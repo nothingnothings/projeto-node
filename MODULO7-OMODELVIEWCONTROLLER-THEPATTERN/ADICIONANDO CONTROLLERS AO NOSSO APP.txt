@@ -1,0 +1,2090 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NO NOSSO PROEJTO, COMO O PROFESSOR MENCIONOU NAS ÚLITMAS AULAS,
+
+
+
+NÓS __ JÁ TEMOS ALGUMAS 'VIEWS'... 
+
+
+
+
+
+
+---> E VAMOS DEIAXR 
+
+
+
+
+ESSAS VIEWS EXATAMENTE COMO ESTÃO,
+
+
+
+
+
+
+
+
+AQUELE FOLDER '
+views'
+
+
+COM AQUELE FOLDER 
+'includes' 
+
+NO INTERIOR... (são os partials/includes, TEMPLATE COMPARTILHADO ENTRE NOSSOS TEMPLATES, basicamente...)
+
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA O QUE ESTÁ FALTANDO, AUQI, É UM FOLDER __ PARA __ OS 'CONTROLLERS',
+
+
+E OS CONTROLLERS EM SI...
+
+
+
+
+
+
+
+
+
+
+-------> TAMBÉM FALTA UM FOLDER PARA OS NOSSOS 'MODELS'... -------. ISSO 
+
+
+PQ 
+
+ATÉ 
+
+AGORA 
+
+
+
+ESSAS 
+ESTRUTURAS/COMPONENTS DO SISTEMA 
+
+'MVC'
+
+ESTÃO 
+
+TODOS __MISTURADOS___ 
+
+
+DENTRO 
+
+
+DE NOSSOS ARQUIVOS 
+
+
+'ROUTE'...  ----------> 
+
+
+
+(dentro das ROUTE FUNCTIONS, na verdade...)
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE ___ A MANEIRA PELA QUAL ROUTEAMOS NÃO 
+
+VAI MUDAR... --------> NÓS SEMPRE __TEREMOS ___ 
+
+
+UM ROUTER,
+
+E AÍ 
+
+TEMOS MIDDLEWRE 
+
+FUNCTIONS 
+
+
+
+
+como 
+
+
+
+'router.get('/', (req, res, next) => {
+
+    const products = adminData.products;
+    res.render('shop', {
+
+            prods: products,
+            pageTitle: 'Shop',
+            path: '/',
+            hasProducts: products.length > 0,
+            activeShop: true,
+            productCSS: true
+    }
+
+    )
+})
+
+
+
+
+
+
+
+
+-------> PROFESSOR DIZ QUE ESSE CÓDDIGO ESTÁ UMA BAGUNÇA... -->
+
+A LÓGICA 
+
+QUE ESTÁ SENDO EXECUTADA DENTRO 
+
+
+DE ESSE 
+
+'render',
+
+
+DENTRO DE NOSSA ROUTE,
+
+É 
+
+'THE TYPICAL CONTROLLER LOGIC'... -----. ISSO 
+PQ 
+
+
+
+NÓS __eSTAMOS INTERAGINDO COM NOSSA DATA (é aquela linha de 'const products = adminData.products'...)
+
+
+
+
+--> E AÍ,
+
+
+A PARTIR 
+
+
+DESSE INTERACT COM DATA,
+
+
+ESTAMOS RETORNANDO UMA VIEW COM 
+
+'res.render('shop', {
+
+})
+
+'
+
+
+
+
+
+
+---> E ESSA  É EXATAMENTE A 'IN-BETWEEN LOGIC' DOS CONTROLLERS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, AÍ VOCÊ PODERIA DIZER: 
+
+
+'ENTÃO NÓS JÁ TEMOS CONTROLLERS....'  -> ''ESSES 2 ARQUIVOS, admin.js e shop.js,
+
+
+JÁ CONTêM NOSSA 
+
+
+CONTROLLER LOGIC...''''
+
+
+
+
+
+
+
+
+
+
+
+--> E VOCê ESTARIA CERTO... REALMENTE ELAS CONTÊM TODA NOSSA CONTROLLER LOGIC...
+
+
+
+
+
+
+
+
+
+---------> MAS A MEDIDA QUE NOSSO APLICATIVO VAI CRESCENDO,
+
+
+
+SE VOCê COLOCAR TUDO DENTRO DOS SEUS ARQIVOS 
+
+
+'route',
+
+ELAS PODEM ACABAR MT GRANDES...  ---------> 
+
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE SEPARAR 
+
+
+ESSA LÓGICA EM ARQUIVOS SEPARADOS 
+
+É 
+
+
+UMA BOA IDEIA,
+
+
+
+
+PQ 
+
+
+AÍ SE VOCê QUER VER AS ROUTES,
+
+
+
+VOCê 
+
+
+Vê AS ROUTES,
+
+
+SE VOCÊ QUER VER A LÓGICA CONTROLLER QUE 
+VAI 
+
+NELAS,
+
+
+VOCê 
+
+
+
+Vê O CÓDIGO DO CONTROLLER FILE 
+
+AND FUNCTION...
+
+
+
+
+
+
+
+--> É POR ISSO QUE CRIAMOS UM NOVO 
+
+FOLDER NO NOSSO PROJETO,
+
+CHAMADO 
+
+DE 
+
+
+'controllers'...
+
+
+
+
+
+
+
+----> DENTRO DESSE FOLDER TEREMOS CONTROLLERS PARA AS FUNCIONALIDADES 
+
+
+QUE 
+
+TEREMOS NO NOSSO CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR ADMITE QUE VOCê PODE/PODERIA TER 
+
+
+'A ONE TO ONE MAPPING'
+
+
+
+entre os seus ROUTE FILE NAMES/número de arquivos route
+
+
+
+
+__ E O NÚMERO/QUANTIDADE 
+
+
+DE 
+
+CONTROLLER FILES... ---------> MAS 
+
+
+VOCê 
+
+TAMBÉM 
+PODE 
+
+SPLITTAR
+ 
+
+ ESSE NEGÓCIO DE FORMA DIFERENTE... -------> PROFESSOR DIZ QUE 
+
+ TALVEZ VOCê 
+
+ QUEIRA
+  
+
+  AGRUPAR 
+
+
+
+
+SEUS ARQUIVOS POR 'PREFIX'.. --> ISSO SIGNIFICA QUE 
+
+VOCê 
+
+PODERIA/PODE TER 
+
+2 
+DIFERENTES 
+
+'CONTROLLERS' 
+PARA 
+
+1 
+MESMO ARQUIVO 
+
+ROUTE,
+
+coisas assim...
+
+
+
+
+
+
+
+
+
+--> É ALGO PESSOAL..
+
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR CRIA UM ARQUIVO CONTROLLER CHAMADO 
+
+'products.js'... ------> 
+
+
+
+
+DENTRO DESSE ARQUIVO O PROFESSOR VAI COLOCAR TODA A LÓGICA 
+
+
+DE PRODUCTS ALI DENTRO,
+
+ATÉ MESMO O CÓDIGO QUE 
+
+TÍNHAMOS NA ROUTE DE 
+
+'SHOP' (pq aí trabalhávamos com 
+
+
+PRODUCTS)
+
+
+
+
+ELE COLOCARÁ LÁ DENTRO....
+
+
+
+
+
+
+
+(ISSO PQ TODA A LÓGICA QUE TIVEMOS NO NOSSO APP, ATÉ AGORA,
+
+
+ESTEVE 
+
+RELACIONADA COM 
+
+__PRODUCTS__, E É POR ISSO QUE 
+
+O 
+PROFESSOR 
+
+VAI QUERER 
+
+COLOCAR TUDO ISSO EM UM MESMO 
+
+ARQUIVO CONTROLLER, CHAMADO 
+DE 
+
+'PRODUCTS'... ) ------>  É CLAARO QEU 
+
+ISSO 
+
+MUDARÁ 
+
+NO FUTURO,
+
+POIS PROFESSOR VAI ADICIONAR 
+
+
+LÓGICAS DESVINCULADAS 
+
+DO TRABALHO COM PRODUCTS,
+
+E QUE 
+
+
+NAÕ RESIDIRÃO EM 
+
+'products.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> USER CONTROLLER, ETC ETC...
+
+
+
+
+
+
+
+
+
+--. DENTRO DESSE ARQUIVO 'product.js',
+
+
+
+
+PROFESSOR VAI 
+
+COLOCAR 
+
+
+A LÓGICA DE 
+
+
+'''
+
+
+
+
+  
+router.get('/add-product', (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+  path: '/admin/add-product',
+  activeAddProduct: true,
+  productCSS: true,
+  formsCSS: true
+
+}); 
+
+
+
+
+'',
+
+
+MAIS PROPRIAMENTE 
+
+AQUELE 
+
+
+'res.render()',
+
+PQ 
+
+É 
+ISSO QUE 
+
+
+
+VAI 
+
+
+RENDERIZAR ESSA ROUTE/PÁGINA...
+
+
+
+
+
+
+
+
+
+
+A QUESTÃO É 'COMO',
+
+pois 
+
+
+
+NÃO PODEMOS SÓ COPIAR E COLAR ESSE CÓDIGO LÁ EM 
+
+
+'products.js',
+
+
+
+POIS ISSO FICARIA INCORRETO...
+
+
+
+
+
+
+
+
+
+
+BEM, NO FINAL NÓS VAMOS QUERER 
+
+ 
+
+
+'LINKAR' ESSA FUNÇÃO,
+
+
+CONECTAR 
+
+ELA, estando ela presente 
+
+em 
+
+
+
+'controllers/products.js',
+
+
+
+AO ___ ARQUIVO 
+'admin.js'... ----------> 
+
+
+
+VAMOS QUERER 1 LINK EM 
+
+'admin.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR FAZER ISSO,
+
+PRECISAMOS -_''EXPORT'' ESSA 
+
+
+FUNÇÃO 
+
+
+DE 
+
+
+''''
+ (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+  path: '/admin/add-product',
+  activeAddProduct: true,
+  productCSS: true,
+  formsCSS: true
+
+}
+
+'''
+
+
+
+LÁ 
+
+DO ARQUIVO 
+
+'products.js'...
+
+
+
+
+
+
+
+
+
+--> E PROFESSOR VAI USAR A CLÁSSICA SINTAXE DE 
+
+
+
+'exports.xxxx = (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+  path: '/admin/add-product',
+  activeAddProduct: true,
+  productCSS: true,
+  formsCSS: true
+
+}',
+
+
+
+
+
+
+ASSIGNAR ISSO A UM NOME DE PROPRIEDADE/PRORPIEDADE 
+
+
+em 
+
+
+'module.exports'...
+
+
+
+
+
+
+
+
+
+
+--------> OK E ESSA SINTAXE NOS DEIXA TER MÚLITPLOS EXPORTS EM 1 MESMO ARQUIVO __ FACILMENTE-_...
+
+
+
+
+
+
+
+
+
+---> AQUI, PORTANTO,
+
+
+
+
+PROFESSOR VAI 
+
+
+
+REALMENTE 
+
+
+ESCREVER 
+
+
+um 
+
+
+export chamado de 
+
+'getAddProduct'...
+
+
+
+
+---> PROFESSOR EXPLICA QUE ELE 
+
+NOMEIA AS COISAS ASSIM,
+
+
+
+AQUI É 
+'get'
+
+PQ NÓS VAMOS FAEZR __ GET__ DA PÁGINA 
+
+de 
+
+'add-product'...
+
+
+
+
+
+
+--> o ideal, para mim, é 'getAddProductPage'...
+
+
+
+ex:
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+  path: '/admin/add-product',
+  activeAddProduct: true,
+  productCSS: true,
+  formsCSS: true
+
+}
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+AGORA QUE CONSEGUIMOS ESSA PAG/RENDERIZAMOS ESSA PAGE POR MEIO DISSO,
+
+
+POR MEIO 
+
+DESSA FUNÇÃO 
+
+
+
+
+interna que ainda recebe 'req' e 'res' e 'next',
+
+
+
+
+
+__ O PROFESSOR EXPLICA QUE ESSA AINDA É UMA MIDDLEWARE FUNCTION NORMAL
+
+COMPREENDIDA PELO 
+
+EXPRESSJS... -------> 
+
+
+
+
+
+
+
+AGORA, PORTANTO, 
+
+O QUE O PROFESSOR VAI FAZER É IMPORTAR 
+
+ESSA 
+FUNÇÃO ESPECIAL' CONTROLLER'
+
+LÁ 
+
+
+
+
+EM 
+
+'admin.js',
+
+
+
+PARA O UTILIZAR NA ROUTE 
+
+DE 
+
+'router.get('/add-product, xxxx') ....'
+
+
+
+
+
+
+ELE VAI CHAMÁ-LA NO SEGUNDO PARÂMETRO, PROVAVELMENTE.. SÓ PRECISA IMPORTAR ANTES...
+
+
+
+
+
+
+
+
+
+
+---> AS COISAS OCORREM EXATAMENTE COMO ANTES,
+
+MAS 
+
+AGORA 
+
+
+
+___ VAMOS TER SPLITTADO NOSSO CÓDIGO DE FORMA DIFERENTE...
+
+
+
+
+
+
+
+
+
+
+--> IMPORTAMOS NOSSO CONTROLLER COM UM CÓDIGO DE 
+
+
+
+
+'const productsController = require('../controllers/products');'
+
+
+
+
+
+
+
+
+
+
+
+
+FICARÁ TIPO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const rootDir = require('../util/path'); /////UTILITY FUNCTION DE AUTORIA DO PROFESSOR.... --> substitui o trecho ""'__dirname, '..' ""       VISTO EM CÓDIGOS COMO 'path.join(__dirname, '..', 'views', 'add-product.html') , que ficam tipo 'path.join(rootDir, 'views', 'add-product.html');'....
+
+const productsController = require('../controllers/products');
+
+
+const router = express.Router();
+
+const products = [];
+
+router.get('/add-product',
+
+
+
+(req, res, next) => { productsController();
+
+//   res.render('add-product', 
+  
+//   {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'....
+  
+//   path: '/admin/add-product',
+//   activeAddProduct: true,
+//   productCSS: true,
+//   formsCSS: true
+
+// }); 
+});
+
+router.post('/add-product', (req, res, next) => {
+
+  products.push(
+    {title: req.body.title}
+  )
+  console.log(products);
+  res.status(302).redirect('/');
+});
+
+
+exports.routes = router; 
+
+exports.products = products;
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+OK... VAMOS CONSEGUIR ESSA PAGE POR MEIO DESSE 'CONTROLLER'...
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+-------> VAMOS CONSEGUIR ESSA PAGE...
+
+
+
+
+
+
+
+
+
+
+
+SÓ TEMOS QUE IMPORTAR ISSO EM 
+
+
+'admin.js',
+
+e aí usar isso na route,
+
+com este código aqui:
+
+
+
+
+
+
+router.get('/add-product',
+ productsController()
+);
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+CERTO... ACHO QUE É ASSIM... --> NA VERDADE,
+
+
+EU ERREI....
+
+
+O CÓDIGO CORRETO 
+
+é 
+
+
+
+
+
+ASSIM:
+
+
+
+
+
+
+
+const productsController = require('../controllers/products');
+
+
+router.get('/add-product',
+ productsController.getAddProductPage
+
+);
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+PQ EU HAVIA ERRADO:
+
+
+
+
+
+
+
+
+
+RAZÕES:
+
+
+1) AQUELE 'productsController' será o 'OBJETÃO DE IMPORT' extraído daquele 'products.js'... --> sendo esse objetão, ele contém todas essas functions/controllers necessários, que devem ser usados lá em 'admin.js'...
+
+
+
+
+
+2) ERREI PQ ESSE '.getAddProductPage' NÃO DEVE SER EXECUTADO ('()"),
+
+
+E SIM DEVE SER APENAS REFERENCIADO... passamos uma REFERENCIA A ESSA FUNCTION;
+ESSENCIALMENTE DIZEMOS AO EXPRESS ROUTER QUE 
+
+ELE DEVE 
+
+__aRMAZENAR__ ESSA FUNÇÃO 
+
+DE '
+
+productsController.getAddProductPage',
+
+
+PARA __ QUE __ ELA 
+
+SEJA 
+
+EXECUTADA SEMPRE QUE 
+
+__ UM EVENT/REQUEST __ DE TIPO 'GET' ENVIADO A ROUTE DE 
+
+'/admin/add-product'
+
+SEJA __ DISPARADO __ ao nosso servidor...
+
+
+
+( OU SEJA, É UM LISTENER, É 
+
+
+'EVENT DRIVEN'...)
+
+
+
+
+
+
+
+
+---> E É CLARO QUE PODEMOS REPETIR ESSE FORMATO/REFORMATING COM O CÓDIGO DE 
+
+
+
+'router.post'(que é a route que ADICIONA UM PRODUCT AO NOSSO SERVIDOR/DATABASE....)
+
+
+
+
+
+
+
+NOSSO CÓDIGO, NO MOMENTO, ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+router.post('/add-product', (req, res, next) => {
+
+  products.push(
+    {title: req.body.title}
+  )
+  console.log(products);
+  res.status(302).redirect('/');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ELE VAI FICAR ASSIM:
+
+
+
+router.post('/add-product', productsController.createProduct
+});
+
+
+
+
+
+
+OU ALGO ASSIM....
+
+
+
+
+
+
+
+
+---E AÍ,
+
+
+LÁ 
+
+
+NO ARQUIVO DE 'products.js',
+
+
+NO FOLDER 'controllers', ficaremos COM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render("add-product", {
+    pageTitle: "Add Product", //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+    path: "/admin/add-product",
+    activeAddProduct: true,
+    productCSS: true,
+    formsCSS: true,
+  });
+};
+
+
+exports.createProduct =  (req, res, next) => {
+
+  products.push(
+    {title: req.body.title}
+  )
+  console.log(products);
+  res.status(302).redirect('/');
+}
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+PROFESSOR USA UMA SINTAXE 
+
+
+
+ALTERNATIVA,
+
+
+ele 
+usa 
+
+'postAddProduct',
+
+PQ 
+
+__ELE VAI 'POST' 
+
+
+UM NOVO PRODUCT,
+
+ELE 
+
+FAZ 
+
+'ADD DE UM NOVO 'PRODUCT'...
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct =  (req, res, next) => {
+
+  products.push(
+    {title: req.body.title}
+  )
+  console.log(products);
+  res.status(302).redirect('/');
+}
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+router.get('/add-product',
+ productsController.getAddProductPage
+);
+
+router.post('/add-product', 
+
+      productsController.postAddProduct
+);
+
+
+
+
+------------------------
+
+
+
+CERTO... COM ISSO,
+
+
+
+
+NOSSO ARQUIVO ROUTE 
+
+DE 
+
+'admin.js'
+
+
+TERÁ FICADO BEM MAIS 'LEAN'...  (tudo graças ao outsourcing ao nosso folder de 'controllers'... )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... MAS AQUI TEREMOS UM PROBLEMA...
+
+
+
+PROFESSOR EXAMINA O CÓDIGO MAIS DE PERTO:
+
+
+
+
+
+exports.postAddProduct =  (req, res, next) => {
+
+  products.push(
+    {title: req.body.title}
+  )
+  res.status(302).redirect('/');
+}
+
+
+
+
+
+
+
+
+
+
+------------> COMO VOCÊ PODE PERCEBER, NESSA FUNÇÃO 
+
+AÍ 
+
+NÓS LIDAMOS 
+
+COM 
+
+'products',
+
+COM AQUELE ARRAY LÁ DE 
+
+'products'... --------> E ESSE ARRAY SÓ EXISTE LOCALMENTE 
+
+LA´
+
+NO 
+
+
+'admin.js', no nosso arquivo route... ------> NÓS 
+
+
+NÃO 
+
+
+TEMOS 
+
+'const products = []' nesse nosso arquivo,
+
+
+BASICAMENTE.... -------> PARA CONSERTAR ISSO,
+
+
+
+PROFESSOR 
+
+TRANSFERE 
+
+O 
+
+'const products = []'
+
+
+
+QUE TEMOS LÁ 
+
+
+EM 
+
+'admin.js'
+
+
+PARA 
+
+DENTRO 
+
+
+
+DESSA FUNÇÃO EM 'products.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+const products = [];
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render("add-product", {
+    pageTitle: "Add Product", //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+    path: "/admin/add-product",
+    activeAddProduct: true,
+    productCSS: true,
+    formsCSS: true,
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+  products.push({ title: req.body.title });
+  res.status(302).redirect("/");
+};
+
+
+
+
+
+
+
+
+------> PROFESSSOR EXPLICA QUE MAIS TARDE AINDA VAMOS ALTERAR ESSE NEGÓCIO,
+
+
+mas que por enquanto ele será mantido ali, no contexto global...
+
+
+
+
+
+
+
+------> OK... 
+
+
+
+
+
+
+
+
+
+AGORA NOSSO ARQUIVO 
+'admin.js'
+
+ESTÁ BEM MAIS LEAN....
+
+
+
+
+
+
+PROFESSOR DIZ QUE AGORA TAMBÉM 
+PODEMOS 
+
+
+ALTERAR NOSSOS EXPORTS DESSE FILE AÍ,
+
+pq 
+
+antes/agora os 
+
+
+
+
+exports desse arquivo estão 
+
+tipo 
+
+'exports.routes = router;'
+
+
+'exports.products = products;'
+
+
+
+--> COMO NÃO 
+
+TEMOS 
+
+MAIS UMA CONSTANTE 
+
+DE 
+
+'products'
+
+NESSE ARQUIVO,
+
+
+SIMPLESMENTE REMOVEMOS ESSE EXPORT....
+
+
+
+
+
+
+
+
+
+
+----> É POR ISSO QUE O PROFESSOR VAI SIMPLIFICAR E VAI 
+
+APENAS 
+
+EXPORTAR O 'router' DELE,
+
+
+COMO FAZEMOS LÁ NO SHOP.JS....
+
+
+
+
+
+EX (CÓDIGO COMPLETO):
+
+
+
+
+const rootDir = require('../util/path');
+const productsController = require('../controllers/products');
+
+
+const router = express.Router();
+
+
+
+router.get('/add-product',
+ productsController.getAddProductPage
+
+);
+
+router.post('/add-product', 
+
+      productsController.postAddProduct
+);
+
+
+// exports.routes = router; 
+
+// exports.products = products; /////COMO NÃO TEREMOS/TEMOS MAIS O ARRAY VAZIO DE 'PRODUCTS' AQUI NESSE ARQUIVO ROUTE(foi transferido para o arquivo de CONTROLLERS de 'products.js'...), PODEMOS SIMPLESMENTE REMOVER ESSE EXPORT __ E PASSAR __ a MANTER APENAS O EXPORT DO 'router', da const 'router 'que SEGURA NOSSA ROUTE...
+
+
+module.exports = router;//tipo assim....
+
+
+----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ok.... --> mas é claro que isso, essa alteração de 'module.exports = router;'
+
+
+
+SIGNIFICA QUE 
+
+PRECISAMOS ALTERAR 
+
+
+O IMPORT DESSA ROUTE LÁ 
+
+NO NOSSO ARQUIVO 'app.js',
+
+
+
+
+QUE DEVERÁ FICAR ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+// const adminData = require('./routes/admin');
+
+
+const adminRoutes = require('./routes/admin');
+
+
+
+
+app.use(
+ 
+
+  '/admin',
+
+
+    // adminData.routes   ////TROCADO PELO CÓDIGO 'adminRoutes', QUE SÓ VAI CONTER NOSSO ROUTER, e não 'o router + a const products (array products)'...
+
+    adminRoutes
+);
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ADMINROUTES- --> PQ AGORA VAMOS VOLTAR A EXPORTAR SÓ 
+
+ROUTES, COMO ANTES...
+
+
+
+
+
+
+
+
+
+-----------> OK.... --> BOM,
+
+
+
+AGORA TEMOS ESSE SETUP... --> 
+
+
+
+
+O PRÓXIMO 
+
+
+PASSO 
+
+É 
+
+
+FAZER A MESMA COISA (outsourcing com os CONTROLLERS)
+
+
+
+
+
+
+
+
+LÁ NO 'shop.js'
+
+
+,
+
+QUE
+
+
+É ONDE TENHO ESTE CÓDIGo:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+    const products = adminData.products;
+                                                                       
+      res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', 
+      productCSS: true,
+      activeShop: true,
+      hasProducts: products.length > 0});   
+               
+            }
+);
+
+
+
+
+
+
+------------------------
+
+
+A PRIMEIRA COISA QUE DEVE SER ALTERADA 
+
+
+É 
+
+esse 
+
+'const products = adminData.products'...
+
+
+
+
+
+
+
+
+------------> MAS ANTES DISSO,
+
+TEMOS QUE OUTSOURCEAR ESSA 
+
+FUNCAO INTERNA INTEIRA,
+
+
+
+segundo parametro de 'router.get()',
+
+
+
+
+AO ARQUIVO controller 
+
+de 
+
+'products.js'... (pq essa função aí TBM ESTÁ RELACIONADA COM PRODUCTS...)
+
+
+
+EM products.js,
+
+
+PROFESSOR CRIA UM NOVO
+
+
+
+EXPORT,
+
+
+de nome 
+
+
+
+'getProducts'....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+exports.getProducts = (req, res, next) => {
+    const products = adminData.products;
+                                                                       
+      res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', 
+      productCSS: true,
+      activeShop: true,
+      hasProducts: products.length > 0});   
+               
+            }
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+OK... MAS COM ISSO AÍ,
+
+AINDA TEMOS O PROBLEMA 
+
+DO 
+
+ARRAY 
+
+DE 
+
+'products'.... ------> NA VERDADE, NÃO TEMOS, NÃO... --> BASTA 
+
+
+TROCAR UM POUCO O CÓDIGO,
+
+
+
+REMOVER ESSE 'const products = adminData.products',
+
+
+
+PQ 
+
+
+ESSA CONSTANTE 
+
+
+
+QUE SEGURA NOSSOS PRODUCTS JÁ EXISTE EM 'products.js' (arquivo controller...) ---> BASTA VER 
+
+AQUELE 
+
+
+CÓDIGO CONTEXTO GLOBAL DE 
+
+
+'const products = [];'
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const products = [];
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render("add-product", {
+    pageTitle: "Add Product", //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+    path: "/admin/add-product",
+    activeAddProduct: true,
+    productCSS: true,
+    formsCSS: true,
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+  products.push({ title: req.body.title });
+  res.status(302).redirect("/");
+};
+
+
+exports.getProducts = (req, res, next) => {
+  // const products = adminData.products; ////código obsoleto, só fazia sentido em 'shop.js', arquivo route...
+                                                                     
+    res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', 
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0});   
+             
+          }
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ENTRETANTO, O PROFESSOR RESSALTA QUE 
+
+VAMOS, NO FUTURO, 
+
+ALTERAR 
+
+ESSE 
+
+ARRAY 
+
+DE PRODUCTS 
+
+FICANDO 
+
+NO NOSSO ARQUIVO controller 
+'products.js'... (esse não é o formato final...)
+
+
+
+
+EX('shop.js'):
+
+
+
+
+router.get(
+  '/', ///////PATH FILTER.
+
+  productsController.getProducts
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... TEMOS O CONTROLLER DE SHOP JÁ COMPLETO...
+
+
+
+
+
+
+
+
+---> AÍ O PROFESSOR IMPORTA ESSE NEGÓCIO LÁ 
+
+DE 
+'products.js',
+
+
+coisa normal...
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ ele salva tudo isso e testa se funciona...
+
+
+
+
+
+
+
+
+-> TUDO ESTARÁ FUNCIONANDO COMO ANTES,
+
+MAS AGORA 
+
+USANDO UM __CONTROLLER...__ 
+
+
+
+
+
+AGORA PROFESSOR DIZ QUE DEVEMOS PROSSEGUIR E VER O QUE 
+
+MAIS PODEMOS FAZER AQUI...

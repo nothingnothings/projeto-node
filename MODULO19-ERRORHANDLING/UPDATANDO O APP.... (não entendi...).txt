@@ -1,0 +1,822 @@
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR COMEÇA DIZENDO 
+
+QUE 
+
+
+DEMOS 
+
+UMA 
+
+OLHADA MAIS DE PERTO EM 'ERROR HANDLING'...
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR REMOVE OS 
+
+
+
+CÓDIGOS DE NOSSO PROJETO QUE CAUSAVAM 
+
+ERROS propositais 
+
+para 
+
+fins de 
+
+
+
+
+
+SHOW de error handling... -------->  O PROFESSOR 
+
+ESPERA QUE 
+
+
+
+TENHAMOS 
+
+ADQUIRIDO 
+UMA 
+
+IDEIA 
+
+DE 
+COMO 
+
+'ERROR HANDLING'
+
+
+FUNCIONA,
+
+
+
+
+E COMO PODEMOS USAR 
+
+AQUELE 
+
+
+'CENTRAL ERROR HANDLING MIDDLEWARE' (do express),
+
+
+
+
+
+
+AQUELES MIDDLEWARES 
+
+DE 
+
+FORMATO 
+
+
+
+
+'app.use((error, req, res, next) => {
+
+
+
+
+....
+
+
+})''',
+
+
+
+
+
+
+
+
+
+LÁ EM 'APP.JS',
+
+
+
+
+OU ENTÃO 
+
+
+
+COMO PODEMOS 
+
+'USE OUR OWN LOGIC',
+
+
+
+
+
+
+___ COMO USAMOS ATÉ AGORA, O TEMPO TODO,
+
+
+
+como 
+
+
+
+naquelas linhas em que 
+
+
+FAZÍAMOS 
+
+
+'CHECK FOR THE EXISTENCE OF A PRODUCT',
+
+
+
+
+
+
+
+
+com 
+
+
+'if (
+
+    !product
+) {
+
+
+    return res.redirect('/');
+}
+
+',
+
+
+
+
+
+
+
+
+
+E 
+
+
+
+
+AÍ _REDIRECIONAMOS SE O PRODUCT NÃO É ENCONTRADO, ETC ETC..
+
+
+
+
+
+
+
+
+
+
+
+--> OK.. ISSO SIGNIFICA QUE 
+
+JÁ 
+
+TEMOS 
+
+
+
+UM MONTE DE CÓDIGOS 
+
+NO NOSSO PROJETO/APP 
+
+
+__QUE __ JÁ 
+
+FAZEM 
+
+'HANDLE'
+
+
+DE CERTAS 
+
+
+SITUAÇÕES DE 'ERRO'... (situações que queremos EVITAR...)
+
+
+
+
+
+
+
+
+
+
+
+--> E O  INTERESSANTE É QUE VOCê __SEMPRE VAI ENCONTRAR__ MANEIRAS 
+
+
+
+DE SER MAIS __ CRIATIVO,
+
+E 
+DE OS handlar 
+
+DE 
+
+
+MANEIRAS __ MELHORES... -------> 
+
+
+
+
+
+
+
+
+
+POR EXEMPLO,
+
+
+LÁ 
+
+
+
+NO CÓDIGO DO CONTROLLER 
+
+'editProduct',
+
+
+
+
+
+
+
+
+temos isto:
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+  // console.log(req.params.productId);
+
+  if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+
+  // Product.getSingleProduct(productId) ///método custom/criado por nós... --> foi usado com o MONGODB DRIVER COMUM, e não com o mongoose (que é claramente melhor, pois possui o builtin method de 'findById'....)
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return res.redirect('/');
+      }
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        prod: product,
+        // isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+
+
+
+
+
+
+--> NESSE CÓDIGO AÍ, TEMOS ESTE TRECHO:
+
+
+
+
+
+
+
+
+
+Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return res.redirect('/');
+      }
+
+
+
+
+
+
+---->   OU SEJA,
+ 
+
+ É UM SIMPLES __ REDIRECT À STARTING PAGE... --> 
+
+
+ 
+
+
+ É MEIO POBRE E RUIM... ----> É __ÓBVIO __ QUE 
+
+
+
+
+ VOCê PODE MELHORAR ISSO... ------> PROFESSOR NOS EXPLICA QUE 
+
+
+ SERIA BEM MELHOR,
+  
+
+  POR EXEMPLO,
+
+
+
+  REDIRECIONAR
+
+  à PAGE 
+  
+
+
+  DE 
+
+  'ADMIN PRODUCTS',
+
+
+
+  e aí ___ FLASHAR__ 
+
+
+
+  UMA MESSAGE __NESSA PAGE__,
+
+
+
+  uma message 
+
+  como 
+
+  'product not found'... ----> ISSO SIM SERIA UMA USER EXPERIENCE MELHOR.... --> e podemos fazer isso 
+
+
+  AGORA MESMO...
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+    Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        // return res.redirect('/'); //RUIM.... não faz muito sentido...
+
+        req.flash( 
+          'error',
+          'Product not found'
+        );
+        res.redirect('/admin/product-list-admin');  ////BEM MELHOR DO QUE AQUELE redirect para '/', pois vamos REDIRECIONAR PARA A PAGE DE 'product list admin' E AÍ VAMOS DISPLAYAR UMA MENSAGEM DE ERRO DIZENDO QUE O PRODUCT NÃO PODE SER ENCONTRADO... melhor user experience...
+          
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+
+FLASHAMOS 
+
+
+
+UMA 
+
+ERROR MESSAGE POR MEIO 
+
+DE 
+
+'req.flash()' (product not found)
+
+
+E 
+
+
+
+AÍ 
+
+REDIRECIONAMOS para a page de 'product list admin',
+
+ONDE ESSA 
+
+MENSAGEM DE ERRO,
+
+
+FLASHADA NA SESSION DO NOSSO USER, LÁ NO OBJETO 'error' ,
+
+
+
+___ SERÁ DISPLAYADA NAQUELA DIV 
+
+
+
+
+na 
+
+view...
+
+
+
+
+
+
+
+
+-----> PROFESSOR NÃO FAZ ISSO 
+PQ 
+
+
+
+ELE NÃO QUER GASTAR MT TEMPO SÓ NA UI,
+MAS ELE ADMITE QUE 
+
+ESSAS SÃO COISAS QUE VOCê __PODE FAZER__..
+
+
+
+
+
+
+
+
+
+--------> O QUE ELE QUER QUE ENTENDAMOS 
+É QUE 
+
+
+
+NÓS _ TEMOS __ VÁRIAS _TOOLS __ PARA 
+
+
+
+HANDLAR ERROS,
+
+
+E QUE 
+
+UMA DAS TOOLS MAIS 
+
+IMPORTANTES 
+
+É 
+
+
+
+
+
+A DE 
+
+
+'AT LEAST HANDLE __ ALL THESE CATCH BLOCKS 
+
+CORRECTLY'... 
+
+
+
+
+
+
+
+
+--> OS CATCH BLOCKS DEVEM 
+
+
+
+
+
+SER tratados com cuidado....
+
+
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+
+
+
+O PROFESSOR VAI SUBSTITUIR 
+
+TODOS 
+
+NOSSOS 
+
+CATCH BLOCKS 
+
+podres (
+
+
+
+    com código simples como 
+
+
+'''''
+    .catch(
+        err => {
+            console.log(err);
+        }
+    )
+
+
+    '''''
+
+
+
+) 
+
+
+
+
+
+
+
+POR 
+
+UM 
+
+
+CATCH BLOCK 
+mais encorpado,
+
+
+COM O USO 
+
+DAQUELE 
+
+
+'EXPRESS ERROR HANDLING MIDDLEWARE',
+
+
+por meio 
+
+
+
+dessa sintaxe aqui:
+
+
+
+
+
+
+
+.catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+
+}) 
+
+
+
+
+
+
+
+--> PROFESSOR VAI SUBSTITUIR TODOS NOSSOS 
+
+CATCH BLOCKS por esse catch block aí... ------> ELE VAI FAZER ISSO PQ 
+
+ISSO 
+
+
+'LETS ME AT LEAST CENTRALLY HANDLE THEM WITH A 500 PAGE'..
+
+
+
+
+
+
+
+
+--> CERTO... FIZ A MESMA COISA...
+
+
+
+
+
+
+
+
+--> DEVEMOS FAZER A MESMA COISA LÁ NO 'AUTH.JS'...
+
+
+
+
+
+
+
+
+OK... FIZ ISSO..
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVO FAZER A MESMA COISA NOS CONTROLLERS DE 
+
+
+
+
+'shop.js'....
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+ESSE 
+
+É 
+
+APENAS 
+'ONE WAY OF HANDLING YOUR ERRORS',
+
+
+essa 
+
+
+
+coisa aí, essa 
+
+
+EXPRESS ERROR HANDLING MIDDLEWARE FUNCTIOn...
+
+
+
+
+--> ANTES DESSE MIDLEWARE ESPECIAL,
+
+VOCê TEM 
+
+'ALL OUR IF CHECKS AND STUFF'
+
+que 
+
+adicionamos ao longo do curso.... --> ISSO SIGNIFICA QUE 
+
+
+ESSA PAGE DE 
+
+
+ERRO 500, e os redirects a ela,
+
+SÃO REALMENTE 
+
+'JUST MY LAST RESORT',
+
+
+o 
+
+LAST RESORT QUE APLICAMOS _ NO CASO _ DE TODAS AS OUTRAS ALTERNATIVAS de 'error handling' FALHAREM...
+
+
+
+
+
+
+
+
+
+
+--. COM ISSO, TEREMOS UM APP UM POUCO MAIS 'HARDENED',
+
+ou que pelo menos MOSTRA 
+
+ALGUMA MESSAGE AO USER 
+
+QUANDO ALGO FALHAR,
+
+EM 
+
+VEZ 
+
+DE 
+
+'JUST DOING NOTHING'
+
+
+
+quando suas features falharem..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ISSO PQ VOCê SEMPRE VAI QUERER EVITAR SITUAÇÕES EM QUE 
+
+SEU APP SÓ CRASHA SEM DIZER NADA AO USER.... (o mínimo que você vai querer fazer é 'INFORM THE USER', por meio de 
+
+
+algum redirect a uma page especial/display de uma error message)
+
+
+
+
+
+
+
+
+
+
+
+--> OK... AGORA TEMOS 'PROPER ERROR HANDLING'
+
+no lugar,
+
+para 
+
+HIPÓTESES EM QUE AS COISAS REALMENTE 
+
+DEEM ERRADO..

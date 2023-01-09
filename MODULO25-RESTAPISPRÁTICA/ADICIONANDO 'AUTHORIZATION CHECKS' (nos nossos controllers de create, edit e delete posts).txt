@@ -1,0 +1,907 @@
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PARA __ CHECAr___ SE 
+
+1
+ 
+
+ USER 
+
+
+
+
+ESTÁ TENTANDO EDIT/DELETE 
+
+
+
+UM DETERMINADO 
+
+
+POST, post QUE 
+
+___ NÃO PERTENCE A 
+
+
+ELE,
+
+
+
+
+
+eu tentei escrever um código como este:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findOne({ _id: ObjectId(postId) })
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 404;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+      return post.save();
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: result,
+      });
+    })
+    .catch((err) => {
+      ///reutilização de error catching logic...
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+      if(post.creator.userId !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 404;
+        throw error;
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+
+  const postId = req.params.postId;
+  const userId = ObjectId(req.userId); //extraído de nossa token, por meio do middleware de 'isAuth'...
+
+  User.findOne({ _id: userId }).then((user) => {
+
+
+
+    if(!user) {
+      const error = new Error('User not found in database.');
+      error.statusCode = 401; //unauthenticated
+      throw error;
+    }
+
+    const oldPosts = [...user.posts];
+
+    const postIndex = oldPosts.findIndex((post) => {
+      return post.postId === postId;
+    });
+
+    if (!postIndex) {
+      const error = new Error(
+        'That post has not been encountered for your user.'
+      );
+      error.statusCode = 404;
+      throw error;
+    }
+
+    oldPosts.splice(postIndex, 1);
+
+    user.posts = oldPosts;
+
+    return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+  })
+  .then(
+    (result) => {    
+  Post.findById(postId)
+  .then((post) => {
+
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    fs.unlink(post.imageUrl, (err) => {
+      console.log(err);
+    });
+
+    return Post.findByIdAndRemove(postId).then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'The post was deleted.',
+      });
+    });
+  })
+    }
+  )
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+MAIS ESPECIFICAMENTE ESTA PARTE AQUI:
+
+
+
+
+
+
+
+
+
+
+
+    if(!user) {
+      const error = new Error('User not found in database.');
+      error.statusCode = 401; //unauthenticated
+      throw error;
+    }
+
+    const oldPosts = [...user.posts];
+
+    const postIndex = oldPosts.findIndex((post) => {
+      return post.postId === postId;
+    });
+
+    if (!postIndex) {
+      const error = new Error(
+        'That post has not been encountered for your user.'
+      );
+      error.statusCode = 404;
+      throw error;
+    }
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE 
+
+
+DEVEMOS IR ATÉ O 
+
+FEED CONTROLLER,
+
+
+E AÍ 
+
+
+ENCONTRAR ESSES METHODS 
+
+DE
+
+
+
+DELETE/UPDATE... ------> 
+
+
+
+
+
+
+
+
+PROFESSOR COMEÇA PELA LEITURA do 'Post.findOne()'...
+
+
+
+
+
+
+
+ex:
+
+
+ Post.findOne({ _id: ObjectId(postId) })
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+---------------------------------------------------
+
+
+
+
+
+
+
+------> PROFESSOR MENCIONA QUE DEVEMOS TER EM MENTE QUE 'for a given post',
+
+
+
+O 
+
+
+
+'creator' 
+
+
+DEVERÁ TER O id __ DO USER__ QUE SUPOSTAMENTE CRIOU ESSE POST...
+
+
+
+
+
+
+
+
+-----> ok... ----> ISSO SIGNIFICA QUE MESMO SE PASSARMOS POR AQUELE CHECK de 'if(!post)',
+
+
+
+
+PRECISAMOS __ CHECAR__ 
+
+
+SE 
+
+AQUELE CREATOR ID DENTRO DESSE POST É 
+
+IGUAL AO 
+
+
+
+id __ DO 'currently logged in user'...
+
+
+
+
+
+
+
+
+
+-----> NO CASO, EU JÁ HAVIA FEITO ISSO,
+
+com este 
+
+check aqui:
+
+
+
+
+
+
+      if(post.creator.userId !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 404;
+        throw error;
+      }
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+OK... EU FIZ EXATAMENTE O QUE O PROFESSOR FEZ...
+
+
+
+
+
+
+
+----> só o status code ficou errado, professor diz que '403' é um bom código para AUTH ISSUES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------. OK... ---> O PROFESSOR ENTÃO 
+
+
+
+TENTA 
+
+DELETAR NOSSO POST 
+
+
+(criado pelo user A) 
+
+
+
+
+com  OUTRO USER (user B)....
+
+
+
+
+
+
+
+--> NÓS FALHAMOS, COM ESSE ERRO 403 (sinal de que o código deu certo)....
+
+
+
+
+
+
+
+
+
+
+-_> com o user correto,
+
+
+esse negócio dá certo....
+
+
+
+
+
+
+
+
+
+----> DEVEMOS ADICIONAR ESSA MESMA LÓGICA AO 
+
+
+ 
+
+
+ 'deletePost'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ MINHA LÓGICA DE DELETEPOST ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+  const userId = ObjectId(req.userId); 
+
+  User.findOne({ _id: userId }).then((user) => {
+
+    if(!user) {
+      const error = new Error('User not found in database.');
+      error.statusCode = 401; //unauthenticated
+      throw error;
+    }
+
+    const oldPosts = [...user.posts];
+
+    const postIndex = oldPosts.findIndex((post) => {
+      return post.postId === postId;
+    });
+
+    if (!postIndex) {
+      const error = new Error(
+        'That post has not been encountered for your user.'
+      );
+      error.statusCode = 403;
+      throw error;
+    }
+
+    oldPosts.splice(postIndex, 1);
+
+    user.posts = oldPosts;
+
+    return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+  })
+  .then(
+    (result) => {    
+  Post.findById(postId)
+  .then((post) => {
+
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    fs.unlink(post.imageUrl, (err) => {
+      console.log(err);
+    });
+
+    return Post.findByIdAndRemove(postId).then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'The post was deleted.',
+      });
+    });
+  })
+    }
+  )
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+--------------------------------------------
+
+
+
+
+OK... 
+
+
+
+
+MAS MINHA LÓGICA FICOU BEM DIFERENTE DAQUELA DO PROFESSOR...
+
+
+
+
+
+
+
+------> a versão do código do professor COMEÇA PELO uso de 'Post.findById()',
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+ exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+  const userId = ObjectId(req.userId); 
+
+    Post.findById(postId)
+    .then(
+        (post) => {
+
+
+            if (!post) {
+                const error = new Error('Could not find post!');
+                error.statusCode = 404;
+                throw error;
+            }
+
+            if(post.creator.toString() !== req.userId) {  ////VAI CHECAR SE ESSE POST AÍ TEM O NOSSO USER ASSIGNADO A ELE...
+
+                const error = new Error('Not authorized!');
+                error.statusCode = 403;
+                throw error;
+            }
+
+        }
+    )
+
+
+
+
+
+
+
+
+
+
+    -> NA VERDADE, É O MESMO CÓDIGO/LÓGICA USADO NAQUELE 'edit post',
+
+
+
+
+
+    MAS 
+    D
+    ESSA VEZ COM O 'delete' de um post...
+
+
+
+
+
+
+
+    (
+
+        o meu código foi por um caminho inverso,
+
+        checando pela existência desse post dentro do 'user',
+
+        naquele array de 'posts' (não deixa de estar certo, na verdade).
+    )
+
+
+
+
+
+
+
+
+
+
+    ------> ok.... POSSO CRIAR UMA CÓPIA 
+
+    DESSA VERSÃO,
+
+    LÁ NO CÓDIGO DE 
+
+    'feed.js'... (só para ter de referência)...
+
+
+
+
+
+
+
+
+
+
+    TIPO ASSIM, ACHO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    exports.deletePost = (req, res, next) => {
+  ////VERSÃO DO PROFESSOR
+
+  const postId = req.params.postId;
+
+  const userId = ObjectId(req.userId); //extraído de nossa token, por meio do middleware de 'isAuth'...
+
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if (post.creator.userId !== req.userId) {
+        ////VAI CHECAR SE ESSE POST AÍ TEM O NOSSO USER ASSIGNADO A ELE...
+
+        const error = new Error('Not authorized!');
+        error.statusCode = 403;
+        throw error;
+      }
+
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+      return Post.findByIdAndRemove(postId);
+    })
+    .then((result) => {
+      User.findOne({ _id: userId }).then((user) => {
+        const oldPosts = [...user.posts];
+
+        const postIndex = oldPosts.findIndex((post) => {
+          return post.postId === postId;
+        });
+
+        if (!postIndex) {
+          const error = new Error(
+            'That post has not been encountered for your user.'
+          );
+          error.statusCode = 403;
+          throw error;
+        }
+
+        oldPosts.splice(postIndex, 1);
+
+        user.posts = oldPosts;
+
+        return user.save();
+      });
+    })
+    .then((result) => {
+      res.status(200).json({
+        message: 'The post was deleted.',
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+    });
+};
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+É CLARO, EXPLICA O PROFESSOR,
+
+
+ 
+ QUE PODERÍAMOS ADICIONAR UM CÓDIGO NO FRONTEND/BACKEND (data no backend, data na response) 
+
+
+ PARA ___EVITAR__ QUE OS BUTTON DE 'DELETE' e 'EDIT' 
+
+
+ APAREÇAM QUANDO O USER NÃO 
+
+
+ FOR O 'LEGIT USER' (user responsável por esse post)... -----> MAS A IDEIA/INTENÇÃO DO PROFESSOR, AQUI,
+
+
+
+ ERA NOS MOSTRAR 
+
+
+ __COMO __ PODEMOS 'PROTECT' 
+
+
+
+ ESSAS FEATURES LÁ NO BACKEND... (
+
+     é por isso que os buttons continuam ali,
+
+     para NOS MOSTRAR __ COMO PODEMOS__
+
+     PROTEGER ESSAS ROUTES/FEATURES __LÁ NO BACKEND...
+ )
+
+
+
+
+
+
+
+
+
+
+
+ --> pq é isso que eu fiz, 
+
+
+ na verdade,
+  
+
+
+  EU _ FIZ _ COM QUE __ SÓ OS POSTS RELACIONADOS A CADA USER __ POSSAM SER 'DISPLAYED' no site.... ---> 
+
+
+
+
+
+o que, é claro,
+
+por si só vai impossibilitar users regulares 
+
+de 
+
+
+
+FAZER 'EDIT/DELETE' de posts, pq 
+
+SÓ AQUELE  USER RESPONSÁVEL PELA CRIAÇÃO DO POST PODERÁ O VISUALIZAR NO SEU FRONTEND...

@@ -1,0 +1,4163 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> NÓS ESTAMOS COM UM CÓDIGO ASSIM:
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+
+         //queries são o formato 'padrão' de handling de requests, no GRAPHQL...
+//       `       
+//    type TestQuery { 
+//       textTest: String!
+//       views: Int!
+//    }
+
+
+
+
+
+//    type RootQuery { 
+//          hello: String!
+//    }
+
+
+//    type RootQuery2 {
+//       hello2: TestQuery!
+//    }
+
+
+//     schema {
+//          query: RootQuery
+        
+//     }
+ 
+//  `
+
+
+
+
+
+////ver aula 'Definindo um schema de MUTATION'...
+
+
+
+
+`       
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: userInputData): User!
+}
+
+
+
+
+ schema {
+      mutation: RootMutation
+     
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE JÁ TEMOS ESSA SUBQUERY/SUBMUTATION 
+
+
+de  
+
+
+
+
+
+'createUser'
+
+
+lá 
+
+
+
+
+NO NOSSO SCHEMA.. ------>  O PRÓXIMO PASSO, AGORA,
+
+É TRABALHAR EM UM _ RESOLVEr__ QUE 
+
+
+NOS DEIXE 
+
+
+'CREATE A USER'... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+LÁ NO ARQUIVO DE 'resolvers.js',
+
+
+ 
+
+ PROFESSOR CRIA UM NOVO MÉTODO,
+
+ método de 
+
+
+ 'createUser() {}'...
+
+
+
+
+
+
+
+
+
+
+ -------> MAS É CLARO QUE 
+
+
+
+
+ NESSE 'createUser(){}'
+
+
+ NÓS VAMOS ACTUALLY RECEBER ALGUNS ARGUMENTOS.... --> PROFESSOR 
+
+
+
+
+
+ DIZ QUE 
+
+
+
+ EM QUERIES EM QUE VOCÊ SÓ FAZ 'GET' DE DATA VOCÊ TAMBÉM _ VAI àS VEZES FAZER O PASS DE ARGUMENTOS (isso 
+ 
+ 
+ não é exclusivo a operações de 'POST'....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> EM QUERIES (fazer GET de data) 
+
+
+ VOCÊ TAMBÉM PODE FAZER __ GET DE ARGUMENTS__- ---> ISSO PODE OCORRER/VAI OCORRER,
+
+
+ POR EXEMPLO,
+
+
+ QUANDO VOCÊ PRECISA 
+
+
+ 'get/retrieve a __ SPECIFIC POST, WITH A SPECIFIC ID'...
+
+
+
+
+
+
+
+
+
+
+
+ --> certo... mas começamos assim:
+
+
+
+
+
+
+
+
+
+
+ module.exports = {
+
+
+
+     createUser() {
+
+     }
+ }
+
+
+
+
+
+
+
+
+ -------------------------
+
+
+
+
+ NO CASO,
+
+ NÃO VAMOS QUERER UM 'postId',
+
+ E SIM 
+
+
+
+ 'THE USER INPUT DATA'...
+
+
+
+
+
+
+
+
+
+
+ --> O PROFESSOR NOS EXPLICA QUE O 
+
+
+
+ PRIMEIRO ARGUMENTO 
+
+
+
+ DE NOSSA FUNÇÃO/MÉTODO 
+
+ 'createUser'
+
+
+
+
+ _ VAI SER/DEVERÁ SER 
+
+
+ 'args',
+
+
+
+
+
+
+
+ _E QUE O SEGUNDO ARGUMENTO DEVERÁ SER 
+ 'req' (  O OBJETO REQUEST, ESSENCIALMENTE)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1O ARGUMENTO: args 
+
+
+
+
+
+2O ARGUMENTO: REQ...
+
+
+
+
+
+
+ ex:
+
+
+
+ 
+
+ module.exports = {
+
+
+
+     createUser(args, req) {
+
+     }
+ }
+
+
+
+
+
+
+
+
+ -------------------------------------
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+ module.exports = {
+
+
+
+    hello() {
+
+        return 'Hello World!';
+    },
+
+    hello2() {
+           return {
+            textTest: 'TESTANDO',
+            views: 12321480
+           } 
+    },
+
+
+    createuser(args, req) { //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+
+    }
+}
+
+
+
+
+
+
+
+//VER ARQUIVO 'schema' para ver POSSIBILIDADES DE VALUES QUE PODEM SER RETORNADOS NESSAS QUERIES/METHODS nesse objeto 'resolver'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR NOS EXPLICA QUE ESSE ARGUMENTO 
+
+
+
+'req'
+
+
+
+VAI SE TORNAR IMPORTANTE MAIS TARDE....
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... NESSE OBJETO 'args',
+
+PODEMOS 
+
+RETRIEVAR 
+
+
+
+__ TODOS __OS __DADOS/DATA 
+
+QUE DEFINIMOS 
+
+
+
+NO NOSSO 'SCHEMA',
+
+
+aquela 
+
+
+DATA 
+
+INPUTTADA PELO USER... 
+
+
+( 
+
+
+    ou seja,
+
+
+
+    A DATA QUE FOI ENVIADA NO REQUEST DO USER AO NOSSO BACKEND...
+)
+
+
+
+
+
+
+
+--> isso quer dizer que vamos poder acessar os argumentos contidos neste objeto, que fora definido no schema:
+
+
+
+
+
+
+input UserInputData {
+
+    name: String!
+    email: String! 
+    password: String!
+}
+
+
+
+
+
+
+
+
+
+--> VAMOS PODER RETRIEVAR ___ ESSES __ 
+
+
+3 FIELDS/VALORES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO... MAS É EVIDENTE QUE 
+
+NAÕ VAMOS ACESSAR ESSES VALORES 
+
+DIRETAMENTE 
+
+
+NO 
+
+
+PARÂMETRO 'args' (
+
+    ou seja,
+
+
+    não vale escrever 
+
+
+    'args.name',
+
+    'args.email',
+
+    'args.password'...
+) 
+
+
+
+
+
+
+--> NÃO.... --> ISSO PQ 
+
+
+
+'args'
+
+VAI SER ACTUALLY 
+
+
+
+__ UM OBJETO __ CONTENDO __ TODOS OS ___ 
+
+
+
+ARGUMENTS _ QUE FORAM PASSADOS A ESSA FUNÇÃO/método 
+
+de 
+
+
+'createInput' (
+
+
+
+    no nosso exemplo, passamos 
+
+    APENAS 1 OBJETO, O OBJETO com estrutura 'UserInputData',
+
+
+    MAS _ É EVIDENTE __ QUE PODERÍAMOS TER MAIS ARGUMENTOS....
+)
+
+
+
+
+
+--> lá no nosso schema,
+
+havíamos settado assim:
+
+
+
+type RootMutation {
+    createUser(userInput: UserInputData): User!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO....  --> ISSO SIGNIFICA QUE 
+
+'args'
+VAI 
+
+
+TER JUSTAMENTE 
+
+
+
+1 FIELD DE 'userInput,
+
+
+
+
+
+E É _ LÁ DENTRO __ QUE TEREMOS 
+
+
+
+
+OS FIELDS de 
+
+'email',
+
+
+'name'
+
+
+e 
+
+'password',
+
+
+tipo assim:
+
+
+
+
+
+
+const { name, email, password } = args.userInput
+
+
+
+
+
+
+
+
+------------------
+
+
+
+ASSIM VAMOS OBTER ESSES 3 VALORES, ENFIADOS EM CONSTANTES....
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+module.exports = {
+
+
+
+    hello() {
+
+        return 'Hello World!';
+    },
+
+    hello2() {
+           return {
+            textTest: 'TESTANDO',
+            views: 12321480
+           } 
+    },
+
+
+    createuser(args, req) { //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+
+        const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE LOGO USAREMOS ESSA DATA 
+
+aí,
+
+
+
+
+
+extraída do request... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> MAS ANTES DISSO,
+
+
+
+PROFESSOR EXPLICA QUE __ _NESSE ARQUIVO DE 'resolvers.js'
+
+
+
+PRECISAMOS__ 
+
+
+
+IMPORTAR___ MODELS.... --> VAMOS 
+
+
+
+QUERER IMPORTAR O MODEL DE 'User'
+
+
+DO NOSSO PROEJTO,
+
+
+
+
+PQ _ AINDA__ VAMOS TRABALHAR COM 'MONGOOSE MODELS'...
+
+
+
+
+
+
+
+
+
+
+-> VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+const User = require('../models/user'); //NÓS AINDA VAMOS TRABALHAR COM MODELS MONGOOSE NESSE ARQUIVO DE 'GRAPHQL'/projetos graphql... (principalmente nos nossos  RESOLVERS)....
+
+
+
+
+module.exports = {
+
+
+
+    hello() {
+
+        return 'Hello World!';
+    },
+
+    hello2() {
+           return {
+            textTest: 'TESTANDO',
+            views: 12321480
+           } 
+    },
+
+
+    createuser(args, req) { //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+
+        const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+    }
+}
+
+
+
+
+
+
+
+//VER ARQUIVO 'schema' para ver POSSIBILIDADES DE VALUES QUE PODEM SER RETORNADOS NESSAS QUERIES/METHODS nesse objeto 'resolver'...
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> CERTO... AÍ, DENTRO DESSE 'createUser()"
+
+METHOD,
+
+
+o professor 
+
+
+EXPLICA QUE 
+
+VAI __ QUERER __ USAR __ A SINTAXE DE 
+
+
+'async/await'
+
+
+
+PARA __ CRIAR __ 
+
+
+
+
+
+1 USER....
+
+
+
+
+
+--> TENTAREI FAZER ISSO SOZINHO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EU TENTEI ESCREVER COM ESTA SINTAXE:
+
+
+
+
+
+
+
+
+
+    async createuser(args, req) { //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+
+        const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+    
+        
+        const user = await new User(
+            {
+                name: name,
+                email: email,
+                password: password
+            }
+        )
+
+        const savedUser = await user.save();
+    
+
+    
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -------> MAS ISSO ESTÁ ERRADO...
+
+
+
+
+
+
+
+
+
+
+
+
+    --> PROFESSOR EXPLICA QUE VAMOS TER QUE REESCREVER TODO ESSE METHOD DE 
+    'createUser'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -> PARA CONSEGUIR USAR ASYNC/AWAIT COM ELE,
+
+
+
+    professor explica que 
+
+
+
+
+
+    DEVEMOS 
+
+
+
+
+    colocar um ':' DEPOIS DO 'createUser',
+
+
+
+    E AÍ __ DEVEMOS 
+
+
+
+
+
+
+    ADICIONAR A KEYWORD 'function' 
+
+
+
+    ANTES DOS NOSSOS PARÂMETROS,
+
+    PARA ENTÃO ADICIONAR 'async'
+
+    NA FRENTE DESSA KEYWORD 'function':
+
+
+
+    
+    createuser: async function (args, req) { //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+
+        const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+    
+        
+        const user = await new User(
+            {
+                name: name,
+                email: email,
+                password: password
+            }
+        )
+
+        const savedUser = await user.save();
+    
+
+    
+    }
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    createuser(args, req) {  ///sintaxe _ NORMAL___ (SEM ASYNC/AWAIT OPERATIONS)...
+//        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+
+//         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+    
+        
+//         const user = await new User(
+//             {
+//                 name: name,
+//                 email: email,
+//                 password: password
+//             }
+//         )
+
+//         const savedUser = await user.save();
+    
+
+    
+//     }
+
+
+
+
+
+    createuser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA...
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+     
+         
+         const user = await new User(
+             {
+                 name: name,
+                 email: email,
+                 password: password
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+     
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+OK... --> AGORA PODEMOS USAR ASYNC AWAIT COM ESSE MTETHOD/FUNCTION (é claro que isso é puramente opcional, mas é melhor)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.. 
+
+
+
+
+nesse código,
+
+A PRIMEIRA COISA QUE O PROFESSOR QUER FAZER É 
+
+'CHECK IF THAT USER ALREADY EXISTS'... 
+
+( eu imaginei)...
+
+
+
+
+
+
+
+
+--> para isso,
+
+ele provavelmente vai usar 
+
+
+'User.findOne(_id: userId)',
+
+
+
+OU ALGO ASSIM...
+
+
+
+
+
+--> ERRADO, ELE VAI USAR O 'EMAIL' dos document 'User', pq se JÁ EXISTIR 1 USER NA DATABASE COM AQUELE EMAIL, 
+
+AQUELE USER NÃO PODERÁ SER CRIADO...
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+TALVEZ TIRAR ESSE 'userId'
+
+LÁ 
+
+DO 
+
+
+BODY 
+
+
+DO 
+
+request? ------>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok....  MAS EU ERREI ISSO AÍ... --> PQ A COISA QUE O PROFESSOR VAI FAZER, AQUI, NÃO É __ PROCURAR__ PELO MESMO ID DE 1 USER que 
+
+nem mesmo está loggado (isso nem mesmo faz sentido),
+
+E SIM 
+
+
+__ PROCURAR__ 1 
+
+
+
+
+USER NA NOSSA DATABASE QUE TENHA O MESMO EMAIL QUE RECÉM FOI INPUTTADO PELO USER...
+
+
+
+
+
+
+
+
+ou seja,
+
+ele vai escrever assim:
+
+
+
+
+
+
+        const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+
+        const foundUser = User.findOne({email: email})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    EX:
+
+
+
+
+
+
+
+
+    
+
+    createuser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const foundUser = User.findOne({email: email});
+
+
+
+
+
+        if (foundUser) {
+
+
+            
+        }
+
+
+         
+         const user = await new User(
+             {
+                 name: name,
+                 email: email,
+                 password: password
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+     
+     }
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> É CLARO, AÍ ADICIONAMOS UM IF CHECK... --> se o user FOR ENCONTRADO,
+
+vamos querer dar o throw de um erro, possivelmente... 
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR FAZ UMA IMPORTANTE NOTA:
+
+
+
+
+SE VOCê __ NÃO ESTÁ __ USANDO ASYNC/AWAIT AQUI,
+
+
+VOCÊ É OBRIGADO A __ RETORNAr__ 
+
+
+'User.findOne()',
+
+
+
+
+
+
+
+E AÍ _ 
+
+
+
+
+ESCREVER os '.then()'.... --> ISSO PQ _ SE VOCê __ NÃO FIZER O RETURN __ 
+
+
+
+DE SUAS PROMISES 
+
+
+
+DENTRO DOS SEUS METHODS 
+
+
+
+
+
+NESSE 'resolver',
+
+
+
+ o 
+
+ GRAPHQL __ NÃO VAI 'WAIT FOR IT TO RESOLVE'... 
+
+
+
+
+
+
+
+
+
+
+
+ --> JÁ QUANDO USAMOS 'ASYNC/AWAIT',
+
+
+
+
+
+
+ A PROMISE É __ RETORNADA _ AUTOMATICAMENTE PARA NÓS...
+
+
+
+
+
+
+
+
+ -->  NOSSO CÓDIGO, ATÉ AGORA, ESTAVA ASSIM:
+
+
+
+
+ 
+module.exports = {
+
+
+
+    hello() {
+
+        return 'Hello World!';
+    },
+
+    hello2() {
+           return {
+            textTest: 'TESTANDO',
+            views: 12321480
+           } 
+    },
+
+
+
+
+
+
+
+    createuser: async function(args, req) {  
+ 
+         const { name, email, password } = args.userInput;
+
+        const foundUser = User.findOne({email: email});
+
+
+        if (foundUser) {
+
+
+
+        }
+
+
+         
+         const user = await new User(
+             {
+                 name: name,
+                 email: email,
+                 password: password
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+     
+     }
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+OK.... SE ESSE USER FOR ENCONTRADO, VAMOS QUERER 
+
+
+RETORNAR ALGUMA COISA...
+
+
+
+
+
+
+
+
+se eu tiver um EXISTING USER,
+
+ SEI QUE NÃO VOU 'CREATE A NEW ONE'... -_> é por isso que 
+
+
+ o 
+
+ professor 
+
+
+ VAI CRIAR UM NOVO ERROR,
+
+ com 
+
+
+
+
+ const error = new Error('An user for that email already exists.');
+
+
+
+
+
+
+
+
+
+
+
+ ,E AÍ O PROFESSOR VAI DAR __ THROW_ NESSE ERRO....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> É CLARO QUE O THROW DESSE ERROR NÃO VAI __ AUTOMATICAMENTE FAZER COM QUE ELE SEJA HANDLADO,
+
+
+
+ MAS 
+
+
+ NÓS VOLTAREMOS 
+
+ AO 
+
+
+ 'ERROR HANDLING IN GRAPHQL' 
+
+
+ EM UMA LIÇÃO MAIS POSTERIOR...
+
+
+
+
+
+
+
+
+
+
+
+
+ -> SE NÃO TIVERMOS NENHUM 
+
+
+ 'existingUser,'
+
+
+ VAMOS PROSSEGUIR 
+
+ com a execução das linhas 
+
+ posteriores,
+
+
+ em que temos:
+
+
+
+
+ ''''
+
+
+
+          const user = await new User(
+             {
+                 name: name,
+                 email: email,
+                 password: password
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+
+
+
+ ''''
+
+
+
+
+
+
+
+
+
+ -----> O PROFESSOR NOS EXPLICA QUE A LÓGICA PARA O 'SAVE' DE UM POST, NO GRAPHQL (com o mongoose),
+
+
+ VAI SER SIMILAR À LÓGICA 
+
+
+
+
+ DO 
+
+ SAVE 
+
+
+ EM REST APIs comuns... 
+
+
+
+
+
+
+
+
+
+
+
+
+ --> UMA COISA QUE EU ESQUECI, AQUI,
+
+
+
+ FOI O USO DE 
+
+ 'BCRYPT'
+
+
+ PARA __ HASHEAR___ NOSSO PASSWORD,
+
+
+ ANTES DE O ARMAZENAR NA DATABASE...
+
+
+
+
+
+
+
+
+
+ --> para isso, importaremos 
+
+
+
+ 'const {hash, compare} = require('bcryptjs');'
+
+
+
+
+
+
+
+
+
+ --> CERTO.... ISSO FEITO, VAMOS USAR 
+
+ o 
+
+
+
+ 'hash'
+
+ PARA HASHEAR NOSSO PASSWORD,
+
+ COM A SINTAXE ASYNC/AWAIT....
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+ 
+    createuser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password);
+
+         
+         const user = await new User(
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+     
+     }
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO.... 
+
+
+
+
+
+
+
+O PROFESSOR FEZ EXATAMENTE A MESMA COISA.... --> MAS EU ESQUECI O SEGUNDO PARÂMETRO DE 'hash',
+
+QUE É 
+
+O 
+
+'SALTING INDEX', ou algo assim... ---> colocamos 12,
+
+que é um bom balanço entre segurança e rapidez...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+    createuser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+         
+         const user = await new User(
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+     
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+----------> OK... ISSO FEITO,
+
+
+o professor 
+
+escreve
+
+
+
+'const user = new User(
+    {
+        name: name,
+        email: email,   
+        password: hashedPassword
+    }
+)
+'
+
+
+
+
+
+
+--> ENTRETANTO, NA VERSÃO DELE,
+
+ELE NÃO COLOCA 'await' 
+
+nesse 
+
+'new User' (talvez essa seja a maneira melhor, também....)
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+OK...
+ 
+
+
+ ISSO FEITO,
+
+
+
+ O PROFESSOR VAI FAZER SAVE 
+
+
+ DESSE 
+
+
+
+
+
+ USER NA DATABASE...
+
+
+
+
+
+
+ POR ISSO ELE ESCREVEU:
+
+  
+
+
+
+
+
+         const savedUser = await user.save();
+     
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO VAI NOS RETORNAR O 'USER OBJECT' que o mongoose criou na database.... (
+
+
+
+    é o 'result', na verdade...
+)
+
+
+
+
+
+
+
+
+
+
+
+-_> POR FIM,
+
+
+
+
+NO FINAL DE CADA MÉTODO DO 'resolver',
+
+
+SOMOS ___ OBRIGADOS__ A 'RETURN SOME DATA'... --> NO CASO,
+
+
+PROVAVELMENTE 
+
+VAMOS RETORNAR AQUELA CONST DE 
+
+'savedUser'..
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+    createuser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+         
+        //  const user = await new User(
+            const user = new User( ///talvez esse '''await'''' não seja necessário, com essa INSTANCIAÇÃO...
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+     
+ 
+
+        return savedUser;
+     }
+
+
+
+
+
+
+---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+-> OK, MAS PQ PODEMOS RETORNAR ESSE OBJETO 'User'? 
+
+
+
+
+--> É PQ LÁ 
+
+
+
+NO NOSSO 'SCHEMA'
+
+DO GRAPHQL,
+
+
+NÓS DEFINIMOS ISTO AQUI:
+
+
+
+
+
+
+type RootMutation {
+    createUser(userInput: UserInputData): User! 
+}                                          ^^^^ --> ISSO AQUI NOS OBRIGA A RETORNAR UM OBJETO 'User'... QUANDO REALIZAMOS ESSA MUTATION/SUBMUTATION DE 'createUser'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS AQUI TEMOS UM __ PROBLEMA...___ 
+
+
+
+
+O PROBLEMA 
+
+É QUE 
+
+
+
+
+
+NOSSO OBJETO USER __ TEM ESTE FORMATO:
+
+
+
+
+
+
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+1) _id ---> JÁ VAMOS OBTER AUTOMATICAMENTE, POR MEIO DO FUNCIONAMENTO DO MONGOOSE....
+
+
+
+2) name --> NÃO TEMOS...
+
+
+3) password --> não sei se teremos 
+
+
+
+4) posts --> não temos 
+
+
+
+
+5) status ---> não temos 
+
+
+
+
+6) email --> temos....
+
+
+
+
+
+
+
+
+
+
+
+------------> OU SEJA,
+ 
+ ESTAMOS COM UM 
+
+ 'USER INCOMPLETO',
+
+
+ em 
+
+
+
+
+ TERMOS __ DE ACTUAL __ DATA__ SENDO RETORNADA,
+
+
+
+
+
+se escrevermos apenas 
+um simples 
+
+
+'return savedUser'...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA QUE CONSIGAMOS __ TER O 'USER COMPLETO',
+
+
+
+VAMOS TER QUE __ USAR O SPREAD OPERATOR PARA __ SPREADAR__ AS 
+
+
+
+propriedades desse 'savedUser',
+
+
+
+E AÍ __ ADICIONAR ALGUMAS (como 'posts') 
+
+
+MANUALMENTE....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+return {
+    ...savedUser
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, MAS _ NÃO VAMOS SPREADAR ESSE OBJETO 'savedUser'
+
+
+'''SECO''',
+
+
+e sim 
+
+vamos 
+
+retornar a propriedade 
+
+
+'._doc' -----> 
+
+
+
+
+
+
+
+'._doc' __ DENTRO __ DE NOSSOS DOCUMENTOS É __ UMA PROPRIEDADE QUE 
+
+NOS DEIXA 
+
+'RETURN ALL THE DOCUMENT DATA, WITHOUT ALL THE METADATA ASSOCIATED WITH IT'...
+
+
+
+
+
+
+
+
+
+--> ISSO PQ VAMOS QUERER SÓ A 'DATA DE VERDADE',
+
+
+sem metadata inútil que polua nosso objeto...
+
+
+
+
+
+
+ex:
+
+
+
+
+{
+
+
+
+    ...createdUser._doc,
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... MAS ALÉM DISSO,
+
+
+PROFESSOR EXPLICA QUE ELE 
+
+VAI 
+
+'OVERWRITE'
+
+
+
+O FIELD 
+
+
+DE 
+
+
+'._id' (FARÁ ISSO POR MEIO DO WRITE DESSA PROPRIEDADE COMO 'PROPRIEDADE SEPARADA', NÃO INCLUÍDA NAQUELE CALL DO SPREAD OPERATOR, EM OUTRAS PALAVARAS; ISSO __ CAUSA__ O OVERWRITE 
+
+DA PROPRIEDADE '_id' VELHA....),
+
+
+
+
+
+ISSO PQ __ ELE VAI PRECISAR/PRECISA __ 
+
+
+
+CONVERTER__ 
+
+
+
+O TYPE DO VALOR NESSE FIELD... --> ELE PRECISA__ CONVERTER__ 
+
+
+O 
+
+
+
+
+
+VALOR DO '_id',
+
+QUE ORIGINALMENTE É DE 
+
+TYPE 
+
+'ObjectId(_id)',
+
+
+PARA __ 
+
+
+
+
+UMA __ STRINg_....
+
+
+
+
+
+
+
+É POR ISSO QUE ELE ESCREVE 
+
+
+
+
+
+'return {
+    ...savedUser._doc, 
+    
+    _id: savedUser._id.toString()
+}
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+    createuser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+         
+        //  const user = await new User(
+            const user = new User( ///talvez esse '''await'''' não seja necessário, com essa INSTANCIAÇÃO...
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+
+
+
+
+         return { ///devemos seguir o SCHEMA de 'createUser', que demanda QUE SEJA RETORNADO UM OBJETO 'User' COM UM DETERMINADO __ LAYOUT__...
+             ...savedUser._doc, /////'._doc' FAZ COM QUE TODAS AS PROPRIEDADES/DATA __ 'REAL' DESSE DOCUMENT SEJAM __ RETORNADAS (ou seja, DEIXAMOS DE LADO A 'METADATA' DESSE DOCUMENT, QUE SERÁ INÚTIL PARA __ O FIM DE 'RETURN SOME DATA TO THE USER; RETURN THE DATA OF THE USER THAT WAS CREATED, TO THE USER'...)
+                _id: savedUser._id.toString() ///esse field LÁ NO NOSSO 'TYPE' DE USER, LÁ NO SCHEMA DO GRAPHQL, está como 'STRING', por isso precisamos CONVERTER ESSE _id de valor 'ObjectId()', LÁ DA DATABASe_, PARA UM FORMATO __ 'string'....
+            }
+     
+ 
+     
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... ISSO SIGNIFICA QUE ESSE SE´RA O 
+
+
+
+'USER OBJECT'
+
+QUE
+VAMOS 
+
+RETORNAR __ QUANDO __ ESTIVERMOS 'CREATING A USER'....
+
+
+
+
+
+
+
+
+
+
+--------> UMA IMPORTANTE NOTA ANTES DE EXPERIMENTAR ESSE RESOLVER/MÉTODO NA NOSSA 
+
+FRONTEND APPLICATION:
+
+
+
+
+
+--> NÓS PODEMS, É CLARO,
+
+
+
+
+TENTAR __ ESSE RESOLVER/MÉTODO __ LÁ DE DENTRO DO __ 'POSTMAN',
+
+
+
+
+___ 
+
+MAS É _ CLARO QUE __ EXISTE 
+
+UMA 
+
+
+SOLUÇÃO AINDA MAIS CONVENIENTE 
+PARA O TESTAR, 
+
+
+PARA __ FAZER_ _ O TESTING 
+
+
+
+
+
+
+DE QUERIES/MUTATIONS/SUBSCRIPTIONS,
+
+
+
+
+
+
+nos seus methods... 
+
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS ANTES DE MOSTRAR ESSA SOLUÇÃO,
+
+ 
+
+ O PROFESSOR DIZ QUE 
+
+ ANTES DEVEMOS 
+
+ LIMPAR 
+
+
+
+ NOSSA DATABASE,
+
+ tudo para que consigamos 'start from scratch'...
+
+
+
+
+
+
+
+
+
+ --> eu não farei isso,
+
+
+
+
+
+ mas professor realmente deleta tudo, e nos diz que 
+
+
+
+ novas collections válidas seram criadas 
+
+
+
+ novamente 
+
+
+
+
+ QUANDO REALIZARMOS ALGUMA OPERAÇÃO com as queries graphQL....
+
+
+
+
+
+
+
+
+
+
+ -> VOU DELETAR TODAS AS ENTRIES/DOCUMENTS,
+
+
+ mas não as collection em si....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK... ISSO FEITO,
+
+ PROFESSOR QUER NOS MOSTRAR 
+
+ 'THAT SIMPLER APPROACH'
+
+
+
+
+ DE FAZER O TEST DE NOSSAS QUERIES/MUTATIONS/METHODS do resolver...
+
+
+
+
+
+
+
+
+
+ -_> PARA FAZER O __ TEST___ DESSA MUTATION,
+
+
+
+
+
+ O PROFESSOR DIZ QUE 
+
+ DEVEMOS SIMPLESMENTE 
+
+ VOLTAR AO 
+
+ ARQUIVO 
+
+ 'app.js'
+
+
+
+
+,
+
+LÁ NO CÓDIGO BACKEND,
+
+
+
+
+
+E __ LÁ NAQUELE __ LOCAL
+
+
+
+
+EM QUE 
+
+
+TEMOS __ 
+
+O 'REGISTER/SETUP' 
+
+
+
+DO 
+NOSSO 
+
+
+
+ENDPOINT 'GRAPHQL' (que é ÚNICO, de tipo POST),
+
+
+
+
+LÁ NAQUELE 
+
+MIDDLEWARE 
+
+
+
+de 
+
+
+
+'app.use('/graphql', 
+
+
+graphqlHTTP(
+    {
+        schema: graphqlSchema,
+        rootValue: graphQlResolver
+    }
+)
+
+
+)
+'
+
+
+
+
+
+
+
+-----> 
+
+ALÉM 
+
+
+
+
+DE DEFINIR 
+
+
+
+
+NOSSO 'schema' 
+
+e 
+
+
+'resolvers'
+
+
+
+a ser 
+
+UTILIZADO
+ 
+ NESSE NOSSO PROJEOT,
+
+
+
+
+
+ ESSE LOCAL/MIDDLEWARE __ TAM´BEM __ NOS 
+
+
+
+
+
+
+ DEIXA 
+
+ definir uma propriedade 
+
+ DE 
+
+ 'graphiql'... (com esse 'i' no meio)
+
+
+
+
+
+
+
+
+
+ -_> SE VOCÊ DEFINIR ESSA KEY COMO SENDO 'true',
+
+
+ VOCÊ 
+
+ OBTERÁ _UMA FERRAMENTA___ ESPECIAL__.... --------> E ESSA 
+
+ É 
+
+ PRECISAMENTE 
+
+
+ A 
+
+ RAZÃO 
+
+
+ DO 
+
+
+ PROFESSOR 
+
+ NÃO ESTAR 
+
+
+
+ FAZENDO 'LISTEN TO POST REQUESTS ONLY'...--> 
+
+
+
+
+
+
+
+
+
+
+ ISSO PQ ESSA FERRAMENTA __ FUNCIONA POR MEIO DE __ GET REQUESTS__.... --> 
+
+
+
+
+
+
+
+ e ela é bem útil... -------> É EXATAMENTE POR ISSO QUE VAMOS DEFINIR 
+
+ ESSE 
+
+
+ MIDDLEWARE COMo 
+
+ 'app.use()',
+
+
+
+ E NÃO 
+
+ 'app.post()'...
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> OK... ASSIM QUE VOCÊ FIZER ESSA ALTERAÇÃO,
+
+ colocar 
+
+ esse 
+
+ '
+ graphiql' como TRUE,
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+ ////ESTE MIDDLEWARE TAMBÉM __ É O LOCAL__ EM QUE __ VAMOS FAZER 'TEST' DOS NOSSOS QUERIES/MUTATIONS/SUBSCRIPTIONS, que são executados por meio daqueles resolvers/methods nos resolvers do arquivo 'resolvers.js'... --> VER PROPRIEDADE 'graphiql'... 
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE)....
+}
+)); 
+
+
+
+
+
+
+
+
+
+
+
+
+-_> ASSIM QUE VOCÊ FIZER ISSO,
+
+VOCÊ DEVE ABRIR O BROWSER E IR ATÉ  A ROUTE/URL DE 
+
+
+'localhost:8080/graphql'... 
+
+
+
+
+(
+
+    OU SEJA,
+
+    É 
+
+
+    A ROUTE 
+
+    A QUE 
+
+
+
+    NORMALMENTE ENVIAMOS REQUESTS DE TIPO 'post' 
+
+
+    no nosso app,
+
+
+    MAS AGORA VAMOS ENVIAR UM REQUEST DE TIPO 'GET',
+
+    pq 
+
+    estamos acessando essa url normalmente...
+)
+
+
+
+
+
+
+
+
+
+
+--> OK... ENVIADO ESSE GET REQUEST,
+
+
+
+
+VAMOS GANHAR __ UMA TELA SUPER LEGAL,
+
+
+
+
+interessante,
+
+QUE __ NOS __ DEIXA _ 
+
+
+
+
+'''PLAY AROUND WITH YOUR GRAPHQL API'...
+
+
+
+
+
+
+
+
+
+---> ok.... consegui...
+
+
+
+
+
+
+
+
+---> no caso, 
+
+já recebi um erro:
+
+
+
+
+
+
+
+
+{
+  "errors": [
+    {
+      "message": "Query root type must be provided.",
+      "locations": [
+        {
+          "line": 42,
+          "column": 2
+        }
+      ]
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+------> NÃO SEI O QUE ESSE ERRO 
+
+
+SIGNIFICA...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR PEDE QUE 
+
+
+
+
+
+SIGAMOS ATÉ O 
+
+
+
+
+
+
+'schema.js',
+
+
+
+
+
+
+ONDE 
+
+
+TEMOS ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+}
+
+
+
+
+ schema {
+      mutation: RootMutation
+     
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+LÁ EMBAIXO,
+
+
+onde temos 
+
+
+
+'schema {
+
+    mutation: RootMutation
+}',
+
+
+
+
+
+
+
+PROFESSOR __ PEDE QUE ADICIONEMOS 
+
+
+
+uma 
+
+key de 
+
+'query',
+
+
+E QUE 
+
+AÍ 
+
+ASSIGNEMOS 
+
+
+
+'RootQuery'
+
+COMO 
+
+
+
+ A OPERATION 
+
+
+
+
+ 
+DESSE 'query'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+}
+
+
+
+
+ schema {
+      mutation: RootMutation
+      query: RootQuery
+     
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+--> O ÚNICO PROBLEMA,
+
+NO CASO,
+ 
+
+ É QUE ___ NÓS 
+
+
+ AINDA NÃO TEMOS __ 
+
+ ESSA QUERY__ 
+
+ de 
+
+
+ 'RootQuery'...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR CRIA ESSE TYPE AÍ,
+
+
+
+
+
+
+ aí 
+
+ ele 
+
+
+
+ adiciona uma query de 'hello',
+
+ bem simples, tipo assim:
+
+
+
+
+
+ type RootQuery {
+     hello: String!
+ }
+
+
+
+
+
+
+
+
+
+
+ -----> PARA QUERIES SIMPLES COMO 
+
+
+
+ 'RootQuery',
+
+
+
+ em que 
+
+
+ temos 
+
+ só 
+
+
+ 1 query 
+
+
+
+
+
+ banal,
+
+
+ NÃO PRECISAMOS DE RESOLVERS...
+
+
+
+
+
+
+
+
+
+ ----------------------
+
+
+
+
+
+
+
+ ---> BEM, AGORA SE RECARREGARMOS NOSSA GRAPHQL INTERFACE,
+
+
+
+ VEREMOS QUE 
+
+ O 
+
+
+ CÓDIGO DE 
+ ERRO 
+
+ de 
+
+
+
+ '''Error: Unknown type "RootQuery".
+
+ ''
+
+
+ SUMIRÁ....
+
+
+
+
+
+
+
+
+
+
+ ------> E AÍ, LÁ 
+
+
+ NA DIREITA,
+
+
+ __ VEMOS __ AS OPERATIONS POSSÍVEIS,
+
+
+ AS OPERATIONS QUE PODEMOS REALIZAR...(
+
+
+
+     no caso,
+
+
+     vemos 
+
+
+
+     'RootQuery'
+
+     e 
+
+     'RootMutation'....
+ )
+
+
+
+
+
+
+
+
+ (
+
+
+     lá no 'docs', no caso...
+ )
+
+
+
+
+
+
+
+
+
+ --> OK...  PODEMOS VER CADA OPERATION QUE PODEMOS FAZER,
+
+
+ MAS PARA CADA UMA DELAS PRECISA-SE 
+
+
+
+ TER UMA 'QUERY',
+
+
+ 'even if it leads to the void'.... --> E SE VOCÊ CLICA 
+
+
+
+ EM UMA DAS OPERATIONS/ROOT TYPES
+
+
+
+
+ para ver quais 
+
+
+
+
+ ___ MUTATIONS/QUERIES_ VOCÊ TEM ,
+
+
+
+ QUAL DATA 
+
+
+
+
+ VOCÊ PRECISA ENVIAR, E ASSIM POR DIANTE...
+
+
+
+
+
+
+
+ --> e vocÊ pode fazer mais do que 
+
+
+ EXPLORE 
+
+ __ SUAS QUERIES... 
+
+
+ --> VOCe^
+
+ PODE 
+
+
+
+ 'SEND YOUR DATA',
+
+
+ se você quiser...
+
+
+
+
+
+
+
+ --> PARA FAZER _ SEND__ DE DATA__, PARA TESTAR SUA GRAPHQL QUERY/MUTATION,
+
+
+
+
+ VOCÊ 
+
+
+
+
+ pode a escrever 
+
+
+
+
+ 'SOLTA'
+
+
+ no notepad da esquerda,
+
+
+
+
+ __ 
+
+
+
+
+ AÍ VOCÊ PODE IR ESCREVENDO COISAS QUE VOCÊ QUER TESTAR/RODAR...
+
+
+
+
+
+
+
+
+ -> se você for inputtando 'control + space',
+
+
+ VOCê VAI 
+
+ RECEBENDO __ SUGESTÕES__ PARA 
+
+ AS COISAS QUE 
+
+ VOCê 
+
+ PODE 
+
+ RODAR 
+
+
+
+
+
+
+ EX:
+
+
+
+ mutation {
+  createUser
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.. NESSE 'createUser()',
+
+VAMOS 
+
+
+
+QUERER INSERIR AQUELE 
+
+'userInput'....
+
+
+
+
+
+
+
+-> ESSE 'userInput',
+
+É CLARO,
+
+
+DE ACORDO COM NOSSO SCHEMA,
+
+
+vai 
+
+
+
+ser um 
+
+__ OBJETO___ com 
+
+
+
+'email',
+
+
+'name'
+ 
+ e 
+
+ 'password'....
+
+
+
+
+
+
+
+ --> NESSES 3 FIELDS, PODEMOS COLOCAR DUMMY DATA/dados aleatórios, para testar 
+
+ se nossa api funciona....
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+ mutation {
+     createUser(userInput: {email: "test@test.com", name: "Max", password: "testeteste"})
+ }
+
+
+
+
+
+ ------------------------------------
+
+
+
+
+ DEPOIS DISSO,
+
+ PROFESSOR EXPLICA QUE 
+
+ DEVEMOS ADICIONAR UM {},
+
+
+
+ EM QUE 
+
+
+ VAMOS __ DEFINIR 
+
+
+ 'THE DATA 
+
+
+ WE WANT TO RETURN'..., DEPOIS DESSA QUERY ESTAR 'DONE'....
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+ 
+ mutation {
+     createUser(userInput: {email: "test@test.com", name: "Max", password: "testeteste"}) {
+
+         SUA DATA VAI AQUI..
+     }
+ }
+
+
+
+
+ -----------------------------------
+
+
+
+
+
+
+SE apertarmos 'Contrl + space',
+
+
+VAMOS GANHAR ALGUMAS SUGESTÕES DO QUE RETORNAR,
+
+como 
+
+aquele 
+
+'_id',
+
+
+
+ou o 'email'... (e todos esses são valores meio FIXOS....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+mutation {
+  createUser(userInput: {email: "test@test.com", name: "Max", password: "testeteste"}) {
+    _id
+    password
+  }
+}
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+--> ao rodar esse código (apertar em 'play'),
+
+
+
+RECEBEMOS 
+
+ESTE ERRO:
+
+
+
+
+
+
+
+
+{
+  "errors": [
+    {
+      "message": "Cannot return null for non-nullable field RootMutation.createUser.",
+      "locations": [
+        {
+          "line": 33,
+          "column": 3
+        }
+      ],
+      "path": [
+        "createUser"
+      ]
+    }
+  ],
+  "data": null
+}
+
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+
+-> O MEU DEU ERRO,
+
+O DO PROFESSOR,
+
+NÃO...
+
+
+
+
+
+
+
+--> o do professor retornou:
+
+
+
+
+
+{
+
+
+
+    "data": {
+        "createUser": {
+            "_id": "51915915907uasfaihoaisfhoi1h2",
+            "email": "test@test.com"
+        }
+    }
+}
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+não estou conseguindo....
+
+
+
+
+
+
+
+
+
+
+
+# Type queries into this side of the screen, and you will see intelligent
+# typeaheads aware of the current GraphQL type schema and live syntax and
+# validation errors highlighted within the text.
+#
+# GraphQL queries typically start with a "{" character. Lines that start
+# with a # are ignored.
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+era um erro de sintaxe,
+
+
+eu havia escrito 
+
+'createuser'
+
+
+no resolver,
+
+quando devia ter sido 
+
+
+'createUser'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+mutation {
+  createUser(userInput: {email: "test51@test.com", name: "Max", password: "testeteste"}) {
+    _id
+    email
+  }
+}
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+ok... isso foi bem sucedido... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+E SE AGORA VOCÊ REFRESHAR 
+
+SEU 'MONGODBCOMPASS',
+
+você verá 
+
+QUE 
+
+UMA ACCOUNT TERÁ SIDO 
+
+CRIADA PARA ESSAS INFOS QUE VOCÊ INPUTTOU 
+
+
+nesse 
+
+'graphql API',
+
+
+no browser...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+_id
+:
+61bd446dc463f2260895a548
+name
+:
+"Max"
+email
+:
+"test51@test.com"
+password
+:
+"$2a$12$lylMWwjSERW7pPSRZ.zFa.8u08IQOc9btr2U1SE.PQmC.EciJWU.a"
+status
+:
+"I am new!"
+posts
+:
+Array
+__v
+:
+0
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+OK, ESTAMOS VENDO O USER LÁ NA 'COLLECTION',
+
+
+com nosso 'hashedPassword'...
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE ESSA É UMA ÓTIMA FERRAMENTA PARA 'MESSING AROUND',
+
+até mesmo MELHOR DO QUE O POSTMAN,
+
+
+
+PQ __ 
+
+
+
+ESSA INTERFACE TEM 
+
+ESSE 
+
+'NICE INTERACTIVE SUPPORT',
+
+
+
+
+
+COM __ ESSE AUTO-COMPLETION,
+
+
+E TAMBÉM PQ TEMOS ESSA DOCUMENTAÇAÕ NA DIREITA,
+
+
+E AÍ VOCê PODE 
+
+
+TESTAR 
+
+
+
+__ SEUS GRAPHQL QUERIES 
+nessa ferramenta...
+
+
+
+
+
+
+
+
+OK.... -_>  COM ISSO,
+
+
+
+DEVEMOS __ PASSAR __ PARA A PRÓXIMA ETAPA...
+
+
+
+
+
+
+
+
+-> TEMOS QUE VER 
+
+
+__ COMO ADICIONAR__ validation,
+
+
+
+ANTES DE ENTÃO CONECTARMOS NOSSA 'FRONTEND APPLICATION' 
+
+
+com essas queries aí, nos request bodies...

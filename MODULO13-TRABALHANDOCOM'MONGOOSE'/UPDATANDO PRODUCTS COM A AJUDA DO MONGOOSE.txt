@@ -1,0 +1,1373 @@
+
+
+
+
+
+
+
+
+
+--> JÁ VIMOS COMO:
+
+
+
+
+
+
+1) ADD A SINGLE PRODUCT 
+
+
+(
+
+'Product.save()'
+
+)
+
+
+
+2) RETRIEVAR TODOS OS PRODUCTS 
+
+(
+
+
+    'Product.find()' 
+)
+
+
+
+
+
+
+
+3) RETRIEVAR APENAS 1 PRODUCT, PELO SEU '_id':
+
+
+
+(
+
+
+'Product.findById(id)'...
+
+
+)
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE 
+
+
+
+O 
+
+
+
+
+
+GET DE 1 ÚNICO PRODUCT FOI BEM FÁCIL,
+
+e que 
+
+
+agora 
+
+DEVEMOS 
+
+
+
+
+COMPLETAR O CICLO 
+
+'CRUD'
+
+por meio 
+
+
+
+
+
+da garnatia 
+
+de 
+
+
+
+que 
+
+
+
+
+_CONSEGUIMOS 'EDIT' E 'DELETE'
+
+
+
+nossos products...
+
+
+
+
+
+
+
+
+
+
+
+---------------> VAMOS COMEÇAR PELO EDIT DE NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+
+--> TEMOS O CONTROLLER DE 
+
+'editProduct':
+
+
+
+
+
+
+
+
+
+xports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+const userId = req.user._id;
+
+
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+const product = new Product( title, price, imageUrl, description, userId, productId)
+  product.save() ///CÓDIGO DO PROFESSOR... UM POUCO MAIS OPTIMIZADO DO QUE O MEU, POIS USA UM MESMO MÉTODO, 'save()', para RODAR 2 OPERAÇÕES DIFERENTES, 1 OPERAÇÃO DE EDIT E OUTRA DE ADD....
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+-------> NESSE CÓDIGO AÍ,
+
+
+usávamos/usamos 
+
+um 
+
+
+call de 
+
+'product.save()' (instanciação do model 'Product')
+
+
+
+
+
+
+CUSTOMIZADO para conseguir 
+
+
+
+
+
+editar aquele product com aquele 'productId'
+
+específico....
+
+
+
+
+
+
+
+--> SÓ NÃO SEI QUE 
+
+MÉTODO 
+
+do 
+
+mongoose vamos usar, aqui... --> 
+
+
+
+
+
+ANTES DE VER 
+
+
+ESSE CÓDIGO DE 'edit' aí,
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+
+DEVEMOS 
+
+VER 
+
+
+
+COMO 
+
+CHEGAMOS à PÁGINA QUE 
+
+CONTÉM 
+
+NOSSA FORM E BUTTON 
+
+
+QUE NOS DEIXAM EDIT ESSE PRODUCT...
+
+
+
+
+
+
+
+
+
+-> o controller dessa página é este:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+  if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+
+  Product.getSingleProduct(productId)
+  .then(
+    (product) => {
+
+
+      if(!product) {
+
+        return;
+      }
+
+            res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                prod: product,
+      })
+
+    }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+----> NÓS PROVAVELMENTE VAMOS QUERER 
+
+
+
+trocar esse 'Product.getSingleProduct()'
+
+
+por 
+
+
+'Product.findById()'...
+
+
+
+
+
+
+
+
+-> TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+  if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+
+  Product.findById(productId);
+  .then(
+    (product) => {
+
+
+      if(!product) {
+
+        return;
+      }
+
+            res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                prod: product,
+      })
+
+    }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OK, ISSO 
+
+  É OUTRO USO 
+
+  DE 
+
+
+  'FETCH A SINGLE ITEM'
+
+  por meio do mongoose,
+
+  outro uso de 
+
+  'findById',
+
+  ESSENCIALMENTE...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ok... essa route aí funcionou....
+
+
+
+
+
+
+
+
+
+  --> AGORA FALTA A ROUTE DE 
+
+  'post edit product',
+
+
+
+
+
+
+  que precisa da utilização 
+
+  de um método 
+
+  'EDIT DOCUMENT' 
+
+
+  do 
+
+  mongoose, para funcionar/realizar sua atribuição..
+
+
+
+
+
+  -------------------
+
+
+
+
+
+
+
+
+  --> PROVAVELMENTE DEVE EXISTIR UM MÉTODO 
+
+  '.updateOne()' 
+
+
+
+  NO MONGOOSE... --> ou então usamos '.save()'... --> não sei 
+
+
+  se 
+
+
+  essas opções realmente existem..
+
+
+
+
+
+
+
+
+
+
+  --> OBS:
+
+  Note that update(), updateMany(), findOneAndUpdate(), etc.
+   do not execute save() middleware. If you need save
+    middleware and full validation, first query for the
+    
+     document and then save() it.
+
+
+
+
+
+
+
+
+
+
+--> eu não sei o que é 'save middleware',
+
+
+
+
+
+
+
+sei que validation é algo importante,
+
+mas aqui ainda não estamos implementando isso.... --> por isso,
+
+provavelmente 
+
+
+
+devemos usar 
+
+
+
+'findOneAndUpdate()'... -----> 
+
+
+
+
+EX:
+
+
+Parameters
+[conditions] «Object»
+[update] «Object»
+[options] «Object» optional see Query.prototype.setOptions()
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+VAMOS ESCREVER ALGO ASSIM:
+
+
+
+
+
+
+
+
+'''product.findOneAndUpdate({_id: ObjectId(productId)}, UPDATEOBJECT)''''
+
+
+
+
+
+
+
+
+
+
+--> O 'UPDATEOBJECT'
+
+
+
+
+SERÁ O __OBJETO QUE VOCÊ DESEJA QUE SUBSTITUA O 'OLD OBJECT' 
+
+
+que é seu document antigo...
+
+
+
+
+
+
+
+----> nesse caso,
+
+nosso código provavelmente ficará assim:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+const userId = req.user._id;
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+  Product.findOneAndUpdate( //////EIS O CÓDIGO EM QUESTÃO.
+    {_id: ObjectId(productId)}, 
+
+    {
+        title: title,
+        imageUrl: imageUrl,
+        description: description,
+        price: price
+
+
+
+
+
+
+    }
+
+
+  ) 
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+  -------------------------
+
+
+
+
+  OK.... FUNCIONOU.
+
+  CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+  exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+
+  Product.findOneAndUpdate( /////////EIS O CÓDIGO EM QUESTÃO.
+
+    {_id: ObjectId(productId)}, 
+
+    {
+        title: title,
+        imageUrl: imageUrl,
+        description: description,
+        price: price
+
+    }
+
+
+  )
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+};
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+--------> OK... 
+
+
+PROFESSOR 
+
+
+
+
+
+VAI ESCREVENDO EXATAMENTE A MESMA COISA QUE EU ESCREVI...
+
+
+
+
+
+
+
+
+-----> 
+
+
+PROFESOR 
+
+ESCREVE 
+
+
+
+
+UM CÓDIGO COMPLETAMENTE DIFERENTE DO NOSSO... ----> 
+
+
+
+ELE DECIDE COMEÇAR 
+
+PELO 
+
+CALL 
+
+DE 
+
+
+
+'Product.findById()',
+
+PARA 
+
+
+
+__ENCONTRAR O PRODUCT QUE NOS INTERESSA, POR MEIO DO SEU ID...
+
+
+
+
+
+
+
+
+
+
+----> AÍ ELE VAI COLOCAR UM THEN BLOCK,
+
+E DENTRO 
+
+
+DESSE THEN BLOCK 
+
+ ___SABEMOS__ QUE 
+
+ TEMOS ACESSO 
+
+ AO 
+
+ PRODUCT QUE FOI FETCHEADO NA DATABASE,
+
+ POR ISSO
+
+
+
+ ele 
+
+ diz que vamos querer 
+
+ executar 
+
+
+
+
+
+ 'product.save()' ,
+
+
+
+ QUE ISSO É POSSÍVEL 
+
+
+
+ PQ 
+
+
+O MONGOOSE FAZ 
+GAMBIARRAS... --> O MONGOOSE FAZ COM QUE 
+
+
+ESSE 
+
+
+objeto 
+
+'product' 
+
+retornado em 
+
+'
+
+then(
+    (product) => {
+
+
+            
+    }
+)
+
+'
+
+
+
+
+
+
+NÃO SEJA ___ UM 
+
+'JAVASCRIPT OBJECT  COM DATA COMUM',
+
+
+
+
+
+___ E SIM 
+
+
+VAMOS TER UM 'FULL MONGOOSE OBJECT' aqui,
+
+
+
+COM __ TODOS OS MÉTODOS 
+
+'MONGOOSE'
+
+
+
+
+como 
+
+'save()',
+métodos de conveniência... ------>   E __ SE NÓS CHAMARMOS 
+
+
+
+'.save()'
+
+
+EM 
+
+
+
+1 
+
+
+'ALREADY EXISTING OBJECT/DOCUMENT',
+
+como 
+esse 
+
+nosso product em 
+
+'product.save()',
+
+
+
+
+____ ESSE PRODUCT NÃO SERÁ COPIADO, NÃO SERÁ CRIADO 1 NOVO PRODUCT/OBJECT,
+
+e sim 
+
+
+
+
+___ O VELHO OBJECT/DOCUMENT/PRODUCT __ 
+
+
+
+
+SOFRERÁ MUDANÇAS SOBRE SI...
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+
+  Product.findById( 
+
+productId
+  )
+  .then(
+    (product) => {
+
+
+                product.save(); /////EIS O CÓDIGO EM QUESTÃO.
+
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+};
+
+
+
+
+
+
+---------> 
+ISSO 
+
+SIGNIFICA QUE 
+
+esse 
+
+
+'product.save()'
+
+
+
+
+VAI FAEZR COM QUE O MONGODB 
+
+'AUTOMATICALLY DO AN UPDATE'
+
+
+
+
+__POR TRÁS DAS CENAS...
+
+
+
+
+
+
+
+--> A ÚNICA COISA QUE O PROFESSOR 
+
+
+
+VAI PRECISAR FAZER, AQUI,
+
+
+É __SETTAR_ OS 
+
+
+
+NOVOS VALORES DOS FIELDS DE 
+
+'product'
+
+MANUALMENTE,
+
+por meio 
+
+
+de dot notation...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+  exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+
+  Product.findById( 
+
+productId
+  )
+  .then(
+    (product) => {
+
+        product.title = title; ////EIS O CÓDIGO EM QUESTÃO.
+        product.price = price; ////EIS O CÓDIGO EM QUESTÃO.
+        product.imageUrl = imageUrl; ////EIS O CÓDIGO EM QUESTÃO.
+        product.description = description; ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+                product.save(); /////EIS O CÓDIGO EM QUESTÃO.
+
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESTE, PORTANTO, É O CÓDIGO QUE INTERESSA:
+
+
+
+
+
+
+  Product.findById( 
+
+productId
+  )
+  .then(
+    (product) => {
+
+        product.title = title; ////EIS O CÓDIGO EM QUESTÃO.
+        product.price = price; ////EIS O CÓDIGO EM QUESTÃO.
+        product.imageUrl = imageUrl; ////EIS O CÓDIGO EM QUESTÃO.
+        product.description = description; ////EIS O CÓDIGO EM QUESTÃO.
+
+
+                product.save(); /////EIS O CÓDIGO EM QUESTÃO.
+
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+
+
+
+--> ou seja,
+
+você 
+
+DEFINE AS MUDANÇAS QUE VOCÊ VAI QUERER NESSE OBJECT/DOCUMENT _ ANTECIPADAMNETE,
+
+
+
+para só 
+
+ENTÃO CHAMAR 
+
+'.save()'
+
+
+E CONFIRMAR ESSAS MUDANÇAS/UPDATAR 
+o 
+
+document com essas mudanças...
+
+
+-------------------------------------------------
+
+
+
+
+
+
+ok...........
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O PROFESSOR ENTÃO COLOCA um 'return' na frente de 'product.save()',
+para então 
+
+PODER CHAINAR O THEN do 'result'
+ 
+ logo depois 
+
+ desse código...
+
+
+
+
+
+
+
+ eX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+  Product.findById( 
+
+productId
+  )
+  .then(
+    (product) => {
+
+        product.title = title; ////EIS O CÓDIGO EM QUESTÃO.
+        product.price = price; ////EIS O CÓDIGO EM QUESTÃO.
+        product.imageUrl = imageUrl; ////EIS O CÓDIGO EM QUESTÃO.
+        product.description = description; ////EIS O CÓDIGO EM QUESTÃO.
+
+
+             return  product.save(); /////EIS O CÓDIGO EM QUESTÃO.
+
+  
+    }
+  )
+    .then(
+        result => {
+
+            console.log('UPDATED PRODUCT');
+            res.redirect('/admin/products');
+        }
+    )
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK, AGORA ESSENCIALMENTE TEMOS UM SETUP EM QUE:
+
+
+
+
+
+
+
+
+1) EU CONSIGO FAZER 'GET'/'FIND' DO __ PRODUCT_ PERTINENTE ao update/edit...
+
+
+
+
+
+
+2) ESSE GET __ ME DÁ UM 'FULL MONGOOSE OBJECT' de volta....
+
+
+
+
+
+
+
+3) A PARTIR DESSE FULL MONGOOSE OBJECT de 'product',
+
+
+POSSO EXECUTAR MÉTODOS sobre ele, manipular o objeto por meio de métodos 
+
+como '.save()' e a dot notation ('product.title = title'),
+
+PARA 
+
+ENTÃO 
+
+CHAMAR 
+
+
+
+4) 'product.save()'
+
+PARA 
+
+SALVAR TODAS ESSAS MUDANÇAS NO 
+
+
+DOCUMENT NA MINHA DATABASE/collection...
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS CHECAR SE TUDO ISSO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... FUNCIONOU...
+
+
+
+--> DE NOVO, 
+
+
+
+ESSE UPDATE DE DADOS É MT PARECIDO COM AQUILO QUE VIMOS COM O 'SEQUELIZE',
+
+
+
+
+
+TUDO 
+
+ATRAVÉS DE LÓGICA E MANIPULAÇÃO DE NOSSA DATA...

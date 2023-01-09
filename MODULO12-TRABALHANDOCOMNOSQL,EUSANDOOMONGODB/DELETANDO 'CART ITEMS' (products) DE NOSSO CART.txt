@@ -1,0 +1,489 @@
+
+
+
+
+
+
+
+ESTAMOS PRÓXIMOS DO FIM... --> AGORA DEVEMOS 
+
+
+NOS CERTIFICAR DE QUE 
+
+TAMBÉM 
+
+CONSEGUIMOS 
+
+
+'DELETE CART ITEMS'....
+
+
+
+
+
+
+
+
+--> VAMOS USAR AQUELA FUNÇAÕ MONGODB 
+
+de 
+
+'deleteOne'
+
+NOVAMENTE...
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROVAVELMENTE VAMOS 
+
+
+ESCREVER A LÓGICA/MÉTODO PARA ISSO LÁ 
+
+NO MODEL DE 'user'...
+
+
+
+
+
+
+
+
+
+
+--> GANHEI UM ERRO:
+
+
+MongoServerError: Cannot apply $pull to a non-array value
+
+
+
+
+
+
+
+
+OK... EU DESISTO.... EU TENTEI USAR O OPERATOR '$pull' do 
+
+mongodb,
+mas falhei...
+
+
+
+
+
+
+
+
+--> VOU VER A AULA DO PROFESSOR....
+
+
+
+
+
+
+--> PROFESSOR COMEÇA COM UM CÓDIGO ASSIM:
+
+
+
+
+
+
+
+
+
+deleteItemFromCart(productId) {
+
+
+
+        const updatedCartItems
+
+}
+
+
+
+
+
+
+
+
+
+
+--> ELE VAI QUERER UMA CONST ASSIM,
+
+
+
+E AÍ VAI QUERER 
+
+
+
+__cOPIAR __ TODOS NOSSOS 'CART ITEMS' atuais 
+
+para dentro 
+
+dessa const 
+
+aí...
+
+
+
+
+(acho que entendi o que ele quer fazer... ele vai querer 
+
+MANIPULAR 
+
+ESSA 
+
+
+DATA NO NOSSO APP NODE.JS, para SÓ __ ENTÃO __, DEPOIS DISSO,
+
+
+UPDATAR 
+
+
+
+NOSSO 
+
+
+'product'/'cart item'
+
+
+só 
+
+
+DE UMA VEZ,
+
+
+lá na nossa collection... --> é realmente BEM MAIS PRÁTICO DO  QUE USAR 
+
+A SINTAXE 
+
+TERRÍVEL DO 
+
+
+MONGODB...
+
+
+
+)
+
+
+
+
+
+
+
+
+-> para isso,
+
+
+
+
+acho que meu código vai ficar assim:
+
+
+
+
+
+
+deleteItemFromCart(productId) {
+
+    const db = getDb();
+
+
+    const updatedCartItems = [...this.cart.products];
+
+
+
+    const neededProductIndex = updatedCartItems.findIndex(
+            (prod) => {
+
+                    return prod.productId.toString() === productId.toString();
+        }
+    )
+
+
+
+
+
+    updatedCartItems[neededProductIndex] = '';
+
+
+
+
+  return  db.collection('users').updateOne(
+        
+        
+        {_id: ObjectId(this.id)},
+
+
+        {$set: { products: updatedCartItems}}
+    
+        )
+
+
+
+    
+}
+
+
+
+
+
+
+
+--> OU SEJA, VAMOS MANIPULAR 
+
+NOSSO ARRAY DE PRODUCTS PARA REMOVER SOMENTE O 
+
+
+PRODUCT QUE NÃO DESEJAMOS, tudo para que 
+
+
+
+esse array aí seja usado no UPDATE DO 
+
+array de 
+
+'products'
+lá na nossa database..
+
+
+
+
+
+
+
+
+
+
+OK... MAS RECEBI UM ERRO:
+
+
+
+
+TypeError: Cannot read property 'products' of undefined
+
+
+
+    at Function.deleteProductFromCart (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\models\user.js:270:44)
+    at exports.deleteCartItem (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\controllers\shop.js:332:6)
+    at Layer.handle [as handle_request] (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\layer.js:95:5)
+    at next (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\route.js:137:13)
+    at Route.dispatch (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\route.js:112:3)
+    at Layer.handle [as handle_request] (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\layer.js:95:5)
+    at A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\index.js:281:22
+    at Function.process_params (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\index.js:335:12)
+    at next (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\index.js:275:10)
+    at Function.handle (A:\proje
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE PODEMOS USAR UM APPROACH AINDA MAIS FÁCIL,
+
+E CHAMAR 
+O METHOD 
+DE 
+'filter
+'
+em  cima 
+
+
+de 'this.cart.items'... (isso vai nos retornar um array com todos os products, menos aquele que queremos REMOVER...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+ static deleteProductFromCart(productId) {
+
+    const db = getDb();
+
+    console.log(this.cart);
+
+
+
+
+      const updatedCartItems = this.cart.products.filter(
+        (prod) => {
+
+
+
+          return prod.productId.toString() !== productId.toString();
+        }
+      )
+
+
+
+    return db.collection('users').updateOne(
+      { _id: ObjectId(this.id) },
+
+      { $set: { cart: {products: updatedCartItems} } }
+    )
+    .then(
+      (result) => {
+        console.log(result);
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(result);
+      }
+    )
+
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+  deleteProductFromCart(productId) {
+    const db = getDb();
+
+    console.log(this.cart);
+
+    const updatedCartItems = this.cart.products.filter((prod) => {
+      return prod.productId.toString() !== productId.toString();
+    });
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        { $set: { cart: { products: updatedCartItems } } }
+      )
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(result);
+      });
+
+
+
+
+
+
+
+
+
+
+E ASSIM(controller):
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+
+const productId = req.body.id;
+
+req.user.deleteProductFromCart(productId)
+.then(
+  (result) => {
+    res.redirect('/cart');
+  }
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+}
+
+
+
+
+----------------------------
+
+
+
+
+
+OK... AGORA NOSSO CÓDIGO QUE 
+
+__REMOVE UM PRODUCt__ DO ARRAY DE 'products'
+
+ESTÁ FUNCIONANDO.... (é basicamente 1 'cart item'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ok...
+
+É ASSIM QUE PODEMOS DELETAR 'CART ITEMS' com facilidade...
+
+
+
+
+
+AGORA VAMOS VER COMO __ IMPLEMENTAR 'ORDERS'....
+
+
+
+
+
+
+
+
+
+
+---> 

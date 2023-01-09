@@ -1,0 +1,2486 @@
+
+
+
+
+
+
+
+
+
+
+
+------> OK, DEVEMOS COMEÇAR A VER O ASSUNTO DO 
+
+'THROWING E HANDLING'
+
+
+de 
+
+__ERRORS__....
+
+
+
+
+
+
+
+
+
+
+-------> LÁ EM 
+
+'auth.js',
+
+
+
+
+NAS NOSSAS ROUTES,
+
+
+NÓS 
+
+
+_ REALMENTE__ TEMOS 
+
+
+ 
+1 ERROR/case de um error escrito, lá NAQUELE CUSTOM VALIDATOR...
+lá 
+
+
+
+em 
+
+
+
+
+
+
+
+'body('confirmPassword')
+.trim()
+.custom((value, {req}) => {
+
+
+
+            if(value !== req.body.password) {
+
+                throw new Error('Passwords have to match'); ////////EIS O CO´DIGO EM QUESTÃO.
+            } else {
+
+
+                return vlaue;
+            }
+
+
+
+
+
+
+})
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+    body('confirmPassword')
+      .custom(
+        ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, { req, loc, path }) => {
+          if (value !== req.body.password) {
+            console.log('ENTERED');
+            throw new Error('Passwords do not match.');
+          } else {
+            console.log(value, req.body.confirmPassword);
+            console.log('TEST');
+            return true;
+          }
+        }
+      )
+      .trim(),
+  ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ----------->  O PROFESSOR NOS EXPLICA QUE 
+  ESSA 
+
+  LINHA DE
+
+
+  ''            throw new Error('Passwords do not match.');'
+
+
+
+
+
+
+
+
+
+
+  VAI REALMENTE SER 
+
+
+  'HANDLED BEHIND THE SCENES'
+
+
+  PELO PACOTE DE 
+
+
+
+  'express-validator'... --------> 
+
+
+
+
+
+
+
+
+
+
+
+E É POR ISSO QUE O PROFESSOR QUER, AGORA, 
+
+ADICIONAR 
+
+
+
+1 
+
+CÓDIGO 
+
+QUE 
+
+'IS NOT HANDLED BEHIND THE SCENES'... --------> PARA ISSO, 
+
+
+PROFESSOR 
+
+DIZ UQE 
+
+DEVE 
+
+
+
+DAR 1 PASSO 
+
+
+PARA TRÁS,
+
+
+
+
+E QUITAR O 
+
+SV DE DEVELOPMENT...
+
+
+
+
+
+
+
+
+
+
+-----> TEMPORARAIMENE,
+
+O PROFESSOR _ ADICIONA _ 
+
+UM NOVO ARQUIVO 
+
+'.js'
+
+
+
+
+
+NO ROOT DE 
+
+NOSSO PROJETO.... (vamos remover isso no futuro, pois 
+não possui relação com o app) -----> ELE CHAMA ESSE 
+
+
+
+ARQUIVO DE 
+
+
+'error-playground.js',
+
+só para brincar...
+
+
+
+
+
+
+
+
+------->  OK.... --> PROFESSRO EXPLICA QUE EVENTUALMENTE VAI REMOVER 'erroy-playground'
+
+
+DE 
+
+NOSSO PROETJO, 
+
+
+PQ NÃO POSSUI RELAÇÃO COM O APP.........
+
+
+
+
+
+
+
+
+--> BEM, MAS O QUE INTERESSA É QUE 
+
+
+em 
+
+'error-playground' 
+
+ 
+
+ _PODEMOS_ EXECUTAR_ _CÓDIGO JS__.... --------> E NÓS VAMOS PODEMR __ EXECUTAR__ 
+
+
+
+ ESSE ARQUIVO POR MEIO 
+
+DO 
+
+
+
+'NODE RUNTIME',
+
+é claro( ou seja, por meio de 'node xxxnomeDoArquivo'...)
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... MAS DENTRO DE 
+
+
+'error-playground.js',
+
+
+PROFESSOR
+
+CRIA UMA NOVA CONSTANTE....
+
+
+
+
+
+
+
+
+const 'sum',
+
+
+
+
+EM QUE 
+
+
+___PROFESSOR VAI ACEITAR/EXIGIR 2 PARÂMETROS,
+
+
+'a e 
+b',
+
+
+
+
+
+
+
+
+
+UMA ARROW FUNCTION... --> AÍ ESSA FUNÇÃO VAI QUERER 
+
+SER UM SIMPLES EXECUTE DE 
+
+'
+return a + b'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const sum = (a, b) => {
+
+
+    return a + b;
+}
+
+
+
+
+
+
+
+
+
+
+
+------> DEPOIS DISSO, PROFESSOR ESCREVE 
+
+'sum(1 ,2)'
+
+....
+
+
+
+
+
+
+
+
+AÍ ELE FAZ UM CONSOLE.LOG de 'sum(1, 2)'...
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO, PROFESSOR EXECUTA ESSE ARQUIVO POR MEIO DE 
+
+'node error-playground'.... 
+
+
+
+
+
+
+
+--------> ISSO FEITO, VAMOS RECEBER '3'
+
+NO CONSOLE....(resultado de 'sum(1, 2)'...)
+
+
+
+
+
+
+
+
+
+
+--> ATÉ AÍ TUDO BEM,
+
+
+MAS O __ PROFESSOR _ QUER 
+
+
+
+'ADD AN ERROR'
+
+
+
+
+
+ A ESSE CÓDIGO DE 'error-deployment'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> CERTo... mas como fazer isso?
+
+
+
+
+
+
+
+
+
+
+ --> BEM, 
+
+
+
+ O PROFESSOR SUPÕE UMA HIPÓTESE EM QUE 
+
+
+ EU/O USER PASSO _ APENAS __ 
+
+ 1
+
+ valor/variável 
+
+
+
+ ao 
+
+
+ 'sum(...)'.... --------> SE ELE FIZER ISSO,
+
+
+
+ _ ELE NÃO 
+
+ VAI 
+
+
+
+
+ RECEBER UM 'NUMBER'
+
+
+
+ (como '3')
+
+
+ COMO 
+ HAVIA 
+
+ RECEBIDO ANTES,
+
+
+
+
+ MAS _ _ TAMBÉM __ NÃO VAI RECEBER 
+
+
+
+
+ um 
+
+ 'error'
+
+ OU UM 
+
+
+ 'TECHNICAL ERROR OBJECT'..
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA PASSAR APENAS 1 
+
+
+valor 
+
+
+À função 'sum()',
+
+
+professor escreve 
+
+
+
+'console.log(sum(1))'....
+
+
+
+
+
+
+
+
+
+
+
+-----> AO EXECUTAR ESSE CÓDIGO,
+
+O CÓDIGO DE 
+
+
+''
+
+
+const sum = (a, b) => {
+  return a + b;
+};
+
+console.log(sum(1, 2));
+
+console.log(sum(1));
+
+
+
+
+
+''',
+
+
+
+
+
+
+PROFESSOR RECEBE ESTE OUTPUT:
+
+
+
+
+
+3
+NaN
+
+
+
+
+
+
+
+
+
+
+
+---> OU SEJA,
+
+
+ELE 
+
+RECEBEU 
+
+
+
+'NaN'... --> NOT A NUMBER... SINAL DE QUE ALGO DEU ERRADo...
+
+
+
+
+
+
+--------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+---------> É CLARO QUE PODEMOS 
+
+
+
+
+ESCREVER UM CÓDIGO DENTRO DE 'sum'
+
+PARA 
+
+FAZER 
+
+HANDLE DOS CASES EM QUE 
+
+
+
+O 
+
+
+
+argumento 'b' é undefined...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const sum = (a, b) => {
+
+
+  if(!b) {
+
+      return throw new Error('Please input second value for the sum operation to work');
+
+  }
+
+  return a + b;
+};
+
+console.log(sum(1, 2));
+
+console.log(sum(1));
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ISSO FEITO,
+
+
+RECEBEMOS __ ESTE __ ERRO:
+
+
+
+
+
+
+
+
+  throw new Error('Please input second value for the sum operation to work');
+  ^
+
+Error: Please input second value for the sum operation to work
+    at sum (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:6:9)       
+    at Object.<anonymous> (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:15:13)
+
+
+
+
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+-----> ou seja,
+
+
+
+antes __ NÓS __ RECEBÍAMOS 'NOT A NUMBER',
+
+
+
+
+
+QUE É SÓ UM 'TIPO DE VALOR,
+
+MAS QUE 
+
+
+_NÃO É UM 'TECHNICAL ERROR OBJECt'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> já ISTO AQUI:
+
+
+
+  throw new Error('Please input second value for the sum operation to work');
+  ^
+
+Error: Please input second value for the sum operation to work
+    at sum (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:6:9)       
+    at Object.<anonymous> (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:15:13)
+
+
+
+  
+
+----> É REALMENTE O RESULTADO 
+
+
+
+DE 
+UM 
+
+
+'TECHNICAL ERROR OBJECT'...
+
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR ESCREVEU UM CÓDIGO 
+
+PARECIDO....
+
+
+
+
+
+
+ele escreveu 
+
+
+
+
+const sum = (a, b) => {
+
+
+if (a && b) {
+
+
+  return a + b;
+} 
+
+
+throw new Error('Invalid arguments');
+
+
+
+}
+
+
+
+
+
+
+
+
+
+-----------> AGORA, QUANDO EXECUTAMOS ESSE CÓDIGO,
+
+
+
+VEMOS 
+
+
+
+
+ESSA MENSAGEM DE ERROR
+
+
+
+'INVALID ARGUMENTS'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> vimos ERRORS COMO ESSES AO LONGO DO CURSO, TAMBÉM.. -----> aqui,
+
+NÓS TEMOS __ NOSSA PRÓPRIA __ MENSAGEM 
+
+DE 
+
+
+'ERROR'.... --------> E AÍ 
+
+TEMOS 
+
+1
+ 
+
+
+ CALL STACK:
+
+
+
+
+
+  at sum (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:6:9)       
+    at Object.<anonymous> (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:15:13)
+    at Module._compile (node:internal/modules/cjs/loader:1095:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1124:10)
+    at Module.load (node:internal/modules/cjs/loader:975:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:816:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:79:12)
+    at node:internal/main/run_main_module:17:47
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ESSE CALL STACK 
+
+
+NOS AJUDA A ENCONTRAR EM QUE LUGAR/QUAL FUNCTION/QUAL LINE 
+
+
+ESSE 
+
+ERROR 
+
+FOI 
+
+'THROWN',
+
+E O 
+QUE 
+
+
+EXATAMENTE 
+
+FORA CHAMADO ANTES DE ESSE ERROR....
+
+
+
+
+
+
+
+
+
+
+
+-------->  NÓS VIMOS ISSO ___ ANTERIORMENTE__ NO CURSO.... ------> 
+
+
+
+
+
+ISSO QUE ESCREVEMOS É AQUILO QUE É CHAMADO DE 'UNHANDLED ERROR' ------> 
+
+
+
+
+
+
+
+
+NÓS:
+
+
+
+1) FAZEOMS O _ THROW__ DE 1 ERROR (throw new Error),
+
+
+
+E ISSO É UMA __ BUILTIN FUNCTIONALITY DO JAVASCRIPT_.... 
+
+
+
+
+(
+
+
+  E O NODE, E UM MONTE DE PACKAGES QUE USAMOS ___ SE UTILIZAM 
+
+  __ DE 'THROW AN ERROR' POR TRÁS DAS CENAS, ISSO É ÓBVIO...
+)
+
+
+
+
+
+-------> POR EXEMPLO, O MONGODB VAI 'THROW AN ERROR' 
+
+
+SE __ ELE NÃO CONSEGUE SE CONECTAR__, OU SE ALGUMA OPERATION FALHA....
+
+
+
+
+
+
+
+--> CERTO, ISSO SIGNIFICA QUE __ 
+
+ERRORS COMO ESSES 
+
+'CAN BE THROWN',
+
+
+e se __NÓS ____ NÃO OS HANDLARMOS _ POR MEIO 
+
+
+DE CÓDIGOS 
+
+ESPECÍFICOS,
+
+
+
+NOSSO APP __ VAI SIMPLESMENTE CRASHAR___.... 
+
+
+(
+
+
+  como 
+
+  aconteceu agora: ganhei só o output de '3', mas o resto do código __NÃO CONTINUOU...
+)
+
+
+
+
+
+------------------> OK... ---> E É EXATAMENTE ISSO QUE 
+
+
+
+
+VIMOS AO LONGO DO CURSO,,
+
+
+ANTERIORMENTE, TAMBÉM... ---> TIVEMOS VÁRIOS CASES 
+
+EM QUE 
+
+
+NOSSO APP SÓ __cRASHOU__ PQ 
+
+
+
+1 'error was thrown'... ---------> 
+
+
+BASTA SE 
+
+
+LEMBRAR 
+
+
+DE 
+
+CASES 
+
+
+NO CURSO EM QUE __ FIZEMOS ALGO E ENTÃO 
+
+
+'WE GOT STUCK',
+
+
+
+E AÍ ___ 
+
+AQUELE 
+
+
+
+SÍMBOLO DE REFRESH NO BROWSER 
+
+
+CONTINOU GIRANDO, E NADA ACONTECIA... ----> isso ocorreu justamente pq ___ NOSSO 
+
+
+SERVER __ CRASHOU, 
+
+E JUSTAMENTE 
+
+PQ 
+
+
+'WE HAD AN ERROR WHICH WE DID NOT HANDLE'....
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+--------> E É ___ EXATAMENTE POR ISSO QUE 
+
+
+
+ESSES SÃO 'UNHANDLED ERRORS' ------> o error foi THROWN, de fato,
+
+
+
+
+__MAS NENHUM CÓDIGO ___ 'HANDLADOR'
+
+FOI 
+
+ESCRITO A PARTIR 
+
+DELE,
+
+
+
+
+NENHUM 
+
+
+CÓDIGO/LÓGICA DE 
+
+
+''''
+
+1) return an error page 
+
+
+
+2) inform the user about the error, then let him try again 
+
+
+
+3) redirect the user with some information...
+
+
+
+
+
+
+
+
+
+
+----------> OK... MAS COMO __ PODEMOS__ 
+
+HANDLAR ERRORS? --------->  
+
+
+
+
+
+
+
+
+BEM,
+
+
+EXPLICA O PROFESSOR,
+
+UMA SOLUÇÃO, 
+
+
+PARA 
+
+O 
+
+
+'SYNC CODE' (código que executa linha por linha, imediatamente, sem esperar por nada),
+
+
+
+
+
+OU SEJA, 
+
+CASOS TÍPICOS EM QUE __ NÃO INTERAGIMOS COM ARQUIVOS E QUE NÃO MANDAMOS REQUESTS, NEM geolocation,
+ 
+ etc....
+
+
+
+
+
+
+
+É _________ -------> WRAPPAR__ 
+
+
+
+ESSES NOSSOS TIPOS DE CÓDIGO COM 
+
+
+
+'try {
+}
+catch (error) {
+
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+--------> ESSA É OUTRA 'BUILTIN LANGUAGE FEATURE'... ------> NÓS FAZEMOS 
+
+
+
+'TRY' 
+
+DE 
+
+UM 
+
+CERTO CÓDIGO,
+
+
+
+E  __ SE ELE ___ NÃO DÁ CERTO____,
+
+
+
+FAZEMOS COM QUE 
+
+O 
+
+CÓDIGO DE 
+
+
+'catch'
+
+
+
+SEJA EXECUTADO... ---------> 
+
+
+
+
+
+O 
+
+
+'catch(err) {
+
+}'
+
+
+
+
+
+
+
+
+--------> VAI __ CAPTURAR___ UM 'POTENTIAL ERROR',
+
+
+
+UM ERROR QUE TALVEZ SEJA 'thrown'.... ----------> E AÍ,
+
+
+A PARTIR 
+
+
+
+DO 
+
+
+
+'{}' do CATCH,
+
+
+NÓS _ PODEMOS __ HANDLAR_  
+
+ESSE 
+
+
+
+ERROR, 
+POR MEIO DE CÓDIGO/LÓGICA ESPECÍFICA...
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+try{
+
+....
+
+if(a === b) {
+
+  throw new Error('invalid value for variables');
+}
+
+
+
+
+} catch (err) {
+
+
+
+  console.log(err);
+  console.log('An error has occurred');
+
+  res.redirect('/somePath ');
+}
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+----------> OK... ESSE SERIA O Ó TÍPICO __ ________HANDLE__ DE 1 
+
+ERROR....
+
+
+
+
+
+
+
+
+
+NO CASO DO CÓDIGO DE 
+
+'sum'
+
+
+
+temos 
+
+
+isto  aqui:
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+const sum = (a, b) => {
+
+  
+  if(!b) {
+
+  throw new Error('Please input second value for the sum operation to work');
+
+}
+
+  return a + b;
+};
+
+
+
+
+
+
+try {
+
+  console.log(sum(1));
+
+
+} catch (error) {
+
+  console.log('An error has occurred!');
+  console.log(error);
+  res.redirect('/aUrl'); 
+
+
+}
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+ENTRAREMOS NO BLOCK DE 'catch()'
+
+
+PQ 
+
+
+
+AQUELE CALL DE 'console.log(sum(1))'
+
+
+VAI _ '''THROW __ AN ERROR''' (como definido na função, na própria função),
+
+
+POIS _ NÃO 
+
+
+PASSAMOS 1 VALOR DE 'b'... ---------> E É POR ISSO QUE 
+
+ENTRAMOS 
+
+
+
+
+NO BLOCK DE 
+
+'catch'..
+
+
+
+
+
+
+-------------->  AGORA, QUANDO OLHARMOS O OUTPUT DE NOSSO CONSOLE, TEREMOS ISTO:
+
+
+
+
+
+
+
+
+An error has occurred!
+Error: Please input second value for the sum operation to work
+    at sum (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:6:9)       
+    at Object.<anonymous> (A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\error-playground.js:21:15)
+
+
+
+
+
+
+
+
+
+----------> SINAL DE QUE TUDO FUNCIONOU,
+
+
+
+PQ AGORA TEMOS 
+
+ESSA MENSAGEM ADICIONAL DE 'An error has occurred!',
+
+
+QUE 
+
+
+É 
+
+
+SINAL DE QUE 
+
+NOSSO ERROR HANDLING NO __CATCH BLOCK___ 
+
+
+
+realmente __ foi disparado.... -------------->  E SE 
+
+
+
+NÓS 
+
+
+
+
+
+CONSOLE.LOGGARMOS __ SÓ __ 
+
+
+
+'console.log('An error has occurred')',
+
+
+
+
+
+
+
+SEM 
+
+
+
+___ 
+
+
+
+COLOCARMOS AQUELE CONSOLE.LOG DE 
+
+
+'error',
+
+
+
+
+
+
+
+FICAREMOS ASSIM:
+
+
+
+
+
+
+
+
+
+const sum = (a, b) => {
+
+  
+  if(!b) {
+
+  throw new Error('Please input second value for the sum operation to work'); ///importante.
+
+}
+
+  return a + b;
+};
+
+try {
+
+
+  console.log(sum(1)); //importante.
+
+} catch(error) { //importante.
+
+
+  console.log('An error has occurred!');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> E O __OUTPUT_ FICARÁ BEM MAIS SIMPLES, FICARÁ SÓ ASSIM:
+
+
+
+An error has occurred!
+
+
+
+
+
+
+(sem o objetão 'error' que havíamos console.loggado antes... objeto com nosso call stack, visto logo acima...)
+
+
+
+
+
+
+
+
+
+
+
+
+------------> MAS O BOM DOS 
+
+
+'CATCH BLOCKS' em 
+
+
+'try-catch'
+
+É QUE 
+
+
+
+__PODEMOS/PODERÍAMOS ___ FAZER O QUE QUISERMOS 
+
+
+
+
+
+
+________________DEPOIS_____________ DESSE 
+
+
+
+
+CONJUNTO 'try-catch' .... ---> ISSO SIGNIFICA QUE _____ 
+
+
+
+
+
+
+
+
+
+
+
+1) O NOSSO ERRO, POR MEIO DO BLOCK DE 'catch(){}', __ACABA SENDO ___ HANDLADO... 
+
+
+
+
+
+2) ___ HANDLADO __ ESSE NOSSO ERROR/NOSSOS ERRORS, NÃO TEREMOS MAIS 
+
+'UNHANDLED ERROR'....
+
+
+
+
+
+
+3) SEM 1 'UNHANDLED ERROR', nosso app __ NÃO VAI ___ CRASHAr__ E 'throw an error message' 
+
+AO SER LIDO E EXECUTADO o 'catch block'...
+
+
+
+4) ISSO, POR CONSEQUÊNCIA, SIGNIFICA QUE _ TODAS AS LINHAS DE CÓDIGO EXISTENTES ___ 
+
+APÓS_ O CONJUNTO 'try-catch' 
+
+
+_________ VÃO SER LIDAS NORMALMENTE___ , SEM CESSAR A EXECUÇAÕ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+REPRESENTAÇAÕ:
+
+
+
+
+
+
+
+
+const sum = (a, b) => { ////1 
+
+  
+  if(!b) {
+
+  throw new Error('Please input second value for the sum operation to work'); ///importante.
+
+}
+
+  return a + b;
+};
+
+try {
+
+
+  console.log(sum(1)); ////2 
+
+} catch(error) {  ////3 (captura o ERROR de 'Please Input a  second value', o que FAZ COM QUE ESSE CONSOLE.LOG LOGO ABAIXO SEJA DISPARADO... MAS ISSO NÃO VAI PARAR A EXECUÇÃO, pois agora esse 'please input second value' SERÁ UM _ HANDLED ERROR.... 
+
+
+  console.log('An error has occurred!');
+}
+
+
+
+console.log('This works!'); ///////4 ------>  __ É EXECUTADO_ MESMO OCORRENDO AQUELE CÓDIGO EM 'try-catch', justamentep q esse CÓDIGO DE 'try-catch' VAI TRANSFORMAR NOSSO ERROR EM UM 'HANDLED ERROR' (e como no nosso CATCH BLOCK nós __ SÓ FIZEMOS 1 CONSOEL.LOG SIMPLES DE 'an error has occurred', o código SEGUIRÁ SEU RUNTIME NORMAL... --> e é por isso que este console.log, esta linha aqui, é LIDA E EXECUTAD...)
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+E É EXATAMENTE POR ISSO QUE OBSERVAMOS ESTE OUTPUT AQUI, AO EXECUTAR ESSE ARQUIVO:
+
+
+
+
+
+An error has occurred!
+This works!
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+--> PARA DEMONSTRAR A IMPORTÂNCIA 
+
+DESSE 
+
+
+
+TRY-CATCH DE 
+
+
+
+
+
+'''''''''''''''''''''''''''
+
+try {       
+
+
+  console.log(sum(1)); 
+
+} catch(error) { 
+
+
+  console.log('An error has occurred!');
+   console.log(error);
+}
+
+
+
+
+
+''''''''''''''''''
+
+
+,
+
+
+
+
+
+
+O PROFESSOR O __ REMOVE__ DO NOSSO CÓDIGO,
+
+
+
+DEIXANDO 
+
+SÓ 
+
+
+ESTAS LINHAS:
+
+
+
+
+
+
+------------------------------------------
+
+
+
+const sum = (a, b) => { ////1 
+
+  
+  if(!b) {
+
+  throw new Error('Please input second value for the sum operation to work'); 
+
+}
+
+  return a + b;
+};
+
+
+
+console.log(sum(1));
+console.log('This works!'); 
+
+
+
+-----------------------------------
+
+
+
+
+SE DEIXARMOS SÓ ISSO,
+
+SÓ ESSE CÓDIGO AÍ,
+
+
+
+VAMOS RECEBER SÓ:
+
+
+
+'' Error: Please input second value for the sum operation to work'' 
+
+
+
+
+
+lá 
+
+
+
+NO TERMINAL (
+
+
+  e _NÃO VAMOS __ RECEBER o 'This works'...
+) 
+
+
+
+
+
+
+----------> ISSO É _ _SINAL__ DE QUE:
+
+
+
+
+
+
+1) O ERROR REALMENTE FOI 'THROWN' LA NA NOSSA FUNÇÃO 'sum()'... (por meio de 'console.log(sum(1))' )
+
+
+
+
+
+
+
+
+2) ESSE 'THROW' DO ERROR___ FOI DE UM 'UNHANDLED ERROR' (NÃO ADICIONAMOS 'try-catch' para CATCHEAR ESSE ERRO E EXECUTAR CÓDIGO A PARTIR DE SUA OCORRÊNCIA...)
+
+
+
+
+
+
+3) ESSE 'THROW' DO __ ERROR___ REALMENTE __cRASHOU/CESSOU O RUNTIME DE NOSSO APP,
+
+POIS 
+
+'This Works'
+
+
+NÃO FOI OUTPUTTADO,
+
+SINAL DE QUE 
+
+ESSE 
+
+REALMENTE OFI UM 'UNHANDLED ERROR'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> OK........ --------->  ISSO SIGNIFICA QUE 
+
+
+NOSSO APP _ CRASHOU__ com 
+
+
+aquele 
+
+
+
+'throw new Error()'
+
+
+lá 
+
+
+
+NA FUNÇÃO 'sum()'...
+
+
+
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE 
+
+NÓS __ NÃO CONTÍNUAMOS COM OUTRO CÓDIGO/RESTANTE DO RUNTIME....
+
+
+
+
+
+
+
+
+
+
+-----------> E É EXATAMENTE ___ POR ISSO__ QUE FAZER O HANDLE 
+
+DE 
+CODE 
+
+
+___ASSIM__,
+
+POR MEIO DE 
+
+
+'try-catch(){}'
+
+
+
+É ______ UMA COISA ___ BOA DE SE FAZER____... -------> É UMA COISA 
+
+
+BOA 
+
+DE 
+
+SE 
+
+FAZER __JUSTAMENTE PQ __ ISSO _____ASSEGURA__ QUE 
+
+
+
+
+NÓS __ CONSIGAMOS 'CONTINUE WITH CODE', com o resto do nosso código,
+
+
+E QUE 
+
+
+AÍ 
+
+
+CONSIGAMOS 
+
+'HANDLE THIS ERROR GRACEFULLY',
+
+
+handlar 
+
+ele 
+
+gracefully 
+
+
+
+___LÁ NO NOSSO APP NODE-EXPRESS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO AMBIENTE DE NOSSA 'NODE-EXPRESS' APP,
+
+
+
+PODERÍAMOS 'SEND AN ERROR RESPONSE '
+
+
+ali 
+
+
+
+nesse 
+
+
+__cATCH BLOCK___..... -------> ESSA RESPONSE DE 'ERROR' 
+
+
+
+
+PODE/PODERIA __ RENDERIZAR UMA __ PAGE __ VÁLIDA AO USUÁRIO,
+
+
+
+SEM 
+
+CRASHAR 
+
+O NOSSO APP,
+
+
+
+
+UMA PAGE QUE SIMPLESMENTE INFORMA/INFORMARIA O USER __ 
+
+DE 
+
+QUE 
+
+ALGO RUIM ACONTECEU E QUE 
+
+
+ELE ___ DEVE TENTAR DE NOVO/ESPERAR 1 POUCO PARA TENTAR DE NOVO...
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... E ISSO, NO FINAL DAS CONTAS, É 
+
+A COISA QUE 
+O 
+
+
+'EXPRESS-VALIDATOR' ___ FAZ PARA NÓS ___ 
+
+
+
+
+____ COM NOSSOS 'THROWN ERRORS' (erros que são atirados POR MEIO DOS VALIDATORS DE '.isString()', 'isLength()', 'isUrl()' ),
+
+
+
+
+
+
+ELE ___ BASICAMENTE  
+
+
+
+
+'HANDLES THOSE ERRORS ' 
+
+
+
+
+por meio de sua LÓGICA INTERNA.... E O 'HANDLE' DESSES ERRORS,
+ 
+ PARA O 
+
+
+ 'express-validator',
+
+
+ É __ JSTAMENTE__ 
+
+ o
+
+
+
+ STORE DELES EM VARIÁVEIS COMO 
+
+
+
+ 'validationResults'...
+
+
+
+
+
+
+
+
+
+ --> isso é visto em códigos como :
+
+
+
+
+
+
+
+'''''''''''''''''''''''''''''''
+
+
+
+
+ body('confirmPassword')
+ .trim()
+ .custom(
+   (value, {req} ) => {
+
+
+     if (value !== req.body.password) {
+
+       throw new Error('Passwords do not match');
+     }
+   }
+ )
+
+
+ '''''''''''''''''''''
+
+
+
+
+
+
+ QUANDO É FEITO O THROW DESSE ERROR, LÁ NO CONTEXTO NODE-EXPRESS + EXPRESS-VALIDATOR,
+
+
+
+
+ O 
+
+
+
+ 'EXPRESS-VALIDATOR'
+
+
+ SIMPLESMENTE FAZ 'CATCH' 
+
+ desse error 
+
+ E 
+
+ ENTÃO 
+
+
+ SIMPLESMENTE O ADICIONA AO SEU PRÓPRIO 'ERRORS ARRAY',
+
+
+
+ E AÍ __POSTERIORMENTE__ ELE NOS DEIXA __ 'READ' ESSA 
+
+ LISTA DE 
+
+ ERRORS QUE 
+
+
+ ELE CAPTUROU... --------> É ISSO QUE OCORRE POR TRÁS DAS CENAS,
+
+
+
+ VOCê PDOERIA DIZER...
+
+
+
+
+
+
+
+
+
+
+ -------> ok... --------> MAS 
+
+
+ AQUI EM 
+
+ 'error.playground'
+
+
+
+
+ NÓS 
+
+ DAMOS 
+
+ UMA OLHADA EM 
+
+ 1 
+
+ 'ERROR', 
+
+
+
+
+ E NA __MANEIRA__ PELA QUAL 'SYNC CODE'
+
+
+ PODE 
+
+
+ 'THROW AN ERROR'.... ?(
+
+
+   por meio do TRY-CATCH.....
+ )
+
+
+
+
+
+
+
+
+
+
+ --------> MAS É EVIDENTE QUE __ NÓS TAMBÉM TEMOS 
+
+ 'async operations',
+
+
+ QUE 
+
+ SÃO 
+
+ OPERATIONS QUE 
+
+
+
+ _______ PODEM, É CLARO, FALHAR__... --------> E OPERATIONS COMO 
+
+
+ ESSAS, QUANDO 
+
+
+ UTILIZAMOS 
+
+ 'PROMISES',
+
+
+
+
+
+
+
+
+SÃO HANDLADAS COM '.then()' 
+
+e 
+
+'.catch()'...
+
+
+
+
+
+
+
+
+-----------------------> E NÓS JÁ PODEMOS/PUDEMOS OBSERVAR UM MONTE DISSO,
+
+
+
+NO NOSSO CÓDIGO...
+
+
+
+
+
+
+ex:
+
+ 
+
+
+         .catch((err) => {
+          console.log(err);
+          res.redirect('/login');
+        });
+
+
+
+
+
+
+
+
+
+    ------> NESSE LUGAR AÍ,
+
+    TEMOS 1 CATCH BLOCK EM QUE PODEMOS 
+
+    'CATCH ANY ERORRS' 
+
+    QUE TALVEZ TENHMA APAREECIDO.. -----> ESSE AÍ, POR EXEMPLO, É UM CATCH BLOCK 
+
+
+    VINCULADO AO USO DAQUELE 
+
+    'User.findOne()'... ------> ISSO SIGNIFICA QUE 
+
+
+
+    ____ SE A OPERAÇÃO __ DA DATA/DATABASE 
+
+
+    __ FALHAR_,
+
+    ela terá falhado __ PRECISAMENTE__ PQ 
+
+
+
+    NÃO TEMOS 'READ ACCESs'.... não temos/TEREMOS 'READ ACCESS', 
+
+
+ou PQ O 'DATABASE SERVER' ESTÁ CAÍDO TEMPORARIAMENTE... ------>  QUALQUER COISA DESSE TIPO __ PODE ACONTECER/TER ACONTECIDO__ 
+
+
+quando 
+
+entrarmos no bloco de 'catch()'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE 
+
+
+'THEN E CATCH()'
+
+
+são o 
+
+
+
+'try-catch'
+
+DOS __ CÓDIGOS ASSÍNCRONOS...
+
+
+
+
+
+
+
+
+
+
+---------->  'THEN()" é o seu SUCCESS CASE.... .
+
+
+
+
+
+
+
+
+
+---> 'CATCH(){}" é o 'fail case', 
+
+BLOCK que __ 
+
+VAI EXECUTAR _ CÓDIGO_ _ SÓ SE O QUE VOCe QUERIA FAZER EM 'THEN' FALHOU...
+
+
+
+
+
+
+
+
+
+
+
+------> OUTRO DETALHE É QUE 
+
+'.catch(err) {}'
+
+
+
+
+________VAI __ COLETAR__ 
+__________TODOS 
+
+
+
+OS 
+
+ERRORS 
+
+QUE 
+FORAM
+
+
+
+'THROWN',
+
+
+
+NÃO se limitando a apenas 1... --------> ISSO SIGNIFICA QUE __tODOS OS THEN BLOCKS ACIMA DELE 
+
+
+
+__ terão seus 'ERRORS CATCHED'... ----> 'catch()' VAI SE DISPARAR A PARTIR DE 
+
+UM ERRO EM 
+
+QUALQUER THEN BLOCK,
+
+em qualquer  OPERAÇÃO EXECUTADA EM 1 THEN BLOCK....
+-------------------------------
+
+
+
+
+
+
+OK....... E É ASSIM QUE PODEMOS 
+
+
+'TRABALHAR COM ERRORS',
+
+
+
+E COMO PODEMOS 'HANDLE THEM'..
+
+
+
+
+
+
+
+
+-----> AGORA DEVEMOS VER NO NOSSO APP __ OS LUGARES QUE 
+
+
+ELE DIZ QUE 
+
+__PODEM SER MELHORADOS___, ter seu 'error handling' melhorado....

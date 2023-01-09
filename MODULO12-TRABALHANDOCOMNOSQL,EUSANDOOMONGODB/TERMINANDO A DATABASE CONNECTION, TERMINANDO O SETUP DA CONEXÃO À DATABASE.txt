@@ -1,0 +1,1579 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O NOSSO CÓDIGO DE DATABASE ESTÁ ASSIm:
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+// export const connectDatabase = async (url) => {
+//   const client = await MongoClient.connect(url);
+//   return client;
+// };
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        callback(client);
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+module.exports = mongoConnect;
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> O PROFESSOR 
+NOS EXPLICA QUE 
+
+
+ELE __AINDA VAI QUERER _ TER UMA FUNÇÃO
+ 
+
+
+ QUE 
+ ELE 
+
+
+ PODE/VAI CHAMAR 
+
+ PARA 
+
+ CONECTAR 
+ NOSSO 
+
+
+ APP 
+
+
+ AO MONGODB....
+
+
+
+
+
+
+
+
+
+
+-----> PORTANTO,
+
+ESSA FUNÇAÕ DE 
+
+'mongoConnect'
+
+
+AINDA 
+
+
+ESTÁ 
+
+'LOOKING GOOD' para ele, por enquanto.... -----> 
+
+
+
+
+
+MAS UMA COISA QUE 
+
+O PROFESSOR 
+QUER 
+
+FAZER É 
+
+DAR 
+
+
+'throw' 
+
+de um error nesse negócio,
+
+
+
+PARA QUE O ERRO 
+
+
+apareça no nosso browser tbm, quando/se ele acontecer...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+// export const connectDatabase = async (url) => {
+//   const client = await MongoClient.connect(url);
+//   return client;
+// };
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        callback(client);
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+                throw err; ////EIS O CÓDIGO EM QUESTÃO.
+      }
+  )
+};
+
+
+
+module.exports = mongoConnect;
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+--> mas o professor VAI MUDAR UMA COISA NESSE CÓDIGO AÍ... ---> 
+
+ELE 
+
+NÃO VAI 
+
+QUERER 
+
+
+RETORNAR 
+
+
+O 
+
+'CLIENT'
+
+nesse 
+
+
+'callback(client)',
+
+
+E SIM  
+
+
+
+
+
+
+
+__ VAI QUERER__ ADICIONAR __ UMA 
+
+
+
+___VARIÁVEL__,
+
+
+
+uma ___VARIÁVEL__
+
+de 
+
+
+nome 
+
+
+
+
+'_db'... (O underscore só existe aquI  PARA __ SINALIZAR QUE ___ ESSA VARIÁVEL _ SÓ SERÁ USADA ___INTERNAMENTE__, OU SEJA, NESSE MESMO ARQUIVO 'database.js'...) -----> MAS É CLARO QUE VOCÊ NÃO PRECISA NOMEAR ESSE NEGÓCIO ASSIM; VOCÊ PODERIA NOMEAR NORMALMENTE, TIPO 'let db'....
+
+
+
+
+
+
+
+
+
+INICIALMENTE, ESSA VARIÁVEL VAI FICAR COMO 'undefined'..
+
+ 
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+ const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+
+let db;
+
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        callback(client);
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+                throw err; ////EIS O CÓDIGO EM QUESTÃO.
+      }
+  )
+};
+
+
+
+module.exports = mongoConnect;
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO... AÍ ALI EMBAIXO,
+
+
+
+naquele THEN BLOCK,
+
+
+
+
+O PROFESSOR 
+
+VAI REALMENTE 
+
+QUERER 
+
+
+
+ARMAZENAR UM VALOR 
+
+
+
+nessa VARIÁVEL 
+
+'_db',
+
+
+QUE 
+
+SERÁ 
+
+
+'client.db('Shop')' ----> NÓS TEMOS QUE COLOCAR O __NOME __ DA DATABASE__ A QUE VAMOS QUERER GARANTIR ACCESS, na nossa database/cluster mongodb....
+
+
+
+
+
+
+--> SE VOCÊ 
+
+
+DEIXAR EM BRANCO,
+
+
+você 
+
+
+
+se conectará automaticamente À 
+
+database 
+
+
+de 
+
+
+'Shop', 
+
+PQ 
+
+FOI ISSO QUE ESPECIFICAMOS LÁ NA URL,
+
+que ficou assim:
+
+
+'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+--------> 
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+let _db; //// o '_' significa que essa variável SÓ VAI SER USADA NESSE MESMO ARQUIVO 'database.js', INTERNAMENTE, e em nenhum outro lugar....
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        // callback(client); não faça assim...
+
+
+       _db = client.db()           //faça assim. --> se você escrever 'client.db()' com o parâmetro em BRANCO, você vai se conectar à database de 'shop' no SEU CLUSTER, pq é ISSO QUE ESPECIFICAMOS NA NOSSA URL....
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+                throw err;
+      }
+  )
+};
+
+
+
+module.exports = mongoConnect;
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+SIDENOTE:
+
+
+
+ao contrário 
+
+do que 
+
+vimos 
+em 
+
+'sequel',
+
+
+AQUI NÓS NUNCA VAMOS PRECISAR
+
+
+'CREATE A DATABASE',
+
+
+
+
+
+E NÃO VAMOS TER QUE ADICIONAR 
+
+ 
+
+ AS _TABLES/COLLECTIONS 
+
+
+
+ À FRENTE DO TEMPO, 
+
+ PQ 
+
+ TUDO 
+
+ ISSO 
+
+ É 
+
+ CRIADO 
+
+
+
+ 'ON THE FLY'
+
+ quando 
+
+ acessarmos 
+
+ essa database pela primeira vez... -------> ISSO, DE NOVO,
+
+
+
+
+ __ SE ENCAIXA NAQUELA NARRATIVA DE 'FLEXIBILIDADE'
+  
+
+  DO 
+
+
+  MONGODB.... (já 
+  
+  
+  
+  nas databases SQL,
+
+
+  TEMOS QUE PREPARAR TUDO 
+
+  'IN ADVANCE'
+
+  se não estivermos usando 
+
+
+  o 
+  SEQUELIZE E SEUS 
+
+
+  MODELS,
+
+
+  
+  )
+
+
+
+
+
+  --> AQUI, NO CASO,
+   
+   NÃO TEMOS QUE 
+
+   FAZER NADA,
+
+
+   SÓ TEMOS QUE DIZER 'HEY, NOS CONECTE A DATABASE DE SHOP',
+
+
+   e SE ESSA DATABSAE NÃO 
+EXISTIR AINDA,
+
+__ VOCÊ DEVE CRIÁ-LA NO MOMENTO EM QUE EU QUERER 
+
+ADICIONAR DATA A ELA'....
+
+
+
+
+
+
+
+
+--> OK... ESSA É UMA SIDENOTE IMPORTANTE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> AQUI, NO CASO,
+
+
+__NÓS REALMENTE __ 
+
+ARMAZENAMOS 
+
+UMA 
+
+CONEXÃO 
+
+
+À DATABASE 
+
+
+
+de 'shop'
+
+
+POR MEIO 
+
+
+DAQUELE CÓDIGO 
+
+de 
+
+
+
+''''
+''''''_db = client.db();''''''
+
+
+
+
+
+
+
+
+
+
+
+--> E COM ESSE CLIENT ARMAZENADO NESSA VARIÁVEL,
+
+
+ 
+
+ __ PODEMOS ___ FAZER UMA COISINHA ADICIONAL... -->
+
+
+ NÃO VAMOS RETORNAR ESSE 
+
+ VALOR de 
+
+ '_db' 
+
+ NO NOSSO CALLBACK,
+
+ e SIM 
+
+
+
+
+ VAMOS ADICIONAR ___ OUTRA __ 
+
+
+
+ function 
+
+
+ em 
+
+
+ 'database.js',
+
+
+
+ UMA FUNCTION 
+ CHAMADA 
+
+
+
+ DE 
+
+
+
+
+ 'getDb = () => {
+
+
+ }
+ '
+
+
+
+
+
+
+
+
+ -_> DENTRO DESSA FUNÇÃO,
+
+
+
+ VAMOS QUERER 
+
+
+
+
+
+ SIMPLESMENTE 
+
+
+ CHECAR (if check)
+
+
+ SE 
+
+
+
+ '_db'  
+
+ ESTÁ SETTADA/EXISTE (se não está como UNDEFINED)... -----> 
+
+
+
+
+
+ NESSE CASE,
+
+ CASO DE NÃO ESTAR COMO UNDEFINED,
+
+ professor 
+
+ vai querer 
+
+
+
+
+ 'RETORNAR _db'  (oU SEJA, VAI RETORNAR __ ACESSO à NOSSA DATABASE)....
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+
+
+ 
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+let _db; 
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+
+
+    (client) => {
+
+
+
+       _db = client.db()          
+    }
+  
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+                throw err;
+      }
+  )
+};
+
+
+
+
+const getDb = () => {
+
+      if(_db) {
+
+        return _db; //////EIS O CÓDIGO EM QUESTÃO.
+      }
+}
+
+module.exports = mongoConnect;
+
+
+
+
+
+-----------------------------
+
+
+CASO CONTRÁRIO,
+
+
+VAMOS 
+QUERER 
+
+FAZER NADA... --> ou seja,
+
+professor 
+
+vai retornar 
+
+UNDEFINED...  (também poderíamos dar throw de um ERROR, como 'No database found!', ou algo do gênero... )
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+let _db; 
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+
+
+    (client) => {
+
+
+
+       _db = client.db()          
+    }
+  
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+                throw err;
+      }
+  )
+};
+
+
+
+
+const getDb = () => {
+
+      if(_db) {
+
+        return _db; //////EIS O CÓDIGO EM QUESTÃO.
+      } else {
+
+        throw 'No database found!';
+      }
+}
+
+module.exports = mongoConnect;
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+OK.... AGORA, É CLARO, 
+
+
+
+O PROFESSOR VAI QUERER 
+
+
+
+EXPORTAR MAIS DO QUE 
+
+
+'mongoConnect'... --> 
+
+
+
+
+
+EM VEZ DISSO,
+
+PROFESSOR VAI USAR OUTRA SINTAXE DE EXPORT QUE APRENDEMOS MAIS CEDO,
+
+SINTAXE QUE 
+
+NOS 
+
+DEIXAR 
+
+EXPORTAR 
+
+
+MÚLTIPLAS COISAS 
+
+DE NOSSOS ARQUIVOS...
+
+
+
+
+
+
+
+
+
+ele vai escrever isto:
+
+
+
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
+
+
+
+
+
+
+
+--> ISSO VAI EXPORTAR ESSAS 2 COISAS.... VAI EXPORTAR ESSES 
+
+2 MÉTODOS...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+let _db; //// o '_' significa que essa variável SÓ VAI SER USADA NESSE MESMO ARQUIVO 'database.js', INTERNAMENTE, e em nenhum outro lugar....
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        // callback(client); não faça assim...
+
+
+       _db = client.db()           //faça assim. --> se você escrever 'client.db()' com o parâmetro em BRANCO, você vai se conectar à database de 'shop' no SEU CLUSTER, pq é ISSO QUE ESPECIFICAMOS NA NOSSA URL....
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+                throw err;
+      }
+  )
+};
+
+
+
+const getDb = () => {
+
+  if(_db) {
+    return _db;
+  } else {
+
+    throw 'No database found!';
+  }
+}
+
+
+
+
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+OU SEJA,
+
+AGORA EXPORTAMOS 
+
+2 
+
+MÉTODOS:
+
+
+
+
+
+
+'mongoConnect' === =  ESSE MÉTODO 
+
+É 
+
+USADO 
+
+PARA 
+
+
+
+CONECTAR NOSSO APP à DATABASE,
+E AÍ 
+
+PARA 
+
+ARMAZENAR 
+
+A CONEXÃO 
+à DATABASE 
+
+EM 
+UMA 
+
+VARIÁVEL
+
+
+(variável de '_db'....)....        -----> A VANTAGEM
+ 
+
+
+ desse 
+
+ método 
+
+
+ 'mongoConnect' É QUE 
+
+ ELE 
+
+ VAI 
+
+
+ 'ALWAYS KEEP ON RUNNING'... 
+
+
+
+
+
+
+
+
+
+
+
+ E AÍ TEMOS O SEGUNDO MÉTODO,
+
+
+ 'getDb',
+
+
+
+ QUE __ VAI 
+
+ 'RETURN ACCESS' 
+
+
+
+
+A ESSA 'CONNECTED DATABASE',
+
+
+___ SE ELA __ EXISTIR/existe... 
+
+
+
+
+
+
+
+(pq seu código 
+
+
+é 
+
+
+
+
+
+const getDb = () => {
+
+  if(_db) {
+    return _db;
+  } else {
+
+    throw 'No database found!';
+  }
+}
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... E AÍ, POR TRÁS DAS CENAS,
+
+
+O 
+
+MONGODB VAI ATÉ MESMO 
+
+
+'MANAGEAR' TUDO ISSO 
+
+DE UMA MANEIRA MT ELEGANTE,
+
+POR MEIO 
+
+
+DE 
+ALGO CHAMADO 
+
+DE 
+
+'CONNECTION POOLING',
+
+
+em que 
+
+
+__ O MONGODB VAI ASSEGURAR QUE 
+
+
+
+ELE CONSIGA PROVIDENCIAR __ 'SUFFICIENT CONNECTIONS'
+
+para 
+
+
+MÚLTIPLAS INTERAÇÕES SIMULTÂNEAS COM A DATABASE....
+
+
+(
+
+
+  isso significa que 
+
+  ESSE PADRÃO QUE O PROFESSOR NOS MOSTROU AGORA É UM 
+
+
+  'GOOD PATTERN',
+
+  um 
+
+
+  PATTERN QUE DEVEMOS SEGUIR...
+)
+
+
+
+
+
+
+
+
+-> COM ESSA MUDANÇA,
+
+nós ainda 
+
+
+
+PODEMOS NOS CONECTAR à DATABASE,
+
+nada de mais.....
+
+
+
+
+
+
+
+
+
+-----> UMA COISA QUE O PROFESSOR PRECISA 
+
+
+É 
+
+AJUSTAR 
+
+O CÓDIGO 
+DE 
+
+'app.js',
+
+AQUELE 
+
+
+
+CALL DE 
+
+'mongoConnect'...
+
+
+
+
+
+
+
+
+
+que está assim:
+
+
+
+
+
+
+mongoConnect((client) => {
+
+    console.log(client);
+    app.listen(3000);
+
+}) 
+
+
+
+
+
+
+
+----> ELE NÃO __VAI MAIS ___ 
+
+
+CONSEGUIR 
+
+
+o 
+
+'client'
+
+
+ali.... --> ISSO PQ NÓS NÃO VAMOS MAIS RETORNAR O 'CLIENT'
+
+
+
+LÁ 
+
+
+NO CALLBACK DESSA FUNÇÃO,
+
+justamente pq o callback não está/não será mais utilizado....
+
+
+
+
+
+
+
+
+
+---> AGORA, NO CASO,
+
+O CÓDIGO FICA ASSIM:
+
+
+
+''''''''''''''''''
+
+
+
+
+mongoConnect(
+  () => {
+    app.listen(3000);
+  }
+)
+
+
+'''''''''''''''''''''
+
+
+
+
+ESSE CÓDIGO, PORTNATO, 
+
+
+
+NOS DIZ QUE 
+
+
+'WE ARE CONNECTED, BUT THERE IS NOTHING ELSE WE CAN DO'...
+
+
+
+
+
+
+
+--> MAS UMA COISA QUE __ PODEMOS __ FAZER,
+
+
+
+É __ LÁ EM 'PRODUCT.JS',
+
+
+
+naquele local em que 
+
+O PROFESSOR CRIOU O MODEL DE 
+
+'product',
+
+que tem este código:
+
+
+
+
+
+
+const mongoConnect = require('../util/database');
+
+
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+
+    save() {
+
+
+        mongoConnect
+
+    }
+
+}
+
+
+
+module.exports = Product;
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+LÁ, NESSE CÓDIGO DESSE ARQUIVO,
+
+O PROFESSOR 
+
+
+VAI QUERER 
+
+
+IMPORTAR 
+
+ALGO DIFERENTE 
+
+DE 
+
+
+'mongoConnect',
+
+
+VAI QUERER 
+
+IMPORTAR 
+
+
+
+a funçaõ 
+
+de 
+
+
+'getDb()',
+
+
+QUE 
+
+
+
+__WRAPPA__/ESTAVA WRAPPANDO 
+
+
+
+A FUNÇAÕ 
+
+DE 
+
+'mongoConnect'... 
+
+
+
+--> E PROFESSOR EXPLICA QUE 
+
+VAI CONSEGUIR 
+
+ESSA FUNÇÃO ESPECÍFICA 
+
+
+POR MEIO 
+
+DA 
+
+ESCRITA 
+
+de 
+
+'.getDb()' depois 
+
+
+
+da escrita do 'require('../util/database)'....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const getDb = require('../util/database').getDb; ///EIS O CÓDIGO EM QUESTÃO.
+
+ 
+
+
+
+
+
+
+
+
+ --> EX:
+
+
+
+
+
+ 
+const getDb = require('../util/database').getDb; ///SINTAXE DE IMPORTS UM POUCO MAIS REBUSCADA....
+
+
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+
+    save() {
+
+
+       
+
+    }
+
+}
+
+
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE 
+
+ISSO AGORA SIGNFIICA 
+
+QUE 
+
+
+EU 
+
+
+
+POSSO CHAAMR ESSA FUNÇÃO DE 
+'getDb'
+
+PARA 
+
+
+__CONSEGUIR _ACESSO A MINHA DATABASE,
+
+e que 
+
+AGORA POSSO A UTILIZAR PARA 
+
+
+__INTERAGIR_ COM 
+
+A DATABASE...
+
+
+
+
+
+
+--> VAMOS USAR __ ESSA 'DATABASE CONNECTION'
+
+na próxima lição....
+
+
+
+
+
+
+
+
+OBS:::: NOSSO CODIGO FICOU BEM PARECIDO COM ISTO:
+
+
+export const connectDatabase = async (url) => {
+  const client = await MongoClient.connect(url);
+  return client;
+};
+

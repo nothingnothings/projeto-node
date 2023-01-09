@@ -1,0 +1,2362 @@
+
+
+
+
+
+
+
+
+
+
+-_> ADICIONAMOS 'MULTER'
+
+
+
+
+NO NOSSO APP.JS...
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const multer = require('multer'); ///USADO PARA HANDLAR FILE UPLOADS FEITOS PELO USER AO NOSSO BACKEND/APP...
+
+const mongoose = require('mongoose'); // isto DEPRECA o arquivo 'database.js', pois faz toda sua função/atribuições AUTOMATICAMENTE (conecta-nos à database NOSQL/mongodb...)....
+
+const session = require('express-session'); //// instalado/incorporado ao nosso project por meio de 'npm install --save express-session'...  ------> ESSA PACKAGE VAI NOS DEIXAR 'SETTAR 1 SESSION' PARA O NOSSO APP, session QUE __ SERÁ INCORPORADA/CONSIDERADA/USADA __ EM TODO __  REQUEST SUBSEQUENTE QUE FIZERMOS AO NOSSO app node....
+
+const MongoDBStore = require('connect-mongodb-session')(session); /////PACKAGE USADO COM 'express-session' PARA __aRMAZENAR__ NOSSAS 'SESSIONS' em databases MONGODB... (bem melhor do que usar a MEMORY DE NOSSO NODEJS PARA FAZER STORE DE NOSSAS SESSIONS...)
+////vocÊ deve usar esse package/configurar esse STORE de sessions LÁ NO 'app.use' (middleware) que DEFINE A SUA SESSION, auqele 'app.use(session)'...
+
+// const expressHbs = require('express-handlebars');
+
+const app = express();
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+const store = new MongoDBStore( ////usado junto de 'app.use(session())', lá embaixo. Os 2 são necessários...
+  {
+    ///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+    uri: MONGODB_URI, ///mesma connection string de nosso CONNECT GERAL AO NOSSO DATABASE... (usado lá em 'mongoose.connect()')...
+
+    collection: 'sessions', //aqui você define a COLLECTION em que você vai querer ARMAZENAR SUAS SESSIONS....
+    //expires// opcional.... ---> SE VOCÊ SETTAR ISSO, o mongodb VAI AUTOMATICAMENTE LIMPAR suas sessions ARMAZENADAS NESSA collection aí, quando o tempo delas expirar, tempo definido nessa key...
+  } //em 'uri' você deve colocar A __sTRING__ DA DATABASE EM QUE VOCê VAI QUERER ARMAZENAR (o seu store) SUAS SESSIONS...
+);
+
+
+const csrf = require('csurf'); ///USADO __ PARA___ EVITAR 'CSRF ATTACKS', tudo por meio do uso de CSRF TOKENS _ NAS NOSSAS VIEWS.... (Assistir aula 255)... --> OBS:::: VOCÊ DEVE INICIALIZAR/CONFIGURAR SEU CSRFTOKEn (com aquele 'app.use(csrfProtection)'  ) __DEPOIS__ DO MIDDLEWARE QUE DEFINE/SETTA __ SUA __ SESSION.... (visto mais abaixo, com 'app.use(session())' )
+
+
+const flash = require('connect-flash'); /////USADO __ PARA__ FAZER SHOW __ DE ERROR MESSAGES/DISPLAY DE MENSAGENS DE ERRO AO USER __APÓS___ REDIRECTS... (utiliza SESSIONS para isso). ----> OBS::: __TAMBÉM__ DEVE SER INICIALIZADO/USADO ___ DEPOIS __ DO SET DA SESSION (Que é feito com o middleware de 'app.use(session())' )
+
+
+
+app.set('view engine', 'ejs');
+
+// app.set('views', 'views');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const authRoutes = require('./routes/auth');
+
+const errorController = require('./controllers/error');
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+////DEPRECADO PELO USO DE 'mongoose', que foi importado logo acima, com 'const mongoose = require('mongoose');'...
+// const mongoConnect = require('./util/database').mongoConnect; ///use isto em conjunto com 'getDb()' (EXECUTE O 'mongoConnect' para CONECTAR SEU APP AO MONGODB; mongoConnect é uma função auxiliar criada lá em 'database.js'... 'getDb()' TAMBÉM É UMA FUNÇÃO AUXILIAR CRIADA LÁ EM 'database.js', MAS É UMA FUNÇÃO QUE DEVERÁ SER CHAAMDA NOS MÓDULOS DE SEU APP NODEJS, para executar OPERAÇÕES COM A DATABASE a partir do '_db' que ficou defined/undefined em razão da EXECUÇÃO dessa função 'mongoConnect'...)
+//importe sempre 'mongoConnect' no seu 'app.js', e nunca 'getDb()'; o 'getDb()' é para ser usado NOS SEUS MÓDULOS, NOS SEUS CONTROLLERS, etc...s
+
+// const sequelize = require('./util/database');  //uso de databases SQL...
+
+// const Product = require('./models/product'); //uso de databases SQL
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const OrderItem = require('./models/order-item');
+// const Order = require('./models/order');
+
+const User = require('./models/user');
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+
+app.use(multer({dest: 'images'}). /// o SET DE 'dest' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+single('image'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+
+
+
+
+const csrfProtection = csrf( //para fazer esse package de proteção contra ataques CSRF funcionar, VOCÊ __PRECISA__ adicionar CSRF TOKENS A SUAS VIEWS/deixar os csrf tokens DISPONÍVEIS NAS SUAS VIEWS...
+
+
+
+
+  // { //OBJETO CONFIG É OPCIONAL, configura DETALHES como 'ONDE DEVEMOS GUARDAR NOSSO CSRF TOKEN' (o default é NA SESSION, no serverside, mas é possível GUARDAR ESSE VALOR EM COOKIES)
+
+  // } //SÓ ESTE CÓDIGO NÃO BASTA... ainda precisamos _ INICIALIZAR ESSe 'csrfProtection', o que é visto LOGO EMBAIXO, depois do CÓDIGO DE INICIALIZAÇÃO/DEFINIÇAO DE NOSSAS 'session'... ( e esse 'csrfProtection()' SEMPRE DEVE SER _ EXECUTADO__ APÓS ___ A DEFINIÇÃO/INICIALIZAÇÃO DE NOSSA SESSION)
+); 
+
+
+
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, ///define o STORE que você vai querer usar.... (vamos passar nossa CONSTANTE de 'store' que definimos mais acima..., com o 'new MongoDBStore()'...)
+      // cookie: { ////KEY USADA PARA _ DEFINIR CONFIGS ESPECÍFICAS DE NOSSO 'SESSION COOKIE', dos session cookies armazenados no browser de nosso user... (pleonasmo... todos session cookies são armazenados NO BROWSER DO USER...)
+      //   maxAge: ...
+      // }
+    }
+  )
+);
+
+
+
+app.use(csrfProtection); ///inicializa nossa PROTEÇÃO CONTRA ATAQUES CSRF....
+
+app.use(flash()); //inicializa NOSSO CÓDIGO QUE VAI AJUDAR COM O SHOW/DISPLAY DE MESSAGES DE ERRO A PARTIR DE REDIRECTS...
+///definido o uso de 'connect-flash', podemos o UTILIZAR EM QUALQUER LUGAR DE NOSSO APP, no objeto 'request'....
+/// USAGE do MÉTODO que vem com esse middleware:  devemos escrever 'req.flash()' nos LOCAIS DE NOSSO CÓDIGO/CASES __ EM QUE __ VAMOS QUERER FLASHAR UMA 'ERROR MESSAGE' dentro de nossa session, para ser usado PARA __ DISPLAYAR__ ERROR MESSAGES AO USER/USERS....
+
+
+
+
+
+
+app.use((req, res, next) => {  ///////////MIDDLEWARE QUE __ VAI ADICIONAR/ADICIONA __ O CSRF TOKEN __ E UMA SESSION____ A CADA 1 DE NOSSAS ROUTES DO APP...
+
+
+  ///'.locals' ---> É PROPRIEDADE __ CRIADA__ DENTRO __ DO OBJETO 'res'.... significa 'local variables', E É __ ADICIONADA __ POR MEIO DA PACKAGE DO 'EXPRESS'.... 
+
+
+
+  ///qual é a utilidade de 'locals'? ------> A UTILIDADE É __JUSTAMENTE__ ADICIONAR a CSRF TOKEN e A SESSION a TODAS AS PAGES DE SEU APP, por meio de middlewares como este aqui...
+
+
+  //TUDO QUE  DEFINIRMOS EM '.locals' (como 'csrfToken' e 'isLoggedIn', respectivamente nossa CSRF TOKEN E __ A SESSION/AUTH STATUS DO USER...) PODERÁ _SER USADO __ EM CADA 1 DOS VIEWS __ DE NOSSO APP... --_> e é assim que implementamos as SESSIONS e os CSRF TOKENS todos de uma vez, em todas as pages de nosso app...
+res.locals.isLoggedIn = req.session.isLoggedIn;
+console.log('LOCALS SET')
+res.locals.csrfToken = req.csrfToken();
+
+  next(); ///esse 'next' É NECESSÁRIO, pois __ vamos querer PROSSEGUIR_  depois __ do set dessas propriedades...
+
+
+
+
+  ////OBS:: IMPORTANTE!!! --> SÓ NUNCA SE ESQUEÇA DE COLOCAR O INPUT DE TYPE HIDDEN específico (este aqui:  <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->) ________EM __TODAS AS FORMS, NOS SEUS VIEWS, DE SEU PROJECT.... é necessário, pq senão o pacote 'csurf' VAI TE RETORNAR ERROS DE 'INVALID TOKEN', etc etc...
+}
+)
+
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+  // throw new Error('Dummy'); //// exemplo de THROW DE ERROR em códigos SÍNCRONOS (que vai REALMENTE TRIGGAR o special express error handling middleware, ao contrário do throw de Error em CÓDIGOS_ _ ASSÍNCRONOS, que não funciona)...
+  if(!req.session.user) { //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+  }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);//importante. é isso que vai 'REACH OUT' o SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE....
+      // throw new Error(err); //NUNCA FAÇA ASSIM.... não faça o THROW DE ERRORS dentro de código assíncrono (dentro de CALLBACKS, THEN-CATCH BLOCKS e async/await), PQ ESSES THROWS __ NÃO VÃO TRIGGAR__ O SEU 'SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE' (só será triggado esse middleware SE SEU 'throw new Error()' for escrito FORA DE CÓDIGO ASSÍNCRONO, em código SÍNCRONO....) --> PARA CONSEGUIR 'REACH OUT' AO SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE __ DENTRO _DE CÓDIGO ASSÍNCRONO (como promises/then-catch, callbacks e async/await), VOCê É __ OBRIGADO__ A USAR 'next(new Error(error))'...
+    });
+});
+
+
+
+
+
+
+
+
+
+// app.use((req, res, next) => { //esta é a versão 'NORMAL MONGODB DRIVER' de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+//   User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+//     .then((user) => {
+//    ////////////  req.user = user; //////////CÓDIGO VELHO, SEM OS METHODS necessários...
+//    req.user = new User(user.name, user.email, user.cart, user._id); ///////////CÓDIGO NOVO, COM OS METHODS NECESSÁRIOS...
+//       next();
+//       // console.log(req.user, 'TEST3');
+
+//     })
+
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+//   // next();
+//     // console.log('TEST2');
+// });
+
+/////////////MOVIDO LÁ PARA O CONTROLLER DE 'auth.js', no controller de 'exports.postLogin'.... (agora o user SÓ ESTARÁ 'LOGGED IN' ao pressionar o BUTTON de 'login'...)
+// app.use((req, res, next) => { //esta é a versão MONGOOSE de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+//   User.findById('6178c60a90464c24983b0847') ///dummy user...
+//     .then((user) => {
+
+//       req.user = user; ////com isso, DEFINIMOS UM OBJETO 'user' no nosso request COMO TENDO O VALOR DO OBJETO/DOCUMENT 'user' ''''MONGOOSADO''' (ou seja, com TODOS OS METHODS CONVENIENCE DO MONGOOSE, ALÉM DA DATA DO USER QUE QUERÍAMOS), extraído lá da collection de 'users'...
+//       next();
+
+//     })
+
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+// });
+
+// Product.belongsTo( //uso de databases SQL
+//   User,
+
+//   {
+//     constraints: true,
+//     onDelete: 'CASCADE',
+//   }
+// );
+// User.hasMany(Product);
+
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+
+// User.hasMany(Order);
+// Order.belongsTo(User);
+
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
+app.use((req, res, next) => {
+  // console.log(req.user, 'LINE666666');
+  next();
+});
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+
+
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404);
+
+
+app.use( ///////MIDDLEWARE ESPECIAL DO EXPRESS. USADO PARA HANDLING DE ERROS... (o express identifica que ele é especial POR MEIO DOS SEUS 4 ARGUMENTOS, 'error, req, res, next'...)
+(error, req, res, next) => { //para acessar/executar o código contido nesse MIDDLEWARE/nesses middlewares especial/especiais, basta USAR A FUNÇÃO 'next()' e então passar UM ERRO COMO PARÂMETRO, TIPO ASSIM: 'next(erroQueVocêQuerPassar)' ------> SE VOCÊ USAR ISSO EM ALGUM LUGAR DO SEU CO´DIGO, ESSE CALL VAI AUTOMATICAMETNE TRIGGAR ESTE MIDDLEWARE AQUI, de 'error, req, res, next'...
+//e sim, a execuçaõ desse middleware especial vai pular ATÉ MESMO A EXECUÇAÕ DE 'error404' (que é o middleware/route 'unknown' de nosso app, que faz catch de todos os paths/routes não compreendidos por 'adminRoutes', 'authRoutes', etc...)
+
+    // res.redirect('/500'); //ver controller de 'error500', lá em 'error.js'...
+
+
+
+    res.status(500).render('500', {
+
+      pageTitle: 'Error!',
+      path: '/500',
+      isLoggedIn: req.session.isLoggedIn
+  })
+
+
+
+}
+
+); 
+
+
+
+// sequelize //uso de databases SQL
+//   .sync()
+//   .then((result) => {
+//     return User.findByPk(1);
+//   })
+//   .then((user) => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+
+//     return user;
+//   })
+//   .then((user) => {
+//     return user.createCart();
+//   })
+//   .then((cart) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+// mongoConnect(   ///uso de databases NOSQL....
+
+////versão de connect to databse que VOCÊ NÃO DEVE USAR....
+
+//   (client) => { //callback function.... examinar arquivo de 'database.js', no folder 'util'...
+
+//     console.log(client);
+//     app.listen(3000);
+//   }
+
+// );
+
+// mongoConnect(   ////deprecado pelo uso de 'mongoose.connect()', que É A MESMA COISA QUE ESTE CÓDIGO, MAS COM A ATUAÇÃO DE 'MONGOOSE' NO WRITE DE NOSSAS QUERIES (é ele que vai formular nossas queries, a partir de uma linguagem 'object Document mapping' ...)
+//   () => {
+
+//     app.listen(3000);
+
+//   }
+
+// );
+
+
+
+
+
+
+
+// mongoose ///////CÓDIGO __ QUE __ AINDA FAZIA __ O CREATE DE 1 USER 'FIXO', que sempre era adicionado ao nosso request object.... --> era um 'DUMMY USER', que foi substituído pela feature de USERS DE VERDADE, usada nesse código mais abaixo....
+//   .connect(
+//     ///sempre ESCREVA ESSE CÓDIGO no seu 'app.js'/arquivo central, pq É ELE __ QUE __ VAI SETTAR SUA CONEXÃO À DATABASE MONGODB, mediada pelo mongoose...
+//     // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+//     MONGODB_URI //mesma coisa que essa fita ali de cima.....
+//   )
+//   .then((result) => {
+//     User.findOne().then((user) => {
+//       if (!user) {
+//         ///só vai criar 1 novo document 'user' na nossa collection 'users' __ SE NENHUM USER FOR ENCONTRADO DENTRO DELA... (isso evita a criação de múltiplos users, nesse nosso DUMMY PROJECT)...
+//         const user = new User({
+//           //CRIA UM OBJETO/document 'user' na collection de 'users' com ESSES VALORES NOS FIELDS...
+//           name: 'Max',
+//           email: 'max@test.com',
+//           cart: {
+//             products: [],
+//           },
+//         });
+//         user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+//       }
+
+//       app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+//     });
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+
+
+
+
+mongoose
+  .connect(
+  // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+
+      app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+ 
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+ 
+
+
+--> APRENDEMOS QUE O MULTER É CAPAZ 
+
+
+DE 
+
+
+1) ACCEPT OUR INCOMING DATA 
+
+
+
+
+2) EXTRAIR OS ARQUIVOS
+
+
+
+
+3) FEITA ESSA EXTRAÇÃO, PODE ARMAZENAR ESSES ARQUIVOS 
+
+EM 1 FOLDER DE NOSSO APP (filesystem....) (TAMBÉM PODE ARMAZENAR NA __MEMORY__ _DE NOSSO APP, se vocÊ não especificar uma key de 'destination' no setup do multer... --> SE VOCÊ FIZER ISSO, O 'BUFFER' DA DATA DO ARQUIVO QUE VOCÊ UPLOADOU FICARÁ EM UMA KEY de 'buffer' lá em 'req.file'....)
+
+
+
+
+
+
+
+4) SE VOCÊ NÃO ARMAZENA ESSE ARQUIVO UPLOADADO EM 1 FOLDER NO SEU APP,
+
+ELE É ARMAZENADO NA KEY DE 'buffer', dentro de 'req.file'...  (esse objeto aí)...
+
+
+
+
+
+
+
+
+------> CERTO.... MAS O PROFESSOR 
+
+
+
+
+
+NOS DIZ, AGORA, QUE 
+
+TUDO O QUE 
+
+PRECISAMOS FAZER É 
+
+
+'
+ENSURE THAT OUR DATA GETS STORED CORRECTLY'...
+
+
+
+
+
+
+
+
+
+
+--> como assim, 'ARMAZENADO CORRETAMENTE'? 
+
+
+
+
+
+
+
+
+--> bem, até agora, 
+
+
+TODOS OS ARQUIVOS 'image'
+
+ACABARAM 
+
+
+ARMAZENADOS EM UM FOLDER DE nome 
+
+'image',
+
+
+
+
+e todos eles com um NOME GOZADO (nome hasheado, aleatório),
+
+CRIADO AUTOMATICMAENTE PELO MULTER... 
+
+
+
+
+
+
+
+
+--> PROFESSOR NOS EXPLICA QUE 
+
+
+
+VAMOS QUERER ALTERAR ESSES FILENAMES,
+
+
+vamos querer 
+
+
+
+
+FAZER ISSO PARA PODER ARMAZENAR NOSSOS ARQUIVOS CORRETAMENTE..
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+
+ELE VAI ATÉ O CÓDIGO DE 
+
+
+
+
+'app.use(multer({dest: 'images'}).single('image'))' 
+
+
+
+
+
+
+
+
+
+-----> ELE DIZ QUE ALÉM DE ESPECIFICAR O 'DESTINATION FOLDER',
+
+
+
+
+
+__ NÓS __ TAMBÉM __ PODEMOS FAZER MAIS COISAS... -
+
+
+
+
+
+
+
+
+
+
+
+---> TEMOS A KEY DE 'storage'... -------> ESSA KEY __ NOS DÁ __ BEM MAIS __ 
+
+
+
+'CONFIGURATION OPTIONS' que 
+
+
+
+só esse 
+
+'dest'...
+
+
+
+
+
+-----> TIPO ASSIM:
+
+
+
+
+
+
+'app.use(multer(storage).single('image'))' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------->  OK.... -----> MAS O PROBLEMA, AQUI, É QUE 
+
+
+ESSE 
+
+'storage' aí 
+
+
+
+É DEFINIDO MELHOR __ NO LUGAR _ DE FORA DESSE MIDDLEWARE,
+
+
+
+em uma 
+
+CONSTANTE QUE SEGURA UM NEGÓCIO.... constante de nome 'storage'...
+
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+const fileStorage = ...
+
+
+app.use(multer(fileStorage).single('image'))
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... O QUE O PROFESSOR VAI FAZER 
+
+É 
+
+
+
+
+
+
+CRIAR ESSA CONST AÍ... --> NO __ VALOR_ DESSA CONST, 
+
+PROFESSRO 
+
+
+VAI 
+
+
+
+ESCREVER 
+
+
+
+'multer...' 
+ 
+
+ (VAI USAR A PACKAGE DE MULTER)
+
+
+
+ E AÍ __ VAI QUERER __ ACESSAR A FUNÇÃO DE 'diskStorage()' ... ------> ESSA FUNÇÃO,
+
+
+
+ NO FINAL DAS CONTAS,
+
+
+
+
+
+ É __ UMA 'STORAGE ENGINE'
+
+
+
+ QUE VOCÊ PODE USAR COM O 'MULTER'... ------> VAI FICAR TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+ 
+const fileStorage = multer.diskStorage();
+
+
+app.use(multer(fileStorage).single('image'))
+
+
+
+
+
+
+
+
+
+
+
+--------------> CERTO.... 
+
+
+
+
+MAS O QUE INTERESSA É QUE _DENTRO__ DESSA FUNÇÃO 
+
+
+'diskStorage'
+
+
+SOMOS OBRIGADOS A PASSAR UM __OBJETo__ JAVACSRIPT,
+
+
+
+
+OBJETO EM QUE __ VAMOS CONFIGURAR__ ESSA ENGINE....
+
+
+
+
+
+
+
+
+
+
+-------> 'diskStorage'
+
+
+
+ACEITA/EXIGE DUAS KEYS,
+
+
+
+QUE SÃO:
+
+
+
+
+1) DESTINATION (mesma coisa que 'dest')
+
+
+
+
+e 
+
+
+
+
+
+2) filename
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  {
+    destination: ,
+    filename: 
+  }
+)
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+ 
+app.use(multer(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  fileStorage
+  ). 
+
+
+
+single('image'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE 
+
+
+ 
+
+
+ 'destination' 
+
+
+ e 
+
+ 'filename',
+
+ ESSAS 
+
+
+
+ 2 FUNÇÕES/PROPRIEDADES 
+
+
+
+ SERÃO __ 'THEN CALLED FOR A GIVEN FILE',
+
+
+
+
+ E AÍ 
+
+ ESSAS FUNÇÕES 
+
+
+ VÕA ENTÃO ___ CONTROLAR___ 
+
+
+
+
+ COMO __ ESSA FILE SERÁ HANDLADA...--> vão controlar:
+
+
+
+
+
+
+
+ 1) O LUGAR EM QUE VOCÊ VAI ARMAZENAR ESSE FILE 
+
+
+
+ 2) O NAME DESSE FILE....
+
+
+
+
+
+
+
+
+ -----> ok, mas vocÊ disse que é uma function, apesar de isso NÃO PARECER UMA FUNCTION...
+
+
+
+
+ -> NÃO, REALMENTE É UMA FUNCTION... É UMA _ PROPRIEDADE__ QUE SEGURA UMA FUNCTION (arrow function)...
+
+
+
+
+
+
+
+
+
+
+
+ O CÓDIGO, PORTANTO, SERÁ ESCRITO ASSim:
+
+
+
+
+
+
+
+
+ 
+
+const fileStorage = multer.diskStorage(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  {
+    destination: () => {}, ////EIS O CÓDIGO EM QUESTÃO.
+    filename: 
+  }
+)
+
+app.use(bodyParser.urlencoded({ extended: false }));
+ 
+app.use(multer(  
+  fileStorage
+  ). 
+
+
+
+single('image'));
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+--> OU SEJA, COMO VOCÊ PODE VER,
+
+
+
+
+O 
+
+
+
+negócio está assim: 
+
+
+
+'destination: () => {}'...
+
+
+
+
+
+
+
+
+
+
+------> ESSA FUNÇÃO ANONIMA VAI SER ___ CHAMADA __ PELO MULTEr...
+
+
+
+
+
+
+
+
+
+----> ESSA FUNÇÃO ANÔNIMA _ VAI RECEBER, OBRIGATORIAMENTE,
+
+
+
+
+OS PARÂMETROS:
+
+
+
+
+
+
+
+
+1) REQ
+
+
+
+
+2) FILE 
+
+
+
+3) CALLBACK (callback function)...
+    (ISSO É UM __ CALLBACK __ QUE VOCÊ PRECISA __ OBRIGATORIAMENTE CHAMAR __ QUANDO VOCÊ ESTIVER 'DONE SETTING UP THE DESTINATION'....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+ESSES 
+
+3 
+PARÂMETROS SÃO __ TODOS __ USADOS __ PARA 'INTERACT WITH MULTER'... (e acho que é AQUI __ QUE POSSO ESCREVER 
+
+CÓDIGO PARA _ NÃO DEIXAR O MULTER ARMAZENAR ARQUIVOS QUANDO TIVER OCORRIDO ALGUM VALIDATION ERROR, lá em 'admin.js' ' .... )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  {
+    destination: (req, file, cb) => {
+        
+    },
+    filename: 
+  }
+)
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+ 
+app.use(multer(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  
+  // {dest: 'images'} ///VERSÃO 'SIMPLES' DE CONFIGURAR O MULTER... não é tão boa, pq não te dá coisas como o CONFIG DAS SUAS FILENAME, etc.... (coisa vista naquela config constant de 'fileStorage', logo acima...)
+    
+  fileStorage
+  ). 
+
+
+
+single('image'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+DENTRO DO FUNCTION BODY DE 
+
+'destination',
+VOCÊ PODE,
+
+
+POR EXEMPLO,
+
+
+
+
+
+
+__ CHAMAR__ o 
+
+
+
+'cb()'.... ------> MAS AÍ, É CLARO,
+
+VOCÊ VAI CHAMAR O 
+
+
+
+
+CB() (callback)
+
+
+
+
+PASSANDO COMO SENDO 'NULL' O PRIMEIRO ARGUMENTO  
+
+
+
+
+(
+
+
+
+  UÉ, MAS __ POR QUE__ 
+
+
+  COLOCAR COMO 'NULL' O PRIMEIRO ARGUMENTO DESSE 'cb()'? ------> É PQ 
+
+
+
+  ____ ESSE PRIMEIRO ARGUMENTO É PARA SER 'AN ERROR MESSAGE YOU THROW',
+
+  uma mensagem de ERRO PARA INFORMAR O MULTER DE QUE 
+
+
+  HÁ ALGO DE ERRADO COM A 'INCOMING FILE',
+
+
+  E QUE 
+
+
+  __ ELE 'NÃO DEVE A ARMAZENAR'...  (OU SEJA, É EXATAMENTE O QUE EU QUERIA __ PARA __ EVITAR 'FILE STORAGES' QUANDO SURGIR ALGUM VALIDATION ERROR RELATIVO AO USUÁRIO..)
+   
+) ------> MAS 
+
+
+
+SE VOCÊ DIZ 
+
+'null',
+
+VOCÊ __ ESTÁ __ DIZENDO AO MULTER QUE __ 
+
+
+
+'ESTÁ OK VOCÊ ADICIONAR ESSE ARQUIVO'...
+
+
+
+
+
+
+
+
+
+------> OK... JÁ O SEGUNDO ARGUMENTO DE 'cb()'
+
+
+DEVE/DEVERÁ _ SER _ O ARGUMENTO EM QUE __ VOCÊ __ REALMENTE_ QUER 
+
+QUE 
+
+
+SUA FILE SEJA ARMAZENADA, NO CONTEXTO DO APP NODEEXPRESSJS... (como queremos que isso seja armazenado em 'images', esse folder aí, digitamos 'images')..
+
+
+
+
+
+
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  {
+    destination: (req, file, cb) => {
+        
+        cb(null, 'images'); //////EIS O CÓDIGO EM QUESTÃO.
+    },
+    filename: 
+  }
+)
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+ 
+app.use(multer( 
+  
+    
+  fileStorage
+  ). 
+
+
+
+single('image'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+OK....
+
+
+
+
+VOU TENTAR ESCREVER UM CÓDIGO POR CONTA PRÓPRIA....
+
+
+
+
+
+
+
+-> não deu certo.... 
+
+
+
+
+
+
+
+--> EU TENTEI ESCREVER ALGO ASSIM:
+
+
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  {
+    destination: (req, file, cb) => {
+
+
+      if(validationResult(req).array().length > 0) {
+
+        return cb ('ERROR', 'images');
+      } else {
+
+      
+
+    return cb (null, 'images'); ///o 'null' é relativo AO 'ERRO' QUE VOCÊ PASSA COMO PRIMEIRO ARGUMENTO DESSE CALLBACK...
+      }
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.filename + '-' + file.originalname);
+    }
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS NÃO FUNCIONOU.... (esse if check não deu certo, não sei porque)...
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+OK, RETORNANDO AO CÓDIGO DO PROFESSOR...
+
+
+
+
+
+
+
+-----> CERTO... 
+
+
+
+
+
+
+
+
+continuando.... 
+
+
+
+
+
+---> dentro daquele FUNCTION BODY,
+
+
+
+
+
+
+PROFESSOR COLOCOU 'null'
+
+
+
+NAQUELE SLOT DA ERROR MESSAGE... -------> 
+
+
+
+
+
+O SEGUNDO ARGUMENTO FARÁ COM QUE 
+
+
+NOSSO ARQUIVO SEJA 
+
+ARMAZENADO ALI em 'images'...
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR REPETE O CÓDIGO DA FUNCTION de 'destination'
+
+
+
+lá em 
+
+'filename',
+
+escrevendo assim:
+
+
+
+
+
+filename: (req, file, cb) => {
+
+
+}
+
+
+
+
+
+----------->  TAMBÉM É UMA ARROW FUNCTION... --> 
+
+
+
+
+
+
+
+
+REQ --> OBJETO REQ 
+
+
+
+FILE --> CONTERÁ 'SOME DATA ABOUT THE FILE'...
+
+
+
+CB --> __ É UM CALLBACK QUE DEVEMOS CHAMAR PARA 
+
+
+'LET MULTER KNOW ABOUT HOW TO NAME THIS FILE'....
+
+
+
+
+
+
+
+-----> AÍ, DENTRO 
+
+
+DO FUNCTION BODY DE '
+
+filename',
+
+
+
+
+
+
+O PROFESSOR VAI ESCREVER 
+
+
+de novo 
+
+'cb(null, ....)' 
+
+
+
+
+
+
+
+-----> JÁ O SEGUNDO ARGUMENTO É 
+
+
+
+'O FILENAME QUE QUEREMOS USAR'....
+
+
+
+
+
+
+
+
+
+--> AQUI, NO CASO, PROFESSOR VAI FAZER UMA __ GRANDE GAMBIARRA__...
+
+
+
+
+
+
+-------> ELE DIZ QUE 
+
+
+CERTAMENTE PODERÍAMOS ESCREVEr 
+
+'image.png',
+
+
+MAS __ ISSO SERIA MEIO 'BORING'... ----------> 
+
+
+
+
+
+
+
+EM VEZ DISSO,
+
+
+
+PROFESSOR DIZ QUE PODEMOS 
+
+
+
+ESCREVER 
+
+
+'file'
+
+PARA 
+
+
+
+
+REFERENCIAR AQUELE OBJETO 'file'... ------> AÍ,
+
+
+
+DENTRO 
+
+DESSE OBJETO 
+
+'file',
+
+
+
+TEMOS 
+
+
+
+
+1 PROPRIEDADE CHAMADA 'originalName',
+
+
+QUE VAI 
+
+
+REALMENTE _ SEGURAR -_ 'THE ORIGINAL FILENAME'... (
+
+
+
+  esse é bom de usar, de fato....
+)
+
+
+
+
+
+
+
+--> É POR ISSO QUE O PROFESSOR VAI ESCREVENDO ESSE CÓDIGO ASSIM:
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  {
+    destination: (req, file, cb) => {
+        
+        cb(null, 'images'); 
+    },
+    filename: cb(null, file.originalName ) //////////////EIS O CÓDIGO EM QUESTÃO.
+  }
+)
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+ 
+app.use(multer( 
+  
+    
+  fileStorage
+  ). 
+
+
+
+single('image'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+-------> OK... MAS O PROFESSOR 
+
+VAI QUERER __ 
+
+
+COMBINAR 
+
+
+'O MELHOR DOS 2 MUNDOS':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ELE VAI QUERER COMBINAR o 
+
+
+'file.originalName'
+
+
+
+com 
+
+
+
+
+'file.fileName' (que 
+
+
+É 
+
+
+UMA PROPRIEDADE DENTRO DE 'req.file' 
+
+QUE VAI 
+
+SEGURAR AQUELE 'RANDOM HASH' 
+
+
+armazenado em cada arquivo 
+
+
+no 
+
+
+
+seu app...
+
+
+)
+
+
+
+
+
+
+
+-------> É POR ISSO QUE O PROFESSOR VAI CONCATENAR 
+
+
+
+ESSES 
+
+
+
+2 'VALUES' 
+
+para formar a string que vai ser o nome da file....
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+    filename: cb(null, file.originalName + '-' + file.fileName ) //////////////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+  ------------------------------
+
+
+
+
+
+
+
+  OK...... 
+
+
+
+
+
+  CONCATENAMOS ESSES NEGÓCIOS,
+
+  para 
+
+  NÃO EXISTIR 
+
+
+
+
+
+  CONFUSÕES 
+
+
+  ENTRE 
+
+
+  ARQUIVOS ARMAZENADOS NO STORAGE DE NOSSO 
+
+
+  APP NODEEXPRESS....
+
+
+
+
+
+
+
+
+
+
+  --> POR FIM, AGORA __ APENAS __ PRECISAMOS __ INFORMAR O 'MULTER'
+
+
+  DE QUE 
+
+  VAMOS QUERER __ USAR __ 
+
+
+  ESSA 
+
+  'STORAGE ENGINE' (armazenada nessa const, essa storage engine criada com 'multer.diskStorage'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+const fileStorage = multer.diskStorage(  ///É POR MEIo de 'multer.diskStorage()' QUE VAMOS __ CRIAR UMA 'STORAGE ENGINE'.. --> e essa storage engine será , então, utilizada NAQUELE MIDDLEWARE DO MULTER, VISTO LOGO ABAIXO... tipo naquele objeto {storage: fileStorage}...
+  {
+    destination: (req, file, cb) => {  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+
+      
+
+    return cb (null, 'images'); ///o 'null' é relativo AO 'ERRO' QUE VOCÊ PASSA COMO PRIMEIRO ARGUMENTO DESSE CALLBACK...
+      
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname ///////O SEGUNDO ARGUMENTO É 'WHAT YOUR FILENAME SHOULD BE' (é como deve ser CHAMADO o arquivo que você vai armazenar naquela 'destination') ---> e '.originalName' é um MÉTODO EXISTENTE DENTRO DO OBJETO 'file' QUE NOS DÁ O ACTUAL FILENAME do arquivo que o user uploadou...
+
+      +
+      '-' 
+
+      + 
+
+      file.filename ///NESSA CONCATENAÇÃO, VAMOS USAR o 'file.filename' JUSTAMENTE PQ 'filename' é uma PROPRIEDADE DENTRO DO OBJETO 'req.file' QUE VAI CONTER A 'RANDOM HASH' GERADA PARA __ CADA 1 DESSES ARQUIVOS (hash única)... ---> faremos isso para que NÃO HAJA CONFUSÃO ENTRE NOSSAS FILES ARMAZENADAS NO NOSSO NODEAPP...
+        
+        );
+    }
+  }
+)
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+ 
+app.use(multer(  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  
+  // {dest: 'images'} ///VERSÃO 'SIMPLES' DE CONFIGURAR O MULTER... não é tão boa, pq não te dá coisas como o CONFIG DAS SUAS FILENAME, etc.... (coisa vista naquela config constant de 'fileStorage', logo acima...)
+    
+ { storage: fileStorage } //versão mais completa/recomendada. ----> É A VERSÃO QUE USA A 'STORAGE ENGINE' que críamos previamente, como visto logo acima...
+  ). 
+
+
+
+single('image'));
+
+
+
+
+
+-----------------------
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+PARA INFORMAR O MULTER 
+
+
+
+DA 
+
+
+STORAGE ENGINE QUE QUEREMOS USAR,
+
+
+BASTA 
+
+ESCREVER ASSIM:
+
+
+
+
+
+app.use(
+
+  multer(
+    {
+      storage: fileStorage
+    }
+  )
+)
+
+
+
+
+
+
+
+
+-------> O ESSENCIAL É ESSA KEY AÍ, de 'storage'...
+
+
+
+
+
+
+
+
+-------> ok ....... COM ISSO, SE SALVAMOS
+ 
+
+
+ TUDO 
+
+ E RECARREGAMOS NOSSA PAGE,
+
+
+
+
+ VAMOS VER QUE 
+
+ NOSSAS IMAGES VÃO COMEÇAR 
+
+ A 
+
+ SER ARMAZENADAS EM UM 
+
+
+ FORMATO TIPO 
+
+
+
+
+ 'chair.jpg-undefined' 
+
+
+
+
+
+ ( EU NÃO SEI A RAZÃO DE ESTARMOS RECEBENDO 'undefined' como file.filename...)
+
+
+
+
+
+
+
+
+ ah, agora entendi... ----------> é pq POR ALGUMA RAZÃO 
+
+
+ EU NÃO ESTOU MAIS 
+
+ FICANDO COM AQUELE 'RANDOM HASH'
+
+
+
+ lá 
+
+
+ na property de 
+
+
+
+'filename',
+
+
+em 
+
+'req.file'...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE __ A RAZÃO DE RECEBERMOS __ 
+
+ESSE 
+
+
+'UNDEFINED'
+
+
+É __ JUSTAMENTE __ POR CAUSA 
+
+DESTE CÓDIGO:
+
+
+
+
+
+
+    filename: (req, file, cb) => {
+      cb(null, file.originalname ///////O SEGUNDO ARGUMENTO É 'WHAT YOUR FILENAME SHOULD BE' (é como deve ser CHAMADO o arquivo que você vai armazenar naquela 'destination') ---> e '.originalName' é um MÉTODO EXISTENTE DENTRO DO OBJETO 'file' QUE NOS DÁ O ACTUAL FILENAME do arquivo que o user uploadou...
+      +
+      '-' 
+      + 
+      file.filename ///NESSA CONCATENAÇÃO, VAMOS USAR o 'file.filename' JUSTAMENTE PQ 'filename' é uma PROPRIEDADE DENTRO DO OBJETO 'req.file' QUE VAI CONTER A 'RANDOM HASH' GERADA PARA __ CADA 1 DESSES ARQUIVOS (hash única)... ---> faremos isso para que NÃO HAJA CONFUSÃO ENTRE NOSSAS FILES ARMAZENADAS NO NOSSO NODEAPP...
+        
+        );
+    }
+
+
+
+
+
+
+
+
+
+
+
+----> quando 
+
+escrevemos 
+
+
+
+esse 
+
+'filename:' 
+
+,
+
+
+
+QUANDO DEFINIMOS 
+
+__ELE __ POR MEIO DESSA KEY 
+
+DE 
+
+
+'filename',
+
+
+
+
+QUANDO USAMOS 
+
+ESSA KEY AÍ PARA 
+
+
+DEFINIR __ UM 
+
+FILENAME,
+
+
+
+
+O 
+
+
+MULTER __ JÁ __ AUTOMATICAMENTE 'PARA DE GERAR O RANDOM HASH',
+
+
+
+
+ELE 
+
+
+__CESSA__ O AUTO-GENERATE DO HASH....
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> É POR ISSO QUE O PROFESSOR __ DESISTE__ DO 
+
+
+
+USO 'NIFTY'
+
+
+daquele 
+
+'file.filename'
+
+
+
+COMO _ DIFERENCIADOR ___ DE NOMES (unique identifier),
+
+
+
+
+
+
+
+
+E NOS DIZ PARA USAR 
+
+UM SIMPLES 
+
+
+
+
+'new Date().toISOString()' ....  (ISSO VAI NOS DAR UMA SNAPSHOT DA CURRENT DATE,
+
+
+
+que SOMADA AO NOME DO ARQUIVO, VAI DAR O NOME DE UM ARQUIVO 'UNIQUE'...
+
+
+
+)
+
+
+
+
+
+
+
+
+
+---------------> SE VOCÊ PRECISA DE MAIS 'UNIQUENESS',
+
+
+
+VOCÊ PODE USAR __ 
+
+
+UM TPP QUE _ REALMENTE __ VAI TE DAR UM 
+
+
+
+'REALLY UNIQUE HASH'... (opcional)...
+
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+
+----> OK, MAS O QUE INTERESSA, AGORA, É QUE 
+
+'ESTAMOS 
+
+ARMAZENANDO FILES COM A FILE EXTENSION DE VERDADE/correta',
+
+
+
+
+
+
+
+
+
+
+
+---> E PROFESSOR DIZ QUE AGORA ISSO NOS DÁ MAIS 'POWER',
+
+
+PQ 
+
+
+AGORA PODEMOS 
+
+
+__CONTROLAR:
+
+
+1) O PATH 
+
+
+2) O FILENAME...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE PODEMOS IR __ALÉM__:
+
+
+
+
+PODEMOS CONFIGURAR O APP DE MODO QUE ELE __ SÓ ACEITE __ALGUNS MIME TYPES 
+
+ESPECÍFICOS (como png, jpg, pdf, etc....) ----> FAREMOS ISSO NA PRÓXIMA AULA...
+
+
+
+
+
+
+
+
+
+
+
+--> POR ALGUMA RAZÃO, AGORA ESTOU RECBENDO UM ERRO 
+
+
+DE 
+
+
+
+
+TypeError: Cannot read property 'isLoggedIn' of undefined
+    at A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\app.js:321:31
+    at Layer.handle_error (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\layer.js:71:5)
+    at trim_prefix (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:315:13)
+    at A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:284:7
+    at Function.process_params (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:335:12)
+    at next (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:275:10)
+    at Layer.handle_error (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\layer.js:67:12)
+    at trim_prefix (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:315:13)
+    at A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:284:7
+    at Function.process_params (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\express\lib\router\index.js:335:12)
+
+
+
+
+
+
+
+
+
+--> E ESSE ERRO ESTÁ PARANDO __ ATÉ MESMO __ O STORAGE __ DE 
+
+FILES 
+
+DO MULTER,
+
+
+lá no folder de 'images'... (bizarro....).
+
+
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ O PROBLEMA SEJA CAUSADO POR ISTO:
+
+
+
+EDIT: If you don't need file uploads, don't use the multipart/form-data enctype. Switching to the default enctype would allow express.csrf() to parse the _csrf token.
+
+In order to parse forms with the multipart/form-data enctype, you need use a multipart parser in your app configuration, or handle file uploads yourself. It's recommended to avoid using the included express.bodyParser() and instead use something like busboy or formidable on the routes you're expecting file uploads, to prevent an exploit.
+
+If you go this route, your _csrf field will no longer be caught by express.csrf() because the form body will not be parsed until after the request passes that middleware. Set your form action to '/api/entries?_csrf={{csrf_token}}' to get around this.
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+está bem complexo o negócio...
+
+
+
+
+
+
+
+
+
+
+
+
+--> parece que REALMENTE O PROBLEMA É:
+
+
+
+
+
+
+
+
+1) A 'CSRF TOKEN' 
+
+
+
+2) A 'SESSION', mais precisamente a key 'isLoggedIn: true', lá na NOSSA SESSION...
+
+
+
+
+
+
+VI OUTRA DICA:
+
+
+
+
+make form like this
+
+<form method="post" action="/?_csrf=<%=csrfToken%>"
+and remove this
+
+input(type="hidden" name="_csrf" value= csrf_token)
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+OK... 
+
+
+
+
+
+
+DEPOIS EU VEJO COMO RESOLVER ISSO, VOU PROSSEGUIR COM A AULA DO PROFESSOR...

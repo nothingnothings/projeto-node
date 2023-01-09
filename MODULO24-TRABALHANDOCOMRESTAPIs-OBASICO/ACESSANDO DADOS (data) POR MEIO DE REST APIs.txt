@@ -1,0 +1,990 @@
+
+
+
+
+
+
+
+
+--> AGORA QUE SABEMOS O QUE É UMA REST API EM GERAL,
+
+
+
+O PROFESSOR QUER NOS DAR UMA VISÃO AMPLA DE COMO ISSO FUNCIONA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TEMOS O CLIENT E O SERVER:
+
+
+
+
+
+
+
+
+
+
+
+
+| CLIENT | 
+(mobile app) (SPA)
+
+
+
+
+
+
+
+
+
+
+| SERVER | 
+(App Backend API).... ------> NO BACKSIDE/SERVERSIDE __ NÓS CONSTRUÍMOS NOSSA 'BACKEND API'...
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+UMA VANTAGEM, NO CASO,
+ 
+
+
+ DO FRONTEND DE NOSSOS APLICATIVOS 'REST API'
+
+
+ é que 
+
+
+ PODEMOS USAR __ UMA MESMA __ BACKEND (como nodeexpress)
+
+
+
+
+ COM __MÚLTIPLAS 'VERSÕES',
+
+
+
+
+ MÚLTIPLAS VERSÕES DOS CLIENTS DO NOSSO FRONTEND (podemos ter, portanto, 1 versão browser do twitter, 1 versão mobile app android, etc etc... TODAS 
+ ELAS COMPARTILHANDO O MESMO BACKEND..)
+
+
+
+
+
+
+
+
+
+
+ ---> ISSO SIGNIFICA QUE 
+
+ PODMOS TER WEBAPPS E MOBILE APPS ao mesmo tempo... --> A GRANDE MAIORIA DAS COMPANHIAS 
+
+ TEM TANTO 
+
+
+
+ WEBAPPS COMO MOBILEAPPS ---> e algumas dessas companhias USAM 
+
+
+
+ A MESMA 'BACKEND APi'  
+
+ 
+ para as versões do seu app.... --> ISSO 
+
+ PQ 
+
+
+ AMBAS 
+
+ AS 
+ VERSÕES 
+
+
+
+ CONTINUAM USANDO A MESMA 'DATA' 
+
+
+ PARA 
+
+ RODAR O SEU APP.... --> SIM, ELAS 
+
+ FAZEM 
+
+ OUTPUT/DISPLAY DESSA 
+
+ DATA 
+
+ DE FORMA DIFERENTE (a data vai aparecer bonitinha no MOBILE APP do twitter, por exemplo, e HORRÍVEL 
+ 
+ 
+no webapp, mas AMBOS AINDA SÃO O 'TWITTER', E USAM O MESMO BACKEND API... restful...)
+
+
+|
+|
+|
+|
+|
+|
+
+-------> ISSO ERA EXATAMENTE O QUE O PROFESSOR ESTAVA FALANDO:
+
+'THE USER INTERFACE IS HANDLED BY THE FRONTEND, BY THE CLIENT'' (que pode ser um WEBAPP ou MOBILEAPP...)
+
+
+
+
+
+
+
+
+
+
+--> PODEM SER APRESENTADOS DE FORMA DIFERENTE, 
+
+MAS CONTINUAM FAZENDO SERVE DA MESMA DATA...
+
+
+
+
+
+
+
+
+
+
+--> OK.... MAS O ESQUEMA NÃO ESTÁ COMPLETO...
+
+
+
+
+
+--> ISSO PQ AINDA PODEMOS TER 'ANY TYPE OF APP' (ou seja, 1 APP 
+
+QUE NÃO É UM MOBILE APP, OU UM SPA... UM APP QUE PODE SER UM APP CLÁSSICO, com return 
+de pages html pelo server)  ------> mesmo nesses 
+
+'any type of app',
+
+
+PODEMOS TER A AJUDA DE 'SERVICE APIs', que por sua vez PODERÃO/PODEM SER RESTFUL APIs...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+| CLIENT | 
+(mobile app) (SPA) (Any App)
+                    |
+                    |
+                    |
+                    |
+                    |
+                    |
+                    |
+                    ||
+                    |(QUALQUER APP, apps clássicos, podem ACABAR USANDO 'service APIs' que se utilizam de REST API...)
+                    V
+| SERVER |          V 
+(App Backend API)   (Service API)
+
+
+
+
+
+
+
+
+
+
+------------> ok... 
+
+
+
+ou nós 
+
+talvez
+
+construamos 
+
+
+
+
+NOSSA PRÓPRIA 'SERVICE API' para vender nossos serviços...
+
+
+
+
+
+
+
+
+--> OU ENTÃO TALVEZ ESTAMOS CONSTRUINDO UMA API DE 'stock',
+
+
+
+EM QUE 
+
+
+QUALQUER APP (alguns que nem conhecemos) SERÁ CAPAZ DE 'QUERY DATA FROm',
+
+
+E AÍ 
+
+
+NÓS APENAS CONCEDEMOS ACESSO A ESSA NOSSA 'SERVICE API',
+
+
+
+E esse acaba sendo nosso 'business model'..
+
+
+
+
+
+
+
+
+
+
+
+--> EM TODOS ESSES CASOS,
+ 
+
+
+ NÓS OBVIAMENTE TROCAMOS ALGO...
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+ | CLIENT | 
+(mobile app) (SPA) (Any App)
+    ^                |
+    |                |
+      |              |
+     |               |
+    |                |
+     |               |
+      |              |
+     |               |
+     |               |
+| SERVER |          V 
+(App Backend API)   (Service API)
+
+
+
+
+
+
+
+
+
+
+
+------> MAS TODOS ESSES CASOS COMPARTILHAM 1 COISA,
+
+
+
+'data'... ------------> 
+
+
+
+
+ESSA É A COISA QUE NÓS TROCAMOS ENTRE CLIENT E SERVERSIDE.... -----> NÓS VAMOS 
+
+
+
+
+
+'EXCHANGE ONLY THE DATA, AND NOT THE USER INTERFACE'...
+
+
+
+
+
+
+
+
+
+
+ONLY THE DATA, NOT THE Ui...
+
+
+
+
+
+
+
+
+---> OK, AÍ SURGE A PERGUNTA:
+
+
+
+
+EM QUAL FORMATO NÓS TROCAMOS ESSA DATA?
+
+
+
+
+
+
+
+
+É ÓBVIO QUE É POR MEIO DE 'JSON'...
+
+
+
+
+
+
+
+
+
+
+
+
+------> APRENDEMOS SOBRE HTML, MAS É EVIDENTE QUE 
+
+PODEMOS ANEXAR OUTROS TIPOS DE DATA AOS NOSSOS REQUESTS E RESPONSES...
+
+
+
+
+
+
+
+
+-> PODEMOS, POR EXEMPLO, ANEXAR 'PLAIN TEXT'...
+
+
+
+
+
+
+
+
+
+--> PODEMOS ENVIAR TAMBÉM 'XML'... (É TIPO HTML....)
+
+
+
+
+
+
+
+
+--> E, POR FIM, JSON...
+
+
+
+
+
+
+
+
+
+
+--> HÁ OUTROS FORMATOS, É CLARO, MAS ESSES SÃO OS MAIS CONHECIDOS....
+
+
+
+
+
+
+
+
+
+
+
+-----------> HTML --> É CLARO, 
+
+
+SE PARECE COM ISSO:
+
+
+
+
+<p>Node.js</p>
+
+
+
+
+
+
+
+
+
+----> É ISSO QUE FIZEMOS ATÉ AGORA NO CURSO, ENVIAMOS HTML AO USER....
+
+
+
+
+
+
+
+--> QUANDO NÓS 'RENDER A EJS VIEW',
+
+
+NÓS ESTAMOS ESSENCIALMENTE ENVIANDO 
+
+
+
+CÓDIGO HTML AO BROWSER... --> Isso pq 
+
+
+
+o view 
+
+foi renderizado no server,
+
+
+
+
+E O __ RESULTADO__ DESSE 'RENDERING PROCESS'
+
+
+
+
+
+FOI UMA  SIMPLES HTML PAGE,
+
+
+
+
+HTML CODE...
+
+
+
+
+
+
+
+--ok...
+
+
+
+
+
+
+
+
+CÓDIGO HTML CONTÉM:
+
+
+
+1) 'THE DATA' (que existe 'ENTRE' nosso html...)
+
+
+2) 'THE STRUCTURE' (a UI em si....) --> os elementos html, estilos css, TUDO ISSO 
+
+
+É A NOSSA ESTRUTURA e o design...
+
+
+
+
+
+--> HTMLS CONTÉM 'USER INTERFACE',
+
+eles 
+
+definem
+
+
+__COMO NOSSA 'USER INTERFACE'
+
+DEVE SE PARECER...
+
+
+
+
+
+
+
+
+----> MAS O PROBLEMA É QUE 
+
+
+SE __ NÓS QUEREMOS__ SÓ A DATA, ficamos com um monte de 'OVERHEAD HTML CONTENT'... -----> 
+
+
+E AÍ 
+
+FICA 
+
+DESNECESSARIAMENTE DIFÍCIL _ PARSEAR__ A RESPONSE, ISSO PQ _ AINDA UQE __ ELEMENTOS 
+
+HTML 
+
+SEJAM/SÃO 
+
+'KINDOF' '''defined and regulated'''',
+
+
+A MANEIRA PELA QUAL NÓS OS UTILIZAMOS, E COMO 
+
+
+
+NÓS __ ESTRUTURAMOS __ NOSSO DOCUMENT_ _ _'IS NOT REALLY ENFORCED ONTO US...' -----> OU SEJA,
+
+
+É 
+
+
+DESNECESSARIAMENTE DIFÍCIL DE PARSEAR, SE SÓ PRECISAMOS 
+
+OBTER DATA....
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+---------> COMO SEGUNDA OPÇÃO, TEMOS O 'RETURN DE PLAIN TEXT'...
+
+
+
+
+
+
+
+
+---> COM PLAIN TEXT,
+
+temos só 
+
+
+DATA,
+
+
+NÃO TEMOS 
+
+
+DESIGN, NENHUMA ESTRUTURA,
+
+
+
+NENHUMA UI 
+
+(
+
+    ''NO UI ASSUMPTIONS''....
+
+)
+
+
+
+
+
+
+--------> MESMO ASSIM, MESMO QUE SÓ USEMOS 'PLAIN TEXT' PARA O RETURN 
+
+DE NOSSAS RESPONSES/REQUESTS,
+
+
+
+NÓS AINDA TEREMOS QUE 
+
+
+'WILL BE UNNECESSARILY DIFFICULT TO PARSE,
+
+NO CLEAR DATA STRUCTURE'... ------> ISSO 
+
+PQ 
+
+
+
+
+PLAIN TEXT É UMA ESTRUTURA FÁCIL DE SER COMPREENDIDA POR HUMANOS,
+
+
+
+MAS 
+
+DIFÍCIL PARA MÁQUINAS... ------> COM O 'PLAIN TEXT',
+
+
+NÃO EXISTE 
+
+
+UM PADRÃO CLARO 
+
+
+NO TEXT... -> PORTANTO,
+
+
+NÃO É UMA BOA MANEIRA DE 'EXCHANGE DATa'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3) XML ---> XML SE PARECE 
+
+MT COM HTML... ----> E NA VERDADE 
+
+
+o html É UM __ TIPO _ ESPECIAL DE XML...
+
+
+
+
+
+
+----------> A DIFERENÇA ENTRE XML E HTML É QUE 
+
+'XML' 
+
+
+__ TE DEIXA __ USAR QUALQUER TAG,
+
+
+AO PASSO QUE 
+
+
+O HTML NÃO TE DEIXA...
+
+
+
+
+
+
+--> A LIBERDADE NO NAMING/WRITE DE TAGS ___ TE __ DEIXA 
+
+
+'TRANSFER DATA',
+
+
+
+
+
+
+
+----> OUTRA COISA DO 'XML' é que 
+
+
+'IT ALSO WONT MAKE ANY UI ASSUMPTIONS',
+
+
+
+ISSO PQ __ XML __ NÃO É 'PARSEABLE BY THE BROWSER'... ---> OS ELEMENTOS XML SÃO 
+
+
+
+'TOTALLY MADE UP BY YOU'...
+ 
+
+
+ (
+
+
+     ou seja, são coisas como 
+
+
+     ''''''
+     <steps>
+     <ingredient>Lettuce</ingredient>
+     </steps>
+
+     ''''''
+ )
+
+
+
+
+
+
+
+
+
+ --> A VANTAGEM DO XML É QUE 
+
+
+ __ELE É LIDO COM MAIS FACILIDADE POR MÁQUINAS, MAIS DO QUE PLAIN TEXT...
+
+
+
+
+(
+
+
+    MACHINE-READABLE, BUT RELATIVELY VERBOSE; XML-PARSER NEEDED...
+)
+
+
+
+
+ -->  VOCÊ PODE, TAMBÉM, É CLARO, 
+
+
+ __'ADD CLEAR STRUCTURES' 
+
+
+no seus documentos XML,
+
+
+
+mas a questão é que 
+
+
+
+VOCÊ __ VAI PRECISAR__ OBRIGATORIAMENTE 
+
+DE 
+UM 
+
+'SPECIAL XML PARSER'... -------> ISSO PQ 
+
+
+'TRAVERSE THROUGH A XML NODE TREE IS 
+
+
+_KIND OF CHALLENGING' --------> O TRAVERSE 
+
+
+
+DE UM DOCUMENTO XML NÃO É IMPOSSÍVEL,
+
+
+
+MAS É COMPLICADO,
+
+VOCÊ PRECISA DE UM SPECIAL PARSER...
+
+
+
+
+
+
+
+
+
+
+----------->  E É CLARO QUE TODOS ESSES ELEMENTOS DO 'XML' 
+
+
+ADICIONAM UM CERTO 'OVERHEAD'
+
+
+NA DATA QUE VOCÊ TRANSFERE (
+
+    isso significa que há o add de um mONTE DE TEXTO EXTRA QUE SÓ 
+
+
+    EXISTE ALI 
+    PARA 
+
+    'ADEQUATELY READ YOUR DATA'... fazer a máquina entender... --------> CÓDIGO QUE 
+
+    NÃO É SEU 'CORE DATA'  em si...
+)
+
+
+
+
+
+
+
+
+
+
+
+--> O ÚLTIMO DATA FORMAT,
+
+
+
+
+MAIS POPULAR,
+
+É 
+O JSON....
+
+
+
+
+
+
+
+
+--> ele se parece assim:
+
+
+{"exemplo": "Node.js"}
+
+
+
+
+
+
+
+
+
+---------> O JSON:
+
+
+
+
+1) também é 'JUST DATA'...
+
+
+
+
+2) MAKES NO UI ASSUMPTIONS... (como o XML e o PLAIN TEXT)
+
+
+
+
+
+3) TAMBÉM É 'MACHINE-READABLE', mas a diferença é que 
+
+ELE É __BEM CONCISO__...
+
+
+
+ALÉM DE SER BEM CONCISO, PODE SER FACILMENTE CONVERTIDO EM JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+
+
+--> É MAIS CONCISO DO QUE XML,
+
+
+E PODE SER FACILMENTE CONVERTIDO EM JAVASCRIPT,
+
+o que 
+
+é UMA GRANDE VANTAGEM
+
+
+QUANDO FALAMOS DE TRABALHO COM O NODEJS (no serverside),
+
+
+MAS 
+
+TAMBÉM 
+
+COM O TRABALHO QUE FAZEMOS NO BROWSER, COM O JAVASCRIPT, QUE 
+
+É 
+A ÚNICA 
+
+
+
+LINGUAGEM QUE PODE SER USADA LÁ...
+
+
+
+
+
+
+
+
+
+
+----------> OK ... O JSON DATA É O 'WINNER'.... --> 
+
+
+
+ISSO SE ___SÓ QUEREMOS__ TRANSFERIR DATA... ------> E É 
+
+
+
+O FORMATO MAIS COMUM EM QUALQUER 
+
+
+
+API COM QUE VOCÊ SE COMUNICA, HOJE EM DIA... --------> NENHUM OUTRO 
+
+FORMATO É TÃO BOM PARA TRANSFERIR 
+
+DATA,
+
+
+como o json...
+
+
+
+
+
+
+
+
+
+--> E É O JSON QUE VAMOS UTILIZAR...

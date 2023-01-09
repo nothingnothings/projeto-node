@@ -1,0 +1,1856 @@
+Partials are basically functions
+ that return functions with some already predefined 
+ arguments and need some arguments to be completed. 
+ Let's say you have a function with several arguments to be set,
+  but you don't want to set the majority of arguments over and over again because
+   you need it more than once.
+
+
+
+
+
+
+
+
+
+
+
+-->  NÓS ADICIONAMOS ALGUMA 'MÁGICA EJS'/templates EJS,
+
+
+
+MAS UMA COISA QUE ESTÁ FALTANDO É AQUELA FUNCIONALIDADE 
+
+DE 
+
+'layout' 
+
+
+
+
+QUE O PUG/HANDLEBARS 
+
+
+
+
+nos davam....
+
+
+
+
+
+
+
+
+---> E, DE FATO,
+
+EJS 
+
+NÃO TEM 'LAYOUTS'..
+
+
+
+
+
+
+---> MAS PARA USAR TIPO UNS LAYOUTS,
+
+
+
+
+__PODEMOS RECORRER A UMA FEATURE DO JAVASCRIPT VANILLA,
+
+OS 
+
+'PARTIALS' (ou 'includes', como são chamados por alguns)
+
+
+
+
+
+
+
+
+OBS::: OS PARTIALS/INCLUDES são uma feature QUE O HANDLEBARS/pug TAMBÉM CONHECEm...
+
+
+
+
+
+
+
+
+
+
+
+--> A IDEIA AQUI É QUE VOCÊ TEM/TERÁ ALGUNS 'CODE BLOCKS' QUE 
+
+VOCê REUTILIZA/REUTILIZARÁ 
+
+
+
+__ EM DIFERENTES PARTES __ DOS SEUS TEMPLATES... ----------> 
+
+
+
+
+E VOCÊ PODE,
+ 
+
+ ENTÃO,
+
+
+ SIMPLESMENTE FAZER 'SHARE' 
+
+ DESSES CODE BLOCKS 
+
+ AO LONGO 
+
+ DOS SEUS TEMPLATES... (
+
+     ou seja,
+
+
+     é 
+
+
+     um pouco como 
+
+     O CONTRÁRIO DE UM LAYOUT;
+
+     isso pq o LAYOUT É UM NEGÓCIO EM QUE ENCAIXAMOS OUTROS CONTEÚDOS,
+
+
+     ao passo que 
+
+
+
+     PARTIALS/INCLUDES __ SÃO __ 'CODE BLOCKS' QUE VAMOS ENFIAR 
+
+
+     NO MEIO 
+
+     DE OUTROS ARQUIVOS...
+ ) ----> 
+
+
+ OK, MAS 
+
+ A QUESTÃO 
+
+ É QUE 
+
+ AINDA VAMOS SALVAR CÓDIGO... -----------> 
+
+
+
+
+
+ MAS AQUI, EM VEZ DE TERMOS APENAS 1 'MASTER LAYOUT',
+
+ em que 
+
+ colocamos 
+
+ NOSSAS 'INDIVIDUAL PAGES', as enfiamos no meio,
+
+
+
+
+ ___ AQUI __ NÓS 
+
+ TEREMOS 
+
+
+ VÁRIOS 
+
+ 'PARTIALS',
+
+
+
+
+
+ A COUPLE OF 'SEPARATED SHARED VIEW PARTS',
+
+
+
+
+AS QUAIS VOCÊ PODE 
+
+'MERGE'
+
+
+
+NAS VIEWS INDIVIDUAIS QUE VOCÊ ESTÁ CRIANDO
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+O PROFESSOR CRIA UM NOVO FOLDER CHAMADO DE 
+
+'includes'
+
+DENTRO DO FOLDER DE 'views'...
+
+
+
+
+
+
+
+
+
+---> DENTRO DESSE FOLDER,
+
+O PROFESSOR 
+
+VAI CRIAR UM PUNHADO DE 'SHARED FILES',
+
+
+
+QUE 
+
+SERÃO 
+
+'SHARED CODE BLOCKS'...
+
+
+
+
+
+
+
+
+-----> OK... E O CÓDIGO QUE COMPARTILHAMOS AO LONGO DE TODAS NOSSAS VIEWS 
+
+
+
+É ESTE TRECHO AQUI:
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not Found</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+
+
+
+
+
+
+
+
+    ---------- 
+
+
+    ISSO AÍ NÓS REUTILIZAMOS __ AO LONGO DE TODOS NOSSOS ARQUIVOS...
+
+
+
+
+
+
+
+
+------> o _BODY_ também é compartilhado, apesar de ele n ter mt coisa até agora...
+
+
+
+
+
+
+
+
+
+
+--> NÓS TAMBÉM 
+
+
+
+
+COMPARTILHAMOS/SHAREAMOS 
+
+
+A 
+
+'NAVBAR'
+
+
+ao longo 
+
+de nossas 
+
+várias views...
+
+
+
+
+
+
+
+---> É POR ISSO QUE 
+
+O PROFESOR 
+
+VAI 
+
+
+
+__CRIAR __ 3 ARQUIVOS 
+
+'INCLUDES' diferentes,
+ 
+ um 
+
+ chamado 
+
+ de 
+
+ 'head.ejs' (que vai conter nossa metadata E OS DADOS EM 'head')....
+
+
+
+
+ 'end.ejs' ....
+
+
+
+
+
+ E 
+
+
+ 'navigation.ejs'.... 
+
+
+
+
+
+
+
+
+
+ ------> PROFESSOR ENFIA 
+
+ A PARTE DO 'HEAD' DENTRO DO 
+
+ 'head.ejs'...
+
+
+
+
+
+
+
+
+
+ Ex:
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+
+
+
+
+
+
+
+
+
+
+    --------------------
+
+
+    OK... AGORA O PROFESSOR NOS DIZ QUE A ÚNICA COISA QUE TEMOS QUE FAZER É 
+
+    'IMPORT' 
+
+    ESSE ARQUIVO
+
+    de 
+
+    'head.ejs'... 
+
+
+
+
+
+
+
+------> E ELE DIZ QUE 
+
+PODEMOS 
+
+
+
+
+______OUTPUTTAR__ 
+
+
+O CONTEÚDO DE 
+
+
+
+'head.ejs'
+
+
+
+
+__LÁ DENTRO DE 
+
+'404.ejs',
+
+
+BASTA 
+
+
+IR 
+
+
+ATÉ 
+O CÓDIGO DE 
+
+'404.ejs'
+
+
+
+E ENTÃO, NO TRECHO EM QUE 
+
+QUEREMOS 
+
+OUTPUTTAR
+
+
+
+ESSE NOSSO 'HEAD',
+
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+ESCREVE UMA SINTAXE ALTERNATIVA 
+
+
+DO 
+
+EJS,
+
+
+sintaxe que 
+
+usa 
+
+
+'-' (menos)...
+
+
+ex:
+
+
+
+
+<%-  ->
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+  <%- ->
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+--> VOCÊ DEVE USAR 
+
+'<%- ->'
+
+QUANDO/NAS HIPÓTESES EM QUE VOCÊ QUER 
+
+
+
+OUTPUTTAR 
+
+'UNESCAPED HTML CODE'... -----> E ESSA SINTAXE 
+
+
+SERVE 
+
+
+PARA 
+
+
+
+__EVITAR___ XSSS (cross site scripting attacks)....
+
+
+
+
+
+
+
+
+
+
+
+
+--> por default,
+
+
+
+
+quando você escreve 
+
+
+'<%= %>',
+
+
+
+tudo que você colocar ali dentro 
+
+será 
+
+
+RENDERIZADO/OUTPUTTADO COMO 
+
+__tEXT__ (isso é feito para EVITAR CROSS SITE SCRIPTING ATTACKS)
+
+
+
+
+
+
+
+
+
+
+
+
+o problema é que com os includes/partials 
+
+
+no EJS,
+
+você VAI QUERER 
+
+OUTPUTTAR 
+
+O CÓDIGO HTML MESMO,
+
+'THE REAL HTML CODE',
+
+
+e não text...
+
+
+
+
+
+
+
+
+
+
+--------> para isso,
+
+
+
+você deve usar 
+
+o 
+
+'-' nessa marcação; com ele VOCÊ PODE REALMENTE __ EVITAR __ ESSE CENÁRIO
+
+
+
+
+
+
+__ E ENTÃO __ REALMENTE RENDERIZAR CÓDIGO HTML...
+
+
+
+
+
+
+
+
+O IMPORTANTE, AQUI, É A SINTAXE/ESCRITA DE 
+
+'include()'..
+
+
+
+
+
+
+-----> PARA USAR ESSE 
+
+
+'<%- %>',
+
+
+VOCê 
+
+
+DEVE 
+
+
+COMBINÁ-LO COM 
+
+
+
+
+A SINTAXE DE 'INCLUDE'  (includes) PERMITIDA PELO EJS...
+
+
+
+
+fica basicamente assim:
+
+
+
+
+
+
+
+
+<%- include() %>
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+ISSO AÍ NOS __ PERMITE__ INSERIR UM CERTO ___ ELEMENTO HTML/BLOCO HTML NESSA PÁGINA,
+
+
+NESSE SLOT/POSIÇÃO ESPECÍFICA...
+
+
+
+ex:
+
+
+
+
+<%- include() %>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+--> OK... EM 'INCLUDE()',
+
+VOCê 
+
+
+
+SIMPLESMENTE 
+
+
+INSERE UMA STRING 
+
+
+
+QUE CONTÉM O __PATH__ AO 
+
+
+
+ELEMENTO QUE VOCÊ QUER 'INCLUIR'... -------> E VOCÊ TEM QUE 
+
+
+INPUTTAR 
+
+
+
+ESSE 
+PATH 
+
+
+considerando a PERSPECTIVA (pov) 
+
+
+do ARQUIVO 'template' EM QUE VOCÊ ESTÁ....
+
+
+
+
+
+
+
+---> como o elemento 'head.ejs'
+
+
+ESTÁ LÁ 
+
+NO FOLDER DE 
+
+'includes', dentro do folder de 'views',
+
+
+
+o professor diz que devemos escrever 
+
+
+
+
+
+('includes/head.ejs').......
+
+
+
+
+
+(ou seja, entramos NAQUELA PASTA, E AÍ ESCOLHEMOS AQUELE ARQUIVO ESPECÍFICO)...
+
+
+
+
+
+
+
+
+
+
+
+EX (arquivo 'head.ejs'):
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+
+
+
+
+
+
+
+
+  
+  EX( arquivo '404.ejs'):
+
+
+
+
+
+
+
+
+    <%- includes('includes/head.ejs') ->
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+--> ISSO VAI BASICAMENTE RENDERIZAR O CÓDIGO DE 'head.ejs'
+
+
+NAQUELE SLOT 'includes'...
+
+
+
+FICARÁ TIPO ASSIM, BASICAMENTE (arquivos combinados...):
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+----> PROFESSOR SALVA TUDO E TESTA... --> AINDA TEREMOS UM ARQUIVO VÁLIDO, com o 
+
+código html certinho... tudo graças a essa feature...
+
+
+
+
+
+
+
+
+--> OK... AGORA ESTAMOS USANDO UM INCLUDE...
+
+
+
+
+
+
+
+
+
+
+
+--> MAS E SE TENTÁSSEMOS USAR UM 'include()'
+
+
+
+wrappado 
+
+
+em 
+
+
+'<%=  %>' (EQUAL SIGN)
+
+
+
+EM VEZ DE 
+
+
+'<%-  %>' ? 
+
+
+
+
+
+
+--> BEM, AÍ 
+
+
+NOSSO CÓDIGO SERIA SIMPLESMENTE OUTPUTTADO VISUALMENTE NA NOSSA PÁGINA,
+
+COMO 
+
+TEXT(
+
+  veríamos o código 
+
+  SOLTO NO MEIO DA PÁGINA,
+
+  SIMBOLIZANDO QUE USAMOS 
+
+  o 
+
+  MARCADOR/SINTAXE ERRADA...
+)  ------> ISSO AÍ 
+
+
+
+É 
+O 
+
+'ESCAPING THE VALUES', 
+
+
+E não 'RENDERING THE VALUES'... --------->  ISSO SIGNIFICA QUE 
+
+SE VOCê 
+
+TIVESSE/TIVER ALGO 
+
+COMO UM SCRIPT
+
+'FISHY' DENTRO 
+
+
+DESSE '<%= =>',
+
+
+
+ELE ___NUNCA__ VAI OUTPUTTAR/EXECUTAR ESSE SCRIPT,
+
+E SIM 
+VAI SÓ 
+
+OUTPUTTÁ-LO COMO TEXT... (o que te protege contra XSSS...)
+
+
+
+
+
+
+
+
+
+-----> OK... MAS PQ PODEMOS USAR '<%- %>', 
+
+
+então ,
+
+
+SE É PERIGOSO? -----> PODEMOS USAR 
+
+
+
+
+NO NOSSO CASO PQ __ NÓS SABEMOS O QUE ESTAMOS FAZENDO,
+
+E 
+
+
+
+SABEMOS QUE 
+
+DEVEMOS 
+
+INCLUIR ESSE NOSSO CÓDIGO COMO HTML...
+
+
+
+
+
+
+--------------> ok... isso está usando um INCLUDE....
+
+
+
+
+
+
+
+
+
+----> AGORA PODEMOS FAZER A MESMA COISA COM A PARTE/SLOT DA 
+
+'NAVIGATIOn'...
+
+
+
+
+
+
+
+
+
+
+
+--> vamos incluir o 'navigation.ejs'
+
+
+TAMBÉM... 
+
+
+
+
+
+(O ELEMENTO 'NAVIGATION'/navBAR tem TAMBÉM 
+a questão 
+
+
+DO 
+
+ACTIVE LINK... --> PROFESSOR DIZ QUE 
+
+VOLTARÁ A ISSO EM UM SEGUNDO,
+
+
+que antes ele vai só querer importar esse elemento nos nossos outros arquivos msm....)
+
+
+
+
+
+-------------------------
+
+
+
+OK... ISSO DEU CERTO...
+
+
+
+FICOU ASSIM:
+
+
+
+
+  <%- include('includes/head.ejs') %>
+</head>
+<body>
+    <%- include('includes/navigation.ejs') %>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+ISSO É REALMENTE __ BEM ÚTIL... E COMBINA TANTO A SINTAXE DO PUG COMO A DO HANDLEBARS... 
+
+
+
+
+
+
+-------------------
+
+
+
+
+VOU TROCAR AS PARTES DO 
+
+
+
+
+'add-product' e do 'shop' tbm...
+
+
+
+
+
+
+
+
+ex(shop):
+
+
+
+
+  <%- include('includes/head.ejs'); %>
+  </head>
+  <body>
+      <%- include('includes/navigation.ejs') %>
+    <main>
+        <% if (prods.length > 0) { %>
+      <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% } %>
+                
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex (add-product):
+
+
+
+
+<%- include('includes/head.ejs') %>
+</head>
+<body>
+    <%- include('includes/navigation.ejs') %>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+OK... AGORA SÓ RESTA 2 PROBLEMAS:
+
+
+
+
+
+
+
+
+1) STYLING __ ADICIONAL/ESPECÍFICO das pages 'add-product' e 'shop'....
+
+
+
+
+
+
+
+
+2) CLASSE 'ACTIVE' QUE É ATIVADA EM CADA 'LINK' DEPENDENDO DA __PAGE EM QUE __eSTIVERMOS__...
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+-------> OBS: PROFESSOR DIZ QUE TAMBÉM É MELHOR IMPORTARMOS 
+
+'END.EJS'
+
+
+EM CADA 
+
+
+
+
+arquivo/template.. com o include,
+
+
+
+
+PQ 
+
+ELE CONTERÁ 
+O 
+
+'FINAL' DOS ARQUIVOS,
+
+TIPO ISTO:
+
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+ok...
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+CERTO.... COM TUDO ISSO FORA DO CAMINHO,
+
+
+PODEREMOS 
+
+
+
+CARREGAR AS PÁGINAS 
+
+
+EXATAMENTE COMO ANTES....
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--------> ok... agora sei como resolver o problema 
+
+
+
+de 
+
+''''
+
+
+1) STYLING __ ADICIONAL/ESPECÍFICO das pages 'add-product' e 'shop'....
+
+
+
+'''''
+
+
+
+
+
+
+
+
+--> PARA RESOLVER ESSE PROBLEMA,
+
+DEVEMOS __IMPORTAR COM 'include' e, ao mesmo tempo,
+
+
+__DEIXAR INTACTOS __ 
+
+
+
+OS ''''link''''  ESPECÍFICOS', as tags com os stylesheets específicos usados em cada arquivo... (como 'forms' e 'product', no caso de 'add-product.ejs'...)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+<%- include('includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/product.css">
+</head>
+<body>
+    <%- include('includes/navigation.ejs') %>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+<%- include('includes/end.ejs') %>
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+OK.. ISSO RESOLVEU O PROBLEMA DO STYLING ESPECÍFICO...
+
+
+
+
+
+
+
+
+
+
+-----> MAS AINDA TEMOS O PROBLEMA 2,
+
+
+O PROBLEMA DE 
+
+
+
+''''
+
+2) CLASSE 'ACTIVE' QUE É ATIVADA EM CADA 'LINK' DEPENDENDO DA __PAGE EM QUE __eSTIVERMOS__...
+
+
+
+'''
+
+
+
+
+
+
+---> PRECISAMOS RETORNAR ESSA CLASS DE 
+
+'active',
+
+
+de alguma forma...
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+
+PROFESSOR VOLTA AO ARQUIVO 
+
+  
+
+  'admin.js',
+
+  QUE É O LOCAL EM QUE 
+
+  EFETIVAMENTE RENDERIZAMOS 
+
+
+
+  A ROUTE 
+
+
+
+  de 
+
+
+  'add-product'...
+
+
+
+
+
+  EIS O CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+  router.get('/add-product', (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product',  
+  
+  path: '/admin/add-product',
+  activeAddProduct: true,
+  productCSS: true,
+  formsCSS: true
+
+}); 
+});
+
+
+
+
+---------------------------------
+
+
+
+
+NESSE ARQUIVO AÍ,
+
+DEVEMOS NOS LEMBRAR QUE __ JÁ HAVIA SIDO ESCRITA, POR NÓS,
+
+UMA PROPRIEDADE 
+
+DE 
+
+
+'path' (foi usada com o modelo do PUG...)
+
+
+
+
+------> E PODEMOS REUTILIZAR ESSA FUNCIONALIDADE DO 'path'... -------> 
+
+
+
+
+
+PARA ISSO, VOLTAMOS AO NOSSO ARQUIVO 
+
+'navigation.ejs' (nosso partial/include)
+
+
+E AÍ 
+
+
+ADICIONAMOS 
+
+UMA 
+
+
+
+
+CLASS 
+
+
+NOS 2 'li'...
+
+
+
+
+ex:
+
+
+
+<header class="main-header">
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class=>Shop</a></li>
+        <li class="main-header__item"><a href="/admin/add-product" class=>Add Product</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+
+
+
+
+  -----------------------------
+
+
+
+
+
+  ------> AÍ, NESSA 'CLASS='
+
+  ,
+
+
+
+
+  VAMOS SIMPLESMENTE 
+
+
+
+
+  OUTPUTTAR ALGO RENDERIZADO PELO EJS.... ---> NO CASO,
+
+
+
+
+
+  vamos outputtar DINAMICAMENTE,
+
+
+  por meio de 
+
+  '<%= %>',
+
+
+
+  E AÍ VAMOS COLOCAR 
+
+
+
+  UM CHECK... 
+
+
+
+
+
+
+  ----> no link de 'Shop',
+
+
+  VAMOS 
+
+
+
+CHECK 
+
+se 
+
+o 
+
+
+
+path === '/',
+
+
+
+
+E NO LINK DE 
+
+
+
+'Add Product'
+
+
+VAMOS CHECK 
+
+
+se 
+
+'path === '/admin/add-product'...
+
+
+
+
+------------------
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+<header class="main-header">
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>>Shop</a></li>
+        <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : ''>Add Product</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+-------------------------
+
+
+
+
+RESULTADO:
+
+
+
+
+
+
+<header class="main-header">
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>">Shop</a></li>
+        <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : ''%>">Add Product</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+
+
+
+
+
+
+
+  ----------------------------------------
+
+
+
+
+
+
+  ISSO VAI VIRAR 'active' QUANDO TIVERMOS RENDERIZADO ESSAS ROUTES... (por causa de 'path', o 'path' PASSADO A ESSA ROUTE DEVIDO A '''res.render('arquivoTemplate'  , { path: xxxx} )''' )
+
+
+
+
+
+
+
+
+
+
+
+  ---> SALVAMOS TUDO ISSO E TESTAMOS...
+
+
+
+
+
+
+
+
+  --> TUDO ESTÁ FUNCIONANDO, MAS AGORA 
+
+  ESTAMOS USANDO 
+
+
+
+  'INCLUDES',
+
+  QUE 
+
+
+  + OU - 
+
+  NOS DÁ 
+
+
+  __A MESMA FUNÇÃO DE LAYOUTS,
+
+
+
+  mas um pouco mais clunky...
+
+
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR DIZ  QUE UMA DESVANTAGEM É QUE TEMOS DE REPETIR 
+
+
+  aquele 
+
+  código de 
+
+
+  '<%- include() %>'
+
+
+  TODA HORA,
+
+
+
+  MAS ISSO 
+
+
+  É 
+
+  OK,
+
+
+
+  pq ainda temos o benefício de ter 'shared code'...
+
+
+
+
+  -- CONTINUAREMOS USANDO 
+
+
+
+  EJS AO LONGO DO CURSO....
+
+
+
+
+  ENTENDEMOS:
+
+
+
+
+  PQ USAMOS TEMPLATING ENGINES
+
+
+
+
+
+  QUAIS OPÇÕES TEMOS 
+
+
+
+
+  COMO ELAS SÃO DIFERENTES UMA EM RELAÇÃO À OUTRA...

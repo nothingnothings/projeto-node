@@ -1,0 +1,2310 @@
+
+
+
+
+
+
+
+
+
+
+OK... JÁ TEMOS TODAS AS CORE FEATURES RELATIVAS __A 'AUTHENTICATION'
+
+
+
+
+
+NO ___ NOSSO __ PROJETO...
+
+
+
+
+
+
+
+
+
+
+-------> AGORA O PROFESSOR QUER TRABALHAR 
+
+
+UM POUCO 
+
+NA USER EXPERIENCE....... --> agora, nesse momento,
+
+
+
+
+SE 
+
+__NÓS __ 
+
+FAZEMOS 'LOGIN',
+
+
+
+
+FAZEMOS LOGIN E ENTÃO 
+
+
+
+__TENTAMOS __ FAZER 
+
+LOGIN _ COM 
+
+
+
+
+'INVALID CREDENTIALS'
+
+
+
+
+
+
+eX:
+
+
+
+
+O EMAIL QUE INPUTTAMOS NÃO É ENCONTRADO NA DATABASE,
+
+OU 
+
+O 
+
+
+___PASSWORD__ NÃO MATCHEIA 
+
+
+
+
+O HASHEDPASSWORD ARMAZENADO NA DATABASE... -----------> 
+
+
+
+
+
+
+
+
+OUTRO 
+
+
+
+CASE 
+
+É 
+O 
+
+CASE 
+
+DE 
+
+__TENTARMOS __CRIAR 1 USER___ COM 
+
+1 
+
+EMAIL QUE 
+
+
+JÁ EXISTE EM 1 USER NA DATABASE...
+
+
+
+
+
+
+
+
+
+------> em todos ESSES CASES,
+
+
+
+NÓS __ SÓ __ SOMOS REDIRECIONADOS __ 'NO SECO',
+
+
+SEM 
+
+MENSAGEM 
+
+DE 
+
+ERROR 
+
+
+ALGUMA... --> nenhuma mensagem de erro mostrada 
+
+
+na 
+
+page...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E O PROFESSOR JÁ NOS ESCLARECE QUE __ ELE VAI NOS MOSTRAr_ 
+
+
+COMO __ 
+
+FAZER O 'VALIDATE'
+
+
+
+
+DE USER INPUT 
+
+
+
+NA PARTE DE 'VALIDATION'
+
+
+de nosso curso,
+
+
+
+
+
+
+_________ MAS AQUI NÓS NÃO ESTAMOS 
+
+FALANDO 
+
+
+
+
+DE VALIDATION TANTO ASSIM,
+
+
+
+
+
+E SIM 
+
+
+
+
+SOBRE 
+
+
+'GIVING BACK SOME FEEDBACK TO THE USER, IN GENERAL'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> BEM, QUANDO 
+
+__RENDERIZAMOS _______ VIEWS___ COM 
+
+o 
+
+método 
+
+
+'render',
+
+
+
+COMO __eSTAMOS FAZENDO__ 
+
+
+
+
+
+
+EM CÓDIGOS COMO ESTE:
+
+
+
+
+
+
+
+
+
+exports.getSignupPage = (req, res, next) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+  });
+};
+
+
+
+
+
+
+
+
+
+
+------->  QUANDO RENDERIZAMOS VIEWS COMO ESSE,
+
+
+
+
+
+INCLUIR DATA__ QUE __ DEVE __ SER 
+
+
+
+'RENDERED ON THE PAGE' ____ É __ ALGO SIMPLES...  -----> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... A COISA PRINCIPAL QUE O PROFESSOR ESTÁ NOS FALANDO, AUQI,
+
+
+
+É QUE 
+
+
+
+'ITS EASY TO PASS DATA TO OUR VIEWS __ INSIDE ___ OF THE RENDER METHOD,
+ 
+
+ AS YOU CAN SEE'... ------------------> ISSO 
+
+
+
+ NUNCA FOI UM PROBLEMA PARA NÓS,
+
+
+
+ FAZER 
+
+
+
+ O 
+
+
+
+
+ GET DE DATA A PARTIR __ 
+
+
+ DA ESCRITA DESSA DATA 
+
+
+ DENTRO 
+
+ DE NOSSAS 
+
+ VIEWS __ NUNCA FOI UM PROBLEMA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> SIM.... É VERDADE.... ENTRETANTO,
+  
+
+
+  O __ PASS__ DE DATA ____ SE TORNA UM __PROBLEMA ___ GIGANTE __ 
+
+
+  QUANDO/NAS HIPÓTESES 
+
+
+
+  EM QUE ___ VOCê __ QUER 
+
+
+
+
+  'PASS SOME DATA'
+
+
+
+  na 
+
+
+  VIEW QUE JÁ FOI RENDERIZADA __ 
+
+
+
+  EM __ MOMENTOS__ 
+
+  EM QUE __ VOCê __ ESTÁ 
+
+  FAZENDO 
+
+
+  'REDIRECT'... (pq esse objeto 'data' do res.render NÃO FUNCIONA com redirects... não é compatível...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> E COMO NÓS VAMOS QUERER ___ REDIRECIONAR__ O USER 
+
+
+
+  se ele inputtar infos de login INVÁLIDAS,
+
+
+
+  __ 
+
+
+  VAMOS QUERER__ 
+
+  MOSTRAR ALGUMA COISA AO USER,
+
+
+  UMA MENSAGEM DE ERRO,
+
+
+  __PORÉM O 
+
+  OBJETO 
+
+  'data'
+
+
+  DE 
+
+  'res.render'
+
+
+  __NÃO CONSEGUE__ NOS AJUDAR, NESSE ASPECTO... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------> ISSO ACONTECE, ESSA INCOMPATIBILIDADE,
+
+
+  PQ __ 
+
+
+  A PARTIR __DE  
+
+
+  UM 'REDIRECT',
+
+
+
+  _______tECNICAMENTE__ 
+
+
+  1 
+
+  NOVO OBJETO 'REQUEST'
+
+
+
+  É 
+
+  CRIADO/INICIADO... --> NO CASO 
+
+  DO 
+
+
+  REDIRECT A NOSSA HOME PAGE,
+
+  é 
+
+
+
+  um 
+
+  REQUEST 
+
+  DE TIPO 
+
+  'get' 
+
+
+
+
+
+  DIRECIONADO 
+
+
+
+  à page de '/login'.....
+
+
+
+
+
+
+
+
+
+
+
+
+  --> E O PROBLEMA, CONSEQUENTEMENTE, É QUE _ NESSE NOVO REQUEST 
+
+
+  __NÃO HÁ __ NENHUMA INFORMAÇÃO __ DE QUE 'WE GOT HERE BECAUSE THE 
+
+  USER ENTERED AN INVALID EMAIL'''..... ------> 
+
+
+
+  NÃO HÁ INDICATIVO DE COISA ALGUMA,
+
+  você só vai aparecer na PAGE ' DE PRANCHA',
+
+  e 
+  O 
+
+
+
+  OBJETO request 
+
+
+  __NÃO VAI TER NENHUMA INFO NO SEU INTERIOR DIZENDO QUE VOCê FOI REDIRECIONADO 
+
+  POR MOTIVO X OU Y....
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> ISSO SIGNIFICA QUE __ QUANDO 
+
+
+  ESSE NOVO REQUEST __ É TRIGGADO,
+
+
+
+  ___ ELE É TRATADO __ DA 
+
+  MESMA MANEIRA 
+
+
+
+  QUE 
+
+  UM 
+
+  REQUEST 
+
+
+
+  QUE 
+  É 
+
+  TRIGGADO PELO CLICK 
+
+  DE 
+
+  1 BOTÃO EM 1 DE NOSSOS MENUS.... ------> E É EXATAMENTE 
+
+
+
+  POR 
+
+  ISSO 
+
+
+  QUE 
+
+
+
+  'WE HAVE NO WAY OF FINDING OUT, nesse request, _ IF 
+
+  WE WANT TO DISPLAY THE ERROR MESSAGE OR NOT'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------> E É EXATAMENTE POR ISSO QUE NO 
+
+  método 
+
+  'res.render' 
+
+  de 
+
+
+  'getLogin',
+
+  QUE TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+exports.getLoginPage = (req, res, next) => {
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+
+      isLoggedIn: req.session.isLoggedIn,
+    }
+  );
+};
+
+
+
+,
+
+
+
+
+
+
+
+NESSE METHOD 
+AÍ,
+
+
+EM QUE __ MOSTRAMOS A 'LOGIN PAGE',
+
+
+
+
+NÓS __ NÃO VAMOS SABER_ 
+
+
+SE 
+
+QUEREMOS 
+
+
+
+
+INCLUIR ALGUMA 'ERROR MESSAGE' 
+
+
+
+nessa page 
+
+
+a que vamos redirecionar.... 
+
+
+
+
+
+
+
+
+
+
+
+
+------> PARA ___rESOLVER__ ESSE PROBLEMA,
+
+
+
+E 
+
+PARA
+
+
+FAZER 
+O 
+
+
+'STORE OF SOME DATA __ BEFORE WE REDIRECT',
+
+
+
+
+
+
+
+__ PARA __ FAZER O ARMAZENAMENTO DESSA DATA __ QUE __ ENTÃO USAREMOS ___ NO
+
+
+'BRAND NEW REQUEST__ QUE SERÁ _ TRIGGADO PELO REDIRECT',
+
+
+
+
+
+
+
+
+VAMOS TER QUE ESCREVER ALGUM CÓDIGO ESPECIAL....
+
+
+
+
+
+
+
+
+
+
+
+------------> COMO PDEMOS FAZER ISSO?
+
+
+
+
+
+
+
+
+
+
+
+
+----------> BEM, APRENDEMOS __ QUE ___ 
+
+
+
+SE 
+
+QUEREMOS ____ ARMAZENAR__ 
+
+
+DATA 
+
+
+__ AO LONGO __ DE MÚLTIPLOS/DIFERENTES ___ REQUESTS__, 
+
+
+PRECISAMOS __ DE 
+
+
+1 
+
+'SESSION'... --------->  ISSO SIGNIFICA QUE ____PODEMOS __ USAR 
+
+
+
+
+
+
+UMA SESSION PARA ISSO,
+
+
+PODEMOS 
+
+
+
+
+USAR O OBJETO/entry __ SESSION_ DE 'A GIVEN USER'
+
+
+
+
+
+PARA __ FAZER O SHOW _ DESSAS MENSAGENS DE ERRO nos NOVOS REQUESTS triggados 
+
+pelo 'res.redirect()'....
+
+
+
+
+
+
+
+
+
+
+-------> MAS É ___ÓBVIO__ QUE O PROFESSOR__ NÃO VAI QUERER 'STORE THE ERROR MESSAGE IN THE 
+
+SESSION __PERMANENTLY',
+
+
+
+
+
+___ É ÓBVIO QUE __ ELE VAI __ QUERER __aDICIONAR__ 
+
+
+
+ALGUMA COISA ___ 
+
+
+
+LÁ 
+
+
+NA 
+
+
+'ERROR MESSAGE',
+
+
+
+
+
+
+
+para então fazer um tipo de 'FLASH' 
+
+
+dessa 
+
+error 
+
+message 
+
+
+LÁ NA SESSION DE NOSSO USER... --------> AÍ, ASSIM QUE _ A MESSAGE 
+
+DE 
+
+ERROR _ 
+
+
+
+FOR USADA/EXIBIDA AO USUÁRIO ('pulled out' de nossa session, por assim dizer),
+
+
+
+
+
+
+_________ ASSIM QUE A PUXARMOS DA SESSION E FIZERMOS ALGO COM ELA (display ao user),
+
+
+
+__VAMOS __ _QEURER __REMOVER___ ESSA 
+
+
+
+
+'ERROR MESSAGE' 
+
+
+DE NOSSA SESSION, permanentemente... ------> QUEREMOS ISSO 
+
+
+
+JUSTAMENTE PARA QUE ___ 
+
+
+EM 
+
+
+REQUESTS 
+
+SUBSEQUENTES 
+
+
+__eSSA __ 
+
+
+'ERROR MESSAGE'
+
+
+
+___DEIXE __ DE FAZER PARTE __dA SESSION...  --------> PARA ISSO,
+
+
+
+
+
+
+
+
+
+PODEMOS/DEVEMOS USAR __ OUTRA PACKAGE,
+
+
+PACKAGE 
+
+QUE 
+DEIXA__ 
+
+
+
+
+ESSE SET DE ERROR MESSAGES __ BEEEEM FÁCIL....
+
+
+
+
+
+
+
+
+
+É A PACKAGE DE 
+
+
+
+
+'connect-flash'...
+
+
+
+
+
+
+
+
+
+--> INSTALAMOS COM 
+
+
+'npm install --save connect-flash'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+INSTALAMOS ESSE PACKAGE... ------> O 'CONNECT-FLASH'
+
+
+
+É __ BEM SIMPLES__ DE SER UTILIZADO...
+
+
+
+
+
+
+
+
+
+
+OBS, NOSSO PACKAGE.JSON, ATÉ AGORA,
+
+ESTÁ ASSIM:
+
+
+
+
+
+
+{
+  "name": "novonovoprojeto4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
+    "connect-mongodb-session": "^3.1.1",
+    "csurf": "^1.11.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.4",
+    "express-session": "^1.17.2",
+    "mongodb": "^4.1.3",
+    "mongoose": "^6.0.12",
+    "mysql2": "^2.3.0",
+    "pug": "^3.0.2",
+    "sequelize": "^6.7.0"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+BEM LEGAL....
+
+
+
+
+
+
+
+
+-----> OK... PARA USARMOS 
+
+O 
+
+'connect-flash',
+
+
+
+
+
+
+
+
+
+
+
+
+
+___ PRIMEIRAMENTE DEVEMOS __IMPORTAr__ 
+
+
+
+
+
+
+ESSE PACOTE LÁ 
+
+
+
+NO ARQUIVO 'app.js',
+
+
+
+
+por meio de 
+
+
+
+
+
+
+''' const flash = require('connect-flash')''' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+OK.... ISSO FEITO,
+
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+TECE ALGUMAS CONSIDERAÇÕES: 
+
+
+
+
+
+
+
+
+
+___ O 'connect-flash',
+
+ASSIM COMO 
+
+
+o 
+
+
+'csrfProtection',
+
+
+
+__PRECISA__ SER 
+
+
+___iNICIALIZADO_ ______ 
+
+
+________dEPOIS__ 
+
+
+DO CÓDIGO/MIDDLEWARE QUE __ DEFINE SUA SESSION....
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... 
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE NOSSO CÓDIGO, E SUA ORDEM,
+
+FICARÃO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+const csrf = require('csurf'); ///USADO __ PARA___ EVITAR 'CSRF ATTACKS', tudo por meio do uso de CSRF TOKENS _ NAS NOSSAS VIEWS.... (Assistir aula 255)... --> OBS:::: VOCÊ DEVE INICIALIZAR/CONFIGURAR SEU CSRFTOKEn (com aquele 'app.use(csrfProtection)'  ) __DEPOIS__ DO MIDDLEWARE QUE DEFINE/SETTA __ SUA __ SESSION.... (visto mais abaixo, com 'app.use(session())' )
+
+
+const flash = require('connect-flash'); /////USADO __ PARA__ FAZER SHOW __ DE ERROR MESSAGES/DISPLAY DE MENSAGENS DE ERRO AO USER __APÓS___ REDIRECTS... (utiliza SESSIONS para isso). ----> OBS::: __TAMBÉM__ DEVE SER INICIALIZADO/USADO ___ DEPOIS __ DO SET DA SESSION (Que é feito com o middleware de 'app.use(session())' )
+
+
+const csrfProtection = csrf( 
+)
+
+
+
+
+app.use(
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, ///define o STORE que você vai querer usar.... (vamos passar nossa CONSTANTE de 'store' que definimos mais acima..., com o 'new MongoDBStore()'...)
+    }
+  )
+);
+
+
+
+
+
+
+
+
+
+app.use(csrfProtection); ///inicializa nossa PROTEÇÃO CONTRA ATAQUES CSRF....
+
+
+
+
+
+
+
+
+
+
+app.use(flash()); ///////// AÍ VAMOS CHAMAR o 'app.use', E SIMPLESMENTE PASSAR 'flash' como UMA FUNÇÃO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO,
+
+PASSAMOS A PODER USAR ESSE 
+
+
+'FLASH MIDDLEWARE' 
+
+
+_EM QUALQUER LUGAR 
+
+
+DE 
+
+NOSSO APLICATIVO,
+
+LÁ 
+
+
+NO OBJETO 'request'..
+
+
+
+
+
+
+---------------
+
+
+
+
+ok.... 
+
+
+
+
+
+
+definido esse 'flash',
+
+
+
+
+
+
+
+
+
+PODEMOS O UTILIZAR NO OBJETO 'REQUEST', 
+
+
+em qualquer lugar de nosso app....
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+VAMOS 
+
+ATÉ 
+
+OS CONTROLLERS 
+
+DE 
+
+'auth.js',
+
+
+
+
+
+
+
+
+
+
+E AÍ ___
+
+
+VAMOS TER ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+  const password = req.body.password;
+  const email = req.body.email.toLowerCase(); ///para evitar problemas com '.com' e '.COM' naquela function de '.findOne()'.... (isso pq EMAILS NÃO SÃO CASE-SENSITIVE, não se importam com isso..)
+
+  console.log(email);
+
+  User.findOne({ email: email }).then((user) => {
+    console.log(user, 'XX');
+    if (!user) {
+      return res.redirect('/login');
+    } else {
+      // const passwordIsValid = bcrypt.compare(password, user.password)
+      bcrypt
+        .compare(password, user.password)
+        .then((result) => {
+          ///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+          if (result) {
+            //JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+           return req.session.save((err) => {
+              console.log(err);
+              // res.redirect('/');
+
+
+              return res.redirect('/');
+            });
+          }
+
+          res.redirect('/login');
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/login');
+        });
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE CÓDIGO AÍ TEMOS A HIPÓTESE/CASE __ EM QUE ____ NÃO ENCONTRAMOS 
+
+
+
+UM 
+USER 
+
+PARA 
+
+AQUELE 
+
+
+email... (ou seja, NÃO EXISTE 1 USER DESSES NA NOSSA DATABASE....) -------> 
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+É 
+
+ESTE BLOCK AQUI:
+
+
+    if (!user) {
+      return res.redirect('/login');
+    } 
+
+
+
+
+
+
+
+
+-------> DENTRO DESSE BLOCK AÍ,
+
+
+
+VAMOS QUERER 
+
+
+'FLASH' UMA ___ ERROR__ MESSAGE__ PARA __ DENTRO __ 
+
+DE NOSSA 
+
+
+
+
+SESSION.... (isso me lembra o E3 FLASHER... --> você FLASHEIA ALGO, uma data, em um volume físico/virtual...)
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER FLASHEAR __ ESSA ERROR MESSAGE PARA DENTRO DE UMA SESSION/A SESSION DO USER.... ---> 
+
+
+
+
+
+VAMOS FAZER ISSO POR MEIO 
+
+
+DA 
+
+ESCRITA DE 
+
+
+
+'req.flash()' -------> OU SEJA, A PACKAGE DE 'CONNECT-FLASH'
+
+
+VAI TER 
+
+ADICIONADO __ 
+ESSE 
+
+MÉTODO 
+
+de 
+
+'req.flash()', 
+
+
+QUE PODE SER ACESSADO EM QUALQUER LUGAR DE NOSSO APP,
+
+PARA __ 'FLASHAR'__ 
+
+
+A DATA QUE QUISERMOS __ DENTRO ___ DE NOSSA 'SESSION', para 
+
+
+que 
+seja possível utilizar essa data COM ERROR MESSAGES....
+
+
+
+
+
+
+
+
+--> CERTO... ISSO SIGNIFICA QUE O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+    if (!user) {
+
+      req.flash(); ///////EIS O CÓDIGO EM QUESTÃO.
+      return res.redirect('/login');
+    } 
+
+
+
+
+
+
+-------------------> CERTO.... MAS DEVEMOS __ RESSALTAR__ QUE 
+
+ESSE 
+
+
+'req.flash()'
+
+
+
+__ EXIGE 2 PARÂMETROS... --> esse parâmetros
+
+
+
+
+SERÃO:
+
+
+
+
+1) UMA KEY, A KEY__ 'UNDER WHICH THIS MESSAGE WILL BE STORED'....
+
+
+--> no caso, o PROFESSOR VAI COLOCAR O NOME DE 'error' nessa key... --> e essa key PASSARÁ A EXISTIR __ DENTRO DE NOSSA SESSION, NA DATABASE....
+
+
+
+
+
+2) A MESSAGE, A 
+
+
+'ERROR MESSAGE' QUE 
+
+
+VAMOS QUERER __ DISPLAYAR__/ARMAZENAR NAQUELA KEY  QUE NOMEAMOS NO PRIMEIRO PARÂMETRO (nesse caso, 'error')....
+
+
+
+
+
+
+ESSES 2 PARÂMETROS SERÃO __ STRINGS....
+
+
+
+
+
+
+-----> EX:
+
+
+
+
+
+
+
+
+    if (!user) {
+
+      req.flash('error', 'Invalid email or password.'); ///////EIS O CÓDIGO EM QUESTÃO.
+      return res.redirect('/login');
+    } 
+
+
+
+
+
+
+-----------------------------
+
+
+PROFESSOR FALA 1 POUCO DA TEORIA... ---> AQUI VOCÊ PODERIA COLOCAR SÓ 
+
+'invalid email', para ser MAIS ESPECÍFICO.... ---> MAS ELE 
+
+DIZ QUE 
+
+ALGUMAS PESSOAS ACHAM QUE ISSO É __ PIOR__, PQ AÍ ALGUM MALANDRO PODE 'GUESS WHICH PART 
+OF THE CREDENTIALS WAS WRONG',
+
+
+e isso torna 
+
+nossa GUARD um pouco menos segura, de certa forma... (por isso às vezes é melhor deixar 1 pouco mais 'geral' a descrição do error..)
+
+
+
+
+
+
+
+
+
+
+--> MESMO ASSIM, 
+O QUE 
+
+INTERESSA É QUE VOCÊ PODE FLASHAR A MESSAGE QUE VOCê QUISER...
+
+
+
+
+
+
+ok... COM ISSO,
+
+
+
+
+ESSA KEY DE 
+
+'error'
+
+
+FICARÁ __DENTRO __ DA SESSION,
+ 
+
+
+ E ELA __ VAI FICAR LÁ ___ aTÉ QUE __ A UTILIZEMOS... (dura por só 1 utilização)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> COMO NÓS __ SABEMOS___ QUE 
+
+
+
+ NOSSO USER SERÁ __ REDIRECIONADO _ PARA A PAGE DE 'login' 
+
+
+
+ QUANDO ELE FALHAR/passar o email ou password incorretos,
+
+
+
+
+ __ VAMOS USAR __ 
+
+ algo como 
+
+
+
+ 'req.session.error' 
+
+
+
+ LÁ ___ NO CONTROLLER 
+
+
+ DE 
+
+
+
+ 'getLoginPage',
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+ exports.getLoginPage = (req, res, next) => {
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+      errorMessage: req.session.error ///ESTÁ __ERRADO__....
+    }
+  );
+};
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+----> OK... 
+
+
+
+
+
+PROFESSOR FEZ EXATAMENTE ISSO,
+
+
+MAS 
+
+
+
+
+EU ERREI NUMA PARTE... --> ELE NÃO VAI SÓ ESCREVEr 
+
+
+
+'req.session.error',
+
+
+
+E SIM 
+
+
+VAI 
+
+ESCREVEr 
+
+
+
+'errorMessage: req.flash('error')' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OU SEJA, PARA __ CONSEGUIRMOS __ AQUELA 
+
+MESSAGE QUE FOI ARMAZENADA DENTRO DE 'session',
+
+
+
+BASTA __ REPETIRMOS O CALL DE 
+
+'
+req.flash()',
+
+
+
+MAS 
+
+DESSA 
+
+VEZ 
+
+
+
+COM APENAS O PASS DE 1 ÚNICO PARÂMETRO,
+ 
+
+
+  A KEY __ EM QUE SALVAMOS AQUELA ERROR MESSAGE.... nesse caso, 'error'...
+
+
+
+
+
+
+  eX:
+
+
+
+
+
+
+
+  
+
+ exports.getLoginPage = (req, res, next) => {
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+      errorMessage: req.flash('error') ///ESTÁ __CERTO.
+    }
+  );
+};
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+OK....
+
+
+
+
+
+
+
+EX:
+
+
+
+  
+
+ exports.getLoginPage = (req, res, next) => {
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+      errorMessage: req.flash('error') ///ESTÁ __CERTO.
+    }
+  );
+};
+
+
+
+
+
+
+
+
+
+
+------> A VANTAGEM DESSA USAGE DE 'req.flash('error')
+
+É 
+
+
+QUE 
+
+
+ESSA 
+DATA 
+
+NA NOSSA SESSION, ESSA KEY AÍ,
+
+
+__ VAI SER ___ REMOVIDA__ DA 
+
+SESSION APÓS SER USADA 1 ÚNICA VEZ... ---------> 
+
+
+
+
+
+
+
+
+
+
+OK.... AGORA O 'errorMessage'
+
+
+
+vai 
+
+
+
+estar 
+
+'SET',
+
+
+
+E AGORA __ SÓ VAI 'HOLD A VALUE' __ 
+
+
+SE 
+
+EFETIVAMENTE __ TIVERMOS 
+
+
+'AN ERROR FLASHED INTO A/OUR SESSION'....
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... --> AGORA PODEMOS IR ATÉ O VIEW 
+
+DE 
+
+'login.ejs',
+
+
+
+
+
+E AÍ __ FAZER__ O DISPLAY__ DE NOSSA ERROR MESSAGE,
+
+de alguma forma....
+
+
+
+
+
+
+
+
+
+
+--> O VIEW DE 
+
+'login.ejs'
+
+É ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+            <form class="login-form" action="/login" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button class="btn" type="submit">Login</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+--------> DIGAMOS 
+
+
+
+
+
+QUE 
+
+
+
+EM CIMA __ DE TODO ___ ESSE CONTEÚDO AÍ __ VAMOS ADICIONAR UMA DIV (que provavelmente 
+
+SERÁ UM BACKDROP COM UM MODAL, no futuro...) -----> POR ENQUANTO,
+
+
+
+VAMOS 
+
+SÓ 
+
+OUTPUTTAR__ NOSSA 
+
+
+ERROR MESSAGE EM UMA DIV SIMPLES... -------> 
+
+
+
+
+
+
+
+
+
+
+
+é por isso que o professor vai escrever assim:
+
+
+
+
+
+
+<div><%= errorMessage %></div>
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ANTES DE RENDERIZAR ESSE ELEMENTO,
+ 
+
+ É 
+
+ ÓBVIO QUE ELE __ VAI QUERER __ CHECAR PELA EXISTÊNCIA DE UM VALOR 
+
+
+ NESSA 
+
+ propriedade 
+ de 
+
+ 'errorMessage',
+
+
+ por isso 
+
+
+ ele 
+
+ vai 
+
+ escrever 
+
+
+
+ UM IF
+
+
+ STATEMENT 
+
+
+
+
+
+NO EJS,
+
+
+checando por 
+
+'errorMessage'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+<% if (errorMessage) {  %>
+<div><%= errorMessage %></div>
+<% } %>
+
+
+
+
+----------------------------------
+
+
+
+
+
+OK...  
+
+
+
+
+AÍ CHECAMOS SE ISSO FUNCIONA... 
+
+
+
+
+
+
+
+--> VAMOS NO NOSSO APP E ESCREVEMOS 1 
+
+EMAIL INVÁLIDO
+ 
+
+
+ NO FIELD DE EMAIL... --> OK,
+
+
+
+ AÍ 
+
+ VOU __ SER REDIRECIONADO PARA A PAGE 
+
+ DE 
+ LOGIN E REALMENTE 
+
+
+ VOU 
+
+ VER
+
+
+
+
+ 'INVALID EMAIL OR PASSWORD'...
+
+
+
+
+
+
+
+
+
+
+
+ O CÓDIGO COMPLETO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div><%= errorMessage %></div>
+            <% } %>
+            <form class="login-form" action="/login" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button class="btn" type="submit">Login</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+MAS É CLARO QUE PRECISAMOS ADICIONAR O MESMO CASE PARA O 'INVALID PASSWORD',
+
+pq 
+
+NÃO ADICIONAMOS ISSO LÁ NAQUELE CASE...
+
+
+
+
+
+
+
+
+--> CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+  const password = req.body.password;
+  const email = req.body.email.toLowerCase(); ///para evitar problemas com '.com' e '.COM' naquela function de '.findOne()'.... (isso pq EMAILS NÃO SÃO CASE-SENSITIVE, não se importam com isso..)
+
+  console.log(email);
+
+  User.findOne({ email: email }).then((user) => {
+    console.log(user, 'XX');
+    if (!user) {
+      req.flash('error', 'Invalid email.'); ////ISSO FOI/É USADO LÁ NO CONTROLLER DE 'get' '/login', PQ __ É PARA LÁ QUE VAMOS REDIRECIONAR NOSSO USER, e é LÁ QUE VAMOS QUERER __ MOSTRAR__ NOSSA MENSAGEM DE ERRO DIZENDO QUE ELE ERROU O EMAIL/PASSWORD...
+      return res.redirect('/login');
+    } else {
+      // const passwordIsValid = bcrypt.compare(password, user.password)
+      bcrypt
+        .compare(password, user.password)
+        .then((result) => {
+          ///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+          if (result) {
+            //JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+           return req.session.save((err) => {
+              console.log(err);
+
+
+              return res.redirect('/');
+            });
+          }   
+          //esse case FORA DO 'if(result)' é o case em que OS PASSWORDS NÃO MATCHEIAM (user errou/não sabe o password....) ---> vamos querer MOSTRAR UMA MENSAGEM DE ERRO AO REDIRECIONAR, lá na page de 'login', a que redirecionaremos o user....
+          
+          req.flash('error', 'Invalid password.');
+          res.redirect('/login');
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/login');
+        });
+    }
+  });
+};
+
+
+
+
+
+
+OK, 
+
+
+
+ESSA FORMATAÇÃO DEU CERTO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK...
+
+
+
+VAMOS VER MAIS SOBRE A FORMATAÇÕA 
+
+
+
+DESSAS MENSAGENS DE ERRO _NA PRÓXIMA LIÇÃO..
+

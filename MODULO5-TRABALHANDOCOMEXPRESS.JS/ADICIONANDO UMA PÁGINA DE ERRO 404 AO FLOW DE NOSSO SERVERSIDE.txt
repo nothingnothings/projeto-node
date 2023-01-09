@@ -1,0 +1,629 @@
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> UMA COISA QUE __ NÓS DE FATO FIZEMOS NA ÚLTIMA AULA __ FOI 
+
+ 'USE THE EXPRESS ROUTER'.... --------> 
+
+
+
+
+
+ __ E, AGORA, NÓS TEMOS UM SETUP EM QUE 
+
+
+
+
+ __NÓS ___ TAMBÉM__ TEMOS ALGUMAS 'UNHANDLED ROUTES'... ------> 
+
+
+
+
+ SE ESCREVERMOS 
+
+
+
+ 'localhost:3000/randomstring',
+
+
+
+
+ __VAMOS AUTOMATICAMENTE RECEBER 
+
+
+
+ 1 ERRO... --> vamos receber 
+
+
+ 'cannot GET/fsadasfasf'..
+
+
+
+
+
+
+
+
+
+
+ ------> E O PROFESSOR, ENTÃO, NOS EXPLICA QUE NORMALMENTE, QUANDO INPUTTMAOS LIXO NO PATH/URL 
+
+ BAR DE NOSSO PROGRAMADOR,
+
+ 
+ estamos costumados a ver UMA PÁGINA DE ERRO 404... -------> E NÓS __ REALMENTE PODEMOS FAZER ISSo...
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> DE VOLTA AO 
+
+ 
+
+
+
+ arquivo 'app.js',
+
+
+ POEDMOS NOS 
+
+ APROVEITAR DOS MIDDLEWARES/MANEIRA PELA QUAL O EXPRESSJS 
+
+ USA 
+
+ AS MIDDLEWARES... (maneira pela qual 'FUNELLA' os requests por dentr O
+ 
+ deles...) -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> LEMBRE-SE: 
+
+ O REQUEST 
+
+ VAI SEMPRE 
+
+
+
+ 'FROM TOP TO BOTTOM'..... ------> ISSO SIGNIFICA QUE 
+
+
+
+
+ ___ SE O NODEJS/EXPRESS ___ ENCONTRAR UM MIDDLEWARE__ 
+
+
+
+ que 
+
+
+ FAZ HANDLE DESSES DADOS,
+
+
+
+ o EXPRESJS __ VAI ENTRAR NO SEU BODY,
+
+
+ e aí , 
+
+ por exemplo,
+
+
+
+
+
+
+
+
+
+
+------> PRECISAMOS DE UMA PÁGINA DE ERRO PQ 
+
+
+
+__ AGORA ESTAMOS COM UM COMPORTAMENTO DE 
+'EXACT'
+ 
+
+ NOS NOSSOS PATHS/URLS;
+
+
+
+
+ ESSE COMPORTAMENTO 
+
+
+ ESTÁ PRESENTE DEVIDO AO NOSSO USO 
+
+
+ DE 
+
+
+
+ 'express.Router'
+
+
+ NO LUGARR DO ROUTER COMUM DO NODEJS (que é só usar '.use()' e seu primeiro parâmetro...)
+
+
+
+
+
+
+
+
+
+
+ ------------------> PARA 
+
+
+
+
+ CONSEGUIR 
+
+
+
+
+
+HANDLING DE PÁGINAS DE ERRO,
+
+
+DE PÁGINAS 
+
+NÃO ABRANGIDAS POR NOSSAS PATHS/URLS,
+
+
+
+BASTA 
+
+
+DEFINIR 
+
+
+
+ALGUM  
+
+
+
+MIDDLEWARE 
+
+
+QUE 
+
+
+EXECUTE CÓDIGO (renderize uma página)
+
+A PARTIR 
+
+
+DOS CASES 
+
+EM QUE 
+
+
+
+NOSSO PATH 
+
+
+seja algo DISTINTO 
+
+dos cases pré-definidos...
+
+
+
+
+
+
+
+-----> se NÃO TEMOS NENHUM 'FITTING MIDDLEWARE',
+
+
+
+
+__ NÓS 
+
+
+ACABAMOS 
+
+
+'MAKING IT ALL THE WAY TO THE BOTTOM OF OUR APP.JS'.... ------> 
+
+
+
+
+
+E EVENTUALLY,
+
+
+
+
+ACABAMOS 'NOT HANDLING THAT REQUEST'... -------> 
+
+
+
+
+
+PARA CONTORNAR ESSE PROBLEMA,
+
+DEVEMOS 
+
+
+ESCREVER ___ ALGUM __ MIDDLEWARE__ LÁ 
+
+
+
+EM 
+
+
+
+'app.js',
+
+LA 
+
+NO FINAL DO ARQUIVO,
+
+
+
+
+
+COLOCAMOS UM MIDDLEWARE 
+
+
+
+'CATCH-ALL',
+
+
+QUE SERVIRÁ 
+
+
+
+COMO 
+
+ESSE 
+
+
+
+__'''DISPENSER DE PÁGINAS DE ERRO 404'''....
+
+
+
+
+
+
+
+
+
+--------> OK... PARA ISSO, ESCREVEMOS 
+
+
+
+
+
+UM 'app.use()'
+
+
+EM QUE NÃO COLOCAMOS __ NENHUM 'PATH FILTER' (nem um '/', por exemplo...),
+
+
+
+
+
+
+E AÍ SIMPLESMENTE ESCREVEMOS 
+
+O CÓDIGO PADRÃO 
+
+DOS 
+
+
+
+REQUEST HANDLERS.... --> 
+
+
+
+e vamos usar 
+
+
+'app.use()',
+
+
+E NÃO 
+
+
+'APP.GET' OU 
+
+'APP.POST',
+
+
+ou qualquer outra coisa,
+
+PQ VAMOS QUERER 
+
+
+HANDLAR 
+
+TODOS 
+
+OS 
+
+REQUESTS, REQEUSTS 
+
+
+DE TODOS OS TIPOS,
+
+
+QUE NÃO 
+
+SE ENCAIXEM NOS NOSSOS OUTROS CASES...
+
+
+
+
+
+
+
+
+
+->OK...
+
+
+
+vamos escrever:
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+
+
+
+                res.send(
+                    '<h1>PAGE NOT FOUND!</h1>'
+                )
+    }
+)
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER RENDERIZAR/ENVIAR ALGO ASSIM... --> NÓS __ TBM VAMOS QUERER 
+
+
+ENVIAR UM 
+
+
+STATUS CODE DE ERRO 404,
+
+POR ISSO ESCREVEMOS ISTO:
+
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+
+
+
+                res.status(404).send(
+                    '<h1>PAGE NOT FOUND!</h1>'
+                )
+    }
+)
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+NÓS JÁ FIZEMOS ISSO; PARA FAZER ISSO, PARA CONSEGUIR ENVIAR UM CÓDIGO DE STATUS 
+
+
+EM UMA RESPONSE 
+
+
+
+enviada por 'res.send()',
+
+BASTA VOCÊ ESCREVER/CHAINAR 
+
+o 
+
+
+'status(xxxx)'
+
+
+ANTES __ DO CALL DE '.send'...
+
+
+
+ex:
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+
+
+
+                res.status(404).send(
+                    '<h1>PAGE NOT FOUND!</h1>'
+                )
+    }
+)
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+-----> E NÓS PODEMOS COLOCAR ESSE 'status()' EM TODOS OS LUGARES DE NOSSO CÓDIGO EM QUE 
+
+ESCREVEMOS 
+
+'send'... ---> PODEMOS FAZER A MESMA COISA COM 'setHeader({})',
+
+
+
+
+
+TODOS 
+
+ESSES METHOD CALLS NA RESPONSE __ FUNCIONAM COM ESSE CHAINING.... --> A ÚNICA COISA QUE 
+
+VOCê 
+
+
+TEM QUE SE CERTIFICAR É QUE 
+
+O 
+'SEND' 
+
+sempre 
+
+ACABA SENDO O __ ÚLTIMO __ __
+
+
+
+MÉTODO CHAMADO NESSA LINHA...
+
+
+
+ex:
+
+
+
+
+
+
+res.setHeader({'Content-Type': 'application/json'}).status(201).send('<h1>HTML CONTENT</h1>');
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+OK........ --> 
+
+
+E O PROFESSOR 
+
+ESCREVE 
+
+
+
+app.use(
+    (req, res, next) => {
+            res.status(404).send('<h1>Page not found</h1>'); 
+    }
+)
+
+
+
+
+
+------------------------------
+
+
+COM ISSO ADICIONADO,
+
+
+RECARREGAMOS NOSSA PÁGINA 
+
+E TESTAMOS ALGUMAS URLS 
+
+
+QUE NÃO EXISTEM NOS NOSSOS MIDDLEWARES/ROUTES...
+
+
+
+
+
+
+
+
+
+
+
+-----> 
+app.use(
+  (req, res, next) => { ///CLÁSSICO USE-CASE DE UM __ RETORNADOR DE PÁGINA DE 'ERRO 404'... ---> PAGE NOT FOUND... ---> COMO ESSE MIDDLEWARE ESTÁ DEFINIDO BEM NO FINAL DESSE ARQUIVO 'app.js', ELE __ SÓ SERÁ EXECUTADO SE NENHUM OUTRO MIDDLEWARE FOR ATIVADO A PARTIR DO PATH/URL besteirol/inexistente que o usuário inputtou...
+      res.status(404).send('<h1>PAGE NOT FOUND!</h1>'); ///EXEMPLO DE CHAINING DE METHODS JUNTO DE 'send' (aqui usamos 'status' antes, para definir um STATUS CODE DE 404, page not found...)
+  }
+)
+
+
+
+-------------- 
+
+
+
+ok....

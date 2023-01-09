@@ -1,0 +1,720 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> AGORA QUE SOMOS CAPAZES DE FAZER 'FETCH' DE NOSSOS POSTS POR MEIO DO GRAPHQL,
+
+
+
+
+DEVEMOS 
+
+ADICIONAR PAGINATION TAMBÉM... (EU JÁ HAVIA ADICIONADO PAGINATION, NO MEU CÓDIGO)....
+
+
+
+
+
+
+O RESOLVER DE 'getPosts',
+
+
+COM PAGINATION,
+
+FICOU ASSIM:
+
+
+
+
+
+
+     getPosts: async function(args, req) {
+
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+        const pageNumber = args.pageNumber || 1; //extraído de nossa QUERY....
+     
+
+        console.log(pageNumber);
+
+        const countedDocuments = await Post.find().countDocuments();
+
+
+        const neededUserDocuments = await Post.find({}, null,
+            {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+          ).populate(
+            'creator.userId'
+        ).sort({_id: -1})
+      
+
+
+
+        if(!neededUserDocuments) {
+            const error = new Error('No posts found in the database, please try again.')
+            error.code = 404;
+            throw error;
+          }
+
+
+          console.log(neededUserDocuments[0].createdAt.toISOString());
+
+        return {
+            posts: neededUserDocuments.map(
+                (post) => {
+                    return {
+                        ...post._doc, //TUDO, EXCETO ESSAS 3 KEYS/PROPRIEDADES, PERMANECERÁ O MESMO...
+                        creator: { //hotfix...
+                            name: post.creator.userId.name,
+                            _id: post.creator.userId._id
+                        },
+                        _id: post._id.toString(), //// DE NOVO, PRECISAMOS TRANSFORMAR essas 3 propriedades, pois seus data types MONGOOSE (ObjectId e DATETYPE) não SÃO/SERÃO RECONHECIDOS PELO GRPAHQL e seu schema...
+                        createdAt: post.createdAt.toISOString(),
+                        updatedAt: post.updatedAt.toISOString()
+                    }
+                }
+            )
+            ,
+            totalItems: countedDocuments,
+            page: +pageNumber
+        }
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     --> O QUE INTERESSA É AQUELE 
+
+     'pageNumber' E O 'countedDocuments'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+     --> NO CÓDIGO DO PROFESSOR,
+
+
+     ELE 
+
+     EXPLICA QUE VAMOS 
+
+
+
+
+     TER QUE 
+     ALTERAR 
+
+     ALGO 
+
+     NA NOSSA QUERY DE 'getPosts'...
+
+
+
+
+
+
+
+
+
+     --> MINHA QUERY HAVIA FICADO ASSIm:
+
+
+
+
+     type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+}
+
+
+
+
+
+
+
+
+
+--> eu já fiz isso que o professor vai fazer agora;
+
+
+já adicionei esse argumetno de 
+
+
+
+'(pageNumber: Int!)'...
+
+
+
+
+
+
+
+
+
+
+
+--> ESSE ARGUMENTO DEFINE A __ PAGE __ EM QUE __ ESTAMOS... --> 
+
+
+
+
+
+COLOCAMOS de tipo 'integral',
+
+
+
+PQ VAI SER UM NÚMERO,
+ 
+ É CLARO....
+
+
+
+
+
+
+
+
+ --> OK.... --> 
+
+
+ LÁ 
+
+
+
+
+ no resolver,
+
+ NÓS CERTAMENTE 
+
+
+ VAMOS RECEBER 
+
+
+ ESSE 
+
+
+
+ ARGUMENTO 'pageNumber'
+  
+
+  na nossa query,
+
+
+  por isso escrevemos:
+
+
+
+
+
+  const pageNumber = args.pageNumber || 1;
+
+
+
+
+
+
+
+
+
+
+
+
+  --> EXTRAÍMOS 
+
+  ESSE 
+
+
+  NÚMERO LÁ DO argumento de 'args',
+
+  QUE EXISTE EM CADA UM DOS ME´TODOS DO NOSSO 'resolvers.js':
+
+
+
+
+
+  ex:
+
+
+
+
+       getPosts: async function(args, req) { 
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+OK.... --> IMPORTANTE É 
+
+AQUELE 
+
+DEFAULT (||) 
+
+
+
+DE 
+
+1,
+
+
+
+PARA QUE 
+A PÁGINA SEJA DEFINIDA COMO '1',
+
+
+
+
+SE NÃO EXISTIR NENHUMA OUTRA PAGE 
+
+DEFINIDA 
+
+
+NA NOSSA QUERY...
+
+
+
+
+
+--------> o 'perPage' VAI FICAR DE 5.... --> É CLARO QUE 
+
+PODERÍAMOS ADICIONAR 
+
+
+
+
+
+UMA 'OPÇÃO' 
+
+
+LÁ 
+
+
+
+NO FRONTEND DIZENDO 'PAGE SIZES',
+
+
+em que 
+
+OFERECEMOS __ DIFERENTES__ TAMANHOS DE PAGE _ PARA O USER ESCOLHER... (
+
+    aí, 
+
+    para isso,
+
+    USARÍAMOS UM __ DROPDOWN... --->
+
+
+    EM CADA 
+    OPÇÃO DO DROPDOWN (<select></select>)
+
+
+    COLOCAMOS 
+
+
+    UM VALOR 
+
+    DESSE 'per_page',
+
+
+    QUE ENTÃO É ENVIADO 
+
+    NESSA NOSSA QUERY ao method de 'getPosts'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... HARDCODAMOS ISSO...
+
+
+
+
+
+
+
+--> AGORA PODEMOS USAR 
+
+
+ESSE 'per_page'
+
+ALI EMBAIXO,
+
+QUANDO 
+
+
+
+FAZEMOS O 'SEARCH' POR TODOS NOSSOS POSTS...
+
+
+
+
+
+
+
+--> E NÓS JÁ APRENDEMOS QUE PODEMOS FAZER 
+
+'PAGINATE'
+
+NAS 
+
+
+
+NOSSAS QUERIES DO MONGOOSE/MONGODB,
+
+TUDO POR MEIO DE 
+
+
+'.skip()'
+
+e 
+
+'.limit()'...
+
+
+
+
+
+
+
+
+
+--> ADICIONAMOS ESSE SKIP E LIMIT,
+
+
+
+
+E AÍ 
+
+escrevemos isto:
+
+
+
+
+
+        const neededUserDocuments = await Post.find({}, null,
+            {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+          ).populate(
+            'creator.userId'
+        ).sort({_id: -1})
+
+
+
+
+
+
+
+
+
+
+        EM SKIP ESPECÍFICAMOS, POR MEIO DAQUELES VALORES DINÂMICOS,
+
+
+        QUANTOS ITEMS QUEREMOS SKIPPAR.... ----> POR FIM,
+
+
+
+
+        VAMOS __ LIMITAR___ A QUANTIDADE de items a serem queryiados,
+
+
+
+        por meio de 'limit',
+
+
+
+        EM QUE COLOCAMOS '5' (só vamos querer 5 items por vez...)
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ ACABAMOS,
+ 
+ ESSE É o 
+ PAGINATION NO SERVERSIDE....
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> LÁ 
+
+
+ NO FRONTEND 
+
+
+
+ O PROFESSOR JÁ COLOCOU UMA LÓGICA PARA O PAGINATION,
+
+ lá 
+
+
+ naquele 
+
+ código de 'Feed.js',
+
+ DE:
+
+
+
+
+
+
+
+
+
+
+
+    if (direction) {
+        this.setState({ postsLoading: true, posts: [] });
+      }
+
+      let page = this.state.postPage;
+      console.log(page);
+
+      if (direction === 'next') {
+        page++;
+        this.setState({ postPage: page });
+      }
+
+      if (direction === 'previous') {
+        page--;
+        console.log(this.state.postPage);
+        this.setState({ postPage: page });
+        console.log(this.state.postPage);
+      }
+
+      console.log(this.state.postPage, 'NEEDPOSTPAGE');
+      // fetch('URL')
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+--> AGORA SÓ PRECISAMOS ENVIAR ESSE 
+
+
+'currentPage'
+
+
+
+
+
+NA NOSSA QUERY DE 
+
+'graphqlQuery',
+
+
+EM QUE 
+
+ESCREVEMOS ASSIM:
+
+
+
+
+
+        query: `
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } 
+        `
+
+
+
+
+
+
+--> OU SEJA,
+
+EU JÁ HAVIA 
+
+
+ADICIONADO A NOSSA PAGE 
+
+COMO PARÂMETRO 
+
+DESSA QUERY...
+
+
+
+
+
+
+
+
+
+--> BEM CERTInho....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> não precisamos wrappar ${name} em "",
+
+pq vamos querer 
+
+que isso seja um NÚMERO, mesmo...
+
+
+
+
+
+
+---------------------
+
+
+
+AÍ REINICIAMOS NOSSO CÓDIGO,
+
+
+
+E 
+TUDO FUNCIONA....
+
+
+
+TEMOS PAGINATION FUNCIONANDO...
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+O PRÓXIMO PASSO, É CLARO,
+
+
+É __ FAZER O UPLOAD DE IMAGES__ FUNCIONAR___ (os imageUrl na database, também...)
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+image upload é algo BEM INTERESSANTE NOS GRAPHQL,
+
+e o professor nos mostrará agora...

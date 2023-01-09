@@ -1,0 +1,5312 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> GOOGLE POR 'STRIPE'....
+
+
+
+
+
+
+
+
+
+
+--> TEMOS UM DOCS MT BOM SOBRE ELE....
+
+
+
+
+
+
+
+
+--> CLICAMOS EM CREATE ACCOUNT, E AÍ CRIAMOS UMA ACCOUNT...
+
+
+
+
+
+
+
+
+
+
+--> PRIMEIRAMENTE, PRECISAMOS VALIDAR NOSSO EMAIL,
+
+
+
+
+
+E AÍ,
+ 
+
+ DEPOIS DISSO,
+
+
+ PODEMOS COMEÇAR...
+
+
+
+
+
+
+
+
+
+ --> IMPORTANTE:::
+
+
+
+
+
+
+ EM 
+
+
+ 'Developers',
+
+
+VOCÊ 
+
+ENCONTRA VÁRIAS API KEYS,
+
+AS QUAIS 
+
+VOCÊ VAI PRECISAR,
+
+
+CASO QUEIRA USAR STRIPE NO SEU APP...
+
+
+
+
+
+
+
+
+
+-------------> E NÓS ESTAMOS VENDO 'SPECIAL TESTING DATA' aqui,
+
+
+
+data que é FINE PARA NOSSO DEVELOPMENT... --------->  MAS SE VOCÊ 
+
+
+
+ESTIVESSE FAZENDO UMA 'REAL APPLICATION',
+
+SE VOCê FOSSE TROCAR PARA O MODO DE 'PRODUCTION' (deploy),
+
+
+
+VOCê TEM QUE 
+
+
+CLICAR EM UM BOTÃOZINHO ALI QUE DIZ 
+
+
+
+
+
+'use live data'... ----->  MAS PARA USAR LIVE DATA,
+
+
+
+
+
+VOCÊ TEM QUE 
+
+
+
+
+VERIFICAR SUA CONTA, ETC..
+
+
+
+
+
+
+--> NÃO VAMOS USAR A 'LIVE DATA'
+
+ainda... por enquanto, vamos mexer só com a 
+
+
+'TEST DATA', 
+
+para começar...
+
+
+
+
+
+
+
+
+
+
+---> CERTO...
+
+
+
+
+
+
+
+CONFIRMADA SUA CONTA,
+
+
+
+
+
+DEVEMOS CLICAR EM 'HOME',
+
+
+E ENTÃO 
+
+
+
+
+
+EM 'ACCEPT FIRST PAYMENT',
+
+
+para ler 
+
+
+OS OFFICIAL DOCS E APRENDER SOBRE _ COMO PODEMOS 
+
+
+'ACCEPT OUR PAYMENT'...
+
+
+
+
+
+
+
+
+
+
+-----> A COISA LEGAL, AQUI, É QUE 
+
+ESSA DATA 
+
+
+
+TODA, AQUI,
+
+
+
+JÁ É 
+
+'ACTUALLY ALREADY POPULATED'
+
+
+
+
+COM NOSSA PRÓPRIA DATA,
+
+
+
+
+
+
+
+
+COM NOSSA PRÓPRIA 'PUBLISHABLE KEY'..., por exempllo....
+
+
+
+
+
+
+------> ESSA KEY, ESSA 'publishable key',
+
+
+
+É 
+
+
+A KEY QUE 
+
+
+ENXERGAMOS ANTES,
+
+
+DEBAIXO DE 
+
+
+'developers api keys'...
+
+
+
+
+
+
+
+
+
+--------> 'developers '--> api keys --->  ESSAS KEYS 
+
+
+
+ 
+ SÃO KEYS QUE 'YOU NEED TO SEND WITH YOUR DATA, to let 
+
+ STRIPE KNOW ___ TO WHICH __ ACCOUNT THIS __ BELONGS''... (essa operação pertence)...
+
+
+
+
+---> 
+
+
+https://stripe.com/docs/payments
+
+
+
+
+
+
+
+
+ -----> NO CASO, 
+
+
+
+
+
+
+ LÁ EM quickstart'
+
+ TEMOS UM 
+
+
+ CODESNIPPET COMO ESTE:
+
+
+
+
+
+Chave publicável
+
+pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK
+
+
+
+
+
+
+
+
+
+
+
+---------------> mas no site do stripe ANTIGO,
+
+
+
+
+tínhamos um codesnippet de tutorial,
+
+que 
+
+era este:
+
+
+
+
+<form action="your-server-side-code" method="POST">
+    <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button">
+    data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+    data-amount="999"
+    data-name="Demo Site"
+    data-description="Example charge"
+    data-imge="https://stripe.com/img/documentation/marketplace.ong"
+    data-locale="auto"
+    data-currency="eur">
+    </script>
+</form>
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE DEVEMOS __COPIAR__ ESSE NEGÓCIO E COLAR LÁ 
+
+
+NA NOSSA PAGE DE 'CHECKOUT'...
+
+
+
+
+
+--------------------------
+
+
+
+ENTRETANTO, ENCONTREI ESTE SITE:
+
+
+
+https://stripe.com/docs/payments/checkout/migration
+
+
+
+
+
+
+
+
+---------->
+
+
+
+
+
+
+
+Na versão antiga do Checkout, você mostrava o valor dinâmico e a descrição, e coletava os dados do cartão do cliente.
+
+
+client.html
+
+<form action="/purchase" method="POST">
+  <script
+    src="https://checkout.stripe.com/checkout.js"
+    class="stripe-button"
+    data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+    data-name="Custom t-shirt"
+    data-description="Your custom designed t-shirt"
+    data-amount="{{ORDER_AMOUNT}}"
+    data-currency="brl">
+  </script>
+</form>
+
+
+
+
+
+
+
+Depois você enviava o token ou fonte gerado para o seu servidor e fazia a cobrança.
+
+
+
+
+const customer = await stripe.customers.create({
+  email: 'customer@example.com',
+  source: request.body.stripeToken,
+});
+
+const charge = await stripe.charges.create({
+  customer: customer.id,
+  description: 'Custom t-shirt',
+  amount: order.amount,
+  currency: 'brl',
+});
+
+
+
+
+
+
+
+
+
+
+
+MAS TUDO ISSO _MUDOU_....
+
+
+
+
+
+
+
+AGORA É ASSIM:
+
+
+
+
+
+
+
+
+Com a versão atual do Checkout, você cria primeiro uma sessão do Checkout no seu servidor.
+
+
+
+
+
+
+const session = await stripe.checkout.sessions.create({
+  payment_method_types: ['card'],
+  line_items: [{
+    price_data: {
+      product: '{{PRODUCT_ID}}',
+      unit_amount: 1500,
+      currency: 'brl',
+    },
+    quantity: 1,
+  }],
+  mode: 'payment',
+  success_url: 'https://example.com/success',
+  cancel_url: 'https://example.com/cancel',
+});
+
+
+
+Depois, você envia o ID da Sessão para seu cliente, redirecionando-o para o Checkout para
+ finalizar o pagamento.
+
+
+
+
+
+const stripe = Stripe('pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK');
+const checkoutButton = document.getElementById('checkout-button');
+
+checkoutButton.addEventListener('click', () => {
+  stripe.redirectToCheckout({
+    // Make the id field from the Checkout Session creation API response
+    // available to this file, so you can provide it as argument here
+    // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+    sessionId: '{{CHECKOUT_SESSION_ID}}'
+  })
+  // If `redirectToCheckout` fails due to a browser or network
+  // error, display the localized error message to your customer
+  // using `error.message`.
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ok, mas antes de mais nada, tenho que INSTALAR O STRIPE, POR MEIO DE 'npm install --save stripe'...
+
+
+
+
+
+
+
+
+
+
+
+--> o approach do professor é ANTIGO, ultrapassado.
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ EM 'shop.js',
+
+
+
+COMEÇO ESCREVENDO ISTO:
+
+
+
+
+
+
+
+const stripe = require('stripe')('pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK'); //necessário.
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO VAI __ IMPORTAR__ A PACKAGE DO 'stripe',
+
+
+
+VINCULADA AO NOSSO APP/CONTA...
+
+
+
+
+
+
+
+
+--> certo... nos docs 
+
+do 
+
+
+stripe,
+
+
+
+temos 
+
+
+
+algo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+''''''
+
+
+
+
+const session = await stripe.checkout.sessions.create(
+    {
+        payment_method_types: ['card'],
+
+
+        line_items: [
+            price: totalPrice (acho que será isso...),
+            quantity: 1
+        ],
+
+        mode: 'payment',
+        success_url: 'https://exemplo.com/success',
+        cancel_url: 'https://exemplo.com/cancel'
+    }
+)
+
+
+
+
+
+..........
+
+
+
+
+
+
+
+
+
+ok... mas a questão é:
+
+
+ONDE COLOCAR ESSE CÓDIGO?
+
+
+
+
+talvez em algum controller de 'checkout'?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> 'PAYMENT' será para obter APENAS 1 PAGAMENTO, PROVAVELMENTE..
+
+
+
+
+
+
+
+
+
+
+
+--> o problema, além disso, é o próximo passo:
+
+
+
+
+
+
+
+
+'''
+
+Depois, você envia o ID da Sessão para seu cliente, redirecionando-o para o Checkout para finalizar o pagamento.
+
+
+''
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O QUE O PROFESSOR FAZ, NA VERSÃO DELE, É ESCREVER ISTO:
+
+
+
+
+
+<form action="/create-order" method="POST">
+    <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button">
+    data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+    data-amount="999"
+    data-name="Demo Site"
+    data-description="Example charge"
+    data-imge="https://stripe.com/img/documentation/marketplace.ong"
+    data-locale="auto"
+    data-currency="eur">
+    </script>
+</form>
+
+
+
+
+
+
+---------------------------------
+
+
+
+OK, MAS O QUE DIABOS FAZ 
+
+
+ESSA 
+
+'form'? 
+
+
+
+
+
+-> BEM, ESSA FORM __ _CONTÉM UM __ SCRIPT (<script>)
+
+QUE 
+
+
+VAI ACTUALLY 
+
+
+'CREATE THE INPUT FIELDS'
+
+para o usuário...
+
+
+
+
+
+
+
+
+
+
+--> ACHEI UM LINK BEM MELHOR, EXPLICANDO COMO FAZER ESSA INTEGRAÇÃO AO STRIPE....
+
+
+
+
+
+
+EX:
+
+
+https://stripe.com/docs/payments/accept-a-payment?integration=checkout
+
+
+
+
+
+
+
+
+
+Primeiro, verifique se você criou um nome para a conta(https://dashboard.stripe.com/settings/account/ ) no Stripe Dashboard.
+
+Então instale as bibliotecas para acessar a API da Stripe no seu aplicativo:
+
+
+
+
+
+
+# Install via npm
+npm install --save stripe
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> DEPOIS DISSO,
+
+
+
+FAÇA ISTO:
+
+
+
+
+Redirecione seu cliente para o Stripe Checkout
+
+
+
+Adicione um botão de checkout ao seu site para invocar um endpoint do lado do servidor e criar uma Sessão do Checkout.
+
+
+
+
+
+
+
+<html>
+  <head>
+    <title>Buy cool new product</title>
+  </head>
+  <body>
+    <form action="/create-checkout-session" method="POST">
+      <button type="submit">Checkout</button>
+    </form>
+  </body>
+</html>
+
+
+
+
+
+
+CERTO... __ É ISSO_ QUE VAMOS QUERER 
+
+COLOCAR NA NOSSA PÁGINA...
+
+
+
+
+isto:
+
+
+    <form action="/create-checkout-session" method="POST">
+      <button type="submit">Checkout</button>
+    </form>
+
+
+
+
+
+
+
+
+
+
+->OK... MEU VIEW FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+          <form action="/create-checkout-session" method="POST">
+            <h2>Total Price: <%= totalPrice %></h1>
+            <button type="submit">Checkout</button>
+          </form>
+      </ul>
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> AGORA SÓ PRECISAMOS ___ 
+
+
+
+
+ESCREVER UMA ROUTE DE TIPO 'post',
+
+LÁ 
+
+
+
+em 
+
+
+'shop.js' (arquivo route),
+
+
+
+
+
+QUE 
+
+
+
+HANDLE ESSE PATH...
+
+
+
+
+
+--> TIPO ISTO:
+
+
+router.post('/create-checkout-session', authCheckerAndRedirecter, shopController.postCheckout);
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo...
+
+
+
+
+
+
+
+
+
+
+
+Adicione um botão de checkout ao seu site para invocar um endpoint do lado do servidor e criar uma Sessão do Checkout.
+
+
+
+
+
+
+
+
+
+
+Uma sessão de checkout é o programa que representa o que seu cliente vê ao ser redirecionado para o formulário de pagamento. Você pode configurar opções como:
+
+*itens de linha (https://stripe.com/docs/api/checkout/sessions/create#create_checkout_session-line_items) 
+a serem cobrados
+
+*moedas a serem usadas
+
+
+
+
+
+Você também precisa especificar:
+
+Uma página success_url em seu site, para onde o cliente é redirecionado ao finalizar o pagamento.
+Uma página cancel_url em seu site, para onde o cliente é redirecionado se clicar no seu logotipo no Checkout.
+
+
+
+
+
+
+
+As sessões do Checkout expiram 24 horas após a criação.
+
+
+
+
+
+
+
+
+
+
+OK, ACHEI UM CÓDIGO MUITO BOM, QUE FAZ BASTANTE SENTIDO:
+
+
+
+
+
+
+https://youtu.be/rPR2aJ6XnAc
+
+
+
+
+
+
+
+
+
+E:
+
+
+
+
+
+
+
+
+// This example sets up an endpoint using the Express framework.
+// Watch this video to get started: https://youtu.be/rPR2aJ6XnAc.
+
+const express = require('express');
+const app = express();
+const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L')
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'T-shirt',
+          },
+          unit_amount: 2000,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: 'https://example.com/success',
+    cancel_url: 'https://example.com/cancel',
+  });
+
+  res.redirect(303, session.url);
+});
+
+app.listen(4242, () => console.log(`Listening on port ${4242}!`));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ou seja, _ REALMENTE__ ESSA SESSION É CRIADA __ LÁ NO NOSSO CONTROLLER,
+
+em 'shop.js'...
+
+
+
+
+----> vamos escrever algo como:
+
+
+
+
+
+
+
+
+
+exports.postCheckout = (req, res, next) => {
+
+      stripe.checkout.sessions.create(
+        {
+
+        payment_method_types: ['card'],
+
+
+        line_items: [
+            price: totalPrice (acho que será isso...),
+            quantity: 1
+        ],
+
+        mode: 'payment',
+        success_url: 'https://exemplo.com/success',
+        cancel_url: 'https://exemplo.com/cancel'
+
+
+        }
+      )
+      .then(
+          (result) => {
+                    res.redirect(')
+          }
+      )
+
+
+}
+
+
+
+
+
+
+
+
+-------> DESCOBRI ALGO AGORA....
+
+
+
+
+
+
+
+
+
+The res.redirect() function redirects to the URL derived from the specified path, with specified status, a integer (positive) which corresponds to an HTTP status code. The default status is “302 Found”.
+
+Syntax:
+
+res.redirect([status, ] path)
+Parameter: This function accepts two parameters as mentioned above and described below:
+
+status: This parameter holds the HTTP status code
+path: This parameter describes the path.
+
+
+
+
+
+
+
+
+
+
+
+-----> ou seja, o primeiro parâmetro você pode usar para PASSAR UM STATUS CODE...
+
+
+
+
+(é opcional, é claro....)
+
+
+
+
+
+
+
+
+
+
+--> no caso dos docs 
+
+
+do 
+
+
+stripe, temos 
+
+isto:
+
+
+'res.redirect(303, session.url)'
+
+
+
+
+
+
+
+
+
+
+CONTINUANDO NOSSO CÓDIGO:
+
+
+
+
+
+
+
+
+exports.postCheckout = (req, res, next) => {
+
+      stripe.checkout.sessions.create(
+        {
+
+        payment_method_types: ['card'],
+
+
+        line_items: [
+            price: totalPrice (acho que será isso...),
+            quantity: 1
+        ],
+
+        mode: 'payment',
+        success_url: 'https://exemplo.com/success',
+        cancel_url: 'https://exemplo.com/cancel'
+
+
+        }
+      )
+      .then(
+          (session) => {
+                    res.redirect(303, session.url); ////TALVEZ seja assim...
+          }
+      )
+
+
+}
+
+
+
+
+
+
+
+
+--> BEM, EU GANHEI UM __ ERRO_:
+
+
+
+ForbiddenError: invalid csrf token
+    at csrf (A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\csurf\index.js:112:19)
+    at Layer.handle [as handle_request] (A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:317:13)
+    at A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:284:7
+    at Function.process_params (A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:335:12)
+    at next (A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:275:10)
+    at A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express-session\index.js:506:7
+    at A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\connect-mongodb-session\index.js:140:20
+    at A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\mongodb\lib\utils.js:532:9
+    at A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\mongodb\lib\cursor\abstract_cursor.js:477:68
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> tenho que passar a csrftoken 
+
+
+
+a route 'post' de stripe, também....
+
+
+
+
+
+
+--------> para fazê-lo, posso passar essa token 
+
+
+
+POR MEIO DE MINHA FORM... (Acho)
+
+
+
+
+
+
+
+--> COLOQUEI UM INPUT FIELD HIDDEN COM UMA CSRFTOKEN,
+
+
+
+tipo assim:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+          <form action="/create-checkout-session" method="POST">
+            <h2>Total Price: <%= totalPrice %></h1>
+              <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+            <button type="submit">Checkout</button>
+          </form>
+      </ul>
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> agora recebi OUTRO ERRO, 'totalPrice is not defined'...
+
+
+
+
+
+
+
+
+--> O ERRO PARTIU DESTE CÓDIGO:
+
+
+
+
+
+
+exports.postCheckout = (req, res, next) => {
+
+  stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+
+
+    line_items: [
+      {
+        price: totalPrice, ////aqui...
+        quantity: 1
+      }
+    ],
+
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+
+
+    }
+  )
+  .then(
+      (session) => {
+                res.redirect(303, session.url); ////TALVEZ seja assim...
+      }
+  )
+
+
+
+}
+
+
+
+
+
+
+--------------------------
+
+
+
+
+preciso armazenar o valor de 'totalPrice' em uma CONST/LET, para então usar nesse local...
+
+
+
+
+
+
+--> o problema, especificamente, é que o valor 'totalPrice'
+
+
+está 
+
+
+só na minha PAGE de 'checkoutPage',
+
+
+
+
+E NÃO 
+
+
+
+
+ESTÁ 
+
+
+
+NESSA FUNÇÃO DE 'stripe'
+
+
+AUTOMATICAMENTE...
+
+
+
+
+
+
+
+
+
+
+
+--> vejo a aula do professor para observar se esqueci algo....
+
+
+
+
+
+
+
+
+-> pelo visto professor criou/importou aquele STRIPE __ DENTRO _ DO CONTROLLER DE 'postCheckout'... 
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+exports.postCheckout = (req, res, next) => {
+
+
+ 
+
+  stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+
+
+    line_items: [
+      {
+        price: totalPrice,
+        quantity: 1
+      }
+    ],
+
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+
+
+    }
+  )
+  .then(
+      (session) => {
+                res.redirect(303, session.url); ////TALVEZ seja assim...
+      }
+  )
+
+
+
+}
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+mas isso ainda NÃO ESTÁ FUNCIONANDO....
+
+
+
+
+
+
+
+não, espere... ele remove aquele import LOCAL, deixa no GLOBAL do 'shop.js'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+exports.postCheckout = (req, res, next) => {
+
+
+ 
+
+  stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+
+
+    line_items: [
+      {
+        price: totalPrice,
+        quantity: 1
+      }
+    ],
+
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+
+
+    }
+  )
+  .then(
+      (session) => {
+                res.redirect(303, session.url); ////TALVEZ seja assim...
+      }
+  )
+
+
+
+}
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+->OK ,MAS AGORA O PROFESSOR NOS EXPLICA ALGO IMPORTANTE...
+
+
+
+
+
+
+
+
+--> NÓS NÃO DEVEMOS PASSAR A 'pk' (publishable key),
+
+
+E SIM 
+
+DEVEMOS PASSAR A 'SECRETKEY',
+
+PQ É ESSA QUE INTERESSA... (key que só é manageada/existe no nosso server, LONGE DO ALCANCE DOS USERS...)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const stripe = require('stripe')('pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK'); //necessário.
+
+ 
+
+
+
+ (ERRADO)
+
+
+
+
+
+
+
+
+
+const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L');
+
+
+
+
+
+
+
+(CORRETO)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok, mas eu AINDA PRECISO DA DATA 
+
+
+
+
+LÁ 
+
+
+DO NOSSO 'CART', especificamente, para criar essa order...
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE VAMOS QUERER FETCHEAR, OBVIAMENTE, ESSA DATA LÁ DO SEU SERVER,
+
+
+pq 
+
+
+
+SE ISSO FOR DATA ENVIADA PELO __ REQUEST__ DO USER (formulado pelo user, pode ser forjado),
+
+
+
+ELE PODERÁ 
+
+
+
+MANIPULAR A DATA, COMPRAR 1 MONTE DE COISA E PEDIR 1 PREÇO MINÚSCULO...
+
+
+
+
+
+
+
+
+
+--> para isso, vamos ter que 
+
+usar 
+
+
+coisas como 
+
+
+
+'User.findOne({_id: req.user.id})'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> NÃO VAMOS USAR ISSO, 
+
+
+E SIM VAMOS 
+
+
+
+
+REUTILIZAR AQUELE USER 
+
+QUE JÁ 
+
+VAI ESTAR EXISTINDO NO BROWSER DO USER...
+
+
+
+
+
+
+
+
+--> vamos usar aquele código de 
+
+cart,
+
+
+
+aquele código de 'orderPost', de 
+
+
+
+
+
+
+''''
+
+req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        // product: product.productId,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      // totalPrice: 0,
+      totalPrice: products
+        .map((product) => {
+          console.log(product, 'LINE3');
+          // return product.productId.price * product.quantity;
+          return product.product.price * product.quantity;
+        })
+        .reduce((prevValue, curValue) => {
+          return prevValue + curValue;
+        }, 0),
+    });
+
+
+
+  
+
+  '''
+
+
+
+
+
+
+
+  --> na verdade,
+
+
+
+  nosso código inteiro precisa ser REFORMULADO..
+
+
+
+
+
+
+  ----> pq o que o professor está fazendo, na verdade,
+
+  é 
+
+  colocando TODO ESSE CÓDIGO DE 'COMEÇO DO CHECKOUT'
+
+
+
+  LÁ 
+
+
+  NESSA ROUTE DE 'orderPost'... 
+
+
+
+
+
+
+
+
+  ----> e é por isso que DEVEMOS FAZER A MESMA COISA, TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> MEU CÓDIGO DO CONTROLLER VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        // product: product.productId,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      // totalPrice: 0,
+      totalPrice: products
+        .map((product) => {
+          console.log(product, 'LINE3');
+          // return product.productId.price * product.quantity;
+          return product.product.price * product.quantity;
+        })
+        .reduce((prevValue, curValue) => {
+          return prevValue + curValue;
+        }, 0),
+    });
+
+    order
+      .save()
+      .then((result) => {
+        return req.user.clearCart().then((result) => {
+          res.status(302).redirect('/orders');
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  });
+
+
+
+
+
+
+
+
+
+
+  -----> ou seja, VOU COMEÇAR COM O FETCH DA DATA LÁ DA MINHA DATABASE, para então USAR ESSA 
+
+  DATA LÁ 
+
+
+
+  NA 'CHARGE'/checkout do stripe (na cobrança, na parte de 
+  
+  
+  
+  '''
+
+
+
+ stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+
+
+    line_items: [
+      {
+        price: totalPrice,
+        quantity: 1
+      }
+    ],
+
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+
+
+    }
+  )
+  .then(
+      (session) => {
+                res.redirect(303, session.url); ////TALVEZ seja assim...
+      }
+  )
+
+
+
+
+
+
+
+
+
+  '''
+  
+  
+  
+  
+  
+  
+  
+  
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+  se eu não me engano, o código vai ficando assim:
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+exports.orderPost = (req, res, next) => {
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += p.productId.price * p.quantity
+      }
+    )
+
+
+ stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price: totalPrice,
+        quantity: 1
+      }
+    ],
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+    }
+  )
+  .then(
+      (session) => {
+                res.redirect(303, session.url); ////TALVEZ seja assim...
+      }
+  )
+
+
+
+
+
+
+
+
+
+
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        // product: product.productId,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      // totalPrice: 0,
+      totalPrice: products
+        .map((product) => {
+          console.log(product, 'LINE3');
+          // return product.productId.price * product.quantity;
+          return product.product.price * product.quantity;
+        })
+        .reduce((prevValue, curValue) => {
+          return prevValue + curValue;
+        }, 0),
+    });
+
+    order
+      .save()
+      .then((result) => {
+        return req.user.clearCart().then((result) => {
+          res.status(302).redirect('/orders');
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUE INTERESSA PARA NOSSA COBRANÇA, NO CASO, É ESTE CÓDIGO:
+
+
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += p.productId.price * p.quantity
+      }
+    )
+
+
+ stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price: totalPrice,
+        quantity: 1
+      }
+    ],
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+    }
+  )
+  .then(
+      (session) => {
+                res.redirect(303, session.url); ////TALVEZ seja assim...
+      }
+  )
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += p.productId.price * p.quantity
+      }
+    )
+
+
+
+
+
+    -_> ISSO AÍ VAI CALCULAR O 'totalPrice'
+
+    QUE USAMOS LOGO ABAIXO, em 'stripe.checkout.sessions.create({})'....
+
+
+
+
+
+
+
+    -------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+    ------> O CÓDIGO FICOU ENORME...
+
+
+
+
+
+
+
+
+
+
+    --> ficou assim:
+
+
+
+
+
+
+
+
+
+
+     req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += product.productId.price * product.quantity
+      }
+    )
+
+
+ stripe.checkout.sessions.create(
+    {
+
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price: totalPrice,
+        quantity: 1
+      }
+    ],
+    mode: 'payment',
+    success_url: 'https://exemplo.com/success',
+    cancel_url: 'https://exemplo.com/cancel'
+    }
+  )
+  // .then(
+  //     (session) => {
+  //               res.redirect(303, session.url); ////TALVEZ seja assim...
+  //     }
+  // )
+  .then(
+    (session) => {
+
+
+      const products = user.cart.products.map((product) => {
+        return {
+          quantity: product.quantity,
+          // product: product.productId,
+          product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+        };
+      });
+
+      
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+  
+        products: products,
+  
+        // totalPrice: 0,
+        totalPrice: products
+          .map((product) => {
+            console.log(product, 'LINE3');
+            // return product.productId.price * product.quantity;
+            return product.product.price * product.quantity;
+          })
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0),
+      });
+
+
+        
+    order
+    .save()
+    .then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    })
+
+
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> AGORA, PELO MENOS, ESTOU RECEBENDO UM __ ERRO_ _ DO STRIPE,
+
+
+  E NÃO DE SINTAXE...
+
+
+
+
+
+
+
+  O ERRO QUE ESTOU RECEBENDO É ESTE:
+
+
+
+
+
+  A:\projeto4 - NODEJS\MODULO23-ADICIONANDOPAGAMENTOSNOSEUAPP(stripe)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\stripe\lib\Error.js:40
+        return new StripeInvalidRequestError(rawStripeError);
+               ^
+
+StripeInvalidRequestError: The `price` parameter should be the ID of a price object, rather than the literal numerical price. Please see https://stripe.com/docs/billing/prices-guide#create-prices for more information about how to set up price objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> deve ser o 'ID' de um OBJETO PRICE... (e não um número de preço...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> Merda... o código do professor funciona.
+
+
+
+
+Eu devo ser muito idiota...
+
+
+
+
+
+
+
+
+Vou recomeçar o código, agora seguindo bem de perto o que ele faz...
+
+
+
+
+
+
+
+
+
+
+
+-----> mas eu ainda acho que essa versão dele 
+
+NÃO É MAIS SUPORTADA...
+
+
+
+
+
+
+
+
+como visto neste artigo:
+
+
+
+
+https://help.ithemes.com/hc/en-us/articles/360049328934-Stripe-Checkout-Deprecated
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+oK... VAMOS 
+
+IMITAR O CÓDIGO DO PROFESSOR....
+
+
+
+
+
+
+VAMOS ATÉ 'checkout.ejs'
+
+
+
+E COLAMOS AQUELE CÓDIGO DE 
+
+
+
+
+
+<form action="/create-order" method="POST">
+    <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button">
+    data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+    data-amount="999"
+    data-name="Demo Site"
+    data-description="Example charge"
+    data-imge="https://stripe.com/img/documentation/marketplace.ong"
+    data-locale="auto"
+    data-currency="eur">
+    </script>
+</form>
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+-_> é claro, devemos colocar nossa 'publishable key' 
+
+naquele slot ali (
+
+
+  e não a secret key,
+
+  que 
+
+  deve SOMENTE PERMANECER NO NOSSO SERVIDOR NODEJS...
+
+
+)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+<form action="/create-order" method="POST">
+    <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button">
+    data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+    data-amount="999"
+    data-name="Demo Site"
+    data-description="Example charge"
+    data-imge="https://stripe.com/img/documentation/marketplace.ong"
+    data-locale="auto"
+    data-currency="eur">
+    </script>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS É CLARO QUE EM 'form action' TEMOS QUE TARGETTAR UMA ROUTE NO NOSSO SERVER..
+
+
+
+
+--> vamos targettar a route de 'craete-order'....
+
+
+
+
+
+--> ESSE SCRIPT VAI 'CREATE THE INPUT FIELDS FOR THE USER'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... É CLARO QUE 
+
+
+
+PRECISAMOS 
+
+
+
+POPULATE ESSE 'data-amount'... --> VAMOS USAR EJS, AQUI, 
+
+
+PARA 
+
+
+COLOCAR 
+
+
+um valor de 'totalPrice'...
+
+
+
+
+
+--> no 'name', colocamos 'Your Order'... 
+
+
+
+
+
+
+
+-->  na 'data-description',
+
+
+'ALL ITEMS YOU ORDERED'...
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+          <div class="centered">
+            <h2>Total: <%= totalPrice %> </h2>
+          </div>
+          <form action="/create-order" method="POST">
+            <script
+              src="https://checkout.stripe.com/checkout.js"
+              class="stripe-button"
+              data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+              data-name="Your Order"
+              data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+              data-description="The items you ordered"
+              data-amount="<%= totalPrice %>"
+              data-currency="brl">
+            </script>
+          </form>
+      </ul>
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+COM ISSO, 
+
+SE AGORA RECARREGARMOS NOSSA 'CHECKOUT PAGE',
+
+
+
+VAMOS TER UM BUTTON AZUL 
+
+DE 
+
+'PAY WITH CARD'.....
+
+
+
+
+
+
+CERTO... O BUTTON REALMENTE APARECEU.... MAS ELE ESTÁ 
+
+
+
+COM UM STYLING 'OFF'... (está lá na esquerda, quero colocar no meio...)
+
+
+
+
+
+
+
+
+--> COLOQUEI UM STYLE DE 'centered' na 'form', e ele ficou centralizado...
+
+
+
+
+
+
+ex:
+
+
+          <form action="/create-order" method="POST" class="centered">
+            <script
+              src="https://checkout.stripe.com/checkout.js"
+              class="stripe-button"
+              data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+              data-name="Your Order"
+              data-description="The items you ordered"
+              data-amount="<%= totalPrice %>"
+              data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+              data-currency="brl">
+            </script>
+          </form>
+
+
+
+
+
+
+
+
+---------------
+
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+
+
+
+SE CLICAMOS 
+
+
+NO BUTTON,
+
+
+ABRIMOS UM MODAL...
+
+
+
+
+
+
+
+--> ESSE MODAL É TODO CONTROLADO PELO 'STRIPE'....
+
+
+
+
+
+
+
+
+
+--> AQUI PODEMOS 'ENTER OUR PAYMENT DATA'..
+
+
+
+(
+
+  e estaremos no modo de TESTES...
+)
+
+
+
+
+
+
+
+
+
+--> IMPORTANTE:
+
+
+
+
+O VALOR QUE VOCÊ INPUTTA, AQUI, 
+
+É SEMPRE INPUTTADO EM ____CENTS__....
+
+
+
+
+
+
+
+
+'ex:
+
+
+
+
+Pay $0.22'
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OU SEJA, O nosso 'totalPrice' ( que está nos milhares de dólares, com nossos products)
+
+
+VAI SER TRATADO __ COMO CENTS... 
+
+
+
+
+
+
+
+
+
+------> esse é um 'COMMON GOTCHA' 
+do 
+
+stripe... -----> ELE SEMPRE 
+
+COLOCA 
+
+
+O VALOR 
+
+
+DAS 'ORDERS'/pagamentos 
+
+
+
+EM __ CENTS_... ----> VOCÊ TEM QUE __ _CONVERTER__ ISSO,
+ 
+ por meio de multiplicadores...
+
+
+
+
+    (
+      como 
+
+      'x100'..
+    )
+
+
+
+
+
+
+
+o valor de que estamos falando é este:
+
+
+              data-amount="<%= totalPrice %>"
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  ---------> ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+  
+
+          <form action="/create-order" method="POST" class="centered">
+            <script
+              src="https://checkout.stripe.com/checkout.js"
+              class="stripe-button"
+              data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+              data-name="Your Order"
+              data-description="The items you ordered"
+              data-amount="<%= totalPrice * 100%>"
+              data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+              data-currency="brl">
+            </script>
+          </form>
+
+
+
+
+
+
+
+
+      data-amount="<%= totalPrice * 100 %>"
+
+
+
+
+
+
+
+
+
+      --> ISSO VAI NOS DAR O VALOR CORRETo.... (nosso valor vezes 100, para anular o meme dos 'cents'...)
+
+
+
+
+
+
+
+
+
+
+
+
+      -----> CERTO.... ISSO FUNCIONOU....
+
+
+
+
+
+
+
+
+  --> AGORA TEMOS 
+
+
+
+  ESSE FIELD DE 'order', 
+
+  SIM,
+
+
+
+  MAS ___ COMO PODEMOS CONTINUAR?
+
+
+
+
+
+
+
+
+  BEM, SE O USER INPUTTA A DATA DELE... 
+
+
+
+
+
+
+  4242 4242 4242 4242 
+
+
+
+
+
+
+  -_> SE CLICARMOS EM 'pay',
+
+
+
+  O QUE ACONTECERÁ SERÁ:
+
+
+
+
+
+
+
+  1) UMA 'TOKEN' (stripeToken) 
+
+
+SERÁ __ GERADA (GENRATED) ----> essa token será gerada LÁ NOS SERVERS DO STRIPE... ('through stripes servers'...).
+
+
+
+
+depois do generate dessa token,
+2) UM REQUEST SERÁ __ AUTOMATICAMENTE __ ENVIADO __ AO SEU BACKEND (nodeexpress) 
+
+  (só consertar o erro da CSRFTOKEn)...
+
+
+
+
+
+
+
+
+3) no seu BACKEND, LÁ,
+ 
+ O _ STRIPE__ VAI TENTAR HANDLAR __ ESSA SUA 'STRIPETOKEN'...
+ (aqui, no caso, o request foi enviado àquela route de 'create-order', de tipo POST...)
+
+
+
+
+
+
+
+
+
+
+
+ --> isso significa, em outras palavras, que precisamos 
+
+
+
+ CODAR AQUELE CONTROLLER DE 
+
+
+ 'orderPost',
+
+ vinculado 
+
+
+ à route post de 
+
+ 'create-order'...
+
+
+
+
+
+
+ ----> NESSA ROUTE, VAMOS 'RECEIVE SOME SPECIAL DATA'...
+
+
+
+
+
+
+
+
+ --> e 'HOW TO CONTINUE'
+
+
+ é algo que 
+
+
+ O STRIPE DOCS TE DIZ...
+
+
+
+
+
+
+
+ ---> LÁ NA PAGE DE ''QUICKSTARTt',
+
+
+
+
+
+ vemos um code snippet 
+
+
+
+
+
+
+ MOSTRANDO __ COMO PODEMOS 'HANDLE THE DATA ON THE INCOMING REQUEST'...
+
+
+
+
+
+
+
+
+
+ --> o código ANTIGO dos docs era este:
+
+
+
+
+---------------------------------------------------------------
+
+ var stripe = require('strip')('sk_test_sihjasihsaihasi');
+
+
+///Token is created using Checkout or Elements!
+///Get the payment token ID submitted by the form:
+ const token = request.body.stripeToken; 
+
+
+
+
+ const charge = stripe.charges.create(
+   {
+     amount: 999,
+     currency: 'usd',
+     description: 'Example charge',
+     source: token
+   }
+ )
+
+
+ ------------------------------------------------------------
+
+
+
+
+
+
+ OK... OBSERVAMOS QUE NOSSO REQUEST VAI TER ESSA 'stripeToken'
+
+
+
+ no SEU BODY... 
+
+
+
+
+
+
+
+ ----> ok... basta 
+
+ COPIARMOS ESSE CÓDIGO E O COLOCARMOS 
+
+
+ EM 
+
+
+
+ 'orderPost'...
+
+
+
+
+
+
+
+ ------->
+
+
+
+
+
+
+
+ LÁ, em 'postOrder',
+
+
+
+
+ TEMOS ESTE CÓDIGO, NO PRESENTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postOrder = (req, res, next) => {
+
+
+
+
+    req.user
+    .populate('cart.products.productId')
+    .then(
+      (user) => {
+
+                  const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+      totalPrice: products
+        .map((product) => {
+          console.log(product, 'LINE3');
+          return product.product.price * product.quantity;
+        })
+        .reduce((prevValue, curValue) => {
+          return prevValue + curValue;
+        }, 0),
+    });
+
+    order
+      .save()
+      .then((result) => {
+        return req.user.clearCart().then((result) => {
+          res.status(302).redirect('/orders');
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  });
+
+      }
+    )
+  
+     }
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+NÓS VAMOS:
+
+
+
+
+
+1) IMPORTAR O 'STRIPE' package com NOSSA SECRETKEY...
+
+
+
+
+
+
+
+
+2) USAR ESSE PACOTE DE 'Stripe', por meio daquele código de 
+
+
+
+
+''
+
+ const token = request.body.stripeToken; 
+
+
+
+
+ const charge = stripe.charges.create(
+   {
+     amount: 999,
+     currency: 'usd',
+     description: 'Example charge',
+     source: token
+   }
+ )
+
+
+ '''
+
+
+
+
+ ----------------------------
+
+
+
+
+
+ CERTO.... ISSO SIGNIFICA QUE O CÓDIGO FICARÁ + OU - ASSIM:
+
+
+
+
+
+ const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L');
+
+
+
+
+exports.postOrder = (req, res, next) => {
+
+
+ const token = request.body.stripeToken; 
+
+
+
+
+ const charge = stripe.charges.create(
+   {
+     amount: 999,
+     currency: 'usd',
+     description: 'Example charge',
+     source: token
+   }
+ )
+
+    req.user
+    .populate('cart.products.productId')
+    .then(
+      (user) => {
+
+                  const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+      totalPrice: products
+        .map((product) => {
+          console.log(product, 'LINE3');
+          return product.product.price * product.quantity;
+        })
+        .reduce((prevValue, curValue) => {
+          return prevValue + curValue;
+        }, 0),
+    });
+
+    order
+      .save()
+      .then((result) => {
+        return req.user.clearCart().then((result) => {
+          res.status(302).redirect('/orders');
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  });
+
+      }
+    )
+  
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+É CLARO QUE ESSE CÓDIGO ESTÁ MEIO __ ERRADO__... --> como havíamos checado antes,
+
+
+
+
+
+
+ESSE CÓDIGO AÍ DO 'stripe' PRECISA USAR A _ DATA__ RETRIEVADA __ DO NOSSO 
+
+SERVER 
+PARA FORMULAR AQUELA 'CHARGE' (cobrança)....
+
+
+
+
+
+
+
+
+
+
+
+
+-------> AÍ, NESSE LOCAL,
+
+
+
+NO FINAL DAS CONTAS,
+
+
+
+
+ESTAMOS ESTRAINDO A TOKEN E USANDO ESSA TOKEN NAUQELE 
+
+
+'CHARGE OBJECT'..
+
+
+
+
+
+
+
+--> ENTRETANTO, NOVAMENTE, AQUI PRECISAMOS 'PASS/ENTER OUR AMOUNT/VALUE IN _CENTS__....'
+
+
+
+
+
+
+
+--> PARA ISSO, VAMOS TER QUE FAZER UM FETCH À DATABASE... (para que não seja 
+
+possível fakar valores, user fakando valores...)
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE VAMOS ENFIAR ESSE CÓDIGO DO STRIPE __ DENTRO___ DO CÓDIGO DE FETCH 
+
+à databas,
+
+
+dento de 
+
+'req.user.populate()....'
+
+
+
+
+
+----->  PROFESSOR ESCREVE UM CÓDIGO DE CÁLCULO, COISA SIMPLES...
+
+
+
+
+
+
+
+
+
+
+
+
+------> faz tipo assim:
+
+
+
+
+
+
+
+
+
+ const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L');
+
+
+
+
+exports.postOrder = (req, res, next) => {
+
+
+ const token = request.body.stripeToken; 
+
+
+
+
+ const charge = stripe.charges.create(
+   {
+     amount: 999,
+     currency: 'usd',
+     description: 'Example charge',
+     source: token
+   }
+ )
+
+    req.user
+    .populate('cart.products.productId')
+    .then(
+      (user) => {
+
+                  const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+      totalPrice: products
+        .map((product) => {
+          console.log(product, 'LINE3');
+          return product.product.price * product.quantity;
+        })
+        .reduce((prevValue, curValue) => {
+          return prevValue + curValue;
+        }, 0),
+    });
+
+    order
+      .save()
+      .then((result) => {
+        return req.user.clearCart().then((result) => {
+          res.status(302).redirect('/orders');
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  });
+
+      }
+    )
+  
+     }
+
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM (por enquanto):
+
+
+
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += product.productId.price * product.quantity
+      }
+    )
+
+
+
+    const charge = stripe.charges.create(
+      {
+        amount: totalPrice * 100,
+        currency: 'usd',
+        description: 'Example charge',
+        source: token
+      }
+    )
+
+
+      const products = user.cart.products.map((product) => {
+        return {
+          quantity: product.quantity,
+          product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+        };
+      });
+
+      
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+  
+        products: products,
+  
+        totalPrice: products
+          .map((product) => {
+            console.log(product, 'LINE3');
+            return product.product.price * product.quantity;
+          })
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0),
+      });
+
+
+        
+    order
+    .save()
+    .then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    })
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+depois, assim:
+
+
+
+
+
+
+  const token = req.body.stripeToken;
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += product.productId.price * product.quantity
+      }
+    )
+
+
+
+    const charge = stripe.charges.create(
+      {
+        amount: totalPrice * 100,
+        currency: 'usd',
+        description: 'Demo Order',
+        source: token //EIS O CÓDIGO EM QUESTÃO, REFERÊNCIA à CONST DE 'token' obtida do BODY DE NOSSO REQUEST...
+      }
+    )
+
+
+      const products = user.cart.products.map((product) => {
+        return {
+          quantity: product.quantity,
+          product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+        };
+      });
+
+      
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+  
+        products: products,
+  
+        totalPrice: products
+          .map((product) => {
+            console.log(product, 'LINE3');
+            return product.product.price * product.quantity;
+          })
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0),
+      });
+
+
+        
+    order
+    .save()
+    .then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    })
+
+
+------------------------
+
+
+
+
+
+essa token 
+
+de 
+
+
+
+'
+const token = req.body.stripeToken'
+
+
+
+CONTÉM A 
+
+
+'VALIDATED CREDIT CARD DATA'....
+
+
+
+
+
+
+
+
+
+------> COM ISSO,
+
+COM ESSE CÓDIGO AÍ,
+
+
+
+esse 
+
+
+'stripe.charges.create()'
+
+
+
+JÁ VAI __ 
+
+
+
+'ALREADY SEND A REQUEST TO THE STRIPES SERVERS',
+
+
+e aí 
+
+
+
+VAI 'CHARGE OUR PAYMENT METHOD' lá 
+
+
+no stripe...
+
+
+
+
+
+
+
+
+
+--> o professor, no caso, vai pegar ESSA CHARGE __ E TRANSPLANTAR MAIS PARA BAIXO,
+
+
+
+LOGO DEPOIS DA EXECUÇÃO DE 'order.save()' (salva a order na nossa database...)
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  const token = req.body.stripeToken;
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += product.productId.price * product.quantity
+      }
+    )
+
+
+
+      const products = user.cart.products.map((product) => {
+        return {
+          quantity: product.quantity,
+          product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+        };
+      });
+
+      
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+  
+        products: products,
+  
+        totalPrice: products
+          .map((product) => {
+            console.log(product, 'LINE3');
+            return product.product.price * product.quantity;
+          })
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0),
+      });
+
+
+        
+    order
+    .save()
+    .then((result) => {
+
+            const charge = stripe.charges.create( ///EIS O CÓDIGO EM QUESTÃO.
+      {
+        amount: totalPrice * 100,
+        currency: 'usd',
+        description: 'Demo Order',
+        source: token //EIS O CÓDIGO EM QUESTÃO, REFERÊNCIA à CONST DE 'token' obtida do BODY DE NOSSO REQUEST...
+      }
+    )
+
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    })
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const token = req.body.stripeToken; /////ESSA TOKEN (obtida lá do BODY do nosso request, por meio daquela form especial do STRIPE...) SERÁ/É UTILIZADA LÁ EMBAIXO, NA EXECUÇÃO DO CÓDIGO DE 'CHARGE' do stripe....
+
+
+
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+    let totalPrice = 0;
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += product.productId.price * product.quantity ////valor de 'totalPrice' nesse cálculo aí vai ser UTILIZADO LÁ NO 'CHARGE' feito ao stripe, mais embaixo, em 'stripe.charges.create()'...
+      }
+    )
+
+      const products = user.cart.products.map((product) => {
+        return {
+          quantity: product.quantity,
+          // product: product.productId,
+          product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+        };
+      });
+
+      
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+  
+        products: products,
+  
+        // totalPrice: 0,
+        totalPrice: products
+          .map((product) => {
+            console.log(product, 'LINE3');
+            // return product.productId.price * product.quantity;
+            return product.product.price * product.quantity;
+          })
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0),
+      });
+
+
+        
+    order
+    .save()
+    .then((result) => {
+
+      const charge = stripe.charges.create( ///EIS O CÓDIGO EM QUESTÃO. (vai CHARGE nosso payment method, lá nos servers do stripe, contanto que sua  TOKEN ESTEJA REALMENTE VÁLIDA....)
+        {
+          amount: totalPrice * 100, //multiplicamos por 100 pq o 'amount' será em CENTS...
+          currency: 'usd',
+          description: 'Demo Order',
+          source: token //EIS O CÓDIGO EM QUESTÃO, REFERÊNCIA à CONST DE 'token' obtida do BODY DE NOSSO REQUEST...
+        }
+      )
+
+
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    })
+
+
+
+
+
+ok.... mas __ NÃO TERMINAMOS__...
+
+
+
+
+
+
+
+
+
+
+
+
+----> pq o professor escolheu esse lugar, lá embaixo, depois de 'order.save()',
+
+PARA 
+
+
+
+FAZER O 'CHARGE' do valor ao usuário? -------> é pq 
+
+
+
+
+DENTRO 
+
+daquele 
+
+
+'(result)'
+
+RETORNADO POR ORDER,
+
+
+TEMOS ALGUMAS INFORMAÇÕES, INFORMAÇÕES (metadata)
+
+
+
+QUE 
+
+PODEMOS ADICIONAR 
+
+A 
+
+ESSA 'charge' 
+
+que 
+
+recém criamos...
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PROFESSOR ESCREVE 
+
+
+
+uma key de 'metadata',
+
+
+QUE É UMA PROPRIEDADE, nas 'charge'
+
+EM QUE 
+
+
+VOCÊ PODE 
+
+'PASS ANY ARBITRARY DATA YOU WANT'...
+
+
+
+
+
+
+--------> a metadata é usada para IDENTIFICAR, PARA VOCê, o desenvolvedor,
+
+A 'ORDER' COM A 'CHARGE' que será armazenada na sua conta....
+
+
+
+
+
+
+--> e dentro da metadata, nesse caso, podemos 
+
+
+passar 
+
+
+
+'order_id: result._id'
+
+
+
+
+(PQ VAMOS QUERER QUE O ID dessa 'order' identifique o pedido...)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const token = req.body.stripeToken; /////ESSA TOKEN (obtida lá do BODY do nosso request, por meio daquela form especial do STRIPE...) SERÁ/É UTILIZADA LÁ EMBAIXO, NA EXECUÇÃO DO CÓDIGO DE 'CHARGE' do stripe....
+
+
+ let totalPrice = 0;
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+
+
+   
+
+    user.cart.products.forEach(
+      (product) => {
+        totalPrice += product.productId.price * product.quantity ////valor de 'totalPrice' nesse cálculo aí vai ser UTILIZADO LÁ NO 'CHARGE' feito ao stripe, mais embaixo, em 'stripe.charges.create()'...
+      }
+    )
+
+      const products = user.cart.products.map((product) => {
+        return {
+          quantity: product.quantity,
+          // product: product.productId,
+          product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+        };
+      });
+
+      
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+  
+        products: products,
+  
+        // totalPrice: 0,
+        totalPrice: products
+          .map((product) => {
+            console.log(product, 'LINE3');
+            // return product.productId.price * product.quantity;
+            return product.product.price * product.quantity;
+          })
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0),
+      });
+
+
+        
+    order
+    .save()
+    .then((result) => {
+
+      const charge = stripe.charges.create( ///EIS O CÓDIGO EM QUESTÃO. (vai CHARGE nosso payment method, lá nos servers do stripe, contanto que sua  TOKEN ESTEJA REALMENTE VÁLIDA....)
+        {
+          amount: totalPrice * 100, //multiplicamos por 100 pq o 'amount' será em CENTS...
+          currency: 'usd',
+          description: 'Demo Order',
+          source: token //EIS O CÓDIGO EM QUESTÃO, REFERÊNCIA à CONST DE 'token' obtida do BODY DE NOSSO REQUEST...
+          metadata: {order_id: result._id}
+        }
+      )
+
+
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    })
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok...
+
+
+
+
+
+Testamos a feature,
+
+
+
+o pagamento,
+
+
+com um cartão de 
+
+4242 4242 4242 4242 
+
+
+
+
+
+,
+
+
+
+
+
+
+dados falsos,
+
+
+
+
+e aí 
+
+
+
+
+
+conseguimos 'success'... ----> aí somos redirecionados 
+
+
+à uma page 'NOT FOUND', 
+
+
+
+
+que é 
+
+
+
+
+
+'localhost:3000/create-order'....
+
+
+
+
+
+
+
+
+
+--> OK, MAS AGORA O PROFESSOR FALOU ALGO ESTRANHO...
+
+
+
+
+
+
+
+--> ELE DISSE QUE TENTAR ADICIONAR AQUELE 'INPUT FIELD HIDDEN' 
+
+
+lá 
+
+
+na nossa form,
+
+
+como havíamos feito AQUI:
+
+
+
+          <form action="/create-order" method="POST" class="centered">
+            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+            <script
+              src="https://checkout.stripe.com/checkout.js"
+              class="stripe-button"
+              data-key="pk_test_51JzRu5CmbCw1fMfw67d3Wwex6B9QCbMHYAVNN8TS4mqwzz3jSg9kMa0QuejL7BXnb1MX09efAsMeNnCVF8KHL3WD0096Zc6CqK"
+              data-name="Your Order"
+              data-description="The items you ordered"
+              data-amount="<%= totalPrice * 100%>"
+              data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+              data-currency="brl">
+            </script>
+          </form>
+
+
+
+
+
+ELE 
+
+
+DISSE QUE ISSO É INÚTIL,
+
+
+pq 
+
+o 
+
+
+'stripe'
+
+
+ACABA CRIANDO SUA PRÓPRIA 'FORM' POR MEIO 
+
+
+
+DA FORM QUE ELE CARREGA,
+
+
+
+
+por isso 
+
+
+esse input field é desconsiderado....
+
+
+
+
+
+
+-------> MAS ISSO TBM QUER DIZER, AFIRMA O PROFESSOR,
+QUE 
+
+O 
+
+STRIPE 
+
+TAMBÉM 
+
+'TAKES CARE OF SECURING THAT FORM'.... ------> ISSO SIGNIFICA, EM OUTRAS PALAVRAS,
+
+
+QUE VOCê 
+
+
+
+_________NÃO PRECISA__ PASSAR O CSRFTOKEN,
+
+
+essa 'security' já é garantida PELO STRIPE EM SI...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO BASICAMENTE QUER DIZER QUE __ NÓS PRECISMAOS 
+
+
+
+'DISABLE CSRF PROTECTION' 
+
+
+
+
+PARA 
+
+ESSA ROUTE ESPECÍFICA DE 
+
+
+
+'router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost)'...
+
+
+
+
+
+
+
+
+
+-----> PARA FAZER ISSO, PROFESSOR __VAI MOVER A ROUTE LÁ 
+
+DE 
+
+'shop.js',
+
+
+
+
+VAI 
+
+
+TIRAR ESSA ROUTE DAÍ,
+
+
+
+
+VAI 
+
+TIRAR 
+
+ESSA 
+
+ROUTE 
+
+
+E 
+
+
+
+ENTÃO 
+
+
+VAI 
+
+A 
+
+COLOCAR __ DIRETAMENTE NO 'app.js',
+
+
+
+
+solta em algum lugar..
+
+
+
+
+
+
+
+
+
+
+--> LÁ, NO 'app.js',
+
+
+O PROFESSOR VAI COLOCAR ESSA ROUTE,
+
+
+a route de 
+
+
+'router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost)'...
+
+
+
+
+
+
+LOGO ACIMA DAS OUTRAS ROUTES,
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost);
+
+
+app.use('/admin', adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404); 
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+E AÍ, DEPOIS DISSO, PROFESSOR VAI SUBSTITUIR 'route' por 'app',
+
+
+
+POIS SÓ TEMOS 'app' DISPONÍVEL NESSE ARQUIVO 'app.js'....
+
+
+
+
+
+
+
+
+
+-> CERTO, MAS O PROFESSOR AINDA VAI QUERER USAR 
+
+'authCheckerAndRedirecter'...
+
+
+
+
+
+
+
+
+-----> POR ISSO TEREMOS DE IMPORTAR 
+
+
+ESSE NEGÓCIO, E TAMBÉM O CONTROLLER DE 'orderPost'.... (shopController)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> certo... 
+
+
+
+
+
+AGORA ISSO PROVAVELMENTE VAI FUNCIONAR...
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+MAS O PROFESSOR DIZ QUE ESSA ROUTE __ AINDA VAI __ TER 
+
+'CSRF PROTECTION' 
+
+adicionada a si.... ----> isso acontece, no caso, pq 
+
+
+
+AINDA TEMOS 
+
+
+
+NOSSO MIDDLEWARE 
+
+DE 
+
+'csrfProtection',
+
+
+
+AQUELE 
+
+
+'app.use(csrfProtection)',
+
+
+
+
+__ EXISTINDO MAIS ACIMA 
+
+
+DESSE NOSSO CÓDIGO...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+app.use(csrfProtection);  ////É ISSO QUE ESTÁ INCOMODANDO..
+
+app.use(flash()); 
+
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.session.isLoggedIn;
+  console.log('LOCALS SET');
+  res.locals.csrfToken = req.csrfToken();
+
+  next(); 
+});
+
+app.use((req, res, next) => {
+ 
+  if (!req.session.user) {
+    //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (!user) {
+        ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+      }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err); //importante. é isso que vai 'REACH OUT' o SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE....
+   
+    });
+});
+
+
+router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost);
+
+
+app.use('/admin', adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404); 
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO EVITAR ESSA 'CSRF PROTECTION'? 
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE DEVEMOS SIMPLESMENTE 
+
+INICIALIZAR ESSE MIDDLEWARE DE 'CSRFPROTECTION' __________DEPOIS__ 
+
+
+DESSA ROUTE DE 
+
+'app.post('/create-order')',
+
+
+PQ 
+
+NÃO QUEREMOS 
+
+
+QUE 
+
+
+
+ESSE 
+
+CREATE ORDER SEJA 'VERIFIED'
+
+
+por essa package do csurf...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+////TIRAMOS DAQUI.
+
+app.use(flash()); 
+
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.session.isLoggedIn;
+  console.log('LOCALS SET');
+  res.locals.csrfToken = req.csrfToken();
+
+  next(); 
+});
+
+app.use((req, res, next) => {
+ 
+  if (!req.session.user) {
+    //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (!user) {
+        ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+      }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err); //importante. é isso que vai 'REACH OUT' o SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE....
+   
+    });
+});
+
+
+router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost);
+
+app.use(csrfProtection);  ////COLOCAMOS AQUI...
+
+app.use('/admin', adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404); 
+
+
+
+
+----------------
+
+
+
+
+OK, AGORA SÓ AS ROUTES 
+
+
+DE 
+
+
+'admin',
+ 
+
+
+ 'shoproutes'
+
+
+
+ 'authRoutes'
+
+
+ e demais 
+
+ SERÃO AFETADAS POR CSURF/ verificadas pela presença de 'csrfToken'...
+
+
+
+
+
+
+
+ --------------------
+
+
+
+
+ OK, ENTÃO SE LIGUE NISSO:
+
+
+
+
+
+
+
+
+ QUANDO VOCÊ TIVER 'EXCEPTIONS' à presença/verify do CSRFTOKEN,
+
+
+
+
+ COLOQUE-AS ____ ANTES__ 
+
+
+ DO RUN DO MIDDLEWARE 
+
+ de 
+
+ 'csrfProtection'....  (para evitar sua incorporação)...
+
+
+
+
+
+
+
+
+
+
+ -->OK, MAS OUTRA COISA.....
+
+
+
+
+
+
+ --> há aquele middleware que coloca o 'csrfTOken' em todos os requests feitos por nosso user... (
+
+
+   para que não tenhamos que escrever 'csrfToken' em todos 
+
+   os renders de 
+
+
+   nosso app...
+ ) ------>
+
+
+
+ ESTAMOS FALANDO DESTE CÓDIGO AQUI:
+
+
+
+
+ app.use((req, res, next) => {
+ 
+  res.locals.isLoggedIn = req.session.isLoggedIn;
+  console.log('LOCALS SET');
+  res.locals.csrfToken = req.csrfToken();
+
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+--> ESTA LINHA AQUI:
+
+
+  res.locals.csrfToken = req.csrfToken();
+
+
+
+
+PRECISA FICAR EM UM MIDDLEWARE, LOGO 
+
+DEPOIS 
+
+
+DA EXECUÇÃO DE 
+
+'app.use(csrfProtection);'...
+
+
+
+
+
+
+
+
+---> FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+////TIRAMOS DAQUI.
+
+app.use(flash()); 
+
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.session.isLoggedIn;
+ ////////// res.locals.csrfToken = req.csrfToken(); ///REMOVEMOS ISTO
+
+  next(); 
+});
+
+app.use((req, res, next) => {
+ 
+  if (!req.session.user) {
+    //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (!user) {
+        ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+      }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err); //importante. é isso que vai 'REACH OUT' o SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE....
+   
+    });
+});
+
+
+router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost);
+
+app.use(csrfProtection);  ////COLOCAMOS AQUI...
+
+app.use((req, res, next) => { ///COLOCAMOS AQUI.... EIS O CÓDIGO EM QUESTÃO.
+
+res.locals.csrfToken = req.csrfToken(); ///precisamos settar a token NESTE MOMENTO...
+  next(); 
+});
+
+
+
+app.use('/admin', adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404); 
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+CÓDIGO FINAL FICA ASSIM:
+
+
+
+
+
+app.use(flash()); 
+
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.session.isLoggedIn;
+  next(); 
+});
+
+app.use((req, res, next) => {
+ 
+  if (!req.session.user) {
+    //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (!user) {
+        ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+      }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err); //importante. é isso que vai 'REACH OUT' o SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE....
+   
+    });
+});
+
+
+router.post('/create-order', authCheckerAndRedirecter, shopController.orderPost);
+
+app.use(csrfProtection);  ////COLOCAMOS AQUI...
+
+app.use((req, res, next) => { ///COLOCAMOS AQUI.... EIS O CÓDIGO EM QUESTÃO.
+
+res.locals.csrfToken = req.csrfToken(); ///precisamos settar a token NESTE MOMENTO...
+  next(); 
+});
+
+
+
+app.use('/admin', adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404); 
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+COM ISSO, CONSEGUIREMOS 
+
+
+EXCLUIR/EXCEPCIONAR 
+
+
+A ROUTE DE 
+
+
+
+
+'STRIPE' (do CHARGE)
+
+
+
+
+
+
+
+lá das hipóteses de 'VOCÊ PRECISA DE CSRFTOKEN'...
+
+
+
+
+
+
+
+
+-->OK, VOLTAMOS LÁ E COLOCAMOS NOSSAS INFOS 
+
+DE CARTÃO... --_> SUBMIT REQUEST... -------> AGORA, QUANDO 
+
+
+ACABAR 
+
+ESSE 
+
+PEDIDO,
+
+
+
+SEREMOS 
+
+
+REDIRECIONADOS A 'ORDERS' (pq é isso que codamos)...
+
+
+
+
+
+--> VEREI MINHA ORDER LÁ.... 
+
+
+
+
+
+------>E SE EU FOR ATÉ MEU DASHBOARD DO STRIPE E EU CLICAR EM 'PAYMENTS',
+
+
+
+
+.... PROFESSOR DIZ QUE NÃO VEREMOS COISA ALGUMA... (
+
+  ocorreu algum erro...
+)
+
+
+
+
+
+--------------------
+
+
+
+
+--> MAS NO MEU CÓDIGO, ISSO DEU CERTO....
+
+
+
+
+
+
+
+
+
+--> vi uma order de 
+
+
+
+'424.242,00',
+
+
+feita 
+
+
+AGORA...
+
+
+
+
+
+
+--> sinal de que ISSO FUNCIONOU...
+
+
+
+
+
+
+
+--> parece que isso está funcionando... (na versão de TESTES...)
+
+
+
+
+
+
+
+
+
+
+
+-> O ERRO DO PROFESSOR FOI CAUSADO POR 
+
+
+'metadata: {order_id: result._id}' 
+
+
+
+
+-----> ELE EXPLICA  que o que 
+faltou 
+
+
+
+é escrever 
+
+'._id.toString()',
+
+PARA CONSEGUIR CONVERTER O OBJETO EM UMA STRING...
+
+
+(
+
+  e isso causa o 
+
+  fail da charge....
+)
+
+
+
+--> de fato, não tenho nada na 'metadata', 
+
+
+
+tenho que adcionar esse código aí...
+
+
+
+
+--> OK... AGORA DEU CERTO...
+
+
+Metadados
+
+
+order_id
+619fdaffbb9fcddc282a4ad2
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+OK... É ASSIM QUE PODEMOS ADICIONAR PAGAMENTOS 
+
+
+
+NO NOSSO APP...
+
+
+
+
+
+
+
+-> É CLARO QUE O STRIPE É BEM FORTE,
+
+FAZ UM MONTE DE COISAS...
+
+
+
+
+
+
+
+
+
+
+---> PODEMOS MELHORAR ESSE CÓDIGO, 
+
+
+
+
+ADICIONAR COISAS COMO 
+
+'CATCH DE ERRORS',
+
+que talvez ocorram devido ao 'charging'... 
+
+
+
+
+
+
+
+--> VOCÊ TVZ 
+QUEIRA ADICIONAR OPÇÃO DE 'ROLLBACK ORDERS' feitas no seu database...
+
+
+
+
+
+
+
+
+
+
+
+---> OK... MAS ISSO TE MOSTRA COMO VOCÊ PODE INTEGRAR O STRIPE NO SEU APp...

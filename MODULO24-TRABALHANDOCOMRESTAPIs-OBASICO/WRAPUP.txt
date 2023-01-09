@@ -1,0 +1,181 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ACABAMOS O BÁSICO DAS REST APIs...
+
+
+
+
+
+
+--> VAMOS VER BEM MAIS SOBRE ELAS NO PRÓXIMO MODULE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> REST CONCEPTS E IDEAS:
+
+
+
+
+
+a) REST APIS são 'all about data'; NENHUMA 'UI LOGIC' é trocada 
+pelo server/client...
+
+
+
+
+b) REST APIs  são servers NODE NORMAIS, servers QUE EXPÕEM DIFERENTES ENDPOINTS (http method + path) PARA 
+CLIENTS, QUE DEVEM ENVIAR REQUESTS A ESSES ENDPOINTS ESPECÍFICOS....
+
+
+
+
+
+C) JSON é O FORMATO DE DATA COMUM, USADO PARA TANTO REQUESTS E RESPONSES, por tanto 
+o browserside como serverside...
+
+
+
+D) REST APIs são 'decoupled' from the clients that use them (
+
+ISSO SIGNIFICA QUE ELAS NÃO 'COMPARTILHAM QUALQUER CONNECTION HISTORY COM O SERVER',
+
+E 'NÃO ARMAZENAM QUALQUER CONNECTION HISTORY'...
+
+)
+
+
+
+
+
+
+
+
+REQUESTS E RESPONSES:
+
+
+
+
+a) VIMOS QUE NÓS DEVEMOS _ ANEXAR__ DATA __ EM FORMATO 'JSON' 
+
+TANTO NOS REQUESTS COMO NOS RESPONSES.. 
+
+
+b) VIMOS QUE DEVEMOS DEIXAR O 'outro end' SEMPRE SABER QUE 
+
+VAMOS ENVIAR DATA EM FORMATO JSON __ por meio _ DO SET DO 
+
+HEADER de 'Content-Type: application/json'..
+
+
+
+
+
+c) CORS ERRORS acontecem QUANDO É UTILIZADA UMA 
+API QUE __ NÃO __ SETTA 'CORS HEADERs' (
+
+
+
+    headers como 
+
+    'Access-Control-Allow-Headers'
+)
+
+
+
+
+
+
+
+
+-------> DEPENDE DE QUAL METHOD NO BROWSER VOCÊ ESTÁ USANDO... -----> se você está usando 
+
+
+
+
+A FETCH API,
+
+VOCÊ TEM QUE DEFINIR ESSES HEADERS MANUALMENTE NO SEU REQUEST....
+
+
+
+
+
+
+
+--> JÁ QUANDO VOCÊ USA O AXIOS,
+
+
+esses HEADERS SÃO SETTADOS AUTOMATICAMENTE (
+
+
+    axios ---> OUTRO COMMON LIBRARY NO BROWSERSIDE JAVASCRIPT 
+
+    PARA ENVIAR ASYNC REQUESTS, AJAX  REQUESTS...
+)
+
+
+
+
+
+
+---> ERROS CORS  ------> OCORREM DEVIDO AO MECANISMO DE SEGURANÇA 'CORS' --> FAZEMOS 
+
+BYPASS PROPOSITAL DESSE MECANISMO, POR MEIO DO SET DE 
+
+CORS HEADERS como 
+
+
+
+''
+    'Access-Control-Allow-Headers'
+
+'''
+
+
+
+
+
+
+
+
+
+
+--> OK, ESSA É A PARTE BÁSICA...
+
+
+
+
+
+
+--> AGORA VAMOS VER O USO DE DIFERENTES HTTP METHODS/VERBS,
+
+
+
+E AUTHENTICATION, EM UM PROJETO DE VERDADE...

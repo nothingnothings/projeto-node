@@ -1,0 +1,822 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+devemos começar com essas core features do denO,
+
+...
+
+
+
+
+ É POR ISSO QUE LÁ EM 
+
+ 'app.ts'
+
+
+ VAMOS 
+
+ COMENTAR PARA FORA AQUELE CÓDIGO,
+
+
+ E AÍ 
+
+ VAMOS 
+
+ CODAR UM TEXTO 
+
+ BÁSICo...
+
+
+
+
+
+
+
+
+
+ ----> ex:
+
+
+
+
+ const text = 'this is a text - and it should be stored in a file';
+    
+
+
+
+
+
+
+
+
+
+
+
+
+---> VAMOS QUERER ARMAZENAR ESSE VALOR/TEXTO EM 1 ARQUIVO, COM O USO DE UMA 
+
+
+DAS RUNTIME APIS DO DENo...
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR TENTA SUMMONAR UM 
+
+METHOD 'DENO'....
+
+
+
+
+
+
+
+
+
+
+
+--> ele escreve assim:
+
+
+
+'Deno.xxxx'...
+
+
+
+
+
+
+
+
+
+
+--> MAS O NOSSO IDE 
+
+NÃO GOSTA DISSO,
+
+NÃO VAI GOSTAR 
+DESSE 
+
+OBJETO GLOBAL DENO.. --. E PARA AJUDAR O VISUAL STUDIO CODE COM ISSO,
+
+
+DEVEMOS PROCURAR
+ 
+ PELA EXTENSÃO DE 'DENO',
+
+
+ no visual studio code,
+
+
+ QUE 
+
+ VAI ACTUALLY TRAZER 
+
+ SUPORTE DENO 
+
+
+ AO 
+
+
+ VS CODE....
+
+
+
+
+
+
+
+ -> AGORA VOCê VERÁ QUE NESSE OBJETO 'Deno'
+
+ VOCê TERÁ 
+
+
+ AUTO-COMPLETION E NÃO TERÁ MAIS ERROS....
+
+
+
+
+
+
+
+
+
+
+
+ --> PARA DEIXAR BEM CLARO:
+
+
+ ESSE OBJETO DENO 
+
+
+
+ E TODOS OS METHDOS QUE PODEM SER ACESSADOS NELE __ SÓ __ FICAM DISPONIÍVES
+
+
+ SE 
+
+
+ O EXECUTAMSO COM 'DENO',
+
+
+
+
+ QUE 
+
+ ESSES 
+
+ NEGÓCIOS __ NÃO FICAM DISPONÍVEIS 
+DE NENHUM OUTRO MODO (se vocÊ tentar rodar esse script TS com o NODE, por exemplo, VOCê FALHARÁ, RECEBERÁ ERRORS)....
+
+
+
+
+
+
+
+
+
+--> CERTO.... INSTALEI ISSO...
+
+
+
+
+
+
+
+
+
+-> MAS ISSO NÃO ESTÁ FUNCIONANDO (não estou vendo os methods DENO nesse objeto deno)...
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ EU TENHA INSTALADO O DENO DE FORMA ERRADA...
+
+
+
+
+
+
+
+
+
+
+---> EU ESTAVA INSTALANDO DE FORMA ERRADA,
+
+
+SEGUI ESTES PASSOS E CONSEGUI:
+
+
+
+
+
+
+
+
+
+
+
+Visual Studio Code
+There is an official extension for Visual Studio Code called vscode_deno. When installed, it will connect to the language server built into the Deno CLI.
+
+Because most people work in mixed environments, the extension does not enable a workspace as Deno enabled by default, and
+
+ it requires that the "deno.enable" flag to be set. You can change the settings yourself, or you can choose
+ 
+  Deno: Initialize Workspace Configuration from the command palette to enable your project.
+
+More information can be found in the Using Visual Studio Code section of the manual.
+
+
+
+
+
+
+
+
+
+
+---------> OU SEJA,
+
+
+APERTE 'ctrl shift P'
+
+
+para ABRIR A COMMAND PALLETE 
+
+E PODER
+
+
+escolher a opção 
+
+
+Deno: Initialize Workspace Configuration 
+
+
+
+
+
+
+
+
+--> ISSO VAI ATIVAR O 'DENO LINTING' no nosso projeto específico (no foldr específico do nosso projeto)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NOSSO OBJETIVO, NO CASO, ERA 'WRITE A FILE'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONVENIENTEMENTE,
+
+O DENO NOS APRESENTA O METHOD 'writeFile',
+
+
+
+QUE PODEMOS CHAMAR...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ESSE REALMENTE É UM METHOD  QUE FAZ O WRITEDE 1 FILE.....
+
+
+
+
+
+
+
+
+
+-> TAMBÉM HÁ  O METHOD DE 'WRITETEXTFILE',
+
+
+
+QUE DEIXA ESSA TAREFA AINDA MAIS FÁCIL,
+
+
+mas 
+
+professor quer nos mostrar maisfeatures,
+
+por ISSO 
+
+
+
+vai usr esse method de 
+
+
+'writeFile'..
+
+
+
+
+
+
+
+ARGUMENTOS: 
+
+
+
+1) PATH à FILE...
+
+(incluindo o filename)
+
+
+
+
+
+
+
+
+2) DATA QUE DEVERÁ 
+
+SER INSERIDA NO NOSSO ARQVUIO,,
+
+
+
+
+
+
+
+
+--------> 
+
+
+
+
+A DATA QUE DEVERÁ SER WRITTEN AO ARQUIVO DEVE 
+
+SER 
+
+NO FORMATO 
+'
+
+UInt8Array '' ---------> É UM FORMATO ESTRANHO, MAS QUE 
+
+É 
+
+BUILTIN NO 
+
+JAVASCRIPT,
+
+
+
+E QUE É BASICAMENTE UM 'ARRAY DE BYTES'...
+
+
+
+
+
+
+
+
+-----> NÓS PODEMOS FACILMENTE CONVERTER NOSSA STRING/TEXT 
+
+em bytes,
+
+
+MAS 
+
+
+VAMOS COMEÇAR PELO PATH...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------>   QUANTO AO PATH,
+
+QUEREMOS 
+
+CRIAR 
+
+
+ESSA 'FILE'
+
+NO ROOT, POR ISSO 
+
+
+CONVENIENTEMENTE PODEMOS SÓ ESCREVER 
+
+
+'message.txt'
+
+
+PARA 
+
+QUE 
+ELE SEJA GRAVAOD NESSE MESMO LOCAl...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+Deno.writeFile('message.txt')
+
+
+
+
+
+
+
+
+
+
+
+--> JÁ A SEGUNDA DATA
+
+
+SERÁ 
+
+
+
+
+AQUELE 'Uint8Array' -----> A DICA DO IDE 
+
+
+NOS 
+
+
+
+fala um pouco sobre como CONVERTER ESSA STRING NESSE TIPO DE ARRAY...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR FAZER ISSO,
+
+
+SIMPLESMENTE CRÍAMOS UM 'ENCODER',
+
+por meio 
+
+
+
+DA 
+
+INSTANCIAÇAO DE UM 'TextEncoder' (constructor function disponível globalmente no DENO)...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+const encoder = new TextEncoder();
+
+
+
+
+
+
+
+
+  ENCODER VAI BASICAMENTE SER UM OBJETO QUE _ VAI__ PERMITIR A NÓS _ CONVERTER 
+
+
+  A STRING EM BYTESS...
+
+
+
+
+
+
+
+
+
+
+  --> PARA QUE NOSSA STRING SEJA CONVERTIDA,
+
+
+
+  escrevemos 
+
+
+
+
+const text = 'this is a text - and it should be stored in a file';
+    
+  'const data = encoder.encode(text);' 
+
+
+
+
+
+
+
+
+
+
+O ´CODIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+const text = 'this is a text - and it should be stored in a file';
+    
+
+
+
+
+const encoder = new TextEncoder();  ////CONSTRUCTOR FUNCTION __ DISPONÍVEL___ GLOBALMENTE NO DENO.... (vamos o utilizar para CONVERTER NOSSA STRING EM BYTES, EM 1 DATA NO FORMATO 'Uint8Array', que é o formato ACTUALLY SUPORTADO POR 'writeFile'...)
+
+
+
+
+const data = encoder.encode(text);
+
+
+
+Deno.writeFile('message.txt', data);
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+
+
+
+
+------> ESSE WRITEFILE VAI ESCREVER ESSE TEXT 
+
+
+EM 1 FILE...
+
+
+
+
+--> ESSE CÓDIGO N É MT FANCY,
+
+MAS É 
+O PRIMEIRO 
+
+CÓDIGO DENO QUE 
+
+
+
+ESCREVEMOS...
+
+
+
+
+
+
+-->  CONFORME O PROFESSOR HAVIA MENCIONADO, O DENO 'EMBRACES'
+
+FEATURES MODERNAS 
+
+
+DO JAVASCRIPT,
+
+POR ISSO 
+
+VAMOS USAR THEN-CATCH COM 
+
+
+ESSE 'writeFile',
+
+E NÃO __ CALLBACKS__ (pq isso é uma bosta)...
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS CONSOLE.LOGGAr 'wrote to file',
+
+
+e aí console.loggar o erro, com 'cach'...
+
+
+
+
+
+
+
+
+
+--> OK... ATÉ AÍ TUDO BEM... MAS SE TENTARMOS __ EXECUTAR ESSE ´CODIGO 'DENO,'
+
+
+
+VAMOS_ ACTUALLY__ RECEBER__ 1 ERRO.... --> O 
+
+
+ERRO SERÁ 
+
+1 
+ERRO 
+DE 
+
+'PERMISSION DENIED' (é algo que o professor havia mencionado anteriormente, nos slides)...
+
+
+
+VEREMOS O SIGNIFICADO DISSO LOGO LOGO....
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// let message: string = 'Hi there!';
+
+
+
+
+
+
+// console.log(message);
+
+
+
+
+
+
+
+
+const text = 'this is a text - and it should be stored in a file';
+    
+
+
+
+
+const encoder = new TextEncoder();  ////CONSTRUCTOR FUNCTION __ DISPONÍVEL___ GLOBALMENTE NO DENO.... (vamos o utilizar para CONVERTER NOSSA STRING EM BYTES, EM 1 DATA NO FORMATO 'Uint8Array', que é o formato ACTUALLY SUPORTADO POR 'writeFile'...)
+
+
+
+
+const data = encoder.encode(text);
+
+
+
+Deno.writeFile('message.txt', data)
+.then(
+    (result) => { ////COMO O DENO É UMA LANGUAGE QUE 'embraces new javascript features', ELE ACEITA TOTALMENTE PROMISES, E ODEIA CALLBACKS em funções... (pq elas fedem)...
+            console.log( ///NOSSO CÓDIGO VAI __ FALHAR/DAR ERROR, INICIALMENTE, POR 'FALTA DE PERMISSOES' no execute dessa função...
+                'wrote to file!'
+            )
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+// Deno.seek
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS O QUE SIGNIFICA ESSE ERROR?

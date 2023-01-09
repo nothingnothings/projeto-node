@@ -1,0 +1,151 @@
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE JÁ 
+
+ESTAMOS FAZENDO 'UPDATE'
+ 
+
+ CORRETAMENTE POR 
+
+ MEIO DO 
+
+
+ SOCKETIO... --> 
+
+
+
+ mas 
+
+
+ ele 
+
+
+
+ fala 
+
+
+
+
+
+ que 
+
+
+
+
+
+
+ A ORDEM DE NOSSOS ITEMS 
+
+ ESTÁ 
+
+
+
+
+ ERRADA, QUANDO 
+
+ CRIAMOS 1 NOVO POST, 
+
+
+
+
+no client dos outros users.... ------> 
+
+
+
+MAS 
+
+
+
+ISSO 
+
+
+
+EU JÁ RESOLVI, RESOLVI POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+ const neededUserDocuments = await Post.find({}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    ).populate(
+      'creator.userId'
+  ).sort({_id: -1})
+
+
+
+
+
+
+
+
+
+
+
+
+--> esse '.sort(_id: -1)'
+ 
+
+ VAI FAZER COM QUE 
+
+
+
+ NOSSOS POSTS SEJAM FETCHEADOS 'IN A DESCENDING WAY'...
+ (
+
+     dos mais novos para os mais velhos...
+ )
+
+
+
+
+
+
+
+
+
+ --> alternativamente, você pode escrever, como o professor,
+
+
+
+
+o critério assim:
+
+
+
+
+''''.sort({createdAt: -1})''''
+
+
+
+
+
+
+
+
+ISSO SURTIRÁ O MESMO EFEITO....
+
+
+
+
+
+
+
+
+
+
+
+ok... funcionou.
+
+
+
+'TINY COSMETICS THAT ALLIGN WITH THE REST OF OUR APP'...
+

@@ -1,0 +1,985 @@
+
+
+
+
+
+
+
+
+
+
+
+-> OK, NÓS TRABALHAMOS UM POUCO COM O DEBUGGER...
+
+
+
+
+
+
+
+
+
+
+
+-----> NA PRÓXIMA LIÇÃO, VAMOS ENCONTRAR MAIS INSTRUÇÕES SOBRE AS FUNCIONALIDADES QUE 
+
+O 
+
+DEBUGGER DO 
+
+VISUAL STUDIO CODE NOS DÁ...
+
+
+
+
+
+
+
+
+
+
+----> EXPLORE UM POUCO DISSO,
+ 
+ PARA 
+
+ APRENDER UM POUCO SOBRE O DEBUGGER...
+
+
+
+
+
+
+
+
+
+
+ --> o professor quer nos mostrar 
+
+ mais 
+
+ 2 
+
+ coisas:
+
+
+
+
+
+
+
+
+ 1A COISA --> PROFESSOR 
+
+
+ NOS MOSTROU QUE PODEMOS EXECUTAR 
+
+ CÓDIGO 
+
+
+ NO CONSOLE 
+
+ DO DEBUGGER, ALI EMBAIXO.....
+
+
+
+
+
+
+
+
+
+ ------> por exemplo,
+
+
+
+
+ você pode 
+
+
+ DIGITAR UM NOME DE VARIÁVEL 
+
+
+ ALI EMBAIXO,
+
+
+
+ algo disponível 
+
+
+
+
+ no seu código no momento,
+
+
+
+
+ como 
+
+ 'message' ---> 
+
+
+ SE VOCÊ 
+
+
+
+ DIGITAR ISSO,
+
+
+ VOCê 
+
+ PODERÁ 
+
+ PRINTAR SEU VALOR... ---------. 
+
+
+
+
+
+
+
+
+ VOCÊ PODE 
+
+
+ TAMBÉM RODAR OPERAÇÕES SOBRE ESSAS VARIÁVEIS,
+
+
+ PARA 
+
+ ENTÃO TESTAR 
+
+ UMA TRANSFORMAÇÃO ANTES 
+
+ DE 
+
+
+ ADICIONAR 
+
+ ESSE CÓDIGO 
+
+
+
+ NO SEU CÓDIGO DE VERDADE....
+
+
+
+
+
+
+
+
+ --------> A SEGUNDA COISA QUE 
+
+ O 
+
+ PROFESSOR 
+
+ QUERIA MOSTRAR É QUE 
+
+
+
+
+
+
+ O COMPORTAMENTO DEFAULT DO DEBUGGER É __ NÃO RESTARTAR__ 
+
+
+
+
+
+ QUANDO ALTERAMOS O NOSSO CÓDIGO... -----> 
+
+
+
+ ENTRETANTO,
+
+
+
+ O NODEMON ___ OFERECE_ UM PACKAGE__ QUE TAMBÉM___ 
+ FAZ 
+
+
+ ESSE 
+
+
+ RELOAD AUTOMÁTICO DE NOSSO APP 
+
+ A 
+
+ PARTIR 
+
+
+ DE 
+
+ MUDANÇAS.... ---> 
+
+ PARA ISSO,
+
+
+ DEVEMOS 
+
+
+
+
+ IR ATÉ A OPÇÃO DO DEBUG,
+
+ E AÍ 
+
+
+ ADICIONAR UMA CONFIGURAÇÃO 
+
+
+
+ PARA 
+
+ O NODEJS.... ------> 
+
+
+
+
+
+ ISSO,
+
+
+ ESSA OPÇÃO,
+
+ VAI CRIAR UM ARQUIVO 
+
+ 'launch.json'
+
+
+ DENTRO
+
+
+ DE UM 
+
+ FOLDER 
+
+ '.vscode'
+
+ NO SEU PROJETO... -------> ISSO DE TE DEIXA CONFIGURAR O DEBUGGING 
+
+ PARA 
+
+ ESSE PROJETO,
+
+
+
+ CONFIGURAR SEU COMPORTAMENTO....
+
+
+
+
+ ELE ESTÁ VAZIO POR ENQUANTO,
+
+
+
+ MAS O PROFESSOR 
+
+ EXPLICA QUE 
+
+ PODEMOS 
+
+ ADICIONAR 
+
+
+
+
+
+
+ UM 
+
+ FIELD 
+
+ de 
+
+ "restart": true
+
+ PARA 
+
+ IMPLEMENTAR 
+
+ ESSE COMPORTAMENTO NO NOSSO DEBUGGER...
+
+
+
+ ex:
+
+
+
+
+ 
+
+
+
+{
+
+
+    "restart": "true"
+}
+
+
+
+
+
+
+
+
+
+
+
+------> OK.. MAS SÓ ISSO NÃO VAI BASTAR.... --> PARA CONSEGUIR 
+
+O 
+
+COMPORTAMENTO DO 'RELOAD A PARTIR DE MUDANÇAS',
+
+você 
+
+DEVE 
+
+SE 
+ASSEGURAR 
+
+QUE 
+
+O NODEMON 
+
+
+
+ESTÁ SENDO UTILIZADO...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, VOCÊ 
+
+DEVE 
+
+ESCREVER 
+
+
+'runtimeExecutable'
+
+
+
+
+__ COMO 
+
+"nodemon" --------> 
+
+
+
+
+
+O DEFAULT É 'NODE', 
+
+
+MAS 
+
+QUEREMOS USAR 
+
+O NODEMON,
+
+
+PQ 
+ELE 
+
+VAI 
+
+
+__RE-EXECUTAR__/REINICIAR __ O DEBUGGER 
+
+
+SEMPRE QUE 
+
+UMA 
+
+
+CHANGE FOR DETECTADA (
+
+
+
+    ou seja,
+
+    ALÉM DE SER REINICIADO O SERVER,
+
+    O 
+
+    DEBUGGER EM SI TBM SERÁ REINICIADO....
+)
+
+
+ex:
+
+
+
+
+
+
+
+{
+
+
+    "restart": "true",
+    "runtimeExecutable": "nodemon"
+}
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+----------> ALÉM DISSO, NESSE ARQUIVO CONFIG,
+
+
+
+vocÊ 
+
+PODE 
+
+TAMBÉM DEFINIR QUE 
+
+ELE SEMPRE DEVE COMEÇAR COM O 
+
+ARQUIVO 
+
+'app.js', o que 
+
+SEMPRE É MAIS CONVENIENTE 
+
+DO 
+
+QUE 
+
+TER QUE 
+
+
+'SELECTING THE FILE YOU WANT TO DEBUG FIRST BEFORE 
+
+STARTING THE DEBUGGER',
+
+
+
+
+
+e você 
+
+SEMPRE TEM QUE 
+
+
+PEGAR 
+
+
+
+
+
+O APP.JS 
+
+como 
+
+starting FILE PQ 
+
+É 
+
+ELA QUE 
+
+VAI COMEÇAR SEU SERVIDOR INTEIRO,
+
+
+
+
+
+
+PQ É SEMPRE ISSO QUE VOCÊ VAI FAZER... --->
+
+
+
+
+
+PARA ISSO, você 
+
+deve definir 
+
+
+
+"program" como sendo 
+
+
+"${workspaceFolder}/app.js"...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+{
+
+    "program": "${workspaceFolder}/app.js",
+    "restart": "true",
+    "runtimeExecutable": "nodemon"
+}
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+ALÉM DISSO,
+
+VOCÊ 
+
+DEVE 
+SETTAR 
+
+O 
+
+'CONSOLE'
+
+
+como 
+
+
+'integratedTerminal',
+
+
+
+
+PARA QUE VOCÊ UTILIZE O TERMINAL COMUM....
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+--> e se você TENTAR RODAR 
+
+
+
+O SEU DEBUGGER AGORA, ELE VAI __ FALHAR___ --> 
+
+
+
+
+
+
+
+VAI FALHAR PQ VOCÊ PRECISA  
+
+DO NODEMON INSTALADO GLOBALMENTE...
+
+
+--> vocÊ faz isso por meio do 
+
+código 
+
+
+
+'npm install nodemon -g' 
+
+
+NO SEU TERMINAl....
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok.......
+
+
+
+
+
+
+
+
+---> NODEMON ESTARÁ INSTALADO GLOBALMENTE,
+
+
+
+o que resulta que 
+
+agora 
+
+
+
+O NODEMON PODE SER RODADO NO TERMINAL (não receberemos mais um erro de 'command not found'..)
+
+
+
+
+
+
+
+
+
+
+--> AGORA SE ADICIONARMOS UM 
+
+BREAKPOINT 
+
+
+
+
+como antes,
+
+
+
+
+AS COISAS VAO FUNCIONAR COMO ANTES,
+
+MAS 
+
+AGORA 
+
+O 
+
+
+
+DEBUGGER VAI REINICIAR A PARTIR DE MUDANÇAS...
+
+
+
+
+
+
+
+
+
+CERTO... MAS ESSAS MUDANÇAS NÃO FORAM APLICADAS.... devo ter feito algo errado..
+
+
+
+
+
+
+
+
+
+
+
+
+OK... PARECE QUE A SINTAXE DO PROFESSOR ESTÁ ULTRAPASSADA, A ATUAL É ESTA:
+
+
+
+
+
+
+
+
+{
+    "configurations": [
+        {
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "nodemon",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "restart": true,
+            "runtimeExecutable": "nodemon",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        }
+
+    ]
+}
+
+
+
+salvo tudo e testo...
+
+
+
+
+
+
+
+
+
+
+RECEBI UM ERRO:
+
+
+PS A:\projeto4 - NODEJS\MODULO4-DEVFLOWMELHORADOEDEBUGGING>  a:; cd 'a:\projeto4 - NODEJS\MODULO4-DEVFLOWMELHORADOEDEBUGGING'; ${env:NODE_OPTIONS}='--require "c:/Users/Usuário/AppData/Local/Programs/Microsoft VS Code/resources/app/extensions/ms-vscode.js-debug/src/bootloader.bundle.js" --inspect-publish-uid=http'; ${env:VSCODE_INSPECTOR_OPTIONS}='{"inspectorIpc":"\\\\.\\pipe\\node-cdp.14312-2.sock","deferredMode":false,"waitForDebugger":"","execPath":"C:\\node.exe","onlyEntrypoint":false,"autoAttachMode":"always","fileCallback":"C:\\Users\\USURIO~3\\AppData\\Local\\Temp\\node-debug-callback-b7c748ceac47be3c"}'; & 'C:\Users\Usu?rio\AppData\Roaming\npm\nodemon.cmd' '.\app.js' 
+& : O termo 'C:\Users\Usu�rio\AppData\Roaming\npm\nodemon.cmd' não é reconhecido como nome de cmdlet, função, 
+arquivo de script ou programa operável. Verifique a grafia do nome ou, se um caminho tiver sido incluído, veja se   
+o caminho está correto e tente novamente.
+No linha:1 caractere:562
++ ... 7be3c"}'; & 'C:\Users\Usu�rio\AppData\Roaming\npm\nodemon.cmd' '.\app ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\Usu�ri...npm\nodemon.cmd:String) [], CommandNotFoundExcept  
+   ion
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+ACHO QUE CONSEGUI...
+
+
+
+
+
+
+---> mas os scripts ficaram bem zoados,
+ 
+
+ e o 
+
+
+ app 
+
+ não inicia automaticamente 
+
+ a 
+
+ partir 
+
+
+
+ da opção 
+
+ 'run' --> 'start debugging' 
+
+ no 
+
+ VISUAL STUDIO CODE... ------> 
+
+
+
+ EM VEZ DISSO,
+
+
+ VOCÊ DEVE:
+
+
+
+
+ 1) rodar 'npm run debug' no terminal, para iniciar o debugger do nodemon 
+
+
+
+ 2) clicar em 'start debugging' no visual studio code...
+
+
+
+
+
+
+
+
+ acho que isso não está funcionando bem,
+
+ mas 
+
+ ali embaixo consigo ver 
+
+ 'nodemon',
+
+
+ a 
+
+ barra de debug do nodemon...
+
+
+
+
+ ficou gozado..
+
+
+
+ meu 
+ 'launch.json'
+
+ ficou assim:
+
+
+ 
+
+
+ 
+{
+"configurations": [
+
+    {   "type": "node",
+        "console": "integratedTerminal",
+        "request": "attach",
+        "name": "nodemon",
+        "runtimeExecutable": "nodemon",
+        "internalConsoleOptions": "neverOpen",
+        "program": "${workspaceFolder}/app.js",
+        "processId": "${command:PickProcess}",
+        "restart": true,
+        "protocol": "inspector"
+    }
+]
+
+}
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+
+
+
+
+NÃO, ESPERE, PARECE QUE ESTÁ FUNCIONANDO, SIM... --> 
+
+
+
+
+os 
+
+2 processos (debugger do VISUAL STUDIO CODE e do NODEMON)
+
+
+SÃO 
+SEPARADOS,
+
+
+
+
+são 
+
+2 processos separados,
+
+
+
+E SE VOCê 
+
+PARA 
+
+O 
+
+DEBUGGER,
+
+ O NODEMON TEM QUE SER EXITADO SEPARADAMENTE...
+
+
+
+
+
+
+
+
+
+
+ ------> ok, agora temos um setup em que TEMOS UM DEBUGGER ANEXADO 
+
+ AO NOSSO PROGRAMA,
+
+ EM QUE 
+
+ O 
+
+ SERVIDOR VAI REINICIAR 
+
+
+ QUANDO 
+
+ SALVARMOS ALGUMA MUDANÇA...
+
+
+
+
+
+
+
+ --> PELO RESTO DO CURSO, O PROFESSOR 
+
+ SÓ VAI USAR 
+
+ O DEBUGGER 
+
+
+ se 
+
+ ele quiser realmente 
+
+
+ encontrar um bug 
+ específico com 
+
+
+ o 
+
+ debugger...
+
+
+
+
+ EX:
+
+
+ https://code.visualstudio.com/docs/nodejs/nodejs-debugging
+
+
+
+ 

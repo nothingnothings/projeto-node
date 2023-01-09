@@ -1,0 +1,2132 @@
+ 
+
+
+
+ ASSOCIATIONS... -------> 
+
+
+
+
+
+
+
+
+
+
+ O QUE O PROFESSOR QUER DIZER COM 
+
+ 'ASSOCIATIONS/RELATIONS'? 
+
+
+
+
+
+
+ (os 2 são a mesma coisa...)
+
+
+
+
+
+
+
+ ----> DIGAMOS QUE 
+
+ NO NOSSO 
+
+PROJECT 
+
+
+
+TENHAMOS 
+
+
+
+
+
+ 
+4 MODELS:
+
+
+
+
+
+
+1) PRODUCT 
+
+
+
+
+2) USER 
+
+
+
+3) CART 
+
+
+
+4) ORDER  (no futuro)....
+
+
+
+
+
+
+
+
+
+
+--> AGORA.... SE QUISERMOS __CONECTAR__ TODAS ESSAS COISAS 
+
+
+E 
+
+DEFINIR __COMO ELAS DEVEM FUNCIONAR ___ EM CONJUNTO,
+
+
+
+AÍ __ 
+
+
+
+
+
+1 PRODUCT _______PROVAVELMENTE 
+
+
+
+PERTENCERIA/PERTENCERÁ 
+
+
+
+
+_______a MUITOS (many) 
+
+CARTS... 
+
+
+
+
+
+
+
+
+
+
+
+
+         --> cart --> user
+        --> cart --> user
+product --> cart --> user
+        --> cart --> user
+        --> cart --> user
+       
+
+
+
+
+
+
+
+--> ISSO PQ __ CADA USER __ VAI TER 1
+ 
+
+ CART;
+
+
+
+
+ isso significa que 
+
+
+ temos uma relação tipo:
+
+
+
+
+         --> cart --> user
+        --> cart --> user
+product --> cart --> user
+        --> cart --> user
+        --> cart --> user
+
+
+
+
+
+
+
+
+--> OS CART-USER terão uma relação 'one-to-one',
+
+
+
+ENQUANTO 
+
+QUE 
+
+o 
+
+
+'product' terá uma relação 'one-to-many',
+
+pois aparecerá em muitos e muitos carts...
+
+
+
+
+(
+
+    ISSO PQ DIFERENTES USERS PODEM ADICIONAR 1 MESMO 
+
+    TIPO DE PRODUCT AOS SEUS CARTS...
+)
+
+
+
+
+
+
+
+OK....
+
+
+
+E O 
+
+
+4), 'orders'?
+
+
+
+
+
+
+
+
+
+ORDERS --> AS ORDERS POSSUEM UMA RELAÇÃO 'many-to-many' com os products,
+
+
+E TAMBÉM 'many-to-many' com 
+
+OS 
+
+USERS...
+
+
+
+(
+
+PQ 1 MESMO USER PODE TER __MÚLTIPLAS__ ORDERS,
+
+
+
+
+E UM MESMO PRODUCT__ PODE __ APARECER EM MÚLTIPLAS ORDERS... --> 
+
+
+
+
+por isso 
+
+
+é 
+
+
+'many-to-many' NOS 2...
+
+
+)
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS É CLARO QUE __ TEMOS 2 TIPOS DE USER...
+
+
+
+
+
+
+
+
+1) USER 'CONSUMIDOR' (que não é o admin) -----> esse user tem uma relação de ORDERING com os products... --> é a relação NORMAL de um user NORMAL entre os models...
+
+
+
+
+
+
+
+2) user 'ADMIN' --> É O ___ ADMINISTRADOR/CRIADOR DE UM PRODUTO QUE __ CRIA O PRODUTO E PASSA O EXIBIR NA SUA 'ONLINE SHOP'...  -----> ESSE TIPO DE USER, O USER ADMIN, ele pode 'OWN MULTIPLE PRODUCTS' (products QUE ELE MESMO CRIOU, pois é um admin)... --> E ESSA É OUTRA RELAÇÃO 'ONE-TO-MANY', pois 1 mesmo user/admin cria vários product...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK.... ---> ESSE É UM ROUGH OUTLINE DE COMO PODEMOS 
+
+
+
+'COMMUNICATE/RELATE' DIFFERENTES MODELS 
+
+
+NO NOSSO APP... 
+
+
+
+
+
+
+
+
+
+-----> E É ISSO QUE PODEMOS 'REFLECT' 
+
+
+LÁ NO 
+
+
+SEQUELIZE,
+
+no nosso código...
+
+
+
+
+
+
+
+
+
+
+--> LÁ NO SEQUELIZE,
+
+
+VAMOS 
+
+
+ATÉ 
+
+
+O 
+
+ARQUIVO 'app.js',
+
+
+main starter do nosso app.... 
+
+
+
+
+
+
+
+
+
+------> lá em app.js,
+
+
+
+O PROFESSOR,
+
+ANTES 
+
+
+
+DE ELE 
+
+
+RODAR AQUELE 
+
+CÓDIGO 
+
+QUE 
+
+
+'SYNC ALL MY DATA TO THE DATABASE' 
+
+(código 
+
+de 
+
+
+'''
+sequelize.sync() ///ISTO AQUI __VAI BASICAMENTE__ CRIAR TABLES, NA DATABASE, PARA ___ TODOS __OS MODELS QUE DEFINIMOS COM sequelize.define(), como visto lá em 'product.js'... (local em que definimos o model de 'Product.js'...)
+                    ///e ele vai criar essas tables/vincular seus models a essas tables __JÁ NO INÍCIO DO SEU APP, NO STARTUP...
+.then(
+  (result) => {
+
+    app.listen(3000); 
+  }
+)
+.catch(
+  (err) => {
+      console.log(err);
+  }
+)
+
+''''
+
+
+),
+
+
+
+ANTES 
+
+
+DE 
+
+ELE 
+
+EXECUTAR ___ ESSE CÓDIGO AÍ,
+
+
+
+
+
+ELE 
+
+
+__VAI QUERER 
+
+
+
+__DEFINIR __OS SEUS MODELS, 
+
+IMPORTAR OS SEUS 
+
+MODELS EXPLICITAMENTE NO ROOT DE NOSSO APP, 
+
+
+tudo para 
+
+DEFINIR 
+
+
+
+AS RELATIONS 
+
+ENTRE ELES...
+
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+
+ELE VAI ADICIONAR 
+
+ 
+
+IMPORTS DE NOSSOS MODELS 
+
+LÁ 
+
+
+NO 
+
+ROOT, lá em 'app.js'.... ------> 
+
+
+
+
+
+
+ELE 
+
+ESCREVE 
+
+
+
+'const Product = require('./models/product');
+
+
+const User = require('./models/user');
+
+
+
+
+
+
+
+
+
+
+
+
+NOSSO CÓDIGO, ATÉ AGORA, ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express(); 
+
+
+
+
+
+app.set('view engine', 'ejs'); 
+
+
+
+
+
+
+const adminRoutes = require('./routes/admin');
+
+
+const shopRoutes = require('./routes/shop');
+
+
+const errorController = require('./controllers/error');
+
+
+// const db = require('./util/database'); ///versão que NÃO USAVA SEQUELIZE
+
+const sequelize = require('./util/database'); ////VERSÃO QUE USA SEQUELIZE... (é a CONNECTION POOL manageada pelo sequelize + conjunto de features do sequelize... tudo isso definido no arquivo 'database.js'...)
+
+
+const Product = require('./models/product'); /////necessário para DEFINIR RELATIONS, NESSE NOSSO ROOT...
+const User = require('./models/user');
+
+
+app.use(bodyParser.urlencoded({extended: false}));
+
+
+
+
+app.use(express.static(path.join(__dirname, 'public'))); 
+
+
+
+app.use(
+ 
+
+  '/admin', 
+
+
+      
+
+    adminRoutes 
+);
+
+
+
+app.use(
+  shopRoutes  
+)
+
+
+
+
+app.use(
+
+  errorController.error404
+)
+
+
+
+sequelize.sync() ///ISTO AQUI __VAI BASICAMENTE__ CRIAR TABLES, NA DATABASE, PARA ___ TODOS __OS MODELS QUE DEFINIMOS COM sequelize.define(), como visto lá em 'product.js'... (local em que definimos o model de 'Product.js'...)
+                    ///e ele vai criar essas tables/vincular seus models a essas tables __JÁ NO INÍCIO DO SEU APP, NO STARTUP...
+.then(
+  (result) => {
+    // console.log(result);
+    app.listen(3000); 
+  }
+)
+.catch(
+  (err) => {
+      console.log(err);
+  }
+)
+
+// app.listen(3000); ////cria o nosso server... ongoing process...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+AÍ, NESSE LUGAR 
+
+AÍ,
+ 
+ EM 
+
+
+ 'app.js',
+
+
+ ELE 
+
+ DIZ QUE 
+
+ DEVEMOS 
+
+
+ SETTAR NOSSA RELATION ENTRE 
+
+ ESSES 
+
+ 2 MODELS...
+
+
+
+
+
+
+
+
+ ---------> VAMOS FAZER 'RELATE' DELES ALI,
+
+
+ NO MESMO LUGAR 
+
+ QUE 
+
+ ELE 
+
+
+ FAZ 
+
+ 'SYNC()' 
+
+
+ de 'sequelize'... -------> 
+
+
+
+
+
+
+
+
+ MAS ELE 
+
+ VAI 
+
+
+ DEFINIR ESSA RELATION __ POUCO ANTES __ 
+
+
+ DO 
+ RUN 
+ DESSE 
+
+ 'sequelize.sync()'... ------->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ NESSE LOCAL,
+
+ PROFESSOR 
+
+ VAI BASICAMENTE 
+
+
+
+
+ DIZER 
+
+
+
+
+
+ 'UM PRODUCT DEVE PERTENCER A UM USER'....
+
+
+
+
+
+
+
+
+
+
+ --> a sintaxe disso fica:
+
+
+
+
+
+const Product = require('./models/product'); /////necessário para DEFINIR RELATIONS, NESSE NOSSO ROOT...
+const User = require('./models/user');
+
+
+
+ Product.belongsTo(User);
+
+
+
+
+ -------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ É CLARO QUE HÁ BEM MAIS INFORMAÇÕES SOBRE ESSAS RELATIONS LÁ NOS DOCS 
+
+
+ DO 
+
+ SEQUELIZE....
+
+
+
+
+(É NO ARTIGO SOBRE 'ASSOCIATIONS'...)
+
+ --------------------------------------
+
+
+
+
+
+
+
+
+
+------> ok.. 
+
+
+nesse código aí,
+
+
+ESTAMOS 
+
+
+
+
+DEFININDO 
+
+
+
+ESSA RELATION ENTRE 
+
+
+
+
+PRODUCT E USER .... -->  AQUI, NO CASO,
+
+
+ESTAMOS 
+
+FALANDO 
+DE 
+
+
+'USERS/ADMINS' 
+
+__ QUE __ CRIAM O PRODUCT/PRODUCTS,
+
+E NÃO 
+
+
+
+__OS 'USERS DE VERDADE' (users que vao realmente comprar os products....)
+
+
+
+
+
+---> ok... estamos falando 'users' em um sentido de CRIADORES DE PRODUTOS/ADMINs...
+
+
+
+BelongsTo
+BelongsTo associations are associations 
+where the foreign key for the one-to-one relation exists on the source model.
+
+A simple example would be a Player being part 
+of a Team with the foreign key on the player.
+
+
+
+
+
+
+
+
+------> certo... -------> AÍ O PROFESSOR NOS 
+
+DIZ QUE 
+
+
+___PODEMOS__ CONFIGURAR_____ 
+
+
+
+
+ESSA 
+
+
+
+RELATION __ POR MEIO DO PASS 
+
+DE 
+
+UM __ SEGUNDO PARÂMETRO....
+
+
+
+
+
+
+
+ESSE SEGUNDO PARÂMETRO É OPCIONAL, MAS SERÁ UM OBJETO..
+
+
+
+
+
+
+
+
+--> DENTRO DO OBJETO PODEMOS __ DEFINIR 'HOW THIS RELATION SHOULD BE MANAGED'...
+
+
+
+
+
+
+
+
+
+E, IMPORTANTE,
+
+
+podemos 
+
+
+DEFINIR NESSE OBJETO 
+
+
+algo chamado 
+
+de 
+
+'constraints',
+
+
+
+
+PODEMOS 
+
+
+AS DEFINIR OU COMO 'true' ou como 'false'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+'''''Product.belongsTo(User, {constraints: true})'''''
+
+
+
+
+
+
+
+
+
+
+
+
+MAS O QUE SÃO CONSTRAINTS? 
+
+
+
+
+
+
+
+encontrei esta explicação:
+
+
+
+
+
+
+Adding constraints between tables means
+ that tables must be created in the database 
+ in a certain order, when using sequelize.sync() . 
+ If Task has a reference to User , the User table 
+ must be created before the Task table can be created.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONSTRAINS: true/false -----> 'TELLS THE ENGINE IF IT SHOULD ENABLE 'on update' and 'on delete' constraints on the foreign key'....
+
+
+
+
+
+
+
+
+By default the foreign key for a belongsTo relation will 
+
+be generated from the target model name and the target primary 
+
+key name. The default casing is ...
+
+
+
+
+https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CONSTRAINTS GERALMENTE SERÃO 
+
+
+
+SETTADAS COMO TRUE... --> 
+
+
+
+e existem constraints 
+
+para 
+
+
+
+O 'on delete' 
+
+e 
+
+para 
+o 
+
+'on update'...
+
+
+
+
+
+
+
+
+
+
+
+--> NO CASO, O PROFESSOR ESCREVE ISTO:
+
+
+
+
+
+
+
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'}) 
+
+
+
+
+
+
+
+
+
+--> ISSO QUER DIZER:
+
+
+
+'SE UM USER FOR DELETADO, O QUE DEVERÁ ACONTECER COM OS 
+
+CONNECTED PRODUCTS, OS PRODUCTS CONECTADOS ÀQUELE USUÁRIO DELETADO..... '-->
+
+
+
+
+
+quando definimos o valor de 'CASCADE',
+
+
+
+
+
+___ESTAMOS BASICAMENTE DIZENDO 
+
+QUE 
+
+
+O 
+
+
+DELETION __ TAMBÉM _ DEVE SER EXECUTADO PARA O PRODUCT,
+
+O PRODUCT DEVE SER DELETADO JUNTO DO USUÁRIO... (pq os 2 estão conectados, no final das contas, 
+
+
+e por meio do 'constraints' e do 'onDelete'/onUpdate definimos esse comportamento...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> TEMOS ESTE ARTIGO NO 
+
+
+
+STACKOVERFLOW FALANDO DISSO:
+
+
+Let's look at the ON UPDATE clause:
+
+ON UPDATE RESTRICT : the default : if you try to update a company_id in table COMPANY the engine will reject the operation if one USER at least links on this company.
+ON UPDATE NO ACTION : same as RESTRICT.
+ON UPDATE CASCADE : the best one usually : if you update a company_id in a row of table COMPANY the engine will update it accordingly on all USER rows referencing this COMPANY (but no triggers activated on USER table, warning). The engine will track the changes for you, it's good.
+ON UPDATE SET NULL : if you update a company_id in a row of table COMPANY the engine will set related USERs company_id to NULL (should be available in USER company_id field). I cannot see any interesting thing to do with that on an update, but I may be wrong.
+And now on the ON DELETE side:
+
+ON DELETE RESTRICT : the default : if you try to delete a company_id Id in table COMPANY the engine will reject the operation if one USER at least links on this company, can save your life.
+ON DELETE NO ACTION : same as RESTRICT
+
+***
+ON DELETE CASCADE : dangerous : if you delete a company row in table COMPANY the engine will delete as well the related USERs. This is dangerous but can be used to make automatic cleanups on secondary tables (so it can be something you want, but quite certainly not for a COMPANY<->USER example)
+
+***
+ON DELETE SET NULL : handful : if you delete a COMPANY row the related USERs will automatically have the relationship to NULL. If Null is your value for users with no company this can be a good behavior, for example maybe you need to keep the users in your application, as authors of some content, but removing the company is not a problem for you.
+usually my default is:  ----- ON DELETE RESTRICT -----   ON UPDATE CASCADE ----- . with some ON DELETE CASCADE for track tables (logs--not all logs--, things like that) and ON DELETE SET NULL when the master table is a 'simple attribute' for the table containing the foreign key, like a JOB table for the USER table.
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+OK.... ACHO QUE ENTENDI UM POUCO MELHOR.... -> 
+
+
+
+ESSE 
+
+
+
+
+
+SET QUE O PROFESSOR COLOCOU,
+
+
+de 
+
+
+'onDelete: 'CASCADE' 
+
+é incomum,
+
+e não tão recomendado....
+
+
+
+
+
+
+
+
+LEMBRE-SE DOS DEFAULTS:
+
+
+ON UPDATE RESTRICT : the default : if you try to update a company_id in table COMPANY the engine will reject the operation if one USER at least links on this company.
+
+
+
+ON DELETE RESTRICT : the default : if you try to delete a company_id Id in table COMPANY the engine will reject the operation if one USER at least links on this company, can save your life.
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+---> ok.... -> PROFESSOR RESSALTA QUE 
+
+
+ESSE CÓDIGO 
+
+
+de ''
+
+{constraints: true, onDelete: 'CASCADE'}
+
+
+
+
+
+'
+'
+
+
+'
+
+É TOTALMENTE 
+
+
+OPCIONAL,
+
+
+
+
+
+E QUE VOCÊ 
+
+DEVE 
+
+ENTENDER 
+
+MAIS UM POUCO SOBRE 
+
+O SEQUEL 
+
+
+
+PARA ENTENDER ISSO... --> MAS TUDO ISSO PODE SER FEITO COM SEQUELIZE, O QUE É ÓTIMO...
+
+
+
+
+
+
+
+
+
+
+
+---------> OK... AGORA TEMOS 
+
+ESSA 
+
+
+ 
+
+
+
+ RELATION 'SET UP'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE TAMBÉM
+
+
+
+
+PODEMOS 
+
+
+ESCREVER '''o inverso'''',
+
+
+podemos 
+
+escrever 
+
+
+
+
+
+
+
+
+'User.hasMany(products)'.... ------> ISSO PQ 
+
+
+
+1 MESMO 
+
+USER 
+
+
+
+__PODE __ TER 
+
+
+
+VÁRIOS PRODUCTS (many products),
+
+
+
+
+
+PQ É CLARO QUE 
+
+
+1 MESMO USER PODE 
+
+
+
+TER 
+
+
+ADICIONADO MÚLTIPLOS OBJECTS AO SHOP...
+
+
+
+
+
+
+
+
+--------> PROFESSOR DIZ QUE 
+
+
+
+AQUELE 
+
+
+'Product.belongsTo(User)'
+
+
+
+TEM O MESMO 
+
+EFEITO 
+
+DE 
+
+'User.hasMany(product)'...
+
+
+(só não sei se isso é verdade....)
+
+
+
+
+
+
+
+The A.belongsTo(B) association means that a One-To-One
+ relationship exists between A and B , with the foreign key 
+ being defined in the source model ( A ). The A.hasMany(B) 
+ association means that a One-To-Many relationship exists between A and B
+  , with the foreign key being defined in the target model ( B ).
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+What's the difference between B.belongsTo(A) and A.hasMany(B)
+
+Artist = sequelize.define('Artist', {});
+Album = sequelize.define('Albums', {});
+
+Album.belongsTo(Artist, foreignKey: 'album_belongsl_artist');
+Artist.hasMany(Album, foreignKey: 'artist_hasmany_albums');
+if it in both cases creates the depended tables in Album?
+
+
+https://stackoverflow.com/questions/20290815/belongsto-vs-hasmany-in-sequelize-js
+
+
+
+When you do Album.belongsTo(Artist) you are creating the relation enabling you to call album.getArtist().
+
+Artist.hasMany(Album) links the association the other way, enabling you to call artist.getAlbums().
+
+If you only did one of those two, e.g. if you only did Album.belongsTo(Artist) you would be able to retrieve the artist of an album, but not all albums of an artist.
+
+Notice, however, that because of the foreign key given in your example, you are effectively creating two relations. The generated table looks like this:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OBS:
+
+
+
+
+A SINTAXE 
+
+de 
+
+
+'belongsTo'
+
+
+e 
+
+
+
+'hasMany'
+
+É EXATAMENTE A MESMA,
+
+
+MAS 
+
+
+O PRIMEIRO MÉTODO 
+
+
+
+
+
+cria uma relation 
+
+'one-to-one'
+
+
+entre 
+
+os 2 models,
+
+
+
+ao passo que 
+
+
+
+'User.hasMany()'
+
+cria uma 
+
+RELATION 
+
+
+
+
+'ONE-TO-MANY'
+
+
+entre os 2 models....
+
+
+
+
+
+
+
+///^^^^^professor diz que VOCÊ SÓ PRECISARIA DO CALL de 'User.hasMany(Product, {constraints: true, onDelete: 'CASCADE'})' MAS QUE AQUI ELE GOSTA DE DEIXAR TANTO o 'belongsTo' como o 'hasMany' pARA ___DEIXAR__ BEM CLARO COMO ESSA RELATION DEVE FUNCIONAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... COM ISSO SETTADO,
+
+
+
+
+O 
+
+
+
+'sequelize.sync()'
+
+
+
+ESCRITO LOGO ABAIXO 
+
+
+VAI 
+
+
+CRIAR MAIS DO QUE APENAS 
+
+'TABLES'
+
+PARA OS NOSSOS MODELS,
+
+MAS 
+
+TAMBEÉM 
+
+
+
+
+
+__ VAI DEFINIR__ 
+
+
+AS RELATIONS NA NOSSA DATABSAE,
+
+
+
+como 
+
+estipulamos 
+
+naquelas 
+
+2
+ 
+
+ linnhas 
+
+
+
+ de 
+
+
+
+
+
+
+
+
+
+
+ Product.belongsTo(User,   ///DEFINE __ UMA RELATION ONE-TO-ONE ENTRE 'Product' e 'User'...
+  
+{
+  constraints: true, onDelete: 'CASCADE' ////ver anotação 'ADICIONANDO UMA RELATIONSHIP one-to-many', LÁ NO MÓDULO 11, 'entendendoSEQUELIZE'... ---> esse objeto são OPÇÕES, é um objeto OPCIONAL PARA CONFIGURAR A RELATION...
+}
+
+)     
+User.hasMany(Product); //////DEFINE/CRIA UMA RELATION 'ONE-TO-MANY' entre User e Product (cada user terá MÚLTIPLOS PRODUCT)....
+
+
+
+
+
+
+
+
+
+
+-----> O ÚNICO PROBLEMA QUE __ TEMOS,
+
+NO MOMENTO,
+
+É QUE 
+
+
+
+A 
+
+TABLE 
+
+
+DE 
+
+'products'
+
+JÁ HAVIA SIDO CRIADA POR NÓS,
+
+
+
+
+
+E ESSA TABLE 
+
+
+VELHA 
+
+NÃO SERÁ 
+
+'OVERWRITTEN'
+
+
+POR ESSA 
+
+
+
+
+TABLE 'NOVA' 
+
+QUE ESTAMOS QUERENDO DEFINIR AGORA... ------->
+
+
+
+
+É POR ISSO QUE 
+
+O 
+
+PROFESSOR 
+
+
+
+
+NOS DIZ QUE 
+
+DEVEMOS 
+
+
+PROVISORIAMENTE 
+
+
+ADICIONAR 
+UM 
+
+
+
+
+
+OBJETO 
+
+
+
+com 
+
+'force: true' 
+
+
+
+
+
+
+
+
+
+DENTRO 
+
+
+DO 'sequelize.sync({force: true})'........ --------> É CLARO QUE 
+
+
+
+ESSA 
+
+É UMA 
+
+
+SETTING 
+
+
+
+QUE __ VOCÊ __ NUNCA VAI QUERER USAR EM PRODUCTION,
+
+PQ 
+
+VOCÊ 
+
+
+QUASE NUNCA VAI QUERER OVERWRITTAR ___ 
+
+
+
+SUAS TABLES TODA HORA.... 
+
+
+
+
+
+
+
+
+ex (como nosso código ficará, provisoriamente):
+
+
+
+
+
+
+
+ Product.belongsTo(User,   {constraints: true, onDelete: 'CASCADE' });
+
+User.hasMany(Product); 
+
+
+
+sequelize
+.sync(
+    {force: true}
+)
+.then(
+    (result) => {
+        app.listen(3000);
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+----------------------
+
+
+
+
+
+
+
+--> OK... EXECUTAMOS ESSE CÓDIGO...
+
+
+
+
+
+
+NOSSO TERMINAL FICOU ASSIM:
+
+
+
+
+
+
+Executing (default): SHOW INDEX FROM `users`
+Executing (default): DROP TABLE IF EXISTS `products`;
+Executing (default): CREATE TABLE IF NOT EXISTS `products` (`id` INTEGER NOT NULL auto_increment , `title` 
+VARCHAR(255), `price` DOUBLE PRECISION NOT NULL, `imageUrl` VARCHAR(255) NOT NULL, `description` VARCHAR(255) NOT NULL, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, `userId` INTEGER, PRIMARY KEY (`id`), FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE=InnoDB; 
+Executing (default): SHOW INDEX FROM `products`
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+ 
+
+ A TABLE FOI DROPPADA (pq já existia uma table de 'produts'... e aí o 'if exists' foi satisfeito),
+
+
+
+ E AÍ 
+
+ ELE CRIOU UMA NOVA TABLE 
+
+
+
+
+
+
+ DE 'USERS'... --> por meio do código de 
+
+
+ '' CREATE TABLE IF NOT EXISTS `users`'''
+
+
+
+
+
+
+
+
+ --> MAS ALÉM DESSA DEFINIÇÃO DAS TABLES,
+
+
+
+
+
+ __ O SEQUELIZE/SQL ENGINE __ DEFINIU QUE 
+
+
+ DEVE 
+
+ EXISTIR UM NOVO FIELD,
+
+
+ O FIELD 
+
+
+ DE 
+
+
+ 'userId',
+
+
+ VISTO 
+
+
+
+ NESTA LINHA AQUI:
+
+
+
+FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+
+ ENGINE=InnoDB; 
+Executing (default): SHOW INDEX FROM `products`
+
+
+
+
+
+
+
+
+
+
+
+--> É ESSA TAL DE 'foreignKey',
+
+
+de nome 
+
+'userId' (pegou o 'User' que definimos lá em 'belongsTo(User)'...)
+
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR EXPLICA QUE 
+
+ESSE field 
+de 
+
+'userId' 
+
+é um 
+
+field 
+de 
+
+datatype
+ 
+
+ INTEGER, LÁ NO 'PRODUCTS',
+
+
+
+
+ E QUE 
+
+
+ É UMA FOREIGNKEY 
+
+
+ __ QUE __ REFERENCIA__ 
+
+
+
+
+ O 'ID FIELD'
+
+
+
+ __LÁ 
+
+
+ NA TABLE DE 
+
+ 'Users'... -----> E AÍ,
+
+
+
+
+
+ TAMBÉM 
+
+
+ DEFINIU QUE 
+
+
+ 'ON DELETE' ELE DEVERÁ 
+
+ 'CASCADE',
+
+
+
+
+
+
+
+
+
+ (e o CASCADE no 'onUpdate' é o default, diz o professor...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO É ESSENCIALMENTE 
+
+ UM 
+
+ 'META SETUP' 
+
+
+ LÁ 
+
+ NO DATABASE,
+
+ O QUAL SEQUELIZE 
+
+ TAMBÉM 
+
+
+ ADICIONOU,
+
+
+ PARA CONECTAR NOSSAS TABLES LA TAMBÉM...
+
+
+
+
+
+
+ -> na table de 'products',
+na versão 
+
+do professor,
+
+
+é possível
+ 
+ ver o 
+
+ 'userId'...
+
+
+
+
+
+ (e na nossa, também....)
+
+
+
+
+
+
+
+
+ ---> COMO RECRÍAMOS NOSSA TABLE,
+
+ PERDEMOS 
+
+ TODA 
+
+ DATA ANTIGA,
+
+
+
+ mas agora podemos 
+
+ testar para ver se o 
+
+
+ 'userId' 
+
+ QUE FICA ARMAZENADO 
+
+ DENTRO 
+
+ DE 
+
+
+ 'products' 
+
+
+ É __ O MESMO ___ ID _ 
+ QUE 
+
+
+ FICA ARMAZENADO no field 'ID' EM CADA 'user' 
+
+
+ em 
+
+
+ 'users', na outra table...
+
+
+
+
+
+
+
+
+
+ --> bem... mas a 
+
+ table 
+
+ de users 
+
+ AINDA 
+
+
+ NÃO TEM USER ALGUM,
+
+ e não há feature no nosso 
+
+ app que 
+
+ faça 
+
+
+
+ esse 
+ 'CREATE' 
+
+ de um user... 
+
+
+
+
+
+
+
+
+ --> MAS O FIELD DE 'userId'
+
+ JÁ É UMA VITÓRIA..
+
+
+
+
+
+
+
+ ----> E O PROFESSOR EXPLICA QUE __ 
+
+
+ ESSE 
+
+ 'userId' FIELD 
+
+
+ VAI 
+
+ SER AUTOMATICAMENTE 
+
+
+ POPULADO 
+
+
+ PELO 
+
+
+ SEQUELIZE, TAMBÉM,
+
+
+
+
+ __ QUANDO __ COMEÇARMOS 
+
+
+
+ A 
+
+ CRIAR 
+ PRODUCTS 
+
+
+
+ __ QUE __ POSSUEM RELAÇÃO/THAT ARE RELATED TO A USER (admin)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA DEMONSTRAR ESSA FUNCIONALIDADE,
+
+
+
+PROFESSOR EXPLICA QUE 
+
+DEVEMOS __ CRIAR UM USER (pq nossa table de users está VAZIA..);
+
+
+ 
+
+
+ DEVEMOS FAZER ISSO PARA QUE ENTÃO SEJA POSSÍVEL CONECTAR 
+ USERS 
+
+ E PRODUCTS, criados por eles, NO NOSSO APP...

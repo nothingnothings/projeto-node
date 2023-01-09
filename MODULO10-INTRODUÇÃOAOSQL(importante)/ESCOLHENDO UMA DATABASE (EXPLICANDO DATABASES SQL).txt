@@ -1,0 +1,962 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> SQL VS NOSQL... ---> ESSA É A QUESTÃO...
+
+
+
+
+
+
+
+
+
+--> PARA RESPONDER ESSA PERGUNTA,
+
+
+PRIMEIRAMENTE 
+
+TEMOS QUE 
+
+
+ENTENDER 
+
+
+AS 
+DIFERENÇAS 
+
+
+ENTRE 
+
+AS 
+
+2.... 
+
+
+
+
+
+
+
+---> VER OQ DATABASES SQL E NOSQL SÃO,
+
+como 
+
+
+
+
+__ DIFEREM EM RELAÇÃO AO STORAGE DE DATA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NOSSO OBJETIVO,
+
+
+EM DATABASES,
+
+
+É SEMPRE 
+
+
+
+'STORE DATA AND MAKE THAT DATA EASILY AVAILABLE/acCessible'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> QUEREMOS ISSO PARA QUE 
+
+TENHAMOS UMA __MANEIRA__ 
+
+FÁCIL DE ACESSAR 
+
+
+NOSSA DATA.... -->  E FÁCIL NÃO SÓ DE UMA 
+
+
+PERSPECTIVA
+ 
+
+ DE 
+
+
+ __CÓDIGO,
+
+
+ MAS TAMBÉM EM UMA QUESTÃO ___ DE EFICIÊNCIA (
+
+
+     pq a DATABASE 
+
+     DEVE SEMPRE SER __RÁPIDA, EFICIENTE...
+ )
+
+
+
+
+
+
+
+
+
+
+-> E ESSA É UMA DAS RAZÕES PARA USAR UMA DATABASE..---> 
+
+
+É SIMPLESMENETE
+ 
+
+
+
+ __MUITO MAIS RÁPIDO DE ACESSAR UM ARQUIVO,
+
+
+ PRINCIPALMENTE 
+
+
+
+
+
+
+ A MEDIDA QUE 
+
+ SUA QUANTIDADE DE DATA VAI AUMENTANDO... --------> 
+
+
+
+ E AS DATABASES 
+
+
+  
+  TAMBÉM 
+
+  NOS AJUDAM 
+
+  COM COISAS COMO 
+
+
+
+
+  ''' WE DONT HAVE TO __READ THE ENTIRE FILE_ JUST TO FIND ONE PIECE OF INFORMATION...'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> COMO O PROFESSOR MENCIONOU,
+
+
+
+  __PODEMOS 
+
+
+
+
+  OBTAR POR 
+
+
+
+
+
+
+
+
+  UMA DATABASE 
+
+
+
+
+
+  DO TIPO 
+
+  'SQL'... -----> 
+
+
+
+
+
+  UMA 
+
+  ENGINE 
+
+
+  DE DATABASE 
+
+
+
+  ___SQL___ 
+
+
+  COMUM 
+
+  É 
+
+  A 
+
+
+  'MySQL'...
+
+
+
+
+
+
+  ------> OU PODERÍAMOS USAR 
+
+
+
+
+  UMA 'NOSQL DATABASE',
+
+
+  como o MONGODB ,
+
+
+  QUE É 
+
+
+  A MAIS FAMOSA...
+
+
+
+
+  -----------------------
+
+
+
+
+
+
+
+
+
+OK.......................
+
+
+
+
+
+
+
+MAS O QUE É UMA 'SQL DATABASE'? -------> 
+
+
+
+
+
+
+
+
+SQL --> SQL DATABASES 
+
+
+
+PENSAM 
+
+
+
+
+
+EM 'TABLES'...
+
+
+
+
+
+
+
+
+----> seu raciocínio considera uma série de 
+
+TABLES... ------>
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE PODEMOS TER VÁRIAS 
+
+TABLES:
+
+
+
+
+
+1 table para USERS,
+
+
+
+1 table PARA PRODUCTS,
+
+
+
+
+1 TABLE PARA ORDERS...
+
+
+
+
+
+
+
+
+--> E EM CADA TABLE VOCÊ 
+
+
+
+
+TEM COISAS 
+
+CHAMADA 
+
+
+DE 
+
+
+FIELDS/columns (os 2 nomes são válidos...)....
+
+
+
+
+
+
+
+
+
+
+UM USER, POR EXEMPLO,
+
+
+PODE SER DEFINIDO COMO 
+
+
+UM NEGÓCIO 
+
+
+
+
+
+COMPOSTO 
+
+POR 
+
+
+
+'ID, EMAIL, NAME'...
+
+
+
+
+
+
+
+
+
+
+--> JÁ 
+
+
+
+
+UM PRODUCT PODE SER 
+
+
+DEFINIDO 
+POR 
+
+
+
+
+'id, title, price, description'...
+
+
+
+
+
+
+
+
+
+
+-----> E NÓS PREENCHEMOS ESSES FIELDS __ COM DATA__...
+
+
+
+
+
+
+
+---> A '''DATA''' QUE PREENCHE ESSES FIELDS 
+
+
+É CHAAMDA 
+
+
+DE 
+
+'records'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+USERS:
+
+
+id       email        name 
+
+1   max@test.com    Maximillian Schwarzmuller
+2   manu@test.com    Manuel Lorenz
+3   exemplo@test.com  xxxxxxx
+
+
+
+
+
+
+----> CADA 1 DESSAS LINHAS SERIA 
+
+UM 
+
+
+'RECORD' ---------> THE ROWS IN OUR TABLES ARE __ RECORDS....
+
+
+
+
+
+
+
+--------> A MESMA COISA COM PRODUCTS...
+
+
+
+
+
+
+--> 
+
+
+ex:
+
+id     title            price                     description
+
+1   A chair             120.99                      DUMMYTEXT
+2   A book              49.99                           DUMMYTEXT
+3   EXEMPLO             20.00                       DUMMYTEXT
+
+
+
+
+
+
+
+
+
+
+--> CERTO.. MAS SQL DATABASES __ TAMBÉM POSSUEM 1 DETALHE ADICIONAL... -----> 
+
+
+
+ELES TAMBÉM 'ALLOW YOU TO RELATE DIFFERENT TABLES'... -----------> ISSO 
+
+
+SIGNIFICA QUE,
+
+
+POR EXEMPLO,
+
+
+
+UMA 
+
+
+
+'Order' PODE __ SER 
+
+
+DESCRITA 
+
+
+
+__ SIMPLESMENTE COMO UMA CONEXÃO 
+
+
+
+__ENTRE 1 USER E UM PRODUCT... (pq é um pedido/order, de fato...).
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+Orders 
+
+
+id     user_id      product_id
+
+1         1              1       ----------------------> AQUI TEMOS UMA 'RELATION' entre o MAX (user de id 1) E A CHAIR (product de id 1)...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO PQ UM USER PODE __ ACABAR 'ORDER A COUPLE OF DIFFERENT PRODUCTS',
+
+
+
+E UM 
+
+
+__PRODUCT__ 'MIGHT BE ORDERED BY A COUPLE OF DIFFERENT USERS'...
+
+
+
+
+
+
+
+
+
+--> BASICAMENTE, TEMOS 'RELAÇÕES'  EM 
+
+
+DATABASES 
+
+
+
+'SQL'... (E ISSO 
+
+
+É 
+
+VISTO COM 
+
+
+A 'ORDER' 
+
+
+que é composta 
+
+
+
+por um ID, 'user_id' (como max) e 'product_id' (como 'chair')
+
+
+)
+
+
+
+
+
+
+
+
+
+
+--> NÓS TEMOS RELATIONS EM SQL BASED DATABASES.... -->  é uma das coisas 
+
+
+CORE DO SQL...
+
+
+
+
+
+
+
+
+
+------> ____ E, EM GERAL, __ 
+
+
+
+AS CARACTERÍSTICAS 
+
+CENTRAIS 
+
+
+
+DAS 
+
+SQL DATABASES É 
+
+
+QUE 
+TEMOS:
+
+
+
+
+
+
+
+
+1) A 'VERY STRONG' __'CENTRAL DATA SCHEMA'.... ----> ou seja, EM CADA TABLE NÓS DEFINIMOS BEM CLARAMENTE COMO CADA FIELD LÁ DENTRO DEVERÁ SE PARECER, SEU FORMATO, quais fields que temos, QUAL TIPO DE DATA CADA FIELD DEVERÁ ACEITAR/ARMAZENAR... 
+
+    STRONGLY/STRICTLY DEFINED SCHEMA ---> como  | ID |  | NAME |  | AGE | ------>  aí, toda a DATA NAQUELA TABLE TEM QUE ENCAIXAR NESSE SCHEMA/DEFINITION....
+
+
+
+--> isso é algo central em SQL DATABASES...
+
+
+
+
+
+2) NÓS TAMBÉM TEMOS 'RELATIONS' ENTRE NOSSA DATA... -> essa é OUTRA CARACTERÍSTICA BÁSICA DE SQL BASED DATABASES... --->
+
+NÓS 'RELATE OUR DIFFERENT TABLES' 
+
+
+COM BASICAMNETE 3 
+
+IMPORTANTES 'TIPOS' (kinds) DE 
+
+
+RELATIONS:
+
+
+
+a) one-to-one 
+
+b) one-to-many
+
+
+c) many-to-many....
+
+
+
+
+
+
+
+
+ISSO SIMPLESMENTE SIGNIFICA:
+
+
+
+
+a) PODEMOS TER UMA TABLE EM QUE TEMOS 2 RECORDS, 1 'FITS ONE OTHER RECORD',
+
+
+
+b) A RECORD IN TABLE A MIGHT FIT MULTIPLE OTHER RECORDS IN TABLE B..
+
+
+
+
+c) MULTIPLE RECORDS IN TABLE A CAN FIT MULTIPLE RECORDS IN TABLE B
+
+
+
+
+
+
+
+--> VAMOS VER ISSO EM PRÁTICA NESTE MÓDUlo...
+
+
+
+
+
+
+
+
+
+
+
+--> ok... tables 
+
+
+SÃO CONECTADAS... (estão conectadas...) -----> É OUTRA COISA IMPORTANTE...
+
+
+
+
+
+
+
+
+
+
+
+--> E 'SQL' SIMPLESMENTE SIGNIFICA 'STRUCTURED QUERY LANGUAGE'...
+
+
+
+
+
+
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE 
+
+'QUERIES' SÃO COISAS ____eXTREMAMENTE IMPORTANTES___ 
+
+
+
+
+EM SQL DATABASES.... --> 
+
+
+
+
+''''queries'''' --> 
+
+
+SÃO SIMPLESMNETE 
+
+
+
+''COMMANDS''(comandos)
+
+
+
+QUE 
+
+USAMOS 
+
+
+
+__PARA __ INTERAGIR __ 
+
+
+
+COM A DATABASE... 
+
+
+
+
+
+
+
+
+
+---> E EM 'SEQUEL',
+
+
+
+
+UMA 
+
+
+QUERY 
+
+
+SE PARECE COMO ISTO:
+
+
+
+
+
+
+
+
+'''''''''' SELECT * FROM users WHERE age > 28    '''''''''''
+
+
+
+
+
+--> É CLARO QUE EXISTEM DIFERENTES COMMANDS... --> 
+
+
+
+ESSE É UM 
+
+
+COMMAND 
+
+QUE 
+
+
+__SELECIONA (select) TODOS (*) __ OS USERS ('FROM USERS', todas as entries na table de 'users')
+
+
+
+EM QUE (where ) a 
+
+
+
+
+AGE é MAIOR DO QUE 
+
+
+28 (age > 28).......
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... ISSO É UMA QUERY... 
+
+
+
+
+
+
+
+
+SELECT, FROM, WHERE -----> ISSO SÃO 'SQL KEYWORDS/SYNTAX'...
+
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+--> A ESTRUTURA DA LINGUAGEM SQL É COMPOSTA 
+
+
+POR ESSAS KEYWORDS,
+
+
+
+
+
+keywords como 'select', 'from' e 'where'...
+
+
+
+
+
+
+
+
+
+-> E AÍ __INSERIMOS 
+
+
+
+ALGUNS PARÂMETROS/DATA NOS VÃOS ENTRE ESSAS KEYWORDS...
+
+
+
+
+
+ex: '*', 'users', 'age > 28'....
+
+
+
+
+
+
+
+
+
+
+
+--> É ASSIM QUE O SQL FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+SELECT * FROM users WHERE age > 28
+key   par key    par  key    parameter
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS VER UM POUCO DE COMO É UMA DATABASE 'noSQL', na PRÓXIMA AULA...

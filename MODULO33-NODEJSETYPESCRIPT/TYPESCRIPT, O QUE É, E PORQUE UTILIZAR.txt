@@ -1,0 +1,1078 @@
+
+
+
+
+
+
+
+
+
+
+--> O QUE É O TYPESCRIPT, E PORQUE O UTILIZAR? 
+
+
+
+
+
+
+
+
+
+---------> O QUE É O TYPESCRIPT? 
+
+
+
+
+
+
+
+
+
+
+
+
+--> É _ UM 'SUPERSET' 
+ao 
+
+JAVASCRIPT... -------> ISSO SIMPLESMENTE SIGNIFICA QUE 
+
+
+
+ELE 
+
+
+É UMA EXTENSÃO 
+
+DO JAVASCRIPT....
+
+
+
+
+
+
+
+
+-> ELE CONSTRÓI A PARTIR DO JAVASCIRIPT...
+
+
+
+
+
+
+
+
+
+
+-> e ao contrário do JAVASCRIPT,
+
+
+
+
+O __ TYPESCRIPT_ NÃO RODA NO BROWSER.... -----> EM VEZ DISSO,
+
+
+
+O 
+
+
+TYPESCRIPT ___ TEM QUE __ SER 
+
+COMPILADO __ 
+
+EM JAVASCRIPT...,
+
+
+
+
+
+para que ele consiga ser executado....
+ 
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+
+
+
+
+-----> OK, MAS PQ DIABOS TRABALHARÍAMOS COM ISSO?
+
+
+
+
+
+
+
+-----> É PQ O TYPESCRIPT 
+
+
+NOS DÁ, COMO DESENVOLVEDORES,
+UMA 
+
+MELHOR 
+
+DEV EXPERIENCE,
+
+
+
+PQ 
+
+
+
+ELE 
+
+ADICIONA 
+
+CERTAS FEATURES AO CÓDIGO,
+
+
+
+FEATURES QUE _ APENAS__ EXISTIRÃO DURANTE O DESENVOLVIMENTO,
+ 
+
+
+ mas que 
+
+ vão 
+ nos ajudar a 
+
+
+ escrever 
+
+ melhores códigos,
+
+
+ e a evitar erros indesejados..
+
+
+
+
+
+
+
+
+
+
+
+
+ OK, TEMOS O EXEMPLO DEsse javascript aqui:
+
+
+
+
+
+
+
+
+
+ function add (num1, num2) {
+
+     return num1 + num2;
+
+ }
+
+
+ console.log(add('2', '2'));
+
+
+
+
+
+
+
+ ----------------------------------
+
+
+
+
+
+
+
+
+
+
+ ---> O TYPESCRIPT PODE NOS AJUDAR COM ESSE TRECHO..
+
+
+
+
+
+
+
+
+
+ MAS COMO ELE PODE NOS AJUDAR?
+
+
+
+
+
+
+
+
+
+ --> 
+
+ VAMOS TENTAR POR CONTA PRÓPRIA..
+
+
+
+
+
+
+
+
+
+
+DEVEMOS ABRIR NOSSO DEV TOOLS DO CHROME E IR ATÉ O CONSOLE...
+
+
+
+
+
+
+
+
+LÁ, VOCÊ PODE ESCREVER UM CÓDIGO JAVASCRIPT 
+
+BÁSICO,
+
+QUE VAI SER 
+
+EXECUTADO NO BROWSER.... (vamos usar isso para esse EXEMPLO)...
+
+
+
+
+
+
+
+
+
+--> VAMOS ESCREVER ESSA FUNÇAÕ DE 'add'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+ function add (num1, num2) {
+
+     return num1 + num2;
+
+ }
+
+
+ console.log(add('2', '2'));
+
+
+
+
+
+
+
+
+
+
+
+
+ -_> VAMOS ESCREVER ESSA FUNÇÃO E 
+
+
+
+
+ A REGISTRAR 
+
+
+
+ NA MEMÓRIA DO CONSOLE...
+
+
+
+
+
+
+
+
+
+
+
+ -> AGORA ELA EXISTE NO CONSOLE,
+
+ podeoms escrever 
+
+
+
+
+ 'add(1, 5)'
+
+
+ PARA RECEBER 
+
+ 6 
+
+
+ no console,
+ por exemplo...
+
+
+
+
+
+
+
+
+
+
+ --> MAS 
+
+ E 
+
+ SE 
+ VOCÊ 
+
+
+
+
+ ESCREVESSE 
+
+
+
+
+
+
+ 'add('1', '5')'
+
+
+
+
+
+
+
+ 2 
+
+ NÚMEROS 
+
+
+
+ EM FORMATO DE STRING... ------> BEM, AÍ NÓS VAMOS RECEBER DE VOLTA 
+
+
+ O 
+
+ OUTPUT 
+
+ "15" (um 15 EM FORMATO STRING)....
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE 
+
+ 1 
+ E 
+ 5 
+
+
+
+ FORAM CONCATENADOS EM UMA STRING MAIS LONGA,
+
+
+ EM VEZ 
+
+ DE 
+
+ SEREM CONVERTIDOS EM NÚMEROS E ENTÃO 'SUMMED UP'...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> A RAZÃO PARA ISSO, 
+
+ NO CASO,
+
+
+ É QUE _ 
+
+
+
+
+
+
+ESSES RESULTADOS AÍ __ ACONTECERAM 
+
+__ DEVIDO à MANEIRA PELA QUAL O JAVASCRIPT FUNCIONA.... -->   SE VOCÊ TEM UMA OPERATION 
+
+COM 
+
+
+
+
+'+' 
+
+
+
+E 
+
+
+
+
+
+PELO MENOS 1 DOS ARGUMENTOS/VALORES É UMA STRING,
+
+
+
+
+__ ISSO FARÁ COM QUE_ _ AMBOS _ SEJAM 'COMBINED AS STRINGS' (
+
+
+    ainda que 
+
+    1 DESSES VALORES _ NÃO SEJA UMA STRING...
+)
+
+
+
+
+
+
+
+
+
+
+--> MAS SE 1 DOS ARGUMENTOS FOR 1 NUMBER E TENTARMOS MULTIPLICAR POR UMA STRING, POR EXEMPLO,
+
+RECEBEMOS 'NaN' (not a numbeR)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> E ISSO, É CLARO, PODE SER UM PROBLEMA, DEPENDENDO DO CASO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCê PODE PENSAR:
+
+
+
+
+'COMO QUE ISSO SERÁ UM PROBLEMA,
+
+
+PQ DIABOS VOCê CHAMARIA ESSA FUNÇÃO COM 2 STRINGS PASSADAS COMO  ARGUMENTOS num1 e num2?'
+
+
+
+
+
+
+
+
+
+------> BEM, IMAGINE QUE VOCÊ ____ TEM_ 2 'INPUTS'
+
+
+NA SUA PAGE,
+
+
+
+
+2 INPUTS 
+
+EM QUE 
+
+
+VOCÊ 
+
+FAZ 
+
+'FETCH' 
+
+DE 
+
+ALGUM USER INPUT.... -------> BEM, VOCê DEVE SABER QUE ___ QUALQUER __ DATA __ QUE 
+
+
+VOCê 
+
+EXTRAI 
+
+
+DE 
+
+
+
+'input fields
+'
+
+EM JAVASCRIPT ___ SEMPRE__ SERÁ __ 
+
+
+
+EXTRAÍDA __ 
+
+
+COMO 
+
+'TEXT'.... -------. SEMPRE COMO UMA __ STRING.... -> ISSO SIGNIFICA QUE 
+
+
+
+MESMO 
+
+
+SE O USER INPUTTAR UM 
+
+_ NÚMERO_,
+
+ESSE 
+
+NEGÓCIO VAI AUTOMATICAMENTE 
+
+SER 
+
+
+CONVERTIDO EM UMA STRING pelo javascript....
+
+
+
+
+
+
+
+
+
+
+
+(
+
+    aí somos obrigados a escrever coisas como 
+
+    '+userInput',
+
+    ou então 
+
+
+    'userInput.parseInt()'.....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+------> É CLARO QUE PODEMOS CONVERTER ISSO EM UM NUMBER COM ´VARIAS FUNCTIONS,
+
+MAS 
+
+SE 
+VOCê SE ESQUECER DE CONVERTER,
+
+
+
+
+E __ ENTÃO 
+
+PASSAR O VALOR NÃO CONVERTIDO A ESSA FUNÇÃO,
+
+
+VOCÊ PODE ACABAR 
+
+
+
+
+
+COM RESULTADOS INDESEJADOS COMO  ESSE '15'...
+
+
+
+
+
+
+--> E É EM CASOS COMO ESTE 
+
+
+__ QUE _ O TYPESCRIPT PODE NOS AJUDAR....
+
+
+
+
+
+
+
+
+
+
+
+-> PARA EVITAR 
+
+
+
+COMPORTAMENTOS COMO ESSE, INDESEJADOS,
+
+QUE OCORREM DURANTE O RUNTIME 
+
+(
+
+
+
+
+
+    ou seja,
+
+    durante 
+
+    o momento em que você 
+
+
+    escreve 
+
+    'console.log(add('2', '3'))'...
+),
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+QUANDO NOSSO CÓDIGO EXECUTA,
+
+
+
+__ NÓS __ PODEMOS USAR __ O TYPESCRIPT__.... --> 
+
+
+
+
+
+
+
+
+
+
+
+MAS É CLARO QUE 
+PODERÍAMOS/PODEMOS EVITAR ESSE COMPORTAMENTO __ DURANTE O RUNTIME
+ 
+
+ COM O JAVASCRIPT,
+
+
+
+
+
+
+ __ POR MEIO __ DE COISAS COMO 'IF CHECKS' 
+
+
+
+
+
+
+
+
+
+
+
+
+ IF CHECK --> 'you could add AN IF CHECK TO AVOID THE ERROR',
+
+
+
+
+
+
+ IF CHECK PARA 
+
+
+ IDENTIFICAR SE OS VALORES QUE RECEBEMOS __ SÃO STRINGS OU NUMBERS__... --> 
+
+
+
+
+ SIM, ISSO É ALGO QUE PODEMOS CHECAR COM JAVASCRIPT,
+
+
+
+
+
+
+
+ ___ E ISSO NOS DEIXARIA 'AVOID SUCH MISTAKES'....
+
+
+
+
+
+
+
+ ENTRETANTO, isso __ SIGNIFIC QUE 
+
+ VOCÊ 
+
+ VIA TER QUE __ ESCREVER CÓDIGO EXTRA 
+
+
+
+DURANTE O RUNTIME PARA __ ASSEGURAR__ O FUNCIONAMENTO CORRETO DO SEU CÓDIOG.... --> 
+
+
+
+
+você seria obrigado a fazer isso,
+
+quando  
+
+
+você 
+
+
+
+ACTUALLY 
+
+
+
+poderia 
+
+
+ter _ EVITADO_ ISSO DURANTE O DEVELOPMENT... ------> VOCÊ __ PODERIA TER EVITADO ISSO DURANTE O DEVELOPMENT 
+
+
+
+_________ SE VOCÊ TIVESSE 'STRICT TYPE CHECKS'... (uma feature do TYPESCRIPT)...
+
+
+
+
+
+
+
+
+
+
+
+
+------> 'UNNECESSARY STEP THAT COULD BE AVOIDED WITH STRICT TYPEs'... 
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OU SEJA,
+
+SE PUDÉSSEMOS DIZER AO __ JAVASCRIPT_ __ ANTECIPADAMENTE QUAIS __ TIPOS DE DATA 
+
+
+VAMOS QUERER ,
+
+
+isso seria ótimo... -_> 
+
+
+
+SE 
+
+O JAVASCRIPT E O IDE 
+
+
+
+
+
+
+conseguissem entender isso,
+
+
+ELES PODERIAM 
+
+TE 
+AVISAR, NO PROGRAMA,
+
+
+
+LOCAIS DE SEU CÓDIGO EM QUE 
+
+'wrong types are being fed in'...
+
+
+
+
+
+
+
+
+
+
+--------> E É _ AÍ _ QUE O TYPESCRIPT PODE NOS AJUDAR.... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> O TYPESCRIPT ADICIONA 'STRICT TYPES/typing' (é uma de suas features)..
+
+
+
+
+
+
+
+
+
+
+
+
+--> O TYPESCRIPT ADICIONA UM MONTE DE FEATURES AO JAVASCRIPT... ------> 
+
+
+
+
+
+ELE ADICIONA:
+
+
+
+1) OS TYPES --> É ADIÇÃO MAIS IMPORTANTE DO TYPESCRIPT, E É A RAZÃO DE SEU NOME... -> 
+
+
+MAS ELE __ TAMBÉM __ DESBLOQUEIA ALGUMAS FEATURES NEXT-GEN JAVASCRIPT,
+
+FEATURES QUE PODEMOS ENTÃO UTILIZAR NO NOSSO CÓDIGO.... --> ISSO SEM __ FERRAMENTAS ADICIONAIS COMO 'BABEL'...
+
+
+
+
+
+
+
+
+
+2) ELE TAMBÉM ADICIONA ALGUMAS FEATURES TOTALMENTE INÉDITAS, QUE NÃO EXISTEM NO JS NORMAL... --> 
+
+
+FEATURES COMO 
+
+'INTERFACES' OU 'GENERICS'... ---> ESSAS FEATURES _ NOS AJUDAM A ESCREVER CÓDIGO MAIS LIMPO...
+
+
+
+--> SÃO FEATURES __ QUE SÃO 'STRIPPED AWAY' quando nosso código é actually compilado,
+
+MAS 
+
+DURANTE O DEVELOPMENT ELAS NOS AJUDAM A ESCREVER CÓDIGO MAIS CLEAN....
+
+
+
+
+
+
+
+
+
+
+
+3) ___ ELE TAMBÉM __ ADICIONA 'META-PROGRAMMING FEATURES',
+
+
+
+COMo 
+
+'decorators' (????),
+
+
+
+
+
+
+
+
+4) POSSUI RICAS OPÇÕES DE CONFIGURAÇÃO,
+
+
+QUE TE DEIXAM, COMO DESENVOLVEDOR,
+
+'FINE-TUNE' como o código deve ser compilado...
+
+
+
+
+
+
+
+
+5) EM GERAL,
+
+NOS DÁ UM MONTE DE 'MODERN TOOLING',
+
+
+
+
+TOOLS QUE 
+
+NOS AJUDAM __ ATÉ MESMO __ EM 
+PROJETOS 
+
+
+
+
+QUE NÃO _ SÃO 'TYPESCRIPT'.... --> O TYPESCRIPT TAMBÉM SE INTEGRA 
+
+
+MT BEM 
+
+COM 
+
+'MODERN TOOLING',
+
+
+
+E NOS DÁ UMA 
+
+GRANDE 
+
+DEV EXPERIENCE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE REFRESHER 
+
+
+NÃO VEREMOS TODAS AS FEATURES DO TYPESCRIPT...
+
+
+
+
+
+--> PARA VER TODAS AS FEATURES EM DETALHE, DEVEMOS ASSISTIR O __ CURSO _ DE TYPESCRIPT __ DO 
+
+
+PROFESSOR...
+
+
+
+('UNDERSTANDING TYPESCRIPT')...
+
+
+
+
+
+
+
+--> ESSE CURSO TE MOSTRA TODAS AS CORE FEATURES DELE...
+
+
+
+
+
+
+--> AQUI VAMOS VER ALGUNS CORE BASICS,
+
+
+
+
+
+e para isso 
+
+DEVEMOS VOLTAR A ESSE EXEMPLO QUE RECÉM VIMOS,
+
+
+
+
+
+mas 
+
+AGORA COM UM EXEMPLO 
+
+DE UMA 
+
+WEBPAGE UM POUCO MAIS REALISTA...

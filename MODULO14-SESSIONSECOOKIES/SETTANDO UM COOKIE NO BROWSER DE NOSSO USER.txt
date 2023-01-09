@@ -1,0 +1,1567 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> NÓS DESCOBRIMOS A BOSTICE DESTE CÓDIGO:
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+        req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+
+    res.redirect('/');
+
+}
+
+
+
+
+
+
+
+
+
+--> DESCOBRIMOS QUE FAZER O STORE 
+
+
+
+DE 
+
+
+
+1 propriedade/objeto  __ DENTRO __ 
+
+
+DO 
+
+'request'
+
+
+
+
+_BEM NO FINAL DO SEU LIFETIME (corrente de execução 'app.js -> controllers') 
+
+
+
+
+É ___ UMA PÉSSIMA IDEIA,
+
+
+
+
+ISSO PQ 
+
+
+
+__ O 
+
+
+
+REQUEST FICARÁ 
+
+
+____DEAD____ 
+
+
+
+depois do send de uma response, e a data 
+
+
+enfiada 
+
+nele,
+
+portanto,
+
+
+____ NÃO PERSISTIRÁ 
+
+
+
+
+DEPOIS DE REDIRECTS/VISITS DE OUTRAS PÁGINAS...
+
+
+
+
+
+
+
+
+
+----> OK, MAS QUE ALTERNATIVAS TEMOS? ----> UMA ALTERNATIVA 
+
+
+
+
+
+SERIA/É __ SETTAR UMA 
+
+
+
+
+ESPÉCIE DE 
+
+'GLOBAL VARIABLE',
+
+
+
+
+
+VOCÊ PODERIA 
+
+USAR 
+
+
+uma 
+
+'global variable',
+
+
+
+
+
+
+
+
+___ UMA VARIÁVEL QUE VOCÊ 
+
+
+
+ARMAZENA EM 1 ARQUIVO ADICIONAL,
+
+E QUE 
+
+VOCÊ ENTÕA 
+
+
+
+__EXPORTA DESSE ARQUIVO.... ---> 
+
+
+
+
+ESSA VARIÁVEL AÍ 
+
+
+
+
+SERIA ENTÃO __ ALTERADA__... ------> se você 
+
+
+FIZESSE ASSIM,
+
+
+
+
+
+___ ESSA VARIÁVEL ___ ACTUALLY__ SOBREVIVERIA 
+
+
+
+
+AOS SEUS 'REQUEST CYCLES' (request -> response, várias vezes)...
+ 
+
+
+
+
+
+
+
+
+ -------> ___MAAAAAAAASSS_____ --------> COMO ESSA 
+
+
+ VARIABLE 
+
+
+
+
+ __SERIA/SERÁ ___ COMPARTILHADA __ AO LONGO DE __ MÚLTIPLOS REQUESTS,
+
+
+
+ ___ ELA ACABARIA 'SHARED ACROSS ALL USERS',
+
+
+
+
+ COISA QUE VOCÊ __ NÃO QUER.... -------------> E É EXATAMENTE 
+
+
+
+
+
+ NESSE ASPECTO QUE OS _____COOKIES__ 
+
+
+
+
+
+ NOS __ AJUDAM__... ----> NÓS PODEMOS 
+
+
+
+
+ ______ARMAZENAR 'DATA' DE AUTHENTICATION ____ NO BROWSER __ 
+
+
+ DE 
+
+
+ 1 ÚNICO 
+
+
+ USER,
+
+
+
+
+
+ E __ AÍ ___ ARMAZENAR DATA __ NAQUELE BROWSER, DATA __QUE É CUSTOMIZADA ÀQUELE USER,
+
+
+
+
+ E QUE __ NÃO AFETA __ TODOS OS OUTROS USERS,
+
+
+
+
+ MAS QUE PODE SER ENVIADA NOS REQUESTS/COM OS REQUESTS 
+
+
+ __PARA DIZER 
+
+
+ 'Hey, eu já estou autenticado'.... ------> E É EXATAMENTE ISSO 
+
+ QUE
+  
+
+
+  VAMOS FAZER AGORA,
+
+
+
+
+
+
+
+
+
+  __VAMOS __ 
+
+
+
+
+
+  LÁ EM 
+
+  'postLogin'
+
+
+
+
+
+  E VAMOS __ 
+
+  QUERER 
+
+
+  DEFINIR 1 __COOKIE__... -----> 
+
+
+
+
+
+
+
+  PARA DEFINIR 1 COOKIE,
+
+
+
+
+
+
+VAMOS TER QUE USAR 
+
+
+O 
+
+
+
+
+
+OBJETO 'response'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OS COOKIES SÃO SETTADOS, NO NODEJS,
+
+
+
+
+PELO SIMPLES 
+
+
+
+__SET DE UM __HEADEr_,
+
+
+por meio 
+
+
+do código de 
+
+
+
+'res.setHeader()'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+            res.setHeader();
+            res.redirect('/');
+}
+
+
+
+
+
+
+----------------------------------------
+
+
+
+OK, VAMOS SETTAR 
+
+1 
+
+HEADER NA NOSSA RESPONSE.... -------> 
+
+
+
+
+
+E AÍ VAMOS SETTAR 
+
+
+
+
+1 HEADER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+PARÂMETROS DE 'setHeader":
+
+
+
+
+1) O __NOME DO HEADER__...
+
+
+
+
+
+
+
+
+--> vamos usar 'Set-Cookie', que __ é um RESERVED NAME, EXPLICA O PROFESSOR....
+
+
+É UM NOME QUE VAI FAZER O __SET DE UM COOKIE PARA VOCÊ....
+
+
+
+
+
+
+2)  ISSO FEITO, 
+
+VOCê PRECISA 
+
+DEFINIR 
+
+O 
+
+
+
+___VALOR__ DESSE HEADER.... ----> E O PROFESSOR EXPLICA QUE 
+
+
+
+O 
+
+
+
+__VALOR DE 1 COOKIE,
+
+
+NA SUA FORMA ___MAIS SIMPLES,
+
+
+É 
+
+
+__ SIMPLESMENTE ___ UM 
+
+
+
+'key-value pair' ,
+
+
+
+EM QUE 
+
+VOCÊ 
+
+
+DEFINE ___ QUALQUER NOME 
+
+
+
+__NA ESQUERDA (key) 
+
+
+
+
+
+
+_____ E AÍ QUALQUER VALOR QUE VOCÊ QUISER, na direita....
+
+
+
+
+
+
+
+
+
+
+PROFESSOR VAI ESCREVER 
+
+  
+
+  'loggedIn=true'....
+
+
+
+
+
+
+
+
+
+  ---> CÓDIGO COMPLETO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+            res.setHeader('Set-Cookie', 'loggedIn=true');
+            res.redirect('/');
+}
+
+
+
+
+
+
+
+---------------------------------- 
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE CONSEGUE NOS MOSTRAR QUE ISSO FUNCIONOU, 
+
+
+BASTA IRMOS ATÉ A PÁGINA DE LOGIN 
+
+ 
+
+
+ E CLICARMOS 
+
+
+ em 'login'... ------> 
+
+
+
+
+
+
+
+ ABRIMOS O DEVTOOLS,
+
+
+
+
+ VAMOS ATÉ 
+
+
+
+
+
+
+ a aba 'application',
+
+ e aí vamos 
+
+ ATÉ 
+
+ 'cookies'... ----> 
+
+
+
+
+
+ LÁ, VAMOS 
+
+
+
+ VER __OS COOKIES __ DO NOSSO ADDRESS...
+
+
+
+
+
+
+
+ --> NESSE LUGAR AÍ,
+
+ veremos 
+
+
+
+ 'loggedIn true'....
+
+
+
+
+ --> OU SEJA,
+
+
+
+
+
+
+ O SET DESSE COOKIE __ DEU CERTO_-...
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+ 
+exports.postLogin = (req, res, next) => {
+
+
+    
+
+
+        // req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+
+
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true');
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+-->  É ISSO QUE VAI SETTAR 1 COOKIE, REALMENTE...
+
+
+
+
+
+
+
+
+
+----> OK.... 
+
+
+
+
+-----> ESSE É O COOKIE QUE RECÉM SETTAMOS....  --> 
+
+
+
+vemos 
+
+tbm 
+
+
+o 
+
+
+
+
+
+DOMAIN a que pertence,
+
+
+
+O SEU PATH ('/'),
+
+
+
+
+
+
+E TBM QUANDO ELE VAI EXPIRAR.... (
+
+
+
+
+e essa data
+
+
+
+É DESCRITA NO __PASSADO__, ISSO 
+PQ 
+
+
+
+ESSE É UM 'SESSION COOKIE',
+
+
+O QUE SIGNIFICA QUE 
+
+
+É UM COOKIE 
+
+
+
+QUE VAI __BASICAMENTE__  
+
+
+__expirar__ QUANDO VOCÊ 
+
+__FECHAR __ O BROWSER E VOLTAR DEPOIS...
+
+
+)
+
+
+
+
+
+
+
+
+--> E, DE FATO, 
+
+
+
+SE 
+
+
+
+__FECHARMOS__ NOSSO BROWSER 
+
+E O ABRIRMOS DE NOVO,
+
+
+
+
+TEREMOS __PERDIDO___ ESSE COOKIE,
+
+
+tudo pq 
+
+ele 
+
+é 
+
+
+REALMENTE UM 'SESSION COOKIE'
+
+
+
+
+
+
+
+EXISTE REALMENTE 2 TIPOS DE COOKIES,
+
+
+
+
+
+
+
+
+PERSISTENT COOKIES E SESSION (transient) COOKIES...
+
+
+
+
+
+
+A DIFERENÇA ENTRE OS DOIS É QUE OS 
+
+SESSION COOKIES EXPIRA/MORREM QUANDO VOCê FECHA O BROWSER....
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+ALÉM DE 'VALUE',
+
+
+'DOMAIN',
+
+
+
+'PATH' 
+
+E 
+
+
+'expiresIn',
+
+
+
+NÓS TAMBÉM 
+
+
+VEMOS OUTRAS PROPRIEDADES,
+
+QUE 
+
+O PROFESSOR EXPLICARÁ MAIS TARDE...
+
+
+
+
+
+
+
+--> OK... ESSE COOKIE ESTÁ SETTADO.... ------> E ESSE COOKIE NÃO SÓ 
+
+ESTÁ SETTADO,
+
+MAS 
+
+
+TBM 
+
+O 
+
+
+
+BROWSER,
+
+
+
+__POR DEFAULT_, 
+
+
+VAI ENVIAR ESSE 
+
+
+COOKIE __ AO SERVER__ 
+
+
+EM TODO E QUALQUER REQUEST __ QUE 
+
+
+
+FIZERMOS...
+
+
+
+
+
+
+
+
+-------> PARA MOSTRAR ISSO, PROFESSOR ABRE 
+
+
+
+
+A ABA 'network'
+
+
+E Vê O REQUEST 
+de 
+
+'products',
+
+que foi enviado 
+
+
+PARA  A PAGE DE 'products'...
+
+
+
+
+
+
+
+
+
+--> LÁ, SE DERMOS UMA OLHADA NOS HEADERS,
+
+
+
+
+VEREMOS QUE 
+
+
+EXISTIRÁ UMA ENTRY 
+
+
+'Cookie: xxxx',
+
+
+
+
+
+E NESSE 
+
+'Cookie'
+
+
+
+TEREMOS 
+
+
+'loggedIn=true',
+
+
+TUDO PQ 
+
+
+ELE 
+FOI SETTADO 
+
+
+
+
+
+
+
+
+NAQUELE CÓDIGO DE 
+
+'''
+
+
+
+
+
+
+
+
+ 
+exports.postLogin = (req, res, next) => {
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true');
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+''''''''
+
+
+
+
+
+
+
+OK, ESSE É O NOSSO COOKIE, E ELE FOI REALMENTE ENVIADO AO NOSSO SERVER...
+
+
+
+
+
+
+
+
+
+
+--> E AGORA, COMO TEMOS ESSE COOKIE,
+
+TODO REQUEST 
+
+TERÁ 
+
+
+
+ESSE COOKIE APENSO A SI... -----> E ESSA DATA 
+
+SERÁ 
+
+
+
+ENVIADA EM 
+
+CADA 
+
+
+REQUEST, isso mesmo...
+
+
+
+
+
+
+
+
+
+--> E AGORA PODEMOS REALMENTE __USAR___ 
+esse 
+
+
+'loggedIn=true',
+
+
+
+PODEMOS 
+
+
+USAR 
+
+ISSO 
+
+PARA 
+
+FAZER O SHOW CONDICIONAL DOS LINKS DE 
+
+
+'add a product' 
+
+
+E 
+
+
+'admin product list'...
+
+
+
+
+
+
+
+
+
+
+
+-->OK, MAS COMO PODEMOS 'CHECK' por esse cookie, no nosso server node?
+
+
+
+
+
+
+
+
+--> talvez em 'req.headers.cookie'?
+
+
+
+
+
+
+
+
+
+
+If you're using the express library, as many node.js developers do, there is an easier way. Check the Express.js documentation page for more information.
+
+The parsing example above works but express gives you a nice function to take care of that:
+
+app.use(express.cookieParser());
+To set a cookie:
+
+res.cookie('cookiename', 'cookievalue', { maxAge: 900000, httpOnly: true });
+To clear the cookie:
+
+res.clearCookie('cookiename');
+
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+cookie-parser is no longer part of express and/or connect, but is available as middleware: github.com/expressjs/cookie-parser – 
+Koen.
+ Apr 14 '14 at 2
+
+
+
+
+
+
+
+
+
+ --> parece que há uma package para isso, o 'cookie-parser', que funciona com 
+
+
+ o 
+
+
+
+ EXPRESSJS
+
+
+
+
+
+
+
+ ------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ PROFESSOR DIZ QUE PODEMOS DAR UMA OLHADA NOS NOSSOS HEADERS,
+
+
+
+ HEADERS DO REQUEST,
+
+
+
+
+
+
+ por meio desse código aqui:
+
+
+
+
+
+
+ 'console.log(req.get('Cookie'))' 
+
+
+
+
+
+
+
+
+--> ESSE MÉTODO '.get()"
+
+
+
+
+NO REQUEST 
+
+
+
+
+
+__eXIGE__ O 'HEADER NAME'... --> como o header name aqui é 'Cookie' (como observamos no 
+
+
+DEVTOOLS do chrome),
+
+
+
+
+
+
+
+
+
+E AÍ 
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+ 
+exports.postLogin = (req, res, next) => {
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true');
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+exports.getLogin = (req, res, next) => {
+
+
+  console.log(req.get('Cookie')); /////EIS O CÓDIGO EM QUESTAÕ.
+
+
+  res.render('auth/login', {
+
+      path: '/login', 
+      pageTitle: 'Login',
+      isAuthenticated: ...
+
+
+  })
+}
+
+
+
+
+
+
+---------------------
+
+
+
+ 
+
+
+
+
+
+
+SE 
+
+
+
+
+FIZERMOS ISSO AÍ, VEREMOS O 
+
+
+NOSSO COOKIE 
+
+
+'loggedIn=true'
+
+
+OUTPUTTADO NO TERMINAL...
+
+
+
+
+
+o que significa que 
+
+essa extração do valor do cookie por meio de 'req.get()' FOI UM SUCESSO...
+
+
+
+
+
+
+
+
+
+--> COM EFEITO, CONSEGUIMOS 
+
+
+''loggedIn=true''
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE PODEMOS __ USAR__ ESSE VALOR AÍ,
+
+
+
+
+USAR 
+
+
+PARA 
+
+
+
+
+
+
+fazer aquele render condicional....
+
+
+
+
+
+
+
+
+-> PODEMOS CONSEGUIR O VALOR DE 'false/true' A PARTIR DE UMA MANIPULATION 
+
+dessa string do cookie...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.getLogin = (req, res, next) => {
+
+
+  console.log(req.get('Cookie').trim().split('=')[1]); /////EIS O CÓDIGO EM QUESTAÕ. ---> VAI RENDER OU 'true' ou 'false', dependendo DA PRESENÇA/existência OU NÃO desse cookie....
+
+
+  res.render('auth/login', {
+
+      path: '/login', 
+      pageTitle: 'Login',
+      isAuthenticated: ...
+
+
+  })
+}
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+OK... 
+
+
+
+MEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+exports.getLogin = (req, res, next) => {
+
+
+const isLoggedIn = req.get('Cookie').trim().split('=')[1] /////EIS O CÓDIGO EM QUESTAÕ. ---> VAI RENDER OU 'true' ou 'false', dependendo DA PRESENÇA/existência OU NÃO desse cookie....
+
+
+  res.render('auth/login', {
+
+      path: '/login', 
+      pageTitle: 'Login',
+      isLoggedIn: isLoggedIn
+
+
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ESSE RENDER CONDICIONAL__ REALMENTE FUNCIONOU,
+
+
+EU COPIEI 
+
+ESSE CÓDIGO EM TODOS OS RENDERS DE VIEWS 
+
+
+DE MEU APP,
+
+e agora 
+
+
+
+
+minha toolbar FUNCIONA 
+
+
+
+CONDICIONALMENTE (se o user está loggado, os admin products e add a product links aparecem...)
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+PROFESSOR ADMITE QUE 
+
+ESSE 
+
+JEITO DE CONSEGUIR A 'COOKIE DATA'/header
+
+
+
+é 
+
+
+bem 
+
+COMPLEXA/cumbersome,
+
+MAS __ FUNCIONA___...
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+OK.... MAS ISSO AINDA ESTÁ RUIM.... esse extract de cookies ainda é mt precário...
+
+
+
+
+
+
+
+
+
+-_> OK, MAS O QUE INTERESSA É QUE 
+
+
+
+
+
+ESSE COOKIE FICA ARMAZENADO NA STORAGE DE NOSSO APP,
+
+
+
+
+
+e não fica armazenado MOMENTANEAMENTE NO NOSSO OBJETO REQUEST,
+
+
+E SIM 
+
+FICA __ ARMAZENADO 'semi-permanent' (pq ele vai PERDURAR ATÉ QUE FECHEMOS O BROWSER, 
+
+
+
+mas ainda vai 
+
+PERDURAR QUANDO TROCAMOS DE PAGE, REDIRECIONAMOS, ETC ETC...) ---------> ISSO 
+
+
+
+
+SIGNIFICA QUE, POR MEIO DOS COOKIES,
+
+
+CONSEGUIMOS 
+
+UM 
+
+
+'CROSS REQUEST DATA STORAGE'... (
+
+
+
+
+  isso pq 
+
+
+
+  CADA REQUEST, mesmo enviado de nosso browser, é __aUTÔNOMO; 
+
+
+
+
+
+  É POR ISSO QUE É 'cross-request',
+
+
+  É PQ 
+
+
+
+  ELE __ VAI SER USADO EM TODO E QUALQUER REQUEST ENVIADO DE NOSSO BROWSER, ao longo das pages....
+)
+
+
+
+
+
+
+
+
+
+
+---------> AINDA ASSIM, PROFESSOR NOS DIZ QUE __ HÁ UMA ___ GRANDE DESVANTAGEM __ NO 
+
+USO 
+
+DE NOSSO 
+
+COOKIE 
+
+
+DESSA FORMA AÍ... --> você 
+
+sabe qual é essa desvantagem?

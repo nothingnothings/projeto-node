@@ -1,0 +1,1951 @@
+
+
+
+
+
+
+
+
+
+
+
+
+acho que vou começar pelo MONGOOSE...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+PRECISO:
+
+
+
+1) INSTALAR O MONGODB DRIVER 
+
+
+
+2) INSTALAR O MONGOOSE....
+
+
+
+
+
+
+
+
+
+ok... agora tenho que IMPORTAR O MONGOOSE e o mongodb, acho... ( ou só o mongoose... não me lembro direito....) ---> é só o MONGOOSE, SÓ PRECISO DO MONGOOSe....
+
+
+
+
+
+
+
+
+--> CERTO... FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+const mongoose = require('mongoose'); ///nem mesmo precisamos do 'mongodb' driver.... (mas instale mesmo assim).
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+const feedRoutes = require('./routes/feed');
+
+const authRoutes = require('./routes/auth');
+
+app.use(bodyParser.json());
+
+app.use(express.static(path.join(__dirname, 'images')));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+app.use(authRoutes);
+
+app.use('/feed', feedRoutes);
+
+// app.listen(3000);
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+AGORA SÓ PRECISAMOS 
+
+
+
+
+
+vincular nosso frontend ao backend...
+
+
+
+
+
+
+
+
+
+
+
+ESTE É O CÓDIGO QUE FAZ O 'ACTUAL SEND' (o create) 
+
+
+DO NOSSO POST:
+
+
+
+
+
+
+
+
+
+
+
+finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    let url = 'URL';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+    fetch(url)
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+  -------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+  EDITEI, E FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+    finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    let url = 'http://localhost:8080/feed/post';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+    fetch(url, {
+          method: 'POST',
+          body: postData
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+-----------------------------
+
+coloquei a url/path de nosso 
+
+endpoint, ali...
+
+
+
+
+
+
+
+
+CERTO... --> MAS VAMOS  CONTINUAR.... --> minha image 
+
+
+
+
+lá em 'images' (folder)
+
+NÃO ESTÁ SENDO SERVIDA...
+
+
+
+
+
+--> não sei a razão disso....
+
+
+
+
+---> sintaxe estranha:
+
+
+
+background-image: url('images/my-image.png');
+
+
+<div class="image" style="background-image: url(&quot;images/o-fantastico-jaspion.jpg&quot;); background-size: contain; background-position: center center;"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> A IMAGE NÃO ESTÁ CONSEGUINDO SER SERVIDA....
+
+
+
+
+
+
+
+
+--> pensei que 'window.location.hostname'
+
+
+me daria o que queria,
+
+
+
+
+TIPO ASSIM:
+
+
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`${window.location.hostname}/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+
+
+
+
+
+
+
+
+
+  -> MAS ISSO __ NÃO FUNCIONA,
+
+  PQ 
+
+
+  __ O QUE EU OBTENHO, POR MEIO DISSO, É 'localhost:3000' (host do frontend),
+
+  e não 
+
+
+  'localhost:8080',
+
+  QUE 
+  É ONDE 
+
+  ESSA IMAGE EFETIVAMENTE 
+
+
+  VIVE....
+
+
+
+  -> AÍ EU TENTEI UM HARDCODE de 'http://localhost:8080',
+
+  MAS ISSO TAMBÉM NÃO FUNCIONOU....
+
+
+
+
+
+
+
+
+  ---> acho que eu estava mexendo no lugar errado, o lugar certo é este:
+
+
+
+  import React from 'react';
+
+import Button from '../../Button/Button';
+
+import Image from '../../Image/Image';
+
+import './Post.css';
+
+const post = (props) => (
+  <article className="post">
+    <header className="post__header">
+      <h3 className="post__meta">
+        Posted by {props.author} on {props.date}
+      </h3>
+      <h1 className="post__title">{props.title}</h1>
+    </header>
+    <div className="post__image">
+      <Image imageUrl={`http://localhost:8080/${props.image}`} contain />
+    </div>
+    {/* <div className="post__content">{props.content}</div> */}
+    <div className="post__actions">
+      <Button mode="flat" link={props.id}>
+        View
+      </Button>
+      <Button mode="flat" onClick={props.onStartEdit}>
+        Edit
+      </Button>
+      <Button mode="flat" design="danger" onClick={props.onDelete}>
+        Delete
+      </Button>
+    </div>
+  </article>
+);
+
+export default post;
+
+
+
+
+
+
+
+
+
+
+
+
+--> AINDA ASSIM, com esse código não consigo 
+
+renderizar a image...
+
+
+
+
+
+
+
+
+--> hora de ver um pouco da aula do professor..
+
+
+
+
+
+
+
+
+
+
+-------> vamos criar uma route de 'CREATE POST' (controller),
+
+
+
+MAS __ SEM O IMAGE UPLOAD, POR ENQUANTO...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, VOLTAMOS A NOSSA REST API....
+
+
+
+
+
+
+--> vamos querer usar o controller de 'createPost',
+
+que tem este código:
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title;
+  const content = req.body.content;
+
+  console.log('REQUEST RECEIVED');
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString,
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+OK.... --> 
+
+
+
+
+
+nós fazíamos expect de 'title' e 'content' 
+
+
+
+nesse 'createPost'... -> PROFESSOR DIZ QUE, POR ENQUANTO, ESSA SERÁ 
+
+A 
+
+UNICA DATA COM QUE NOS PREOCUPAREMOS (A image veremos depois)....
+
+
+
+
+
+-------------------
+
+
+certo...
+
+
+
+
+
+
+
+--> PARA CONSEGUIR __ ARMAZENAR___ 1 'POST'
+
+
+
+na nossa DATABASE,
+
+
+
+PROVAVELMENTE __ VAMOS PRECISAR__ DE MODELS.... --> 
+
+
+1 MODEL 
+
+DE 
+
+
+'post'....
+
+
+
+
+
+
+
+OK.. VINCULEI O FRONTEND...
+
+
+AGORA SÓ FALTA VINCULAR O BACKEND... 
+
+(controller de 'createPost'...)
+
+
+
+
+
+
+
+
+
+
+
+---> CONSEGUI... VINCULEI O FRONTEND AO BACKEND, COM SUCESSO....
+
+
+
+
+
+
+
+
+
+-- >AGORA SEMPRE QUE 
+
+
+CLICAMOS EM 'NEW POST' 
+
+e preenchemos os 
+
+input fields e clicamos 
+
+em 
+
+'accept',
+
+
+
+
+CRIAMOS 1 OBJETO 'post' 
+
+na COLLECTION DE 'posts' 
+
+
+
+
+
+em nosso DATABASE MONGODB...
+
+
+
+
+
+
+
+
+--> espere.... na verdade, 
+
+
+
+NÃO FOI CRIADO 1 POST, AINDA...
+
+
+É PQ O CÓDIGO DE MEU CONTROLLER ESTÁ INCOMPLETO:
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString,
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+---> FALTOU O 'post.save()',
+
+E AÍ 
+
+O THEN BLOCK DIZENDO QUE A OPERAÇÃO FOI UM SUCESSo...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OUTRO PROBLEMA:
+
+
+
+
+
+
+
+tanto meu 
+
+
+'title' como 'content'
+
+
+ESTÃO APARECENDO COMO 'UNDEFINED'.... (pelo visto, fiz algo errado....)
+
+
+
+
+
+
+
+
+
+--> bem, essas 2 propriedades 
+
+são obtidas 
+
+
+
+no 'req.body'...
+
+
+
+
+
+
+--> o body está vazio, por alguma razão...
+
+
+
+
+
+
+--> no meu código frontend,
+
+
+
+tenho isto:
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    let url = 'http://localhost:8080/feed/post';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+    fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData)
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OU SEJA, TENTEI STRINGIFAR O BODY (para conseguir fazer com que virasse JSON DATA),
+
+
+
+
+  mas 
+
+  ainda 
+
+
+  assim o negócio não funcionou...
+
+
+
+
+
+
+
+
+
+  --> não, mas isso ainda não faz sentido... e ainda recebo este erro:
+
+
+
+
+
+
+
+  Error: Post validation failed: title: Path `title` is required., content: Path `content` is required.
+    at ValidationError.inspect (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\error\validation.js:48:26)
+
+
+
+--------------------------------------
+
+
+
+
+
+
+--> ERA O HEADER DE 'Content-Type' QUE ESTAVA FALTANDO...
+
+
+
+
+
+FICOU ASSIm:
+
+
+
+
+
+
+
+
+('Feed.js'):
+
+
+
+
+  finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    let url = 'http://localhost:8080/feed/post';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+
+    console.log(postData, 'LINE');
+
+
+    fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+SERVERSIDE/BACKEND:
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------> E NOSSOS 'POSTS'
+
+
+ESTÃO SENDO ARMAZENADOS ASSIM:
+
+
+
+
+{
+    "_id": {
+        "$oid": "61a5a18dd6263923a7a6653b"
+    },
+    "title": "jojoasjsoajoa",
+    "content": "assaassaa",
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+
+
+
+certo... tudo ótimo....
+
+
+
+
+
+
+
+
+
+
+
+
+como o professor escreveu isso?
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> 
+
+
+
+
+
+
+
+
+
+
+PROFESSOR VAI ATÉ O CÓDIGO DO REACT,
+
+
+
+ATÉ 
+
+
+
+
+o arquivo de 'Feed.js':
+
+
+
+
+
+
+
+
+
+
+--> aí ele nos mostra a função de 'finishEditHandler'...
+
+
+
+
+
+
+
+
+
+
+---> ELE DIZ QUE ESSA FUNÇÃO VAI ENVIAR NOSSO REQUEST QUANDO 
+
+
+
+DIGITARMOS 1 TITLE, IMAGE E CONTENT VÁLIDOS...
+
+
+
+
+----> PROFESSOR EXPLICA QUE 
+
+AQUI ELE JÁ COLOCOU UMA 'VALIDATION' NO LUGAr....
+
+
+
+
+
+
+--> FRONTEND VALIDATION.... (
+
+
+
+
+  é um bom bônus, um negócio de user experience... --> NO CURSO DO REACT 
+
+
+  TEMOS MAIS DETALHES SOBRE ISSO....
+)
+
+
+
+
+
+
+
+
+--> SE CLICAMOS EM 'ACCEPT',
+
+
+
+
+QUEREMOS 
+
+ALCANÇAR A ROUTE DE 
+
+
+
+'/feed/post'... 
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR COLOCA A URL DE 
+
+
+'http://localhost:8080/feed/post'....  ------> A ROUTE QUE 
+
+HAVÍAMOS SETTADO 
+
+
+
+NO 
+
+BACKEND...
+
+
+
+
+
+
+
+--> aí o professor escreve o clássico 
+
+
+
+'fetch(
+  url, {
+    method: 'POST', 
+    ...
+  }
+)
+'
+
+
+
+
+
+
+
+
+
+-----> MAS O PROFESSOR DECIDE ESCREVER ESSE NEGÓCIO DE UM JEITO MAIS FLEXÍVEL.... (pq 
+
+vamos querer
+
+definir outro 'method', para o 'EDIT',
+
+no futuro....
+
+
+ )
+
+
+
+
+
+
+
+
+ ele basicamente escreve 
+
+
+ 'fetch(
+   url, {
+     method: method,
+      body: JSON.stringify({
+        title: postData.title,
+        content: postData.content
+      }
+      )
+   }
+ )
+
+ '
+
+
+
+
+
+
+
+
+ OK... 
+
+
+
+
+
+
+
+ ISSO FEITO... ------> 
+
+
+
+
+
+
+ ELE COLOCA OS HEADERS,
+
+
+em que 
+
+define 
+
+
+
+'Content-Type: 'application/json'',
+
+
+
+
+PARA INFORMAR AO SERVER QUE 
+
+VAMOS QUERER ENVIAR JSON DATA...
+
+
+
+
+
+
+
+
+
+--> OK... SALVAMOS TUDO ISSO...
+
+
+
+
+
+
+
+
+
+E AÍ ___ TESTAMOS NOSSO 
+
+
+APP... 
+
+
+
+
+
+
+
+
+--> digitamos qualquer coisa, e aí um POST É CRIADO 
+
+lá 
+
+
+no nosso backend...
+
+
+
+
+
+
+
+
+
+
+
+
+----------> PROFESSOR OBTEVE ALGUNS ERROS NA FRONTEND...
+
+
+
+
+
+
+
+
+-----> 'Cannot read property 'name' of undefined'... --> MAS ISSO É UM ERRO 
+
+DO 
+
+
+FRONTEND,
+
+PQ 
+
+
+
+NO BACKEND 
+
+
+
+SEU DOCUMENT FOI CRIADO A PARTIR DAQUELES DADOS...
+
+
+
+
+
+
+
+
+
+
+-_> O ERRO NO FRONTEND OCORRE PQ 
+
+
+
+
+NO SERVER AINDA NÃO 
+
+
+ESTAMOS 
+
+FAZENDO ATTACH DO USER,
+
+
+GENERATE DE UMA DATE,
+
+ ETC ETC..
+
+
+
+
+
+
+
+
+
+ ------->  O CÓDIGO DE 'createPost'
+
+
+
+ antes estava assim:
+
+
+
+
+
+
+
+
+
+
+
+ exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+
+
+
+
+
+
+-------> MAS AÍ O PROFESSOR ALTEROU AQUELE 
+
+
+'        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+        },
+
+        '
+        ,
+
+
+
+
+
+
+        COLOCOU 
+
+
+        '_id' em vez de 
+
+        'id' (pq com o mongodb SEMPRE VAMOS TRABALHAR COM '_id' em vez de 'id'...)
+
+
+
+
+
+
+  EX:
+
+
+
+   exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          _id: new Date().toISOString,
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+ELE TAMBÉM ADICIONA 
+
+
+UMa propriedade de 'creator',
+
+
+EM QUE COLOCA 'name' 
+
+E 'createdAt'...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+   exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          _id: new Date().toISOString,
+          creator: {
+            name: 'Max'
+          },
+          createdAt: new Date()
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+
+
+
+------------------
+
+
+
+
+
+
+
+OK... TUDO ÓTIMO...
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+TEMOS NOSSO 'BASIC FLOW' 
+
+de criação de posts JÁ SETTADo...
+
+
+
+
+
+
+
+
+-------> PROFESSOR FALA QUE 2 COISAS ESTÃO FALTANDO NO NOSSO SERVER...
+
+
+
+
+
+
+
+
+
+
+
+
+--> a primeira é a conexão com o mongodb (que já fiz...)
+
+
+
+
+
+
+
+
+
+
+
+--> A SEGUNDA É __ 'SERVERSIDE VALIDATION' (pq 
+
+
+não estamos validando 
+
+nossos inputs 
+
+no server,
+
+isso é um fato...)
+
+
+
+
+
+
+
+
+
+------> como exemplo de serverside validation, podemos pegar 
+
+os códigos 
+
+
+dos módulos passados, como 
+
+por exemplo:
+
+
+
+
+
+
+router.post(
+  '/add-product',
+  authCheckerAndRedirecter,
+
+  check('title')
+    // .isAlpha()
+    .isString()
+    .withMessage('Products must contain only letters.')
+    .trim()
+    .custom((value, { req }) => {
+      console.log(value);
+      return Product.findOne({ title: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen title already exists, please choose another one.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+  check('imageUrl')
+    .isURL()
+    .withMessage('Please input a valid URL')
+    .trim()
+    .custom((value, { req }) => {
+      console.log(value);
+      return Product.findOne({ imageUrl: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen imageUrl already exists, please type another url.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+  check('price')
+    .isFloat({ min: 1 })
+    .withMessage('Price must be a number, and must be greater than 0.')
+    .isDecimal({ force_decimal: true, decimal_digits: 2 })
+    .withMessage('Price must include cents.')
+    .toFloat(),
+
+  check('description')
+    .isAlpha()
+    .withMessage('Your description must contain only letters'),
+
+  adminController.postAddProduct
+);
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+ESSES CÓDIGOS, É CLARO,
+
+
+
+SÃO EXTRAÍDOS 
+
+LÁ 
+
+DO 
+
+'express-validator',
+
+
+QUE TEREMOS DE INSTALAR NESSE NOSSO PROJETO, TAMBÉM...
+
+
+
+(
+
+
+
+
+  pq só a clientside validation NÃO BASTA POR SI SÓ....
+)
+
+
+
+
+
+
+
+
+
+-----> precisamos 'validate on the server'...

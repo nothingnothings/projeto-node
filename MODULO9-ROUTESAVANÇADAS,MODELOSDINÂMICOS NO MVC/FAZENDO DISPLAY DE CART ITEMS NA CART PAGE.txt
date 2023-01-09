@@ -1,0 +1,2146 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> JÁ SOMOS CAPAZES DE TRABALHAR COM O 'CART' (model de nome 'cart'),
+
+
+
+
+PORTANTO AGORA 
+
+
+É HORA 
+
+
+DE FAZER 
+
+
+
+DISPLAY DE 
+
+
+'CART ITEMS'
+
+
+LÁ 
+
+EM 
+
+
+
+'cart.ejs'...
+
+
+
+
+
+
+
+
+
+--> LÁ EM 'cart.ejs',
+
+
+
+
+
+VAMOS ADICIONAR UMA 
+
+
+<main>
+
+
+,
+
+
+
+
+
+
+
+
+
+
+
+
+
+E AÍ DENTRO DALI... --> VAMOS 
+
+
+
+
+
+TER QUE 
+
+ESCREVER OQ?
+
+
+
+
+
+
+
+
+
+
+--> PRIMEIRAMENTE,
+
+
+
+VAMOS TER QUE __ CHECAR__ SE TEMOS __ _PRODUCTS... ------> 
+
+
+
+
+
+SE TIVERMOS PRODUCTS,
+
+
+
+
+VAMOS QUERER 
+
+
+FAZER 
+
+
+DISPLAY DELES...
+
+
+
+
+
+
+
+--> VAMOS FAZER 
+
+
+DISPLAY DOS ITEMS EM UMA LISTA 
+
+BEM BORING, POR ENQUANTO...
+
+
+
+
+
+
+
+
+
+
+
+OS CÓDIGOS 
+
+
+
+
+FICARAM ASSIM, POR ENQUANTO:
+
+
+
+
+
+
+(controller de 'SHOP'):
+
+
+exports.getCartPage = (req, res, next) => {
+
+Cart.getCartFromFile(
+
+    (cart) => {
+
+      console.log(cart);
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Cart',
+        cart: cart
+      });
+    }
+  );
+
+};
+
+
+
+
+
+
+
+
+
+
+MODEL DE 
+
+'cart':
+
+
+
+
+
+
+static getCartFromFile(callback) {
+ return fs.readFile(filePath, 
+    
+    
+    (err, fileContent ) => {
+        callback(JSON.parse(fileContent))
+    }
+  )
+}
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+E AGORA,
+
+O VIEW QUE 
+
+FARÁ 
+
+DISPLAY DE TUDO ISSO...
+
+
+
+
+
+
+
+
+OK.. MAS AGORA NOS DEPARAMOS COM UM PROBLEMA...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+{
+  products: [
+    { id: '0.5207285031223152', quantity: 3 },
+    { id: '0.2683474077265857', quantity: 1 }
+  ],
+  totalPrice: 212878787
+}
+
+
+
+
+
+
+
+
+--> ESTE É O NOSSO CART...
+
+
+
+
+--> É CLARO QUE ISSO É INSTATISFATÓRIO... ---> 
+
+
+PRECISAMOS 
+
+
+____CONSEGUIR __ TODOS OS PRODUCTS PARA 
+
+AQUELES 'GIVEN IDs'...
+
+
+
+--> para isso, provavelmente 
+
+vou ter de COLOCAR UMA 
+
+LÓGICA 
+
+
+NO MEU CONTROLLER DE 
+
+
+
+
+
+'''
+
+
+
+exports.getCartPage = (req, res, next) => {
+
+Cart.getCartFromFile(
+
+    (cart) => {
+
+      console.log(cart);
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Cart',
+        cart: cart
+      });
+    }
+  );
+
+};
+
+
+''''
+
+
+
+
+
+--------> PROVAVELMENTE VOU TER QUE EXECUTAR 
+
+
+
+'findProduct'
+
+
+DENTRO DAQUELE 
+
+
+'
+
+
+
+
+    (cart) => {
+
+      console.log(cart);
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Cart',
+        cart: cart
+      });
+    }
+
+
+
+',
+
+
+
+
+E PROVAVELMENTE __ DENTRO DE UM FOR LOOP...
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI... O ÚNICO PROBLEMA É QUE FICOU UM CÓDIGO BEM GOROROBA...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.getCartPage = (req, res, next) => {
+
+Cart.getCartFromFile(
+
+    (cart) => { //callback....
+          const cartProducts = [];
+        for (const product of cart.products) {
+            console.log(product, 'X');
+            Product.findProduct(product.id, 
+
+              (product) => { ///callback
+                  cartProducts.push(product);
+                  console.log(cartProducts);
+              }
+              )
+
+        }
+        res.render('shop/cart', {
+          path: '/cart',
+          pageTitle: 'Cart',
+          cartProducts: cartProducts  //vai usar o valor (um monte de PRODUCTS, array de PRODUCTS) OBTIDO __ A PARTIR__ DAQUELES CALLBACKS...
+        });
+    }
+  );
+
+};
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+--> ISSO PQ, veja o flow:
+
+
+
+
+
+
+
+1) temos 
+
+{"products":[{"id":"0.5207285031223152","quantity":3},{"id":"0.2683474077265857","quantity":1}],"totalPrice":212878787}
+
+
+(mas em um formato JAVASCRIPT...)
+
+
+
+A PARTIR de 
+
+
+'getCartFromFile'...
+
+
+
+
+
+2) vamos usar esses 'ids' em um FOR LOOP PARA ENCONTRAR TODOS OS OBJETOS CORRESPONDENTES, dentro 
+do ARRAY DE PRODUCTS, USANDO O MÉTODO de 'findProduct' lá NO MODEL DE 'product'...
+
+
+
+
+
+3) vamos empurrar todos esses items em um array, por meio de 'push' dentro DESSE FOR OF LOOP...
+
+
+
+
+
+
+
+4) vamos finalmente fazer o RENDER DE NOSSA PÁGINA, com esse array aí...
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+OK...
+
+
+
+
+E NOSSO 
+
+VIEW  SIMPLES PROVAVELMENTE VAI FICAR ALGO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS ESTOU FICANDO COM UM PROBLEMA _ DE ORDEM, AQUI__....
+
+
+
+
+
+
+
+
+
+
+--> ENTREI NO __CALLBACK HELL___... 
+
+
+
+
+
+
+
+
+--> O CÓDIGO FICOU ASSIM:
+
+
+
+exports.getCartPage = (req, res, next) => {
+
+ Cart.getCartFromFile(
+
+    (cart) => { //callback....
+          console.log('A');
+          const cartProducts = [];
+        for (const product of cart.products) {
+            Product.findProduct(product.id, 
+
+              (product) => { ///callback
+                  cartProducts.push(product);
+                  console.log('B');
+                  console.log(cartProducts);
+              }
+              )
+        }
+
+        console.log('C');
+        res.render('shop/cart', {
+          path: '/cart',
+          pageTitle: 'Cart',
+          cartProducts: cartProducts
+        });
+    }
+  )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+---> ENTRETANTO,
+
+A ORDEM ESTÁ TODA ERRADA:
+
+
+
+
+
+
+(OUTPUT DO CONSOLE):
+
+
+A
+C
+B
+
+
+
+
+
+
+
+
+
+---> eu queria 'A B C',
+
+
+mas isso 
+
+
+não está funcionando...
+
+
+
+
+
+
+
+--> PROFESSOR FALA QUE VAI QUERER PEGAR TODOS OS PRODUCTS 
+
+
+
+__PARA ENTÃO INVESTIGAR/DESCOBRIR __ APENAS __ OS PRODUCTS 
+
+QUE 
+
+
+
+
+TEMOS NO CART,
+
+
+
+para que 
+
+só esses sejam então displayados...
+
+
+
+
+
+
+-------> PARA ISSO,
+
+
+professor 
+
+
+vai 
+
+
+até 
+
+
+
+
+
+O 
+
+
+MODEL 
+
+De 
+
+
+'cart.js',
+
+
+E FAZ EXATAMENTE O QUE FIZEMOS,
+
+
+CRIA UMA 
+
+
+FUNÇÃO/MÉTODO 
+
+como 
+
+
+''
+static getCartFromFile(callback) {
+ return fs.readFile(filePath, 
+    
+    
+    (err, fileContent ) => {
+        callback(JSON.parse(fileContent))
+    }
+  )
+}
+
+
+'''
+
+
+
+
+
+
+
+
+
+-->   ELE ESCREVE:
+
+
+
+
+
+
+
+
+
+static getProducts() {
+
+
+}
+
+
+
+
+
+--> NESSA FUNÇÃO, ELE VAI SIMPLESMENTE 
+
+
+'GET THE PRODUCTS AND THEN RETURN THEIR IDS'.. 
+
+
+
+
+-> vamos 
+
+
+
+
+ter um CALLBACK, que chamaremos quando RECEBERMOS OS PRODUCTS...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+static getCart(callback) {
+
+
+
+    fs.readFile(filePath, (err, fileContent) => {
+           const cart = JSON.parse(fileContent);
+      if(err) {
+        callback(null);
+      } else {
+          callback(cart);
+      }
+       
+
+
+    })
+}
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+CERTO... ISSO AÍ FOI BEM PARECIDO COM O QUE EU FIZ....
+
+
+
+
+
+
+
+aí o professor 
+
+
+vai 
+
+Até 
+
+
+
+
+
+o CONTROLLER DE 'getCart', lá nos controllers...
+
+
+
+
+
+
+
+
+
+aí ele escreve:
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+  Cart.getCart();
+
+  res.render(
+
+
+
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE DEVEMOS PASSAR A CALLBACK FUNCTION NESSE 
+
+NEGÓCIO AÍ.
+
+
+
+
+aí escreveremos..
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+Cart.getCart(
+
+  (cart) => {
+
+
+
+
+  }
+)
+
+
+
+
+
+
+
+
+--> VOU RECEBER MEU CART,
+
+
+E AÍ VOU QUERER __RENDERIZAR MINHA VIEW __ DENTRO DESSA CALLBACK FUNCTIOn....
+
+
+
+ex:
+
+
+
+
+
+Cart.getCart(
+
+  (cart) => {
+    res.render('shop/cart', {
+
+      path: '/cart',
+      pageTitle: 'Your Cart'
+
+
+
+    })
+
+
+
+
+  }
+)
+
+
+
+
+
+
+
+--------->  ENTRETANTO, É ÓBVIO QUE O PROFESSOR PRECISA UM POUCO MAIS DO QUE 
+
+O 
+
+
+'CART';
+
+
+ele TAMBÉM PRECISA 
+
+
+DE UM POUCO MAIS DE INFO SOBRE 
+
+
+OS 
+
+PRODUCTS QUE 
+
+DEVEM SER DISPLAYADOS... --------> 
+
+
+
+
+
+PARA ISSO,
+
+
+PROFESSOR VAI USAR 
+
+o MODEL 
+
+
+
+de 
+
+'Product'
+
+
+PARA 
+
+
+
+USAR __ 
+
+
+O MÉTODO 
+
+'fetchAll',
+
+PARA 
+
+
+__FETCHEAR__ TODOS OS PRODUCTS__...
+
+
+
+
+
+
+
+CÓDIGO DE 
+
+
+'fetchAll()':
+
+
+
+
+
+
+      static fetchAll(cb) {
+            getProductsFromFile(cb);
+
+      }
+
+
+
+
+
+
+
+
+
+--> ESSE 'fetchAll'
+
+
+
+
+__vAI SER CHAMADO ___ DENTRO __ 
+
+
+
+DO 
+
+CALLBACK 
+
+
+
+de 
+
+
+'getCart'...
+
+
+
+
+
+
+
+OU SEJA, FICARÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+Cart.getCart(
+
+  (cart) => {
+
+
+    Product.fetchAll(
+      products => {
+
+      }
+    )
+
+
+
+
+
+    res.render('shop/cart', {
+
+      path: '/cart',
+      pageTitle: 'Your Cart'
+
+
+
+    })
+
+
+
+
+  }
+)
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE ESTAMOS COM UMA PORRADA DE CALLBACKS AQUI,
+
+
+mas que esse código ainda é legível...
+
+
+
+
+
+
+--> MAS MAIS TARDE 
+
+
+VAMOS ENCOTNRAR ___OUTRA __ FORMA DE TRABALHAR 
+
+
+'WITH A LOT OF DEPENDING ASYNC ACTIONS'...
+
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+OK, AGORA QUE __ 
+
+
+
+
+1) TENHO O CART 
+
+
+
+2) TENHO OS 'PRODUCTS' (Todos os products),
+
+
+
+
+EU SÓ PRECISO 
+
+
+
+'FILTER OUT'
+
+
+
+os products que 
+
+
+REALMENTE ESTÃO NO CART... ----> 
+
+
+
+
+
+
+PARA ISSO, PROFESSOR VAI 
+
+
+
+USAR UM LOOP 
+
+
+
+de 
+
+'for in'
+
+
+PARA 
+
+IR POR DENTRO 
+
+
+DE TODOS 
+
+OS PRODUCTS 
+
+
+
+RETORNADOS POR 'fetchAll'... -----> 
+
+
+
+
+
+
+
+OK... LOOPANDO 
+POR 
+
+
+TODOS 
+
+
+
+OS 
+
+
+PRODUCTS,
+
+
+
+VAMOS 
+
+
+
+''''CHECK IF THAT PRODUCT IS ALSO STORED IN THE CART'''' (e, com isso, evitando o uso de 'findProduct', que estávamos empregando anteriormente...)
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+Cart.getCart(
+
+  (cart) => {
+
+
+    Product.fetchAll(
+      products => {
+
+              const cartProducts = [];
+            for (const product of products) {
+
+                  if (cart.products.find(prod => prod.id === productId) {
+                      cartProducts.push(product); 
+                  }
+                  
+                  )
+            }
+      }
+    )
+    res.render('shop/cart', {
+      path: '/cart',
+      pageTitle: 'Your Cart'
+    })
+
+
+
+
+  }
+)
+
+
+
+
+
+
+
+
+--> ficou meio confuso, mas  o que 
+
+
+ele escreveu 
+
+
+
+foi 
+
+
+
+'SE EU ENCONTRAR NO CART UM PRODUCT QUE TENHA __ UMA PROPRIEDADE 'id' IGUAL A 
+
+
+UMA PROPRIEDADE 
+'id'
+ 
+
+ QUE EXISTA DENTRO DE ALGUM OBJETO 'product' 
+
+ LÁ 
+
+
+ NO NOSSO ARRAY DE 'all Products',
+
+
+ VOU QUERER 
+
+
+ EMPURRAR 
+
+ ESSE 
+
+
+ PRODUCT PARA DENTR DO ARRAY 'cartProducts',
+
+
+ inicialmente vazio...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ VAI FICANDO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+ exports.getCart = (req, res, next) => {
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+          const cartProducts = [];
+          for (const product of products) {
+            if( cart.products.find(prod => prod.id === product.id)) {
+              cartProducts.push(product);
+            }
+          }
+    res.render('shop/cart', {
+      path: '/cart',
+      pageTitle: 'Your Cart',
+      cartProducts = cartProducts
+    });
+  });
+
+
+    });
+
+};
+
+
+
+
+
+
+
+
+
+---------> OK... MAS O PROFESSOR NOS EXPLICA QUE 
+
+
+SIMPLESMENTE 
+
+
+PUSHAR um 
+
+'product' para dentro de 'cartProducts'
+
+__NÃO É O BASTANTE__... -------> 
+
+
+
+EM VEZ DISSO,
+
+
+
+
+PROFESSOR VAI FAZER PUSH __ DE UM OBJETO/OBJETOS,
+
+
+objetos 
+
+
+'{}'
+
+
+
+
+QUE TERÃO 
+
+
+NO SEU INTERIOR 
+
+
+
+
+
+FIELDS 
+
+
+
+DE 
+
+'productData: product' (será o PRODUCT EM SI, com seu id, etc etc...)
+
+
+
+
+E __ 
+
+
+
+O FIELD 
+DE 
+
+
+'quantity'... (isso pq a QUANTITY DE CADA PRODUCT TBM É ARMAZENADA NO CART, MAS __ ISSO NO CART EM SI, E NÃO 
+
+
+NAQUELE 'PRODUCTS ARRAY', RETORNADO POR 'fetchAll', O QUAL ESTAMOS 'LOOPING THROUGH'...) -------->  isso pq 
+
+
+
+LÁ 
+
+NO ARQUIVO 
+
+'ProductList.json'
+
+OBVIAMENTE NÃO TEMOS NENHUMA 'QUANTITY' ARMAZENADA EM CADA PRODUCT... (só temos isso no CART)....
+
+
+
+
+
+
+------> E COMO EM _ CADA PRODUCT NO 'CART' 
+
+
+
+
+__ TEMOS UM FIELD DE QUANTITY,
+
+
+
+
+
+esse 
+
+field 
+
+de 
+
+
+{
+  productData: product,
+  quantity: xxxx
+}
+
+
+
+
+
+
+--> SERÁ PREENCHIDO POR 
+
+
+
+uma constante como 
+
+
+'productCartQuantity',
+
+
+
+
+QUE 
+
+
+SERÁ 
+
+
+ARMAZENADO E UTILIZADO 
+
+
+
+NO LOOP...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+          const cartProducts = [];
+          for (const product of products) {
+            if( cart.products.find(prod => prod.id === product.id)) {
+
+              cartProducts.push({productData: product, quantity: xxxxx});
+            }
+          }
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    -------> OK... MAS PARA ISSO,
+
+
+    PROFESSOR NOS DIZ QUE 
+
+
+
+    __VAI TER QUE REEESTRUTURAR NOSSO CÓDIGO...
+
+
+
+
+
+    --> ele pega a linha 
+
+
+
+    ''cart.products.find(prod => prod.id === product.id)'''
+
+
+
+
+
+
+    E MOVE para 
+
+    uma constante 
+
+
+
+    que armazena esse valor (Que será TRUE OU FALSE)...
+
+
+
+
+
+    ex:
+
+
+
+
+
+
+const cartData = cart.products.find(prod => prod.id === product.id);
+
+
+
+
+
+
+
+
+-> OK... AÍ ELE REESCREVE O CÓDIGO PARA FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+          const cartProducts = [];
+          for (const product of products) {
+
+        const cartProductData = cart.products.find(prod => prod.id === product.id);
+
+            if(cartProductData) {
+              cartProducts.push({productData: product, quantity: xxxxx});
+            }
+          }
+
+  
+
+--------------------------
+
+
+
+
+
+
+ok........... AÍ ELE VAI USAR esse 
+
+'cartProductData'
+
+
+
+__ PARA _ CONSEGUIR ___ A QUANTITY __ 
+
+
+DE NOSSO PRODUCT/OF A GIVEN PRODUCT...
+
+
+
+
+
+--> ELE VAI FAZER ISSO COM A DOT NOTATION,
+
+vai escrever:
+
+
+
+
+'quantity: cartProductData.quantity'...
+
+
+
+
+
+
+
+
+OK... CÓDIGO COMPLETO FICA ASSIM:
+
+
+
+
+
+
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+          const cartProducts = [];
+          for (const product of products) {
+
+        const cartProductData = cart.products.find(prod => prod.id === product.id);
+
+            if(cartProductData) {
+              cartProducts.push({productData: product, quantity: cartProductData.quantity}); ////EIS O CÓDIGO EM QUESTÃO.
+            }
+          }
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+CONSEGUI UM ERRO:
+
+
+
+
+
+
+Error: Route.get() requires a callback function but got a [object Undefined]
+    at Route.<computed> [as get] (A:\projeto4 - NODEJS\MODULO9-ROUTESAVANÇADAS,MODELOSDINÂMICOS... (dynamic MODELS in the model view controller)\novonovoprojeto7-ROUTESDINAMICASEADVANCEDMODELS(VERSAODOPROFESSOR,CODIGOMAISOPTIMIZADO\node_modules\express\lib\router\route.js:202:15)
+
+
+
+
+
+
+
+
+------> CONSEGUI... 
+
+
+
+
+
+
+
+O VIEW FICOU BEM BÁSICO,
+
+
+ALGO COMO ISTO:
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <h1>Your Cart</h1>
+      <% if (!cartProducts) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% for (let product of cartProducts) { %>
+            <li>
+              <h1><%= product.productData.title %></h1>
+              <p>x<%= product.quantity %> </p>
+            </li>
+            <% } %>
+        </ul>
+        <% } %>
+
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O código do professor, por sua vez,
+
+
+
+começou assim:
+
+
+
+
+
+
+
+
+
+
+<main>
+  <% if (products.length > 0) { %> 
+
+
+
+
+
+
+<% } else { %> 
+
+
+
+
+
+
+
+
+(OU SEJA,
+
+PROFESSOR 
+
+
+VAI QUERER 
+
+CHECAR 
+
+PELA 
+
+LENGTH DO ARRAY,
+
+
+PARA
+ 
+ 
+ 
+ 
+ 
+ FAZER DISPLAY __ DE ALGO DIFERENTE, ALGO COMO 'NENHUM PRODUCT NO SEU CART',
+
+
+
+caso seja constatado que 
+
+o negócio está vazio)...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <h1>Your Cart</h1>
+      <% if (cartProducts.length < 0) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% for (let product of cartProducts) { %>
+            <li>
+              <h1><%= product.productData.title %></h1>
+              <p>x<%= product.quantity %> </p>
+            </li>
+            <% } %>
+        </ul>
+        <% } %>
+
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+---> ok... O PROFESSOR ESCREVE UM LOOP 
+
+
+POR DENTRO DOS PRODUCTS...
+
+
+
+
+
+
+
+
+
+          <% for (let product of cartProducts) { %>
+            <li>
+              <h1><%= product.productData.title %></h1>
+              <p>x<%= product.quantity %> </p>
+            </li>
+            <% } %>
+
+
+
+
+
+
+        --------------------------------
+
+
+
+
+
+
+
+        ---->  PROFESSOR DIZ QUE VAI QUERER OUTPUTTAR 
+
+
+        A PRODUCT INFORMATION DE CADA PRODUCT...
+
+
+
+
+
+
+
+
+  ---> É IMPORTANTE TER EM MENTE QUE 
+
+
+
+
+
+  cada 1 desses negócios 
+
+
+
+  'product'
+
+
+  SE REFERE 
+
+  A UM OBJETO COM ESTE FORMATO:
+
+
+
+
+
+  {productData: product, quantity: cartProductData.quantity}
+
+
+
+
+
+
+
+
+  ----> 
+
+
+
+
+  ok... professor fez algo parecido com o que fizemos...
+
+
+
+
+
+
+
+
+  --> CONSERTEI UM POUCO  O STYLING:
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <style>
+    
+         @media(min-width: 400px) { ///EIS O CÓDIGO EM QUESTÃO.
+            .btn {
+              width: 7rem;
+            }
+         }
+    
+    </style>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <h1>Your Cart</h1>
+      <% if (cartProducts.length < 0) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% for (let product of cartProducts) { %>
+            <li>
+              <h1><%= product.productData.title %> (x<%= product.quantity %>)</h1>
+              <form action="/cart/delete-cart-item" method="POST">
+              <button class="btn" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% } %>
+        </ul>
+        <% } %>
+
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+OK.... AGORA PRECISAMOS 
+
+ESCREVER A LÓGICA __ PARA __ DELETAR AQUELE 
+
+
+ESPECÍFICO 
+
+
+'product', COM SUA QUANTITY,
+
+
+
+___ DE NOSSO ARQUIVO 
+
+
+'cart.json'... (com 'writeFile'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS PRECISAR DE LÓGICA 
+
+
+
+EM 
+
+
+'cart.js',
+
+NOSSO MODEl...
+
+
+
+
+
+
+
+--> TALVEZ USAR ESTA FUNÇÃO:
+
+
+
+
+
+static deleteProductFromCart(productId, productPrice) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+        const cart = JSON.parse(fileContent);
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity;
+        updatedCart.products = updatedCart.products.filter(
+          (prod) => {
+              prod.id !== productId
+          }
+        )
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+            fs.writeFile(
+              filePath, JSON.stringify(updatedCart), 
+              (err) => {
+                  console.log(err);
+              }
+            )
+    })
+}
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+--> só vamos precisar do 'productPrice',
+
+que deve ser tirado DE ALGUM LUGAR...
+
+
+
+
+
+------------
+
+
+
+
+
+NÓS JÁ TEMOS ESSA INFO, JÁ TEMOS O 'price'... ---> 
+
+
+
+
+
+pode ser encontrado aqui, em 'cartProducts':
+
+
+
+
+
+
+
+
+[
+  {
+    productData: {
+      id: '0.5207285031223152',      
+      title: 'CACACAAAC2211',        
+      imageUrl: 'TESTE',
+      description: 'asassa',
+      price: '0000000000000000222222'
+    },
+    quantity: 1
+  },
+  {
+    productData: {
+      id: '0.2683474077265857',
+      title: 'asasasa',
+      imageUrl: 'IMAGEM',
+      description: 'asasasasas',
+      price: '212212121'
+    },
+    quantity: 2
+  }
+]
+
+
+
+
+
+
+-------------> basta acessar cada 1 dos 'price' 
+
+
+nos nossos objetos product...
+
+
+PARA ISSO, 
+
+
+
+VAMOS 
+
+CHAMAR 
+
+
+A FUNÇÃO/MÉTODO 
+
+'deleteProductFromCart' 
+
+
+
+
+de um modo um pouco específico...
+
+
+
+
+
+
+
+---> vamos querer remover esse PRODUCT __ SÓ DO CART__, E NÃO DA PRODUCTLIST EM SI...

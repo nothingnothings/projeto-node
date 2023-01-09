@@ -1,0 +1,1619 @@
+
+
+
+
+
+
+
+
+
+agora vamos READICIONAR PAGINATION NO NOSSO APP,
+
+
+mas 
+
+dessa vez em um app com RESTFUL API....
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS JÁ VIMOS PAGINATION NO PASSADO,
+
+
+
+
+
+e temos este código 
+
+para 
+
+
+servir de exemplo:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+const pageNumber = req.query.page || 1; ///se user NÃO INPUTTAR NADA no espaço dos 'query params' (parte de '/?page=xxx'), SERÁ ADOTADO O VALOR BASE DE '1', para pegar a primeira página, e evitar o erro 500 de nosso app...
+
+let totalItems;
+
+
+
+console.log(pageNumber, 'LINE');
+
+
+Product.countDocuments().then(
+
+(numProducts) => {
+
+
+  totalItems = numProducts;
+
+  return  Product.find() 
+  .skip(
+    (pageNumber - 1) * ITEMS_PER_PAGE    /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (2 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+  )  ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+ .limit(ITEMS_PER_PAGE) ///VAI LIMITAR A '2' (valor desse parâmetro) O NÚMERO ___ DE ITEMS/ENTRIES QUE VAMOS DEIXAR SER FETCHEADOS LÁ DA COLLECTION NA NOSSA DATABASE... (assim reduzimos a quantidade de data fetcheada.... pq fetchear todos os products/documents seria WASTEFUL e demorado)...
+ 
+ // .select('title price -_id') ////É A MESMA COISA QUE O SEGUNDO PARÂMETRO DE '.populate()', mas atua sobre OS PRODUCTS RETRIEVADOS por meio de '.find()', e não a DATA RETRIEVADA LÁ DO 'RELATED OBJECT' (que é 'user', no caso desse call inferior de '.populate()')....
+   .populate('userId', 'name') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ... ---> JÁ O SEGUNDO PARÂMETRO CUMPRE A MESMA TAREFA DE '.select('fields a serem retrievados de sua database...')'; OU SEJA, NELE VOCÊ PASSA, COMO PARÂMETRO, UMA STRING DIZENDO __QUAIS __ PRODUCTS __ DEVEM SER __RETRIEVADOS DA DATABASE... (é um parâmetro opcional, exatamente como '.select()' o é...)
+   .then((products) => {
+     console.log(products);
+
+     // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+     res.render('shop/product-list', {
+       prods: products,
+       pageTitle: 'Shop',
+       path: '/products',
+       productCSS: true,
+       activeShop: true,
+       hasProducts: products.length > 0,
+      //  totalPages: totalItems, ////eis o código em questão.
+      currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+       hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+       hasPreviousPage: +pageNumber > 1,
+       nextPageNumber: +pageNumber + 1,
+       previousPageNumber: pageNumber - 1,
+       lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE), ///vai nos outputtar a MAIOR PAGE POSSÍVEL de nosso app, dada a quantidade atual de 'products/documents'...
+      paginationPath: '/products' ///usado no NOSSO INCLUDE DE 'pagination'...
+     });
+   })
+}
+)
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+-> esse exemplo de código aí é __ MUITO ÚTIL...___
+
+
+
+
+
+
+
+
+
+
+
+
+----> no nosso app REST,
+
+
+até agora,
+
+
+temos 
+
+
+este controller aqui, para fazer o fetch dos 'post':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+
+
+
+
+
+
+  Post.find({})
+    .then((posts) => {
+      if (!posts) {
+        const error = new Error(
+          'There was a problem, and no posts could be fetched.'
+        );
+        error.statusCode(404);
+        throw error;
+      }
+      res.status(200).json({
+        ///código que fazia return de DUMMY POSTS...
+        message: 'Posts fetched successfully',
+        posts: posts,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+A PRIMEIRA COISA QUE DEVEMOS FAZER, NO CASO,
+
+É 
+
+ADICIONAR
+
+
+AQUELE 
+
+
+
+ID/NÚMERO DA PÁGINA,
+
+
+que 
+
+será 
+
+representado 
+
+
+
+por algo no estilo de 
+
+
+
+''
+
+const pageNumber = req.query.page || 1;
+
+
+
+'''
+
+
+
+
+
+
+
+POR ISSO, ESCREVEMOS:
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+
+
+
+const pageNumber = req.query.page || 1; 
+
+
+
+  Post.find({})
+    .then((posts) => {
+      if (!posts) {
+        const error = new Error(
+          'There was a problem, and no posts could be fetched.'
+        );
+        error.statusCode(404);
+        throw error;
+      }
+      res.status(200).json({
+        ///código que fazia return de DUMMY POSTS...
+        message: 'Posts fetched successfully',
+        posts: posts,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+no approach do professor, é claro,
+
+NÓS TAMBÉM 
+
+
+DEPENDÍAMOS DE UMA CONSTANTE GLOBAL DE 
+
+'ITEMS_PER_PAGE',
+
+algo assim.... --> isso é bem útil,
+
+
+
+pq 
+
+
+
+nos deixa settar quantos items queremos por page,
+
+
+a partir de 1 única constante...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const ITEMS_PER_PAGE = 10;
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+
+
+
+const pageNumber = req.query.page || 1; 
+
+
+
+  Post.find({})
+    .then((posts) => {
+      if (!posts) {
+        const error = new Error(
+          'There was a problem, and no posts could be fetched.'
+        );
+        error.statusCode(404);
+        throw error;
+      }
+      res.status(200).json({
+        ///código que fazia return de DUMMY POSTS...
+        message: 'Posts fetched successfully',
+        posts: posts,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+AGORA, PORTANTO, FICAREMOS COM 10 ITEMS POR PAGE,
+
+
+
+se escrevermos a lógica necessária...
+
+
+
+
+
+--> para isso,
+
+
+provavelmente usaremos 
+
+
+
+AQUELA FUNÇÃO DE 
+
+
+
+
+'xxxx.countDocuments()',
+
+
+DO MONGOOSE....
+
+
+
+
+
+
+
+
+
+--> lembre-se: CONTAR DOCUMETNS é bem mais rápido do que realizar operações com documents...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+const pageNumber = req.query.page || 1; 
+
+
+
+let totalItems; 
+
+
+
+Post.countDocuments()
+.then(
+  (numPosts) => {
+
+    totalItems = numPosts;  ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+
+
+  }
+)
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+--> isso feito,
+
+
+
+vamos começar com 
+
+
+'Post.find()' 
+
+
+
+
+
+dentro 
+
+de esse 
+
+'countDocuments()',
+
+
+para que 
+
+
+
+
+
+COMEÇEMOS A BUSCA POR 'TODOS OS PRODUCTS', inicialmente...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const pageNumber = req.query.page || 1; 
+
+
+
+let totalItems; 
+
+
+
+Post.countDocuments()
+.then(
+  (numPosts) => {
+    totalItems = numPosts;  ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+
+
+
+      return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+      .skip(
+        (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+      )///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+      .limit(ITEMS_PER_PAGE)
+
+  }
+)
+
+
+
+
+
+
+
+
+
+Certo... até aí, tudo bem...
+
+
+
+
+
+
+
+
+
+
+
+
+
+VAI FICAR TIPO ASSIM, ACHO EU:
+
+
+
+
+
+
+
+
+
+  const pageNumber = req.query.page;
+
+  totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+  return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+    .skip(
+      (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+    ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+    .limit(ITEMS_PER_PAGE)
+    .then((posts) => {
+      if (!posts) {
+        res.status(404).json({
+          message: 'No posts encountered on database, please try again later.',
+        });
+
+        res.status(200).json({
+          posts: posts,
+          currentPage: +pageNumber,
+          hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+          hasPreviousPage: +pageNumber > 1,
+          nextPageNumber: +pageNumber + 1,
+          previousPageNumber: pageNumber - 1,
+          lastPage: Math.ceil(totaltems / ITEMS_PER_PAGE),
+        });
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatus(500);
+        return next(error);
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+--> minha route de 'fetch All Posts' vai ter de ser alterada,
+
+vai ficar assim:
+
+
+
+
+--> lembre-se: queries na url não precisam ser descritas nas suas routes,
+
+ e sim apenas incorporadas 
+ às urls...
+
+
+
+
+
+
+
+-----> isso significa que nossa route de 
+'getPosts'
+
+NÃO PRECISA SER ALTERADA, pode ficar igual...
+
+
+
+--> SÓ O FRONTEND TEM QUE SER AJUSTADO...
+
+
+
+
+
+VOU TESTAR LÁ NO MEU FRONTEND (tenho que ajustar algumas coisas lá....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O NOSSO FRONTEND TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('http://localhost:8080/feed/posts') //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  como visto,lá 
+
+  no 'then block'
+
+
+  DAQUELE FETCH,
+
+
+
+
+
+
+  NÓS DEVEMOS RETORNAR A DATA DOS POSTS QUE DEVEM/DEVERÃO SER RENDERIZADOS... (no caso, 10 posts... vou colocar menos, tipo 5 posts, para ficar mais conveniente)...
+
+
+
+
+
+
+
+
+
+
+
+  --> CERTO... MAS QUANDO ADICIONEI TODO ESSE CÓDIGO, MEU APP PAROU DE FUNCIONAR.. AGORA GIRA 'carregando' para sempre....
+
+
+
+
+
+
+
+
+
+
+  EXX:
+
+
+
+
+
+
+
+    const pageNumber = req.query.page;
+
+  let totalItems;
+
+  Post.countDocuments()
+    .then((numPosts) => {
+      totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+      return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+        .skip(
+          (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+        ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+        .limit(ITEMS_PER_PAGE)
+        .then((posts) => {
+          if (!posts) {
+            res.status(404).json({
+              message:
+                'No posts encountered on database, please try again later.',
+            });
+
+            res.status(200).json({
+              posts: posts,
+              currentPage: +pageNumber,
+              hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+              hasPreviousPage: +pageNumber > 1,
+              nextPageNumber: +pageNumber + 1,
+              previousPageNumber: pageNumber - 1,
+              lastPage: Math.ceil(totaltems / ITEMS_PER_PAGE),
+            });
+          }
+        });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatus(500);
+        return next(error);
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+    --> código ficou assim...
+
+
+
+
+
+    
+
+
+
+
+    --> meus posts ainda não estão sendo carregados....
+
+
+
+
+
+
+
+
+
+
+    EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      const pageNumber = req.query.page || 1;
+
+  let totalItems;
+
+  Post.countDocuments()
+    .then((numPosts) => {
+      totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+      return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+        .skip(
+          (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+        ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+        .limit(ITEMS_PER_PAGE)
+        .then((posts) => {
+          if (!posts) {
+            res.status(404).json({
+              message:
+                'No posts encountered on database, please try again later.',
+            });
+
+            res.status(200).json({
+              posts: posts,
+              currentPage: +pageNumber,
+              hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+              hasPreviousPage: +pageNumber > 1,
+              nextPageNumber: +pageNumber + 1,
+              previousPageNumber: pageNumber - 1,
+              lastPage: Math.ceil(totaltems / ITEMS_PER_PAGE),
+            });
+          }
+        });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      }
+    });
+
+
+
+
+
+
+
+
+
+    agora tento de novo....
+
+
+
+
+
+
+
+
+
+
+    --> agora, pelo menos, não recebo um erro....
+
+
+
+
+
+
+
+
+
+
+    ---> entretanto, meus posts NÃO SÃO CARREGADOS...
+
+
+
+
+
+
+    há algum problema na vinculação entre o 
+
+
+
+
+    BROWSERSIDE E O SERVERSIDE...
+
+
+
+
+
+
+
+
+    --> o estranho é que o request nunca termina de ser enviado....
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --> consegui... tinha havia colocado 2 hipóteses (A de 'não encontrei posts' e 'encontrei posts') 
+
+
+    EM UM MESMO 
+
+    IF BLOCK... (coisa burra demais)...
+
+
+
+
+
+
+
+
+
+
+    ---> ok... a pagination, agora, está QUASE __ funcionando...
+
+
+
+
+
+
+
+
+
+    --. é possível ver APENAS 5 POSTS POR PAGE,
+
+
+
+
+    MAS EU AINDA NÃO TENHO AQUELES BUTTONS QUE FAZEM 
+
+
+    A NAVIGATION EM SI....
+
+
+
+
+
+
+
+
+    ---> vou ter que codar uns buttons, aparentemente...
+
+
+
+
+
+
+
+
+    -> lá no component que tem 
+
+
+    o 
+
+
+div de 
+
+'paginator__controls'...
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO DELE É ESTE:
+
+
+
+
+import React from 'react';
+
+import './Paginator.css';
+
+const paginator = (props) => {
+  return (
+    <div className="paginator">
+      {props.children}
+      <div className="paginator__controls">
+        {props.currentPage > 1 && (
+          <button className="paginator__control" onClick={props.onPrevious}>
+            Previous
+          </button>
+        )}
+        {props.currentPage < props.lastPage && (
+          <button className="paginator__control" onClick={props.onNext}>
+            Next
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+
+export default paginator;
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ok... consegui fazer os buttons funcionar...
+
+
+
+lógica básica react... (e comunicação com o serverside)...
+
+
+
+
+
+
+
+
+
+agora só preciso fazer com que 
+
+cada 
+
+
+click nos button de 'next' e 'previous'
+
+
+
+
+
+CONSIGA ALTERAR o 
+
+
+'query'
+
+
+NA MINHA URL....
+
+
+
+
+
+
+
+
+
+
+--> só tenho que encontrar o local no meu código que faz esse 'switch'....
+
+
+
+
+
+
+
+
+
+
+
+ENTENDI... 
+
+
+
+É ESTE TRECHO AQUI( no frontend, em 'Feed.js'):
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+
+
+
+
+
+
+
+
+direction pode ser 'next' 
+
+
+ou 
+
+'previous',
+
+de acordo com o código do professor.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+COLOQUEI ISTO NA URL:
+
+
+
+
+   // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts/${this.postPage}`) //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+
+
+
+
+
+
+
+-------> mas quando fiz isso,
+
+
+
+
+MEU CÓDIGO PAROU DE FUNCIONAR... (load infinito, isso ocorre pq 
+
+
+nossa route de 'getPosts' está configurada sem 
+
+um 
+
+':page'....) -------> posso colocar 
+
+esse 
+
+
+':page' 
+
+
+
+na minha route,
+
+
+sem problemas, acho....
+
+
+
+
+
+
+
+
+
+
+
+--> ESTOU COM BUGS NO RENDER DOS POSTS,
+
+
+MAS 
+
+
+ESTE CÓDIGO AQUI FUNCIONOU:
+
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      console.log(this.state.postPage)
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    if (direction === 'previous') {
+ 
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${this.state.postPage}`) //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------> ou seja,
+
+  eu encriptei o 'page number'
+
+  LÁ 
+
+
+
+
+  NA URL,
+
+
+
+
+  nos 'query params,'
+
+  por meio daquela 
+
+  sintaxe de 
+
+
+
+  '?page={this.state.postPage}'
+
+
+
+
+
+
+
+
+
+
+  --> ISSO, LÁ NO CONTROLLER DE 'Feed.js',
+
+
+
+  É EXTRAÍDO POR MEIO DA ESCRITA DE 
+
+
+  'req.query.page'...
+
+
+
+
+
+
+
+
+
+
+  --> só o render da page está meio bugado... 
+
+
+
+
+
+
+
+
+
+
+  ---> estou com 4 pages, quando deveria ter apenas duas....
+
+
+
+
+
+
+
+
+
+
+
+  --> isso está acontecendo pq estou recebendo 2 requests de 
+
+
+  'posts?page=1'.... (
+
+
+
+    em vez de 
+
+
+
+    'posts?page=1'
+
+
+    e 
+
+    'posts?page=2'...
+  )
+
+
+
+
+
+  ------------------------------
+
+
+
+
+
+
+
+
+
+
+
+  não adianta.... meu código atual está todo bugado,
+
+
+  e não vai funcionar 
+
+
+
+
+
+  com essa lógica 
+
+
+  atual...
+
+  a lógica atual do controller era esta:
+
+
+
+
+
+
+
+
+  exports.getPosts = (req, res, next) => {
+  
+  //código com pagination...
+  const pageNumber = req.query.page || 1;
+
+  console.log(pageNumber);
+
+  let totalItems;
+
+  Post.countDocuments()
+    .then((numPosts) => {
+      totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+      return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+        .skip(
+          (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+        ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+        .limit(ITEMS_PER_PAGE)
+        .then((posts) => {
+          if (!posts) {
+            res.status(404).json({
+              message:
+                'No posts encountered on database, please try again later.',
+            });
+          }
+          // console.log(posts);
+          res.status(200).json({
+            posts: posts,
+            currentPage: +pageNumber,
+            totalItems: totalItems
+          });
+        });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      }
+    });
+
+
+
+
+
+
+-------------> MAS ISSO NÃO DEU CERTo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> o código do professor ficou BEM DIFERENTE do nosso:
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  const currentPage = req.query.page || 1;
+  const perPage = 2;
+  let totalItems;
+  Post.find()
+    .countDocuments()
+    .then(count => {
+      totalItems = count;
+      return Post.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
+    .then(posts => {
+      res
+        .status(200)
+        .json({
+          message: 'Fetched posts successfully.',
+          posts: posts,
+          totalItems: totalItems
+        });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+

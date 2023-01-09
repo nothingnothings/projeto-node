@@ -1,0 +1,943 @@
+
+
+PARA __PARSEAR___ 'INCOMING DATA' de novo, 
+
+MAS DESSA VEZ COM O EXPRESS.JS, 
+
+VAMOS PRECISAR, DE NOVO, 
+
+
+__dE ALGUNS DADOS___...
+
+
+
+O professor copia nossa 'tira de html' do nosso arquivo 'pure-node.js'.... 
+
+
+
+Ele vai no 
+
+
+
+'resp.send()' do arquivo app.js, no MIDDLEWARE, e substitui a nossa string BÁSICA por 
+
+essa STRING DINÂMICA...
+
+
+
+ex:
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+-------------------------------------
+
+
+
+Certo, agora tenho aquele valor dinâmico.... Vou querer outputtar O USERNAME DO USUÁRIO NAQUELE ESPAÇO...
+
+Também tenho uma FORM, aqui....
+
+
+
+Como o userName não está SEMPRE DEFINIDO na nossa página, o professor vai querer usar 
+aquele userName default de 'Unknown user', naquela variável...
+
+
+
+
+ele também vai querer usar aquele 'if check' do body, pois aquilo 
+
+
+vai deixar nós conseguirmos nosso userName 'dinâmico'... 
+
+
+
+ex(representação):
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = 'Unknown user';
+    if(body) {
+        userName = body.split('=')[1];
+    }
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+---------------------------
+
+
+
+Professor explica que, NA VERDADE, PODEMOS ___REMOVER__ O IF CHECK inteiro...
+
+
+Podemos remover ele inteiro pq NÓS VAMOS TIRAR O 'userName' DE DENTRO 
+
+DO 
+
+_______BODY____ do request  DE UMA FORMA UM POUCO DIFERENTE DAQUELA QUE USAMOS NO 'NODE.JS' puro....
+
+
+-------------------------
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+-------------------------------
+
+
+
+Em vez de MANUALMENTE PARSEARMOS O BODY do response,
+
+com o express.js nós podemos 
+
+__USAR___ UM MIDDLEWARE____  QUE FAZ 
+
+ESSE 'PARSING' DO 'BODY' PARA __NÓS____....
+
+
+---------
+
+
+Ok, mas qual é esse middleware?
+
+
+
+
+
+Professor explica que, no código, antes de nós fazermos QUALQUER COISA 
+
+COM A RESPONSE por meio daqueles '.use()'  (OU SEJA, POR MEIO DOS OUTROS MIDDLEWARE),
+
+
+
+NÓS PODEMOS ADICIONAR OUTRO MIDDLEWARE, BEM NO INÍCIO DA CHAIN DE MIDDLEWARES...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+app.use();
+
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+------------------------------------------------
+
+
+
+
+
+Nós então adicionamos a função interna a esse middleware...
+
+
+
+
+ESSA FUNÇÃO INTERNA ___TERÁ___ TODA A 'BODY PARSING LOGIC'.... ELA 
+
+TERÁ TODA A 'BODY PARSING LOGIC' PARA QUE NOS MIDDLEWARES SUBSEQUENTES 
+
+NÓS JÁ TENHAMOS 
+
+
+O 'PARSED BODY' disponível....
+
+
+(professor aqui coloca os parâmetros adequados nos slots correspondentes...).
+
+
+
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+app.use((req, resp, next) => {
+
+});
+
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+
+-----------------------------------------
+
+
+PROFESSOR DIZ QUE PODERÍAMOS CRIAR NOSSA PRÓPRIA FUNÇÃO 
+
+
+PARA PARSEAR O BODY DO INCOMING REQUEST,
+
+
+mas que EXISTEM THIRD PARTY PACKAGES (TPPs) QUE PODEM 
+
+
+SER INTEGRADAS NESSE 'middleware flow' DO EXPRESS QUE 
+
+FAZEM ISSO PARA NÓS....
+
+
+-----> ------> ------------> E ESSA PACKAGE DE PARSEAR O REQUEST BODY (e que então o coloca no OBJETO 'request')
+
+___É MUITO POPULAR____.... o nome 
+
+dela  é :         'body-parser'....
+
+
+
+
+
+
+
+
+
+
+
+(essa package PARSEIA O REQUEST BODY E ENTÃO O ADICIONA 
+NO OBJETO 'request' passado pelos middlewares...)
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+INSTALAMOS ELA COM O CÓDIGO 
+
+
+'npm install body-parser --save'...
+
+
+
+
+isso vai adicionar essa entry ao package.json..
+
+
+
+
+
+
+COM ISSO, ESSA TPP agora estará DISPONÍVEL NO SEU PROJETO, INSTALADA.
+
+
+
+
+----> agora APENAS TEMOS QUE IMPORTAR ESSA THIRD PARTY PACKAGE (como todas as outras TPPs; esse processo é necessário)....
+
+
+Colocamos 
+
+
+'const bodyParser = require('body-parser');'
+
+
+no nosso arquivo 'app.js'...
+
+-------------------------------------------------
+
+isso vai importar o MÓDULO 'body-parser'...
+
+
+
+
+---------------------------------
+
+
+ISSO FEITO, 
+
+
+
+ESSA THIRD PARTY PACKAGE PODERÁ AGORA SER USADA 
+
+NO NOSSO CÓDIGO por meio 
+
+
+da SIMPLES REFERÊNCIA A ELA, NOS NOSSOS MIDDLEWARES... (nesse caso, NO PRIMEIRO MIDDLEWARE da chain de middlewares...)
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+app.use(bodyParser); ////////EIS O CÓDIGO EM QUESTÃO...
+
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+
+----------------------------------
+
+
+
+
+
+ENTRETANTO, APENAS 
+
+O CALL DE 
+
+
+'app.use(bodyParser);' 
+
+
+NÃO BASTA...
+
+
+
+DEVEMOS ESCOLHER ALGUM DOS MÉTODOS NO INTERIOR DE 'bodyParser'...
+
+
+
+
+há métodos 
+
+
+como 
+
+
+
+'.json()' -----------> ESTE MÉTODO É USADO QUANDO TEMOS JSON DATA.... (se tivéssemos json data, teríamos de o utilizar...).
+
+
+
+
+
+
+
+e 
+
+
+
+'.toString()'...
+
+
+
+
+
+e 
+
+
+
+
+'.urlencoded()' ----------------> ESSE É O MÉTODO QUE UTILIZAREMOS.... é utilizado para CONVERTER A __fORM DATA___ que nós VAMOS RECEBER___.... 
+
+
+
+
+
+
+REPRESENTAÇÃO:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+app.use(bodyParser.urlencoded()); ////////EIS O CÓDIGO EM QUESTÃO...
+
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+----> ESSE PACKAGE VAI ADICIONAR UM 
+
+
+___"""MIDDLEWARE DEFAULT"""____
+
+
+
+(ou seja, uma função 
+
+
+como 
+
+"app.use((req, res, next) => {
+
+
+next();
+});"
+
+
+
+
+),
+
+
+AO  MIDDLEWARE FLOW DO NOSSO CÓDIGO....
+
+
+
+
+esse 'middleware default' adicionado por essa package 
+
+
+VAI PARSEAR  E EXTRAIR o 'incoming request body' E ENTÃO 
+
+
+ADICIONAR ESSE 'parsed body' DE VOLTA 
+
+
+AO FIELD 'body' DENTRO 
+
+
+DO OBJETO 'req' (request) NO NOSSO MIDDLEWARE (no nosso middleware flow, para ser mais exato).
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+Feita essa mudança, agora é possível, diz o professor, settar 
+
+nosso 'userName' (que agora deverá ser UMA CONSTANTE) como IGUAL 
+
+
+
+A 
+
+
+'req.body'....
+
+
+
+NA VERDADE,
+
+
+
+como igual a 
+
+
+
+'req.body.username'  (mas pq 'username'? PQ 'username' É O NOME DO INPUT, VISTO NAQUELA FITA DE CÓDIGO HTML:      ''     `<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`    ''                     )
+
+(isso significa que 'username' SERÁ A KEY PELA QUAL PODEREMOS ACESSAR O valor do FIELD, do 'input field'.... )
+
+
+----------------------------
+
+
+REPRESENTAÇÃO:
+
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+app.use(bodyParser.urlencoded()); ////////EIS O CÓDIGO EM QUESTÃO...
+
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username; ////////EIS O CÓDIGO EM QUESTÃO...
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+
+
+---------------------------------
+
+
+
+
+Certo, mas ainda precisamos daquele valor de 'Unknown user' PARA A HIPÓTESE 
+
+DE NADA AINDA TER SIDO DEFINIDO COMO VALOR DE USUÁRIO NA NOSSA PÁGINA... (undefined)
+
+para isso, o professor se utiliza do operador || (or)....
+
+
+ex:
+
+
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+app.use(bodyParser.urlencoded()); ////////EIS O CÓDIGO EM QUESTÃO...
+
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+----------------------------------------------
+
+
+
+COM ISSO, AGORA DEVEMOS REINICIAR O NOSSO SERVIDOR...
+
+
+---> entretanto, agora tenho um PROBLEMA.
+
+
+o ESLint está dizendo que o 
+
+body-parser está DEPRECADO...((obsoleto))...
+
+
+
+
+
+Certo... acho que resolvi o problema:
+
+
+
+//app.use(bodyParser.urlencoded({extended: true})); //////EIS O CÓDIGO-REFERENCIA DO BODYPARSER... tem varios métodos, que podemos ver se digitarmos '.' MAS ESSE BODYPARSER É UMA BOSTA... FOI INTEGRADO AO NODE.JS, POR ISSO NÃO PRECISAMOS MAIS DELE... Use a versão do NODE.JS, que não está deprecada...
+
+
+app.use(express.urlencoded({extended: true})); ///////ESSE CÓDIGO FAZ A MESMA COISA DO DE CIMA (teoricamente)... mas não ESTÁ DEPRECADO, o que é melhor. (DEVEMOS USAR ESSE CÓDIGO)...
+
+
+
+--------------------------------------
+
+
+Os métodos de 'bodyParser' FORAM 
+
+MIGRADOS PARA 
+
+
+O 'express'... por isso não precisamos 
+
+MAIS DA THIRD PARTY PACKAGE Do 'bodyparser'..
+
+
+(e é por isso que podemos usar urlencoded() e 'json()' no 
+
+express....)
+
+
+
+-----------------------------------------------------------------
+
+
+
+O professor fala para nós definirmos 'extended' como ____FALSE____...
+
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+
+//const bodyParser = require('body-parser'); //////ESTE CÓDIGO É NECESSÁRIO PARA INTRODUZIR ESSA THIRD PARTY PACKAGE DE 'body-parser' AO NOSSO CÓDIGO... ELA É MUITO POPULAR (e conveniente).
+//CÓDIGO DE MERDA, DEPRECADO.
+
+
+
+
+const app = express();
+
+
+
+//app.use(bodyParser.urlencoded({extended: true})); //////EIS O CÓDIGO-REFERENCIA DO BODYPARSER... tem varios métodos, que podemos ver se digitarmos '.' MAS ESSE BODYPARSER É UMA BOSTA... FOI INTEGRADO AO NODE.JS, POR ISSO NÃO PRECISAMOS MAIS DELE... Use a versão do NODE.JS, que não está deprecada...
+
+
+app.use(express.urlencoded({extended: false})); ///////ESSE CÓDIGO FAZ A MESMA COISA DO DE CIMA (teoricamente)... mas não ESTÁ DEPRECADO, o que é melhor
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    let userName = req.body.username || 'Unknown user';
+    /*if(body) {      -----------------> ESSE IF CHECK DO BODY NÃO É NECESSÁRIO NO 'EXPRESS.JS'... só é necessário no node.js PURO.
+        userName = body.split('=')[1];
+    } */
+    //resp.send('<h1>Hello World!</h1>');
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+})  
+
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+
+-------------------------------
+
+
+
+
+Mas o que diabos esse objeto com a propriedade 
+
+
+'extended' faz?
+
+
+
+Bem, isso vai controlar 
+
+___COMO ____ O REQUEST __ BODY __ SERÁ PARSEADO... 
+
+(professor explica que o valor padrão, 'false', é apropriado...)
+
+
+
+
+
+
+EXPLICAÇÃO:
+
+
+A new body object containing the parsed data
+ is populated on the request object after the middleware
+  (i.e. req.body). This object will contain key-value pairs, 
+  where the value can be a string or array (when extended is false), 
+  or any type (when extended is true).
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+CERTO.
+
+
+Agora podemos começar nosso server sem ter nenhum aviso...
+
+
+
+Agora vemos 'hi, unknown user...'
+
+
+
+
+
+CONSEGUIMOS VER NOSSO INPUT NO CAMPO DO USUÁRIO...
+
+
+Isso funciona por causa da package do EXPRESS/BODY-PARSER 
+
+que faz a conversão do request automaticamente para nós....
+
+
+
+---> é assim, portanto, que podemos PARSEAR O BODY 
+
+COM A AJUDA 
+
+DESSA PACKAGE( não, na verdade, com a ajuda do express, que INCORPOROU os métodos 
+
+de 'body-parser'...) 
+
+
+
+
+COM A AJUDA DO EXPRESS....
+
+
+
+---> é ele que nos deixa fazer isso, deixa tudo mais conveniente... mais conveniente do que parsear manualente o body...
+
+
+
+---------------------------
+
+
+
+
+
+----> com isso, agora temos um setup BÁSICO DE 'EXPRESS.JS' com node.js... 
+
+
+
+MAS SERIA LEGAL PODER MANDAR DE VOLTA (pelas responses) NÃO SÓ 
+
+
+CÓDIGO HTML como aquela fita de html em 'resp.send()',
+
+
+
+aquela FITA ___iNLINE___ de html  dentro do nosso arquivo javascript, 
+
+
+MAS TAMBÉM __ PODER 
+
+ENVIAR DE VOLTA ___ UM 
+
+
+
+_______aRQUIVO HTML SEPARADO_____ ou até mesmo 
+
+enviar de volta um 'ARQUIVO DINÂMICO TEMPLATE' ('a dynamic template file'), 
+
+um arquivo template dinâmico template QUE RENDERIZARIA HTML, MAS QUE 
+
+TAMBÉM NOS DARIA/nos dá ___ ''''DYNAMIC INJECTION POINTS''''___, 
+
+pontos de injeção EM QUE PODEREMOS 
+
+INJETAR NOSSO CONTEÚDO DINÂMICO... 
+
+(pq, tipicamente, é isso que vamos querer fazer...) ----> nós tipicamente 
+sempre queremos 
+
+PREPARAR UM CONTEÚDO/UM CERTO CONTEÚDO NO SERVER E ENTÃO CRIAR  o arquivo/um arquivo html
+
+HTML, o arquivo HTML QUE TERÁ ___ALGUNS ELEMENTOS __ ESTÁTICOS (que sempre serão os mesmos) 
+E ALGUNS 
+
+ELEMENTOS __DINÂMICOS__, ELEMENTOS DINÂMICOS QUE DEPENDEM/DEPENDERÃO DOS __DADOS__ (data) que 
+
+NÓS GERAMOS/acabamos gerando NO SERVIDOR....
+
+E É ISSO QUE FAREMOS EM SEGUIDA, NA PRÓXIMA LIÇÃO.

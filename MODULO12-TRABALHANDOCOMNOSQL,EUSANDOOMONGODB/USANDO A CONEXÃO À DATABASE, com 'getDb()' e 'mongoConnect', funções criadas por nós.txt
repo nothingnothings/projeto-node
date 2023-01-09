@@ -1,0 +1,1632 @@
+
+
+
+
+
+
+
+--> OK... ESTAMOS IMPORTando 
+
+
+
+
+'const getDb = require('../util/database').getDb',
+
+
+
+
+
+
+e isso é algo que NOS DEIXA 
+
+CONSEGUIR 
+
+ACESSO 
+
+à 
+
+'DATABASE CONNECTION',
+
+
+
+conexão que 
+
+SETTAMOS __ INICIALMENTE,
+
+QUANDO COMEÇAMOS NOSSO SERVER...
+
+
+(
+
+    isso visto em:
+
+
+
+    ''''
+
+    mongoConnect(  
+  () => { 
+
+    app.listen(3000);
+  }
+
+); 
+
+
+''',
+
+LÁ EM 
+
+'app.js'...
+) -------> ESSE É UM CONCEITO _ QUE VAMOS PODER __ REUTILIZAR,
+
+DIZ O PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+----> por isso, lá no 
+
+
+model de 'product.js',
+
+
+
+
+
+NO MÉTODO 
+
+'save()',
+
+
+
+
+NÓS PODEMOS CONSEGUIR ACCESS 
+
+A NOSSA DATABASE 
+
+
+
+
+POR MEIO DO CALL DE 
+
+
+
+'getDb()',
+
+
+(QUE 
+
+POSSUI ESTE CÓDIGO:
+
+
+
+
+
+
+const getDb = () => {
+
+  if(_db) {
+    return _db;
+  } else {
+
+    throw 'No database found!';
+  }
+}
+
+
+
+
+)
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+OK.... DEIXE-ME ENTENDER:
+
+
+
+
+
+
+
+
+
+1) quando iniciamos nosso app, com app.js, vamos executar ESTE CÓDIGO AQUI:
+
+
+''''''''''
+
+
+mongoConnect(  
+  () => { 
+
+    app.listen(3000);
+  }
+
+); 
+
+
+
+''''''''''''''
+
+
+
+
+
+o código de 'mongoConnect()' 
+
+é:
+
+
+
+
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+    .then(
+      (client) => {
+        _db = client.db();
+        callback(); ////ISTO É MUITO IMPORTANTE....
+      }
+    )
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
+};
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+como você pode perceber, aquele parâmetro 'callback' AINDA _É IMPORTANTE_ nesse 
+
+'mongoConnect'; A ÚNICA DIFERENÇA, AGORA, É QUE NÃO VAMOS MAIS PASSAR 'client' como parâmetro desse callback,
+
+
+e 
+
+sim vamos só 
+
+rodar o callback de forma 'empty' (
+
+  o que fará com que 
+
+  o 
+
+  código de 
+
+
+  '() => {
+    app.listen(3000)
+  }
+  ',
+
+
+
+  lá em 
+
+  'app.js',
+
+
+  SEJA __ EXECUTADO___...
+)
+
+
+
+
+
+certo... até aí, tudo bem... 
+
+
+
+
+
+
+
+2) QUANDO O CÓDIGO DE 'mongoConnect' É EXECUTADO, lá em 'app.js',
+
+ele acaba CRIANDO UMA VARIÁVEL DE 
+
+'_db' em ALGUM LUGAR.... (é durante o runtime, não sei se '''fica'''' em 'app.js' ou em 
+
+'database.js'.... ) 
+
+
+
+
+
+
+
+3) ESSA VARIÁVEL '_db', que passa a ser DEFINED, defined como sendo o NOSSO CLIENT EM SI, por conta do código de 
+
+'mongoConnect',
+
+
+
+
+__ SERÁ __ USADA EM TODAS AS OPERAÇÕES ENVOLVENDO A DATABASE NO NOSSO CÓDIGO,
+
+tudo por meio 
+
+
+
+DA FUNÇÃO DE 
+
+
+'getDb()', __ QUE ___ VAI CHECAR __ PELA 
+
+EXISTÊNCIA DE 
+
+'_db',
+
+
+E ENTÃO 
+
+__ RETORNAR A CONEXÃO à DATABASE, OU RETORNAR UM _ ERRO_, dependendo 
+
+do 
+
+'define' ou 'undefine' dessa variável '_db',
+
+que segura 
+
+nosso client....
+
+
+
+ex:
+
+
+
+const getDb = () => {
+  if (_db) {
+    return _db;
+  } else {
+    throw 'No database found!';
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+------> E É __ EXATAMENTE POR ISSO 
+
+que 
+
+
+
+VAMOS IR CHAMANDO 'getDb()'
+
+
+
+EM VÁRIOS LOCAIS DE NOSSO APP, quando quisermos 
+
+___ EXECUTAR OPERAÇÕES ENVOLVENDO A DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+LÁ 
+
+EM 
+
+
+
+'app.js'
+
+
+TEREMOS 
+
+SÓ 
+O 
+
+
+'mongoConnect' IMPORTADO,
+
+
+ao passo 
+
+
+
+que 
+
+EM 
+
+
+TODOS OS OUTROS ARQUIVOS/CONTROLLERS NÓS 
+
+TEREMOS 
+
+
+
+'getDb()',
+
+que 
+se aproveita desse call de 'mongoConnect' 
+
+em app.js....
+
+
+
+
+
+
+
+'ve been reading and reading and still am confused on what
+ is the best way to share the same database (MongoDb) connection
+  across whole NodeJs app. As I understand connection should be
+   open when app starts and reused between modules. My current idea 
+   of the best way is that server.js
+    (main file where everything starts) connects to database and
+     creates object variable that is passed to modules. 
+     Once connected this variable will be used by modules code as 
+     necessary and this connection stays open. E.g.:
+
+
+
+
+
+
+
+RESPOSTA (é a mesma coisa que o professor fez):
+
+
+
+
+
+You can create a mongoUtil.js module that has
+functions to both connect to mongo and return a mongo db instance:
+
+
+
+
+
+
+
+
+const MongoClient = require( 'mongodb' ).MongoClient;
+const url = "mongodb://localhost:27017";
+
+var _db;
+
+module.exports = {
+
+  connectToServer: function( callback ) {
+    MongoClient.connect( url,  { useNewUrlParser: true }, function( err, client ) {
+      _db  = client.db('test_db');
+      return callback( err );
+    } );
+  },
+
+  getDb: function() {
+    return _db;
+  }
+};
+
+
+
+To use it, you would do this in your app.js:
+
+
+var mongoUtil = require( 'mongoUtil' );
+
+mongoUtil.connectToServer( function( err, client ) {
+  if (err) console.log(err);
+  // start the rest of your app here
+} );
+
+
+
+
+And then, when you need access to mongo somewhere else, like in another .js file, you can do this:
+
+var mongoUtil = require( 'mongoUtil' );
+var db = mongoUtil.getDb();
+
+db.collection( 'users' ).find();
+
+
+
+-------------------------------
+
+
+
+
+
+E A RESPOSTA QUE EU QUERIA:
+
+
+
+
+
+
+The reason this works is that in node, 
+when modules are require'd, they only get loaded/sourced 
+
+__ONCE__ so you will only ever end up with one instance
+ of _db and mongoUtil.getDb() will always return that same instance.
+
+Note, code not tested.
+
+
+
+
+
+
+
+
+(E É EXATAMENTE POR ISSO QUE 
+
+EU POSSO 
+
+ME APROVEITAR DO '_db' criado a partir do 'mongoConnect', lá no 'app.js', no código executado INICIALMENTE NO NOSSO APP...)
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ok.... --> vamos até o 
+
+
+
+'product.js',
+
+
+
+no 
+
+
+método 
+
+
+'product.js'... 
+
+
+
+
+
+
+
+-> VAMOS CONSEGUIR ACESSO 
+
+
+
+A DATABASE 
+
+por meio do 
+
+call de 
+
+
+'getDb()',
+
+e aí 
+
+
+por meio do STORE 
+
+desse 
+
+call em uma variável de nome 'db'...
+
+
+
+
+
+ex:
+
+
+
+
+save() {
+
+
+
+  const db = getDb();
+
+
+
+
+}
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+O código de 'getDb()'
+
+era aquele simples 
+
+
+''
+
+const getDb = () => {
+  if (_db) {
+    return _db;
+  } else {
+    throw 'No database found!';
+  }
+};
+
+
+'''
+
+
+
+
+
+
+
+
+--> SE TUDO DER CERTO,
+
+VAMOS TER 
+
+NOSSA CONEXÃO à DATABASE...
+
+
+
+
+
+
+
+
+--> A PARTIR 
+
+DESSA CONST 
+
+'db',
+
+PODEMOS 
+
+REALIZAR 
+
+
+
+OPERAÇÕES
+
+
+
+
+NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+--> vamos, a partir de 
+
+'save()',
+
+por exemplo,
+
+
+
+
+CRIAR __ UM 
+
+
+__ NOVO 
+
+DOCUMENT 
+
+
+NA NOSSA 
+
+DATABASE 
+
+
+DO MONGODB....
+
+
+
+
+
+
+imagino que fique algo tipo isto:
+
+
+
+save() {
+
+
+  const db = getDb();
+
+
+  db.collection('products').insertOne(this);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO COMPLETO FICARIA TIPO ASSIM:
+
+
+
+
+
+
+const getDb = require('../util/database').getDb; ///SINTAXE DE IMPORTS UM POUCO MAIS REBUSCADA....
+
+class Product {
+  constructor(title, price, imageUrl, description) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+  }
+
+  save() {
+   const db = getDb();
+
+   db.collection('products').insertOne(this);
+  }
+}
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+'products', no caso,
+
+
+SERÁ 
+
+CRIADO 
+NA 
+
+DATABASE 
+
+'shop',
+
+dentro do cluster0,
+
+no na nossa 
+database geral do mongodb...
+
+
+
+
+
+
+
+
+
+
+certo..... ----> PROFESSOR FAZ EXATAMENTE ISSO....
+
+
+
+
+
+
+
+
+---> o método 'insertOne' 
+
+
+vai 
+
+inserir
+ 
+
+
+
+o negócio que você especifica no parâmetro...
+
+
+
+
+
+--> NA COLLECTION VOCê PODE EXECUTAR 
+
+UM MONTE DE 
+
+MÉTODOS 
+
+
+
+
+'mongoDB'... -----> 
+
+
+
+
+
+O PROFESSOR FALA SOBRE TODOS ESSES MÉTODOS NO CURSO 
+
+COMPLETO 
+
+
+DO 
+
+MONGODB... (CRUD OPERATIONS... --> CREATE, READ, UPDATE, DELETE...)
+
+
+
+
+
+
+
+
+
+É UM ÓTIMO 
+
+
+LUGAR PARA VER MAIS COISAS....
+
+
+
+
+
+
+
+
+-> OK, RODAMOS 
+
+'insertOne',
+
+
+
+ou então 
+
+
+'insertMany()'...
+
+
+
+
+
+
+
+-> A DIFERENÇA DE 
+
+'insertOne()'
+
+
+para 
+
+'insertMany()'
+
+É QUE 
+
+
+INSERTMANY __ ACEITA/EXIGE ___ UM ARRAY DE 
+
+JAVASCRIPT OBJECTS QUE 
+
+VOCÊ VAI QUERER 
+
+INSERIR...
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER INSERIR APENAS 1 OBJECT, APENAS 1 DOCUMENT... -----.
+
+
+
+
+
+
+
+VAMOS INSERIR
+
+
+
+'this',
+
+
+que 
+
+REPRESENTA 
+
+
+
+
+
+NOSSO 
+
+PRODUCT... --> 
+
+aí,
+
+lá no controller 
+
+de 
+
+
+
+'postAddProduct',
+
+
+
+
+PROVAVELMENTE ESCREVERÍAMOS ALGO COMO 
+
+
+
+'
+
+
+
+const newProduct = new Product('título', 122121, 'descrição de alguma coisa', algumaimageurl);'
+
+newProduct.save();
+
+
+''
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK... MAS PROFESSOR EXPLICA 
+
+
+
+ QUE 
+
+
+
+ o CÓDIGO QUE COLOCAMOS DENTRO 
+
+ DE 
+
+ 'insertOne()'
+
+
+ NÃO É PROPRIAMENTE 
+
+
+ JSON,
+
+
+
+
+ __ E SIM __ UM OBJETO JAVASCRIPT NORMAL/LINGUAGEM JAVASCRIPT COMUM,
+
+
+ MAS 
+
+ QUE 
+
+ SERÁ 
+ EVENTUALMENTE CONVERTIDA 
+
+
+
+ EM 
+
+ JSON/BSON por meio do mongodb...
+
+
+
+
+
+
+
+
+ --> ENTRETANTO, AQUI, NO NOSSO CASO,
+
+
+
+ __ É ESSENCIALMENTE O PRODUCT QUE VAMOS QUERER INSERIR... --> É POR ISSO QUE 
+
+ O 
+ PROFESSOR 
+
+ ESCREVE 
+
+
+ 'this'...
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+ const getDb = require('../util/database').getDb; ///SINTAXE DE IMPORTS UM POUCO MAIS REBUSCADA....
+
+class Product {
+  constructor(title, price, imageUrl, description) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+  }
+
+  save() {
+   const db = getDb();
+
+   db.collection('products').insertOne(this) ////EIS O CÓDIGO EM QUESTÃO.
+  }
+}
+
+module.exports = Product;
+
+
+------------------------------------
+
+
+
+
+
+OK.... 
+
+
+E COMO EU IMAGINEI,
+
+
+ESSE 
+
+
+MÉTODO 
+
+'db.collection()'
+
+VAI 
+
+
+NOS RETORNAR UMA PROMISE,
+
+por isso 
+
+podemos 
+
+acrescentar 
+
+'.then().catch()',
+
+
+
+
+
+
+
+
+E AÍ 
+
+PODEMOS 
+
+console.loggar quaisquer erros.... --> 
+
+
+
+TAMBÉM 
+
+PODEMOS 
+
+
+
+CONSOLE.LOGGAR O  RESUTLADO (result)...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+ const getDb = require('../util/database').getDb; ///SINTAXE DE IMPORTS UM POUCO MAIS REBUSCADA....
+
+class Product {
+  constructor(title, price, imageUrl, description) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+  }
+
+  save() {
+   const db = getDb();
+
+   db.collection('products').insertOne(this)
+   .then(
+     (result) => {
+       console.log(result);
+     }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   )
+  }
+}
+
+module.exports = Product;
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK... AGORA PODEMOS IR ATÉ 
+
+O 
+
+NOSSO CONTROLLER 
+
+DE 
+
+'postAddProduct',
+
+
+
+
+NO CONTROLLER 
+DE 
+
+'admin.js'....
+
+
+
+
+
+
+
+
+
+ESCREVEMOS TIPO ISTO:
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+
+
+  const newProduct = Product(title, price, imageUrl, description);
+
+    newProduct.save();
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+--> PROFESSOR EXPLICA QUE,
+
+POR ENQUANTO,
+
+VAMOS TER QUE 
+
+
+'CREATE A PRODUCT' 
+
+
+
+___SEM __ O STORE DE ALGO VINCULANDO ESSE PRODUCT 
+
+
+
+A UM USER,
+
+
+coisa que 
+
+tínhamos 
+
+
+com o 
+
+
+
+
+sequelize,
+
+com aquele código de 
+
+
+
+'''
+
+// req.user.createProduct( ///////MÉTODO ''MÁGICO'''__ DO sequelize.... --> é mais conveniente do que o código de '.create()' visto logo abaixo, pois vai ADICIONAR o campo 'userId' ao nosso 'Product' AUTOMATICAMENTE... (não vamos precisar escrever aquele 'userId: req.user.id', visto logo abaixo no '.create()')
+  //   {
+  //     title: req.body.title,
+  //     price: req.body.price,
+  //     imageUrl: req.body.imageUrl,
+  //     description: req.body.description
+
+  //       ///userId: req.user.id; //////FIELD e valor de field adicionado __ AUTOMATICAMENTE pelo sequelize, por estarmos usando esse MAGIC METHOD de 'req.user.createProduct()'  (pq esse 'createProduct' realmente passa a existir dentro de 'user', devido à relation estabelecida em app.js pela escrita de 'Product.belongsTo(user)'....)
+
+
+  //   }
+
+  // )
+  // .then((result) => {
+  //   console.log(result);
+  //   res.redirect('/admin/product-list-admin');
+  // })
+  // .catch((err) => {
+  //   console.log(err);
+  // });
+
+
+
+
+'''''
+
+
+
+
+
+
+
+
+--> VAMOS REINTRODUZIR ESSE CONCEITO DE 'VINCULAR ALGUMA COISA A OUTRA COISA' (como products a USERS),
+
+
+
+MAIS TARDE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ NAS ROUTES DE 
+
+'admin.js',
+
+
+
+
+
+PROFESSOR DESABILITA TODAS AS ROUTES QUE 
+
+NÃO FUNCIONAM POR ENQUANTO,
+
+QUE 
+
+SÃO 
+
+TODAS 
+
+
+AS ROUTES QUE 
+
+NÃO SÃO 
+
+
+'/add-product'....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+router.post('/add-product', 
+
+      adminController.postAddProduct
+);
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+OK.... DEU CERTO.
+
+
+
+
+
+
+JÁ CONSEGUI CRIAR 2 'product' 
+
+
+LÁ 
+
+
+
+NA DATABASE 
+
+de 
+
+'shop',
+NA COLLECTION DE 
+
+'products'...
+
+
+
+
+
+
+
+
+
+--> OK... FEITO ESSE SAVE,
+
+provavelmente 
+
+vamos querer 
+
+
+
+__REDIRECT.. --> 
+
+VAMOS ESCREVER ESSE 
+
+
+REDIRECT 
+
+
+
+EM UM THEN BLOCK 
+
+
+chainado após 
+o 
+
+
+'newProduct.save()',
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+
+
+  const newProduct = new Product(title, price, imageUrl, description); ///com isso, estamos usando A VERSÃO 'NOSQL'/mongodb do código de 'add a product to our database'... 
+
+   newProduct.save().then(
+
+     (result) => {
+
+
+            console.log('Created Product');
+        res.redirect('/products');
+     }
+   )
+   .catch(
+     (err) => 
+     {
+
+       console.log(err);
+     }
+   )
+
+
+ 
+
+
+};
+
+
+
+
+-----------------------------
+
+
+
+
+OK, COM ISSO 
+
+
+SALVAMOS TUDO E RECARREGAMOS A PÁGINA...
+
+
+
+
+
+
+--> VEREMOS NO NOSSO CONSOLE O OUTPUT 
+
+Do 
+
+'result',
+
+
+
+
+printamos o result da 
+
+
+
+
+OPERAÇÃO DE 'INSERT'.... -----> 
+
+
+
+
+
+AÍ VEMOS UM MONTE DE DATA ACERCA DA OPERATION,
+
+
+
+E LÁ EMBAIXO VEMOS 
+
+
+
+
+'insertedCount: 1' (1 document foi inserido),
+
+
+
+E ELE RECEBEU UM ID INTERNO 
+
+
+
+
+GRANDÃO (unique) ----> ESSE ID É MANAGEADO AUTOMATICAMENTE 
+
+
+PELO 
+
+
+
+MONGODB... -->  CADA OBJECT PRECISA TER UM '_id' no mongodb,
+ E O MONGODB 
+
+
+ ESCREVE ESSE ID AUTOMATICAMENTE, ON THE FLY,
+
+ SE 
+
+ O SEU 
+
+ OBJECT NÃO TINHA UM DELES...
+
+
+
+ --> E AÍ VEMOS O NOSSO PRODUCT,
+
+ a 
+
+ data 
+
+ dele 
+
+ que 
+ foi inserida 
+
+
+
+ na collection....
+
+
+
+
+
+
+
+
+
+ --> NOSSA INSERTONE OPERATION FOI 
+
+ BEM SUCEDIDA,
+
+ e inseriu um negócio naquela  collection, na database...
+
+
+
+
+
+ -------------------
+
+
+
+
+ A declaração throw lança uma exceção definida pelo usuário. 
+ 
+ A execução da função atual vai parar (as instruções após o throw
+ 
+  não serão executadas), e o controle será passado para o primeiro bloco 
+  
+  catch na pilha de chamadas. Se nenhum bloco catch existe entre as funções
+  
+   "chamadoras", o programa vai terminar.
+
+
+
+
+
+
+
+
+---> vamos redirecionar à 
+
+
+'/',
+por enquanto, a partir do insert com sucesso de 1 product...

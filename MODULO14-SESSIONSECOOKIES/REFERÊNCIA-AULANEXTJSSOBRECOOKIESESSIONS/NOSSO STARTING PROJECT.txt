@@ -1,0 +1,663 @@
+
+
+
+
+
+
+--> PARA ESSA COURSE SECTION ,
+
+
+O PROFESSOR PREPAROU 
+
+OUTRO 
+
+
+STARTING PROJECT PARA NÓS...
+
+
+
+
+
+
+
+
+
+--> aí,
+
+
+nós vamos 
+
+
+
+
+
+rodar 'npm install' 
+
+e 
+
+aí 
+
+rodar 
+
+o 
+
+server 
+
+com 
+
+'npm run dev'...
+
+
+
+
+
+
+
+
+
+-> É UMA DEMOPAGE comum....
+
+
+
+
+
+
+
+
+
+TEMOS AS PÁGINAS:
+
+
+
+
+1) STARTING PAGE 
+
+
+
+2) LOGIN PAGE 
+
+
+
+
+3) PROFILE PAGE 
+
+
+
+
+
+
+
+
+
+
+
+e aí, temos um BOTÃO DE LOGOUT.... ----> POR ENQUANTO, O BUTTON DE LOGOUT __ NÃO FAZ COISA ALGUMA__...
+
+
+
+
+
+-------------------------------
+
+
+
+
+--> as forms também 
+
+não fazem NADA, POR ENQUANTO... -------> vamos 
+
+
+
+
+ADICIONAR A LÓGICA 
+
+
+
+
+
+DE QUE 
+
+APENAS AUTHENTICATED 
+
+USERS PODERÃO 
+
+IR 
+
+ATÉ 
+
+O 
+
+
+'
+PROFILE', 
+
+
+à página de profile.... -------> 
+
+
+
+
+E 
+
+
+
+A PÁGINA DE 'LOGIN', por outro lado,
+
+
+
+
+NÃO DEVERÁ SER ACESSÍVEL __ SE VOCÊ __ ESTIVER 'AUTHENTICATED'.. ----> 
+
+
+
+
+VOCÊ NÃO VAI 
+
+
+NEM 
+
+VER 
+
+
+ESSE 
+
+'LOGIN', 
+
+ESSA 
+
+OPÇÃO AÍ,
+
+
+SE VOCÊ 
+
+NÃO ESTIVER LOGGADO....
+
+
+
+
+
+
+
+
+--> CERTO... E ESSAS SÃO AS 'VARIOUS THINGS'
+
+
+que 
+
+vamos 
+
+fazer durante este módulo....
+
+
+
+
+
+
+
+
+
+-------> EXPLORE 
+
+
+OS DIFERENTES COMPONENTS QUE O PROFESSOR 
+
+
+NOS PROVIDENCIA AQUI... --> é um monte 
+
+
+de 
+
+
+
+components comuns;
+
+
+
+no 
+
+component 
+
+de 
+
+'Auth'
+
+
+TEMOS UM 
+
+STATE 
+
+
+QUE 
+
+TROCA 
+
+ENTRE 
+
+UM 
+
+STATE 
+
+
+
+PARA 
+
+
+fazer 
+
+
+
+__sWITCH__ ENTRE 'LOGIN' E 'SIGN UP',
+
+
+
+QUANDO CLICAMOS 
+
+AQUELE BUTTON ALI EMBAIXO.... ----> E O PROFESSOR 
+
+
+FAZ 
+
+ISSO 
+
+POR MEIO 
+
+DO 
+
+SWITCH QUE 
+
+ELE IMPLEMENTOU POR ESSE STATE AÍ,
+
+que 
+
+renderiza 
+AS 
+
+INPUT FORMS CONDICIONALMENTE....
+
+
+
+
+
+
+
+--> OK, É COISA BEM 
+
+NORMAL,
+
+NADA 
+
+DE COISAS 
+
+
+ESPECIFICAMENTE 
+
+
+
+'NEXTJS'
+
+
+aqui....
+
+
+
+
+
+--> DEVEMOS NOS RELEMBRAR DE COMO 
+
+
+A
+
+AUTHENTICATION FUNCIONA...
+
+
+
+
+
+
+--> NO MEU PROJETO 
+
+
+
+DO BURGERBUILDER,
+
+
+eu 
+
+usei 
+
+
+
+REDUX 
+
+
+para 
+
+fazer manage do authState do usuário... (pelo que eu me lembre...)
+
+
+
+
+
+
+SIM. ISSO PODE SER VISTO NESSE TRECHO DE CÓDIGO, LÁ NO 'authReducer':
+
+
+
+
+
+
+const initialState = {
+        token: null,
+        userId: null,
+        error: null,
+        loading: false,
+        email: null,
+        authRedirectPath: '/'
+        // createdBurger: false
+}
+
+
+
+E DEPOIS EM:
+
+
+
+const authStart = (state, action) => {
+        return updateObject(state, {loading: true, error: null})
+}
+
+
+
+const authSuccess = (state, action) => {
+    return updateObject(state, {
+                loading: false,
+                error: null,
+                // token: action.authData.idToken,
+                // userId: action.authData.localId
+                token: action.token,
+                userId: action.userId,
+                email: action.email
+
+
+    })
+}
+
+
+const authFail = (state, action) => {
+    return updateObject(
+        state, {
+            error: action.error,
+            loading: false
+        }
+    )
+}
+
+
+
+const authLogout = (state, action) => {
+        return updateObject(state,
+            
+            {
+                token: null,
+                userId: null,
+                email: null
+            }
+            
+            
+            )
+}
+
+
+
+const setAuthRedirectPath = (state, action) => {
+    return updateObject(state, {authRedirectPath: action.path})
+}
+
+
+
+
+ const authReducer = (state = initialState, action) => {
+        switch(action.type) {
+                    case authActionTypes.AUTH_START:
+                        return authStart(state, action);
+                    case authActionTypes.AUTH_SUCCESS: 
+                        return authSuccess(state, action);
+                        case authActionTypes.AUTH_FAIL:
+                            return authFail(state, action);
+                        case authActionTypes.AUTH_LOGOUT:
+                            return authLogout(state, action);
+                        default: return state;
+                        // case authActionTypes.BURGER_CREATED_WITHOUT_AUTH:  //meu approach, diferente daquele que o professor usou. Não é tão dinâmico.
+                        //     return burgerCreate(state, action);
+                        // case authActionTypes.BURGER_FINISHED_PURCHASING:
+                        //     return burgerFinished(state, action);
+                        case authActionTypes.SET_AUTH_REDIRECT_PATH:
+                                return setAuthRedirectPath(state, action);
+              
+        }
+}
+
+
+
+
+
+
+export default authReducer;
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+ENTRETANTO, 
+
+
+AGORA 
+
+
+ESTAMOS 
+
+USANDO 
+
+
+
+'REACT CONTEXT',
+
+
+
+
+por isso 
+
+
+
+não podemos usar ESPECIFICAMENTE O FORMATO 
+
+
+DE 
+
+
+'REDUX'
+
+para fazer manage do state do usuário 'across our pages'...
+
+
+
+
+
+
+
+
+
+--> BEM, antes de mais nada, devo CODAR o projeto do professor, bem o INÍCIO dele....
+
+
+
+
+
+
+
+
+-> CERTO, CODEI A PARTE INICIAL DO CÓDIGO...
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+--> JÁ VOU LÁ E CRIO UM 'AUTHCONTEXT.js',
+
+dentro de 
+
+'store'... ---> ok,
+
+vou precisar 
+
+
+
+
+
+CONECTAR MEU APP 
+
+COM 
+
+ESSE CONTEXT,
+
+
+FAZER TODO O SETUP...
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+ok... escrevi o 'authContext'
+
+inicial,
+
+que ficou com este código:
+
+
+
+
+
+import { useState, createContext, useEffect } from 'react';
+
+const AuthContext = createContext({
+  auth: null,
+});
+
+export const AuthContextProvider = () => {
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+
+  const context = {
+    auth: isUserAuthenticated,
+  };
+
+  return (
+    <AuthContext.Provider value={context}>
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext;
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+agora o problema é 
+
+
+
+OS MÉTODOS e sua lógica...
+
+
+
+
+
+
+
+
+
+
+
+OBS::: __PROVAVELMENTE___ VAMOS 
+
+
+PRECISAR DE UMA API 
+
+ROUTE PARA 
+
+
+AUTENTICAR NOSSO USUÁRIO... -----> 
+
+
+para 
+
+isso,
+
+
+já vamos lá 
+
+e criamos uma 
+
+
+api route 
+
+
+
+dentro do folder 
+
+'api'... --> 
+UM FOLDER 
+
+DE 
+
+
+'auth',
+
+
+com um index.js 
+
+dentro....
+
+
+
+
+
+-------------------------------

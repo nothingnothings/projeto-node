@@ -1,0 +1,325 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> OK...
+
+
+
+EU 
+
+HAVIA ADICIONADO ALGUMAS 
+
+
+FLASH 
+
+MESSAGES, antes... 
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+1) PASSWORDS NÃO MATCHEIAM:
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.')
+    return res.redirect('/signup');
+  }
+
+
+
+
+
+
+
+
+2) JÁ EXISTE 1 USER COM ESSE EMAIL NA DATABASE:
+
+
+
+
+
+
+
+ User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+
+
+
+
+
+
+
+
+
+
+
+3) CÓDIGO COMPLETO:
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.')
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+ok.... professor fez a mesma coisa. 
+
+
+
+
+--> 
+
+
+ELE TBM EDITOU O VIEW DO 'signup.ejs', para que conseguíssemos outputtar o negócio...
+
+
+
+
+
+
+
+
+
+E ELE TBM USOU AQUELE CÓDIGO PADRÃO que 'CONSERTA' o pacote do 'connect-flash',
+
+AQUELE 
+
+TRECHO DE 
+
+
+
+''
+
+
+let message = req.flash('error');
+
+
+
+
+if (message.length > 0) {
+
+    message = message[0];
+} else {
+
+    message = null;
+}
+
+
+
+
+'',
+
+
+QUE 
+
+ELE 
+
+ENFIOU 
+
+NA 
+
+
+ROUTE DE 
+
+
+'GET'
+
+de 
+
+
+nossa 
+
+PAGE 
+de
+
+
+'signup'...
+
+
+ex:
+
+
+
+
+
+
+exports.getSignupPage = (req, res, next) => {
+
+
+let message = req.flash('error');
+
+
+
+
+if (message.length > 0) {
+
+    message = message[0];
+} else {
+
+    message = null;
+}
+
+
+console.log(message);
+
+
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    errorMessage: message ///EIS O CÓDIGO EM QUESTÃO.
+  });
+};
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+ok.... ISSO TUDO DEU CERTO...
+
+
+
+HORA DO WRAPUP....
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE PODERÍAMOS 
+
+
+
+ADICIONAR MAIS ALGUMAS 
+
+
+
+'FLASH MESSAGES',
+
+
+
+como por exemplo uma 
+
+flash message dizendo 
+
+'LOGGED OUT',
+
+
+MAS QUE 
+
+ISSO 
+
+DEVE 
+
+
+
+SER SUFICIENTE POR ENQUANTO,
+
+
+
+e 
+
+
+melhora um pco a user experience....

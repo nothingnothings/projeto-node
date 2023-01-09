@@ -1,0 +1,2618 @@
+
+
+
+
+
+
+
+
+
+
+
+---> COM CONTROLLERS E VIEWS ADICIONADOS AO NOSSO PROJETO,
+
+
+
+PASSAMOS AOS MODELS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA COM O MODEL DE NOSSO PROJETO É QUE TEMOS 1 
+
+QUE É __MUITO SIMPLES__....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BASICAMENTE,
+
+NÓS FAZEMOS MANAGE DO NOSSO ARRAY DE PRODUCTS LÁ 
+
+
+EM 
+
+'products.js' (controller),
+
+
+
+o
+
+QUE 
+
+
+SE OBSERVA NO SEU CÓDIGO, 
+
+QUE É:
+
+
+
+
+const products = [];
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render("add-product", {
+    pageTitle: "Add Product", //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+    path: "/admin/add-product",
+    activeAddProduct: true,
+    productCSS: true,
+    formsCSS: true,
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+  products.push({ title: req.body.title });
+  res.status(302).redirect("/");
+};
+
+
+exports.getProducts = (req, res, next) => {
+  // const products = adminData.products; ////código obsoleto, só fazia sentido em 'shop.js', arquivo route...
+                                                                     
+    res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', 
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0});   
+             
+          }
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+NÓS FAZEMOS MANAGE DE NOSSO ARRAY DE PRODUCTS ALI....
+
+
+
+
+E UM 
+
+'product'(  {} )
+
+
+
+É SIMPLESMENTE 
+
+'CREATED ON THE FLY'
+
+
+
+
+COMO __ UM OBJECT__ 
+
+
+QUE SE PARECE ASSIM:
+
+
+
+'''{ title: req.body.title }'''
+
+
+
+
+
+
+
+
+
+
+ESSE OBJECT,
+
+
+NO FINAL DAS CONTAS,
+
+
+É 
+
+ALGO QUE __ REPRESENTA__ NOSSA DATA....
+
+
+
+
+
+
+
+
+--> NÓS TEMOS PRODUCT(s)
+
+
+NO NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+
+--> MAIS TARDE TEREMOS COISAS COMO 'USERS',
+
+MAS POR ENQUANTOO SÓ TEMOS 
+
+
+PRODUCT/products 
+
+
+
+
+
+--------> AINDA ASSIM,
+
+
+PODEMOS DEFINIR UM 
+
+
+'MODEL'
+
+
+ 
+
+ PARA ESSES NOSSOS PRODUCT... --> 
+
+
+
+
+ PARA ISSO,
+
+
+ PARA 
+
+
+ DEFINIR UM MODEL 
+
+
+
+ PARA ESSA ESTRUTURA,
+
+
+
+ CRIAMOS UM NOVO FOLDER NO NOSSO PROJETO,
+
+ QUE CHAMAMOS 
+
+
+ DE 
+
+ 'models'...
+
+
+
+
+
+
+
+
+
+
+ -----> CLARO QUE ESSES NOMES PODEM SER ALTERADOS POR VOCê,
+
+
+
+ MAS 
+
+
+
+
+ ESSE TRIO DE NOMES 
+
+ É 
+
+ MT BOM:
+
+
+
+
+
+
+ TEMOS:
+
+
+
+ 1) VIEWS 
+
+
+
+ 2) MODELS
+  
+
+
+3) CONTROLLERS....
+
+
+
+
+
+
+
+--> E TUDO ISSO DENTRO DO FOLDER DO NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+----> AÍ VAMOS CRIAR UM ARQUIVO DENTRO DO FOLDER 'models,'
+
+DE NOME 
+
+
+
+'product'... --> PERCEBA QUE 
+
+
+NÃO É 
+
+'productS',
+
+
+
+PQ O PROFESSOR VAI QUERER 
+
+REPRESENTAR
+ 
+
+ __UMA 'SINGLE ENTITY'
+
+
+
+(ISSO PQ NO FINAL DAS CONTAS 
+
+
+NOSSA CORE DATA É UM __PRODUCT__... --> 
+
+
+
+É CLARO QUE TEMOS 
+
+LISTAS DE PRODUCTS NO NOSSO APP,
+
+
+
+___MAS A CORE THING QUE FORMA O APP 
+
+É 
+
+''''COMO UM PRODUCT SE PARECE''' (ou seja,
+
+
+QUAIS FIELDS ELE TEM, 
+
+SE TEM UMA IMAGE,
+
+SE TEM UM TITLE, ETC... --> ESSA É NOSSA CORE DATA...
+ )
+
+
+
+
+
+)
+
+
+
+
+
+
+
+LISTS OF PRODUCTS NÃO SÃO 
+
+
+NOSSA 'CORE DATA',
+
+
+pq 
+
+é 
+
+'BORING',
+
+é 
+
+SÓ MAIS DO MESMO,
+
+MAIS 
+
+DE 1 
+
+ÚNICO MODEL... ---------> 
+
+
+
+
+MORE OF A SINGLE TYPE..
+
+
+
+
+
+
+
+
+
+--> 'A SINGLE TYPE IS WHAT DEFINES OUR APP'  (É UMA DAS COISAS 
+
+QUE 
+
+DEFINE NOSSO APP, NA VERDADE, PARTE DELE...)
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS COMO UM MODEL SE PARECE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE ISSO CABE A NÓS,
+
+
+PODEMOS DEFINIR/CRIAR UM MODEL 
+
+
+DO JEITO QUE QUISERMOS... 
+
+
+
+
+
+PODEMOS 
+DEFINIR DA MANEIRA QUE QUEREMOS...
+
+
+
+
+
+
+
+
+
+
+---> PODEMOS SIMPLESMENTE, POR EXEMPLO,
+
+
+
+
+EXPORTAR UMA 
+
+CONSTRUCTOR FUNCTION...
+
+
+
+
+ISSO LÁ NO 
+
+'product.js'... ------->
+
+
+
+PARA ISSO,
+
+
+
+
+PROFESSOR ESCREVE:
+
+
+
+
+
+
+
+module.exports = class Product = {
+
+}   
+
+
+
+
+--------------------------
+
+
+
+ESSA CONSTRUCTOR FUNCTION/class
+
+
+
+SERÁ 
+
+
+ÚTIL PQ ___ VOCÊ PODERÁ 
+
+
+CHAMÁ-LA EM QUALQUER LUGAR DO SEU APP (quando importada)
+
+
+PARA 
+
+
+
+___cRIAR UM __OBJETO/MODEL 
+
+
+''product'''
+
+NAQUELE LUGAR...
+
+
+
+
+
+
+
+
+
+------> PARA 
+
+
+DEFINIR ESSA CONSTRUCTOR FUNCTION,
+
+
+o PROFESSOR 
+
+VAI ESCREVENDO:
+
+
+
+
+
+
+
+
+
+
+
+ELE DIZ QUE ___ VAI QUERER/QUER 
+
+DEFINIR 
+O 
+
+
+__fORMATO DE UM PRODUTO__...
+
+
+
+
+
+
+
+
+--> PARA ISSO, ANTES DE MAIS NADA,
+
+PROFESSOR NOS EXPLICA QUE 
+
+ELE 
+
+QUER 
+
+
+
+_______--CRIAR A CONSTRUCTOR FUNCTION..
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+ELE ESCREVE 
+
+'constructor() {
+     
+}
+'
+
+
+
+
+
+
+DENTRO 
+
+DESSA CLASS...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+module.exports = class Product {
+    constructor() {
+
+    }
+}
+
+
+
+
+
+
+
+
+------->  DENTRO DESSE CONSTRUCTOR,
+
+
+PROFESSOR VAI QUERER DEFINIR UM PARÂMETRO 
+
+QUE 
+
+SERÁ 
+RECEBIDO... ESSE 
+
+PARÂMETRO SERÁ UM __tITLE__- 
+
+
+
+
+Ex:
+
+
+
+module.exports = class Product {
+    constructor(title) {
+
+    }
+}
+
+
+
+
+
+
+
+--> ISSO SERÁ 
+
+UM TITLE PARA O PRODUCT 
+
+QUE 
+
+
+
+EU VOU CRIAR A PARTIR 
+
+DESSA FUNCAO,
+
+
+
+'FROM INSIDE OF MY CONTROLLER'...
+
+
+
+
+
+
+---> A PARTIR DESSE 'title' que ESSE CONSTRUCTOR VAI RECEBER,
+
+
+
+__ PROFESSOR __ VAI CRIAR UMA PROPRIEDADE __ DENTRO 
+
+DESSA 
+
+'CLASS'...  ( ou seja, basicamente uma VARIÁVEL DENTRO DE UMA CLASS, essencialmente...)
+
+
+ex:
+
+
+
+
+
+
+
+module.exports = class Product {
+    constructor(title) {
+            this.title = title;
+    }
+}
+
+---------------------------
+
+
+
+
+CERTO...
+
+ISSO 
+
+
+VAI 
+CRIAR UMA PROPRIEDADE 
+
+'title'
+
+
+DENTRO 
+
+DE NOSSO 
+
+OBJETO 
+
+'product',
+
+INSTANCIADO A PARTIR DESSA CLASS de 'Product',
+
+
+
+
+
+QUE FICARÁ MAIS OU MENOS ASSIM:
+
+
+{title: 'xxxx'}.........
+
+
+
+
+
+
+
+
+
+
+-------> CERTO... 
+
+
+
+
+EU ME LEMBRO DISSO,
+
+DO 
+
+'this.xxx' PARA ADICIONAR 
+
+PRORPIEDADES 
+
+
+AS MINHAS CLASSES...
+
+
+
+
+
+
+
+---> CERTO... ESSA CLASS/CONSTRUCTOR FUNCTION VAI ME PERMITIR 
+
+
+CRIAR OBJETOS 'product''
+
+
+QUANDO EU INSTANCIAR 
+
+UM 
+
+
+PRODUCT 
+
+
+com 
+
+'new Product('TÍTULO')' ...
+
+
+
+
+
+-> E ESSE 'título'
+
+
+FICARÁ DENTRO 
+
+DO MEU OBJETO 
+
+
+
+
+'product'
+
+ASSIM:
+
+
+{title: 'TÍTULO'
+}
+
+
+
+
+
+
+
+
+
+
+
+---------> OK..... --> MAS É CLARO QUE 
+
+VAMOS QUERER MAIS 
+
+DO QUE 
+
+
+__ARMAZENAR VALORES 
+
+'SOLTOS'
+
+
+COMO 
+
+'title'... --> VOU QUERER, 
+
+EM VEZ DISSO,
+
+
+TAMBÉM 
+SER 
+
+CAPAZ 
+DE 
+
+
+
+
+
+'STORE MY PRODUCT TO AN ARRAY OF PRODUCTS'
+
+
+
+E TAMBÉM 
+
+SER CAPAZ 
+
+
+
+DE FAZER FETCH DESSE PRODUCT..
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PROFESSOR NOS DIZ QUE 
+
+
+ELE 
+
+VAI 
+
+__REINTRODUZIR __ O 
+
+ARRAY 
+
+'products'
+
+
+
+NESSE ARQUIVO 
+
+
+'model' 
+
+
+de 
+
+
+
+'product.js'...
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+};
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+CERTO... -----> E O PROFESSOR NOS ADMITE QUE 
+
+VAMOS 
+
+
+ALTERAR,
+
+TIRAR 
+
+ESSE 
+
+ARRAY 
+
+DAÍ
+
+MAIS TARDE,
+
+
+quando tivermos UMA DATABASE DE VERDADE...
+
+
+
+
+
+
+
+
+
+
+--> MAS POR ENQUANTO, VAMOS COM ESSE APPROACH...
+
+
+
+
+
+
+
+
+
+---------> CERTO.... ---> E AÍ,
+
+
+DENTRO 
+
+
+DA CLASS 
+
+de 
+
+'Product',
+
+O PROFESSOR 
+
+
+VAI 
+
+ADICIONAR UM MÉTODO 
+
+de 
+
+'save() {
+
+}
+'   (FORMA DO ES6 DE ADICIONAR UM MÉTODO A UMA CLASS..)
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+ISSO É QUASE COMO UMA FUNCTION,
+
+MAS 
+
+SEM 
+
+A KEYWORD de 'function'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+
+  save() {
+
+  }
+};
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+
+'save' 
+
+PASSARÁ 
+
+A SER UM 
+
+MÉTODO 
+
+
+DISPONÍVEL
+ 
+
+ DENTRO 
+
+ DESSA CLASS AÍ...
+
+
+
+
+
+
+
+ -----> DENTRO DESSE MÉTODO 'SAVE',
+
+
+
+
+ O PROFESSOR VAI QUERER __ SER CAPAZ__  
+
+
+
+ DE 
+
+ ARMAZENAR ESSE NOSSO OBJETO 'product'
+
+
+ __DENTRO __ 
+
+ DESSE 
+
+ ARRAY 
+
+ 'products'...
+
+
+
+
+
+
+
+ --> E PROFESSOR FARÁ ISSO POR MEIO 
+
+
+
+ DE UM CÓDIGO COMO 
+
+
+ 'save() {
+     products.push(this);
+ }'
+
+
+
+
+
+
+
+
+
+
+ OU SEJA,
+
+ PROFESSOR VAI SIMPLESMENTE FAZER O PUSH DE 
+ '
+ this'
+
+ MSM,
+
+ PQ 
+
+ 'this'
+
+
+ __SERÁ BASICAMENTE UMA REFERÊNCIA 
+
+ AO 
+
+
+ 'OBJECT CRIADO COM BASE NA NOSSA CLASS' (o product em si),
+
+
+ E ISSO É EXATAMENTE O OBJETO 
+
+ QUE QUEREMOS
+
+
+ ARMAZENAR 
+
+ DENTRO 
+
+
+ DESSE 
+
+ ARRAY 
+
+ 'products'..
+
+
+
+
+ EX(Código completo):
+
+
+
+
+
+
+ const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+
+  save() {
+      products.push(this);
+  }
+};
+
+
+
+
+
+
+
+
+MAS É CLARO QUE O PROFESSOR QUER SER CAPAZ DE FAZER MAIS COISAS 
+
+
+COM 
+
+
+ESSA CONSTRUCTOR FUNCTION... --> ELE TAMBÉM QUER 
+
+SER 
+CAPAZ, OBVIAMENTE,
+
+
+
+__ DE RETRIEVAR _ _TODOS OS PRODUCTS 
+
+
+
+
+DAQUELE ARRAY LÁ.... ( e ele tbm quer fazer isso 
+
+POR MEIO DESSE OBJECT MODEL AÍ, a princípio)
+
+
+
+
+
+
+
+
+
+
+
+OK... MAS AÍ ELE NOS EXPLICA QUE __ ENQUANTO QUE __ 
+'save'
+
+
+
+
+FAZIA/FAZ SENTIDO EM SER CHAMADO DE 
+
+DENTRO 
+
+
+
+DE UM 'CONCRETE INSTANTIATED OBJECT BASEADO 
+
+
+NA CONSTRUCTOR FUNCTION de 'Product '',
+
+
+
+ELE TAMBÉM 
+
+
+
+
+QUER TER UM 
+
+MÉTODO 
+
+
+'fetchAll()' -->   ___ ELE NOS EXPLICA QUE 
+
+
+
+ESSA 
+
+SERÁ TIPO UMA UTILITY FUNCTION,
+
+MAS UMA UTILITY FUNCTION QUE NÃO SERÁ CHAAMDA
+ 
+
+ EM UMA INSTÂNCIA SINGULAR 
+
+ DE 'Product' (objeto product),
+
+
+
+ PQ ELA VAI/DEVERÁ REALMENTE FETCHEAR 
+
+ TODOS OS PRODUCTS,
+
+
+
+
+
+
+E ELE SÓ FAZ ASSIM PQ 
+
+ELE 
+
+DIZ QUE 
+
+SERIA IDIOTA 
+
+CRIAR UM NOVO OBJETO COM A KEYWORD 'new',
+
+
+COM UM TITLE 
+
+'dummy'
+
+SÓ PARA __ FETCHEAR__ TODOS OS 'EXISTING PRODUCTs'... -------->
+
+
+
+E É EXATAMENTE 
+
+POR ISSO 
+
+
+QUE 
+ELE 
+
+ADICIONA/ADICIONARÁ 
+
+
+
+A KEYWORD 
+
+
+
+'static' 
+
+AO INÍCIO 
+
+
+DESSE MÉTODO 
+
+
+'fetchAll()',
+
+JUSTAMENTE 
+
+PARA 
+
+QUE 
+
+
+
+ESSE MÉTODO SÓ SEJA 
+CAPAZ 
+
+DE 
+
+SER EXECUTADO 
+
+
+NA NOSSA CONSTRUCTOR FUNCTION ORIGINÁRIA (não será 'passed away' aos nossos objetos 
+
+criados a partir 
+
+da instanciação de 
+
+'Product'...)
+
+
+
+(SÓ PODEREI CHAMAR ESSE MÉTODO 'DIRECTLY ON THE CLASS ITSELF',
+
+e não em INSTANTIATED OBJECTS...)
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+
+
+
+  save() {
+      products.push(this);
+  }
+
+
+  static fetchAll() {
+
+  }
+};
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+--------> E AÍ,
+
+
+NESSE OBJETO 
+
+
+'fetchAll()',
+
+
+
+PROFESSOR VAI QUERER 
+
+RETORNAR 
+
+
+'this.products'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+
+  save() {
+      products.push(this);
+  }
+
+
+
+  static fetchAll() {
+      return this.products;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+--> CERTO, MAS ISSO FICOU ESTRANHO.... --> 
+
+
+'this.products'
+
+NÃO 
+
+SE REFERIRIA 
+
+A UM ARRAY NÃO EXISTENTE DENTRO DE NOSSA CONSTRUCTOR FUNCTION...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE ACABAMOS COM ESSE 'MODEL' AÍ,
+
+
+
+
+E QUE 
+
+AGORA 
+
+SÓ 
+
+RESTA 
+
+CONECTÁ-LO/USÁ-LO 
+
+
+
+LÁ 
+
+
+
+
+NO 
+
+
+
+ARQUIVO 
+
+
+CONTROLLER DE 
+
+'products.js'....
+
+
+
+
+
+
+
+--------> LÁ EM 
+
+
+'products.js',
+
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+ELE 
+VAI 
+
+
+SE LIVRAR 
+
+DE 
+
+'const products = []',
+
+
+
+E TAMBÉM 
+
+
+de 
+
+
+
+
+'product.push{title: req.body.title}'
+
+
+
+
+
+
+
+
+---------> A PRIMEIRA COISA QUE ELE VAI FAZER É IMPORTAR 
+
+AQUELA CLASS/CONSTRUCTOR FUNCTION,
+
+por meio 
+
+do 
+código (e USE INICIAIS MAIÚSCULAS PARA CLASSES...)
+
+
+
+
+'const Product = require('../models/product');'
+
+
+
+
+
+
+------> EM VEZ DISSO, ELE PROVAVELMENTE ESCREVERÁ ISTO:
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+
+    
+}
+
+
+
+
+
+
+
+
+
+
+--> NESSE NEGÓCIO AÍ,
+
+ELE DIZ QUE A PRIMEIRA COISA QUE ELE VAI FAZER É 
+
+'CREATE A NEW OBJECT BASED ON THIS CLASS BLUEPRINT'...
+
+
+
+
+
+
+
+
+
+--> E ELE FARÁ ISSO COM ESTE CÓDIGO:
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+
+
+        const newProduct = new Product(req.body.title);
+        newProduct.save();
+        res.redirect('/');
+    
+}
+
+
+-----------------------------------
+
+
+
+
+
+
+EU __ACHO__ QUE ESSE CÓDIGO AÍ FUNCIONARÁ...
+
+
+
+
+
+-> NÓS:
+
+
+1) CRÍAMOS UM NOVO OBJETO 'product'... (por meio de 'new Product'...)
+
+
+
+2) SALVAMOS ESSE 
+
+'NOVO PRODUCT' 
+
+NAQUELE ARRAY/const 'products',
+
+LÁ NO NOSSO ARQUIVO MODEL 
+
+de 
+
+'product.js', por meio do código 'newProduct.save()'... (NESSE CÓDIGO AÍ, EXECUTAMOS O MÉTODO 'save()" QUE HAVIA SIDO LIMITADO ÀPENAS à NOSSA CONSTRUCTOR FUNCTION de 'Product'.......)
+
+
+
+
+3) REDIRECIONAMOS O USUÁRIO à PÁGINA DE '/' (shop) por meio de 'res.redirect()'....
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+OK... A PARTE 1 
+
+
+EU ACERTEI...
+
+
+
+
+
+
+--------> DEPOIS O PROFESSOR DIZ QUE VAMOS 
+
+
+QUERER SALVAR ESSE NEGÓCIO...
+
+
+REALMENTE,
+
+ELE EXECUTA 
+
+
+
+'newProduct.save()'...
+
+
+
+
+
+
+
+
+
+--------> OK... ISSO RESOLVE O PROBLEMA DO 'ADD A PRODUCT'. (ao nosso array)...
+
+
+
+
+
+
+
+
+
+
+
+-----> A PRÓXIMA ETAPA É RESOLVER O PROBLEMA 
+
+DO 
+
+'FETCH ALL PRODUCTS',
+
+
+visto 
+
+
+NO CONTROLLER 
+
+DE 
+
+
+
+'getProducts',
+
+
+QUE TEM ESTE CÓDIGO:
+
+
+
+
+
+exports.getProducts = (req, res, next) => {                                                           
+    res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', 
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0});   
+             
+          }
+
+
+
+---------------------------------
+
+
+
+
+
+
+------> PARA ISSO,
+
+PARA 
+
+FETCHEARMOS 
+
+
+TODOS NOSSOS PRODUCTS 
+
+NO ARRAY 
+
+'products'
+
+
+EXISTENTE LOCALMENTE 
+
+
+em 
+
+
+'product.js',
+
+
+
+__PROFESSOR 
+
+
+INSTANCIA, DE NOVO___, 
+
+
+
+
+AQUELE OBJETO 'Product',
+
+
+POR MEIO 
+
+
+
+
+
+
+
+DE OUTRO USO 
+
+
+
+
+DA CLASS 
+
+'Product'....
+
+
+
+
+
+
+
+
+--> MAS AGORA O PROFESSOR __ NÃO VAI INSTANCIAR__ UM OBJETO 
+
+'product'
+
+
+A PARITR DESSE CONSTRUCTOR....
+
+
+
+
+
+
+
+
+--> em vez disso,
+
+
+ELE 
+
+
+VAI 
+
+__QUERER O VALOR __ 
+
+
+
+DIRETO 
+
+DO 
+
+ARRAY 
+
+'PRODUCTS'
+
+
+
+
+dentro 
+
+
+desse CONTROLLER de 'products'...
+
+
+
+
+--> PARA ISSO, 
+
+ELE VAI CHAMAR DIRETAMENTE AQUELE MÉTODO ESTÁTICO (só existente na CLASS EM SI, e não nos objetos criados a partir dela),
+
+
+
+
+de 
+
+'fetchAll()'
+
+QUE CRÍAMOS ANTERIORMENTE EM 'Product'...
+
+
+ex:
+
+
+
+
+exports.getProducts = (req, res, next) => {  
+
+
+    const products = Product.fetchAll();
+
+    res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', 
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0});   
+             
+          }
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+--> ELE SÓ VAI USAR ESSE 
+
+MÉTODO 
+
+'fetchAll()',
+
+QUE VAI NOS DAR TODOS 
+
+OS 
+O
+BJETOS 
+
+
+'product'
+
+NESSE NOSSO ARRAY 
+
+'products'
+
+LÁ 
+
+NO ARQUIVO MODEL 
+
+DE 
+'product.js'....
+
+
+
+
+
+----> ELE VAI QUERER USAR ESSE 'model' 
+
+
+
+lá 
+
+
+
+nos nossos 'CONTROLLERS'....
+
+
+
+
+
+MODEL-VIEW-CONTROLLER ....
+
+
+
+
+
+--> PARA ISSO, 
+
+
+
+ELE IMPORTA 
+
+
+
+
+'Product',
+
+
+ESSA CLASS/CONSTRUCTOR OBJECT 
+
+ 
+
+ por meio da sintaxe
+
+
+
+
+
+ '
+ const Product = require('../models/product');'
+
+
+
+
+
+
+
+
+
+ FICA TIPO ASSIM:
+
+
+
+
+
+
+
+// const products = [];
+
+const Product = require('../models/product');
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render('add-product', {
+    pageTitle: 'Add Product', //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+    path: '/admin/add-product',
+    activeAddProduct: true,
+    productCSS: true,
+    formsCSS: true,
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+  products.push({ title: req.body.title });
+  res.status(302).redirect('/');
+};
+
+exports.getProducts = (req, res, next) => {
+  // const products = adminData.products; ////código obsoleto, só fazia sentido em 'shop.js', arquivo route...
+
+  res.render('shop', {
+    prods: products,
+    pageTitle: 'Shop',
+    path: '/',
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0,
+  });
+};
+
+
+
+          ------------------------
+
+
+
+
+(COMO VOCÊ PODE VER,
+
+ele 
+
+
+já removeu 
+
+
+aquele 
+
+
+array de 
+
+PRODUCTS que 
+
+tínhamos 
+
+
+
+EM 
+
+
+
+'products.js'..., nesse controller aí....)
+
+
+
+
+
+
+
+
+--> COM ISSO ADICIONADO,
+
+lá 
+
+
+em 
+
+'postAddProduct'
+
+VAMOS QUERER 
+
+
+
+
+____ ADICIONAR UM PRODUCT__ AO NOSSO  ARRAY 'products'
+
+
+la 
+
+
+
+em 
+
+
+'product.js'( nosso model)... ---> PARA ISSO,
+
+
+
+V
+AMOS ESCREVER 
+
+
+
+
+'
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  // products.push({ title: req.body.title });
+
+
+  const newProduct = newProduct(req.body.title);
+  newProduct.save();
+  res.status(302).redirect('/');
+};
+
+
+
+
+
+----------------------------
+
+
+
+
+OU SEJA,
+
+REMOVEMOS AQUELE CÓDIGO VELHO 
+
+
+de 
+
+'products.push'
+
+
+
+E UTILIZAMOS 
+
+ESSA INSTANCIAÇÃO 
+
+DE NOSSA CLASSE,
+
+junto 
+
+
+
+do 
+
+EXECUTE DESSE MÉTODO 'save()' contido dentro do objeto que instanciamos a partir dela (objeto que é um PRODUCT)
+
+
+
+
+PARA __ ENTÃO ___ ARMAZENAR 
+
+
+ESSE OBJECT NO NOSSO ARRAY 'products'
+
+lá 
+
+
+
+em 
+
+'product.js'....
+
+
+
+-------------
+
+
+
+
+
+
+---> OK... AÍ PRECISAMOS FAZER ALGO COM NOSSO 
+
+'PRODUCT' TAMBÉM NAQUELA PARTE ALI DE BAIXOD,
+
+
+
+em 
+
+
+'getProducts',
+
+
+
+
+NESSE CONTROLLER AÍ...
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO, NO MOMENTO, ESTÁ SSIm:
+
+
+
+
+
+
+
+
+
+exports.getProducts = (req, res, next) => {
+
+  res.render('shop', {
+    prods: products,
+    pageTitle: 'Shop',
+    path: '/',
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0,
+  });
+};
+
+
+
+
+
+
+
+--> PRECISAMOS CRIAR UMA CONST 
+
+
+de 
+
+'products' contendo NOSSO ARRAY DE PRODUCTS... --> justamente para isso,
+
+havíamos criado aquele método/função 
+
+dentro 
+
+
+
+do MODELO/class/constructor function de 'Product',
+
+
+
+
+
+
+___MÉTODO ESTÁTICO QUE PODE SER ACESSADO 
+
+
+por 
+
+
+
+'Products.fetchAll()'
+
+
+(
+
+  pq 
+
+  seu 
+
+  código interno  é este:
+
+
+
+
+  
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    return this.products;
+  }
+};
+
+
+
+
+
+
+)
+
+
+
+
+
+
+--> CERTO... É POR ISSO QUE ESCREVEMOS:
+
+
+
+
+
+const products = Products.fetchAll();
+
+
+
+
+
+---------------------------
+
+
+
+
+
+EX:
+
+
+
+
+const Product = require('../models/product');
+
+exports.getAddProductPage = (req, res, next) => {
+  res.render('add-product', {
+    pageTitle: 'Add Product', 
+    path: '/admin/add-product',
+    activeAddProduct: true,
+    productCSS: true,
+    formsCSS: true,
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+
+  const newProduct = newProduct(req.body.title);
+  newProduct.save();
+  res.status(302).redirect('/');
+};
+
+exports.getProducts = (req, res, next) => { 
+
+
+
+      const products = Product.fetchAll(); ////////EIS O CÓDIGO EM QUESTÃO....
+  res.render('shop', {
+    prods: products,
+    pageTitle: 'Shop',
+    path: '/',
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0,
+  });
+};
+
+
+
+
+
+
+-------------------------------
+
+
+
+É IMPORTANTE RESSALTAR QUE 
+
+AQUI 
+
+
+
+NÓS __ NÃO VAMOS INSTANCIAR ESSA CLASS,
+
+
+
+E SIM 
+
+vamos 
+
+___APENAS__ 
+
+
+
+usar o método contido dentro dela....
+
+
+
+
+
+
+
+--> fora isso, não alteramos mais nada...
+
+
+
+
+
+
+
+
+
+--> SALVAMOS TUDO ISSO, E AGORA ISSO DEVE FUNCIONAR...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR APONTA ALGO QUE ESTAVA INCORRETO NO NOSSO CÓDIGO, o return de 'return this.products', quando devíamos ter retornado 
+
+'return products' (contexto global)....
+
+
+
+
+
+
+EX (Antes):
+
+
+
+
+
+
+
+
+
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    return this.products;
+  }
+};
+
+
+
+
+
+
+
+EX(DEPOIS):
+
+
+
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    return products;
+  }
+};
+
+
+
+
+--------------------------
+
+
+
+
+
+
+OK, RECARREGAMOS O CÓDIGO, E ELE FUNCIONA...
+
+
+
+
+
+
+
+--> O ADD DE UM BOOK VAI FUNCIONAR,
+
+
+
+AGORA USANDO __ UM 'MODEL'___-
+
+
+
+
+
+
+
+
+
+---> ISSO PODE PARECER MAIS __ COMPLICADO ___ AGORA,
+
+
+
+__MAS EVENTUALMENTE VOCÊ VERÁ QUE 
+
+ESSE FORMATO É BEM 
+
+MELHOR DO QUE O OUTRO,
+
+PQ 
+
+
+
+QUANDO VOCÊ CONSEGUIR MODELS MAIS COMPLEXOS,
+
+
+COM MAIS 
+
+FIELDS E METHODS,
+
+
+
+____ MODELS QUE VOCÊ NÃO VAI 
+
+
+
+ARMAZENAR 
+
+
+EM UM 'RANDOM ARRAY' NO SEU CÓDIGO,
+
+
+E SIM 
+
+
+
+__ EM UMA DATABASE (you got the whole database connection logic and so on).... -----> QUANDO 
+
+
+
+VOCÊ 
+
+TIVER TUDO ISSO,
+
+
+PRECISAR SETTAR TUDO ISSO,
+
+
+
+
+
+VOCê VAI 
+
+
+
+SIMPLESMENTE DUMPAR TUDO ISSO/ESCREVER 
+
+
+TUDO 
+
+ISSO NO SEU MODEL,
+
+o que 
+
+vai então 
+
+'free up' os seus 
+
+controllers,
+
+
+o que 
+deixará 
+
+seu código 
+
+
+mais organizado...
+
+
+
+
+
+
+------> PROFESSOR VAI NOS MOSTRAR O QUE ELE SIGNIFICA POR ISSO,
+
+
+POR MEIO 
+
+
+
+
+___ DA DEFINIÇÃO DE UMA FILE ___ STORAGE___( em vez de um 
+
+ARRAY STORAGE)
+
+
+
+
+
+
+
+
+
+
+
+---> ISSO PQ A '''EVOLUÇÃO''' DE DATA HANDLING,
+
+
+
+nesse curso,
+
+será --> 
+
+
+
+
+
+
+1) 'ARRAY STORAGE' (dentro do código do seu app)...
+
+
+
+
+2) 'FILE STORAGE' (dentro do SISTEMA DE ARQUIVOS DO SEU SERVIDOR QUE SERVE O APP)
+
+
+
+3) 'DATABASE STORAGE' (dentro do sistema de arquivos DE OUTRO SERVIDOR, que armazena seus models/arquivos...)

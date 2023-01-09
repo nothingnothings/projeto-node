@@ -1,0 +1,361 @@
+
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR DIZ QUE 
+
+
+
+
+DEVEMOS __ TENTAR__ SETTAR__ ESSE 
+
+MECANISMO DE RESET DE PASSWORDS... --------> 
+
+
+
+PARA ISSO,
+
+
+
+PRECISAMOS 
+
+
+
+NOS 
+
+
+ASSEGURAR QUE 
+
+
+
+NOSSAS 'NEWLY ADDED CONTROLLER ACTIONS'
+
+lá 
+
+
+
+em 
+
+
+
+'auth.js',
+
+
+
+ESTAS ACTIONS AQUI:
+
+
+
+
+
+
+
+
+
+
+exports.postResetPassword = (req, res, next) => {
+  //para ENVIAR 1 EMAIL COM UM LINK DE RESET PASSWORD, PRIMEIRAMENTE PRECISMAOS __ CRIAR UMA __ UNIQUE TOKEN para esse pedido do user... --> aí, essa TOKEN __ VAI SER ARMAZENADA NA NOSSA DATABSE E ENTÃO ___ INCORPORADA__ AO LINK QUE COLOCAREMOS NESSE EMAIL.. (mais tarde, o TOKEN nesse email SERÁ _VERIFICADO__ por nosso nodeapp, PARA __ ASSEGURAR__ QUE NOSSO LINK DE 'RESET PASSWORD' foi recebido PELO __DONO DO EMAIL DA CONTA, O EFETIVO PROPRIETÁRIO DA CONTA...)
+
+  const { email } = req.body;
+
+  crypto.randomBytes(32, (err, buffer) => {
+    ///USADO PARA CRIAR 32 RANDOM BYTES, que serão nossa token, no final das contas.... --> o segundo argumento é uma callback FUNCTION que é executada APÓS TEREM SIDO CRIADOS OS 32 BYTES aleatórios...
+
+    if (err) {
+      console.log(err);
+      req.flash('error', err);
+      res.redirect('/reset-password');
+    } else {
+      const token = buffer.toString('hex'); ///vai gerar 1 TOKEN a partir dos dados BRUTOS de nosso buffer, que é obtido pelo MÉTODO 'crypto.randomBytes()' (e armazenado naquela const de 'buffer', de sua callback function)....
+      ///OBS: PASSAMOS 'hex' a 'toString()' PARA INFORMAR ESSE MÉTODO DE QUE __ VAMOS QUERER __ CONVERTER 'hexadecimal characters' (todos buffers são nesse formato) PARA __ CARACTERES ASCII NORMAIS...
+
+      User.findOne({ email: email })
+        .then((user) => {
+          if (!user) {
+            req.flash(
+              'error',
+              'No User found for that email. Please input a different email whose password you want to change.'
+            );
+            res.redirect('/reset-password');
+          } else {
+            user.resetToken = token;
+            user.resetTokenExpiration = Date.now() + 3600000; ///é o 'current day and time' + UMA HORA, pq vamos querer que essa token DURE UMA HORA... (3600000 milissegundos)
+            user.save().then(
+              (result) => {
+                    res.redirect('/');
+                    transporter.sendMail({
+                      to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                      from: 'arthur.panazolo@acad.pucrs.br',
+                      subject: 'Reset Password Request',
+                      html: `<h1>Here's your password reset link: <a href="http://localhost:3000/reset-password/${token}">"http://localhost:3000/reset-password/${token}"</a> </h1>`,
+                    });
+              }
+            )
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  });
+
+
+  // res.redirect('/');
+
+};
+
+
+
+
+
+
+
+
+,
+
+
+PODEM SER ALCANÇADAS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> JÁ TÍNHAMOS UMA 
+
+
+
+
+ROUTE DE 'getResetPasswordPage',
+
+
+AGORA 
+
+
+
+__PRECISAMOS ___ 
+
+
+
+
+
+
+
+DE UMA ROUTE DE 'postResetPassword' ----> JÁ FIZ ISSO....
+
+
+
+
+
+
+ficou assim:
+
+
+
+
+
+
+router.get(
+    '/reset-password',
+    authController.getResetPassword
+)
+
+
+
+
+router.post(
+    '/reset-password',
+    authController.postResetPassword
+)
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+
+
+
+
+
+
+
+
+---------> MAS AGORA 
+
+
+
+PRECISAMOS _ DAS ROUTES__ 
+
+
+
+
+
+USADAS COM AQUELE LINK enviado 
+
+
+
+ao nosso email,
+
+
+com o token....
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+
+
+
+SE VOCÊ CLICAR NAQUELE LINK NO EMAIL,
+
+VOCê VERÁ 
+
+QUE 
+
+
+
+
+APARECERÁ 
+
+EM UMA PAGE 
+
+DE 
+
+
+
+
+localhost:3000/reset-password/122197u2197u90faishsoihgoiash219yg9has0 
+
+
+
+
+
+
+
+
+
+
+
+ESSA COISA GIGANTE NA DIREITA É __ A SUA TOKEN_...
+
+
+
+
+
+
+
+
+
+-> E SUA TOKEN PODE SER CONSTATADA LÁ 
+
+
+
+
+NA SUA DATABASE,
+
+
+
+NA SUA COLLECTION DE 'user',
+
+
+
+dentro de cada object 'user',
+
+
+na key de 'Token'....
+
+
+
+
+
+
+
+
+
+
+->OK, ISSO SIGNIFICA QUE 
+ISSO FUNCIONOU... -----> AGORA SÓ PRECISAMOS ___ ADICIONAR __ 
+
+
+
+
+
+
+UMA ROUTE COM LÓGICA __ PARA __ EXTRAIR__ ESSA TOKEN __ 
+
+
+E 
+
+
+A COMPARAR COM A TOKEN ARMAZENADA 
+
+
+
+
+NESSE DOCUMENT 'user'
+
+ESPECÍFICO,
+
+LÁ 
+
+NA NOSSA DATABASE... ------> EXTRAIR ESSA TOKEN, VALIDATE  (se tivermos 1 user com essa token)
+
+
+E AÍ 
+
+
+
+__ OFERECER A ESSE USER UMA FORM QUE VAI O DEIXAR ____SETTAR 1 NOVO PASSWORD__....
+
+
+
+
+
+
+
+
+
+
+
+
+VEREMOS ISSO NA PRÓXIMA AULA...
+
+
+
+
+
+
+
+
+
+
+

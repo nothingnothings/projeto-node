@@ -1,0 +1,2568 @@
+
+
+
+
+
+
+
+
+
+
+----> OK... O PROFESSOR APONTA QUE 
+
+
+ELE HAVIA 
+
+
+
+ADICIONADO 'NODEMAILER'
+
+
+como uma package no nosso projeto...
+
+
+
+
+
+
+
+--> AGORA QUEREMOS USAR 
+
+
+
+ESSA PACKAGE ___ PARA ENVIAR, EFETIVAMENTE,
+
+1 
+
+
+EMAIL..
+
+
+
+
+
+
+--> VAMOS 
+
+
+
+NO ARQUIVO DE 
+
+'auth.js',
+
+
+
+que 
+
+
+
+É BASICAMENTE __O ÚNICO CONTROLLER
+
+
+
+DE NOSSO 
+
+APP 
+
+EM QUE 
+
+
+
+VAMOS 
+
+
+interagir/handlar emails...
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR, ENTÃO,
+
+
+VAI 
+
+IMPORTAR O PACOTE DE 
+
+
+
+'nodemailer'
+
+
+
+
+
+NO ARQUIVO 
+
+'auth.js.'..
+
+
+
+
+
+
+FICA TIPO:
+
+
+
+
+
+
+
+
+const nodemailer = require('nodemailer');
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+
+const User = require('../models/user');
+
+exports.getLoginPage = (req, res, next) => {
+  // console.log(req.get('Cookie')); ///VAI CONSOLE LOGGAR TODOS OS COOKIES settados por meio do header 'Set-Cookie' (que pode ser encontrado naquele controller ali de baixo...)
+
+  // console.log(req.get('Cookie').trim().split('=')[1]); //manipulação do COOKIE QUE NOS INTERESSA... código meio subóptimo.
+
+  // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  // console.log(req.session);
+
+
+  // console.log(req.flash('error'), 'LINE');
+
+  // console.log(typeof req.flash('error')) 
+
+  ///use as messages do flash-connect assim, __EXTRAIA-AS ANTES USANDO uma variável (armazene o valor de 'req.flash('nomeDeSeuError')' ), PARA ENTÃO SER POSSÍVEL O SET DE RENDERS CONDICIONAIS nas paginas a que você redirecionar...
+let message = req.flash('error'); /////USO DE 'flash-connection'... particularmente, do método 'req.flash()', que é SEU __cORE METHOD.... -----> AQUI NÓS VAMOS __ UTILIZAR__ a message/error message armazenada na key de 'error' DENTRO DE NOSSA SESSION (o store dessas error messages na session do user é mt efetivo PQ __ PODEMOS __ USAR a data das sessions AO LONGO DE REQUESTS DISTINTOS.... isso quer dizer que a DATA PERSISTE, pode ser usada em QUALQUER PAGE DE NOSSO APP, para fazer o ERROR HANDLING junto de REDIRECTS... esse é o uso de 'req.flash()' ) -----> OBS: ESSE É O REQ.FLASH() que __ USA__ o 'flash' que você definiu anteriormente... --> para ver a definição de um 'FLASH', veja o controller de 'postLogin', aquele block de 'if(!user)'...
+
+    ///////////////ESTE TRECHO DE CÓDIGO AQUI __ VAI CONSERTAR__ O 'ALWAYS RENDER' de nosso ELEMENTO DE ERRO/div de erro QUE APARECE LÁ na página de 'login' a que somos redirecionados... --> este é um FIX da USAGE do FLASH-CONNECT, que é MEIO BUGADO....
+if (message.length > 0) {
+
+  message = message[0];
+} else { ////caso NÃO EXISTA NENHUMA MESSAGE dentro de 'error' ( ou seja, user não COMETEU NENHUM ERRO de password/email, o que faz com que o objeto 'error' na sua session FIQUE VAZIO, SEM ELEMENTOS, portanto length de 0...), vamos querer SETTAR SEU VALOR COMO 'NULL', tudo para que SEJA __ EVITADO _ O TRIGGER DE 'if(errorMessage) { <div> }' LÁ NA NOSSA VIEW...
+
+  message = null
+}
+
+
+
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+      // errorMessage2: req.flash('error') /////USO DE 'flash-connection'... particularmente, do método 'req.flash()', que é SEU __cORE METHOD.... -----> AQUI NÓS VAMOS __ UTILIZAR__ a message/error message armazenada na key de 'error' DENTRO DE NOSSA SESSION (o store dessas error messages na session do user é mt efetivo PQ __ PODEMOS __ USAR a data das sessions AO LONGO DE REQUESTS DISTINTOS.... isso quer dizer que a DATA PERSISTE, pode ser usada em QUALQUER PAGE DE NOSSO APP, para fazer o ERROR HANDLING junto de REDIRECTS... esse é o uso de 'req.flash()' ) -----> OBS: ESSE É O REQ.FLASH() que __ USA__ o 'flash' que você definiu anteriormente... --> para ver a definição de um 'FLASH', veja o controller de 'postLogin', aquele block de 'if(!user)'...
+      errorMessage: message
+    
+      // isLoggedIn: req.session.isLoggedIn,
+
+      //  isLoggedIn: req.isLoggedIn
+      // isLoggedIn: isLoggedIn
+      // isLoggedIn: req.session.isLoggedIn
+      // isLoggedIn: 'xx'
+    }
+  );
+};
+
+// exports.postLogin = (req, res, next) => { ///CÓDIGO QUE AINDA USAVA O 'DUMMY USER'...
+//   User.findById('6178c60a90464c24983b0847') //todos os códigos abaixo SÃO NECESSÁRIOS para armazenar nossa SESSION DATA (uma 'ENTRY' de SESSION, em 'sessions') LÁ NA NOSSA DATABASE... --> essas linhas TAMBÉM VÃO CRIAR 1 'session cookie' no browser do user, AUTOMATICAMENTE.... (e esse session cookie terá um id HASHEADO que corresponderá AO ID da SESSION ARMAZENADA NA DATABASE, tbm por meio deste código aqui....)
+//     .then((user) => {
+//       // req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+
+//       // res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...) -----> MAS ESSE É UM 'SESSION COOKIE' __POBRE___; VOCÊ NÃO DEVE SETTAR COOKIES MANUALMENTE, ASSIM, __QUASE NUNCA__... --> PREFIRA USAR PACKAGES como 'express-session', PACKAGES QUE ___ FAZEM O STORE DE COOKIES __ PARA VOCê, automaticamente....
+//       req.session.isLoggedIn = true; //MANEIRA ___ LEGIT__ de SETTAR 1 SESSION COOKIE no browser de seu user... --> é claro que esse approach aí REQUER QUE VOCÊ TENHA A PACKAGE DE 'express-session' JÁ INSTALADA no seu projeto.... (pq só assim o objeto 'session' no objeto 'request' passa a existir)....
+//       // ^^^ por meio desse código, FAZEMOS __ O STORE__ DE NOSSA 'SESSION': 1) NA MEMORY DO SEU NODE APP (runtime); 2) NO BROWSER DO USUÁRIO, EM UM COOKIE... (por isso o nome 'session cookie', que é uma SESSION ARMAZENADA DENTRO DE 1 COOKIE.... e esse cookie terá o 'SESSIONID' HASHEADo/encriptado, ao passo que o SERVER/database terá A SESSIONID __ORIGINAL/pura... e esses 2 ids serão MATCHEADOS para identificar o user como AUTOR/correspondente Àquela session...)
+//       req.session.user = user; ////vai definir nossa USER DATA lá na SESSION armazenada na database... (essa será a 'SENSITIVE DATA' armazenada no server...)
+
+//       ///mas esse approach da MEMORY é HORRÍVEL, PQ É MT MELHOR ARMAZENAR SUA SESSION EM UMA __ DATABASE, por meio de packages como 'connect-mongodb-session'... --> para armazenar em uma DATABASE, como o mongodb, você deve SETTAR o uso dessa database lá naquele MIDDLEWARE DEFINIDOR DA SESsion, aquele 'app.use(session({store: store}))', LÁ NO APP.JS...
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Expires='); ///com 'Expires', você define QUANTO TEMPO ESSE COOKIE VAI DURAR, NO MÁXIMO (aí ele vai ser removido SE ESSE TEMPO PAASSAR, ou se você FECHAR O BROWSER)... --> AS DATES DEFINIDAS COM ESSE 'Expires=' __DEVEM SEGUIR __ O FORMATO 'HTTP DATE'..
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Max-age=10'); ///faz a mesma coisa que o CONFIG do cookie de cima, estabelece um TEMPO limite de duração para o cookie.... -->> entretanto, a diferença é que com 'Max-Age', nós definimos o TEMPO EM __ SEGUNDOS_ QUE ESSE COOKIE DEVERÁ DURAR...
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Domain=google'); //USADO ___ NO TRACKING__ DE SEUS USERS/VOCê.... --> o domain a que É ENVIADO 1 COOKIE nem sempre precisa ser o mesmo domain QUE O PRODUZIU... (conluio entre empresas, que fazem acordos para te TRACKAR... ---> cookie produzido em 1 site pode acabar SENDO ENVIADO a DESTINO/DOMAIN distinto, como o google e seus servidores.....)
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Secure'); ///SECURE faz com que seu cookie NÃO SEJA SETTADO NO BROWSER do user SE FOR CONSTATADO QUE A PAGE que produz esse cookie NÃO ESTÁ SENDO SERVIDA EM UM FORMATO HTTPS (http secure)...
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly'); ///IMPORTANTE MECANISMO DE SEGURANÇA,  constatado na coluna 'HTTP' (V) da aba 'application', no google devtools --> ESSE ATTRIBUTE no cookie FAZ COM QUE SEJA __ IMPOSSÍVEL __ ALGUÉM USAR 'CLIENTSIDE JAVASCRIPT' para __ALTERAR O VALOR DESSE COOKIE ESPECÍFICO... --> É MUITO IMPORTANTE E UTILIZADO NO COMBATE A CROSS-SITE SCRIPTING ATTACKS, QUE AMEAÇAM NOSSO SERVER...
+
+//       req.session.user.save(
+//         //talvez funcione.... (não parece funcionar, mas tudo bem...)
+//         () => {
+//           //callback function, vai redirecionar APENAS __aPÓS___  o 'SAVE' da session na DATABASE ter ocorrido, e apenas APÓS A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+//           res.redirect('/');
+//         }
+//       );
+//     });
+// };
+
+exports.postLogin = (req, res, next) => {
+  const password = req.body.password;
+  const email = req.body.email.toLowerCase(); ///para evitar problemas com '.com' e '.COM' naquela function de '.findOne()'.... (isso pq EMAILS NÃO SÃO CASE-SENSITIVE, não se importam com isso..)
+
+  console.log(email);
+
+  User.findOne({ email: email }).then((user) => {
+    console.log(user, 'XX');
+    if (!user) {
+      req.flash('error', 'Invalid Email.'); ////ISSO FOI/É USADO LÁ NO CONTROLLER DE 'get' '/login', PQ __ É PARA LÁ QUE VAMOS REDIRECIONAR NOSSO USER, e é LÁ QUE VAMOS QUERER __ MOSTRAR__ NOSSA MENSAGEM DE ERRO DIZENDO QUE ELE ERROU O EMAIL/PASSWORD...
+      return res.redirect('/login');
+    } else {
+      // const passwordIsValid = bcrypt.compare(password, user.password)
+      bcrypt
+        .compare(password, user.password)
+        .then((result) => {
+          ///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+          if (result) {
+            //JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+           return req.session.save((err) => {
+              console.log(err);
+              // res.redirect('/');
+
+
+              return res.redirect('/');
+            });
+          }  else {
+          //esse case FORA DO 'if(result)' é o case em que OS PASSWORDS NÃO MATCHEIAM (user errou/não sabe o password....) ---> vamos querer MOSTRAR UMA MENSAGEM DE ERRO AO REDIRECIONAR, lá na page de 'login', a que redirecionaremos o user....
+          
+          req.flash('error', 'Invalid Password.');
+          res.redirect('/login');
+
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/login');
+        });
+    }
+  });
+};
+
+exports.postLogout = (req, res, next) => {
+  req.session.destroy(
+    ///////'.destroy()' em cima do objeto 'session' no OBJETO REQUEST daquele user específico... -----> 'destroy()' É UM METHOD EM 'session' PROVIDENCIADO __ PELO PACKAGE DE 'express-session'... ---> ELE ___ VAI ___dESTRUIR__ A SESSION CORRESPONDENTE __ AO 'SESSION COOKIE' do user que ENVIOU ESSE REQUEST de 'logout'.... (aí, com isso, VAMOS ACABAR DESTRUINDO ___TANTO O SESSION COOKIE EM NOSSOS BROWSERS/BROWSERS DOS USERS__ COMO ___ TAMBÉM __ A SESSION ARMAZENADA_ LÁ NA NOSSA DATABASE, na collection de 'sessions'...)
+    () => {
+      console.log('Destroyed Session in Your Database');
+      res.redirect('/');
+      //////ESSA FUNÇAÕ INTERNA/callback SERÁ EXECUTADA QUANDO ESSE 'req.session.destroy()' TIVER _ACABADO __ COM O DESTROY__ DAQUELA SESSION ESPECÍFICA, LÁ NA SUA DATABASE....
+      ///ver aula 'deletando um cookie' -----> NESSA AULA, APRENDEMOS QUE __ NÃO PRECISAMOS DELETAR__ O COOKIE/SESSION COOKIE NO BROWSER DO USER, JUSTAMENTE PQ __ ESSE É 1 'SESSION COOKIE'... --> session cookies SEMPRE SÃO PROVISÓRIOS, NUNCA PERMANENTES... e só duram
+      //até o  USER FECHAR O BROWSER... -----> além disso, quando APAGAMOS a SESSION correspondente a esse SESSION COOKIE, LÁ NA DATABASE, na collection de 'sessions', por meio do código de '.req.session.destroy()', NÓS __ JÁ DEIXAMOS ESSE SESSION COOKIE INÚTIL/INUTILIZÁVEL, só 1 MINI pedaço de data armazenado na local storage do user... ----> E ESSE PEDACINHO DE DATA ___ AINDA SERÁ __AUTOMATICAMENTE OVERWRITTADO _ se o USER RESOLVER FAZER LOGIN DNV, nesse mesmo browser aberto, PQ __ AÍ _ESSE 'SESSION COOKIE' antigo, INÚTIL, será ___ OVERWRITTADO __ PELO NOVO SESSION COOKIE, produzido novamente por aquele código logo acima, as linhas de 'User.findById()' com os calls de 'req.session.user = user', etc etc, SETTADORES/CRIADORES DE 1 SESSION NA DATABASE e SETTADORES/CRIADORES DO SESSION COOKIE no browser do user....
+    }
+  );
+};
+
+exports.getSignupPage = (req, res, next) => {
+
+
+let message = req.flash('error');
+
+
+
+
+if (message.length > 0) {
+
+    message = message[0];
+} else {
+
+    message = null;
+}
+
+
+console.log(message);
+
+
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    errorMessage: message
+    // isLoggedIn: req.session.isLoggedIn,
+    // isLoggedIn: 'xx'
+    // isLoggedIn: isLoggedIn
+  });
+};
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        // return res
+        //   .status(400)
+        //   .json({
+        //     message:
+        //       'An user with that email already exists, please use a different email address.',
+        //   });
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+--> MAS É CLARO _ QUE NÃO SERÁ SÓ ISSO.... --> PROFESSOR 
+
+
+VAI QUERER 
+
+IMPORTAR, TAMBÉM,
+
+
+
+O 
+
+
+
+
+PACOTE 
+
+de 'nodemailer-sendgrid-transport' ----> PROFESSOR ARMAZENA ISSO 
+
+EM 
+UMA 
+
+
+CONST 
+
+DE NOME 
+
+
+'sendgridTransport'...
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+const User = require('../models/user');
+
+exports.getLoginPage = (req, res, next) => {
+  // console.log(req.get('Cookie')); ///VAI CONSOLE LOGGAR TODOS OS COOKIES settados por meio do header 'Set-Cookie' (que pode ser encontrado naquele controller ali de baixo...)
+
+  // console.log(req.get('Cookie').trim().split('=')[1]); //manipulação do COOKIE QUE NOS INTERESSA... código meio subóptimo.
+
+  // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  // console.log(req.session);
+
+
+  // console.log(req.flash('error'), 'LINE');
+
+  // console.log(typeof req.flash('error')) 
+
+  ///use as messages do flash-connect assim, __EXTRAIA-AS ANTES USANDO uma variável (armazene o valor de 'req.flash('nomeDeSeuError')' ), PARA ENTÃO SER POSSÍVEL O SET DE RENDERS CONDICIONAIS nas paginas a que você redirecionar...
+let message = req.flash('error'); /////USO DE 'flash-connection'... particularmente, do método 'req.flash()', que é SEU __cORE METHOD.... -----> AQUI NÓS VAMOS __ UTILIZAR__ a message/error message armazenada na key de 'error' DENTRO DE NOSSA SESSION (o store dessas error messages na session do user é mt efetivo PQ __ PODEMOS __ USAR a data das sessions AO LONGO DE REQUESTS DISTINTOS.... isso quer dizer que a DATA PERSISTE, pode ser usada em QUALQUER PAGE DE NOSSO APP, para fazer o ERROR HANDLING junto de REDIRECTS... esse é o uso de 'req.flash()' ) -----> OBS: ESSE É O REQ.FLASH() que __ USA__ o 'flash' que você definiu anteriormente... --> para ver a definição de um 'FLASH', veja o controller de 'postLogin', aquele block de 'if(!user)'...
+
+    ///////////////ESTE TRECHO DE CÓDIGO AQUI __ VAI CONSERTAR__ O 'ALWAYS RENDER' de nosso ELEMENTO DE ERRO/div de erro QUE APARECE LÁ na página de 'login' a que somos redirecionados... --> este é um FIX da USAGE do FLASH-CONNECT, que é MEIO BUGADO....
+if (message.length > 0) {
+
+  message = message[0];
+} else { ////caso NÃO EXISTA NENHUMA MESSAGE dentro de 'error' ( ou seja, user não COMETEU NENHUM ERRO de password/email, o que faz com que o objeto 'error' na sua session FIQUE VAZIO, SEM ELEMENTOS, portanto length de 0...), vamos querer SETTAR SEU VALOR COMO 'NULL', tudo para que SEJA __ EVITADO _ O TRIGGER DE 'if(errorMessage) { <div> }' LÁ NA NOSSA VIEW...
+
+  message = null
+}
+
+
+
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+      // errorMessage2: req.flash('error') /////USO DE 'flash-connection'... particularmente, do método 'req.flash()', que é SEU __cORE METHOD.... -----> AQUI NÓS VAMOS __ UTILIZAR__ a message/error message armazenada na key de 'error' DENTRO DE NOSSA SESSION (o store dessas error messages na session do user é mt efetivo PQ __ PODEMOS __ USAR a data das sessions AO LONGO DE REQUESTS DISTINTOS.... isso quer dizer que a DATA PERSISTE, pode ser usada em QUALQUER PAGE DE NOSSO APP, para fazer o ERROR HANDLING junto de REDIRECTS... esse é o uso de 'req.flash()' ) -----> OBS: ESSE É O REQ.FLASH() que __ USA__ o 'flash' que você definiu anteriormente... --> para ver a definição de um 'FLASH', veja o controller de 'postLogin', aquele block de 'if(!user)'...
+      errorMessage: message
+    
+      // isLoggedIn: req.session.isLoggedIn,
+
+      //  isLoggedIn: req.isLoggedIn
+      // isLoggedIn: isLoggedIn
+      // isLoggedIn: req.session.isLoggedIn
+      // isLoggedIn: 'xx'
+    }
+  );
+};
+
+// exports.postLogin = (req, res, next) => { ///CÓDIGO QUE AINDA USAVA O 'DUMMY USER'...
+//   User.findById('6178c60a90464c24983b0847') //todos os códigos abaixo SÃO NECESSÁRIOS para armazenar nossa SESSION DATA (uma 'ENTRY' de SESSION, em 'sessions') LÁ NA NOSSA DATABASE... --> essas linhas TAMBÉM VÃO CRIAR 1 'session cookie' no browser do user, AUTOMATICAMENTE.... (e esse session cookie terá um id HASHEADO que corresponderá AO ID da SESSION ARMAZENADA NA DATABASE, tbm por meio deste código aqui....)
+//     .then((user) => {
+//       // req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+
+//       // res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...) -----> MAS ESSE É UM 'SESSION COOKIE' __POBRE___; VOCÊ NÃO DEVE SETTAR COOKIES MANUALMENTE, ASSIM, __QUASE NUNCA__... --> PREFIRA USAR PACKAGES como 'express-session', PACKAGES QUE ___ FAZEM O STORE DE COOKIES __ PARA VOCê, automaticamente....
+//       req.session.isLoggedIn = true; //MANEIRA ___ LEGIT__ de SETTAR 1 SESSION COOKIE no browser de seu user... --> é claro que esse approach aí REQUER QUE VOCÊ TENHA A PACKAGE DE 'express-session' JÁ INSTALADA no seu projeto.... (pq só assim o objeto 'session' no objeto 'request' passa a existir)....
+//       // ^^^ por meio desse código, FAZEMOS __ O STORE__ DE NOSSA 'SESSION': 1) NA MEMORY DO SEU NODE APP (runtime); 2) NO BROWSER DO USUÁRIO, EM UM COOKIE... (por isso o nome 'session cookie', que é uma SESSION ARMAZENADA DENTRO DE 1 COOKIE.... e esse cookie terá o 'SESSIONID' HASHEADo/encriptado, ao passo que o SERVER/database terá A SESSIONID __ORIGINAL/pura... e esses 2 ids serão MATCHEADOS para identificar o user como AUTOR/correspondente Àquela session...)
+//       req.session.user = user; ////vai definir nossa USER DATA lá na SESSION armazenada na database... (essa será a 'SENSITIVE DATA' armazenada no server...)
+
+//       ///mas esse approach da MEMORY é HORRÍVEL, PQ É MT MELHOR ARMAZENAR SUA SESSION EM UMA __ DATABASE, por meio de packages como 'connect-mongodb-session'... --> para armazenar em uma DATABASE, como o mongodb, você deve SETTAR o uso dessa database lá naquele MIDDLEWARE DEFINIDOR DA SESsion, aquele 'app.use(session({store: store}))', LÁ NO APP.JS...
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Expires='); ///com 'Expires', você define QUANTO TEMPO ESSE COOKIE VAI DURAR, NO MÁXIMO (aí ele vai ser removido SE ESSE TEMPO PAASSAR, ou se você FECHAR O BROWSER)... --> AS DATES DEFINIDAS COM ESSE 'Expires=' __DEVEM SEGUIR __ O FORMATO 'HTTP DATE'..
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Max-age=10'); ///faz a mesma coisa que o CONFIG do cookie de cima, estabelece um TEMPO limite de duração para o cookie.... -->> entretanto, a diferença é que com 'Max-Age', nós definimos o TEMPO EM __ SEGUNDOS_ QUE ESSE COOKIE DEVERÁ DURAR...
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Domain=google'); //USADO ___ NO TRACKING__ DE SEUS USERS/VOCê.... --> o domain a que É ENVIADO 1 COOKIE nem sempre precisa ser o mesmo domain QUE O PRODUZIU... (conluio entre empresas, que fazem acordos para te TRACKAR... ---> cookie produzido em 1 site pode acabar SENDO ENVIADO a DESTINO/DOMAIN distinto, como o google e seus servidores.....)
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; Secure'); ///SECURE faz com que seu cookie NÃO SEJA SETTADO NO BROWSER do user SE FOR CONSTATADO QUE A PAGE que produz esse cookie NÃO ESTÁ SENDO SERVIDA EM UM FORMATO HTTPS (http secure)...
+//       // res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly'); ///IMPORTANTE MECANISMO DE SEGURANÇA,  constatado na coluna 'HTTP' (V) da aba 'application', no google devtools --> ESSE ATTRIBUTE no cookie FAZ COM QUE SEJA __ IMPOSSÍVEL __ ALGUÉM USAR 'CLIENTSIDE JAVASCRIPT' para __ALTERAR O VALOR DESSE COOKIE ESPECÍFICO... --> É MUITO IMPORTANTE E UTILIZADO NO COMBATE A CROSS-SITE SCRIPTING ATTACKS, QUE AMEAÇAM NOSSO SERVER...
+
+//       req.session.user.save(
+//         //talvez funcione.... (não parece funcionar, mas tudo bem...)
+//         () => {
+//           //callback function, vai redirecionar APENAS __aPÓS___  o 'SAVE' da session na DATABASE ter ocorrido, e apenas APÓS A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+//           res.redirect('/');
+//         }
+//       );
+//     });
+// };
+
+exports.postLogin = (req, res, next) => {
+  const password = req.body.password;
+  const email = req.body.email.toLowerCase(); ///para evitar problemas com '.com' e '.COM' naquela function de '.findOne()'.... (isso pq EMAILS NÃO SÃO CASE-SENSITIVE, não se importam com isso..)
+
+  console.log(email);
+
+  User.findOne({ email: email }).then((user) => {
+    console.log(user, 'XX');
+    if (!user) {
+      req.flash('error', 'Invalid Email.'); ////ISSO FOI/É USADO LÁ NO CONTROLLER DE 'get' '/login', PQ __ É PARA LÁ QUE VAMOS REDIRECIONAR NOSSO USER, e é LÁ QUE VAMOS QUERER __ MOSTRAR__ NOSSA MENSAGEM DE ERRO DIZENDO QUE ELE ERROU O EMAIL/PASSWORD...
+      return res.redirect('/login');
+    } else {
+      // const passwordIsValid = bcrypt.compare(password, user.password)
+      bcrypt
+        .compare(password, user.password)
+        .then((result) => {
+          ///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+          if (result) {
+            //JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+           return req.session.save((err) => {
+              console.log(err);
+              // res.redirect('/');
+
+
+              return res.redirect('/');
+            });
+          }  else {
+          //esse case FORA DO 'if(result)' é o case em que OS PASSWORDS NÃO MATCHEIAM (user errou/não sabe o password....) ---> vamos querer MOSTRAR UMA MENSAGEM DE ERRO AO REDIRECIONAR, lá na page de 'login', a que redirecionaremos o user....
+          
+          req.flash('error', 'Invalid Password.');
+          res.redirect('/login');
+
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/login');
+        });
+    }
+  });
+};
+
+exports.postLogout = (req, res, next) => {
+  req.session.destroy(
+    ///////'.destroy()' em cima do objeto 'session' no OBJETO REQUEST daquele user específico... -----> 'destroy()' É UM METHOD EM 'session' PROVIDENCIADO __ PELO PACKAGE DE 'express-session'... ---> ELE ___ VAI ___dESTRUIR__ A SESSION CORRESPONDENTE __ AO 'SESSION COOKIE' do user que ENVIOU ESSE REQUEST de 'logout'.... (aí, com isso, VAMOS ACABAR DESTRUINDO ___TANTO O SESSION COOKIE EM NOSSOS BROWSERS/BROWSERS DOS USERS__ COMO ___ TAMBÉM __ A SESSION ARMAZENADA_ LÁ NA NOSSA DATABASE, na collection de 'sessions'...)
+    () => {
+      console.log('Destroyed Session in Your Database');
+      res.redirect('/');
+      //////ESSA FUNÇAÕ INTERNA/callback SERÁ EXECUTADA QUANDO ESSE 'req.session.destroy()' TIVER _ACABADO __ COM O DESTROY__ DAQUELA SESSION ESPECÍFICA, LÁ NA SUA DATABASE....
+      ///ver aula 'deletando um cookie' -----> NESSA AULA, APRENDEMOS QUE __ NÃO PRECISAMOS DELETAR__ O COOKIE/SESSION COOKIE NO BROWSER DO USER, JUSTAMENTE PQ __ ESSE É 1 'SESSION COOKIE'... --> session cookies SEMPRE SÃO PROVISÓRIOS, NUNCA PERMANENTES... e só duram
+      //até o  USER FECHAR O BROWSER... -----> além disso, quando APAGAMOS a SESSION correspondente a esse SESSION COOKIE, LÁ NA DATABASE, na collection de 'sessions', por meio do código de '.req.session.destroy()', NÓS __ JÁ DEIXAMOS ESSE SESSION COOKIE INÚTIL/INUTILIZÁVEL, só 1 MINI pedaço de data armazenado na local storage do user... ----> E ESSE PEDACINHO DE DATA ___ AINDA SERÁ __AUTOMATICAMENTE OVERWRITTADO _ se o USER RESOLVER FAZER LOGIN DNV, nesse mesmo browser aberto, PQ __ AÍ _ESSE 'SESSION COOKIE' antigo, INÚTIL, será ___ OVERWRITTADO __ PELO NOVO SESSION COOKIE, produzido novamente por aquele código logo acima, as linhas de 'User.findById()' com os calls de 'req.session.user = user', etc etc, SETTADORES/CRIADORES DE 1 SESSION NA DATABASE e SETTADORES/CRIADORES DO SESSION COOKIE no browser do user....
+    }
+  );
+};
+
+exports.getSignupPage = (req, res, next) => {
+
+
+let message = req.flash('error');
+
+
+
+
+if (message.length > 0) {
+
+    message = message[0];
+} else {
+
+    message = null;
+}
+
+
+console.log(message);
+
+
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    errorMessage: message
+    // isLoggedIn: req.session.isLoggedIn,
+    // isLoggedIn: 'xx'
+    // isLoggedIn: isLoggedIn
+  });
+};
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        // return res
+        //   .status(400)
+        //   .json({
+        //     message:
+        //       'An user with that email already exists, please use a different email address.',
+        //   });
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+COM ISSO IMPORTADO,
+
+PROFESSOR __ EXPLICA QUE __ JÁ PODEMOS __ IR INICIALIZANDO UM PUNHADO DE COISAS,
+
+
+nesse arquivo 
+
+
+
+'auth.js'... 
+
+
+
+
+
+
+
+
+
+
+-----> PARA QUE O NODEMAILER FUNCIONE,
+
+
+NÓS PRECISAMOS 
+
+INICIALIZAR 
+
+
+
+
+ALGO QUE 
+
+
+É CHAMADO 
+
+DE 
+
+
+
+'
+transporter'...
+ 
+
+
+
+
+
+
+
+
+ -------> POR ISSO O PROFESSOR CRIA UMA CONST DE NOME 
+
+ 'transporter',
+
+
+
+
+
+
+
+
+ E NESSA const 
+
+ VAMOS ESSENCIALMENTE 
+
+ ESCREVER 
+
+
+ 'UM SETUP DIZENDO AO NODEMAILER ___COMO SEUS EMAILS ___ DEVEM 
+
+
+ SER 
+
+ ENTREGUEs' ( how your emails will be delivered)...
+
+
+
+
+
+
+
+
+ -------> VOCÊ PRECISA DESCREVER 'how your emails will be delivered',
+
+ ISSO PQ 
+
+
+
+ ________ O NODEJS __ NÃO VAI FAZER ISSO POR CONTA PRÓPRIA,
+
+
+
+ alguém 
+ precisa 
+
+
+ codar/implementar essa função...  -----> PRECISAMOS DE UM THIRD PARTY SERVICE 
+
+
+ para 
+
+
+ especificar como 
+
+
+
+
+ 
+
+ 'será feito o delivery'...
+
+
+
+
+
+
+
+
+ -> É POR ISSO QUE 
+
+
+
+ o 
+
+
+ professor 
+
+
+ vai 
+
+ escrever
+
+ uma constante de 'transporter',
+
+ tipo assim
+
+ 
+ :
+
+
+
+
+
+
+-----------------------------------
+
+
+ const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+
+
+
+
+
+
+const transporter =
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+NESSE 'transporter',
+
+
+VAMOS 
+
+
+ESSENCIALMENTE 
+
+
+
+usar o 
+
+pacote de 'nodemailer',
+
+
+CHAMANDO UM DE SEUS MÉTODOS,
+
+o método 
+
+
+'createTransport()'.... 
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+ const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+
+const transporter = nodemailer.createTransport(); ///EIS O CÓDIGO EM QUESTÃO.
+
+
+---------------------------------------------
+
+
+
+
+DENTRO DESSE MÉTODO,
+
+
+
+
+
+__NÓS PODEMOS/DEVEMOS PASSAR O ARGUMENTO
+
+
+
+
+de 
+
+
+'sendgridTransport',
+
+
+
+
+
+PARA QUE 
+
+
+
+SEJA ESTABELECIDO QUE _ É O 'SENDGRID'
+
+que 
+
+vai fazer 
+
+
+O __ HANDLE_ DE NOSSOS EMAILS....
+
+
+
+
+
+
+
+
+
+-----> OK.... --> MAS DEVEMOS EXECUTAR ESSE PARÂMETRO 'sendgridTransport' COMO UMA FUNÇÃO,
+
+tipo 'sendgridTransport()'...
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+ const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+
+const transporter = nodemailer.createTransport(sendgridTransport()); ///EIS O CÓDIGO EM QUESTÃO.
+
+----------------------------------------------
+
+
+
+
+
+
+VAMOS QUERER EXECUTAR ESSE PACOTE/const COMO __ UMA FUNÇÃO __ JUSTAMENTE 
+
+PQ 
+
+
+
+
+
+
+______ ESSA FUNÇÃO VAI NOS _ RETORNAR__ UMA 
+
+
+
+
+'''CONFIGURATION''' 
+
+
+QUE 
+
+
+
+
+ENTÃO PODERÁ/VAI SER USADA 
+
+PELO 
+
+
+
+'nodemailer',
+
+
+
+tudo para que O ___NODEMAILER___ CONSIGA USAR 
+O 
+
+
+'sendGrid'...
+
+
+
+
+
+
+
+
+
+
+
+-------> A ESSA FUNÇÃO 
+
+
+'sendgridTransport()',
+
+
+
+NÓS VAMOS 
+
+
+
+
+PASSAR 1 OBJETO como parâmetro... ----> DENTRO 
+
+
+
+DESSE OBJETO,
+
+
+TEREMOS 
+
+1 
+
+
+
+
+PROPRIEDADE 
+
+de 
+
+'auth',
+
+QUE 
+
+VAI SEGURAR __ UM OBJETO_.... --->  
+
+
+DENTRO 
+
+DESSE 
+
+OBJECT,
+
+
+
+DEVEMOS 
+
+
+ESCREVER AS KEYS 
+
+
+'api_user'
+
+
+
+e 
+
+
+'api_key'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+ const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+
+const transporter = nodemailer.createTransport(sendgridTransport(
+{auth:  {
+      api_user:            ,        ///EIS O CÓDIGO EM QUESTÃO.
+      api_key: 
+  } 
+}
+));
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+OS 2 VALORES DESSAS KEYS __ SÃO OBTIDOS LÁ DE SUA CONTA 'sendgrid',
+
+NO SITE DO 
+
+SENDGRID....
+
+
+
+
+
+
+
+
+----------> PARA ENCONTRAR ESSES VALORES,
+
+
+VOCÊ DEVE CLICAR NA OPÇÃO 'settings',
+
+E AÍ 
+
+EM 
+
+'api keys'... --------> LÁ, NESSE local,
+
+
+
+
+_CRIE UMA NOVA 'API_KEY'...
+
+
+
+
+
+
+
+
+
+--> A PÁGINA DA WEB VAI TE __ PEDIR_ 1 NOME PARA ESSA KEY,
+
+
+
+
+
+E __ AÍ __ QUAL O TIPO DE ACESSO QUE VOCê VAI QUERER ....  -----> PROFESSOR VAI QUERER 
+
+'FULL ACCESS',
+
+e então vai criar essa key....
+
+
+
+
+
+
+
+
+--> CRIADA A KEY,
+
+VOCÊ DEVE PEGÁ-LA (ela nunca será emitida novamente, por isso vocÊ tem que GUARDÁ-LA EM UM LUGAR SEGURO) 
+
+
+
+
+
+E __ AÍ __ VOCê ____ 
+
+
+
+COLOCA ESSA KEY NO FIELD DE 'api_key'...
+
+
+
+
+
+
+NOSSA KEY:
+
+
+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
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 'ACTUALLY, WE ONLY NEED THE KEY, AND NOT THE USER'...
+
+
+(
+
+  VOCÊ PODERIA TER USADO SEU 
+
+'USERNAME+ PASSWORD' 
+
+
+dentro 
+desse 
+
+objeto 'auth',
+
+
+MAS __ A 'api_key' SOZINHA __ JÁ 
+
+
+SUPRE 
+
+
+
+A PRESENÇA DOS DOIS....
+
+)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer'); ////USADO PARA __ FAZER O HANDLE/SEND DE EMAILS DENTRO DE NOSSO APP NODE....
+const sendgridTransport = require('nodemailer-sendgrid-transport'); ////USADO PARA __ FAZER O HANDLE/SEND DE EMAILS DENTRO DE NOSSO APP NODE....
+
+
+
+
+const transporter = nodemailer.createTransport(sendgridTransport({ ///usado para __DEFINIR _ QUAL conta/setup do SENDGRID você vai querer usar..
+
+  auth: {api_key: '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', // OU VOCê SETTA a api key que você CRIOU lá no 'sendgrid', OU VOCê USA __'user + password' de sua conta sendgrid...
+
+
+}
+}))
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+COM ISSO,
+
+
+VOCÊ TERÁ CONFIGURADO SEU 'TRANSPORTEr'...
+
+
+
+
+
+
+
+
+
+
+
+-------> certo... COM O TRANSPORTER SETTADO, VOCÊ PODE AGORA 
+
+
+O UTILIZAR 
+
+_____PARA ENVIAR __ 1 EMAIL... 
+
+
+
+
+
+
+
+
+
+
+
+--> E O PROFESSOR DIZ QUE __ ELE VAI QUERER __ ENVIAR 
+
+1 
+
+
+EMAIL __APÓS __ O USER FAZER 'SIGNUP', por exemplo....
+
+
+
+
+
+
+
+ESSA PACKAGE DE 'nodemailer-sendgrid-transport' é MEIO BOSTA....
+
+
+
+
+
+
+
+
+
+
+-------> OK...  O 
+
+
+CÓDIGO DE 
+
+
+
+'signup',
+
+
+NO CASO,
+
+
+É 
+
+ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO QUE NOS INTERESSA, NO CASO, É 
+
+
+AQUELE 
+
+BLOCK DE 
+
+
+'redirect'
+
+à PAGE DE 'login'...
+
+
+
+
+É ESTE BLOCK AQUI:
+
+
+
+          .then((result) => {
+            
+            res.redirect('/login');
+          });
+
+
+
+
+
+--> ESSE BLOCK AÍ É _ EXECUTADO_ _APÓS __- 
+
+
+
+1 USER 
+
+
+
+
+
+ser CRIADO NA NOSSA DATABASe (resultado do processo de 'signup'/coisa que acontece quando user é 'signed up'...)
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... 
+
+
+
+
+NESSE BLOCK AÍ,
+
+
+
+PROFESSOR EXPLICA QUE 
+
+VAMOS QUERER __ 
+
+
+ENVIAR ___ NOSSA 
+
+MESSAGE AO USER,
+
+
+ENVIAR 1 EMAIL AO USER AVISANDO QUE 
+
+1 
+
+CONTA FOI CRIADA NO SEU NOME... 
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+
+VAMOS 
+
+
+USAR 
+
+
+
+aquela const de 
+
+'transporter' (
+
+
+  que é 
+
+
+
+
+'''
+
+
+
+
+
+
+const transporter = nodemailer.createTransport(sendgridTransport({ ///usado para __DEFINIR _ QUAL conta/setup do SENDGRID você vai querer usar..
+
+  auth: {api_key: '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', // OU VOCê SETTA a api key que você CRIOU lá no 'sendgrid', OU VOCê USA __'user + password' de sua conta sendgrid...
+
+
+}
+}))
+
+
+
+
+
+'''
+
+
+
+
+
+),
+
+
+
+
+
+
+
+
+
+
+___VAMOS USAR__ A 
+
+
+CONST 
+
+
+'transporter'
+
+
+
+E ENTÃO 
+
+
+
+
+__EXECUTAR/CHAMAR 
+
+ 
+
+ um método 
+
+ dentro dela,
+
+
+
+
+
+ QUE SE CHAMA 
+
+
+
+ 'sendMail()'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+ 
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    req.flash('error', 'Passwords do not match, please try again.'); 
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) 
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); 
+          })
+          .then((result) => {
+            transporter.sendMail(); ///////EIS O CÓDIGO EM QUESTÃO.
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+---> A ESSE METHOD,
+
+
+
+PASSAMOS 
+
+
+
+____ 1 OBJETO _ JAVASCRIPT___ 
+
+
+
+EM QUE 
+
+
+
+
+__ VOCê __CONFIGURA 
+
+
+'THE EMAIL 
+
+
+
+THAT YOU WANNA SEND'... -----> 
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+VOCÊ PROVAVELMENTE DEFINE:
+
+
+
+
+
+
+
+
+
+1) O CONTEÚDO DO EMAIL 
+
+
+
+
+
+2) DESTINATÁRIO DO EMAIL...
+
+
+
+
+
+
+
+
+
+---> PARA ISSO, PRIMEIRAMENTE,
+
+
+temos 
+
+a propriedade 
+
+
+'to:' -----> É NESSA PROPRIEDADE 
+
+QUE 
+
+
+VOCê __ VAI __ 
+
+ESCREVER 
+
+
+
+
+
+
+O EMAIL DO USER, repreesntado por alguma const/variable...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    req.flash('error', 'Passwords do not match, please try again.'); 
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) 
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); 
+          })
+          .then((result) => {
+            transporter.sendMail(
+              {
+                to: email,              ///////EIS O CÓDIGO EM QUESTÃO.
+             
+              }
+            ); 
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+VAMOS USAR AQUELA INFO QUE JÁ TÍNHAMOS LÁ EM CIMA,
+ 
+
+ NAQUELE OBJECT DESTRUCTURING...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS ALÉM 
+
+ DA 
+
+
+ PROPRIEDADE 
+
+ 'to',
+
+
+
+ PRECISAMOS 
+
+
+ INPUTTAR 
+
+
+
+
+
+
+ OUTRA PROPRIEDADE,
+
+
+ PROPRIEDADE 
+
+
+ DE 
+
+
+ 'from'.... -------> 
+
+
+
+
+OU SEJA, É 
+
+
+
+
+
+
+O 
+
+
+
+
+QUE SERÁ MOSTRADO COMO 'enviador do email',
+
+
+
+
+no email que enviamos... ---> PROFESSOR 
+
+
+VAI 
+
+COLOCAR 
+
+
+
+'shop@node-complete.com'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ATÉ AGORA, TEMOS:
+
+
+
+1) 'to' 
+
+
+
+2) 'from' 
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+O __ TERCEIRO PARÂMETRO É O 'SUBJECT'/assunto do 
+
+EMAIL...
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI COLOCAR 
+
+
+
+um simples,
+
+'Signup Succeeded'
+
+
+
+
+
+
+
+
+
+
+-_> POR FIM,
+ 
+
+
+
+ TEMOS 
+
+
+
+ O FIELD 
+
+ de 
+
+ 'html',
+
+
+
+ QUE __ SERÁ __ ESSENCIALMENTE __ O CONTEÚDO _  ____ 
+
+
+
+ HTML DE 
+
+ SUA MESSAGE... ----> PROFESSOR ENTÃO 
+
+
+
+
+ NOS EXPLICA/ADMITE QUE ___VOCê PODERIA _ ESCREVER 
+
+ NESSE 
+
+ LUGAR 
+
+ UM 
+
+ HTML COMPLEXO,
+
+ cheio de firulas,
+
+
+ MAS QUE 
+
+
+ AQUI 
+
+
+ ELE 
+
+
+ SÓ __ VAI __ESCREVER 
+
+ UMA 
+
+ TAG 
+
+
+ '<h1>'
+
+
+ COMUM...
+
+
+
+
+
+
+ OK, ISSO SIGNIFICA QUE TEMOS:
+
+
+
+
+
+
+
+
+
+1) 'to' 
+
+
+
+2) 'from' 
+
+
+3) 'subject'
+
+
+4) 'html'
+
+
+
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+ 
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    req.flash('error', 'Passwords do not match, please try again.'); 
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) 
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); 
+          })
+          .then((result) => {
+            transporter.sendMail(
+              {
+                to: email,              ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'shop@test.com',
+                subject: 'Signup succeeded', 
+                html: '<h1>You successfullly signed up!</h1>'
+              }
+            ); 
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO... --> PROFESSOR __NOS EXPLICA QUE __ 
+
+ESSE METHOD 
+
+DE 
+
+
+
+'sendEmail()"
+
+
+__ VAI SEMPRE _ NOS __ DAR/RETORNAR UMA PROMISE,
+
+
+
+
+
+e que 
+
+por isso 
+
+
+
+PODEMOS __ ADICIONAR THEN E CATCH BLOCKS,
+
+
+
+
+
+
+
+
+
+
+
+para aí REDIRECIONAR APÓS O 
+
+
+EMAIL 
+
+
+DE CONFIRMAÇAÕ DE SIGNUP SER ENVIADO...
+
+
+
+
+
+
+--> VOCÊ __ TAMBÉM __ PODE QUERER REDIRECIONAR INSTANTANEAMNETE,
+
+
+deixando esse código sendo executado NO BACKGROUND (o email ainda será enviado, no final das contas, só não vamos ESPERAR sua conclusão PARA REDIRECIONAR)
+
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, PROFESSOR DIZ QUE SE QUISERMOS ESSA VERSÃO DE 'NÃO VAMOS ESPERAR O SEND DO EMAIL',
+
+ainda devemos fazer RETURN desse 'transporter.sendMail()'
+,
+
+
+
+
+TUDO 
+
+PARA QUE _ SEJA POSSÍVEL ADICIONAR UM 'catch block'
+
+
+DEPOIS _ DE SUA EXECUÇÃO, PARA CATCH QUAISQUER ERROS....
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        // return res
+        //   .status(400)
+        //   .json({
+        //     message:
+        //       'An user with that email already exists, please use a different email address.',
+        //   });
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+           return transporter.sendMail( //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email,              ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'shop@test.com',
+                subject: 'Signup succeeded', 
+                html: '<h1>You successfullly signed up!</h1>'
+              }
+            )
+
+          });
+      }
+    })
+    .catch((err) => { ///////EIS O CÓDIGO EM QUESTÃO.
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK....... 
+
+
+
+
+
+
+
+
+SALVAMOS TUDO ISSO E TESTAMOS 
+
+
+
+NOSSO CÓDIGo...
+
+
+
+
+
+
+--> GANHAMOS 1 ERROR:
+
+
+
+Error: The from address does not match a verified Sender Identity. Mail cannot be sent until this error is resolved. Visit https://sendgrid.com/docs/for-developers/sending-email/sender-identity/ to see the Sender Identity requirements
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------->
+
+
+To ensure our customers maintain the best possible sender reputations and to uphold legitimate sending behavior, we require customers to verify their Sender Identities. A Sender Identity represents your “From” email address—the address your recipients will see as the sender of your emails.
+
+You can verify one or more Sender Identities using either Domain Authentication or Single Sender Verification. There are advantages to both verification methods, and we provide detailed guides to configure whichever option you choose.
+
+This page offers a high-level overview of Single Sender Verification and Domain Authentication to help you decide which option best fits your needs.
+
+
+
+
+
+
+
+--> ele pede que você crie um sender verificado..
+
+
+
+
+
+
+
+
+
+
+
+--> ok, criei um sender verificado, com meu email... ----> entretanto,
+
+
+ainda não recebi email algum 
+
+
+
+
+quando criei um user...
+
+
+
+
+
+
+
+
+--> ok... testei de novo, agora com um email diferente de 'arthur.panazolo@acad.pucrs.br'
+
+
+
+
+
+
+
+
+
+----> FUNCIONOU.... --> AGORA TODA VEZ QUE FAZEMOS 
+
+
+
+
+'SIGNUP',
+
+
+CRÍAMOS UM USER,
+
+
+
+__ NÓS RECEBEMOS UM 'EMAIL DIZENDO QUE CRIAMOS 1 USER',
+
+
+
+lá 
+no
+ 
+
+ nosso email (e user tbm receberá...)
+
+
+
+
+
+
+
+
+ --> AGORA VOU FAZER A MESMA COISA, MAS 
+
+
+ COM 
+
+  A 
+
+  ROUTE 
+  DE 
+
+
+  '
+  sign-in/login' ---> AÍ, TODA VEZ QUE O USER 
+
+
+  FIZER LOGIN,
+
+
+  VAMOS AVISAR 
+
+  'você loggou 
+
+
+
+  no nosso app em tal e tal data, em tal e tal hora'....
+
+
+
+
+
+
+
+
+
+
+  --> MAS ESSE CÓDIGO AQUI NÃO ESTÁ ENVIANDO UM EMAIL PARA NÓS..:
+
+
+
+              transporter.sendMail(
+                {
+                  to: email,              ///////EIS O CÓDIGO EM QUESTÃO.
+                  from: 'arthur.panazolo@acad.pucrs.br',
+                  subject: 'Thank you for accessing our shop', 
+                  html: `<h1>User login detected in ${formattedDate}, at ${time} </h1>`
+                }
+              )
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, DEU CERTO DESSA VEZ...
+
+
+ex:
+
+
+User login detected in 2021-11-06, at 4:6:35
+
+
+
+
+
+
+
+
+
+
+-----> ok.... o que mais?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> BEM, AGORA SOMOS CAPAZES DE ENVIAR EMAILS POR 
+
+MEIO 
+
+DO 
+
+'SENGRID', e por meio do 'nodemailer'...
+
+
+
+
+
+
+
+
+
+----> CONFORME O PROFESSOR MENCIONOU,
+
+
+PROCURE 'NODEMAILER + SEU MAILING SERVICE FAVORITO',
+
+para então ver como 
+
+
+isso funciona com o node mailer, especificamente... --> mas esse é o 'GENERAL THEME'
+
+
+de como 
+
+ENVIAR EMAILS POR MEIO DO NODEJS 
+
+funciona...

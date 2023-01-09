@@ -1,0 +1,615 @@
+
+
+
+
+
+
+
+
+
+
+
+
+ ANTES DE COMEÇARMOS A UTILIZAR O SEQUELIZE, DEVEMOS SABER OQUE 
+
+ ELE É...
+
+
+
+
+
+
+
+
+
+ --> SEQUELIZE --> É UMA THIRD PARTY PACKAGE,
+
+
+
+ para 
+ 
+
+
+ sermos mais precisos, 
+
+ é 
+
+
+
+ uma 
+
+
+ 'OBJECT RELATIONAL MAPPING LIBRARY'....
+
+
+
+ (ORM library)...
+
+
+
+
+
+
+
+
+
+ ----> É UM NOME BEM LONGO, QUE SIGNIFICA QUE 
+
+ ESSENCIALMENTE FAZ TODO O 'HEAVY-LIFTING',
+
+ TODO 
+
+ O 
+
+
+ SQL CODE 
+
+ POR TRÁS DAS CENAS PARA NÓS,
+
+
+
+
+
+ _ E AÍ __ MAPPEIA ___ 
+
+
+
+ TODAS ESSAS OPERAÇÕES/COMANDOS __ 
+
+
+
+A OBJETOS JAVASCRIPT COM CONVENIENCE METHODS, OS QUAIS 
+
+
+PODEMOS 
+
+
+
+CHAMAR PARA 
+
+EXECUTAR 
+
+ESSE 
+
+CÓDIGO SQL POR TRÁS DAS CENAS.... --> AÍ NUNCA TEMOS UQE 
+
+ESCREVER 
+
+CÓDIGO SQL POR NOSSA CONTA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO EXEMPLO, TEMOS AQUELE OBJECT DE 'User' (mas poderia ser qualquer coisa, até um product, qualquer merda msm...)
+
+
+
+
+
+
+
+
+
+
+-->EX:
+
+
+
+
+
+User 
+
+* name 
+* age 
+* email 
+* password 
+
+
+
+
+
+---> SE VOCÊ DEFINE 
+
+
+O 
+
+
+SEU OBJETO ASSIM,
+
+com o sequelize,
+
+
+ELE AUTOMATICAMENTE 
+
+
+
+__ MAPPEIA ESSES VALORES COMO FIELDS __dE UMA TABLE...
+
+
+
+
+ex (vira):
+
+
+
+
+id name age email password
+1  Max  28  email  asjasojasoj
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+UMA TABLE É AUTOMATICAMENTE 'SETUP' PARA NÓS...
+
+
+
+
+
+
+--> O 
+
+
+
+SEQUELIZE TBM AUTOMATICAMENTE SETTA RELATIONS ENTRE TABLES PARA NÓS,
+
+
+de verdade...
+
+
+
+
+
+
+
+
+-----> E AÍ, QUANDO NÓS __ CRÍAMOS UM NOVO USER (objeto),
+
+
+
+
+__ NÓS SIMPLESMENTE __ CHAMAMOS UM 
+
+
+
+MÉTODO 
+
+
+EM 
+
+CIMA 
+
+DESSE OBJETO JAVASCRIPT 
+
+
+'user',
+
+
+
+E AÍ 
+
+
+
+O __ SEQUELIZE __ EXECUTA AUTOMATICAMENTE A SQL QUERY/SQL COMMAND QUE 
+
+É 
+
+
+
+ 
+NECESSÁRIO...
+
+
+
+
+
+
+
+
+
+
+
+-> isso significa que 
+
+
+
+NÃO PRECISAMOS ESCREVER ALGO COMO 
+
+
+
+'INSERT INTO users VALUES (1, 'Max', 28, 'aspoaspoas')',
+
+
+
+
+
+E SIM 
+
+
+
+
+PODEMOS 
+
+
+ESCREVER ALGO SIMPLES COMO 
+
+
+
+
+
+
+
+
+
+
+'const user = User.create({name: 'Max', age: 28, password: 'aspoaspoas'})'
+
+
+
+
+
+
+
+
+
+
+------> NESSE EXEMPLO LOGO ACIMA, CRÍAMOS UM NOVO USER 
+
+EM UMA 
+
+TABLE de 'users'.... ----> ISSO ECONOMIZA CÓDIGO....
+
+
+
+
+
+
+
+
+***************************
+
+CORE CONCEPTS:
+
+
+****************************
+
+
+
+
+
+----> O SEQUELIZE NOS OFERECE ___ OS __ MODELS DE QUE PRECISAMOS __ PARA 
+
+
+
+__TRABALHAR COM NOSSA DATABASE,
+
+
+
+
+
+
+e aí 
+
+
+
+ele 
+
+NOS DEIXA DEFINIR 
+
+OS MODELS NECESSÁRIOS 
+
+(models serão coisas como 'User', 'Product', etc etc...)
+
+
+
+
+
+
+--> ELE BASICAMENTE NOS DEIXA DEFINIR QUAL DATA 
+
+__VAMOS __ QUERER EM 1 MODEL/objeto,
+
+E AÍ QUAL DATA 
+
+
+SERÁ 
+
+SALVADA NA SUA DATABASE .... -->  E AÍ PODEMOS 
+
+
+INSTANCIAR 
+
+ESSES MODELS,
+
+
+
+
+ESSAS CLASSES,
+
+
+
+PODEMOS 
+
+ 
+
+
+ ou 
+
+ __EXECUTAR__ SUAS CONSTRUCTOR FUNCTIONS (com 'new Product', por exemplo)
+
+
+
+
+ PARA 
+
+ __CONSTRUIR UM NOVO OBJETO 'product/user/whatever' com base 
+
+
+ NO MODELO QUE VOCÊ TINHa,
+
+
+
+ OU ENTÃO 
+
+
+usar 
+
+
+'UTILITY METHODS',
+
+
+TBM PARA FAZER A MESMA COISA, 
+
+
+PARA CONSTRUIR UM NOVO OBJETO 
+
+'product/user/whatever'
+
+
+
+com base no modelo que você definiu previamente...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... 
+
+
+
+
+
+
+
+
+
+Models ----> ex: User Product 
+                 |
+                 |
+                 |
+                    -----------
+                            |
+Instances ---> const user = User.build();
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE HÁ UMA CONEXÃO ENTRE ESSAS 2 COISAS AÍ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+POR FIM, PODEMOS RODAR 
+
+QUERIES 
+
+
+
+EM CIMA 
+
+
+
+DESSES MODELS/coisas armazenadas.... ---> 
+
+
+
+PODEMOS RODAR 
+
+QUERIES 
+
+
+
+
+
+PARA 
+
+'SAVE A NEW USER',
+
+
+OU ENTÃO 
+
+PARA 
+
+'FIND ALL USERS',
+
+
+
+por exemplo....
+
+
+
+
+
+
+
+
+-----------------> E, DE NOVO, TODAS ESSAS QUERIES 
+
+QUE 
+
+VOCÊ (NÃO) ESCREVE 
+
+DEPENDEM 
+
+
+
+DA DEFINIÇÃO DO 'MODEL' 
+
+
+QUE 
+
+
+
+ESCREVEMOS COM O SEQUELIZE....
+
+
+
+
+
+
+-------EX: 'User.findAll()'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> POR FIM, 
+
+
+PODEMOS 
+
+'ASSOCIATE OUR MODELS'....
+
+
+
+
+
+
+
+
+
+-> POR EXEMPLO, PODEMOS/PODERÍAMOS ASSOCIAR 
+
+
+
+___ NOSSO
+
+
+MODEL 
+
+
+DE 
+
+'User' 
+
+
+
+COM 
+
+
+UM OUTRO MODEL, de 'Product'...
+
+
+
+
+
+ex:
+
+
+
+
+User.hasMany(Product);
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... É ISSO QUE O SEQUELIZE FAZ...
+
+
+
+AGORA 
+
+VAMOS ADICIONAR O SEQUELIZE AO NOSSO PROJETO,
+
+
+
+
+
+PARA VER COMO ELE FUNCIONA....

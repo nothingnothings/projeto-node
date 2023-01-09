@@ -1,0 +1,745 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TERMINAMOS O 'GETTODOS' e o 'create todo'...
+
+
+
+
+
+
+
+
+
+--> VAMOS TERMINAR 
+O 
+
+
+
+
+'editTodo'
+
+
+e 
+
+'deleteTodo'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO DE UPDATE ERA ESTE:
+
+
+
+
+
+
+
+
+
+
+
+export const editTodo = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+
+
+
+    const todoId = params.todoId;
+
+    console.log(params, 'LINE');
+  
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    console.log(values.text, 'LINE2');
+
+
+  
+    const todoIndex = todos.findIndex((todo) => {
+      return todo.id === todoId;
+    });
+  
+    todos[todoIndex].text = values.text;
+
+
+    console.log(todos[todoIndex])
+    
+    response.status = 200;
+    response.body = {
+        message: 'Edited todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSE CÓDIGO USAVA 
+
+
+
+
+A 'MEMORY' DE NOSSO APP PARA 
+
+
+
+
+
+
+fazer o update das coisas... (array de 'todos')....
+
+
+
+
+
+
+
+
+
+
+------> O PROFESSOR COMEÇA O CÓDIGO ASSIM:
+
+
+
+
+
+
+
+
+
+getDb().collection('todos').updateOne() 
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS USAR ESSE METHOD DE 'updateOne',
+
+
+
+PARA UPDATAR APENAS 1 ELEMENTO/document --> VAMOS PRECISAR PASSAR O __ID__/filter_ 
+
+
+
+
+QUE VAI NOS AJUDAR A ENCONTRAR ESSE 
+
+
+
+
+
+DOCUMENT QUE QUEREMOS UPDATAR...
+
+
+
+
+
+--> JÁ O SEGUNDO ARGUMENTO SERÁ AS 'UPGRADE INSTRUCTIONS'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+getDb().collection('todos').updateOne({_id: ctx.params.todoId}) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TENTAR EXECUTAR ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const editTodo = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+
+
+
+    const todoId = params.todoId!; //sempre será DEFINED, sempre será uma STRING...
+
+    console.log(params, 'LINE');
+  
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    console.log(values.text, 'LINE2');
+
+
+  
+    // const todoIndex = todos.findIndex((todo) => {
+    //   return todo.id === todoId;
+    // });
+  
+    // todos[todoIndex].text = values.text;
+
+
+    // console.log(todos[todoIndex])
+    
+
+    getDb().collection('todos').updateOne({_id: new Bson.ObjectId(todoId)}, {$set: {text: values.text  }} )
+
+
+
+    response.status = 200;
+    response.body = {
+        message: 'Edited todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> GANHEI ESTE ERROR:
+
+
+
+
+[uncaught application error]: BSONTypeError - Argument passed in must be a string of 12 bytes or a string of 24 hex characters
+
+request: { url: "http://localhost:8080/todos/undefined", method: "PUT", hasBody: true }
+response: { status: 404, type: undefined, hasBody: false, writable: true }
+
+    at new ObjectId (https://deno.land/x/web_bson@v0.1.2/src/objectid.ts:71:15)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --> preciso do 'ObjectId()',
+    de alguma forma... (e não o type.... o actual CONVERSOR, mesmo....)
+
+
+
+
+
+
+
+
+
+    --> MAS PARECE QUE EU ESTAVA ESCREVENDO CORRETAMETNE:
+
+
+
+
+
+    const user1 = await users.findOne({ _id: insertId });
+
+const all_users = await users.find({ username: { $ne: null } }).toArray();
+
+// find by ObjectId
+const user1_id = await users.findOne({
+  _id: new Bson.ObjectId("SOME OBJECTID STRING"),
+});
+
+
+
+
+
+-------------------------------
+
+
+
+FOI ESTE ERRO AQUI:
+
+
+
+
+
+
+
+
+Access to fetch at 'http://localhost:8080/todos/undefined' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+--> PROBLEMA ESTÁ NESTE CÓDIGO AQUI:
+
+
+
+
+
+
+    let url = 'http://localhost:8080/todos';
+    let method = 'POST';
+    if (editedTodo) {
+      url = url + '/' + editedTodo.id;
+      console.log(editedTodo.id);
+      method = 'PUT';
+    }
+
+
+
+
+    -----
+    
+
+
+
+
+
+
+
+    --> alguma coisa não está funcionando (valor de 'id' no params)...
+
+
+
+
+
+
+    
+    -> é um erro de cors...
+
+
+
+
+
+
+
+
+
+    --> 
+
+
+
+    minha execução do backend está assim:
+
+
+
+
+
+
+[uncaught application error]: BSONTypeError - Argument passed in must be a string of 12 bytes or a string of 24 hex characters
+
+
+
+
+
+
+
+
+
+
+--> mas estou com as permissões settadas, não pode ser esse erro....
+
+
+
+
+
+
+
+--> TALVEZ SEJA POR ISTO:
+
+
+3
+
+In Oak ou can use .searchParams
+
+ctx.request.url.searchParams
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> O PROBLEMA É O CÓDIGO FRONTENd...
+
+
+
+
+
+
+
+--> NA VERDADE, ESTE É O PROBLEMA:
+
+
+
+
+      setTodos(todosData.data);
+
+
+
+
+
+
+
+
+      -> PQ TODOS 
+
+
+      NOSSOS 'todo'
+
+      estão ficando COM O FIELD DE 'id' UNDEFINED...
+
+
+      EX:
+
+
+      [
+  { id: undefined, text: "dassadadas" },
+  { id: undefined, text: "CCC" },
+  { id: undefined, text: "daasasasas" },
+  { id: undefined, text: "aasas" },
+  { id: undefined, text: "dasasdas" },
+  { id: undefined, text: "dsadsdsaas" },
+  { id: undefined, text: "dassadsdasdsasa" },
+  { id: undefined, text: "" }
+]
+
+
+
+
+
+
+
+
+
+
+
+-------------
+
+
+CERTO.... FUNCIONOU... AGORA SÓ 
+
+
+FALTA 
+
+
+
+O CÓDIGO 
+
+
+
+
+PARA FAZER O 'DELETE' de 1 todo...
+
+
+
+
+
+
+
+
+
+meu controller até agora está assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const deleteTodo = ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: any
+
+
+
+
+
+}) => {
+
+
+
+    const todoId = params.todoId;
+    console.log(todoId);
+
+
+
+    const newTodos = todos.filter((todo) => {
+        console.log(todoId === todo.id);
+        return todo.id !== todoId;
+      });
+
+
+
+      todos = newTodos;
+      console.log(todos);
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'DELETED TODO',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+OK,.... CONSEGUI FAZER FUNCIONAR, FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+export const deleteTodo = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: any
+
+
+
+
+
+}) => {
+
+
+
+    const todoId = params.todoId;
+    console.log(todoId);
+
+
+
+    // const newTodos = todos.filter((todo) => { ///trabalhando com o negócio NA MEMÓRIA DO APP..
+    //     console.log(todoId === todo.id);
+    //     return todo.id !== todoId;
+    //   });
+
+
+
+    //   todos = newTodos;
+    //   console.log(todos);
+
+
+  const removedTodo = await getDb().collection('todos').deleteOne(
+        {
+            _id: new Bson.ObjectId(todoId)
+        }
+    )
+
+
+    // const todoList = await getDb().collection('todos').find( //PROFESSOR JÁ FAZ ISSO POR MEIO DO CALL DE 'getTodos', lá no frontend...
+    //     {
+    //     }, {
+    //         noCursorTimeout: false
+    //     }
+    // ).toArray();
+
+    console.log(removedTodo);
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'DELETED TODO',
+        // data: todoList
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+CERTO... ACABEI...
+
+
+
+
+
+
+--> poderíamos colocar um loading spinner no frontend, mas o que interessa aqui é o BACKEND, e NAÕ O FRONTEND...
+
+
+
+-----
+
+Acabei o curso.

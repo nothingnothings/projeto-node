@@ -1,0 +1,1243 @@
+
+
+
+
+
+
+
+-->  NÓS TRABALHAMOS NA USER EXPERIENCE E FUNCIONALIDADES 
+
+
+
+
+
+DA PAGE DE 
+
+
+
+'signup'
+
+E SUAS 
+
+ROUTES (post e get)...
+
+
+
+
+
+
+
+
+
+
+
+--------> AGORA DEVEMOS TRABALHAR NA USER EXPERIENCE DO 'LOGGING IN',
+
+da page 
+
+de 
+
+LOGIN,
+
+
+
+PQ 
+
+
+
+NO MOMENTO NÃO ESTAMOS RECEBENDO NENHUM 'HIGHLIGHT' (border vermelha)
+
+
+NOS INPUT FIELDS 
+
+ERRADOS,
+
+
+LÁ 
+
+
+NA PAGE DE 
+'LOGIN'...
+
+
+
+
+
+
+
+--> VAMOS 
+
+
+
+
+
+
+FAZER ALGO PARECIDO COM AQUILO QUE FIZEMOS COM 'SIGNUP',
+
+
+
+
+vamos 
+
+
+fazer 
+
+
+aquela integração 
+
+
+
+
+
+'routes' (arquivos route)  + controllers + views, 
+
+
+
+tudo 
+
+
+
+usando funcionalidades do PACKAGE 
+
+
+'express-validator'...
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+---> nós já tínhamos/temos aquela DIV 
+
+com uma mensagem de erro,
+
+
+
+
+MAS __ AGORA 
+
+VAMOS QUERER 
+
+
+ADICIONAR AQUELA FEATURE DO 
+
+'HIGHLIGHT'
+
+
+
+do border, em vermelho, do input que o user errou/se equivocou...
+
+
+
+
+
+
+
+
+
+
+COMECEI TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/login',
+
+
+  [
+    check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .custom( 
+    (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+      
+      return User.findOne({email: value}) ///////EIS O CÓDIGO EM QUESTÃO.
+        .then(
+            (user) => {
+
+                        if (!user) {
+                            return Promise.reject('No account assigned to that email, please try another one.')
+                        }
+
+            }
+        )
+    }
+),
+
+
+body('password', 
+ 'Invalid Password'). ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS... 
+ isAlphanumeric()
+  .withMessage('Passwords must be made of only letters and numbers')
+ ,
+    
+  ],
+
+
+  authController.postLogin
+);
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+continuo tentando....
+
+
+
+será que 
+
+
+
+
+o ponto é usar 
+
+o 
+
+'bcrypt'
+
+lá 
+
+
+
+
+nos meus arquivos route, na route POST de 'login'?
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA É QUE EU ESTOU RECEBENDO 
+
+
+ESTA MENSAGEM AQUI,
+
+QUANDO ERRO O PASSWORD:
+
+
+Cannot read property 'password' of undefined
+
+
+
+
+
+
+
+
+--> E EU QUERIA ESTA MENSAGEM AQUI:
+
+
+
+'Invalid Password'...
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+OK, CONSEGUI...
+
+
+
+
+
+
+
+
+
+AGORA UM MONTE DAS FEATURES ESTÃO FUNCIONANDO... CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/login',
+
+
+  [
+    check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .custom( 
+    (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+      
+      return User.findOne({email: value}) ///////EIS O CÓDIGO EM QUESTÃO.
+        .then(
+            (user) => {
+
+
+                        if (!user) {
+                            return Promise.reject('No account assigned to that email, please try another one.')
+                        } 
+
+                      
+        
+    }
+        )
+  }
+        
+),
+
+
+check('password')
+.isAlphanumeric()
+.withMessage('Password must be made of only letters and numbers.')
+.custom(
+  (value, { req }) => {
+
+    console.log(req.body.email, 'EMAIL');
+
+   return User.findOne(
+     {email: req.body.email}
+   )
+   .then(
+     (user) => {
+
+      
+        return bcrypt.compare(
+          user.password.toString(), value.toString()
+        )
+        .then(
+          (result) => {
+
+            if(result) {
+              return value;
+            } else {
+
+                if(value.length < 6) {
+                  return Promise.reject('Your Password must contain 6 or more characters.')
+                } else {
+                      
+              return Promise.reject('Invalid Password')
+                }
+
+
+            }
+          }
+        )
+     }
+   )
+  }
+)
+ 
+    
+  ],
+
+
+  authController.postLogin
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+  const password = req.body.password;
+
+  const date = new Date();
+
+  const formattedDate = new Date().toISOString().split('T')[0];
+
+  const time = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+
+  const email = req.body.email.toLowerCase(); ///para evitar problemas com '.com' e '.COM' naquela function de '.findOne()'.... (isso pq EMAILS NÃO SÃO CASE-SENSITIVE, não se importam com isso..)
+
+
+  const errors = validationResult(req); 
+
+
+  // const oldInput = {
+
+  //   email: email,
+  //   password: password
+  // }
+
+
+  const validationErrors = errors.array();
+
+
+
+  console.log(validationErrors, 'LIne');
+
+
+
+
+
+  console.log(email);
+
+  User.findOne({ email: email }).then((user) => { ///vamos fazer essa AUTHENTICATION LÁ ___ NO SERVERSIDE, PQ __ É MELHOR.... (mas poderíamos fazer aqui, também, nada nos impede de o fazer....)
+    console.log(user, 'XX');
+    // if (!user) {
+    //   req.flash('error', 'Invalid Email.'); ////ISSO FOI/É USADO LÁ NO CONTROLLER DE 'get' '/login', PQ __ É PARA LÁ QUE VAMOS REDIRECIONAR NOSSO USER, e é LÁ QUE VAMOS QUERER __ MOSTRAR__ NOSSA MENSAGEM DE ERRO DIZENDO QUE ELE ERROU O EMAIL/PASSWORD...
+    //   return res.redirect('/login');
+    // } else {
+  //     const passwordIsValid = bcrypt.compare(password, user.password)
+      if(user === null) {
+        console.log('TEST');
+
+
+
+
+        if(!errors.isEmpty()) { 
+              return res.status(422).render(
+                        
+          
+                          'auth/login', { 
+                            pageTitle: 'Login',
+                            path: 'auth/login',
+                            errorMessage: errors.array()[0].msg,////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                    
+                            oldInput: {   ///usado para MANTER OS VALORES/INPUTS que o user enfiou nos input fields antes de tomar uma message de error na cara e ser redirecionado...
+                                
+                              email: email, 
+                              password: password,
+                            } ,
+                   
+                            validationErrors: validationErrors ///USADO PARA RENDERIZAR CONDICIONALMENTE BORDAS VERMELHAS NOS NOSSOS INPUT FIELDS, quando for constatado algum PROBLEMA NO INPUT DIGITADO PELO USER...           
+                          
+                          
+                          }
+          
+              ); 
+          
+            }
+          
+
+
+      } else {
+
+      bcrypt
+        .compare(password, user.password)
+        .then((result) => {
+          ///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+          if (result) {
+            //JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            return req.session.save((err) => {
+              console.log(err, 'LINE');
+
+              res.redirect('/');
+              return transporter.sendMail({
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Thank you for accessing our shop',
+                html: `<h1>User login detected in ${formattedDate}, at ${time} </h1>`,
+              });
+
+            });
+          } else {
+            //esse case FORA DO 'if(result)' é o case em que OS PASSWORDS NÃO MATCHEIAM (user errou/não sabe o password....) ---> vamos querer MOSTRAR UMA MENSAGEM DE ERRO AO REDIRECIONAR, lá na page de 'login', a que redirecionaremos o user....
+
+            // req.flash('error', 'Invalid Password.');
+            console.log(email, password);
+            // res.redirect('/login');
+
+            console.log(errors.array())
+                      res.render( 'auth/login', { 
+                            pageTitle: 'Login',
+                            path: 'auth/login',
+                            errorMessage: errors.array()[0].msg,////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                            // errorMessage: [],
+                            oldInput: {   ///usado para MANTER OS VALORES/INPUTS que o user enfiou nos input fields antes de tomar uma message de error na cara e ser redirecionado...
+                                
+                              email: email, 
+                              password: password,
+                            } ,
+                            validationErrors: validationErrors ///USADO PARA RENDERIZAR CONDICIONALMENTE BORDAS VERMELHAS NOS NOSSOS INPUT FIELDS, quando for constatado algum PROBLEMA NO INPUT DIGITADO PELO USER...           
+                          
+                          
+                          }
+                      )
+            }
+          }
+        )
+        .catch((err) => {
+          console.log(err);
+          // res.redirect('/login');
+        });
+    }
+  // }
+  }
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+CERTO... HORA DE OLHAR A AULA DO PROFESSOR...
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+
+
+HÁ UM PEQUENO 'TWIST'
+
+
+sobre 
+
+o 
+
+
+add 
+
+
+
+
+DE VALIDATION 
+
+
+
+NESSA NOSSA ROUTE DE 'login'...
+
+
+
+
+
+
+O CÓDIGO DO PROFESSOR,
+
+
+
+
+
+
+
+
+
+DO CONTROLLER DE 'LOGIN',
+
+
+
+
+começa assim:
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+
+
+  const errors = validationResult(req);
+
+
+  if(!errors.isEmpty()) {
+
+      return res.status(422).render('auth/login', {
+
+
+          path: '/login',
+          pageTitle: 'Login',
+          errorMessage: errors.array()[0].msg
+
+
+      })
+
+
+
+
+
+  }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+------> ELE EXPLICA QUE 
+
+
+
+NÓS 'DO GATHER VALIDATION RESULTS 
+
+
+FOR THE LOGIN SCREEN',
+
+
+por meio 
+
+
+daquele 
+
+'const errors'...
+
+
+
+
+
+
+--> SE RENDERIZAMOS ESSA RESPONSE COM ESSE STATUS CODE DE 422 ( o que é uma boa prática, para deixar bem claro o que deu errado),
+
+
+
+
+
+
+
+NÓS PODEMOS 
+
+
+ESCREVER 
+
+AQUELE 'oldInput'
+
+NESSA ROUTE, TBM...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+
+
+  const errors = validationResult(req);
+
+
+  if(!errors.isEmpty()) {
+
+      return res.status(422).render('auth/login', {
+
+
+          path: '/login',
+          pageTitle: 'Login',
+          errorMessage: errors.array()[0].msg,
+          oldInput: {
+            email: email,
+            password: password
+          },
+
+          validationErrors: errors.array()
+
+
+      })
+
+
+
+
+
+  }
+
+
+
+
+}
+
+
+
+
+
+
+-------> OK, BASCIAMENTE FAZEMOS A MESMA LÓGICA QUE 
+
+FIZEMOS NA ROUTE DE 
+
+'SIGNUP'...
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.....  há só uma PEQUENA DIFERENÇA...  ----> PROFESSOR DIZ QUE 
+
+
+
+também 
+
+
+EXISTIRÃO ALGUNS ERROR CASES, para o login,
+
+que 
+
+
+vao 
+
+'STEM'
+
+
+
+
+do FATO DE QUE 
+__O USER __INPUTTOU 
+
+
+
+1 
+
+EMAIL OU 
+
+PASSWORD INCORRETO... 
+
+
+
+
+
+
+
+-------> NESSES 
+
+ 
+
+ 2 CASES AÍ,
+
+
+
+ COMO EU 'DONT USE MY VALIDATION LOGIC'
+
+
+ nesse local
+ ,
+
+
+ E COMO 
+
+
+
+ NÓS FAZEMOS 
+
+
+
+ REDIRECT 
+
+
+(no momento) 
+
+
+para 
+
+a page 
+de login, quando ocorrem esses cases,
+
+
+O QUE 
+
+
+
+
+
+DEVEMOS FAZER __ É, NA VERDADE,
+
+
+__ 
+
+
+
+RETORNAR UM 
+
+
+
+
+RENDER 
+
+
+de 
+
+
+
+
+''''
+
+
+
+User.findOne({email: email})
+.then(
+  (user) => {
+
+        if(!user) {
+
+          /////req.flash('error', 'Invalid email or password');
+          return res.status(422).render(
+            'auth/login', 
+            {
+
+              path: '/login',
+              pageTitle: 'Login',
+              ///errorMessage: errors.array()[0].msg,
+              oldInput: {
+                email: email,
+                password: password
+              },
+              validationErrors: errors.array()
+            }
+          )
+        }
+
+  }
+)
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+--> TIRAMOS ESSE 'FLASHING' aí,
+
+TIRAMOS 
+
+ESSE 
+
+'req.flash()'
+
+
+E 
+
+ESSE 
+
+
+'errorMessage:'
+
+
+CORRESPONDENTE... (
+
+
+  pq vamos fazer essa validation LÁ NO SERVERSIDE,
+
+
+
+  LÁ NO NODEJS SERVER,
+
+  nas nossas routes...
+)
+
+
+
+
+
+
+
+
+
+-------> ok.... ---> MAS O OLDINPUT NÓS VAMOS MANTER.... -----> 
+
+
+
+
+
+JÁ 
+
+NO 
+
+
+
+'validationErrors',
+
+
+
+
+
+PROFESSOR 
+
+ESCREVE 
+
+
+
+'validationErrors: []',
+
+
+
+
+
+
+PQ __ ELE NÃO QUER MOSTRAR __ EXATAMENTE O QUE FALHOU... (no meu case, eu havia escrito 'errors.array()' como valor disso
+
+, o que mostra a causa do erro....)
+
+
+
+
+
+
+
+
+
+
+-------> OK.... ------> DEPOIS DISSO,
+
+PROFESSOR 
+
+
+
+FAZ O RENDER __ DESSE 
+
+
+
+NEGÓCIO NOS OUTROS CASES TODOS.... 
+
+
+
+
+
+
+
+-------> professor também faz o pre-populate de 
+
+nossos 
+
+
+INPUT FIELDS 
+
+por meio de 
+
+
+'value="<%= oldInput.email %>' ,
+
+
+ETC ETC....
+
+
+
+
+
+
+
+
+-------------
+
+
+
+
+
+
+
+-------------------------
+
+OK.... 
+
+
+
+
+
+
+----> MEU CÓDIGO FICOU UM POUCO DIFERENTE, PQ 
+
+EU 
+
+FIZ 
+
+
+
+O 
+
+CHECK 
+
+
+
+DESSAS COISAS LÁ NAS ROUTES...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/login',
+
+
+  [
+    check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .custom( 
+    (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+      
+      return User.findOne({email: value}) ///////EIS O CÓDIGO EM QUESTÃO.
+        .then(
+            (user) => {
+
+
+                        if (!user) {
+                            return Promise.reject('No account assigned to that email, please try another one.')
+                        } 
+
+                      
+        
+    }
+        )
+  }
+        
+),
+
+
+check('password')
+.isAlphanumeric()
+.withMessage('Password must be made of only letters and numbers.')
+.custom(
+  (value, { req }) => {
+
+    console.log(req.body.email, 'EMAIL');
+
+   return User.findOne(
+     {email: req.body.email}
+   )
+   .then(
+     (user) => {
+
+      
+        return bcrypt.compare(
+          user.password.toString(), value.toString()
+        )
+        .then(
+          (result) => {
+
+            if(result) {
+              return value;
+            } else {
+
+                if(value.length < 6) {
+                  return Promise.reject('Your Password must contain 6 or more characters.')
+                } else {
+                      
+              return Promise.reject('Invalid Password')
+                }
+
+
+            }
+          }
+        )
+     }
+   )
+  }
+)
+
+    
+  ],
+
+
+  authController.postLogin
+);
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+A VERSÃO DO PROFESSOR TAMBÉM 
+
+
+
+USAVA 
+
+AS 
+
+'RED BORDERS',
+
+
+coisa normal.....
+
+
+
+
+
+
+
+
+
+
+----> ok....
+
+
+
+
+
+parece que há mtas maneiras de implementar isso, bem interessante...

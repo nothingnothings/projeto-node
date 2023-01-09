@@ -1,0 +1,1283 @@
+
+
+
+
+
+
+--> VAMOS COMEÇAR PELO 
+
+
+
+
+
+VIEW DE 
+
+
+
+'PRODUCTLIST' (do usuário)... --> LÁ NÓS OBVIAMENTE 
+
+
+
+
+QUEREMOS TAMBÉM 
+
+
+SER 
+
+CAPAZES 
+
+DE 
+
+
+VER 
+
+OS 
+
+'DETAILS'
+
+PARA 
+
+UM 
+
+
+DETERMINADO PRODUTO (for a given product),
+
+quando 
+
+o clicarmos..
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO DE PRODUCTLIST é:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <form action="/add-to-cart/" method="POST">
+              <button class="btn" >Add to Cart</button>
+            </form>
+        </div>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE PRECISAMOS DE UMA SÉRIE DE AJUSTES....
+
+
+
+
+
+
+
+
+--> primeiramente, temos nosso ARTICLE aqui,
+
+article 
+
+que 
+
+
+
+segura 
+
+NOSSO 
+
+'PRODUCT INFORMATION'...
+
+
+
+
+
+
+ex:
+
+
+
+
+     <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <form action="/add-to-cart/" method="POST">
+              <button class="btn" >Add to Cart</button>
+            </form>
+        </div>
+          </article>
+
+
+
+
+
+
+
+
+    
+
+    --> É O __ CARD___ DE NOSSO PRODUCT.... ----> 
+
+
+
+
+
+
+
+
+
+
+
+    AGORA VAMOS TER QUE SER CAPAZES 
+
+    DE 
+    CARREGAR 
+
+
+    UMA 
+
+    'DETAIL PAGE'
+
+
+
+    a partir 
+
+
+    desse 
+
+
+    card... ---> para isso,
+     
+
+     provavelmente 
+
+
+     vamos colocar um 
+
+
+     'A'
+
+
+
+     LÁ 
+
+
+     NO 
+
+
+     ARTICLE QUE REVESTE ESSE PRODUCT,
+
+    
+
+
+
+
+    OU ENTÃO 
+
+
+
+
+    ___ EM UM BUTTON ADICIONAL... --> PROFESSOR 
+
+
+
+    VAI USAR 
+
+    O 
+
+    APPROACH DESSE 
+
+    BUTTON ADICIONAL... --> NÃO SERÁ UM BUTTON,
+
+
+    E SIM 
+
+    SERÁ 
+    UMA 
+
+    ANCHOR TAG,
+
+    PROFESSOR SÓ VAI DAR UMA CLASS DE 'btn' 
+
+    para que 
+
+    ELE RECEBA 
+
+    O 
+
+    STYLING DE NOSSOS BUTTON...
+
+
+
+
+
+
+
+
+-----> OK... 
+
+
+
+
+ele vai escrever 
+
+
+
+'<a href="" class="btn">Details</a>' ...
+
+
+
+
+
+
+
+
+
+--> ISSO VAI IR àLGUMA PÁGINA DE DETAILS...
+
+
+
+
+
+--> RECARREGAMOS NOSSA PÁGINA, E AÍ VAMOS 
+
+VER 
+
+NOSSO 
+
+
+BUTON 
+
+DE 
+
+'DETAILS'....
+
+
+
+
+
+
+
+
+
+--> VAMOS CONTINUAR TRABALHANDO COM ESSE 'PATH' EM ALGUNS SEGUNDOS...
+
+
+
+
+
+
+
+
+
+
+
+-----> DETAILS, É CLARO, NÃO DEVERÁ LEVAR APENAS A '/',
+
+E 
+
+SIM A UMA PÁGINA 
+
+
+
+QUE 
+
+
+
+
+NOS 
+
+MOSTRARÁ 
+
+ALGUNS 
+
+'DETAILS PARA AQUELE PRODUCT'...
+
+
+
+
+
+
+
+
+
+
+
+--> E ESSE É EXATAMENTE UM DOS USE CASES EM QUE __ 
+
+
+PRECISAMOS PASSAR 
+
+
+
+___INFORMAÇÃO EXTRA COMO PARTE 
+
+DE NOSSA 
+
+
+___URL/PATH... --------> ISSO PQ 
+
+
+
+___dIGAMOS QUE, POR EXEMPLO,
+
+
+QUEREMOS 
+
+CARREGAR 
+
+
+
+'/products'.... ----->
+
+
+
+'/products/1' ('INFORMATION PARA ESTE GIVEN PRODUCT'...)
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PRECISAREMOS DE UM 'UNIQUE IDENTIFIER'.... -----> É POR ISSO QUE 
+
+
+
+O PRIMEIRO PASSO, 
+AGORA, 
+
+
+É 
+ASSEGURAR 
+
+
+_____ QUE CADA PRODUCT __ QUE CRIARMOS 
+
+
+SEJA CRIADO 
+
+
+
+COM UM 
+
+
+'UNIQUE ID'...
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+VAMOS ATÉ 
+
+O 
+
+MODEL
+ 
+
+
+ de 
+
+ 'product.js'...
+
+
+
+
+
+
+
+
+
+ --> DEVEMOS ADICIONAR UMA 
+
+
+
+ ETAPA 
+
+ DE 
+
+
+
+
+ 'BUILD AN ID'
+
+
+
+ ______ OU NO CONSTRUCTOR  DE MEU PRODUCT
+
+ (
+
+
+
+     ou seja, 
+
+     em 
+
+
+'''
+
+  constructor(title, imageUrl, description, price) { //todos os objetos 'product' que críarmos/handlarmos/fetchearmos/enviarmos TERÃO ESSA ESTRUTURA AÍ, ESSE CONJUNTO DE PROPRIEDADES...
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+
+  ''''
+
+
+ )
+
+
+
+
+
+
+
+
+ _OU__ NAQUELE PROCESSO DE 
+
+
+ 'save()'{}'
+
+
+ ,
+
+ QUE 
+
+ VAI 
+
+
+ REALMENTE SALVAR 1 PRODUCT, OBJETO PRODUCT,
+
+
+ NA NOSSA DATABASE...
+(
+
+    código de 
+
+
+
+    ''
+
+    
+  save() {
+      getProductsFromFile((products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+ 
+
+  }
+
+  ''''
+)
+
+
+
+
+
+
+--------> PROFESSOR DECIDE FAZER ISSO 
+
+
+
+EM 
+
+'save()',
+
+E NÃO 
+
+
+
+NO 
+
+
+
+_CONSTRUCTOR... -----> 
+
+
+
+
+
+
+
+PARA ISSO,
+
+
+ELE ESCREVE 
+
+
+
+
+
+'this.id = xxxx' -----> ISSO VAI ADICIONAR UMA 
+
+
+
+NOVA PROPRIEDADE, 'id', 
+
+AO 
+
+NOSSO 
+
+OBJETO 'product', que é o que queremos.... 
+
+
+
+
+
+
+'this.id = Math.random()' -----------> 
+
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE O GENERATE DE UM 'TRUE UNIQUE ID'
+
+PODERIA 
+
+SER 
+
+FEITO 
+
+COM ALGUMAS 
+
+
+PACKAGES EXTRAS E COISAS ASSIM,
+
+MAS QUE 
+
+AQUI 
+
+
+
+
+__ ELE VAI SIMPLESMENTE USAR 
+
+'Math.random()',
+
+
+
+
+QUE CERTAMENTE 
+
+
+NÃO É GARANTIDAMENTE 'UNIQUE',
+
+
+
+
+mas aqui,
+como 
+
+
+DUMMY VALUE,
+
+
+vai dar para o gasto....
+
+
+
+
+
+
+
+  save() {
+          ///decidimos criar o ID __ NESSE PROCESSO/MÉTODO DE 'save', de store de 1 product no nosso ARQUIVO/database, EM VEZ DE COLOCÁ-LO/definí-lo lá no CONSTRUCTOR DE 'product' ( o que é uma alternativa, na visão do professor...)
+      this.id = Math.random(); ////VAI CRIAR UMA PROPRIEDADE 'id', unique identifier, DENTRO DE CADA OBJETO 'product'...
+
+      getProductsFromFile((products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+ 
+
+  }
+
+
+
+
+
+
+  ----------------------------
+
+
+
+
+
+
+
+
+
+  OK.... Math.random()
+
+
+  será nosso unique id.... -> 
+
+  PROFESSOR 
+
+
+  VAI CONVERTER 
+
+  ESSE NÚMERO EM UMA __ STRING... --> PROFESSOR DIZ QUE 
+
+
+  PODERÍAMOS USAR UM NUMBER,
+
+
+  MAS  
+
+
+  __ELE PREFERE UMA STRING....
+
+
+  ex:
+
+
+  Math.random().toString();
+
+
+
+
+
+  ---------------------------
+
+
+
+
+
+
+
+
+
+  --> AGORA, 
+
+  DE VOLTA 
+
+  A 
+
+
+  'product-list.ejs',
+
+
+  DO USUÁRIO,
+
+
+  VAMOS QUERER __ PASSAR __ AQUELE 
+
+
+  'unique id'
+
+
+
+  __ 
+
+  AO MEU PATH,
+
+
+  AO PATH DE CADA 
+
+  ELEMENTO 
+
+  RENDERIZADO COM AQUELE 
+
+
+
+  'for (key product of prods)'...
+
+
+
+
+
+
+
+  ---> PARA ISSO, É 
+
+  ÓBVIO QUE 
+
+  VAMOS TER QUE 
+
+  DAR UMA EDITADA 
+
+  NO CONTROLLER 
+
+  DE 
+
+
+
+  'product-list',
+
+
+
+  COLOCAR 
+
+
+  UMA 
+
+
+  PROPRIEDADE 
+
+  NAQUELE 2o parâmetro 'data',
+
+
+
+
+  PROPRIEDADE 
+
+  QUE 
+
+
+  SERÁ ALGUMA COISA 
+
+
+  COMO UM __ARRAY__ COM TODOS MEUS 
+
+
+
+  'productId's... 
+
+
+
+
+
+
+  --> 
+
+NA VERDADE,
+
+NEM PRECISAMOS FAZER ISSO,
+
+PQ 
+
+JÁ 
+
+TEMOS AQUELA 
+
+key 
+
+
+'prods',
+
+que contém 
+
+nossos 
+
+PRODUCTS, products obtidos com 'Product.fetchAll()' e aquelas callback functions...
+
+
+
+
+--> ISSO SIGNIFICA QUE SÓ PRECISO EDITAR O CÓDIGO DE 
+
+
+
+MEU 
+
+
+
+'product-list.ejs'... ------> SÓ PRECISO COLOCAR O VALOR DINÂMICO 
+
+DE 
+
+
+'product.id' 
+
+
+DENTRO 
+
+
+DAQULE 
+
+
+'a href' de '/products/<%= %>'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product.id %>" class="btn">Details</a>
+              <form action="/add-to-cart/" method="POST">
+              <button class="btn" >Add to Cart</button>
+            </form>
+        </div>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+OK... DEU CERTO..
+
+
+
+
+
+
+-> AGORA QUANDO CLICO 
+
+
+
+
+NO BUTTON/link 
+
+
+
+'details'
+
+
+DE ALGUM PRODUCT,
+
+SOU LEVADO A UMA PÁGINA/PATH/ROUTE 
+DE 
+
+
+
+''''''''''''''
+
+
+
+http://localhost:3000/products/0.618142789193888
+
+
+
+
+''''''''''
+
+
+
+
+
+
+--> AGORA SÓ TENHO 
+
+
+QUE 
+
+
+
+ESCREVER MINHA ROUTE 
+
+
+
+DE 
+
+
+'/products/VALORDINÂMICO' 
+
+
+
+
+de algum jeito que 
+
+ELE 
+
+CAPTE 
+
+ESSE REQUEST A ESSA ROUTE 
+
+
+
+
+E __ AÍ _ ME DISPLAYE __ 
+
+
+
+A PÁGINA ASSINGNADA AO PRODUCT COM AQUELE ID..... (é um bocado de lógica)...
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK.... PROFESSOR FEZ EXATAMENTE O QUE EU FIZ:
+
+
+
+      <a href="/products/<%= product.id %>" class="btn">Details</a>
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+AGORA  SÓ 
+
+TEMOS QUE NOS ASSEGURAR DE QUE 
+
+
+
+
+
+
+SOMOS CAPAZES DE 'HANDLE' 
+
+
+
+
+ESSA URL/PATH COM ESSE UNIQUE ID,
+
+
+
+
+
+__EXTRAIR DO PATH,
+
+
+__ ESSA 
+
+
+EXTRAÇÃO 
+
+
+
+SENDO REALIZADA 
+
+
+
+OU __ LÁ EM UMA 'ROUTE' OU 
+
+
+EM UM 
+
+'CONTROLLER',
+
+
+
+tudo para que 
+
+CONSIGAMOS CARREGAR OS DETALHES DO PRODUTO CORRETO E O EXIBIR AO USUÁRIO...
+ 
+
+
+
+
+
+
+
+
+
+
+ -----> ESSA É A IDEIA AQUI:
+
+
+
+
+
+
+
+ 1) ENVIAMOS ALGUMAS INFORMAÇÕES COMO PARTE DO 'PATH',
+
+ PARA QUE 
+ ENTÃO 
+
+ CONSIGAMOS EXTRAIR __ TODA A DATA __ DE QUE PRECISAMOS _ 
+
+
+ PARA O PRODUCT,
+
+
+
+
+ LÁ __ DO CONTROLLER/DENTRO DO CONTROLLER; isso pq __NÃO __ PODEMOS 
+
+
+
+ENVIAR O PRODUCT INTEIRO COMO PARTE DA URL,
+
+POR ISSO TEMOS QUE 
+
+RECORRER AO 
+
+
+__CONTROLLER__..., que será 
+
+
+
+MANIPULADO/COMANDADO A PARTIR 
+
+DESSA 
+
+INFORMAÇÃO VITAL DE 'product.id'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS 
+
+
+
+POR ONDE DEVO COMEÇAR??
+
+
+
+
+
+
+
+
+
+---> ACHO QUE PRIMEIRO PRECISO __ CRIAR UMA ROUTE DE 
+
+'product-detail'....
+
+
+
+
+
+
+
+
+
+
+
+acho que esse é o primeiro passo...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ACHO QUE CONSEGUI...
+
+
+ESCREVI ASSIm:
+
+
+
+
+
+
+
+router.get(
+    '/products/:productId', 
+    shopController.getProductDetailPage
+)
+
+
+
+
+
+
+
+
+
+
+
+--> OBS:
+
+
+
+esse 
+
+':productId'
+
+
+SINALIZA O __ CARÁTER__ DINÂMICO __ DESSE SEGMENTO DA URL... (e é exatamente disso que precisamos, pois esse segmento realmente será dinâmico, será o ID DE CADA PRODUCT em que clicamos...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR DELETA TODOS OS PRODUCTS QUE TEMOS EM 'ProductList.json'...
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+--> NO PRÓXIMO PASSO, PROFESSOR DIZ QUE 
+
+AGORA 
+
+VAMOS EXTRAIR 
+
+ESSE 
+
+ID 
+
+
+e então saber 'WHICH PRODUCT TO LOAD'...

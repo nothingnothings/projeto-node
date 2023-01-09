@@ -1,0 +1,3346 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS REESCREVER O CÓDIGO DA PASTA 'NOVOPROJETOAPIBASICANODEEXEMPLO'
+
+
+
+com o DENO...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+RECOLOCAMOS AS COISAS ESCRITAS EM 'settings.json'
+
+
+
+
+nas pastas '.vscode',
+
+QUE POSSUEM ESTE CÓDIOG:
+
+
+
+
+// {
+//     "deno.enable": true,
+//     "deno.lint": true,
+//     "deno.unstable": true,
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTo... (isso vai invalidar nosso código typescript, mas vai validar nosso código deno)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CRÍAMOS A PASTA
+
+
+
+NOVOPROJETOAPIBASICADENOEXEMPLO
+
+
+
+
+
+
+
+
+
+
+
+
+-------> VAMOS USAR TYPESCRIPT,
+
+
+ 
+ POR ISSO O PROFESSOR CRIA UM ARQUIVO 'app.ts'...
+
+
+
+
+
+
+
+
+
+ --> O DENO USA TYPESCRIPT...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ADICIONAMOS UM FOLDER DE 'routes'... -> TEREMOS A MESMA ESTRUTURA DE UM APP 
+
+ 'javascript/typescript/node/express',
+
+
+ MAS COM __ O DENO__ 
+
+
+
+
+
+
+
+
+
+
+
+ --> UMA GRANDE DIFERENÇA EM RELAÇÃO AOS APPS 
+
+
+ node 
+ é que 
+
+ VOCÊ 
+
+ NÃO VAI TER DE RODAR 
+
+ '
+ npm init'...
+
+
+
+
+
+
+
+
+ --> E NÃO VAMOS PRECISAR INSTALAR QUAISQUER 
+
+
+ TPPs/packages,
+  
+
+  PQ COM O DENO 
+
+
+
+  VAMOS 
+
+
+
+
+  FAZER APENAS 'imports com urls',
+
+
+
+
+  COMO HAVÍAMOS FEITO ANTERIORMENTE....
+
+
+
+
+
+
+
+
+
+
+
+  --> VAMOS COPIAR E COLAR O CÓDIGO 'OAK' anterior,
+
+  que era isto aqui,
+
+  e que 
+
+
+  SETTAVA UMA 'BASIC OAK WEB APPLICATION'... :
+
+
+
+
+
+
+
+
+
+
+  import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+app.use((ctx, next) => { ///'ctx' SIGNIFICA 'CONTEXT'...
+  ctx.response.body = "Hello World!";
+});
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------->  COLAMOS ISSO NO ARQUIVO DE NOSSO NOVO PROJEOT...
+
+
+
+
+
+
+
+
+
+
+--> CERTo... LÁ DENTRO,
+
+
+vaoms querer 
+
+
+
+
+
+REGISTRAR 1 MIDDLEWARE, SIM, MAS NÃO 1 MIDDLEWARE TOSCO COMO ESSE....
+
+
+
+
+
+
+
+
+
+
+OK .... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> HABILITAMOS A EXTENSÃO 'DENO',
+
+
+
+deixamos as settings.json do deno ATIVADAS,
+
+
+e aí 
+
+
+
+
+importamos 
+
+esse 
+
+middleware aí,
+
+
+
+com esse URL IMPORT....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> aí, VAMOS TIRAR ESSE CÓDIGO DO MIDDLEWARE QUE FAZ SEND DA RESPONSe...
+
+
+
+
+
+
+
+
+--> NA VERDADE, VAOMS __ COMENTAR_ TODO O MIDDLEWARE DE 'response'
+
+PARA FORA DE NOSSO CÓDIGO....
+
+
+
+
+eX:
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+// app.use((ctx, next) => { ///'ctx' SIGNIFICA 'CONTEXT'...
+//   ctx.response.body = "Hello World!"; //////ESTE MIDDLEWARE É SIMPLES DEMAIS, VAMOS QUERER USAR ALGO MAIS POTENTE/COMPLEXO PARA RESPONDER AOS REQUESTS ENVIADOS POR NOSSO 'USER'....
+// });
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+PODEMOS DEIXAR O 'LISTEN'
+
+
+,
+
+isso 
+
+está certo,
+
+
+
+MAS É CLARO QUE 
+
+VAMOS QUERER 
+
+
+
+HANDLAR 
+
+OS REQUESTS EM UMA FILE DE 'routes.ts/js'...
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE CRIO UM FOLDER DE 'routes', com um arquivo 'todos.ts' 
+
+
+NO SEU INTERIOR..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS AÍ DEVEMOS NOS LEMBRAR:
+
+
+
+
+__NÃO TEMOS_o  EXPRESS__ COM 
+
+
+ESSE 'deno'... --> por isso não podemos import 'import { Route } from 'express', ' ou  algo assim...
+
+
+
+
+
+
+
+
+
+
+
+---> EM VEZ DISSO, SOMOS FORÇADOS A RECORRER AO 'OAK', esse middleware 
+
+
+THIRD PARTY do deno...
+
+
+
+
+
+
+
+
+
+----> O QUE VAMOS IMPORTAR 
+
+
+
+
+
+é 
+
+
+
+
+OUTRO PACOTE, LÁ DE 
+
+
+
+''
+
+
+"https://deno.land/x/oak/mod.ts";
+
+
+
+'
+''
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUE VAMOS IMPORTAR NÃO SERÁ 'Application',
+
+
+COMO ANTES,
+
+
+
+
+___ E SIM __ 
+
+
+
+o objeto/pacote 'Router'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+import { Router } from "https://deno.land/x/oak/mod.ts"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+É UMA SINTAXE/CÓDIGO__ BEM SIMILAR AO DO EXPRESS, DE SET DE ROUTING....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O TYPESCRIPT PEDE QUE __ INSTANCIEMOS __ ESSE 
+
+
+
+
+objeto 'Router',
+
+
+
+por meio desta escrita:
+
+
+
+
+
+
+
+
+
+import { Router } from "https://deno.land/x/oak/mod.ts"; ///MESMA FEATURE/FUNÇÃO DE 'routing' DO EXPRESS ROUTER...
+
+
+
+
+const router = new Router();
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+ISSO FEITO,
+
+PODEMOS 
+
+SÓ 
+
+
+USAR 
+
+ESSE 
+
+ROUTER NORMALMENTE,
+
+
+
+
+com 'router.get()',
+
+
+
+'router.use()',
+
+
+
+'router.post()',
+
+
+ etc etc...
+
+
+
+
+
+
+
+
+
+
+ AÍ FICA ALGO TIPO ISTO:
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+import { Router } from "https://deno.land/x/oak/mod.ts"; ///MESMA FEATURE/FUNÇÃO DE 'routing' DO EXPRESS ROUTER...
+
+import { getTodos, deleteTodo, editTodo, createTodo } from '../controllers/todos.ts'
+
+
+
+
+const router = new Router();
+
+
+
+
+
+
+
+
+
+
+
+router.get('/')
+
+
+
+
+
+
+
+
+
+
+
+router.post()
+
+
+
+
+
+router.put() 
+
+
+
+
+
+
+router.delete()
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+isso tudo é MT PARECIDO COM O EXPRESS..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS UMA 'KEY__ DIFFERENCE' __ É QUE 
+
+
+
+
+
+
+NOS CONTROLLERS/SEGUNDO PARÂMETRO DE 'router.get()' 
+
+
+
+
+VOCÊ _ NÃO VAI CONSEGUIR OS ARGUMENTSO 'req, res, next',
+
+
+
+E SIM 
+
+VAI 
+
+RECEBER SÓ 
+
+
+'ctx, next' 
+
+
+
+
+(E O CONTEXT ABRANGE TANTO A RESPONSE QUANTO  O REQUEST)...
+
+
+
+
+
+
+
+
+
+
+-> O PROFESSOR ESCREVE ISSO DIRETAMENTE NO NOSSO ARQUIVO 'todos.ts' (de routes):
+
+
+
+
+
+
+
+
+
+import { Router } from "https://deno.land/x/oak/mod.ts"; ///MESMA FEATURE/FUNÇÃO DE 'routing' DO EXPRESS ROUTER...
+
+import { getTodos, deleteTodo, editTodo, createTodo } from '../controllers/todos.ts'
+
+
+
+
+const router = new Router();
+
+
+
+
+
+
+
+
+
+
+
+// router.get('/', (ctx, next) => {}); ////// RECEBEMOS 'CTX' E 'NEXT' em vez de 'req, res, next'..
+
+
+
+
+router.get('/todos', getTodos);
+
+
+
+
+
+
+
+
+router.post('/todos', createTodo);
+
+
+
+
+
+router.put('/todos/:todoId', editTodo) 
+
+
+
+
+
+
+router.delete('/todos/:todoId', deleteTodo)
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> POR FIM, 
+
+
+
+VAMOS __ EXPORTAr__ TODAS ESSAS ROUTES, NESSE ARQUIVO 'routes'... --> PARA ISSO,
+
+
+VAMOS EXPORTAR COM  
+ A SINTAXE 
+
+
+ ES6+,
+
+
+
+
+ que é assim:
+
+
+
+
+
+
+
+
+
+ export default router;
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+ 
+
+
+import { Router } from "https://deno.land/x/oak/mod.ts"; ///MESMA FEATURE/FUNÇÃO DE 'routing' DO EXPRESS ROUTER...
+
+import { getTodos, deleteTodo, editTodo, createTodo } from '../controllers/todos.ts'
+
+
+
+
+const router = new Router();
+
+
+
+
+
+
+
+
+
+
+
+// router.get('/', (ctx, next) => {}); ////// RECEBEMOS 'CTX' E 'NEXT' em vez de 'req, res, next'..
+
+
+
+
+router.get('/todos', getTodos);
+
+
+
+
+
+
+
+
+router.post('/todos', createTodo);
+
+
+
+
+
+router.put('/todos/:todoId', editTodo) 
+
+
+
+
+
+
+router.delete('/todos/:todoId', deleteTodo)
+
+
+
+
+
+
+export default router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK.. MAS ISSO SIGNIFICA QUE LÁ EM 'app.ts' (root de nosso projeto)
+
+
+PODEMOS 
+
+IMPORTAR 
+
+
+esse arquivo 'routes' de 'todos.ts',
+
+
+para 
+
+então 
+
+SETTÁ-LO EM UM MIDDLEWARE...
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS AQUI TEMOS UMA DIFERENÇA 
+
+PONTUAL
+
+
+ENTRE 
+
+O 
+
+
+EXPRESS E O DENO OAK:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+// app.use((ctx, next) => { ///'ctx' SIGNIFICA 'CONTEXT'...
+//   ctx.response.body = "Hello World!"; //////ESTE MIDDLEWARE É SIMPLES DEMAIS, VAMOS QUERER USAR ALGO MAIS POTENTE/COMPLEXO PARA RESPONDER AOS REQUESTS ENVIADOS POR NOSSO 'USER'....
+// });
+
+
+
+
+
+// app.use( ////NÃO ESCREVA ASSIM.... (essa é a sintaxe EXPRESS, E NÃO O DENO)...
+//     todoRoutes
+// )
+
+
+
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--_> É ESTE TRECHO AQUI:
+
+
+
+
+
+
+// app.use( ////NÃO ESCREVA ASSIM.... (essa é a sintaxe EXPRESS, E NÃO O DENO)...
+//     todoRoutes
+// )
+
+
+
+
+
+
+
+
+
+
+--> NAÕ PODEMOS SÓ ENFIAR NOSSO ARQUIVO 'routes'
+
+em 1 middleware, como havíamos feito antes, no express...
+
+
+
+
+
+
+
+
+
+
+
+-----> ok... não vamos escrever assim.... --> em vez disso,
+
+
+
+AGORA 
+
+
+
+
+
+ESSE OBJETO 'todoRoutes'
+
+
+
+QUE IMPORTAMOS _ TERÁ UM __ METHOD DE 'routes',
+
+
+QUE 
+
+PRECISAMOS __ CHAMAR __ __ com '()' PARA CONSEGUIR 
+
+REGISTRAR ESSE MIDDLEWARE...
+
+
+
+
+
+
+
+ex:
+
+
+
+app.use( 
+   todoRoutes.routes() //// EIS O CÓDIGO EM QUESTÃO.
+)
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+
+
+
+app.use( ////ESCREVA ASSIM (sintaxe DENO, com esse method de 'routes' dentro do seu OBJETO importado lá do seu arquivo DE ROUTES)...
+    todoRoutes.routes()
+)
+
+
+
+
+
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAS É CLARO QUE __ SÓ _ ISSO NÃO BASTARÁ.... -----> PRECISAMOS ___ rEGISTRAR __ 
+
+
+
+
+
+
+OUTRO MIDDLEWARE, MIDDLEWARE ESSENCIAL PARA O FUNCIONAMENTO DE NOSSO WEB SERVER... -->  É UM 
+
+
+
+MIDDLEWARE 
+
+
+
+
+
+
+
+com a execução de 'todoRoutes.allowedMethods()' ------> E VOCê __ PRECISA __ DELE:
+
+
+
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+
+
+
+app.use( ////ESCREVA ASSIM (sintaxe DENO, com esse method de 'routes' dentro do seu OBJETO importado lá do seu arquivo DE ROUTES)...
+    todoRoutes.routes()
+)
+
+
+app.use(todoRoutes.allowedMethods());
+
+
+
+
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+app.use( ////ESCREVA ASSIM (sintaxe DENO, com esse method de 'routes' dentro do seu OBJETO importado lá do seu arquivo DE ROUTES)...
+    todoRoutes.routes()
+)
+
+app.use(
+    todoRoutes.allowedMethods() ///////este middleware TAMBÉM É NECESSÁRIo....  (é um request que fará com que o OAK 'PROPERLY HANDLES INCOMING REQUESST' Às suas routes)...
+    );
+
+
+
+
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ESSE MIDDLEWARE É NECESSÁRIO PARA QUE O OAK CONSIGA HANDLAR REQUESTS QUE CHEGAM AO SEU SERVER...
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS ALÉM DESSAS PEQUENAS DIFERENÇAS, A LÓGICA RESTANTE É QUASE A MESMA.... (
+
+  mas ainda estou com erros de typescript lá 
+
+
+  nos CONTROLLER...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ALÉM DESSAS PEQUENAS DIFERENÇAS,
+ELE 
+
+É 
+
+BEM PARECIDO com o express...
+
+
+
+
+
+
+
+
+
+
+
+
+--> parece que a solução para o negócio é REALMENTE COLOCAR SÓ 'type: any' (não existe uma solução que presta, ainda...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> essa solução __ NÃO FUNCIONA__.........
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ENCONTREI UMA SOLUÇÃO, NESSA PÁGINA DA INTERNET:
+
+https://www.freecodecamp.org/news/create-a-todo-api-in-deno-written-by-a-guy-coming-from-node/
+
+
+
+
+
+
+
+
+
+
+--> Awesome, now we have our routes with no functionality at the moment. So let's add that functionality in our controllers.
+
+But before we do that we have to create 2 more (tiny) files.
+
+
+
+
+
+
+
+In your root folder create a new folder called interfaces and inside that folder create a file called Todo.ts (make sure Todo is capitalized, as it won't give any syntax error here if you don't – these are just conventions.)
+Also in your root folder create a new folder called stubs and inside that folder create a file called todos.ts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ESSA INTERFACE AÍ É MEIO __opcional__...
+
+
+
+
+
+
+
+
+
+
+
+--> o que realmente interessa, desse código do cara da internet,
+
+
+é isto:
+
+
+getAllTodos: ({ response }: { response: any }) => {
+    response.status = 200;
+    response.body = {
+      success: true,
+      data: todos,
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, PARECE QUE ESSE CARA DA INTERNET __ NÃO 
+
+
+USOU ___ 
+
+
+
+O 
+
+OBJETO 'ctx',
+
+
+E SIM 
+RECORREU A ESSE 'response'....
+
+
+
+
+
+
+
+
+
+
+--> vamos testar, ver se isso funciona...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CARA DA INTERNET FALOU MAIS ISSO AQUI:
+
+
+
+
+Before I begin on this block of code, let me explain that every controller has an argument – let's call it context.
+
+So we can deconstruct getAllTodos: (context) => {} to:
+
+getAllTodos: ({ request, response, params }) => {}
+And since we are using typescript we have to add type checking to all of these variables:
+
+getAllTodos: (
+  { request, response, params }: { 
+    request: any, 
+    response: any, 
+    params: { id: string },
+  },
+) => {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type Todo = { ////DEFINIÇÃO DE 'TYPE'/type aliasing...
+    id: string,
+    text: string
+}
+
+
+
+type RequestBody = {
+    text: string
+}
+
+
+type RequestParams = {
+    todoId: string
+}
+
+
+
+const todos:Todo[] = [];
+
+
+
+
+
+export const getTodos = ({request, response, params }: {
+    request: any,
+    response: any,
+    params: { id: string }
+
+
+
+
+
+}) => {
+
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+export const editTodo = ({request, response, params }: {
+    request: any,
+    response: any,
+    params: { id: string }
+
+
+
+
+
+}) => {
+
+
+    const params2 = request.params as RequestParams;
+
+    const body = request.body as RequestBody;
+  
+    const todoId = params2.todoId;
+  
+    const todoText = body.text;
+  
+    const todoIndex = todos.findIndex((todo) => {
+      return todo.id === todoId;
+    });
+  
+    todos[todoIndex].text = todoText;
+  
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'Edited todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+export const createTodo = ({request, response, params }: {
+    request: any,
+    response: any,
+    params: { id: string }
+}) => {
+
+
+    const newTodo = {
+        id: new Date().toISOString.toString(),
+        text: request.body.text
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+export const deleteTodo = ({request, response, params }: {
+    request: any,
+    response: any,
+    params: { id: string }
+
+
+
+
+
+}) => {
+
+    const params2 = request.params as RequestParams;
+
+
+    const todoId = params2.todoId;
+
+    todos.filter((todo) => {
+        return todo.id !== todoId;
+      });
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'DELETED TODO',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR, NA VERSÃO DO CÓDIGO DELE,
+
+
+
+DECIDE 
+
+
+CRIAR UMA INTERFACE PARA 'Todo' ----------> EU FIZ A MESMA COISA,
+
+
+
+MAS _ EU __ FIZ COM UM 
+
+'type alias'
+
+em vez 
+
+
+
+de uma interface (
+
+  talvez fosse melhor usar UM TYPE ALIAS, ACHO...
+)
+
+
+
+
+
+
+
+
+
+--> MAS O RESTO DA SINTAXE EU ACERTEI:
+
+
+
+
+
+
+
+
+type Todo = { ////DEFINIÇÃO DE 'TYPE'/type aliasing...
+    id: string,
+    text: string
+}
+
+
+
+
+const todos:Todo[] = [];
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> COM EXPRESS SEMPRE TEMOS QUE ESCREVER 
+
+'res.json()'
+
+para 
+
+
+
+
+
+
+  EXPLICAR QUE VAMOS QUERER ENVIAR UMA RESPONSE QUE SERÁ 'JSON DATA' essencialmente....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> MAS O OAK É DIFERENTE: ---> SE VOCÊ SETTAR O RESPONSE BODY 
+
+
+  ,
+
+  FAZER COM QUE 
+
+
+ELE  
+
+
+
+
+SEJA COLOCADO 'COMO UM OBJETO' 
+
+
+dentro 
+
+
+
+
+do BODY DA RESPONSE,
+
+por meio de um código como 
+
+
+
+'ctx.response.body',
+
+ISSO 
+
+FARÁ COM QUE 
+
+
+
+SEU CÓDIGO SEJA __ AUTOMATICAMENTE PARSEADO COMO JSON... (é uma feature do oak,
+
+transforma ele COMO 'JSON' E __ TAMBÉM COLOCA OS HEADERS APROPRIADOS _ AUTOMATICAMNETE..)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> certo... --> ERA TUDO ISSO QUE 
+
+PRECISÁVAMOS FAZER PARA 'SEND BACK OUR TODOS'.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> 
+
+
+
+AÍ O PROFESSOR RODA 
+
+
+
+
+o nosso projeto com o comando 
+
+
+'deno run --allow-net app.ts' 
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ TENTAMOS ENVIAR REQUESTS,
+
+
+POR MEIO DO POSTMAN,
+
+
+
+
+A ROUTE DE 'getTodos' (
+
+
+
+  '/todos', de tipo GET....
+)
+
+
+
+
+
+
+
+
+
+
+
+--> MAS E QUANTO àS OUTRAS ROUTES,
+
+
+COMO 
+
+
+
+AS ADICIONAMOS __ COM O OAK?
+
+
+
+
+
+
+
+
+
+
+
+
+--> bem, o professor escreve assim:
+
+
+
+
+
+
+
+
+router.post('/todos', (ctx) => {
+
+  const newTodo = Todo = {};
+}
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... 
+
+
+
+
+MAS AÍ O PROFESSOR NOS FALA 
+
+
+DE UMA 
+
+
+
+FEATURE IMPORTANTE BUILTIN DO OAK... ----> 
+
+
+
+
+
+
+
+
+
+
+
+
+ESTE CÓDIGO AQUI __ ESTÁ __ ERRADO:
+
+
+
+
+
+
+
+
+
+
+
+export const createTodo = ({request, response, params }: {
+    request: any,
+    response: any,
+    params: { id: string }
+}) => {
+
+
+    const newTodo: Todo = {
+        id: new Date().toISOString.toString(),
+        text: request.body.text
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+------> a parte que está errada é 
+
+
+
+'text: request.body.text' -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+essa data será obtida em formato JSON (existe dentro do BODY do request), E PRECISAMOS __ A CONVERTEr 
+
+
+
+NO FORMATO 'OBJECT' javascript -----> PARA ISSO,
+
+
+
+devemos 
+
+
+escrever 
+
+
+
+
+
+'const data = await ctx.request.body;'      (USAR ESSE AWAIT AÍ, NO CONTEXTO DESSA FUNCTION)...
+
+
+
+
+
+
+
+
+--> É CLARO QUE, PARA ISSO,
+
+VAMOS TER QUE ESCREVER 'async' na nossa lista de argumentos:
+
+
+
+
+
+
+
+
+export const createTodo = async ({request, response, params }: { ////EIS O CÓDIGO EM QUESTÃO.
+    request: any,
+    response: any,
+    params: { id: string }
+}) => {
+
+  const data = await request.body;
+
+    const newTodo: Todo = {
+        id: new Date().toISOString.toString(),
+        text: data.text; //EIS O CÓDIGO EM QUESTÃO.
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+E O 'body' TEM QUE SER EXECUTADO __ COMO UMA FUNÇÃO....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+export const createTodo = async ({request, response, params }: {
+    request: any,
+    response: any,
+    params: { id: string }
+}) => {
+
+
+        const data = await request.body();
+
+    const newTodo: Todo = {
+        id: new Date().toISOString.toString(),
+        // text: request.body.text
+       text: data.value.text
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+------------------------------
+
+
+
+OK... 
+
+
+agora podemos usar O AWAIT AQUI,
+
+
+
+e aí 
+
+teremos a data desse body.... (se usarmos a propriedade 'value') dentro dessa 
+
+'dATA'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+O __ EXTRACT__ DO 'BODY' _ DE NOSSOS REQUESTS, COM O OAK,
+
+
+SEMPRE É UM POUCO __ DIFERENTE___ DO APPROACH DO EXPRESS....
+
+
+
+
+
+
+
+
+
+------------------------ TEMOS QUE ACESSAR A EXTRACTED DATA DAQUELA FORMA ALI,
+
+
+
+código como:
+
+export const createTodo = async ({request, response, params }: { //ISTO...
+    request: any,
+    response: any,
+    params: { id: string }
+}) => {
+
+
+        const data = await request.body(); //ISTO...
+
+    const newTodo: Todo = {
+        id: new Date().toISOString.toString(),
+       text: data.value.text ///ISTO.
+    }
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+OK.... AÍ VAMOS FAZER O PUSH DO NOVO TODO NESSE 
+
+array aí....
+
+
+
+
+
+
+
+-> QUITAMOS TUDO,
+
+
+
+
+E AÍ __ EXECUTAMOS ESSE NEGÓCIO COM O
+
+
+
+
+
+
+'deno run  --allow-net app.ts'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... GANHEI UM ERRO, E O NEGÓCIO NÃO FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+--> eX:
+
+
+TS2345 [ERROR]: Argument of type '({ request, response, params }: { request: any; response: any; params: {    id: string;}; }) => void' is not assignable to parameter of type 'RouterMiddleware<"/todos/:todoId", { todoId: string; } & Record<string | number, string | undefined>, Record<string, any>>'.
+
+
+
+
+
+
+
+
+
+
+OUTRA INFORMAÇÃO:
+
+
+
+
+
+
+
+1
+
+I think you can try to disable type checking with --no-check flag, using this option also helps to startup faster.
+
+$ deno run --no-check index.ts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COM O '--no-check',
+
+
+
+DE FATO ,
+
+
+ é possível 
+
+ EXECUTAR NOSSO CÓDIGO (evita o check de typescript...)
+
+
+
+
+
+
+
+
+
+
+--> mas isso é só um fix provisório, é claro....
+
+
+
+
+
+
+
+
+
+-> não estou conseguindo inserir 'text',
+
+pq 
+
+
+
+meu objeto 'request'
+
+
+
+NÃO ESTÁ CONESGUINDO ME DAR O 'body'...
+
+
+
+
+
+
+
+
+
+
+CONSERTEI O PROBLEMA, POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const createTodo =  async ( {request, response, params }: { ////async --> 'eis o código em questão'
+    request: Request,
+    response: Response,
+    params: { id: string }
+}) => {
+
+
+
+        // const body = await request.body();
+
+    ///////EIS A SINTAXE EM QUESTÃO (conversão de JSON DATA em JAVASCRIPT OBJECT)....
+
+
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    const newTodo: Todo = {
+        id: Math.random().toString(),
+        // text: request.body.text
+       text: values.text
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O POST DO STACKOVERFLOW QUE FALA DISSO:
+
+
+
+
+
+
+
+https://stackoverflow.com/questions/63728312/deno-post-method-empty-request-body
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+OK... FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+--> todas as api routes estão funcionando...
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO FINAL FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Response, Request, } from "https://deno.land/x/oak/mod.ts";
+
+
+type Todo = { ////DEFINIÇÃO DE 'TYPE'/type aliasing...
+    id: string,
+    text: string
+}
+
+
+
+
+
+interface RequestBody {
+    value: {
+        text: string
+    }
+}
+
+
+const todos:Todo[] = [];
+
+
+
+
+
+export const getTodos = ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+export const editTodo = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+
+
+
+    const todoId = params.todoId;
+
+    console.log(params, 'LINE');
+  
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    console.log(values.text, 'LINE2');
+
+
+  
+    const todoIndex = todos.findIndex((todo) => {
+      return todo.id === todoId;
+    });
+  
+    todos[todoIndex].text = values.text;
+
+
+
+
+    todos[todoIndex].text
+  
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'Edited todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+export const createTodo =  async ( {request, response, params }: { ////async --> 'eis o código em questão'
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+}) => {
+
+
+
+        // const body = await request.body();
+
+    ///////EIS A SINTAXE EM QUESTÃO (conversão de JSON DATA em JAVASCRIPT OBJECT)....
+
+
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    const newTodo: Todo = {
+        id: Math.random().toString(),
+        // text: request.body.text
+       text: values.text
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+export const deleteTodo = ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: any
+
+
+
+
+
+}) => {
+
+
+
+    const todoId = params.todoId;
+
+
+    todos.filter((todo) => {
+        return todo.id !== todoId;
+      });
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'DELETED TODO',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+É, PELO VISTO A ÚNICA COISA QUE É REALMENTE DIFERENTE É A MANEIRA DE FAZER 'EXTRACT' do request body...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... AÍ O PROFESSOR FALA DA FUNCTION DE 'next'
+
+
+
+
+do 
+
+
+
+
+OAK...
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR QUER MOSTRAR ALGO QUE É 'TRICKY',
+
+E É ALGO QUE _ É OUTRA DIFERENÇA ENTRE __ O OAK E O NODEEXPRESS....
+
+
+
+
+
+
+
+
+
+
+--> ELE VOLTA AO 'app.ts'... -->
+
+
+LÁ,
+
+
+SE VOCê QUISER RODAR ALGUM OUTRO MIDDLEWARE,
+
+
+como este aqui:
+
+
+
+
+
+
+
+app.use((ctx) => {
+
+
+    console.log('Middleware!');
+
+})
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE, COMO NO NODEEXPRESS,
+
+SOMOS _ OBRIGADOS__ A ESCREVER A FUNÇÃO DE 'next()'
+PARA 
+
+
+FAZER COM QUE O OAK __ SAIBA__ QUE VAMOS QUERER 'KEEP GOING WITH THE EXECUTION'...
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE ESCREVEMOS ASSIM:
+
+
+
+app.use((ctx, next) => {
+
+
+    console.log('Middleware!');
+
+
+        next();
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK, MAS AGORA VEM A PARTE TRICKY:
+
+
+
+
+O PROFESSOR MENCIONOU QUE O OAK 
+
+
+
+
+'''SEMPRE ENVIA DE VOLTA UMA RESPONSE, AUTOMATICAMENTE''' --> ELE BASICAMENTE 
+
+FAZ ISSO 
+
+
+__SEMPRE__ QUE ELE TIVER ACABADO DE 
+
+EXECUTAR/LER UM MIDDLEWARE..... --> E ISSO ACONTECE_ __ COM QUALQUER MIDDLEWARES 
+
+
+
+usados no oak.... 
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE QUNADO ESSE MIDDLEWARE DE CIMA ALI ACABAR,
+
+O 
+
+
+OAK __ VAI __ ENVIAR DE VOLTA_ UMA RESPONES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO ESTAMOS CHAMANDO' next()',
+
+
+VOCê PODERIA PENSAR 
+
+QUE 
+
+
+__ ESSE MIDDLEWARE__ SÓ VAI ACABAR__ 
+
+
+
+
+QUANDO os middlewares mais para baixo,
+
+aqueles middlewares de 
+
+
+
+''''
+
+
+app.use( ////ESCREVA ASSIM (sintaxe DENO, com esse method de 'routes' dentro do seu OBJETO importado lá do seu arquivo DE ROUTES)...
+    todoRoutes.routes()
+)
+
+app.use(
+    todoRoutes.allowedMethods() ///////este middleware TAMBÉM É NECESSÁRIo....  (é um request que fará com que o OAK 'PROPERLY HANDLES INCOMING REQUESST' Às suas routes)...
+    );
+
+
+
+
+'''
+
+
+,
+
+
+
+TAMBÉM 
+
+
+
+
+
+FOREM EXECUTADOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE O OAK ENVIA 1 RESPONSE PARA CADA 'middleware' que ele executa... (não é como o express, que envia uma response DEPOIS DE ANALISAR  E EXECUTAR TODOS OS MIDDLEWARES).....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> VOCÊ pode pensar que esse next() vai fazer  com que 
+
+
+
+ESSE MIDDLEWARE SÓ VAI ENVIAR UMA RESPONSE QUANDO O RESTO DOS 
+
+MIDDLEWARES TAMBÉM TIVER SIDO EXECUTADO... --->  MAS _ COM O 'NEXT()',
+
+
+NÓS __ NÃO VAMOS 
+
+'WAIT'
+
+
+
+por esses processos... ----> E COMO NOSSAS ROUTES EM 'todos.ts' (arquivo routes)
+
+
+
+
+
+
+
+ATUAM POR MEIO DE PROMISES (possuem código ASYNC),
+
+
+
+ISSO SIGNIFICA QUE 
+
+ELAS TEM CÓDIGO QUE _ SÓ VAI ACABAR__ DEPOIS _ DO RUN __ DESSE NOSSO MIDDLEWARE DESSE CONSOLE.LOG(isso isgnifica que 
+
+esse 
+
+middleware com o console.log VAI SER __ EXECUTADO/TERMINARÁ __ ANTES__ 
+
+
+DO RUN DOS MIDDLEWARE DE NOSSAS ROUTES, o middleware de run de nossos controllers --> e isso é um GRANDE PROBLEMA,
+
+PQ 
+
+O 
+
+RUN DESSE SCRIPT VAI ACABAR CEDO DEMAIS, O QUE PODE GERAR INCOMPATIBILIDDAES...
+)
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE A RESPONSE VAI SER ENVIADA CEDO DEMAIS,
+
+
+
+
+TÃO CEDO QUE A ROUTE NÃO VAI TER SIDO CAPAZ DE PROCESSAR O REQUEST.... --> É POR ISSO QUE 
+
+
+
+
+
+SEMPRE__ QUE VOCÊ TIVER MÚLTIPLOS MIDDLEWARES, MÚLTIPLOS MIDDLEWARES_ _QUE FAZEM___ ASYNC STUFF,
+
+
+VOCê 
+
+SEMPRE 
+
+DEVE EQUIPAR CADA UM DELES, NO 'app.ts',
+
+
+
+COM 'async'
+ 
+
+ NO INÍCIO...
+
+
+
+
+
+
+
+--> POR FIM,
+
+COLOQUE 
+
+
+
+'await' 
+
+em next() 
+para 
+
+
+DIZER QUE 
+
+VAMOS QUERR 
+
+
+ESPERAR PELO EXECUTE DO RESTANTE DOS 
+
+MIDDLEWARES antes __ de querermos _ ENVIAR UMA RESPONSE AO CLIENT, respones com esse console.log...
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+
+app.use(
+   async (ctx, next) => { ///QUANDO VOCÊ TEM MÚLTIPLOS MIDDLEWARES QUE FAZEM 'ASYNC STUFF', você (Ao contrário do que vemos em node) É OBRIGADO A COLOCAR 'async' no run desses middlewares, para fazer com que a ORDEM SEJA RESPEITADA ( e para que a response, nesse caso, NÃO SEJA ENVIADA _ CEDO DEMAIS_)....
+        console.log('Middleware logged');
+      await next();           ///COLOQUE ESSE 'await' em nexT() para INFORMAR O OAK _ DE QUE _ ELE __ DEVE __ ESPERAR__ O RUN DO RESTO DOS MIDDLEWARES (mais para baixo) ANTES _ DE ENVIARMOS DE VOLTA UMA RESPONSE por meio deste middleware de console.log... 
+    }
+)
+
+app.use( ////ESCREVA ASSIM (sintaxe DENO, com esse method de 'routes' dentro do seu OBJETO importado lá do seu arquivo DE ROUTES)...
+    todoRoutes.routes()
+)
+
+app.use(
+    todoRoutes.allowedMethods() ///////este middleware TAMBÉM É NECESSÁRIo....  (é um request que fará com que o OAK 'PROPERLY HANDLES INCOMING REQUESST' Às suas routes)...
+    );
+
+
+
+
+
+await app.listen({ port: 3000 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> SE VOCÊ NÃO FIZER ISSO,
+
+
+OS __ RESPONSE BODIES SETTADOS 
+
+
+LÁ 
+
+
+
+NOS NOSSOS 'ASYNC ROUTE MIDDLEWARES'
+
+
+NÃO SERÃO LEVADOS EM CONSIDERAÇÃO...(
+
+
+    códigos como 
+
+    '''
+     const body = await request.body({type: "json"})
+
+
+     ''''
+
+)
+
+
+
+
+
+
+
+--> ESSE É UM __ GOTCHA__ DO OAK, ESSENCIALMENTE...
+
+
+
+
+
+
+
+
+
+
+-> COM ISSO TUDO SALVO, AGORA
+ESES 
+
+
+
+MIDDLEWARE DE 'console.log'
+
+SÓ SERÁ EXECUTADO __ DPOIS__ DO EXECUTE DE TODOS NOSSOS MIDDLEWARES...
+
+
+
+
+
+
+
+
+--> É ASSIM QUE PODEMOS CONSTRUIR O MESMO TIPO DE APP, COM NODE E DENO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> AÍ O PROFESSOR VAI NOS DIZER SE VALE A PENA MUDAR PARA O DENO, OU SE O NODE JÁ É SUFICIENTE...

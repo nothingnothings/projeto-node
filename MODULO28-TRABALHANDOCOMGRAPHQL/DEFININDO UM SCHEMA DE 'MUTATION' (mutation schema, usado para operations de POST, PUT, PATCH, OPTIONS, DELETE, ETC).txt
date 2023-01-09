@@ -1,0 +1,2448 @@
+
+
+
+
+
+
+
+
+
+-->  NA ÚLTIMA AULA EDITAMOS NOSSA PRIMEIRA QUERY GRAPHQL,
+
+
+UQERY QUE NOS DEIXOU (allowed)
+
+FAZER 
+
+O 
+GET 
+
+
+DE DAATA.....
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS ADICIONAR UMA QUERY_ QUE __ VAI NOS PERMITIR (allow )
+
+
+
+
+__SALVAR_ DATA__...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSSOR SUGERE QUE COMEÇEMOS __ PELO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+--> NO FRONTEND,
+
+
+
+
+
+QUE USAMOS ATÉ AGORA,
+
+
+
+
+
+DEVEMOS 
+
+ASSEGURAR QUE CONSEGUIMOS 
+
+
+'SIGNUP USERS',
+
+
+
+
+
+PQ O __ CREATE _ DE UM USER É CERTAMENTE UMA 'MUTATION',
+
+É 
+
+UM 
+
+ADD/SAVE DE DATA NO NOSSO SERVER...
+
+
+
+
+
+-------> PARA FAZER ISSO,
+
+
+
+PROFESSOR VAI ATÉ 
+
+
+
+O 
+
+
+'App.js'
+
+
+E LIMPA UM POUCO O FRONTEND.. -------> não vamos mais usar 
+
+SOCKET.IO 
+
+
+
+NO NOSSO PROJETO,
+
+
+POR ISSO O PROFESSOR VAI ATÉ O CÓDIGO DO 
+
+
+
+
+'Feed.js'
+
+E REMOVE 
+AQUELE 
+'openSocket' do socket.io...
+
+
+
+
+
+
+
+
+
+
+
+--------> AÍ, NO CASO,
+
+
+
+REMOVEMOS __ A LÓGICA 
+
+
+
+
+DO 'componentDidMount',
+
+
+
+que 
+era o local em que 
+
+
+settávamos nossa 'socket connection'... vamos remover 'addPost'
+
+
+E 
+
+
+'updatePost'....
+
+
+TAMBÉM..
+
+
+
+(
+
+    O PROFESSOR EXPLICA QUE VAI FAZER ESSE UPDATE E ADD _ DE FORMA DIFERENTE, MAIS TARDE.. 
+)
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+-> depois de mudar tudo isso,
+
+
+
+professor volta ao 
+
+
+código de 
+
+'App.js',
+
+
+E AÍ 
+
+ELE DIZ QUE QUER ASSEGurar que 
+
+
+
+NOSSA 
+MUTATION DE 'SIGNUP' 
+
+
+CONSIGA __ ALCANÇAR UMA DE NOSSAS MUTATIONS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK ,MAS COMO DIaBOS VAMOS __ CRIAR UMA MUTATION/CONSTITUIR UMA MUTATION:?
+
+
+
+
+
+
+BEM, O PROFESSOR DIZ QUE DEVEMOS NOS LIVRAR DO RESOLVER ATUAL,
+
+POIS ELE É DEFASADO (diz que só tem request de tipo FETCH).. -----> SERÁ RESOLVIDO __ POR MEIO __ De query resolvers no futuro....s
+
+
+
+
+
+
+
+
+
+
+--> MAS POR ENQUANTO,
+
+
+
+o profesosr simplifica todo  
+
+
+
+
+NOSSO SCHEMA, E DEIXA SÓ A MUTATION NO SEU INTERIOR...
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, VAMOS QUERER 
+
+
+
+
+
+IR ATÉ 
+
+ O 
+
+
+
+ 'signupHandler'
+
+ lá no App.js (frontend)
+
+
+ E AÍ VAMOS ALTERAR 
+
+
+
+ O CÓDIGO 
+
+ DA FETCH API,
+
+ para que 
+
+ seja 
+
+ disparado um request de tipo 
+
+
+
+
+
+
+
+ 'POST',
+
+
+
+
+ àquela route de 
+
+ '/graphql'  
+
+
+
+
+
+ ------------------
+
+
+
+
+
+
+
+ OK, MAS COMO CRÍAMOS UMA MUTATION NO NOSSO SCHEMA? 
+
+
+
+
+
+
+
+
+
+
+ --> BEM, 
+
+
+
+ o professor 
+
+
+
+
+ se livra dos query resolvers (para deixar mais simples),
+
+
+
+
+
+ E AÍ __ ELE 
+
+
+
+ DEIXA NOSSO SCHEMA
+
+ __LIMPO__...
+
+
+
+ tipo assim:
+
+
+
+
+
+
+
+
+ module.exports = buildSchema(
+     `
+     
+     
+     `
+ )
+
+
+
+
+
+
+ -------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ -> para adicionar uma MUTATION,
+
+
+
+
+ nós 
+
+ 
+ ESCREVEMOS, LÁ NA KEY de 'schema',
+
+
+
+
+ A KEY DE 
+
+ 'mutation:' 
+
+
+
+
+
+ (
+
+
+     ou seja,
+
+     essa key 
+     de 
+
+
+     'schema'
+
+     vai segurar 
+
+
+
+     TODOS NOSSOS 'TIPOS DE OPERAÇÃO', que 
+
+
+     são 
+
+
+
+     'query',
+
+     'mutation' 
+
+
+     e 
+
+
+     'subscription'... (WEBSOCKETS)...
+ )
+
+
+
+
+
+
+
+
+
+ --> ok, ISSO SIGNIFICA QUE VAI FICAR ASSIM:
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+        
+
+
+
+        schema {
+            mutation: 
+        }
+     
+     `
+ )
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+O TIPO DE MUTATION 
+
+
+
+
+
+
+você escreve 
+
+
+
+
+
+
+exatamente igual às queries que escrevemos antes,
+
+
+
+tipo 
+
+
+
+'type RootMutation'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+        type RootMutation {
+
+        }
+
+
+
+        schema {
+            mutation: RootMutation
+        }
+     
+     `
+ )
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+--> AGORA, NAQUELE 'RootMutation',
+
+
+
+VOCÊ DEFINE 
+SUAS 
+
+
+DIFERENTES 
+
+MUTATIONS... (as mutations que você vai permitir no seu app)...
+
+
+
+
+
+
+
+------->  E NO NOSSO ROOTMUTATION 
+
+
+NÓS 
+
+
+
+
+
+ADICIONAMOS UM 
+
+'createUser'..., que 
+
+vai 
+
+ter algum tipo de data type que será permitido/retornado...:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+        type RootMutation {
+                createUser {
+
+                }
+        }
+
+
+
+        schema {
+            mutation: RootMutation
+        }
+     
+     `
+ )
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO... provavelmente,
+
+
+se queremos 
+
+DEFINIR 
+
+AS OPERATIONS DE 
+
+'query'
+
+TAMBÉm,
+
+
+vamos escrever assim:
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+        type RootMutation {
+                createUser {
+
+                }
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+
+----------------------------------
+
+
+
+
+CERTo... --> 
+
+
+MAS NESSE 
+
+
+'createUser',
+
+
+ESSA MUTATION AÍ,
+
+
+
+
+
+_ O PROFESSOR __ DIZ QUE VAMOS TER QUE 'EXPECT SOME ARGUMENTS/INPUT'... ------> 
+
+
+
+
+
+E PARA CONSEGUIRMOS ESCREVER __ ESSE EXPECT POR ARGUMENTOS NESSA QUERY DE 
+
+'createUser',
+
+
+DEVEMOS _ USAR__ UMA SINTAXE QUE 
+
+
+
+__aINDA NÃO HAVÍAMOS UTILIZADO/VISTo... ------>  
+
+
+
+
+
+
+A SINTAXE DE QUE O PROFESSOR FALA É UMA SINTAXE 
+
+QUE 
+EXIGE QUE 
+
+VOCÊ ESCREVA 
+
+
+'()' 
+
+
+DEPOIS DO QUERY NAME...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+        type RootMutation {
+                createUser() ///EIS O CÓDIGO EM QUESTÃO.
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> E AÍ, POR MEIO DESSA SINTAXEW 
+
+
+
+
+'nomeDaQuery()',
+
+
+
+
+
+VOCÊ 
+
+
+PODE 
+
+ESPECIFICAR, DENTRO DESSES PARÊNTESES,
+
+
+
+__ ARGUMENTOS__ QUE __ DEVEM __ SER 'GIVEN' 
+
+A 
+ESSE 
+
+
+
+
+RESOLVER/O RESOLVER QUE VAI SER EXECUTADO 
+
+
+para 
+
+esse 
+
+
+
+'createUser', no final das contas... (o method/resolver que vai ser executado para isso) -----> 
+
+
+
+
+
+
+
+AQUI, NO NOSSO CASO, 
+
+PODEMOS DEFINIR 
+
+
+QUE 
+
+O 
+QUE É NECESSÁRIO É 
+
+
+ALGUMA 'inputData',
+
+
+
+POr isso escrevemos:
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+        type RootMutation {
+                createUser(userInput) ///EIS O CÓDIGO EM QUESTÃO.
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+CERTO.... MAS SÓ A ESPECIFICAÇÃO DA NECESSIDADE DESSE ARGUMENTO NÃO BASTA... TEMOS QUE __ DEFINIR__ O TYPE_ QUE 
+
+
+ESSA 
+
+
+DEVERÁ TER....
+
+
+
+OU SEJA,
+
+
+VAMOS ESPECIFICAR 
+
+
+'COMO ESSA DATA DEVERÁ SE PARECER'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> ANTES DE CONTINUAR A EXPLICAÇÃO, PROFESSOR EXPLICA QUE É CLARO QUE PODERÍAMOS ESCREVER ALGO COMO 
+
+
+
+'createUser(email: String,  Password: String)', ETC ETC.... ------. ISSO CERTAMENTE SERIA/É POSSÍVEL....
+
+
+
+
+
+
+
+
+--> ENTRETANTO, 
+
+PROFESSOR DIZ QUE 
+
+É 
+
+PREFERÍVEL __ 
+
+'BUNDLE IT IN ONE OBJECT',
+
+
+
+
+1 só object que vamos 'EXPECT'.... ----> E PARA ESSE OBJECT,
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+__PODEMOS___ CRIAR__ UM NOVO 'TYPE'... -----> MAS NÓS NÃO VAMOS CRIAR ISSO COM A KEYWORD DE 'type' (que é usada para SETTAR __ MUTATIONS, QUERIES E SUBSCRIPTIONS, como você viu antes com 'type RootQuery'),
+
+
+
+
+
+
+
+E SIM __ 
+
+
+UMA KEYWORD ESPECIAL DO GRAPHQL,
+
+USADA 
+
+
+
+
+
+'FOR DATA THAT IS USED AS INPUT/ARGUMENTS'.... ---->  PARA ISSO,
+
+
+
+
+VOCÊ USA A KEYWORD 
+
+'input',
+
+
+
+
+que 
+
+faz ficar tipo assim:
+
+
+
+
+
+
+input UserInput { /////UM OBJETO 'input' DE NOME 'UserData'....
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+AÍ, DENTRO 
+
+DESSE 'OBJETO',
+
+
+
+
+
+VAMOS _ ESPECIFICAR 'HOW MY USER DATA SHOULD LOOK LIKE'...  ------> 
+
+
+
+
+
+
+NO CASO,
+
+
+VAMOS QUERER 
+
+
+
+
+
+QUE 
+
+ISSO SEJA 1 OBJECT  com 
+
+
+
+1) FIELD DE EMAIL, QUE SERÁ DE TIPO 'STRING', e será REQUIRED... (!)....
+
+
+
+
+2) NAME, TAMBÉM STRING, TAMBÉM REQUIRED..... 
+
+
+
+3) PASSWORD, TAMBÉM STRING, TAMBÉM REQUIRED....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `
+
+        input UserInputData {
+            email: String!
+            name: String!
+            password: String!
+        }
+
+
+
+
+        type RootMutation {
+                createUser(userInput: UserInputData) ///EIS O CÓDIGO EM QUESTÃO.
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+OK.... ou seja,
+
+lá naquele 
+
+'createUser'
+
+
+NÓS DEFINIMOS 
+
+QUE 
+
+
+
+
+UM PARÂMETRO DE 'userInput'
+
+SERÁ OBRIGATÓRIO NESSES REQUESTS COM ESSE QUERY,
+
+
+e 
+
+
+
+JUSTAMENTE QUE 
+
+ESSE PARÂMETRO DEVERÁ TER UMA ESTRUTURA CORRESPONDENTE 
+
+a 
+
+
+
+'      {
+            email: String!
+            name: String!
+            password: String!
+        }
+
+
+',
+
+
+
+
+
+PQ É ISSO QUE 
+
+
+
+
+dissemos quando escrevemos 
+
+
+
+' createUser(userInput: UserInputData)'''
+
+
+
+
+
+
+
+
+
+
+
+
+--->  OK.... MAS A __ PERGUNTA_ É:
+
+
+
+
+
+'''O QUE VOU QUERER GANHAR DE VOLTA QUANDO 
+
+EU SUBMITTAR 1 DATA OBJECT QUE TENHA ESSE FORMATO DE 'USERINPUTDATA'? '''' (
+
+    pq aqui 
+
+    nós só especificamos 
+    
+
+    A 
+
+    ESTRUTURA/FORMATO NECESSÁRIO, E NÃO 
+
+    A 
+
+    DATA QUE 
+
+    SERÁ RETORNADA... (pq na queries, antes, quando dizíamos 'text: String!', estávamos falando DA COISA QUE ERA RETORNADA, LÁ PELO/NO RESOLVER, AOS NOSSOS USERS, QUANDO EFETUVAMA AQUELA QUERY....)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, 
+
+O QUE 
+
+
+VOU 
+
+'GET BACK' QUANDO 
+1 
+
+
+USER FOR CRIADO (por meio dessa query de 'createUser')? -------> BEM, O QUE EU VOU QUERER __ DE VOLTA,
+
+
+
+O USUÁRIO VAI QUERER DE VOLTA, NO SEU FRONTEND,
+
+
+É UM 
+
+'USER OBJECT'... ------------> PARA ISSO,
+
+
+
+
+PARA 
+
+
+CONSEGUIR 
+
+FAZER COM QUE 
+
+
+
+
+UM 
+
+USER OBJECT SEJA RETORNADO POR ESSA SUBMUTATION/SUBQUERY,
+
+
+
+O PROFESSOR 
+
+
+
+DIZ QUE 
+
+
+
+__ 
+DEVEMOS __ CRIAR UM NOVO 
+
+'type',
+
+
+
+
+
+
+
+UM TYPE NORMAL,
+
+
+QUE SERÁ CHAMADO 
+
+DE 
+
+'User'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `      
+
+
+     type User {
+
+     }
+
+        input UserInputData {
+            email: String!
+            name: String!
+            password: String!
+        }
+
+
+
+
+        type RootMutation {
+                createUser(userInput: UserInputData) ///EIS O CÓDIGO EM QUESTÃO.
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+
+----------------------------------
+
+
+
+
+
+DENTRO DESSE TYPE DE 'User',
+
+
+
+TEREMOS UM 
+
+
+FIELD QUE SERÁ 
+
+
+'_id',
+
+
+que 
+
+
+TERÁ UM 
+
+VALOR DE 
+
+
+'ID!'... ----------> ID --> É UM TYPE ESPECIAL _ FORNECIDO ___ PELO GRAPHQL,
+
+
+
+
+QUE __ SIMPLESMENTE__ SINALIZA QUE 
+
+
+
+ESSE VALUE DESSE NEGÓCIO SERÁ 'UNIQUE',
+
+
+
+
+e faz com que essa propriedade SEJA BASICAMENTE TRATADA COMO UM 'ID'... 
+
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO,
+
+TEREMOS TAMBÉM O 'name'
+
+FIELD,
+
+QUE SERÁ 
+
+
+UMA STRING....
+
+
+
+
+
+
+
+
+
+
+--> AINDA TEREMOS 
+
+O 
+
+'email',
+
+também string...
+
+
+
+
+--> TEREMOS O PASSWORD,
+
+
+
+
+que não será REQUIRED,
+
+pq 
+
+eu não necessariamente vou ter que RETORNAR ESSE VALOR....
+
+
+
+
+
+
+
+
+
+--> VOU TER O 'status',
+
+QUE TAMBÉM SERÁ UMA STRING,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR FIM,
+
+
+
+__ TEREMOS __ OS NOSSOS 'posts',
+
+
+
+
+QUE VAI SER UM ARRAY....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `      
+
+
+     type User {
+            _id: ID!
+            name: String!
+            email: String!
+            password: String 
+            status: String!
+            posts: []
+     }
+
+        input UserInputData {
+            email: String!
+            name: String!
+
+        }
+
+
+
+
+        type RootMutation {
+                createUser(userInput: UserInputData) ///EIS O CÓDIGO EM QUESTÃO.
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+MAS É CLARO QUE PRECISAMOS __ COMPLEMENTAR ESSE FIELD DE 'posts',
+
+
+
+PQ TEMOS __ QUE __ESPECIFICAR__ COMO CADA 
+
+'post'
+
+DEVERÁ SE PARECER...
+
+
+
+
+
+
+
+
+
+
+
+------> PARA DEFINIR COMO CADA 'POST'
+
+deve se parecer,
+
+
+
+
+
+O PROFESSOR DIZ QUE 
+
+VAI TER QUE 
+
+CRIAR AINDA __ 
+
+
+OUTRO 
+
+'type',
+
+
+DESSA VEZ UM TYPE DE 
+
+'Post',
+
+
+
+
+
+QUE __ TERÁ 
+
+
+
+
+
+
+
+FIELDS 
+
+de 
+
+
+
+1) _id 
+
+
+
+
+
+2) TITLE 
+
+
+
+
+
+
+3) content 
+
+
+
+
+
+4) imageUrl
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+-> NO CASO, VOCÊ PODE TER PERCEBIDO ALGUMA SEMELHANÇA COM OS MODELOS MONGOOSE...- -> LÁ NÓS TAMBÉM 
+
+
+DEFINIMOS COMO A DATA SE PARECE E COMO ELA VAI FICAR CONECTADA ENTRE SI....
+
+
+
+
+
+--> AQUI ESTAMOS BASICAMENTE FAZENDO A MESMA COISA, 
+
+
+PQ __ ISSO TUDO _ VAI NOS DEIXAR FAZER RETRIEVE DESSA DATA _ COM MAIOR__ EFICIÊNCIA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+5) vamos ter UMA PROPRIEDADE DE 'creator'
+
+
+
+
+
+
+
+
+
+
+
+6) DENTRO DESSA PROPRIEDADE DE 'creator'
+
+VAMOS __ TER __ 
+
+NOSSO OBJETO 'User'.... (algo bem parecido com o nosso model 'post' lá na pasta 'models', do mongoose)....
+
+
+
+
+
+
+
+
+
+
+7)  VAMOS TER O FIELD DE 'createdAt' ----> ACERCA DESSE FIELD,
+
+
+
+PROFESSOR EXPLICA QUE O 
+
+'GRAPHQL'
+
+
+
+__NÃO CONHECE 'DATES',
+
+
+POR ISSO
+
+VAMOS USAR 
+
+
+SÓ 
+
+UMA STRING NESSE LOCAL....
+
+
+
+
+
+8 ) NO 'updatedAt'
+
+TAMBÉM USAREMOS UMA STRING....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql');
+
+
+ 
+ module.exports = buildSchema(
+     `      
+
+
+    type Post { ///EIS O CÓDIGO EM QUESTÃO.
+                _id: ID!
+                title: String!
+                content: String!
+                imageUrl: String!
+                creator: User!
+                createdAt: String!
+                updatedAt: String!
+    }
+
+     type User {
+            _id: ID!
+            name: String!
+            email: String!
+            password: String 
+            status: String!
+            posts: []
+     }
+
+        input UserInputData {
+            email: String!
+            name: String!
+
+        }
+
+
+
+
+        type RootMutation {
+                createUser(userInput: UserInputData) ///EIS O CÓDIGO EM QUESTÃO.
+        }
+
+        type RootQuery {
+            text: String!
+            views: Int!
+        }
+
+
+        schema {
+            mutation: RootMutation
+            query: RootQuery
+        }
+     
+     `
+ )
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: []
+   status: String!
+   email: String!
+
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: userInputData)
+}
+
+
+
+
+ schema {
+      mutation: RootMutation
+     
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... PROFESSOR NOS GARANTE QUE 
+
+VAMOS 
+
+EVENTUALMENTE RECEBER ESSES 2 FIELDS 
+
+de 
+
+
+'createdAt'
+
+e 
+
+'updatedAt'
+
+
+
+
+AUTOMATICAMNETE,
+
+
+
+
+ISSO PQ 
+
+
+lá 
+
+
+
+no model de 'post' 
+
+
+NÓS __ _JÁ HABILITAMOS 
+
+
+
+AQUELE 
+
+
+'{timestamps: true}',
+
+
+LÁ NO SEGUNDO PARÂMETRO 
+
+
+DO 
+
+
+'new Schema()'...
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... -> ESSE ERA O MODELO DE 'Post',
+
+
+MAS PRECISAMOS O INCLUIR DENTRO DAQUELE ARRAY DE 
+
+'posts'
+
+
+LA NO USER...
+
+
+
+
+
+
+
+
+----> ok...
+
+
+
+
+lá no type de 'User',
+
+
+
+
+
+
+NÓS _ DIZEMOS _ QUE VAMOS QUERER __ UM __ARRAY COMPOSTO POR ELEMENTOS 'Post'... -> PARA DIZER ISSO,
+
+
+PROFESSOR ESCREVE:
+
+
+
+
+
+posts: [Post!]!
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUANDO VOCÊ __ENCAPSULA__ UM 'type'__ COM SQUARE BRACKETS, DENTRO DA DEFINIÇÃO DE UM FIELD,
+
+
+VOCÊ DIZ AO 
+
+
+
+
+GRAPHQL que 'NÓS TEMOS UM ARRAY DESSE TYPE AÍ'... (desse objeto aí, na verdade)...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: userInputData)
+}
+
+
+
+
+ schema {
+      mutation: RootMutation
+     
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... MAS É CLARO QUE NÃO ACABAMOS... ----> QUEREMOS DIZER AO GRAPHQL 
+
+
+QUE 
+
+
+ESSA 
+
+
+
+DATA DE 
+
+'User'
+
+é a COISA QUE 
+QUEREMOS 
+
+
+RETORNAR __ 
+
+
+QUANDO __ 
+
+
+
+
+O USER TIVER RODADO AQUELA QUERY/MUTATION DE 
+
+'createUser(userInput: userInputData)'
+
+
+
+E QUANDO TIVER SUBMITTADO 
+
+
+USER INPUT DATA VÁLIDA (que é o que especificamos, nesse parâmetro bizarro ali...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PARA DIZER AO GRAPHQL QUE VAMOS QUERER RETORNAR 
+
+
+
+1 OBJETO 'User',
+
+COM AQUELE 
+
+FORMATO DE 
+
+
+
+''
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+''',
+
+
+
+
+
+
+
+NÓS 
+
+
+VAMOS 
+ESCREVER :
+
+
+
+
+type RootMutation {
+    createUser(userInput: UserInputData): User!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+VAMOS 
+ESCREVER 
+
+aquele 
+
++ ': User',
+
+
+
+
+QUE VAI DIZER EXATAMENTE ISSO 
+
+
+
+AO 
+
+
+GRAPHQL...
+
+
+
+
+
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+
+         //queries são o formato 'padrão' de handling de requests, no GRAPHQL...
+//       `       
+//    type TestQuery { 
+//       textTest: String!
+//       views: Int!
+//    }
+
+
+
+
+
+//    type RootQuery { 
+//          hello: String!
+//    }
+
+
+//    type RootQuery2 {
+//       hello2: TestQuery!
+//    }
+
+
+//     schema {
+//          query: RootQuery
+        
+//     }
+ 
+//  `
+
+
+
+
+
+////ver aula 'Definindo um schema de MUTATION'...
+
+
+
+
+`       
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+
+   _id: ID!
+   name: String!
+   password: String
+   posts: [Post!]!
+   status: String!
+   email: String!
+
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: userInputData): User!
+}
+
+
+
+
+ schema {
+      mutation: RootMutation
+     
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... ESSA FOI A DEFINIÇÃO DE NOSSO SCHEMA....
+
+
+
+
+
+
+--> O PRÓXIMO PASSO É TRABALHAR 
+
+
+
+NA DEFINIÇÃO/SETUP DO __RESOLVER__ PARA 
+
+
+
+ESSE QUERY DE 'createUser'...
+
+
+
+

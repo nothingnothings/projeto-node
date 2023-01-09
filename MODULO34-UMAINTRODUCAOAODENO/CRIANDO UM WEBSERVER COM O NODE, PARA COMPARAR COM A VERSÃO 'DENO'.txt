@@ -1,0 +1,534 @@
+
+
+
+
+
+
+
+OK... TENTAR ESCREVER O MESMO CÓDIGO DENO QUE TEMOS AQUI:
+
+
+
+
+const text = 'this is a text - and it should be stored in a file';
+    
+
+
+
+
+const encoder = new TextEncoder();  ////CONSTRUCTOR FUNCTION __ DISPONÍVEL___ GLOBALMENTE NO DENO.... (vamos o utilizar para CONVERTER NOSSA STRING EM BYTES, EM 1 DATA NO FORMATO 'Uint8Array', que é o formato ACTUALLY SUPORTADO POR 'writeFile'...)
+
+
+
+
+const data = encoder.encode(text);
+
+
+
+Deno.writeFile('message.txt', data)
+.then(
+    (result) => { ////COMO O DENO É UMA LANGUAGE QUE 'embraces new javascript features', ELE ACEITA TOTALMENTE PROMISES, E ODEIA CALLBACKS em funções... (pq elas fedem)...
+            console.log( ///NOSSO CÓDIGO VAI __ FALHAR/DAR ERROR, INICIALMENTE, POR 'FALTA DE PERMISSOES' no execute dessa função...
+                'wrote to file!'
+            )
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+///////////// 'STANDARD LIBRARY' DO DENO, USADA PARA __ 'SPIN UP A WEB SERVER', de protocolo HTTP....
+
+import { serve } from "https://deno.land/std@0.119.0/http/server.ts"; ////OUTRO DIFERENCIAL DO DENO... ELE NOS PERMITE REALIZAR 'URL IMPORTS' (ou seja, importar FUNCTIONS DE ARQUIVOS CONTIDOS EM URLS NA INTERNET, em servidores remotos... --> aqui estamos IMPORTANDO A FUNCTION 'serve' LÁ DESSE ARQUIVO 'server.ts', contido nessa url do deno...)
+serve(() => new Response("Hello World\n"), {port: 3000}); ///// 1o argumento de 'serve' __ É UM HANDLER, objeto em que você DEFINE A RESPONSE QUE VOCÊ VAI QUERER MANDAR....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS NA VERSÃO 'node'...
+
+
+
+
+
+
+
+
+
+
+--> FOI BEM FÁCIL:
+
+
+
+import express from 'express';
+
+
+
+const app = express();
+
+
+
+app.get('/', 
+
+    (req, res, next) => {
+
+            res.send('Hello World!')
+    }
+
+)
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ESCREVI ISSO NO TYPESCRIPT, ÁI COMPILEI com 'tsc',
+
+
+
+PARA 
+
+CRIAR O ARQUIVO 'app.js'...
+
+
+
+--> AÍ EXECUTEI ESSE ARQUIVO 
+
+
+'app.js'
+
+
+com 
+
+
+
+'npm start'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> para conseguir a proper IDE completion e suporte,
+
+
+professor desabilita 
+
+ O
+
+
+
+ deno extension temporariamente...
+
+
+
+
+
+
+
+
+
+ --> O PROFESSOR VAI FAZER O HOSTING 
+
+
+
+ DO 
+
+
+
+
+ NODE SÓ COM O NODE, E SEM O EXPRESS (hahaaha)....
+
+
+
+
+
+
+
+
+
+
+ --> o código é um pouco diferente,
+
+
+
+ vai ser assim:
+
+
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer((req, res) => {
+
+
+      
+ })
+
+
+
+
+
+
+
+ ------------------------------
+
+
+
+
+ OU SEJA,
+
+ É ASSIM 
+
+
+ QUE LIDAMOS COM 'INCOMING REQUESTS' 
+
+
+ no mundo do  node...- > NÓS NÃO VAMOS TER UM 'ASYNC ITERATOR'
+
+
+ como no mundo DENO,
+
+  
+
+
+  _ E NÓS __ SÓ TEMOS ESSA CALLBACK FUNCTION EM 'createServer'....
+
+
+
+
+
+
+
+
+
+
+  --> NÓS TAMBÉM NÃO VAMOS __ 
+
+  ENVIAR UMA 
+
+  REPSONSE 
+
+
+
+  POR MEIO DO CALL DE UM METHOD 'respond'
+
+
+  no objeto 'req' (
+
+
+      como 
+
+
+visto 
+
+
+
+em 
+
+'deno',
+
+com este código aqui:
+
+
+
+console.log("http://localhost:3000/");
+for await(const req of server) {
+    req.respond({body: 'Hello World\n'})
+}
+
+
+
+  )
+
+
+
+
+
+
+
+
+
+
+  -_> EM VEZ DISSO,
+
+  O QUE O PROFESSOR FAZ PARA CONSEGUIR 
+
+  ENVIAR UMA 
+
+
+  RESPONSE É ESCREVER ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+  
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer((req, res) => {
+
+     res.end(); ///COMPLETA A RESPONSE e A ENVIA DE VOLTa...
+      
+ })
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE METODO 'end'
+
+o professor 
+
+
+COLOCA O RESPONSE BODY,
+
+
+QUE 
+
+
+NO CASO 
+SERÁ 
+
+
+
+'Hello World (from Node!)' ...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+  
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer((req, res) => {
+
+     res.end('Hello World'); ///COMPLETA A RESPONSE e A ENVIA DE VOLTa...
+      
+ })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE SÓ ISSO AÍ N VAI SPIN UP NOSSO SERVER... --> para fazer esse spinup,
+
+
+precisamos 
+
+chamar 
+
+
+'server.listen(3000)'....
+
+
+
+
+ex:
+
+
+
+
+
+
+  
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer((req, res) => {
+
+     res.end('Hello World'); ///COMPLETA A RESPONSE e A ENVIA DE VOLTa...
+      
+ })
+
+
+
+
+
+
+server.listen(3000);
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+COMO É NODE, AO EXECUTAR ESSE SCRIPT NÃO PRECISAMOS DE NENHUMA PERMISSION,
+
+NÃO TEMOS ESSE PERMISSION SYSTEM...
+
+
+
+
+
+
+
+
+
+-> O NOSSO PROCESSO VAI FICAR 'LISTENING TO HTTP REQUESTS'...
+
+
+
+
+
+
+
+
+---> É ASSIM QUE SPINAMOS UM SERVER COM 
+
+
+O NDOE...
+
+
+
+
+
+
+
+
+--> VEMOS ALGUMAS DIFERENÇAS EM RELAÇAÕ AO DENO:
+
+
+1) SINTAXE DE IMPORTS (sem 'IMPORT') 
+
+
+
+
+2) LOCALLY AVAILABLE MODULE OF 'http' (no deno temos que REACHAR A UM SERVER COM A AJUDA DA SINTAXE DE IMPORTS)...
+
+
+
+
+
+
+
+
+---> aí nós críamos um server 
+
+
+
+
+um server COM ESSA ESCRITA MANUAL AÍ.... 
+
+
+
+
+
+
+
+
+--> dois approaches são bons (node e deno),
+
+
+
+MAS 
+
+
+
+
+
+É ASSIM QUE VOCÊ FAZ COM NODE E DENO...

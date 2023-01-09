@@ -1,0 +1,1216 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> COMO MENCIONADO NA ÚLTIMA LIÇÃO,
+
+
+
+
+PODEMOS/PODERÍAMOS 
+
+
+
+
+PROTEGER NOSSAS 
+
+
+
+
+ROUTES 
+
+
+POR MEIO DE CÓDIGOS COMO ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+
+
+  if(!req.session.isLoggedIn) { ///////ESTE CÓDIGO AQUI..
+    
+        return res.redirect('/login');
+
+
+  }
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn
+
+  });
+};
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+MAS ESSE É UM APPROACH MEIO RUIM,
+
+NÃO É 
+
+MT 
+
+'
+SCALABLE',
+
+
+
+
+ISSO PQ 
+
+
+
+SERÍAMOS OBRIGADOS A ADICIONAR 
+
+
+ESSA 
+
+'GUARD'
+
+
+
+
+__EM TODA E CADA __ ROUTE QUE 
+
+
+DEVE SER PROTEGIDA... (ou seja, em CADA PEQUENINO 'CONTROLLER ACTION'...)
+
+
+
+
+
+
+
+
+
+---------> OK.... ISSO É UMA MERDA.... --> É POR ISSO QUE 
+
+
+
+O 
+
+
+PROFESSOR __PROPÕE_ A CRIAÇÃO __ 
+
+
+
+
+DE 
+
+
+UM MIDDLEWARE 
+
+
+NOSSO,
+
+
+
+middleware 
+
+
+QUE 
+
+
+__PODEREI __ ADICIONAR___ EM 
+
+
+CADA 
+
+ROUTE 
+
+QUE 
+
+
+
+___ EU ACHE QUE __ DEVA SER PROTEGIDA... ----->   PARA ISSO,
+
+
+PARA 
+
+ESCREVER 
+
+E 
+
+USAR ESSE MIDDLEWRE,
+
+
+
+
+
+PROFESSOR 
+
+
+ADICIONA UM 
+
+'BRAND NEW FOLDER'
+
+
+
+NO NOSSO 
+
+
+
+PROJETO... 
+
+
+
+
+
+
+
+
+--> É O FOLDER DE 
+
+ 
+
+
+ 'middleware',
+
+ QUE 
+
+
+
+
+
+VAMOS CRIAR NO ___ ROOT __ DE NOSSO PROJETO....
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... 
+
+
+
+
+DENTRO DE 'middleware',
+
+
+
+
+
+VAMOS 
+
+
+
+CRIAR 1 ARQUIVO CHAMADO DE 
+
+'isAuth.js'... --------> 
+
+
+
+
+
+
+
+
+
+
+-------->  NESSE ARQUIVo,
+
+
+
+
+vamos 
+
+
+simplesmente 
+
+
+exportar
+ 
+
+
+
+ 1 
+
+
+ middleware 
+
+
+
+
+ COMUM,
+
+
+ algo tipo 
+
+
+
+
+
+
+ 
+
+ module.exports = (req, res, next) => {
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+
+ -------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ -----> CERTO... ---> 
+
+
+
+
+1 MIDDLEWARE COMUM, EM QUE RECEBEMOS 1 REQUEST, 1 RESPONSE, E 1 NEXT... -----> 
+
+
+
+
+
+
+
+E NESSA FUNCTION AÍ,
+
+VAMOS SIMPLESMENTE 
+
+IMPLEMNETAR 
+
+
+O CODE 
+
+
+QUE 
+
+O PROF NOS MOSTROU NA ÚLTIMA LIÇÃO...
+
+
+
+O CÓDIGO DE 
+
+''
+
+
+  if(!req.session.isLoggedIn) { ///////ESTE CÓDIGO AQUI..
+    
+        return res.redirect('/login');
+
+
+  }
+
+
+
+  '',
+
+
+  ESSENCIALMENTE....
+
+
+
+
+
+
+
+
+
+
+  ex:
+
+
+  
+ module.exports = (req, res, next) => {
+
+
+        if(req.session.isLoggedIn) {
+                return res.redirect('/login');
+        } else {
+
+
+            next();
+        }
+
+
+ }
+
+
+
+
+
+ -----------------------
+
+
+
+ CASO CONTRÁRIO, VAMOS QUERER 
+
+ CHAMAR 
+
+
+ 'next()',
+
+
+ PQ VAMOS QUERER __ PROSSEGUIR_ A EXECUÇÃO EM CADA 1 DE NOSSOS 'CONTROLLER'
+
+
+
+ de forma ordinária,
+
+
+
+ sem pausas/redirects promovidos por esse middleware....
+
+
+
+
+
+
+
+
+
+
+ --> OK... VAMOS IMPORTAR_ ESSE 
+
+
+ NEGÓCIO, ESSE 
+
+
+
+ middlware aí,
+
+
+
+
+
+LÁ NO ARQUIVO CONTROLLER DE 
+
+'admin.js', provavelmente....
+
+
+
+
+
+
+
+
+-_> ALGO TIPO ISTO:
+
+
+
+
+
+
+const authChecker = require('../middleware/isAuth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> MAS FIZ ERRADO... --> NÃO DEVO IMPORTAR__ 
+
+ESSE 
+
+NEGÓCIO LÁ 
+
+
+em 
+
+
+
+'admin.js',
+
+
+
+E SIM 
+
+
+
+
+__ _VAMOS IMPORTAr__ LÁ NAS NOSSAS ROUTES ( É POR ISSO QUE ESSE APPROACH É MAIS 'SCALABLE")....
+
+
+
+
+
+
+
+
+
+
+
+
+---------> O PROFESSOR, ENTÃO, AGORA NOS EXPLICA QUE __, LÁ NO ARQUIVO DE __ ROUTES (como 'admin.js', auth.js e shop.js) 
+
+
+
+
+PODEMOS ADICIONAR __________ 
+
+
+QUANTOS HANDLERS (qualquer número de handlers)
+
+
+
+
+
+PARA A ROUTE ___ QUE 
+
+DESEJAMOS... -----> 
+
+
+
+
+
+
+EM QUALQUER CASO,
+
+
+O 
+
+
+REQUEST 
+
+
+
+SERÁ 
+
+
+'FUNNELED THROUGH THEM, FROM LEFT TO RIGHT'.. 
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+
+
+
+VOCê VAI 
+
+
+ESCREVER ASSIM:
+
+
+
+
+
+
+
+
+
+
+ANTES:
+
+
+
+
+
+
+
+router.get('/add-product',  adminController.getAddProductPage );
+
+
+
+
+
+
+
+
+
+
+DEPOIS:
+
+
+
+
+
+
+router.get('/add-product', authChecker, adminController.getAddProductPage );
+
+
+
+
+
+
+
+
+
+( OU SEJA, O AUTHCHECKER, nosso middleware, SERÁ EXECUTADO ANTES, E VAI REDIRECIONAR 
+
+SE 
+
+O 
+
+
+USER
+
+REALMENTE NÃO ESTIVER 'LOGGEDIN'...)
+
+
+
+
+
+
+
+
+
+
+--> OK, ISSO SIGNIFICA QUE 
+
+AGORA 
+
+
+BASTA
+ 
+
+ COLOCARMOS 
+
+
+ ESSE 
+
+ MIDDLEWARE __ NO MEIO DAS ROUTES DE 'get' QUE QUEREMOS PROTEGER...
+
+
+
+
+
+
+
+ -----------> E PROFESSOR NOS EXPLICA QUE 
+
+
+ dentro 
+
+ disso aqui:
+
+
+
+
+
+ router.get('/add-product', isAuth, adminController.getAddProductPage);'
+
+
+
+
+
+
+
+ PODEMOS __ COLOCAr__ QUANTOS MIDDLEWARES/ARGUMENTOS 
+
+ QUISERMOS,
+
+
+
+
+ QUE O  REQUEST 
+
+ DIRECIONADO A ESSA ROUTE VAI __ IR POR DENTRO _DE 
+
+ TODOS ELES...
+
+
+
+
+
+ EX:
+
+
+
+
+  router.get('/add-product', isAuth, middleware2, middleware3, etc, adminController.getAddProductPage);'
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+ESSES 
+
+HANDLERS SERÃO PARSEADOS 'FROM LEFT TO RIGHT',
+
+
+tudo normal...
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+OK........
+
+
+
+
+
+
+
+
+--> PROFESSOR __ DIZ, ADEMAIS, QUE 
+
+PODEMOS 
+ADICIOANR 
+
+
+
+
+
+ESSE 
+
+'authCheckerAndRedirecter'
+
+
+__ A TODAS __ AS ROUTES__ 
+
+EXISTENTES EM 'admin.js',
+
+
+JUSTAMENTE __ PQ ______tODAS__ ELAS VÃO
+
+
+
+
+
+
+PRECISAR DE 'AUTHENTICATION' para funcionarem.... -------> 
+
+
+
+
+
+
+
+CERTO.... ------> 
+
+
+e 
+
+
+
+NO 
+
+
+
+ARQUIVO DE 
+
+'shop.js'
+
+
+TAMBÉM HÁ ALGUMAS ROUTES QUE DEVEM SER PROTEGIDAS,
+
+
+
+
+
+
+COMO 
+
+
+ORDERS E CART...
+
+
+
+
+
+
+
+
+--------> VAMOS QUERER PROTEGER O 'GET CART', 'POST CART',
+
+E 
+
+'GETORDERPAGE'
+
+
+
+'POSTORDER' 
+....
+
+
+
+--> TUDO ISSO SERÁ PROTEGIDO POR MEIO DESSE MIDDLEWARE...
+
+
+
+
+
+
+
+CÓDIGO VAI FICAR ASSIM:
+
+
+
+
+
+// const path = require('path');
+
+const express = require('express');
+
+// const rootDir = require('../util/path'); /////UTILITY FUNCTION DE AUTORIA DO PROFESSOR.... --> substitui o trecho ""'__dirname, '..' ""       VISTO EM CÓDIGOS COMO 'path.join(__dirname, '..', 'views', 'add-product.html') , que ficam tipo 'path.join(rootDir, 'views', 'add-product.html');'....
+
+const adminController = require('../controllers/admin');
+
+
+
+const authCheckerAndRedirecter = require('../middleware/isAuth');
+
+
+const router = express.Router();
+
+// const admin = [];
+
+
+
+
+router.get('/product-list-admin', 
+
+authCheckerAndRedirecter,
+adminController.getProductsAdminPage);
+
+
+
+router.post('/edit-product', authCheckerAndRedirecter, adminController.editProduct);
+
+
+
+router.get('/edit-product/:productId', authCheckerAndRedirecter, adminController.getEditProductPage
+);
+
+
+// // router.patch('/edit-product/:productId', adminController.editProduct);
+
+
+// // router.post('/edit-product/:productId', adminController.editProduct); __QUERY PARAMS_ NÃO SÃO NECESSÁRIOS EM REQUESTS DE TIPO 'POST'/ROUTES ACESSADAS POR REQUESTS DE TIPO POST... (isso pq a DATA NECESSÁRIA JÁ SERÁ 'ENCLOSED' DENTRO DO REQUEST DE TIPO POST, E A URL EM SI, COM OS QUERY PARAMS, SERÁ INÚTIL PARA ISSO, REDUNDANTE...)
+
+
+
+
+router.get('/add-product',
+
+authCheckerAndRedirecter,
+ adminController.getAddProductPage
+
+//   res.render('add-product', 
+  
+//   {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'....
+  
+//   path: '/admin/add-product',
+//   activeAddProduct: true,
+//   productCSS: true,
+//   formsCSS: true
+
+// }
+
+);
+
+
+router.post('/delete-product', 
+
+authCheckerAndRedirecter,
+adminController.postDeleteProduct)
+
+
+
+
+
+
+
+router.post('/add-product', 
+            authCheckerAndRedirecter,
+      adminController.postAddProduct
+// (req, res, next) => {
+
+//   admin.push(
+//     {title: req.body.title}
+//   )
+//   console.log(admin);
+//   res.status(302).redirect('/');
+// }
+);
+
+
+// exports.routes = router; 
+
+// exports.admin = admin; /////COMO NÃO TEREMOS/TEMOS MAIS O ARRAY VAZIO DE 'admin' AQUI NESSE ARQUIVO ROUTE(foi transferido para o arquivo de CONTROLLERS de 'admin.js'...), PODEMOS SIMPLESMENTE REMOVER ESSE EXPORT __ E PASSAR __ a MANTER APENAS O EXPORT DO 'router', da const 'router 'que SEGURA NOSSA ROUTE...
+
+
+module.exports = router;//tipo assim....
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+
+router.get(
+    '/products/:productId', 
+    shopController.getProductDetailPage
+)
+
+
+
+router.get(
+  '/products', 
+  shopController.getProductsPage
+)
+
+
+router.post(
+  '/cart',
+  authCheckerAndRedirecter,
+  shopController.postToCart
+)
+
+router.post(
+  '/cart/delete-cart-item',
+  authCheckerAndRedirecter,
+  shopController.deleteCartItem
+)
+
+
+
+router.post(
+  '/cart/order',
+  authCheckerAndRedirecter,
+  shopController.orderPost
+)
+
+
+
+
+router.get(
+  '/cart',
+  authCheckerAndRedirecter, ///É O NOSSO 'GUARD' de routes... (queremos que SÓ __ USERS__ AUTENTICADOS __ CONSIGAM ACESSAR O 'CART'...)
+  shopController.getCart
+)
+
+
+
+router.get(
+  '/orders', 
+  authCheckerAndRedirecter, ///É O NOSSO 'GUARD' de routes... (queremos que SÓ __ USERS__ AUTENTICADOS __ CONSIGAM ACESSAR as 'ORDERS'...)
+  shopController.getOrdersPage
+)
+
+
+
+router.get(
+
+  '/',
+
+      shopController.getStartingPage
+
+);
+
+
+
+
+
+module.exports = router; ///////// DIFERENTE DOS IMPORTS ES6...
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+OK...... --> ISSO SIGNIFICA QUE AGORA,
+
+
+
+
+SE VOCÊ NÃO ESTIVER 'LOGGED IN',
+
+
+vocÊ _ NÃO VAI CONSEGUIR ACESSAR ESSAS ROUTES,
+
+
+VOCÊ VAI SER 
+
+REDIRECIONADO, POR CAUSA DO CÓDIGO DE 
+
+'authCheckerAndRedirecter', que é este:
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = (req, res, next) => {
+
+
+
+
+
+    if(!req.session.isLoggedIn) {
+
+        res.redirect('/login');
+
+
+    } else {
+
+      next();
+    }
+}
+
+
+
+
+
+
+---------------
+
+
+
+
+
+---> OK... TESTAMOS ISSO...
+
+
+
+
+
+
+
+------> TENTAMOS ACESSAR A PAGE DE 
+
+
+'localhost:3000/cart'
+
+
+SEM AUTHENTICATION,
+
+
+
+
+
+e aí ACABAMOS NA PAGE DE LOGIN... (o que significa que nosso GUARD é um sucesso...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA TEMOS ROUTE PROTECTION NO 
+
+
+NOSSO PROJETO.... -> NÃO VAMOS APENAS 'HIDE MENU ITEMS',
+
+
+
+E SIM __ 
+
+
+VAMOS 
+
+
+__iMPOSSIBILITAR ____ 
+
+
+
+O ACESSO A NOSSAS PAGES, tudo 
+
+
+POR MEIO 
+
+
+DO CHECK 
+
+
+DO 
+
+AUTHENTICATION STATUS DAQUELE USER (por meio da session)... --> E, POR MEIO DESSE APPROACH,
+
+
+CABE 
+
+APONTAR QUE 
+
+
+
+O USER NÃO VAI CONSEGUIR MANIPULAR ISSO AÍ,
+
+
+NÃO VAI CONSEGUIR MANIPULAR A SESSION NO NOSSO SERVER,
+
+
+em 
+
+um lugar remoto... -------> OK, AGORA 
+
+
+
+ASSEGURAMOS QUE 
+
+ALGUMAS ROUTES/METHODS SÓ FICAM/FICARÃO DISPONÍVEIS 
+
+
+A 
+
+'LOGGED IN USERS'.... - -------------> E, DE FATO,
+
+SE LOGGARMOS 
+
+
+
+
+
+NO APP,
+
+
+
+SEREMOS CAPAZES DE 'ADD A NEW  PRODUCT',
+
+
+ver 
+
+as 
+
+orders,
+
+
+
+ver o cart, 
+
+
+etc.... 
+
+
+
+
+
+
+
+
+
+
+
+-----------> TUDO ISSO PODE SER FEITO, PORTANTO, 
+
+
+MAS 
+
+
+
+__ AGORA PROTEGEMOS NOSSO APP CONTRA 'ACESSO NÃO AUTORIZADO', algumas features dele...

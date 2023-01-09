@@ -1,0 +1,719 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> HÁ OUTRA FEATURE NOTÁVEL DO EXPRESS ROUTER QUE O PROFESSOR QUER NOS MOSTRAR... 
+
+
+
+
+
+
+
+
+
+
+--> AGORA QUE TEMOS UMA 'CATCH ALL ROUTE'
+
+
+
+que 
+
+handla a PÁGINA DE 'NOT FOUND' USADA
+ 
+ PARA 
+
+
+ CASOS EM QUE 
+
+
+ USUÁRIO 
+
+ COLOCA 
+
+
+ 'localhost:3000/urlinexistente',
+
+
+
+
+
+
+ __ E AGORA NÓS JÁ TEMOS NOSSAS 'ROUTES' OUTSOURCEADAS 
+
+
+
+ NAQUELE FOLDER DE 
+
+ 'routes' no nosso projeto.... 
+
+
+
+
+
+
+
+
+
+ --> E, BEM, ÀS VEZES 
+
+ ESSAS 
+
+ 'OUTSOURCED ROUTES '
+
+
+
+
+ POSSUEM 
+
+
+
+ UM 
+
+
+
+ 'COMMON STARTING PATH'...  --------> PARA EXEPLIFICAR ISSO,
+  
+  DEVEMOS 
+
+
+
+  IMAGINAR/APLICAR QUE 
+
+
+  TODAS 
+
+
+
+  AS ROUTES 
+
+  DE 
+
+
+  'admin.js'
+
+
+
+  POSSUEM/SÃO TRIGGADAS COM O MESMO 
+
+  STARTING PATH,
+
+  SÃO TRIGGADAS 
+
+
+  Com 
+
+
+
+  '/admin/xxxxx'....
+
+
+
+
+
+
+
+
+  ex:
+
+
+
+  '/admin/add-product' 
+
+
+
+
+  '/admin/product'....
+
+
+
+
+  -----------------------------
+
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+
+  const express = require('express');
+
+const router = express.Router();
+
+
+router.get('/admin/add-product', (req, res, next) => {  //////EIS O CÓDIGO EM QUESTÃO.
+  console.log('test; IN THE MIDDLEWARE');
+  res
+  .status(200)
+  .send(
+    '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+  );
+});
+
+router.post('/admin/product', (req, res, next) => { ///////EIS O CÓDIGO EM QUESTÃO.
+  console.log(req.body);
+  res
+  .status(302)
+  .redirect('/');
+});
+
+// router.use();
+
+// router.get();
+// router.post();
+
+module.exports = router;
+
+
+
+--------------------------------------
+
+
+
+
+OK.. OUTRO TAKEAWAY É ESTE:
+
+
+
+
+
+router.get('/product', (req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+  res
+  .status(200)
+  .send(
+    '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+  );
+});
+
+router.post('/product', (req, res, next) => {
+  console.log(req.body);
+  res
+  .status(302)
+  .redirect('/');
+});
+
+
+
+
+
+
+
+
+
+^^^^^^^^^^^^ NESSE CASE AÍ,
+ 
+
+ AS 2 ROUTES REALMENTE SERÃO DIFERENTES ROUTES, MESMO 
+
+ POSSUINDO O ''''MESMO PATH'''' --> MAS NÃO É O MESMO PATH, DE FATO, 
+
+ __ POIS __ O METHOD UTILIZADO 
+
+ NESSES MIDDLEWARES É ___ DIFERENTE (o primeiro é de 'get', enquanto o segundo é de 'POST'... --> POR ISSO SÃO ROUTES DIFERENTES, TRIGGADAS DE FORMAAS DIFERENTES...)
+
+
+
+ ^^^^ NÃO HÁ CONFLITO ENTRE 
+
+ ISSO AÍ; UM MESMO PATH PODE SER USADO 2X (ou mais de 2x), BASTA QUE 
+
+ OS METHODS QUE TRIGGUEM ESSE PATH SEJAM 
+
+ DISTINTOS 
+
+
+ NOS SEUS VÁRIOS 'CASES'...
+
+
+
+
+
+
+
+
+
+
+ -------> OK........... ------> MAS HÁ OUTRO 'IMPORTANT TAKEAWAY'... 
+
+
+
+
+
+
+ ---> SE TEMOS 
+
+ UM SETUP COMO ESSE,
+
+ UM SETUP EM QUE 
+
+
+
+ __NOSSOS PATHS __ DENTRO 
+
+ DE UM 
+
+
+ 'ROUTER FILE' 
+
+
+
+ COMEÇAM COM UM MESMO SEGMENTO,
+
+
+
+ nós podemos 
+
+ SIMPLESMENTE 
+
+
+ 'TAKE THAT SEGMENT'
+
+
+
+ E AÍ OUTSOURCEAR ESSE 'SEGMENT',
+
+
+
+ __ MOVÊ-LO LÁ 
+
+
+ PARA 
+
+
+ 'app.js',
+
+
+
+
+ E AÍ 
+
+
+ O ADICIONAR COMO 
+
+ 'filter' 
+
+
+
+
+ DO MIDDLEWARE 'app.use()' QUE ESTÁ USANDO ESSA SUA ROUTE/MIDDLEWARE...
+
+
+
+
+
+
+
+
+
+ ex( em 'admin.js'; REMOVEMOS O SEGMENTO '/admin' do INÍCIO DE NOSSAS ROUTES QUE TRIGGAM OS MIDDLEWARES):
+
+
+
+
+
+
+
+
+// router.get('/admin/add-product', (req, res, next) => {
+    router.get('/add-product', (req, res, next) => {
+    console.log('test; IN THE MIDDLEWARE');
+    res
+    .status(200)
+    .send(
+      '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+    );
+  });
+  
+//   router.post('/admin/product', (req, res, next) => {
+    router.post('/product', (req, res, next) => { ///esse '/admin' FOI TRANSPORTADO/OUTSOURCEADO como filter lá no 'app.use()' em 'app.js' (arquivo) QUE SE UTILIZA DESSA NOSSA ROUTE/MIDDLEWARE que faz esse redirect.... 
+    console.log(req.body);
+    res
+    .status(302)
+    .redirect('/');
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex( em 'app.js', EM QUE PASSAMOS ESSE DENOMINADOR/STARTING PATH COMUM DE '/admin' como PRIMEIRO PARÂMETRO/FILTER 
+da 
+
+APLICAÇÃO/UTILIZAÇÃO DOS MIDDLEWARES DO ARQUIVO 'routes' de 'admin.js'...
+):
+
+
+
+
+
+
+
+app.use(
+  
+
+  '/admin', //será APLICADO NA URL de nosso path, do path desse negócio aí... (que está lá em 'admin.js')...
+
+
+   adminRoutes  ////uso do EXPRESSJS...
+);
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+AGORA, PORTANTO,
+
+só 
+
+
+
+ROUTES QUE 
+
+__COMEÇAM COM 
+
+
+'/admin'
+
+
+
+VÃO 
+
+
+_CONSEGUIR __ENTRAR 
+
+
+
+NA ''''FILE'''' 
+
+
+
+de 
+
+
+'admin.js'..., em que temos nossas routes...
+
+
+
+
+
+
+
+
+--> E NÃO APENAS ISSO,
+
+
+O __EXPRESSJS __ TAMBÉM ___ VAI OMITIR___ 
+
+
+essa 
+
+parte 
+
+'/admin'  
+
+
+
+
+__________NA URL___, AGORA,__ QUANDO 
+
+
+ELE 
+
+
+TENTAR __ 'MATCH THESE ROUTES'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMO RESULTADO DISSO, VAMOS ATÉ O BROWSER E DIGITAMOS:
+
+
+
+
+
+
+
+
+1) localhost:3000/add-product --> ISSO RESULTA NA NOSSA PÁGINA DE 'NOT FOUND', ERRO 404... (sucesso)...
+
+
+
+
+
+2) localhost:3000/admin/add-product ---> ISSO RESULTA NA PÁGINA DE ADD-PRODUCT, PQ É JUSTAMENTE ISSO QUE DEFINIMOS NO USO DAQUELA ROUTE/MIDDLEWARE em 'app.use('/admin', adminRoutes);'
+                                                (nossa form)....
+
+
+
+
+
+
+
+
+
+
+--> professor recebe um breve erro quando ele 
+
+envia nossa form nessa página... --> isso acontece pq 
+
+
+ele 
+
+
+
+ainda está com o código html errado 
+
+retornado por essa page de 
+
+'/add-product'...
+
+
+o
+ código está assim:
+
+
+
+    .send(
+      '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+    );
+
+
+
+
+
+
+QUANDO DEVIA ESTAR ASSIM ('action' TEM UMA URL DIFERENTE, QUE CONTABILIZA AQUELE '/admin' que recém adicionamos)...:
+
+
+
+
+
+
+    .send(
+      '<form action="/admin/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+    );
+
+
+
+
+
+
+
+
+OK, TESTAMOS DE NOVO,
+
+E AGORA 
+
+O 
+
+
+CÓDIGO FUNCIONA...
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+---------> ok.. isso significa que ___ 
+
+
+
+
+
+ESSE FILTERING MECHANISM EM 'app.js'
+
+
+NOS 
+
+DEIXA 
+
+DEFINIR 
+
+UM 
+
+
+'COMMON STARTING SEGMENT' 
+
+
+__ AO NOSSO PATH,
+
+
+
+
+PATH DE TODAS AS ROUTES EM UM DETERMINADO ARQUIVO 'route'.... --------> ISSO NOS AJUDA 
+
+
+
+PQ 
+
+
+
+
+AÍ NÃO PRECISAMOS REPETIR ISSO 200X 
+
+
+
+nas 
+
+nossas routes 
+
+no arquivo route que usamos 
+
+como middleware....
+
+
+
+
+(EXEMPLO DE COMO FICARIA SE NÃO TIVÉSSEMOS ESSA FEATURE):
+
+
+
+
+
+
+
+router.get('/admin/add-product', (req, res, next) => {})
+
+
+
+
+
+
+
+router.post('/admin/add-product', (req, res, next) => {})
+
+
+
+
+
+
+router.get('/admin/remove-product', (req, res, next) => {})
+
+
+
+
+
+router.get('/admin/alter-product', (req, res, next) => {})
+
+
+
+
+
+
+
+
+
+(OU SEJA, ISSO SERIA INFERNAL, TERÍAMOS DE ESCREVER 
+
+'/admin' NO INÍCIO DE TODAS ELAS..)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OU SEJA, 
+
+
+
+ESSA COMMON STARTING PATH de 
+
+'/admin' 
+
+É 
+
+ADICIONADA IMPLICITAMENTE 
+
+
+
+A TODAS ESSAS ROUTES.......
+
+
+
+
+
+
+
+
+
+-----> ESSA ROUTE DE '/admin' é 'adicionada automaticamente '
+
+
+à CONFIGURAÇÃO DE NOSSAS ROUTES 
+
+nesse arquivo routes em que 
+
+
+colocamos esse 'filter'...

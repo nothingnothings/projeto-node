@@ -1,0 +1,456 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> COMEÇAMOS COM O DENO ---------> DEVEMOS ESCREVER NOSSO PRIMEIRO PROGRAMA 'DENO'... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> vamos até 'deno.land,'
+
+
+E LÁ 
+
+
+
+
+
+
+observamos o código de instalação para diferentes ambientes...
+
+
+
+
+
+
+
+
+
+
+--------> HÁ UM LINK DE 'INSTALL DENO',
+
+
+
+
+E AÍ 
+
+HÁ COMO INSTALAR COM NPM,
+
+etc etc...
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR USA UMA DAQUELAS OPÇÕES....
+
+
+
+
+
+
+
+
+
+
+
+--> COPIAMOS O COMANDO DE 
+
+'iwr https://' -----> LÁ NO POWERSHELL,
+
+
+
+
+no IDE... ----->>>>> 
+
+
+
+
+
+
+
+
+powershell NÃO É O COMMAND PROMPT...
+
+
+
+
+iwr https://deno.land/install.ps1 -useb | iex
+
+
+
+Windows PowerShell
+Copyright (C) Microsoft Corporation. Todos os direitos reservados.
+
+ Gravando solicitação da Web
+    Gravando fluxo de solicitações... (Número de bytes gravados: 3103065)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> INSTALADO O DENO,
+
+
+VEREMOS 
+
+
+que 
+
+
+
+
+
+
+
+O 
+PROFESSOR NÃO SERÁ CAPAZ DE 
+
+
+
+RODAR O DENO... --> 
+
+
+
+
+
+
+NORMALMENTE,
+
+
+
+QUANDO ESTÁ FUNCIONANDO, O DENO É CHAMADO POR MEIO DA ESCRITA de 'deno'
+
+
+no terminal...
+
+
+
+
+
+
+---> SE TENTAMOS FAZER ISSO,
+
+GANHAMOS 'COMMAND NOT FOUND'
+
+
+
+-->
+
+
+
+
+
+
+
+
+
+
+MAS QUANDO ISSO ACONTECE, JÁ RECEBEMOS UM AVISO NOS MOSTRANDO O __FIX:
+
+
+
+
+
+''MANUALLY ADD THE DIRECTORY TO YOUR $HOME/.bash_profile....
+
+
+
+
+
+
+
+
+
+
+
+-->vamos ter que adicionar esse diretório ao nosso 'BASH' profile...
+
+
+
+
+
+
+
+
+
+
+
+-> na verdade,
+
+
+
+precisamos adicionar 2 entries ao nosso bash profile, que são:
+
+
+
+
+'
+
+
+export DENO_INSTALL=".../.deno"
+
+
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COPIE E COLE ESSAS 2 ENTRIES... --------> MAS 
+
+ESSAS INSTRUÇÕES PODEM MUDAR AO LONGO DO TEMPO....
+
+
+
+
+
+--> BASH PROFILE --> É UMA CONFIGURATION FILE PARA SEU SISTEMA INTEIRO,
+
+QUE DIZ AO SEU OS QUAIS COMANDOS FICAM DISPONÍVEIS NO SEU 
+
+COMMAND PROMPT...
+
+
+
+
+
+
+
+
+
+
+--> mas bash profiles só são necessásrios para MAC USERS...
+
+
+
+
+
+
+
+
+
+
+
+--> o meu DENO já __ ESTÁ FUNCIONANDO o seu 'REPL'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... ISSO SIGNIFICA QUE JÁ PODEMOS USAR O DENO PARA EXECUTAR SCRIPTS VARIADOS...
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+DENO ---> VOCê ENTRA NAQUELE 'INTERACTIVE MODE'...
+
+
+
+
+no windows é bem mais fácil de settar 
+
+
+
+isso aí....
+
+
+
+
+
+
+
+
+
+
+
+
+DENO ---> COMANDO DISPONÍVEL GLOBALMENTE ...
+
+
+
+
+
+
+
+
+
+
+
+
+--> dENO REPL --> 
+
+
+
+
+
+NODE REPL --> você pode executar código básico node,
+
+
+
+usá-lo como calculadora básica, etc etc...
+
+
+
+
+
+
+
+
+
+
+
+---> acontece a mesma coisa com o REPL do deno...
+
+
+
+
+
+
+
+---------
+
+
+
+
+
+
+
+
+
+-------> OK.... mas vamos escrever código de verdade com o deno,
+
+
+e naõ esse REPL inútil...
+
+
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+
+
+
+
+----------> VOCê VAI ESCREVER JAVACSRIPT/TYPESCRIPT 
+
+
+
+CODE COM O DENO,
+
+E AÍ 
+
+VAI 
+
+RODAR 
+
+OS 
+
+SCRIPTS COM ELE...
+
+
+
+
+
+
+
+
+
+--> VAMSO ESCREVER UM POUCO DE CÓDIGO DENO, PARA VER COMO ELE 
+
+FUNCIONA,
+
+PARA 
+
+PODERMOS 
+
+
+VER AS DIFERENÇAS 
+
+DELE EM RELAÇAÕ AO NODE...
+
+
+

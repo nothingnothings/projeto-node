@@ -1,0 +1,298 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> antes de começarmos A TRABALHAR NO PROJETO,
+
+
+PROFESSOR 
+
+
+
+
+
+QUER FALAR 1 POUCO DAS REST APIs e DO RESTO DO CONHECIMENTO QUE GANHAREMOS POR MEIO DESTE CURSO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> TUDO QUE APRENDEMOS ATÉ AGORA É REDUNDANTE?
+
+
+
+
+
+
+
+--> APRENDEMOS SOBRE:
+
+
+
+
+
+1) NODE + EXPRESS APP SETUP 
+
+
+
+
+2) ROUTING/ENDPOINTS 
+
+
+
+
+3) HANDLING REQUESTS E RESPONSES 
+
+
+
+4) REQUEST VALIDATION 
+
+
+
+
+5) DATABASE COMMUNICATION 
+
+
+
+6) FILES, UPLOADS, DOWNLOADS 
+
+
+7) SESSIONS E COOKIES 
+
+
+
+8) AUTHENTICATION 
+
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+ESSES SÃO ALGUNS BIG TOPICS QUE VIMOS AO LONGO DO CURSO....
+
+
+
+
+
+
+
+
+
+--> MAS COMO 
+
+AJUSTAMOS ISSO, ESSE CONHECIMENTO,
+
+A UMA 
+
+
+REST API,
+em vez de uma 
+
+'VIEW-BASED APPLICATIOn'?
+
+
+
+
+
+
+
+
+
+
+-->  BEM, VAMOS VENDO....
+
+
+CHANGES NECESSÁRIAS:
+
+
+
+
+
+
+
+
+
+
+
+1) NODE + EXPRESS APP SETUP  ----> SETUP GERAL, __ NENHUMA CHANGE __ NECESSÁRIA... SERÁ + OU - O MESMO (o que pode mudar é só a PORT usada no hosting do backend/frontend)
+
+
+
+ainda settamos um NORMAL NODEEXPRESS SERVER...
+
+
+2) ROUTING/ENDPOINTS  -----> TAMBÉM __ NENHUMA CHANGE __ SERÁ APLICADA AO NOSSO ROUTING... --> A ÚNICA COISA QUE MUDA É QUE VAMO SETTAR MAIS ALGUNS HTTP METHODS DIFERENTES, COMO 'PATCH', 'DELETE' e 'PUT'...
+
+
+
+
+
+
+3) HANDLING REQUESTS E RESPONSES ----> AQUI HÁ UMA MUDANÇA... --> VAMOS TRABALHAR ___ COM JSON DATA___  EM VEZ DE HTML/VIEWS -->  O QUE FAZEMOS, AGORA, É O 'PARSE + SEND' de JSON DATA ao nosso browser/serverside... (apenas fazemos EXCHANGE OF DATA)...
+
+
+(mas isso não é tão difícil de implementar)....
+
+
+
+
+4) REQUEST VALIDATION  (VALIDATION PARA 'INCOMING REQUEST DATA') --->  SE VOCÊ QUISER TER VALIDATION PARA 'INCOMING REQUEST DATA', VOCê __ NÃO TERÁ DE MUDAR__ COISA ALGUMA... --> FICARÁ __ IGUAL_ ao nosso app NORMAL NODEEXPRESS...
+
+
+(
+    Isso significa que NÓS AINDA VAMOS ADICIONAR VALIDATION POR MEIO DE COISAS 
+
+    COMO
+    'EXPRESS-VALIDATOR' (ver módulo de validation),
+
+    E A MANEIRA QUE 
+
+    O USAMOS, A LÓGICA QUE EMPREGAMOS, É A MESMA...
+
+
+)
+
+
+
+5) DATABASE COMMUNICATION  ----> COMUNICAÇÃO COM DATABASE, SEJA ELA SQL OU NOSQL, -------> TAMBÉM NÃO MUDA ---> A COMUNICAÇÃO COM A DATABASE __ ACONTECE __ NO SERVERSIDE__, EM 1 CONTROLLER ACTION (tipicamente), E A LÓGICA QUE NÓS ESCREVEMOS LÁ, O CÓDIGO, __ NÃO É AFETADO __ PELA DATA QUE NÓS 'EXCHANGE', ou pelo FATO DE QUE __ RENDERIZAMOS 1 VIEW ou 'SEND AROUND JSON DATA'...  
+
+
+
+6) FILES, UPLOADS, DOWNLOADS  -----> QUANTO A ISSO, TAMBÉM __ NÃO HÁ MUITAS MUDANÇAS... --> A ÚNICA COISA QUE MUDA, NA VERDADE, É O CÓDIGO ____ CLIENTSIDE, OS __ REQUESTS_ E SUA ESTRUTURA (pq não vamos mais usar FORMS..)
+
+
+
+
+(vamos ver como implementar file upload, e como serve files, nesse módulo...)
+
+
+
+
+
+7) SESSIONS E COOKIES  ------------> AQUI, SIM, NÓS TEMOS CHANGES....  ----> TEMOS CHANGES __ PQ NÃO VAMOS MAIS USAR __ COOKIES E SESSIONS.... --> 'DECOUPLED FRONTEND'... ---> com rest APIS,  não usamos mais isso... --> A RAZÃO PARA ISSO RESIDE NOS 'REST API PRINCIPLES', aquele principle de 'EACH REQUEST IS TREATED SEPARATELY' (cada request é examinado de forma INDEPENDENTE DE REQUESTS ANTERIORES... ) --> ISSO SIGNIFICA QUE NÃO TEMOS CONEXÃO ALGUMA ENTRE O SERVER E O CLIENT, nenhuma 'shared connection history',
+
+por isso não TEMOS O MANAGE __ DE SESSION ALGUMA NO SERVER_, PQ ___ A REST API __ NÃO SE IMPORTA COM 
+OS CLIENTS OU __ SE __ O CLIENT__ ESTÁ CONECTADO/SE CONECTOU A API ANTIGAMENTE/ANTERIORMENTE....
+
+
+
+(NO SESSION AND COOKIE USAGE)....
+
+
+
+
+
+
+8) AUTHENTICATION 
+
+
+
+
+-----> A AUTH TAMBÉM TERÁ QUE MUDAR.... --> VAMOS USAR UM APPROACH DE AUTHENTICATION 
+
+DIFERENTE,
+
+E O PROFESSOR 
+
+
+
+VAI MOSTRAR 
+
+
+
+
+___ QUE APPROACH É ESSA,
+ 
+ E COMO A IMPLEMENTAR... (nesse módulo)...
+
+
+
+
+
+
+
+
+OK, ENTÃO AS MAIORES MUDANÇAS SÃO EM 
+
+
+
+
+'3',
+
+
+
+'7' 
+
+
+e 
+
+
+'8'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> AS MAIORES CHANGES, PORTANTO, POSSUEM RELAÇÃO COM 'SESSIONS E COOKIES',
+
+
+
+
+E 'AUTHENTICATION' (por causa da ausência dessas sessions e cookies), 
+
+
+
+
+
+MAS 
+
+
+
+TODO O CONHECIMENTO 
+
+
+
+QUE 
+
+VOCÊ OBTEVE 
+
+AO LONGO DO CURSO CONTINUA SENDO SUPER IMPORTANTE...
+
+
+
+
+
+
+--> OK, DEVEMOS EXPLORAR ESSE NOVO PROJETO...

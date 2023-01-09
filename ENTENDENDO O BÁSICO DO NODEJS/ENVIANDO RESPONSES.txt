@@ -1,0 +1,1198 @@
+
+
+EIS NOSSO CÓDIGO:
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req.url);       ////////EIS O CÓDIGO EM QUESTÃO.
+  
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+NA ÚLTIMA AULA,
+
+
+APRENDEMOS SOBRE COMO 
+
+FAZER 
+
+'HANDLE' DE REQUESTS,
+
+
+E 
+
+SOBRE 
+
+
+COMO 
+
+'READ SOME DATA FROM THE REQUESTS',
+
+
+
+
+
+como por exemplo 
+
+
+
+A 
+
+
+_URL__ E QUAL HTTP METHOD UTILIZAMOS... 
+
+
+
+
+
+
+
+
+-> GET É O METHOD DEFAULT UTILIZADO,
+
+
+É UTILIZADO SE VOCÊ SÓ INPUTTAR 
+
+UMA 
+
+
+URL NO SEU BROWSER,
+
+NORMALMENTE...
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+-------> OK... QUITAMOS NOSSO SERVER... ----------> ______SEMPRE __ PRECISAMOS__ QUITAR 
+
+
+
+E 
+
+REINICIAR__ NOSSO SERVER ___ SE EDITAMOS ALGUMA COISA NELE,
+
+
+
+
+CASO CONTRÁRIO __ NOSSAS MUDANÇAS___ NÃO SERÃO REFLETIDAS 
+
+
+
+NO SERVIDOR,
+
+
+pq o SERVIDOR/PROCESSO _ ANTIGO__ AINDA __ ESTARÁ __ RODANDO__....
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS USAR AQUELE OBJETO 'RESPONSE'.... ------> 
+
+
+
+
+
+PODERÍAMOS CONSOLE.LOGGAR A RESPONSE 
+
+com 
+
+este código:
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req.url);       ////////EIS O CÓDIGO EM QUESTÃO.
+
+
+                        console.log(res);
+  
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+
+
+
+
+O OBJETO 'RESPONSE' 'NÃO VAI CONTER NENHUMA DATA INTERESSANTE/IMPORTANTE'... ------> 
+
+
+
+
+
+em vez disso,
+
+diz ele,
+
+
+PODEMOS __ USAR __ CÓDIGOS __ PAARA 
+
+
+
+
+
+ENCHER ___ ESSA RESPONSE __ 
+
+
+DE 
+
+DATA 
+
+
+QUE 
+
+QUEREMOS 
+
+
+ENVIAR DE VOLTA AO USUÁRIO...
+
+
+
+
+
+
+
+
+------> FAZEMOS ISSO POR MEIO DO 
+
+CALL 
+
+DE 
+
+
+'res + .xxxx'...
+
+
+
+
+
+
+
+
+
+
+--------> AÍ, ISSO FEITO,
+
+
+
+
+
+
+
+PODEMOS USAR 1 DOS INÚMEROS MÉTODOS 
+
+do objeto 
+
+'response'... ------> 
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE UM USADO COM MT FREQUÊNCIA É 
+
+'headers'...
+
+
+
+
+
+
+
+
+
+
+
+
+ELE ESCREVE ISTO:
+
+
+
+
+
+'res.setHeader('Content-Type', 'xxxxx')',
+
+
+
+
+
+
+
+
+
+UM HEADER 
+
+COMUM É 
+
+ESSE 
+
+
+CONTENT-TYPE,
+
+
+
+QUE É 
+
+
+UM 
+'DEFAULT HEADER'
+
+
+RECONHECIDO/ENTENDIDO/ACEITO PELO BROWSER.... --------->
+
+
+
+
+
+
+E AÍ, COMO SEGUNDO VALOR/ARGUMENTO,
+
+
+
+
+
+SETTAMOS O VALOR PARA 
+
+ESSA 
+
+
+'KEY' DE 
+
+'Content-Type'.... 
+
+
+
+
+
+
+
+
+------> PROFESSOR VAI SETTAR ISSO COMO 
+
+
+'text/html'...  
+
+
+
+
+
+
+EX:
+
+
+
+
+
+res.setHeader('Content-Type', 'text/html');'
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+--> O QUE ISSO VAI FAZER, BASICAMENTE,
+
+É 
+
+
+'ATTACH A HEADER TO OUR RESPONSE',
+
+
+uma header 
+
+em que 
+
+VAMOS BASICAMENTE 
+
+PASSAR 
+
+
+ALGUMA 
+
+
+
+META INFORMATION  
+
+
+
+dizendo que 
+
+o 
+
+
+'type' 
+
+
+daquele 
+
+
+
+_CONTENT_ QUE FARÁ 
+
+PARTE 
+
+
+DA RESPONSE 
+
+SERÁ 
+
+
+
+'text/html' (ou seja, HTML....) --->  
+
+
+
+É EVIDENTE QUE 
+
+
+
+
+HÁ APENAS UM PUNHADO 
+
+DE 
+
+
+SUPPORTED HEADERS ENTENDIDOS 
+
+PELO 
+
+BROWSER... --------> 
+
+
+
+
+
+E DEPOIS DESSA LIÇÃO,
+
+
+
+vamos 
+
+
+ENCONTRAR OUTRA LIÇÃO,
+COM UM 
+
+
+LINK EM QUE 
+
+PODEMOS 
+
+DESCOBRIR QUAIS HEADERS PODEMOS 
+
+SETTAR NAS 
+
+NOSSAS RESPONSES....
+
+
+
+
+
+
+--------> VOCÊ NÃO PRECISA SETTAR TANTOS HEADERS 
+
+
+
+assim.... -----> e, mais tarde,
+
+
+
+vamos 
+
+aprender que 
+
+existe um PACKAGE
+ 
+ QUE 
+
+ FAZ 
+
+ ESSE 
+
+
+ 'HEADER SETTING'
+  
+
+  para nós,
+
+
+
+  PARA 
+
+  QUE 
+
+  NÃO TENHAMOS QUE 
+
+  SETTAR O CONTENT-TYPE 
+
+
+  POR NOSSAS PRÓPRIAS MÃOS..
+
+
+
+
+
+
+
+
+
+  -----> OK...
+
+
+  settamos 
+
+
+  o header,
+
+  e o código ficou assim:
+
+
+
+
+
+
+  const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        console.log(req);
+        console.log(req.url);
+        console.log(req.method);
+        console.log(req.headers);
+        console.log(res);
+        res.setHeader('Content-Type', 'text/html');
+        //process.exit(); ///fecha nosso webserver, TERMINA O 'ONGOING EVENT LOOP'/execução de nosso servidor (vai parar de receber requests, pois terminamos o MAIN PROCESS que continha o eventListener que fazia listen aos REQUESTS) ------> este recurso é raramente usado, pois se usarmos 'process.exit()', PARAMOS DE RECEBER INCOMING REQUESTS, E O SERVER PARA DE FUNCIONAR...
+}) 
+
+
+
+
+
+server.listen(3000);
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+OK.... -----> 
+
+
+
+
+MAS UM PROBLEMA É QUE 
+
+ATÉ AGORA O PROFESSOR 
+
+
+DISSE/DIZ QUE 
+
+
+ESTARÁ
+ENVIANDO
+ 
+
+
+
+ CÓDIGO HTML ,
+
+ mas 
+
+ ele 
+ não 
+
+ está 
+
+
+enviando conteúdo algum...
+
+
+
+
+
+
+
+----------> E NÓS FAZEMOS ISSO por meio 
+
+do 
+
+set 
+
+de uma 
+
+response... --> 
+
+
+
+
+
+
+
+usamos o método 
+
+
+'res.write()' --------------> ESSE MÉTODO 
+
+
+
+
+NOS DEIXA 
+
+
+
+__FAZER 
+
+WRITE___ DE ALGUNS __ DADOS NESSA RESPONSE__- ------> 
+
+
+
+
+
+E 
+
+ESSE 
+
+WRITE BASICAMENTE FUNCIONA EM 
+
+'CHUNKS'... ------> 
+
+
+
+
+
+OU VOCÊ PODERIA DIZER QUE 
+
+ELE FUNCIONA 
+'IN MULTIPLE LINES'.... -------> that would be a good picture...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> VOCÊ 'WRITE MULTIPLE LINES OF RESPONSE'.... ------>
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+
+SE VOCÊ ESCREVE 
+SEU CÓDIGO TIPO ASSIM:
+
+
+
+
+
+
+       res.setHeader('Content-Type', 'text/html');
+       res.write('<html>');
+       res.write('<head><title>My first page</title></head>')
+       res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+       res.write('</html>');
+
+
+
+
+
+
+
+
+
+SE VOCÊ ESCREVER SEU CÓDIGO ASSIM,
+
+ELE 
+
+
+REALMENTE 
+
+
+SERÁ 
+
+
+ENVIADO 
+
+
+EM UM FORMATO 'MULTI-LINE'.... ------>
+
+
+
+
+
+ 
+
+ OU SEJA,
+
+
+ VOCÊ PODERIA 
+
+ 'WRITE A WHOLE HTML DOCUMENT IN __ A VERY COMPLEX __ WAY__ '.... -----> 
+
+
+
+
+ESSE CÓDIGO 
+
+HTML REALMENTE 
+
+SERÁ 
+
+ENVIADO 
+
+AO USER,
+
+MAS O PROBLEMA 
+
+
+É QUE 
+
+
+ESSA MANEIRA DE ESCREVER 
+
+
+
+ESSA RESPONSE É UMA DROGA,
+
+PQ 
+
+TEMOS QUE 
+
+ESCREVER 
+
+'LINE BY LINE'.... ----> esse código html 
+
+
+
+SERÁ 
+
+
+ESCRITO   NA RESPONSE 'line by line'...
+
+
+
+
+
+
+
+
+
+--> ALÉM DISSO,
+
+TAMBÉM PRECISAMOS 
+
+
+
+'TELL NODE' quando acabarmos com o create dessa response... ---> 
+
+
+
+FAZEMOS 
+
+ISSO POR MEIO 
+
+DO 
+
+
+CALL DE 
+
+
+'res.end()'....
+
+
+
+
+
+ex(CÓDIGO COMPLETO):
+
+
+
+
+
+
+
+
+const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+
+                      res.setHeader('Content-Type', 'text/html');
+       res.write('<html>');
+       res.write('<head><title>My first page</title></head>')
+       res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+       res.write('</html>');
+       res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+}) 
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+--> CHAMAMOS 'end'....  ---> DEPOIS QUE CHAMAMOS '.END()',
+
+
+NÃO DEVEMOS ESCREVER MAIS CÓDIGO ALGUM, PQ ISSO 
+
+RESULTARÁ 
+
+
+
+EM UM ___ERRO__ (
+
+
+
+    a response não deverá ser alterada 
+
+    ___ DEPOIS __ DE 
+
+
+    'WE ENDED IT',
+
+
+    pq 'end' é BASICAMENTE A PARTE EM QUE 
+
+    VAMOS 
+
+    RETORNAR 
+
+    A RESPONSE AO CLIENT,
+
+
+    o NODEJS 
+
+    vai retornar a response ao client... --------> 
+)
+
+
+
+
+
+
+
+
+
+
+----> OK,
+
+
+AQUI O NEGÓCIO VAI ENVIAR DE VOLTA UMA RESPONSE COM UM 
+
+CÓDIGO HTML 
+
+DENTRO DELA,
+
+
+em que 
+
+
+
+
+TAMBÉM DIREMOS 
+
+AO 
+
+
+BROWSER QUE 
+
+SE TRATA DE UM CÓDIGO HTML (pq o browser 
+
+não 
+
+saberia isso normalmente,
+
+não consegue 
+
+saber 
+
+
+
+sem você 
+
+
+escrever 
+
+
+
+'res.setHeader('Content-Type', 'text/html')'
+
+
+
+)
+
+
+
+
+
+REEXECUTAMOS 
+
+
+
+nosso código,
+
+
+
+
+
+e aí veremos 
+
+
+'Hello from my NodeJs server',
+
+
+
+lá no NOSSO BROWSER,
+ 
+
+ NA PÁGINA QUE RECEBEMOS/RECEBEREMOS DE NOSSO SERVIDOR...
+
+
+
+
+
+ (e aí, na ABA NETWORK,
+ 
+  
+
+
+  VEREMOS 
+
+
+  'localhost', um arquivo 
+
+
+  'localhost',
+
+
+
+  EM QUE 
+
+
+
+VEREMOS QUE ELE POSSUI 
+
+
+
+ALGUNS HEADERS,
+
+sendo um dos headers 
+
+
+AQUELE CONTENT-TYPE 
+
+DE 
+
+TIPO 
+
+'text/html'...
+
+
+
+ )
+
+
+
+
+
+
+
+
+
+
+ OBS::: OK, E QUANTO AOS OUTROS HEADERS QUE VIMOS 
+
+
+
+ NESSE ARQUIVO RECEBIDO POR NOSSO BROWSER? --> ESSES 
+
+ OUTROS 
+
+
+ HEADERS SÃO OS DEFAULT HEADERS, QUE SÃO SETTADOS PELO SERVIDOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> E SE CLICARMOS NA 
+
+
+ ABA 'RESPONSE '
+
+ em si,
+
+
+
+ PARA 
+ V
+ ER 
+
+ O 
+
+ 'RESPONSE BODY',
+
+
+
+ VEREMOS AQUELE 
+
+
+
+
+
+'HTML DOCUMENT CODE'
+
+que 
+
+escrevemos 
+
+
+(
+    uma fita 
+
+    de html,
+
+    tipo :
+
+<html><head><title>My first page</title></head><body><div><h1>Hello from my Node.js Server!</h1></div></body></html>
+
+)
+
+
+
+
+
+
+
+
+
+
+---> mais tarde, VAMOS APRENDER UMA MANEIRA 
+
+MAIS SIMPLES 
+
+
+DE 
+
+ESCREVER 
+
+CÓDIGO 
+
+HTML RETORNADO PELO SERVIDOR,
+
+
+
+
+a 
+
+
+maneira/approach 
+
+
+do 
+
+EXPRESS.JS,
+ 
+
+ FRAMEWORK DO EXPRESS.JS,
+
+
+
+
+
+ QUE NOS AJUDA COM ISSO...
+
+
+
+
+
+
+
+
+
+ ----> MAS É IMPORTANTE QUE VOCÊ SAIBA TODOS OS 'NITTY GRITTY DETAILS'
+  
+
+
+  das coisas 
+
+
+  que funcionam 
+
+
+  por trás das cenas, tanto do nodejs como do expressjs..
+
+
+
+
+
+
+
+
+
+
+  -->OK, É ASSIM QUE PODEMOS 
+
+  TRABALHAR COM REQUESTS E RESPONSES... 
+
+
+
+
+
+
+
+
+
+
+  --> AGORA VAMOS CONECTAR OS 2: 
+
+
+  VAMOS CONECTAR 
+
+  OS 
+
+
+
+  REQUESTS QUE PODEMOS RECEBER COM 
+
+  AS 
+
+  RESPONSES 
+
+  QUE SOMOS CAPAZES DE ENVIAR....
+
+
+
+
+
+
+
+
+
+  EX
+
+
+
+  On both requests and responses, Http headers are added to transport metadata from A to B.
+
+The following article provides a great overview of available headers and their role: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+
+Whilst this article is a great resource, especially to dive deeper, please don't learn this list by heart though! You'll encounter many of these headers throughout the course and I'll explain them when we need them.
+

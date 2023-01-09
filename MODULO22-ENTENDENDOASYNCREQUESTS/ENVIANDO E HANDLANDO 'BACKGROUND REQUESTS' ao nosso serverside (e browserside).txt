@@ -1,0 +1,3198 @@
+
+
+
+
+
+OK... O ÚLTIMO CÓDIGO ESCRITO POR NÓS FOI ESTE:
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+  
+  console.log(button.parentNode.querySelector('[name=id]').value);
+
+
+
+
+  const productId = button.parentNode.querySelector('[name=id]').value
+
+
+
+const csrfToken = button.parentNode.querySelector('[name=_csrf]').value
+
+  console.log(button.parentNode.querySelector('[name=_csrf]').value);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR EXPLICA QUE 
+
+
+AGORA 
+
+
+JÁ 
+
+
+TEMOS 
+
+
+
+POSICIONADO 
+
+
+UM 'BASIC CODE '
+
+QUE 
+
+EXTRAI 
+
+
+VALUES 
+
+ACERCA 
+
+DO 
+
+PRODUCT QUE QUEREMOS _ DELETAR__... 
+
+
+
+
+
+
+
+-------> OK... 
+
+
+
+
+
+
+
+--> PARA CONTINUAR,
+
+
+
+PRECISAMOS DE UMA _ ROUTE NA BACKEND,
+
+
+ROUTE 
+
+A QUE 
+
+PODEMOS/PODEREMOS 
+
+
+ENVIAR 
+
+NOSSO 
+
+'JAVASCRIPT REQUEST'....
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+
+VAMOS ATÉ 
+
+O 
+
+
+
+FOLDER DE 'routes',
+
+
+no arquivo 'admin.js'...
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA UQE 
+
+JÁ TEMOS UMA ROUTE DE 
+
+'delete',
+
+
+
+
+
+
+
+
+A ROUTE DE 
+
+
+' 
+
+router.post(
+  '/delete-product',
+
+  authCheckerAndRedirecter,
+  adminController.postDeleteProduct
+);
+
+
+
+
+
+'
+
+
+
+
+
+
+
+
+-------> E NÓS PODEMOS 
+
+
+'
+BUILD UP ON THAT ROUTE',
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE ELA É UMA BOA ROUTE, E QUE NÃO HÁ NADA DE ERRADO COM ELA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS COMO AGORA __ VAMOS FAZER __ SEND __ DE 'JSON DATA',
+
+
+
+
+
+______ COMO VAMOS ENVIAR 
+
+ O REQUEST 
+
+ '
+ DIRECTLY THROUGH JAVASCRIPT,'
+
+
+ NÓS ACTUALLY PODEMOS _ USAR__ UM 
+
+
+
+
+
+
+
+
+ 'DIFFERENT HTTP VERB' (algo diferente de 'post', 'get' e 'use'...)
+
+
+
+
+
+
+
+
+
+
+ ----> PROFESSOR EXPLICA QUE ATÉ AGORA SÓ USAMOS 
+
+
+ 'get' 
+
+
+ e 
+
+ 'post'
+
+
+ PQ O BROWSER NATIVAMENTE SUPORTA 
+
+
+
+
+ ESSES TIPOS 
+
+
+
+
+
+ PARA OS REQUESTS__ ENVIADOS _ PELO  BROWSER (
+
+     tanto por 
+
+     FORM SUBMISSION, como por CLICKS EM LINKS... 
+ )   -----------> 
+
+
+
+
+ MAS QUANDO __ENVIAMOS _ REQUESTs__ POR MEIO DO/DE JAVASCRIPT,
+
+
+
+ OU SEJA__, POR MEIO DE __ CLIENTSIDE_ JAVASCRIPT,
+
+
+
+
+ ___ NÓS __ TEMOS 'ACTUAL ACCESS'   A __OUTROS___ HTTP 
+
+ VERBS__   ---------------> E NÓS _ VAMOS APRENDER MAIS 
+
+
+ SOBRE 
+
+
+
+OS OUTROS 
+
+ 'HTTP VERBS' LÁ 
+
+
+
+ NA SEÇÃO DA 
+
+
+ 'REST API'....
+
+
+
+
+
+ https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Methods
+
+
+
+
+
+
+
+
+
+
+ ------> Eu já tinha lido sobre isso antes...
+
+
+
+
+
+
+
+ --> métodos/verbs como 
+
+ 'PUT',
+
+
+
+ 'PATCH' 
+
+
+
+
+ e 'DELETE', além de 'OPTIONS' e 'TRACE'....
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> AGORA, PELO VISTO, FINALMENTE USAREMOS 
+
+ AQUELES CÓDIGOS COMO 
+
+
+ 'router.delete('/xxx', xxx )'...
+
+
+
+
+
+
+
+
+
+ --> NO CASO, PROFESSOR VAI ESCREVER ASSIM:
+
+
+
+
+
+ 'router.delete('/delete-product', isAuth, adminController.postDeleteProduct);' 
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> PROFESSOR EXPLICA QUE 
+
+
+ '.delete' 
+
+ É UM 
+
+
+ HTTP VERB/METHOD,
+
+
+
+ QUE 
+
+ FAZ MT SENTIDO PARA 'DELETING'... ---------> MAS O PROFESSOR NOS EXPLICA QUE 
+
+
+ O 
+
+ USO/ESCRITA DE 
+
+
+ '.delete()'
+
+
+ AQUI É 
+
+
+ APENAS 
+
+ UMA 
+
+ COISA _ SEMÂNTICA.... --> ELE EXPLICA QUE PODERÍAMOS MUITO BEM USAR '.post()'
+
+
+ NO LUGAR de 
+
+ '.delete()',
+
+
+
+
+ E QUE 
+
+
+
+
+ ________ EM GERAL__ VOCÊ PODE USAR QUALQUER 
+
+ 'HTTP VERB' 
+
+
+ PARA 
+
+ FAZER 
+
+ QUALQUER COISA... -----> ISSO PQ 
+
+
+ O QUE 
+
+ DETERMINA 
+ O QUE 
+
+ VAI ACONTECER, QUANDO FOR TRIGGADA 1 DETERMINADA ROUTE,
+
+
+ É 
+
+
+ JUSTAMENTE __ SUA _ _SERVERSIDE LOGIC,
+
+ E NÃO 
+
+ OS 'HTTP VERBS' POR SI SÓ...
+
+
+
+
+
+
+
+
+ --> MAS FAZ SENTIDO TENTAR __ SER __ CLARO NAS __ SUAS INTENÇÕES/INTENÇÕES DE SEU CÓDIGO,
+
+
+ e é por isso que 
+
+ é bom 
+
+
+ usar '.delete()',
+
+ '.patch()',
+
+ '.put()',
+
+
+
+ etc etc...
+
+
+
+
+
+
+
+
+ --------> OK, É POR ISSO QUE VAMOS USAR 
+
+ ESSE 
+
+ VERBO 
+
+
+ 'router.delete()'....
+
+
+
+
+
+
+
+
+
+
+ -----> OK.... PROFESSOR TAMBÉM MUDA UM POUCO O PATH DESSA ROUTE... ------> 
+
+
+
+ ELE TIRA 
+
+ '/delete-product'
+
+
+
+ E COLOCA 
+
+ '/product/:productId',
+
+
+
+
+
+ PARA QUE 
+
+ SEJA 
+
+ USADO 
+
+
+
+ ESSE 
+
+ 'productId'
+
+
+ COMO __ DYNAMIC PARAMETER 
+
+
+ DESSA ROUTE...
+
+
+
+
+ (
+
+
+     ISSO PQ _ DELETE REQUESTS _____PODEM__ TER 'DYNAMIC URL PARAMETERS'...
+ )
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE AGORA VAMOS SER CAPAZES DE EXTRAIR A INFO DE QUAL 
+
+ PRODUCT SE TRATA, DE NOSSA URL,
+
+ LÁ NO CONTROLLER DE 
+
+
+
+ 'deleteProduct'...
+
+
+
+
+
+
+
+
+ -------> CERTo... .
+
+
+
+
+
+
+
+ O PROFESOR MUDA 
+ UM POUCO O NOME 
+
+
+
+ DO CONTROLLER, de 
+
+ 'postDeleteProduct'
+
+
+ para 
+
+
+ 'deleteProduct',
+
+ PQ 
+ AGORA NÃO VAMOS MAIS 
+
+ ENVIAR 1 POST REQUEST,
+
+ E SIM 
+
+ VAMOS ENVIAR 
+
+ 1 REQUEST COM 'JSON DATA'...
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+ router.delete( ////É ´SO UM 'HTTP VERB'... ele só é usado para EXPLICITAR SUAS INTENÇÕES AOS OUTROS DESENVOLVEDORES, MAS O QUE REALMENTE INTERESSA, o que vai DETERMINAR O COMPORTAMENTO QUE SERÁ TRIGGADO POR ESSA ROUTE, É A LÓGICA NOS SEUS CONTROLLERS/SERVERSIDE, e não o 'http verb'/verbs por si sós...
+  '/product/:productId', ///isto também mudou/muda...
+
+  authCheckerAndRedirecter,
+  adminController.deleteProduct ////vamos usar outro controller, e não 'postDeleteProduct', pq AGORA NÃO ESTAMOS MAIS ENVIANDO 1 REQUEST DE TIPO 'POST' PROPRIAMENTE DITO...
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> O 'authCheckerAndRedirecter'
+
+
+vamos manter no lugar, entretanto...
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO, VOLTAMOS AO 
+
+
+CONTROLLER DE 
+
+'admin.js'
+
+
+
+
+E AÍ 
+
+
+
+
+ADICIONAMOS UM 
+
+
+
+CONTROLLER DE 'deleteProduct',
+
+
+
+
+CUJA BASE SERÁ A DO CONTROLLER ANTIGO DE 'postDeleteProduct'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  const productId = req.body.id;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+};
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+---> OK... A PRIMEIRA MUDANÇA, NO CASO,
+É QUE 
+
+
+o 
+
+'const productId = req.body.id'
+
+
+
+ESSE 
+
+ID 
+
+NÃO SERÁ MAIS EXTRAÍDO DO 'BODY',
+
+ISSO 
+
+PQ 
+
+NÃO ESTAMOS MAIS USANDO UM 
+
+
+POST REQUEST 
+
+PARA ENVIAR NOSSA DATA DO PRODUCTID...
+
+
+
+
+
+--> PARA ISSO, 
+
+PARA CONSEGUIR 
+
+ESSA DATA,
+
+
+VAMOS USAR 
+
+
+OS _ PARAMS 
+
+
+
+DA URL...
+
+
+
+
+
+
+
+
+--> ESCREVEMOS:
+
+
+
+
+
+
+const productId = req.params.productId'
+
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+    const productId = req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+};
+
+
+
+
+
+
+
+-----------------------
+
+
+OK, AGORA 
+
+
+
+VAMOS TER NOSSO PRODUCTID....
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE A LÓGICA DE FIND 
+
+
+
+NA DATABASE,  o findById()',
+
+
+AINDA VAI FUNCIONAR...
+
+
+
+
+
+
+
+
+--> A ÚNICA COISA QUE PRECISAMOS MUDAR, NESSE CONTROLLER,
+
+
+É 
+
+O CÓDIGO DA RESPONSE, QUE POR ENQUANTO AINDA É UMA RESPONSE 
+DE 
+
+
+'render/redirect'....
+
+
+
+
+
+
+
+-----> NÃO VAMOS MAIS REDIRECIONAR, 
+
+PQ 
+
+
+QUEREMOS DEIXAR DE 
+
+
+'LOAD A NEW PAGE' .... -------> VAMOS QUERER PERMANECER 
+
+NA MESMA PAGE.... 
+
+
+
+O QUE 
+
+QUEREMOS ENVIAR É UMA JSON DATA QUE CONSIGA SER 
+
+
+
+
+CARREGADA/RECONHECIDA PELO CÓDIGO JS BROWSERSIDE...
+
+
+EX:
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  // const productId = req.body.id;
+
+  req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+tiramos os códigos de redirect....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  // const productId = req.body.id;
+
+  req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+
+///
+
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+};
+
+
+
+
+
+
+
+
+--> A RESPONSE, NO CASO, SERÁ UMA 
+
+
+
+RESPONSE (res)
+
+
+EM QUE 
+
+VAMOS 
+
+
+ENVIAR 
+
+'.json()',
+
+
+
+
+QUE __ TE DEIXA 'SEND JSON DATA'...
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE 'json data'
+
+
+É UM FORMATO ESPECIAL, 
+
+
+E QUE COM 
+
+O 
+
+EXPRESSJS __ PODEMOS USAR 
+
+
+ESSE 
+
+
+'CONVENIENCE JSON HELPER METHOD'
+
+
+para 
+
+RETORNAR DE FORAM CONVENIENTE JSON DATA.... -----> E JSON É SIMPLESMENTE 
+
+
+
+
+UM 
+
+
+DATA FORMAT QUE __ SE PARECE COM 1 OBJETO JAVASCRIPT,
+
+
+
+
+
+(ou seja, com '{}' e key-value pairs..)
+
+
+
+
+
+
+--> A ÚNICA COISA DIFERNTE 
+
+
+NO JSON 
+
+É QUE 
+
+
+
+AS KEYS SÃO ESCRITAS ASSIM: " "
+
+
+
+
+
+
+
+--> PROFESSOR VAI RETORNAR UM STATUS CODE DE '200' (success), 
+
+
+
+ESSE É O DEFAULT COM JSON DATA... ------> 
+
+
+
+
+MAS É BOM SER 
+
+BEM 
+
+
+CLARO 
+
+
+ACERCA DO STATUS CODE QUE VAMOS QUERER RETORNAR, MESMO ESSE SENDO O DEFAULT (não vamos querer redirecionar nem nada, e sim apenas dizer 'REQUEST OBTIDO, RESPONSE ENVIADA'...)
+
+
+
+
+(requisição bem sucedida -- > código 200)
+
+
+
+
+eX:
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  // const productId = req.body.id;
+
+  req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+    res.status(200).json();
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+};
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+VAMOS TAMBÉM ALTERAR O ERROR HANDLER.... em vez de 
+
+FAZER O RETURN 
+
+DA 
+
+
+'PÁGINA DE ERRO 500',
+
+
+
+NÓS VAMOS ACTUALLY RETORNAR UMA 
+
+RESPONSE COM 
+
+STATUS 
+
+de 
+'500',
+
+E AÍ 
+
+TAMBÉM UMA 
+
+
+
+JSON DATA....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  // const productId = req.body.id;
+
+  req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+    res.status(200).json();
+    })
+    .catch((err) => {
+
+
+          res.status(500).json();
+    });
+
+};
+
+
+
+
+
+--------------------
+
+
+
+
+
+A QUESTÃO AGORA, É CLARO, É: 
+
+
+
+QUAL/QUE JSON DATA VAMOS ENVIAR?
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, O QUE DEVEMOS PASSAR É SIMPLESMENTE UM __ 
+
+OBJETO JAVASCRIPT.... --> ESSE OBJETO JAVASCRIPT VAI SER AUTOMATICMAENTE 
+
+
+
+TRANSFORMADO EM JSON DATA 
+
+por nosso servidor...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  // const productId = req.body.id;
+
+  req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+    res.status(200).json({ message: 'Success!'});
+    })
+    .catch((err) => {
+
+
+          res.status(500).json({'Deleting product failed!'});
+    });
+
+};
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+OK.... AGORA 
+
+
+TEMOS 
+
+2 
+
+
+IMPORTANTES MUDANÇAS NO LUGAR:
+
+
+
+
+
+
+1) EXTRAÍMOS O PRODUCTID POR MEIO DOS 'PARAMS',
+
+
+
+
+
+
+2) AGORA RETORNAMOS JSON RESPONSES; isso pq __ NÃO QUEREMOS 'RETURN A NEW PAGE', E SIM 'ONLY RETURN SOME NEW DATA'..
+
+
+
+
+
+
+
+
+
+----->  OK...... ------> OBVIAMENTE, AGORA 
+
+
+
+DEVEMOS __ 
+
+
+'CONTINUAR'
+
+
+LÁ NO ARQUIVO 
+
+
+
+BROWSERSIDE 
+
+DE 
+
+'admin.js',
+
+
+
+E LÁ 
+
+
+
+_DEVEMOS __ ASSEGURAR_ _QUE 
+
+
+
+a response CONSIGA SER RECONHECIDA POR NOSSO CÓDIGO 
+
+BROWSERSIDE,
+
+QUE 
+
+POR ENQUANTO ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+  //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+  console.log(button);
+
+  console.log(button.parentNode.querySelector('[name=id]').value);
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+  console.log(button.parentNode.querySelector('[name=_csrf]').value);
+};
+
+
+
+
+
+
+
+
+
+
+--------> OK .... 
+
+
+
+
+NÓS TRABALHAMOS 
+
+
+ 
+
+ NO SERVERSIDE 
+
+ E 
+
+ ADICIONAMOS/ALTERAMOS A ROUTE DE 
+
+
+ '
+ router.delete',
+
+
+ PARA 
+
+ QUE 
+
+
+ ELA ACEITASSE/CONSEGUISSE CAPTAR NOSSO id/productId...
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+ 
+router.delete( ////É ´SO UM 'HTTP VERB'... ele só é usado para EXPLICITAR SUAS INTENÇÕES AOS OUTROS DESENVOLVEDORES, MAS O QUE REALMENTE INTERESSA, o que vai DETERMINAR O COMPORTAMENTO QUE SERÁ TRIGGADO POR ESSA ROUTE, É A LÓGICA NOS SEUS CONTROLLERS/SERVERSIDE, e não o 'http verb'/verbs por si sós...
+  '/product/:productId', ///isto também mudou/muda...
+
+  authCheckerAndRedirecter,
+  adminController.deleteProduct ////vamos usar outro controller, e não 'postDeleteProduct', pq AGORA NÃO ESTAMOS MAIS ENVIANDO 1 REQUEST DE TIPO 'POST' PROPRIAMENTE DITO...
+);
+
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+----> OK.... 
+
+
+
+
+
+AGORA, NO CASO,  
+
+
+
+
+
+
+__PRECISAMOS_ ENVIAR 1 
+
+REQUEST 
+
+A 
+
+
+ESSA ROUTE... ---> E ISSO SERÁ FEITO, NO CASO,
+
+
+
+
+___DE DENTRO __ DE NOSSO 'CLIENTSIDE JAVASCRIPT',
+
+
+
+
+de dentro de 
+
+
+'admin.js' (Arquivo browserside, em 'public'),
+
+
+
+
+
+
+
+
+
+
+
+
+PROVAVELMENTE POR MEIO DE 'axios'/ fetch() ...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... PROFESSOR PROVAVELMENTE MENCIONARÁ ESSES APPROACHES...
+
+
+
+
+
+
+
+
+
+
+
+-_> DENTRO DE 'deleteProduct',
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+PODEMOS 
+USAR 
+O 
+
+
+MÉTODO 
+
+'fetch()',
+
+
+QUE 
+
+É 
+
+UM MÉTODO SUPORTADO PELO BROWSER, QUE É USADO 
+
+
+
+__ PARA ENVIAR HTTP REQUESTS 
+
+
+
+
+
+AO NOSSO SERVERSIDE/servidores em geral...
+
+
+
+
+
+
+
+
+
+
+
+-----> o fetch aceita 3 argumentos:
+
+
+
+
+
+
+
+1) A URL ....
+
+
+
+
+2) O TIPO DE REQUEST QUE VOCÊ QUER ENVIAR (vamos usar 'delete')
+
+
+
+
+
+3) A DATA QUE VOCÊ QUER ENVIAR A SUA ROUTE...
+
+
+
+
+
+
+
+
+
+--> no caso, escrevemos algo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+    fetch('', 'DELETE', 
+    
+
+    {
+      productId: JSON.stringify(productId),
+      csrfToken: JSON.stringify(csrfToken)
+    }
+    )
+};
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+OK, A ÚNICA PERGUNTA É, 
+
+
+
+QUAL 
+
+
+
+'PATH/URL'
+
+EU USO 
+
+no primeiro parâmetro 
+
+dessa função?
+
+
+
+
+
+
+
+
+
+---> BEM... NA VERDADE, EU ERREI... 
+
+
+
+
+
+
+--> É NO SEGUNDO 
+
+
+
+ARGUMENTO DE 
+
+
+
+'fetch()'
+
+QUE 
+
+COLOCAMOS 
+
+'method: xxxxx',
+
+
+DIZENDO SE SERÁ POST, OU DELETE, OU WHATEVER..
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+
+
+É POR ISSO QUE ESCREVEOMS ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+const data =  {
+      productId: JSON.stringify(productId),
+      csrfToken: JSON.stringify(csrfToken)
+    }
+
+
+    fetch('', {
+
+        method: 'DELETE',
+        body: JSON.stringiy(data);
+
+    }
+    )
+};
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+certo... só falta a url, agora...
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+const deleteProduct = (button) => {
+  //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  // console.log('Clicked');
+
+  // console.log(button);
+
+  // console.log(button.parentNode.querySelector('[name=id]').value);
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+  productId: JSON.stringify(productId),
+  csrfToken: JSON.stringify(csrfToken)
+}
+
+
+
+  fetch('', {
+
+
+    method: 'DELETE',
+    body: JSON.stringify(data)
+  }
+  
+  )
+  .then(
+    
+  )
+
+  // console.log(button.parentNode.querySelector('[name=_csrf]').value);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> NO CASO, O QUE O PROFESSOR VAI QUERER 
+
+
+
+
+FAZER, NA URL, 
+
+É 
+
+ESCREVER 
+
+
+
+const productId = btn.parentNode.querySelector('[name=productId]').value;
+
+
+
+
+fetch(`/product/${productId}`)
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+  productId: JSON.stringify(productId),
+  csrfToken: JSON.stringify(csrfToken)
+}
+
+
+
+  fetch(`/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js' /////EIS O CÓDIGO EM QUESTÃO.
+    method: 'DELETE',
+    body: JSON.stringify(data)
+  }
+  )
+  .then(
+
+  )
+
+};
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+
+SE 
+
+
+
+VOCÊ 
+
+NÃO ESCREVEr 
+
+'http://xxxxx/sssss',
+
+
+
+
+ALGO ASSIM,
+
+ELE 
+
+VAI 
+'SEND THE REQUEST TO THE CURRENT HOST'....
+
+
+
+
+
+
+
+
+
+------> CERTO... E AÍ O PROFESSOR NOS EXPLICA QUE O SEGUNDO ARGUMENTO É UM ___ OBJETO__ EM QUE 
+
+
+
+
+CONFIGURAMOS __ ESSE 
+
+'REQUEST'...
+
+
+
+
+
+
+
+--> NO CASO, 
+
+
+PROFESSOR __ ADMITE QUE_ PODERÍAMOS ADICIONAR UM 'REQUEST BODY' ('body'),
+
+
+
+MAS QUE 
+
+
+___ ISSO NÃO É NECESSÁRIO PARA __ 
+
+
+DELETE REQUESTS... (por isso NÃO ADICIONAREMOS 
+
+
+'body'; nosso código está ERRADO)
+
+
+
+
+
+
+
+
+CORRIGIMOS NOSSO CÓDIGO, E ELE FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+  productId: JSON.stringify(productId),
+  csrfToken: JSON.stringify(csrfToken)
+}
+
+
+
+  fetch(`/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js' /////EIS O CÓDIGO EM QUESTÃO.
+    method: 'DELETE'
+  }
+  )
+  .then(
+
+  )
+
+};
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+--> PARA POST REQUESTS, DEFINIMOS ESSE 'BODY'...
+
+
+
+
+
+
+
+
+--> DEFINIDO O METHOD COMO 'delete',
+
+
+o que 
+
+esquecemos 
+
+DE 
+
+
+
+
+ADICIONAR, ALÉM DISSO,
+
+É 
+
+
+
+' headers'... --> POR MEIO DOS 'headers',
+
+
+VAMOS 
+
+
+DEFINIR 
+
+AQUELA 
+
+NOSSA 
+
+CSRF TOKEN, PRESUMO EU....
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ADMITE QUE 
+
+PODERÍAMOS ENCODAR NOSSA 'CSRFTOKEN' nos headers... --> ISSO PQ 
+
+
+__ NÓS __ AINDA VAMOS PRECISAR __ 
+
+'ATTACH' 
+
+ESSES 
+
+HEADERS 
+
+A ESSE REQUEST DE 'DELETE'...  (sempre precisamos ATTACH AS CSRFTOKEN AOS NOSSOS REQUEST, E NO MOMENTO _ NÃO ESTAMOS FAZENDO ISSO_....)
+
+
+
+
+
+
+
+
+
+
+-----> E NÓS NÃO PODEMOS ENVIAR A 'CSRFTOKEN' 
+
+NO REQUEST BODY, justamente pq 
+
+
+'DELETE REQUESTS' 
+
+
+__NUNCA POSSUEM BODY... ----> MAS A COISA LEGAL É 
+
+
+
+QUE 
+
+
+A PACKAGE DE 
+
+
+'csurf' 
+
+QUE ESTAMOS USANDO NO NOSSO APP NODEEXPRESS/SERVER 
+
+
+___ FAZ UM LOOKUP COMPLETO,
+
+
+
+ELE 
+
+NÃO SÓ 
+
+PROCURA 
+
+
+NOS 'REQUEST BODIES',
+
+MAS TAMBÉM 
+
+
+
+
+__ NOS __ QUERY __ PARAMETERS, E NOS HEADERS TAMBÉM...
+
+
+
+
+
+
+
+
+------> É JUSTAMENTE POR ISSO QUE PROFESSOR DIZ QUE PODEMOS 
+
+ESCREVER 
+
+(ESSA 
+
+
+É A KEY A QUAL ELE FAZ 'LOOKUP' automaticamente, o csurf)
+
+
+
+
+'csrf-token': csrfToken   (valor da csrfToken...)
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+  productId: JSON.stringify(productId),
+  csrfToken: JSON.stringify(csrfToken)
+}
+
+
+
+  fetch(`/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js' /////EIS O CÓDIGO EM QUESTÃO.
+    method: 'DELETE',
+    headers: {
+
+      'csrf-token': data.csrfToken
+    }
+  }
+  )
+  .then(
+
+  )
+
+};
+
+
+
+
+
+-----------------------------
+
+
+CERTO...
+
+
+
+
+
+
+
+
+------> ISSO, ESSE PROMISE AÍ,
+
+
+VAI AUTOMATICAMENTE 'SEND A REQUEST'.... --> a partir 
+
+desse request,
+
+
+ELE VAI 
+
+
+
+__rETORNAR UMA __ PROMISE__>....
+
+
+
+
+
+
+
+--> POR ISSO ESCREVEMOS '.then().catch()'...
+
+
+
+
+
+
+CONSOLE.LOGGAMOS QUAISQUER ERROS NO CATCH BLOCK,
+
+
+
+E AÍ 
+
+
+
+__CONSOLE.LOGGAMOS OS RESULTS, TAMBÉM...
+
+
+
+
+
+
+
+
+
+
+
+-----> certo... ficou tipo assim:
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+  productId: JSON.stringify(productId),
+  csrfToken: JSON.stringify(csrfToken)
+}
+
+
+
+  fetch(`/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js' /////EIS O CÓDIGO EM QUESTÃO.
+    method: 'DELETE',
+    headers: {
+      'csrf-token': data.csrfToken
+    }
+  }
+  )
+  .then(
+
+        (result) => {
+
+          console.log(result);
+        }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+};
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+----> OK.... MAS __IMPORTANTE________!!!! -----> ESSE NOSSO 
+
+
+
+
+REQUEST DE TIPO 'DELETE'
+
+
+
+__ NÃO VAI GERAR EFEITO NENHUM NO NOSSO SERVER, ISSO 
+
+PQ 
+
+
+___ NÃO EMBUTIMOS NENHUM _ 
+
+'body' nele.... ------------> NÃO VAMOS PRECISAR 
+
+
+DE 
+
+'body'
+
+
+com 
+
+
+REQUESTS DE TIPO DELETE, com o delete de coisas em 1 collection em databases,
+
+
+ISSO 
+
+PQ 
+
+
+
+O MERO SEND de 
+
+
+um request de tipo 
+
+
+'DELETE' 
+
+À route 
+
+
+de 
+
+'/product/${productId}' 
+
+
+
+JÁ BASTA PARA TRIGGAR O NOSSO CONTROLLER DE 'admin.js',
+
+QUE 
+
+ACABA  __ APAGANDO __ ESSE PRODUCT/DOCUMENT ESPECÍFICO, LÁ NA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, ISSO É ALGO QUE __ VAMOS VER SOMENTE LÁ 
+
+
+
+NO MÓDULO DE 'REST API',
+
+
+
+QUE 
+
+
+
+NOS ENSINARÁ 
+
+QUE 
+
+
+TEMOS DE _ PARSEAR__ 
+
+
+ESSE REQUEST/BODY DO REQUEST 
+
+
+LA´
+
+
+
+NO SERVERSIDE, por meio de 
+
+
+'JSON.parse()',
+
+
+
+
+
+
+
+
+
+PARA QUE ENTÃO CONSIGAMOS MANIPULAR E EDITAR COISAS NA NOSSA DATABASE (deletar o product )
+
+
+
+
+
+
+
+
+
+
+
+-> O PROFESSOR NOS EXPLICA QUE 
+
+LÁ 
+
+
+NO NOSSO APP,
+
+
+no app nodeexpress,
+
+
+
+
+TEMOS APENAS ___ 2 PARSERS,
+
+
+
+O 
+
+
+PARSER 
+
+
+DE 
+
+
+'bodyParser.urlencoded()' (parseia TEXT  NOS NOSSOS INPUTS... valores inputtados nos inputs como TEXT...)
+
+
+
+
+( e nós NÃO TEMOS 'URLENCODED DATA' quando enviamos JSON DATA...)
+
+
+
+
+e 
+
+
+
+
+'app.use(multer({}))',
+
+
+
+
+
+
+
+QUE É USADO PARA _ PARSEAR__ AS 'IMAGES' UPLOADADAS NOS NOSSOS INPUT FIELDS...
+
+
+
+
+(
+
+  usado para 'MULTIPART DATA', que também não é essa json data que estamos 
+
+  enviando....
+)
+
+
+
+
+
+------
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+
+__ UM NOVO BODYPARSER __ TERIA __ DE SER ADICIONADO AO NOSSO APP.JS,
+
+
+UM 
+
+
+
+BODY PARSER __ CAPAZ__ DE 
+
+'HANDLE JSON DATA'
+
+
+E 
+
+DE 
+
+
+EXTRAIR ESSA DATA 
+DE 
+
+'INCOMING REQUESTS'...
+
+
+
+
+
+
+
+
+--------> PROFESSOR NÃO DECIDE ADICIONAR ESSE PARSER ESPECIAL, EXTRAÍDOR DE 
+
+
+DATA JSON DE INCOMING REQUESTS,
+
+
+JUSTAMENTE 
+
+PQ 
+
+
+__ NÃO VAMOS PRECISAR DELE AQUi,
+
+
+
+MAS VAMOS O ADICIONAR MAIS TARDE, QUANDO 
+
+NECESSÁRIO...
+
+
+
+
+
+
+
+
+
+
+-------> OK, COM TUDO ISSO NO LUGAR, COM 
+
+
+NOSSO CÓDIGO CLIENTSIDE AJUSTADO,
+
+
+
+
+
+DEVEMOS SALVAR TUDO ISSO E CLICAR NO BOTÃO DE 'DELETE' 
+
+EM ALGUM DE NOSSOS ITEMS...
+
+
+
+
+
+
+
+
+
+
+-> O QUE VAI ACONTECER:
+
+
+
+
+
+
+
+1) PROVAVELMENTE, O ITEM/PRODUCT SERÁ DELETADO DE NOSSA DATABASE,
+
+MAS O ITEM CORRESPONDENTE _ NÃO SERÁ __ APAGADO_ 
+
+DE NOSSA UI/DOM...
+
+
+
+
+
+
+
+2) PARA CONSEGUIR 
+
+DELETAR ESSE ITEM, VAMOS PRECISAR MANIPULAR O DOM POR MEIO DO CLIENTSIDE,
+
+POR MEIO 
+
+DOS 
+
+'.then()'
+
+LÁ 
+
+NAQUELA FUNÇÃO 
+
+de 
+
+ 
+
+ 'fetch()'...
+
+
+
+
+
+
+
+
+
+ -> bem, primeiramente,
+
+ EU RECEBO UM __ ERRO__:
+
+
+
+
+
+
+
+
+
+ ForbiddenError: invalid csrf token
+    at csrf (A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\csurf\index.js:112:19)
+    at Layer.handle [as handle_request] (A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:317:13)
+    at A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:284:7
+    at Function.process_params (A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:335:12)
+    at next (A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\router\index.js:275:10)
+    at A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express-session\index.js:506:7
+    at A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\connect-mongodb-session\index.js:140:20
+    at A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\mongodb\lib\utils.js:532:9
+    at A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\mongodb\lib\cursor\abstract_cursor.js:477:68
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok....
+
+
+
+
+--> no código do professor, isso funcionou; no nosso, não.
+
+
+
+
+
+
+
+--> professor não recebeu esse erro de 'csrfToken'....
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA DEVE SER ISTO:
+
+  csrfToken: JSON.stringify(csrfToken)
+
+
+
+
+
+
+
+
+
+  --> devemos deixar esse 'csrfToken' SOLTO, SEM SER 'STRINGIFADO'...
+
+
+
+
+
+
+
+
+
+
+
+  -->ok, mas CONTINUO RECEBENDO AQUELE ERRO....
+
+
+
+
+
+
+
+
+
+  --> agora recebi um erro de 404, em vez de 403....
+
+
+
+
+
+
+
+
+
+  --> acho que entendi a razão...
+
+
+  olhe o objeto response retornado pelo console:
+
+
+
+  Response {type: 'basic', 
+  
+  
+  url: 'http://localhost:3000/admin/product-list-admin/admin/product/619b1a82813bed4acb7a56bd', 
+  
+  
+  
+  
+  redirected: false, status: 404, ok: false, …}body: (...)bodyUsed: falseheaders: Headers {}ok: falseredirected: falsestatus: 404statusText: "Not Found"type: "basic"url: "http://localhost:3000/admin/product-list-admin/admin/product/619b1a82813bed4acb7a56bd"[[Prototype]]: Response
+16:10:51.272 
+
+
+
+
+
+
+------------------
+
+
+
+essa url está um lixo, toda errada...
+
+
+
+
+
+
+
+
+CONSERTEI, ESTAVA FALTANDO O '/':
+
+
+
+
+
+
+
+
+fetch(`/admin/product/${productId}`,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK, MAS AGORA RECEBI UM OUTRO ERRO:
+
+
+
+
+ReferenceError: productId is not defined
+
+
+    at exports.deleteProduct (A:\projeto4 - NODEJS\MODULO22-AGORAASCOISASFICAMMAISDIFICEIS,ENTENDENDOASYNCREQUESTS\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\controllers\admin.js:334:20)
+
+
+
+
+
+
+
+
+
+
+
+
+    CONSERTEI, ERA UM ERRO DE SINTAXE, FICOU ASSIM:
+
+
+
+
+
+
+
+
+  exports.deleteProduct = (req, res, next) => { //usa 'async requests' 
+
+
+  // const productId = req.body.id;
+
+  const productId = req.params.productId;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+
+      res.status(200).json();
+      // res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+
+        res.status(500).json();
+
+      // const error = new Error(err);
+      // error.httpStatusCode = 500;
+      // return next(error);
+    });
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> isso feito,
+
+
+RECEBEMOS ESTA RESPONSE:
+
+
+
+
+
+
+Response {type: 'basic', url: 'http://localhost:3000/admin/product/619b1a82813bed4acb7a56bd', redirected: false, status: 200, ok: true, …}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OU SEJA, SUCESSO (response status 200)...
+
+
+
+
+
+
+-. O PROBLEMA É QUE ESSE ELEMENTO __ AINDA NÃO SOME 
+
+DE NOSSO 
+
+
+
+DOM/UI... ----> precisamos fazer esse remove LÁ NO NOSSO CÓDIGO JAVASCRIPT CLIENTSIDE, EM 'admin.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ESCREVI UM CÓDIGO BEM CHEESY, QUE FUNCIONOU... 
+
+
+
+ELE REMOVE 
+
+O 
+
+ELEMENTO DO DOM quando o apagamos da database, por meio do then block...
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+const deleteProduct = (button) => {
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+
+  productId: productId,
+  csrfToken: csrfToken //não stringifie a sua token, senão o 'CSURF' não consegue a compreender/parsear...
+}
+
+
+console.log(data.csrfToken);
+
+
+  fetch(`/admin/product/${productId}`, { 
+    method: 'DELETE',
+
+    headers: {
+      'csrf-token': data.csrfToken 
+    }
+  }
+  )
+  .then(
+      (result) => {
+            const grid = button.parentNode.parentNode.parentNode.parentNode;
+            const product = button.parentNode.parentNode;
+            grid.remove(product); ///////EIS O CÓDIGO EM QUESTÃO.
+          console.log(result);
+      }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+
+    }
+  )
+
+};
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR FAZ BREVE ANÁLISE DO RESPONSE ....
+
+
+
+
+
+
+--> repsonse tipo assim:
+
+
+
+
+
+
+status: 200, 
+
+body: readableStream 
+
+
+
+
+
+
+
+
+---------->  PROFESSOR VAI NOS EXPLICAR COMO 'GET TO THAT REQUEST BODY'
+
+
+
+logo logo...
+
+
+
+
+
+
+--> 
+
+
+NÓS JÁ MANIPULAMOS O DOM, POR MEIO DESSE CÓDIGO AÍ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... é isso que veremos na próxima  aula, com o 'manipulating the dom'... 

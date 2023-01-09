@@ -1,0 +1,1747 @@
+
+
+
+
+
+
+
+
+
+
+--> OK... ADICIONAMOS 'CSRF TOKEN PROTECTION',
+
+
+
+
+
+
+
+
+A PROTEÇÃO DE NOSSO APP, de 'csrf attacks',
+
+
+POR 
+
+
+MEIO 
+
+DAS 
+
+
+CSRF TOKENS...
+
+
+
+
+
+
+
+e o código ficou assim:
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn ///FUNCIONAL, MAS CUMBERSOME.
+    csrfToken: req.csrfToken() ///////FUNCIONAL, MAS CUMBERSOME...
+
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+---------> MAS O PROBLEMA _ É QUE __ 
+
+
+ESSA 
+
+PROTEÇÃO 
+
+É 
+
+
+'INDIVIDUALIZADA'; só aquela página em que __ VOCÊ __ ESCREVEU 
+
+esse 
+
+'req.csrfToken()'
+
+
+
+E 
+
+
+__EDITOU __ O VIEW__ é que 
+
+
+VAI 
+
+
+TER 
+ESSE 
+
+__CSRF__ TOKEN__ 
+
+
+
+
+
+
+IMPLEMENTADO... (e aí você teria/tem de __ escrever o código de GET desse csrfToken ,
+
+
+COMO
+
+'REQ.csrfToken()', nesse caso aí,
+
+______ EM __ TODOS OS CONTROLLERS 
+
+DE 
+
+SEU APP, O QUE É CUMBERSOME E BURRO...
+
+
+
+)
+
+
+
+
+AQUI, POR EXEMPLO, O  __TOKEN__ SÓ __ VAI FUNCIONAR SE ESTIVERMOS VISITANDO A PAGE DE 'getIndex'...
+
+
+
+
+
+-------> OK, MAS COMO CONTORNAR ISSO?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, NÓS QUEREMOS __ TER 
+
+
+
+
+UMA 'TOKEN'
+
+
+
+
+
+
+E 
+
+O 
+
+NOSSO __ AUTH __ STATUS___ (EXTRAÍDO da session, lá em 'req.session.isLoggedIn')
+
+
+
+
+
+_______EM ___TODA E CADA PAGE QUE 
+
+
+ 
+
+
+ RENDERIZAMOS NO NOSSO APP........
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> UMA COISA QUE PODEMOS FAEZR, PARA 
+
+
+
+
+
+conseguir __ as TOKENS e SESSIONS EM TODOS LUGARES ____ DE NOSSO CÓDIGO __ É 
+
+
+JUSTAMENTE ____OS 
+
+REMOVER 
+
+
+
+
+
+
+DA FUNÇÃO DE 'render',
+
+
+vista em 
+
+
+
+'res.render('/shop/index', {
+
+
+
+
+    prods: products, 
+    isLoggedIn = req.session.isLoggedIn
+    csrfToken = csrf();
+
+
+
+})
+
+
+''',
+
+
+
+E, EM VEZ DISSO,
+
+
+DIZER AO
+
+____ EXPRESSJS 
+
+que 
+
+
+
+
+
+
+
+
+
+
+
+_______NÓS TEMOS __ UMA 'PIECE OF DATA'__ QUE 
+
+
+DEVE/DEVERÁ ___ SER INCLUSA__ EM QUALQUER 
+
+
+VIEW RENDERIZADA, VIEW QUE ELE RETORNAR....
+
+
+
+
+
+
+
+
+
+
+------> É CLARO QUE PARA FAZER ISSO,
+
+VAMOS 
+
+
+ATÉ 
+
+O ARQUIVO DE 
+
+'app.js',
+
+NOSSO ARQUIVO ROUTE... -----------> 
+
+
+
+
+LÁ EM 
+
+'APP.JS',
+
+
+
+____LOGO __ DEPOIS DO TRECHO EM QUE__ EXTRAÍMOS __ NOSSO USER (complementar ao CÓDIGO DE __ SET__ da session na database/server),
+
+LÁ 
+
+
+NAQUELE C´DIGO 
+
+
+
+
+
+
+DE 
+
+
+
+
+''
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+
+
+  if(!req.session.user) { 
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+'''',
+
+
+
+
+
+
+
+
+
+
+
+__DEPOIS__ DESSE CÓDIGO __ DO _ SET DO USER __, 
+
+
+
+__ _MAS __ ANTES_ _ DA DEFINIÇAÕ DE NOSSAS ROUTEs (NO MEIO, PORTANTO)...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+
+
+  if(!req.session.user) { 
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+app.use(); //////EIS O CÓDIGO EM QUESTAÕ.
+
+
+
+app.use('/admin', adminRoutes);
+app.use(authRoutes);
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+OK, VAMOS 
+
+
+
+ADICIONAR OUTRA MIDDLEWARE FUNCTION,
+
+
+
+UMA MIDDLEWARE FUNCTION COMUM,
+
+assim:
+
+
+
+
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+    }
+)
+
+
+
+
+
+---------------------------------
+
+
+
+
+--> DENTRO DESSE MIDDLEWARE CUSTOMIZADO,
+
+
+
+
+
+
+
+______ PODEMOS ___ USAR UMA _ FEATURE__ ESPECIAL_  PROVIDENCIADA PELO
+
+PRÓPRIO 
+
+
+
+
+
+
+
+'EXPRESS-JS'... ------> 
+
+
+É UMA __ FEATURE__ QUE 
+
+ACESSA 
+
+
+1 FIELD ESPECIAL
+
+
+
+
+
+NA 'RESPONSE',
+
+que 
+É 
+
+
+__ O FIELD __DE 'locals'
+  
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+FIELD 'locals'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+UMA MIDDLEWARE FUNCTION COMUM,
+
+assim:
+
+
+
+
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+                res.locals
+    }
+)
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+O FIELD 
+
+DE 
+'
+.locals',
+
+
+NO 
+
+OBJETO 'RESPONSE',
+
+
+
+____NOS __ DEIXA__ PASSAR 
+'LOCAL VARIABLES'
+
+
+
+
+
+
+
+___ QUE SERÃO __ SIMPLESMNETE 
+
+
+
+'PASSED INTO THE VIEWS'.....
+
+(
+
+    e o nome é 
+
+    'LOCALS' pq __AS FUNÇÕES __ DEFINIDAS DENTOR DE 'locals'
+
+    SÓ ______ EXISTEM NAS VIEWS/NA VIEW QUE ESTÁ SENDO RENDERIZADA...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> AQUI, PORTNATO,
+
+
+__PODEMOS__ ADCIIONAR__ NOSSAA
+
+
+PRO´PRIA PROPRIEDADE 
+
+
+'authenticated' (QUE HAVIA SIDO __ REMOVIDA__ DO INTERIOR _ DA FUNÇÃO res.RENDER().......)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+            req.locals.isAuthenticated = req.session.isLoggedIn; 
+
+
+    }
+)
+
+
+---------------------------
+
+
+
+
+
+CERTO, TIPO ASSIM...
+
+
+
+
+
+
+
+--> E PROFESSOR __TAMBÉM __ VAI ADICIONAR 
+
+SUA 
+TOKEN 
+DE 
+
+CSRF,
+
+A QUAL VOCÊ OBTEU POR MEIO 
+
+
+
+
+de 'req.csrfToken()'.....
+
+
+
+
+
+-------> ISSO SIGNIFICA QUE AGORA, PARA __ TODO E CADA__ 
+
+
+REQUEST__ QUE FOR ENVIADO _ PARA O NOSSO SERVER,
+
+ESSES 
+
+
+2 
+FIELDS,
+
+fields de 
+
+
+'isAuthenticated'
+
+
+e 
+
+
+'csrfToken'
+
+
+
+
+
+
+
+
+_______SERÃO__, COM EFEITO__, 
+
+
+
+ADICIONADOS/INCORPORADOS A TODOS NOSSOS VIEWS que forem RENDERIZADOS...
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... E, POR FIM, 
+TEMOS QUE CHAMAR 
+
+'.next()',
+
+PARA 
+
+
+
+GARANTIR QUE O RESTO DO NOSSO CÓDIGO 
+
+
+EXECUTE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = (req, res, next) => {  ///////////MIDDLEWARE QUE __ VAI ADICIONAR/ADICIONA __ O CSRF TOKEN __ E UMA SESSION____ A CADA 1 DE NOSSAS ROUTES DO OJGO...
+
+res.locals.isLoggedIn = req.session.isLoggedIn;
+res.locals.csrfToken = req.csrfToken();
+
+  next(); //////////IMPORTANTE....
+
+}
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+module.exports = (req, res, next) => {  ///////////MIDDLEWARE QUE __ VAI ADICIONAR/ADICIONA __ O CSRF TOKEN __ E UMA SESSION____ A CADA 1 DE NOSSAS ROUTES DO OJGO...
+
+
+  ///'.locals' ---> É PROPRIEDADE __ CRIADA__ DENTRO __ DO OBJETO 'res'.... significa 'local variables', E É __ ADICIONADA __ POR MEIO DA PACKAGE DO 'EXPRESS'.... 
+
+
+
+  ///qual é a utilidade de 'locals'? ------> A UTILIDADE É __JUSTAMENTE__ ADICIONAR a CSRF TOKEN e A SESSION a TODAS AS PAGES DE SEU APP, por meio de middlewares como este aqui...
+
+
+  //TUDO QUE  DEFINIRMOS EM '.locals' (como 'csrfToken' e 'isLoggedIn', respectivamente nossa CSRF TOKEN E __ A SESSION/AUTH STATUS DO USER...) PODERÁ _SER USADO __ EM CADA 1 DOS VIEWS __ DE NOSSO APP... --_> e é assim que implementamos as SESSIONS e os CSRF TOKENS todos de uma vez, em todas as pages de nosso app...
+res.locals.isLoggedIn = req.session.isLoggedIn;
+res.locals.csrfToken = req.csrfToken();
+
+  next();
+
+}
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+OK..........  
+
+
+
+
+
+SE VOLTARMOS 
+
+
+
+NA NOSSA PAGE 
+
+E 
+
+
+
+RECARREGARMOS,
+
+
+
+
+as coisas __ VÃO PARECER CERTAS,
+
+
+ATÉ O MOMENTO EM QUE 
+
+
+
+
+
+VAMOS NA PAGE DE 
+
+'sign in',
+
+
+
+
+
+
+
+
+_____ EM QUE __ TAMBÉM TEMOS 1 POST REQUEST... ----> 
+
+
+
+
+
+
+
+
+NESSA PAGE AÍ,
+
+
+SE __ TENTARMOS FAZER LOGIN,
+
+VAMOS IMEDIATAMENTE RECEBER UM ERRO 
+DE 
+
+
+
+'forbiddenError: invalid csrf token'...
+
+
+
+
+
+
+
+
+
+
+--> QUAL É A RAZÃO DESSE ERRO?
+
+
+
+
+
+
+
+
+
+-------> A RAZÃO __ PARA ISSO TER FALHADO É:
+
+
+
+
+1) BEM, NÓS REALMENTE PASSAMOS __ NOSSA 'TOKEN' 
+
+
+PARA DENTRO DE TODAS __ NOSSAS VIEWS_,
+
+
+
+MAS...
+
+
+
+
+
+
+
+
+
+
+2) É ÓBVIO __ QUE AINDA É NECESSÁRIO __ USARMOS/REFERENCIARMOS __ ESSA TOKEN 
+
+EM 
+
+TODAS 
+
+NOSSAS VIEWS,
+
+coisa QUE 
+
+
+AINDA NAÕ ESTAMOS FAZENDO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, VAMOS TER QUE ALTERAR TODAS NOSSAS VIEWS PARA __ QUE USEM __ ESSA 
+
+
+TOKEN __ 
+
+
+
+de 'csrfToken',
+
+
+QUE 
+
+
+__ FOI __ COLOCADA DENTRO DE 
+
+
+'res.locals.csrfToken'.... ------> VAMOS USAR __ 
+
+
+
+ISSO E A SESSION,
+
+
+
+EM TODOS NOSSOS VIEWS...
+
+
+
+
+
+
+
+
+
+--->  ISSO SIGNIFICA QUE _VAMOS TER QUE __ REPETIR __ O CÓDIGO 
+
+
+
+QUE 
+
+
+NÓS 
+
+
+
+HAVÍAMOS ADICIONADOS AO 'navigation.ejs',
+
+AQUELE CODE 
+
+
+de 
+
+
+''
+
+
+
+ <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+
+
+
+ '''',
+
+
+
+
+ EM TODAS NOSSAS VIEws...
+
+
+
+
+
+
+
+
+
+
+
+ --> VAMOS PRECISAR DESSE HIDEN INPUT AÍ, ESPECÍFICO,
+
+ COM ESSE NAME E ESSE VALUE,
+
+
+
+
+ __E PRECISAMOS __ ADICIONAR __ ISSO ___ EM TODAS 
+
+
+ AS NOSSAS FORMS...
+
+
+
+
+
+
+
+
+
+ *******E O PROFESSOR ESCLARECE QUE ISSO É __ REALMENTE 
+
+
+ 'JUST SOMETHING YOU __HAVE__ TO DO'''....
+
+
+
+
+
+
+--> VOCÊ REALMENTE PRECISA __ ADICIONAR ESSE input AÍ __ 
+
+
+EM __TODAS AS FORMS DE SEU APP... é necessário...
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ADICIONEI 
+
+
+esse HIDDEN INPUT ___ EM 
+
+
+_TODAS AS FORMS DE MEU APP...
+
+
+
+
+
+
+
+
+--> OK... MAS AÍ RECEBI UM ERRO:
+
+
+csrfToken is not defined
+
+
+
+
+
+
+
+
+
+--> é pq preciso PASSAR ESSE VALOR EM CADA 1 DE MEUS CONTROLLERS, PENSO EU....
+
+
+
+
+
+
+
+
+
+---> EXATO, ERA ISSO... EU AINDA TENHO O CÓDIGO VELHO 
+
+de 
+
+
+''
+
+
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn,  ///FUNCIONAL, MAS CUMBERSOME (vamos ter que adicionar essa property EM TODO E CADA CONTROLLER DE NOSSO APP, 1 por 1.... mt chato).
+    csrfToken: req.csrfToken() /// FUNCIONAL, MAS CUMBERSOME (como o código de cima)....
+  });
+
+
+'''''
+
+
+
+
+
+
+O QUE EU PRECISO FAZER É REMOVER 
+
+ESSAS LINHAS DE 
+
+
+'isLoggedIn' 
+
+
+e 
+
+'csrfToken'
+
+
+
+DESSE _ 'OBJETO DATA' 
+
+de meu render... 
+(
+
+
+    pq 
+
+
+
+
+    o 
+
+    'res.locals.xxxx' JÁ __SERVE__, JÁ É USADO POR NOSSOS VIEWS ___ NATURALMENTE__,
+
+    SEM 
+
+    PRECISARMOS OS ESPECIFICAR 
+
+
+    nesse 
+
+    'objeto data' das views aí...
+)
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+OFFTOPIC: 
+
+
+
+encontrei um PROBLEMA no meu código... --> as orders estão ficando salvas PARA TODOS OS 
+
+
+USERS,
+
+e n para 
+
+
+1 user em particular...
+
+
+
+
+
+--> provavelmente o problema é o METHOD que estou usando lá no controller 
+
+de 
+
+'getOrders'...
+
+
+
+
+-> acho que sei o problema... --> estou tentando encontrar MÚLTIPLAS ORDERS por meio do 
+
+código 
+
+de 
+
+
+
+'Order.find({....})',
+
+
+mas isso não está dando certo, pq TODAS AS ORDERS ESTÃO SENDO ENCONTRADAS...
+
+
+
+
+
+
+
+
+
+--> CONSERTEI.... O PROBLEMA ERA ESTE:
+
+
+
+
+ESTAVA ASSIM:
+
+
+
+
+
+
+
+
+  console.log(req.user._id)
+
+  Order.find({ userId: req.user._id })
+    // .populate('cart.products.productId')
+    .populate('products.product')
+    .then((orders) => {
+      console.log(orders, 'THE ORDERS');
+
+
+
+
+
+
+
+
+
+QUANDO DEVIA ESTAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+  console.log(req.user._id)
+
+  Order.find({ user: { userId: req.user._id }})
+    // .populate('cart.products.productId')
+    .populate('products.product')
+    .then((orders) => {
+      console.log(orders, 'THE ORDERS');
+
+
+
+
+
+
+
+(OU SEJA,
+
+
+
+NOSSO NESTING NESSE 'find' ESTAVA __ INCORRETO...
+
+
+
+
+
+
+
+--> ISSO PQ O FORMATO DE CADA ORDER É ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "_id": {
+        "$oid": "6183ed45982422f2a8df59eb"
+    },
+    "products": [{
+        "product": {
+            "_id": {
+                "$oid": "6179bcb8a05105d79005d70b"
+            },
+            "title": "ASAS",
+            "price": 21211,
+            "description": "1221ASASAS",
+            "imageUrl": "ASASASAS",
+            "userId": {
+                "$oid": "6178c60a90464c24983b0847"
+            },
+            "__v": 0
+        },
+        "quantity": 1,
+        "_id": {
+            "$oid": "6183ed45982422f2a8df59ec"
+        }
+    }],
+    "totalPrice": 0,
+    "user": {
+        "userId": {
+            "$oid": "6183ec2aa93c695aa77fb10b"
+        }
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+)
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+OK.... CONTINUANDO O VIDEO DO PROFESSOR...
+
+
+
+
+
+
+
+
+--> TÍNHAMOS VISTO __ 
+
+
+
+AQUELE NEGÓCIO 
+
+DE 
+
+ADICIONAR 
+
+
+
+
+O 
+
+
+'CSRF TOKEN'
+
+
+
+e 
+
+a 
+
+'session'
+
+
+EM __tODAS AS ROUTES __ DE NOSSO APP,
+
+
+
+por meio 
+
+daquele código/middleware de 
+
+
+
+
+
+''
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  
+
+
+res.locals.isLoggedIn = req.session.isLoggedIn;
+res.locals.csrfToken = req.csrfToken();
+
+  next(); ///esse 'next' É NECESSÁRIO, pois __ vamos querer PROSSEGUIR_  depois __ do set dessas propriedades...
+
+
+
+
+  ////OBS:: IMPORTANTE!!! --> SÓ NUNCA SE ESQUEÇA DE COLOCAR O INPUT DE TYPE HIDDEN específico (este aqui:  <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->) ________EM __TODAS AS FORMS, NOS SEUS VIEWS, DE SEU PROJECT.... é necessário, pq senão o pacote 'csurf' VAI TE RETORNAR ERROS DE 'INVALID TOKEN', etc etc...
+}
+)
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+------> NÓS TAMBÉM JÁ 
+
+
+
+CONSEGUIMOS __ ADICIONAR__ GUARDS__ A NOSSAS ROUTES,
+
+
+
+tudo por meio daquele 
+
+
+MIDDLEWARE 
+
+
+
+de 
+
+
+
+'''
+
+
+
+module.exports = (req, res, next) => {
+
+
+
+
+
+    if(!req.session.isLoggedIn) {
+
+        res.redirect('/login');
+
+
+    } else {
+
+        next();
+    }
+}
+
+
+
+''',
+
+
+
+LÁ 
+
+
+
+
+NO ARQUIVO 
+
+'isAuth.js',
+
+
+NA PASTA 
+
+'middleware' 
+
+
+(
+
+
+
+  tbm precisamos settar aquela configuraçaõ em 
+
+  CADA 
+
+
+  1 DAS 
+
+
+  ROUTES,
+   
+   lá 
+
+   NOS ARQUIVOS ROUTES, 
+
+
+   tipo isto aqui:
+
+
+
+router.post('/edit-product', authCheckerAndRedirecter, adminController.editProduct);
+
+
+
+
+
+
+-> É O FUNNELING DO REQUEST__ por meio de 'authCheckerAndRedirecter' para então chegar a 'adminController.editProduct'...
+
+)
+
+
+
+
+
+
+
+
+
+--> CERTo..
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+CONTINUANDO  A AULA DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+----> DEPOIS DE ADICIONAR AQUELE 
+
+
+
+elemento de 'input' de tipo HIDDEN com 
+
+
+aquele attribute de 
+
+'_csrf' 
+
+A 
+
+TODAS 
+
+AS 
+
+'ROUTES' 
+
+
+
+DE NOSSO 
+
+
+
+PROJETO QUE _ SÃO DE TIPO 'POST',
+
+
+
+
+
+
+
+
+
+
+professor diz que podemos ADICIONAR 
+
+ITEMS AO CART E ENTÃO FAZER 'ORDER' 
+
+
+
+
+desses products...
+
+
+
+
+
+
+
+--> TENTAMOS FAZER ISSO...
+
+
+
+
+
+
+
+--> CONSEGUIMOS, CONSEGUIMOS FAZER A ORDER DE 
+
+
+1 PRODUCT... --> mas professor diz que 
+
+
+
+NO CÓDIGO DELE 
+
+ELE _ NÃO CONSEGUIU FAZER ISSO...
+
+
+
+
+
+
+
+--> ELE DIZ QUE VAI QUERER CONSERTAR 
+
+
+ESSE 
+
+BUG 
+
+DAS ORDERS NA PRÓXIMA AULA....
+
+
+
+
+
+
+
+
+
+--_> MAS O QUE INTERESSA É 
+
+QUE 
+
+
+ESSA AULA 
+
+
+___NOS MOSTROU __ COMO USAR 
+
+
+
+'CSRF TOKENS'/PROTECTION NOS SEUS 
+
+PROJETOS,
+
+
+
+e
+
+
+
+
+ESSA É UMA __ COISA OBRIGATÓRIA__ QUE VOCÊ TEM QUE ADICIONAR A TODOS OS SEUS 
+
+
+PROJETOS,
+
+
+
+
+
+NÃO É ALGO OPCIONAL,
+
+
+PQ 
+
+
+CASO CONTRÁRIO VOCÊ VAI TER UM PROBLEMA GIGANTE DE SEGURANÇA 
+
+
+NA SUA PÁGINA... ------------> VOCÊ TEM QUE ADICIONAR ESSAS CSRF TOKENS __ PARA __ GARANTIR 
+
+
+QUE 
+
+SUAS 
+
+SESSIONS __ NÃO ACABEM 'STOLEN'
+
+
+POR 
+
+FALSÁRIOS..

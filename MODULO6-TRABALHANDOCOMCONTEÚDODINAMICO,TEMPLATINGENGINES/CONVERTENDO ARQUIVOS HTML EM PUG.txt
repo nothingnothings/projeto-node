@@ -1,0 +1,436 @@
+
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR DIZ QUE DEVEMOS CONVERTER NOSSAS PÁGINAS HTML EM PUG...
+
+
+
+
+MEU CÓDIGO HAVIA FICADO ASSIM:
+
+
+
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Add Product
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/forms.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a(href="/") Shop
+                    li.main-header__item 
+                        a.active(href="/") Add Product
+        main 
+            form.product-form(action="/admin/add-product", method="POST")
+                .form-control 
+                    label(for="title") Title 
+                    input(type="text", name="title")
+                button.btn(type="submit") Add Product
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+---> CERTO... MAS AÍ ENCONTRO UMA 
+
+
+
+MUDANÇA, NO CÓDIGO DO PROFESSOR...
+
+
+
+
+
+
+
+--> lá em 
+
+'input',
+
+
+input de type 
+
+text,
+
+
+
+
+TEMOS TAMBÉM UM 
+
+'TITLE'... ----> 
+
+
+
+
+
+
+
+
+O PROFESSOR COLOCOU ESSE ATTRIBUTE AÍ....
+
+
+
+FICA ASSIM:
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Add Product
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/forms.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a(href="/") Shop
+                    li.main-header__item 
+                        a.active(href="/") Add Product
+        main 
+            form.product-form(action="/admin/add-product", method="POST")
+                .form-control 
+                    label(for="title") Title 
+                    input(type="text", name="title", id="title") /////EIS O CÓDIGO EM QUESTÃO.
+                button.btn(type="submit") Add Product
+
+
+-----------------------------------------------
+
+
+
+
+MAS APARENTEMENTE ELE 
+
+
+VAI QUERER 
+
+
+
+
+
+
+
+ESCREVER O 'ID' 
+
+DE UMA FORMA DIFERENTE... -----> PARA ISSO,
+
+
+ELE 
+
+
+
+ESCREVE 
+
+o id __ DO LADO_ _ DE FORA__ 
+
+
+do 
+
+'input',
+
+
+dos PARÊNTESES DO INPUT,
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+  input(type="text", name="title")#title 
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+-------> SE ESCREVERMOS DESSA FORMA,
+
+ESSE ELEMENTO, 
+
+NA NOSSA PÁGINA HTML,
+
+
+
+FICA ASSIM:
+
+
+
+
+<input type="text" name="title" id="title">
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+
+É 
+
+UM CÓDIGO HTML COMUM,
+
+
+
+EXATAMENTE COMO ESPERÁVAMOS...
+
+
+
+
+
+
+
+
+
+-----> ISSO FEITO,
+
+PROFESSOR DIZ QUE DEVEMOS ADICIONAR ALGUM CONTEÚDO DINÂMICO NESSA PAGE 
+
+de 
+
+'add-product'...
+
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+
+ELE 
+
+
+
+
+PROPÕE TROCAR O 'title'
+
+
+
+
+__dA PÁGINA __ POR 
+
+
+
+UM 
+
+OUTPUT DINÂMICO... --> 
+
+ele 
+
+
+escreve 
+
+um 
+
+
+'title #{pageTitle}' ...
+
+
+
+
+
+
+
+
+
+--> OK... AGORA PRECISAMOS PASSAR ESSA KEY DE 'pageTitle'
+
+PARA DENTRO 
+
+DESSE TEMPLATE AÍ...
+
+
+
+
+
+
+
+--> PARA ISSO, VAMOS ATÉ 'admin.js',
+
+
+
+ONDE TEMOS O ´CODIGO DE RENDER DE 
+
+'add-product.pug'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+router.get('/add-product', (req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+
+  res.render('add-product'); //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'....
+
+});
+
+
+
+
+
+
+
+
+
+FICARÁ ASSIM:
+
+
+
+
+
+
+
+router.get('/add-product', (req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+
+  res.render('add-product', {pageTitle: 'Add Product'}); //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'....
+
+});
+
+
+
+
+
+
+----------------------------------
+
+
+
+CERTO.... SALVAMOS TUDO ISSO E RECARREGAMOS....
+
+
+
+
+
+
+
+FUNCIONOU.
+
+
+---------------------------------
+
+
+
+AGORA É HORA DE TRABALHAR NA PÁGINA DE ERRO 404...
+
+
+
+
+
+
+
+
+---> PARA ISSO ADICIONAMOS UM ARQUIVO 
+
+'404.pug'...
+
+
+
+
+
+--> CRÍAMOS OUTRO ESQUELETO DE PUG/HTML,
+
+
+
+---------------------------------
+
+
+
+
+OK, FICOU ASSIM:
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+
+        main 
+            h1 Page not found, please 
+                a(href="/") &nbsp;return to the Home Page 
+
+
+
+
+

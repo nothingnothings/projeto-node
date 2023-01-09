@@ -1,0 +1,1942 @@
+
+
+
+
+
+-> É CLARO QUE TEMOS MAIS DO QUE 'PRODUCTS'
+
+
+e 
+
+'USERS'...
+
+
+
+
+
+
+
+
+--> TAMBÉM TEMOS O 'CART', o model de 'CART'...
+
+
+
+
+
+
+
+--> NÃO TRABALHAMOS COM O CART FAZ BASTANTE TEMPO...
+
+
+
+
+
+
+
+
+--> de um ponto de vista de RELATION/ASSOCIATIOn,
+
+
+
+
+o 
+
+
+cart 
+
+
+
+tem relations 
+
+de 
+
+
+
+'ONE-TO-ONE' com os USER,
+
+
+
+
+e 
+
+
+'ONE-TO-MANY' com os products... (pq cada PRODUCT, ÚNICO, pode aparecer em MÚLTIPLOS CART...)
+
+
+
+
+
+
+
+
+
+
+----------> CART SIMPLESMENTE SEGURA PRODUCTS, MUITOS PRODUCTS,
+
+
+
+
+com uma 
+
+
+__QUANTITY___ ASSOCIADA __ AO CART.... E AOS PRODUCTS ---------> é por isso 
+
+
+que 
+
+o 
+
+professor 
+
+nos 
+
+fala 
+QUE 
+
+
+VAMOS 
+
+PRECISAR 
+
+DE 
+
+MAIS DE 1 'MODEL' 
+
+para definir o nosso cart... (talvez precisemos de 1 model para definir a QUANTITY, no caso)
+
+
+
+
+
+
+
+
+
+--> VAMOS PRECISAR DE MAIS DE 1 MODEL.. 
+
+
+
+
+
+
+
+
+
+--> MAS VAMOS TRABALHAR NO MODEL DO 'CART' ANTES DE MAIS NADA....
+
+
+
+
+
+
+
+
+
+
+-. O PROFESSOR __ VAI DELETAR___ TUDO__ DE NOSSO CARRINHO, 
+
+
+PARA 
+
+COMEÇAR A ESCREVER TUDO DO NADA....
+
+
+
+
+
+
+
+
+---> PROFESSOR 
+
+
+
+ESCREVE 
+
+
+OS IMPORTS 
+
+
+PADRÃO 
+
+DO 
+
+SEQUELIZE,
+
+USADOS PARA 
+
+DEFINIR 
+
+
+SEQUELIZE MODELS...
+
+
+
+
+ex:
+
+
+const Sequelize = require('sequelize');
+
+
+const sequelize = require('../util/database');
+
+
+-------------------------------------------------------
+
+
+
+
+isso feito,
+
+
+
+
+
+ELE COMEÇA a criar o model do cart,
+
+com este código:
+
+
+
+
+
+
+
+
+const Cart = sequelize.define(
+    {
+
+    }
+)
+
+
+
+
+
+
+
+
+
+
+AÍ VAMOS PRECISAR DOS FIELDS...
+
+
+
+
+
+
+
+----> 
+
+
+
+um cart, para o professor,
+
+
+
+
+
+
+SIMPLESMENTE DEVERÁ TER UM ID FIELD...
+
+
+
+
+
+
+
+--> o id deverá 
+
+ter os attributes 
+
+de 
+
+
+'allowNull: false',
+
+
+
+'autoIncrement: true',
+
+
+'type: Sequelize.INTEGER',
+
+
+
+
+e 
+
+
+'primaryKey: true'...
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+EXPORTAMOS 
+
+ESSE 
+
+
+MODEl...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+
+
+
+const sequelize = require('../util/database');
+
+
+
+
+
+const Cart = sequelize.define('cart', 
+  {
+      type: Sequelize.STRING,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+  }
+)
+
+
+
+
+module.exports = Cart;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------> AGORA VOCÊ DEVE ESTAR SE PERGUNTANDO: 
+
+
+MAS ONDE ESTÃO OS 'PRODUCTS'?
+
+
+
+
+
+
+
+
+
+
+
+--> BEM,
+
+NÓS DEVEMOS TER EM MENTE __ QUE 
+
+
+1
+ 
+
+ CART 
+
+ DEVERÁ 
+
+ 'BELONG TO A SINGLE USER',
+
+
+
+
+
+ MAS 
+
+
+ __DEVERÁ 
+
+
+ 'HOLD MULTIPLE PRODUCTS'.... -------> 
+
+
+
+
+ PARA DEFINIR 
+
+ ESSAS RELATIONS,
+
+ PROVAVELMENTE 
+
+
+ TEMOS QUE 
+
+
+
+ IR ATÉ O ARQUIVO 'app.js'.......
+
+
+
+
+
+
+
+
+ OK... MAS ESSE É O ___MODEL____ DE CART.....
+
+
+
+
+
+
+
+
+
+ A table 
+
+
+ 'carts'
+
+
+
+
+
+__DEVERÁ ___ 
+
+  SEGURAR 
+
+
+
+  __OS DIFERENTES CARTS, PARA OS DIFERENTES USERS.... -----> ISSO 
+
+
+
+
+SIGNIFICA QUE 
+
+
+
+
+________VAMOS PRECISAR ___ MAIS DO QUE 
+
+
+
+UMA 
+
+
+TABLE E UM MODEL DE 
+
+'CART',
+
+
+
+
+
+
+
+
+pq 
+
+VAMOS PRECISAR 
+
+
+DE UM 
+
+
+
+
+
+NOVO MODEL,
+
+UM MODEL 
+CHAMAOD 
+
+
+DE 
+
+'cart-item',
+
+
+dedicado 
+
+a ser isso,
+
+
+1 'cart-item'...
+
+
+
+
+
+--> POR ISSO VAMOS CRIAR UM ARQUIVO 
+
+
+'cart-item.js'...
+
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE TEREMOS 4 MODELS:
+
+
+
+
+
+
+
+cart 
+
+product 
+
+user 
+
+
+cart-item...
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DE 
+
+
+'cart-item.js',
+
+
+
+COPIAMOS E COLAMOS 
+
+O 
+
+
+CÓDIGO DE 
+
+'cart.js',
+
+
+para começar...
+
+
+
+
+
+
+
+--> ESCREVEMOS ISTO:
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const CartItem = sequelize.define('cart-item', {
+  type: Sequelize.STRING,
+  autoIncrement: true,
+  allowNull: false,
+  primaryKey: true,
+});
+
+module.exports = CartItem;
+
+
+
+
+
+
+
+
+
+
+--------------> certo... é claro que teremos de editar isso...
+
+
+
+
+
+
+
+
+
+
+
+--> só deixe eu pensar:
+
+
+
+
+
+
+
+1) cart --> vai segurar NOSSOS PRODUCTS... --> na verdade, vai segurar MANY products, products que serão eventualmente COMPRADOS...
+
+
+
+
+2) cart --> vai segurar MÚLTIPLOS CARTS --> cada cart TERÁ UMA RELAÇÃO ONE-TO-ONE com 1 user....(user consumidor)....
+
+
+
+
+                                                                                                        (cart) (cart-item)
+3) cart-item ----> não sei o que vai segurar.... provavelmente vão ser CÓPIAS DOS 'product', que serão 'one-to-many' com o nosso cart....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> ESSE CARTITEM, O MODEL (e cada 'CartItem') 
+
+
+
+
+
+TERÁ 
+
+
+UM FIELD 
+
+
+de 'primaryKey: true'
+
+TAMBÉM,
+
+
+
+
+
+MAS O QUE O DIFERENCIARÁ 
+
+
+de 
+
+'cart'
+
+
+é que 
+
+
+ELE 
+
+
+TERÁ UM FIELD 
+
+DE 
+
+
+'quantity'...
+
+
+
+o field de quantity será de 
+
+
+TYPE 
+
+'sequelize.INTEGER'... ------>
+
+
+
+
+só poderá ser uma integral....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const Cart = sequelize.define('cart', {
+  id: {
+    type: Sequelize.STRING,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+
+  quantity: {
+    type: Sequelize.INTEGER,
+    
+  }
+});
+
+module.exports = Cart;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ok... --------> ESSA QUANTITY DEVERÁ SER UM 'INTEGER'.... --> ISSO 
+
+
+PQ 
+
+
+
+CADA 
+
+
+'cart-item'
+
+
+É 
+
+
+
+__ESSENCIALMENTE__ UMA 
+
+
+'COMBINATION' 
+
+
+
+
+de 
+
+UM  PRODUCT  E O __ ID__ DO CART__ EM QUE 
+
+
+ESSE 
+
+PRODUCT 
+
+RESIDE/RESIDIRÁ,
+
+
+e aí 
+
+
+A __ QUANTIDADE __DESSE PRODUCT QUE FOI COLOCADA NO CART, naquele cart...
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMBINAÇÃO 
+
+de 
+
+
+
+
+
+
+1 PRODUCT + ID DO CART EM QUE ESSE PRODUCT FICARÁ + a quantidadae do product que foi colocada nesse cart específico...
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE 
+
+O 
+
+
+'ID OF THE CART TO WHICH THIS cart-item is RELATED' 
+
+
+
+não PRECISA SER ADICIONADO POR NÓS AQUI.... ----> ISSO PQ 
+
+
+
+NÓS VAMOS 
+
+
+
+CRIAR, NOVAMENTE, UMA ASSOCIATION,
+
+E AÍ 
+
+VAMOS DEIXAR O SEQUELIZE MANAGEAR ISSO......
+
+
+
+
+
+
+
+--> É HORA DE CRIAR ALGUMAS ASSOCIATIONS, PORTANTO....
+
+
+
+
+
+--> para isso, devemos ir até 
+
+'app.js'....
+
+
+
+
+
+
+
+
+
+
+------> EU __ACHO__ QUE FICA ASSIM:
+
+
+
+
+Cart.belongsTo(
+  User, {
+
+    constraints: true,
+    onDelete: 'CASCADE'
+  }
+);
+Cart.hasMany(CartItem);
+
+
+
+
+
+
+
+ENTRETANTO, PROFESSOR USOU 
+
+'
+hasOne()'
+
+
+em vez de 
+
+
+'belongsTo'...
+
+
+--> o código dele ficou:
+
+
+User.hasOne(Cart);
+
+
+
+
+
+
+
+
+
+---> no stackoverflow,
+
+temos este artigo:
+
+
+
+
+https://stackoverflow.com/questions/34565360/difference-between-hasone-and-belongsto-in-sequelize-orm
+
+
+
+
+I am developing a sails.js app with sequelize ORM. I am a little confused as to when BelongsTo and HasOne need to be used.
+
+The documentation states that :
+
+BelongsTo associations are associations where the foreign key for the one-to-one relation exists on the source model.
+
+HasOne associations are associations where the foreign key for the one-to-one relation exists on the target model.
+
+Is there any other difference apart from the the place where these are specified? Does the behavior still continue to be the same in either cases?
+
+
+
+
+
+
+
+
+
+
+
+
+This is more universal problem.
+
+The main difference is in semantic. you have to decide what is the relationship (Some silly example):
+
+Man has only one right arm. Right arm belongs to one man.
+
+Saying it inversely looks a little weird:
+
+Right arm has a man. A man belongs to right arm.
+
+You can have man without right arm. But alone right arm is useless.
+
+In sequelize if RightArm and Man are models, it may looks like:
+
+Man.hasOne(RightArm);      // ManId in RigthArm
+RightArm.belongsTo(Man);   // ManId in RigthArm
+And as you notice there is also difference in db table structure:
+
+BelongsTo will add the foreignKey on the source where hasOne will add on the target (Sequelize creates new column 'ManId' in table 'RightArm' , but doesn't create 'RightArmId' column in 'Man' table).
+
+I don't see any more differences.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cart Belongs to User ----> userId in CART...
+
+User has one Cart ---> userId in CART...
+
+
+
+
+
+
+
+
+
+
+--> PARECE QUE 
+
+MINHA SINTAXE 
+E 
+
+
+A 
+DO PROFESSOR RESULTARAM NO MESMO EFEITO... (o add de 1 field 'userId' no CART... ----> esse field ASSOCIA OS NOSSOS 'USER' aos 'cart' ... --> E CADA CART TERÁ APENAS 1 USER...)
+
+
+
+
+
+
+--------------------
+
+
+
+
+ok... VOU ESCREVER 
+
+
+'Car.belongsTo(User)',
+
+
+MAS A SINTAXE 
+
+
+DE 
+
+'User.hasOne(Cart)'
+
+
+TAMBÉM FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+
+------> ok... 
+
+
+
+
+
+
+
+
+MAS QUAL É A RELATION QUE VAMOS ESCREVER PARA O 
+
+'CartItem'?
+
+
+
+
+
+
+
+-----> O PROFESSOR ESCREVE 
+
+
+
+'User.hasOne(Cart);
+Cart.belongsTo(User);'
+
+
+
+----> PROFESSOR EXPLICA QUE 
+
+
+1 DIRECTION DESSAS 2 JÁ É O SUFICIENTE...
+
+
+
+
+
+
+
+
+
+--> QUALQUER 1 DESSAS 2 APPROACHES 
+
+VAI 
+
+ADICIONAR 
+
+UMA 
+
+
+key/field
+
+
+de 
+
+
+'userId'
+
+
+lá 
+
+
+NO ___ CART___... ------>
+
+
+
+
+
+
+VAI REPRESENTAR 
+
+
+'THE USER TO WHICH THIS 
+
+CART BELONGS'...
+
+
+
+
+
+
+
+----> DEPOIS DISSO,
+
+
+
+PROFESSOR 
+
+
+
+VAI ESCREVER 
+
+
+
+'Cart.belongsToMany(Product)',
+
+
+(one-to-many...)
+
+
+
+
+
+
+
+
+PQ, ___ DE FATO__,
+
+
+
+
+
+
+
+
+INÚMEROS PRODUCTS (Product) de 
+
+
+
+nosso 
+
+
+
+APP PODERÃO TER 
+
+ESSE 
+
+'cart'...(poderão APARECER nesse cart....)
+
+
+
+
+
+
+
+
+
+
+
+
+--> EM CONTRAPARTIDA,
+
+
+
+
+
+1 MESMO PRODUCT 
+
+PODE 
+
+
+'BELONG' 
+
+A VÁRIOS CARTS...
+
+
+
+(MANY-TO-MANY..)
+
+
+
+
+
+
+
+
+
+ME CONFUNDI...
+
+
+
+
+o código do professor 
+
+está 
+
+assim:
+
+
+
+
+
+
+User.hasMany(Product);
+User.hasOne(Cart);
+
+
+Cart.belongsToMany(Product);
+Product.belongsToMany(Cart);
+
+
+
+
+^^^^^^^^^^ COM ESSAS 2 ÚLTIMAS LINHAS, DEFINIMOS 
+
+UMA RELAÇÃO 
+
+'MANY-TO-MANY'...
+
+
+
+
+
+
+
+
+MANY-MANY- -- >> > PQ 
+
+UM MESMO/ÚNICO
+
+
+CART PODE 
+
+
+SEGURAR _ MÚLTIPLOS PRODUCTS DIFERENTES,
+
+
+
+E 1 ÚNICO PRODUCT PODE __ SER PARTE DE _MÚLTIPLOS CARTS DIFERENTES..
+
+
+
+
+
+
+
+
+-> E ESSA RELAÇÃO 
+
+
+'MANY-TO-MANY'
+
+
+
+__sÓ FUNCIONA __SE EXISTIR uma 'intermediate table' ('pivot table'),
+
+
+--------------------------------------------------
+
+
+
+
+IMPORTANTE, EXPLICA BASTANTE:
+
+
+
+As mentioned, usually the Sequelize associations are defined in pairs. In summary:
+
+To create a One-To-One relationship, the hasOne and belongsTo associations are used together;
+
+To create a One-To-Many relationship, the hasMany and belongsTo associations are used together;
+
+To create a Many-To-Many relationship, two belongsToMany calls are used together.
+
+
+Note: there is also a Super Many-To-Many relationship, which uses six associations at once, and will be discussed in the Advanced Many-to-Many relationships guide.
+
+
+
+*****This will all be seen in detail next. The advantages of using these pairs instead of one single association will be discussed in the end of this chapter.
+
+
+
+
+
+
+
+
+
+RECAPITULANDO, O CÓDIGO DO PROFESSOR ESTAVA/ESTÁ ASSIm:
+
+
+
+
+
+////////////////
+
+
+To create a One-To-Many relationship, the hasMany and belongsTo associations are used together;
+
+
+
+Product.belongsTo(User, {contraints: true, onDelete: 'CASCADE'});
+User.hasMany(Product);
+
+
+
+/////////
+
+
+AÍ É CRIADA UMA RELATIONSHIP de 
+
+'One-to-many',
+
+É 
+
+1 USER PARA VÁRIOS PRODUCT... --> e todos esses Product (que são o TARGET) estão conectados APENAS COM ESSE USER, ESSA ENTIDADE SINGULAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DEPOIS, TEMOS:
+
+
+
+
+/////////////////////////////
+
+To create a One-To-One relationship, 
+the hasOne and belongsTo associations are used together;
+
+
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+
+
+
+
+
+////////////////////////////////
+
+
+
+
+
+
+
+
+OK.... ATÉ AÍ, TUDO BEM....
+
+
+
+
+
+---------------------------------------
+
+
+
+POR FIM,
+
+
+TEMOS A PARTE MAIS DIFÍCIL,
+
+ESTA:
+
+
+
+
+
+/////////////////////////////////////////////////
+
+
+
+To create a Many-To-Many relationship, two belongsToMany calls are used together.
+
+
+
+
+
+Cart.belongsToMany(Products);
+Products.belongsToMany(Cart);
+
+
+
+Many-To-Many associations connect one source with 
+multiple targets, while all these targets can in turn be 
+connected to other sources beyond the first.
+
+This cannot be represented by adding one foreign
+ key to one of the tables, like the other relationships did. Instead, 
+ the concept of a Junction Model is used. This will be an extra model 
+ (and extra table in the database) which will have two foreign key columns 
+ and will keep track of the associations. The junction table is also sometimes 
+ called join table or through table.
+
+
+
+
+(é isso que o professor está falando...)
+
+
+///////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO SÓ FUNCIONA COM UMA 'INTERMEDIATE TABLE'
+
+
+QUE CONECTA 
+
+
+O 'SOURCE' E O TARGET'.... ----> ESSA 'INTERMEDIATE TABLE'
+
+
+
+
+vai essencialmente 
+
+ARMAZENAR 
+
+___UMA '''''COMBINAÇÃO''''''
+
+___ DE 'PRODUCT IDs'
+
+
+E 
+
+'Cart IDs'...
+
+
+
+
+
+
+
+
+
+------> O PROFESSOR CRIOU AQUELE MODEL 
+
+
+DE 
+
+'cart-item' justamente para ISSO: 
+
+
+PARA 
+
+SER 
+
+A 'INTERMEDIATE TABLE' ('junction model', 'through table', 'join table')... --->
+
+
+
+
+
+
+
+PARA UTILIZARMOS ESSA 'intermediate table', essa table que 
+
+
+vai 
+
+MEDIAR 
+
+A RELATION 
+
+
+'
+many-to-many'
+
+
+entre 
+
+
+
+CART E PRODUCT,
+
+
+
+
+adicionamos 
+
+
+
+
+ UM SEGUNDO ARGUMENTO 
+
+
+ à 
+
+ 'Cart.belongsToMany(Product)',
+
+
+
+
+
+
+
+ QUE 
+
+
+ SERÁ _ UM __ OBJETO__ CONTENDO UMA KEY 
+
+
+ dizendo 'through'....
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+ Cart.belongsToMany(Product, { through: }); ///////EIS O CÓDIGO EM QUESTÃO...
+Product.belongsToMany(Cart);
+
+
+
+
+
+
+
+
+
+------> NESSA KEY DE 
+
+'through',
+
+
+
+NÓS 
+
+INDICAMOS/COMUNICAMOS AO SEQUELIZE _ EM QUE __ LUGAR 
+
+
+
+____ ESSAS CONNECTIONS/RELATIONS entre 'Cart' e 'Product'
+
+
+
+DEVEM 
+
+
+SER 
+
+ARMAZENADAS... ---->  E NÓS VAMOS REFERENCIAR 
+
+'CartItem', aquele nosso model de 
+
+'CartItem'....  -----> E PRECISAMOS 
+
+ADICIONAR 
+
+
+ESSE '{through: CartItem}'
+
+
+
+EM __ AMBOS 
+
+
+
+CÓDIGOS 
+
+
+de 'belongsToMany', NOS 
+
+2 SENTIDOS...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ Cart.belongsToMany(Product, { through: CartItem }); ///////EIS O CÓDIGO EM QUESTÃO...
+Product.belongsToMany(Cart, {through: CartItem});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem}); /////// este código faz par com 'Cart.belongsToMany(Product, {through: CartItem})') --> ambos são necessários para estabelecer uma RELATION MANY-TO-MANY...
+
+
+
+
+
+
+
+
+
+
+
+---> PORTANTO, 
+
+
+AGORA 
+
+
+
+TEMOS TODO O SETUP DE QUE PRECISAMOS.... -->
+ 
+
+
+
+
+
+
+
+
+
+DE NOVO, VAMOS 
+
+
+ESCREVER 
+
+
+AQUELE 
+
+CÓDIGO 
+
+SACANA 
+
+de 
+
+
+'sequelize.sync({force: true})',
+
+
+colocar esse 
+
+'''''FORCE:TRUE'''''
+
+
+
+
+
+para 
+
+
+
+RESETTAR NOSSAS TABLES...
+
+
+
+
+
+
+
+
+
+--> OK... RESETTEI NOSSAS TABLES...
+
+
+
+
+
+
+
+--> nós já definimos nosso model de 'CartItem' 
+
+
+como 
+
+
+'INTERMEDIATE TABLE' 
+
+
+
+
+definida 
+
+entre 
+
+
+
+'Product' e 'Cart',
+
+
+
+mediará 
+
+a relação 
+
+
+'MANY-TO-MANY'
+
+
+entre 
+
+os 
+2
+ models...
+
+
+
+
+
+
+
+ ------> TEMOS ISSO SETTADO, AQUI.... 
+
+
+
+
+
+ --> AGORA DEVEMOS TER TODO O SETUP DE QUE PRECISAMOS...
+
+
+
+
+
+
+
+
+
+
+ ----> CERTO.... MAS O QUE INTERESSA, AGORA, 
+
+ É 
+
+ A 
+
+ TABLE 
+
+ de 
+
+ 'cartItems' 
+
+
+ que agora criamos na nossa database...
+
+
+
+
+
+
+
+ AGORA, PORTANTO,
+
+
+
+
+ TEMOS 
+
+
+
+
+
+
+ 1 DATABASE DE 'carts',
+
+ que 
+
+ tem os seguintes fields:
+
+
+
+
+
+
+
+
+ 'id' (id do PRÓPRIO CART....)
+
+
+
+
+ 'created at' 
+
+
+
+ 'updated at'....
+
+
+
+ 'userId' ---> ESTE FIELD SERÁ O QUE VINCULARÁ 'EACH CART TO A SINGLE USER'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ E LÁ NO 
+
+
+ 'cart-items' ('intermediate table' entre PRODUCTs e CARTs),
+
+
+ por sua vez,
+
+ teremos 
+
+ ESTES FIELDS:
+
+
+
+
+
+
+
+'id'  (representa esse cartITEM EM SI....)
+
+
+
+'
+quantity' (definido por nós)
+
+
+
+
+
+
+'created at' 
+
+
+
+'updated at' 
+
+
+
+
+
+'cartId'  ----> representa o CART _ que __ ESTÁ SEGURANDO ESTE CARTITEM/record específico...
+
+
+
+
+
+'productId' ---> representa o PRODUCT/ASSOCIA O PRODUCT QUE É REPRESENTADO/DEVE SER REPRESENTAOD POR ESTE 'cartItem'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA, PORTANTO, 
+
+TEMOS TUDO 
+
+
+NECESSÁRIO 
+
+PARA 
+
+'MANAGE OUR CART ITEMS'
+
+PARA OS 
+
+CARTS QUE 
+
+
+
+
+PRECISAMOS....
+
+
+
+
+(meio confuso...)

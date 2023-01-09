@@ -1,0 +1,919 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA TESTAR ESSA API INTEIRA, PRIMEIRAMENTE PRECISAMOS A COMPILAR....
+
+
+
+
+
+
+
+
+
+
+
+-> PARA COMPILAR,
+
+ESCREVA 
+
+'tsc'
+
+
+NO TERMINAL DE SEU PROJEOT...
+
+
+
+
+
+
+
+
+
+
+
+---> ISSO VAI CRIAR ARQUIVOS '.js'
+ 
+
+ EM TODOS SEUS FOLDERS EM QUE EXISTE UM '.ts'....
+
+
+
+
+
+
+
+
+
+ --> CERTO....
+
+
+
+
+
+
+
+ -_> VOCÊ VERÁ QUE 
+
+
+
+
+ ISSO COMPLETOU SEM ERRORS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -> NOTE IMPORTANTE --> 
+
+ NO FOLDER DE 
+
+
+
+
+
+
+ 'models'
+
+
+ VEREMOS QUE 
+
+ o 
+ ARQUIVO 
+
+ DE 
+
+
+ 'todo.js'
+
+
+
+
+
+ FICARÁ__ BEM VAZIO__... :
+
+
+
+
+
+
+ "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> A RAZÃO PARA ISSO 
+
+
+É QUE 
+
+'INTERFACES'
+
+SÃO 
+
+
+UMA FEATURE 
+
+'PURA DO TYPESCRIPT',
+
+
+
+FEATURE QUE 
+
+
+__ AJUDA __ O TYPESCRIPT ___  DURANTE A COMPILATION 
+
+
+
+
+
+DE SEU PROJETO,
+
+
+mas que 
+
+
+EM CONTRAPARTIDA_ _ NÃO GERAM 'NO ACTUAL CODE' --.>>>> ISSO 
+
+
+
+PQ 
+
+ESSA 
+
+FEATURE DE 
+
+
+
+'''
+
+
+
+
+export interface Todo {  ////ISSO É RECOMENDADO.....
+
+    id: string;
+    text: string;
+
+
+}
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+NÃO __ CRIA NADA __ QUE EXISTE NO JAVASCRIPT... -> É POR ISSO 
+
+QUE 
+
+
+VAMOS FICAR ESSENCIALMENTE 
+
+
+COM UM 
+
+
+__aRQUIVO ___ VAZIO 
+
+lá 
+
+em 
+
+
+'todo.js',
+
+
+
+
+
+
+
+UM FILE SEM NADA 
+
+
+DENTRO,
+ 
+
+ se você 
+
+
+ olhar bem... -->  MAS 
+
+
+
+ SE 
+
+ VOCÊ 
+
+
+
+ EXAMINAR O RESTO DO CÓDIGO,
+
+ PERCEBERÁ QUE ELE AINDA ESTÁ FUNCIONANDO,
+
+
+ PQ 
+
+
+
+ ESSA INTERFACE 
+
+ NA VERDADE 
+
+
+
+ SÓ __ FOI USADA COMO 
+
+
+
+ UM 
+
+
+ 'TYPE DEFINITION' 
+
+
+ nos outros arquivos...
+
+ (
+
+
+
+     como visto neste trecho aqui:
+
+
+
+
+
+
+    const newTodo: Todo = {
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso...
+    }
+
+
+
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ESSA É UMA _ FEATURE_ QUE 
+
+NÃO 
+
+EXISTE DURANTE O JAVASCRIPT, COMO O PROFESSOR MENCIONOU... 
+
+
+ELA EXISTE_ __ SOMENTE__ DURANTE O 'COMPILATIOn'...
+
+
+
+
+
+
+
+
+
+
+-_> COM ISSO,
+ 
+ TEMOS TODOS NOSSOS 
+
+ ARQUIVOS JAVASCRIPT,
+
+ E AÍ 
+
+
+ PODEMOS 
+
+ SÓ RODAR 
+
+ NOSSAS COISAS COMO NORMAL....
+
+
+
+
+
+
+
+
+
+ --> RODAMOS NOSSO WEBSERVER 
+
+
+
+
+
+
+ NODE 
+
+ por meio de 
+
+
+
+
+ 'npm start'....
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+ {
+  "name": "novonovoprojeto30-exemplodenodecomtypescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.2.2",
+    "mongoose": "^6.1.4",
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.13",
+    "@types/express-validator": "^3.0.0",
+    "@types/node": "^17.0.5"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+--> AÍ RODAMOS 'NPM START'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, NOSSO BACKEND ESTÁ FUNCIONANDO... PROFESSOR ESTÁ RELAXADO, NEM MEMSO 
+
+
+
+
+
+CODARÁ O FRONTEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PODEMOS TESTAR NOSSA BACKEND API 
+
+
+
+COM O POSTMAN,
+
+
+
+
+
+
+
+
+
+
+
+
+
+BASTA MEXER NELE....
+
+
+
+
+
+
+
+
+
+
+
+--> PODEMOS 
+
+
+
+ENVIAR REQUESTS AO NOSSO RUNNING 
+
+
+BACKEND server...
+
+
+
+
+
+
+
+
+
+
+
+----> NODE NÃO É CAPAZ DE RODAR CÓDIGO TYPESCRIPT,
+
+e sim 
+
+só 
+CÓDIGO JAVASCRIPt.... -> TEMOS QUE COMPILAR NOSSO CÓDIGO TYPESCRIPT PARA 
+
+
+CÓDIGO 
+
+JAVASCRIPT,
+
+ANTES DE USAR ESSE CÓDIGO 
+
+
+
+NO NOSSO BACKEND....
+
+
+
+
+
+
+
+
+
+
+----> NODE SEMPRE EXECUTA __ JAVASCRIPT__ .... 
+
+
+
+
+
+
+
+--> OK, PODEMOS ENVIAR UM REQUEST A 'localhost:3000' ...
+
+
+
+
+
+
+
+--> VAMOS ENVIAR UM REQUEST__ DE TIPO 'GET',
+
+
+a '/'...
+
+
+
+
+
+
+-> VAMOS RECEBER UM OBJECT COM 
+
+
+{
+
+    todos: []
+},
+
+
+
+QUE 
+É 
+EXATAMENTE O QUE NOSSO APP FAZ....
+
+
+
+
+
+
+
+
+
+
+
+CERTO... FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE AINDA NÃO TEMOS TODO NENHUM... 
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE VAMOS __ ENVIAR UM NOVO 'POST REQUEST',
+
+para 
+
+CRIAR UM NOVO TODO...
+
+
+
+
+
+
+
+--> basta escrever:
+
+
+
+
+
+'localhost:3000/post',
+
+
+E COLOCAR REQUEST DE TIPO __ POST__....
+
+
+
+
+
+
+--> COLOQUE TBM O DATA TYPE DO BODY COMO 'JSON',
+
+e aí 
+
+ESCREVA AQUELE FIELD DE 
+
+
+
+'text'...
+
+
+
+
+
+
+
+
+
+--> TIPO ASSIM:
+
+
+
+{
+
+"text": "EXEMPLO"
+
+}
+
+
+
+
+
+
+
+--> E RECEBEMOS ISTO:
+
+
+
+
+
+{
+    "message": "Created todo",
+    "todos": [
+        {
+            "id": "2021-12-30T21:43:53.379Z",
+            "text": "EXEMPLO"
+        }
+    ]
+}
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+--> AGORA, SE ENVIARMOS UM REQUEST de 'get' a '/', mais uma vez,
+
+
+RECEBEMOS:
+
+
+
+
+
+{
+    "todos": [
+        {
+            "id": "2021-12-30T21:43:53.379Z",
+            "text": "EXEMPLO"
+        }
+    ]
+}
+
+
+
+
+------------------- 
+
+
+
+SUCESSO....
+
+
+
+
+
+ESSA DATA SÓ EXISTE DURANTE O RUNTIME DO SERVER, SÓ EXISTA NA MEMÓRIA DELE....
+
+
+
+
+
+--> PODEMOS TESTAR TAMBÉM 
+
+
+
+
+a feature de 'delete':
+
+
+
+
+
+
+
+
+
+
+ESCREVO UM REQUEST DE TIPO 'DELETE' NO POSTMAN,
+
+
+
+
+
+
+com essa url:
+
+
+
+localhost:3000/todo/2021-12-30T21:43:53.379Z
+
+
+
+
+
+
+
+
+--> AÍ, 
+
+COMO RESPOSTA, RECEBO ISTo:
+
+
+
+
+{
+    "message": "Deleted todo successfully",
+    "data": [
+        {
+            "id": "2021-12-30T21:44:51.553Z",
+            "text": "EXEMPLO"
+        }
+    ]
+}
+
+
+
+
+
+
+
+
+
+--> OK, FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+-_> o postman é realmente MUITO ÚTIL....
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA SÓ FALTA A ROUTE DE 'PUT'....
+
+
+
+
+
+
+
+---> RECEBI ISto:
+
+
+
+{
+    "message": "Could not find todo for this id."
+}
+
+
+
+
+
+
+
+
+
+AGORA CONSEGUI... (era pq o 'todoId' estava como 'req.params' em vez de 'req.params.todoId'...)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+{
+    "message": "Updated todo",
+    "todos": [
+        {
+            "id": "2021-12-30T22:04:24.104Z",
+            "text": "NOVO EXEMPLO"
+        }
+    ]
+}
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+CERTO, TODAS NOSSAS ROUTES/ENDPOINTS ESTÃO FUNCIONANDO...
+
+
+
+
+
+
+
+
+
+
+
+--> ESSA É UMA API CONSTRUÍDA COM TYPESCRIPT E NODE....
+
+
+
+
+
+
+
+-------> o professor ainda não acabou... -> 
+
+
+ELE QUITA O SERVER,
+
+E AÍ 
+
+
+
+VAI NOS MOSTRAR MAIS COISAS 
+
+NESSE PROJETO TYPESCRIPT,
+
+mais coisas que podemos fazer com ele...

@@ -1,0 +1,2085 @@
+
+
+
+
+
+
+
+
+
+-----------> A MUTAÇÃO 
+
+
+básica 
+
+
+
+de 
+
+
+'createPost' 
+
+
+
+
+
+
+
+JÁ ESTÁ 
+
+CODADA... --> MAS AGORA 
+
+PRECISAMOS 
+
+
+
+
+
+
+SER CAPAZES DE 'VALIDATE OUR TOKEn',
+
+
+
+
+E 
+
+DE 
+
+EXTRAIR 
+
+
+NOSSO 
+
+USER 
+
+
+
+DESSE TOKEN.... 
+
+
+
+
+
+
+
+
+-----> E O PROFESSOR EXPLICA QUE __ A MANEIRA DE FAZER ISSO NO MUNDO GRAPHQL 
+
+
+É BEM _ PARECIDA__ COM 
+
+
+
+A MANEIRA _DE FAZÊ-LO NO 'REST API'... --> 
+
+
+
+
+NO REST API,
+
+
+
+
+
+TÍNHAMOS AQUELE 
+
+ARQUIVO DE 
+
+'isAuth',
+
+
+COM CÓDIGOS 
+DE VERIFICAÇÃO DA VALIDADE DA TOKEN....
+
+
+
+ex:
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+  ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+  const header = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+  ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+  ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a __TOKEN EM SI___)...
+
+  if (!header) { ////cases em que NEM MESMO O HEADER FOI ANEXADO AO REQUEST...
+    const error = new Error('Not authenticated.');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const actualToken = header.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+  let decodedToken;
+
+  try {
+    ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+    decodedToken = jwt.verify(
+      actualToken, ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+      /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+      'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+    );
+  } catch (err) {
+    err.statusCode = 500;
+    throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+  }
+
+  if (!decodedToken) {
+    const error = new Error('Not authenticated');
+    error.statusCode = 401;
+    throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+  }
+
+  req.userId = decodedToken.userId; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+
+  next(); ///após armazenar o userId no request, fazemos forward do request, para que continue com o flow do runtime, para que alcance os controllers como o de 'getPosts'...
+};
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+------> 
+
+
+
+
+
+MAS ANTES DE MAIS NADA, 
+
+
+NO GRAPHQL,
+
+
+
+
+
+__ TEMOS QUE __ ASSEGURAR_ QUE CONSEGUIMOS __ ENVIAR 
+
+
+1 
+
+
+'TOKEN' (JWT)
+
+
+
+
+EM UM 
+
+
+__ HEADER____ DE NOSSO 'INCOMING REQUEST'...
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+SE DERMOS UMA OLHADA NO NOSSO CÓDIGO FRONTEND,
+
+
+
+
+
+LÁ EM 
+
+'Feed.js',
+
+
+
+
+
+
+EM QUE 
+
+__ CRÍAMOS NOVOS POSTS,
+
+
+
+
+
+
+___ LÁ EM 'finishEditHandler,'
+
+
+
+LÁ ENCONTRAMOS 
+
+
+NOSSO 
+
+TOKEN SENDO ANEXADO 
+
+
+NO CÓDIGO DE 
+
+
+'''
+
+
+
+
+
+finishEditHandler = async (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+
+    try {
+      this.setState({ editLoading: true });
+
+      //Set up data (with image!)
+      // let url = 'URL';
+
+      ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+      let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+      // console.log(postData.image);
+
+      let url = 'http://localhost:8080/feed/post';
+      let method = 'POST';
+
+      if (this.state.editPost) {
+        // url = 'URL';
+        // url = 'http://localhost:8080/feed/post-edit';  ////approach do method 'PATCH', com o POSTID enviado no BODY do request (send no body do request, em vez de o extrair de um SEGMENTO DINÂMICO NA URL)....
+        // method = 'PATCH';
+        url = `http://localhost:8080/feed/post/${postData.id}`;
+        method = 'PUT';
+        // console.log(postData);
+        // formData = new FormData(); /// approach antiga, do 'formData'.... --> essa approach é usada com o 'createPost', mas não com o EDIT POST...
+        // formData.append('postId', postData.id); //ver anotação logo acima... approach do método 'patch', antiga, minha, obsoleta.
+        // formData.append('title', postData.title);
+        // formData.append('content', postData.content);
+        // formData.append('image', postData.image);
+      }
+
+      // for (var pair of formData.entries()) {
+      //   // console.log(pair[0] + ', ' + pair[1]);
+      // }
+
+      const editAndAddResults = await fetch(url, {
+        method: method,
+        // body: JSON.stringify(postData),
+        body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE, não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ  ENVIANDO DATA por meio daquele 'formData.append()'... APENAS precisamos settar, nesse case, UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+
+        // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+        //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+        //                       'multipart/form-data'
+        // }
+      });
+      // .then((res) => {
+      if (editAndAddResults.status === 400) {
+        throw new Error(
+          'Please input values that are valid and not equal to previous ones.'
+        );
+      }
+  
+      if (
+        editAndAddResults.status !== 200 &&
+        editAndAddResults.status !== 201
+      ) {
+        throw new Error('Creating or editing a post failed!');
+      }
+
+      // return res.json();
+      // })
+      // .then((data) => {
+
+
+      const manipulatedEditAndAddResults = await editAndAddResults.json();
+
+      const post = {
+        _id: manipulatedEditAndAddResults.post._id,
+        title: manipulatedEditAndAddResults.post.title,
+        content: manipulatedEditAndAddResults.post.content,
+        creator: manipulatedEditAndAddResults.post.creator,
+        createdAt: manipulatedEditAndAddResults.post.createdAt,
+      };
+
+      console.log(post, 'Line');
+      this.setState((prevState) => {
+        let updatedPosts = [...prevState.posts];
+        if (prevState.editPosts) {
+          const postIndex = prevState.posts.findIndex((post) => {
+            return post._id === prevState.editPost._id;
+          });
+          updatedPosts[postIndex] = post;
+        } else if (prevState.posts.length < 2) {
+          updatedPosts = prevState.posts.concat(post);
+        }
+        return {
+          posts: updatedPosts,
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+        };
+      });
+
+      this.loadPosts();
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      //   console.log(err);
+      this.setState({
+        isEditing: false,
+        editPost: null,
+        editLoading: false,
+        error: err,
+      });
+      this.loadPosts();
+      // });
+    }
+  };
+
+
+
+
+  '''
+
+
+
+
+
+  LÁ 
+
+
+
+  EM 
+
+
+
+
+
+  ''
+
+      const editAndAddResults = await fetch(url, {
+        method: method,
+        body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+        headers: {
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        },
+
+
+''
+
+
+
+
+
+
+-------> NÓS ANEXAMOS NOSSO 
+
+TOKEN AO 
+
+'OUTGOING REQUEST'...
+
+
+
+
+
+
+
+
+---> A URL ESTÁ ERRADA, É CLARO (precisa ser 'localhost:8080/graphql', DE TIPO POST),
+
+
+
+mas 
+
+é 
+
+
+
+CLARO QUE 
+
+
+
+É ASSIM QUE 
+
+VAMOS ENVIAR O REQUEST,
+
+NO FINAL DAS CONTAS...
+
+
+
+
+
+
+
+
+
+
+-------> OK.... TEREMOS ESSA TOKEN 
+
+NO NOSSO HEADER,
+
+
+
+enviado àquela url..
+
+
+
+
+
+
+
+
+
+
+--> ANTERIORMENTE,
+
+NA REST API,
+
+
+
+
+
+USÁVAMOS/USAMOS O MIDDLEWARE 
+
+de 
+
+
+'is-auth.js'
+
+
+PARA 
+
+FAZER 
+
+GET 
+
+
+DE 
+
+NOSSA 
+
+TOKEN,
+
+
+
+VALIDATE ESSA TOKEN,
+
+
+
+EXTRACT A USER DATA,
+
+
+ 
+
+ E AÍ __ ADICIONAR O USERID 
+
+
+
+ AO 
+
+ OBJETO 'request'...
+
+
+
+
+
+
+
+
+ --> E ISSO É __ PRATICAMENTE A MESMA COISA QUE O PROFESSOR QUER FAZER,
+
+ AGORA, NO MUNDO GRAPHQL....
+
+
+
+
+
+
+ ----> SÓ VAMOS TER QUE TWEAKAR o 
+
+
+
+ 'is-auth.js'.... 
+
+
+
+
+
+ --> VOU CRIAR UM 
+
+ NOVO 
+
+ 'auth.js',
+
+
+ VERSÃO 
+
+
+ GRAPHQL ----> 
+
+
+
+
+
+ vou chamar de 'is-auth-graphql'...
+
+
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR NÃO VAI CHAMAR DE 'is-auth'
+ PQ 
+
+
+ISSO 
+
+AÍ 
+
+
+
+
+NÃO VAI SERVIR SÓ PARA 
+
+FAZER 
+
+'VALIDATE AUTHENTICATION' 
+,
+
+
+MAS 
+
+TAMBÉM 
+
+
+PARA 
+
+
+
+'GIVE ME THE USER DATA',
+
+
+
+MAS ISSO 
+
+É ALGO PURAMENTE 
+
+
+COSMÉTICO.... ---> 
+
+
+
+
+
+
+O FLOW É ESTE:
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+    
+  const header = req.get('Authorization'); 
+
+  if (!header) { 
+    const error = new Error('Not authenticated.');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const actualToken = header.split(' ')[1];
+
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(
+      actualToken, 
+      'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+    );
+  } catch (err) {
+    err.statusCode = 500;
+    throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+  }
+
+  if (!decodedToken) {
+    const error = new Error('Not authenticated');
+    error.statusCode = 401;
+    throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+  }
+
+  req.userId = decodedToken.userId; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+
+  next(); ///após armazenar o userId no request, fazemos forward do request, para que continue com o flow do runtime, para que alcance os controllers como o de 'getPosts'...
+};
+
+
+-----------------------------------
+
+
+
+
+
+
+  const header = req.get('Authorization'); 
+
+
+
+
+
+
+
+  -->  VOU CHECAR SE ESTÁ 'set'... --> 
+
+
+
+
+
+      
+  const header = req.get('Authorization'); 
+
+  if (!header) { 
+    const error = new Error('Not authenticated.');
+    error.statusCode = 401;
+    throw error;
+  }
+
+
+
+
+
+
+
+OK.... MAS SE NÃO TIVERMOS ESSE HEADER (o header de 'authorization', essa TOKEN, armazenada no header),
+
+
+
+
+
+
+VAMOS QUERER 
+
+
+
+
+
+definir 
+
+
+
+req.isAuth = false;
+
+
+
+----------------------------
+
+
+
+
+
+
+
+----> vamos querer definir como false pq 
+
+vamos 
+
+
+querer 
+
+
+resolver a validation __ LÁ _ NOS NOSSOS RESOLVERS... (throw de mensagem de erro lá)....
+
+
+
+
+if(!header) {
+
+    req.isAuth = false;
+
+}
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+-----> professor escreve um 'return next()' 
+
+
+
+
+
+
+
+----------> 
+
+
+
+ex:
+
+
+
+
+
+
+  const header = req.get('Authorization'); 
+
+  if (!header) { 
+
+      req.isAuth = false; ///////////// settamos isto e pulamos A EXECUÇÃO DO RESTO DO CÓDIGO....
+      return next();
+  }
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+    
+  const header = req.get('Authorization'); 
+
+  if (!header) { 
+        req.isAuth = false;
+        return next(); ///pula o resto do código...
+  }
+
+  const actualToken = header.split(' ')[1];
+
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(
+      actualToken, 
+      'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+    );
+  } catch (err) {
+    err.statusCode = 500;
+    throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+  }
+
+  if (!decodedToken) {
+    const error = new Error('Not authenticated');
+    error.statusCode = 401;
+    throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+  }
+
+  req.userId = decodedToken.userId; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+
+  next(); ///após armazenar o userId no request, fazemos forward do request, para que continue com o flow do runtime, para que alcance os controllers como o de 'getPosts'...
+};
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+--------->  EXTRAÍMOS 
+
+
+
+
+a token,
+
+
+
+a decodificamos,
+
+
+etc etc,
+
+
+
+com estas linhas:
+
+
+
+
+  const actualToken = header.split(' ')[1];
+
+  let decodedToken;
+
+
+
+
+
+
+
+
+TENTAMOS O DECODAR,
+
+EXATAMENTE COMO ANTES:
+
+
+
+  try {
+    decodedToken = jwt.verify(
+      actualToken, 
+      'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+    );
+  } catch (err) {
+    err.statusCode = 500;
+    throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+  }
+
+
+
+
+
+
+  -----> colocamos aquele secret ali,
+
+  exatamente como antes:
+
+
+
+
+   'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+
+
+
+
+------------------
+
+
+ESSE 
+SECRET TEM QUE 
+
+
+MATCHEAR O SECRET QUE 
+
+__CRIA__ A SUA TOKEN,
+
+
+
+
+LÁ 
+
+
+
+em 'resolvers.js'....
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+aí no try-catch block,
+
+
+
+
+
+não vamos colocar aquele throw de erro genérico,
+
+e sim 
+
+
+
+
+
+
+
+
+''''
+
+
+req.isAuth = false;
+
+
+
+'''''
+
+
+
+
+
+
+TAMBÉM RETORNAMOS 'next()' nesse block,
+
+
+PARA 
+
+NÃO EXECUTAR MAIS CÓDIGO ALGUM...
+
+
+--------------------------
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+  try {
+    decodedToken = jwt.verify(
+      actualToken, 
+      'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+    );
+  } catch (err) {
+        req.isAuth = false;
+        return next();
+  }
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+SE também entrarmos 
+
+no 
+
+block 
+
+
+de 
+
+'if (!decodedToken)',
+
+
+também 
+
+
+
+
+vamos querer 
+
+definir 
+
+
+
+'req.isAuth' como sendo FALSE...
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+---->  aí se passarmos por todos 
+
+
+os checks,
+
+vamos ter 
+
+
+nosso id 
+
+
+em 
+
+'req.userId'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> MAS ISSO FEITO,
+
+
+VAMOS 
+
+
+QUERER TAMBÉM DEFINIR UMA __ NOVA PROPRIEDADE 
+
+nesse 
+
+objeto 
+
+'req',
+
+
+
+a 
+
+
+propriedade 
+de 
+
+
+'isAuth = true' ... --> 
+
+
+
+FAREMOS ISSO PARA INTERAGIR COM NOVOS IF CHECKS,
+
+LÁ NO 
+
+'resolvers.js'....
+
+
+
+
+
+
+
+
+--------------
+
+
+
+OK..... MAS COMO PODEMOS USAR ESSE 'auth.js'/is-auth-graphql.js 
+
+
+
+
+LÁ 
+
+
+
+NO NOSSO RESOLVEr? 
+
+
+
+
+
+
+
+
+
+
+---> provavelmente vamos ter que IMPORTAR EM ALGUM LUGAR DE NOSSO CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> touché... mas NÃO VAMOS IMPORTAR ESSE ARQUIVO em 'resolvers.js',
+
+
+E SIM __ VAMOS __ IMPORTAr__ E 
+
+USAR 
+
+LÁ 
+
+
+
+EM 
+
+'app.js',
+
+
+
+
+
+
+__ LOGO ANTES __ DO SET DE NOSSO 'GRAPHQL ENDPOINT' (
+
+
+
+  ou seja,
+
+
+
+
+
+
+  ANTES 
+
+  DESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+
+  app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+
+  // `formatError` is deprecated and replaced by `customFormatErrorFn`. It will be removed in version 1.0.0.
+  // formatError(err) { /////USADO PARA _ SETTAR__ O ERROR HANDLING DE SEU APP... --> você define, aqui, QUAIS INFOS ADICIONAIS DEVEM SER RETORNADAS __ nas suas messages de error, ao user que usa seu app... (que envia requests com bodies forrados de queries)...
+      customFormatErrorFn(err) {
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ANTES DESSE CÓDIGO AÍ,
+
+
+
+VAMOS 
+
+
+IMPORTAR 
+
+
+
+NOSSO 
+
+
+
+MIDDLEWARE DE 'isAuth'
+
+
+
+
+E ENTÃO __ VAMOS 
+
+O 
+
+ADICIONAR__ 
+
+
+LOGO ANTES 
+
+desse 
+
+
+'app.use('/graphql', {})',
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+app.use(isAuth);
+
+
+
+  app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+
+  // `formatError` is deprecated and replaced by `customFormatErrorFn`. It will be removed in version 1.0.0.
+  // formatError(err) { /////USADO PARA _ SETTAR__ O ERROR HANDLING DE SEU APP... --> você define, aqui, QUAIS INFOS ADICIONAIS DEVEM SER RETORNADAS __ nas suas messages de error, ao user que usa seu app... (que envia requests com bodies forrados de queries)...
+      customFormatErrorFn(err) {
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> OK... --> ISSO SIGNIFICA, EM OUTRAS PALAVRAS,
+
+
+
+
+QUE __ ESSE MIDDLEWARE__ VAI __ RODAR __ 
+
+
+PARA __ CADA REQUEST__ QUE 
+
+
+ATINGIR 
+
+
+
+NOSSO 
+
+ 
+
+GRAPHQL ENDPOINT... --> MAS É CLARO QUE ESSE middleware de 'isAuthGraphql',
+
+
+CONFORME 
+
+
+SEU CÓDIGO,
+
+
+
+_ NÃO __ VAI 
+
+
+
+'DENY' 
+
+o 
+
+REQUEST 
+
+SE 
+
+CONSTATAR 
+
+
+__ QUE _ NÃO EXISTE NENHUM TOKEN NESSE REQUEST.... --> EM VEZ 
+
+DISSO,
+
+
+A ÚNICA COISA QUE 
+
+ele 
+
+VAI
+
+
+
+FAZER É RODAR AQUELE CÓDIGO DE 
+
+
+
+'
+
+
+  if (!header) { 
+    req.isAuth = false; ////diferente de nosso 'is-auth.js' (mundo REST API)
+    return next(); //isto vai PULAR o resto da execução de nosso código.... (se entrarmos nesse block aqui....)
+  }
+
+
+''
+
+
+
+
+
+E AFINS,
+
+
+
+PARA QUE 
+
+SEJA 
+
+DEFINIDA 
+
+ESSA 
+
+PROPRIEDADE 
+
+DE 
+
+'isAuth'
+
+
+
+NO _ _REQUESt__ como sendo __ FALSE.... --------> A PARTIR 
+
+DESSE 
+
+
+valor 'false' 
+
+
+
+dessa PROPRIEDADE,
+
+
+
+
+
+PODEMOS RODAR IF CHECKS 
+
+LÁ 
+
+
+NOS MEUS RESOLVERS...
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+
+
+TODA AS 'ROUTES'/METHODS NOS RESOLVERS QUE 
+
+EXIGIREM 
+
+
+ESSE 
+
+'isAuth = true',
+
+
+
+
+VAMOS 
+
+ESCREVER CHECKS COMO 
+
+
+'if (!req.isAuth)',
+
+
+PARA 
+
+ENTÃO 
+
+DAR THROW DE UM ERROR, OU ALGO ASSIM...
+
+
+
+
+
+
+
+
+
+
+------> ok... lá nos nossos resolvers,
+
+
+
+
+
+___ NÓS NÃO VAMOS NOS IMPORTAR __ COM O 'req.isAuth = true' (o fato de isso estar como TRUE, e não FALSE)
+
+
+
+
+
+EM PATHS COMO 
+'createUser',
+
+
+PQ _ É ÓBVIO _ QUE 
+
+O USER 
+
+NUNCA 
+
+VAI 
+ESTAR 
+
+
+'isAuth = true'
+
+QUANDO ELE ESTIVER ENVIANDO 
+
+ESSE REQUEST 
+
+
+
+
+PEDINDO POR 'POR FAVOR, CRIE UM USER'...
+
+
+
+
+
+
+
+--> portanto,
+
+
+
+NÃO ADICIONAMOS IF CHECK NENHUM NESTE CÓDIGO AQUI:
+
+
+
+
+  createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        console.log(password);
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+NÃO VAMOS FAZER COISA ALGUMA COM ESSA INFO (lá em 'createUser")...
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAS JÁ EM 'createPost',
+
+
+
+
+O PROFESSOR 
+
+
+
+VAI, DE FATO,
+
+
+CHECAR 
+
+
+PRIMEIRAMENTE 
+
+SE 
+
+
+
+
+
+'if (!req.isAuth) '--> OU SEJA,
+
+
+VAI CHECAR SE ISSO ESTÁ COMO 'NOT TRUE'/undefined...
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+AÍ, SE ISSO FOR CONSTATADO, SABEREMOS QUE 
+
+O USER NÃO ESTÁ AUTHENTICATED,
+
+
+E QUE 
+
+CERTAMENTE 
+
+NÃO VAMOS QUERER CONCEDER ACESSO AO 'CREATE A POST'....
+
+
+
+
+
+
+
+-> é por isso que vamos CRIAR UM NOVO ERROR,
+
+
+COMO 
+
+'Not authenticated!',
+
+
+
+
+E aí vamos settar um code de 401...., 
+
+e dar 
+
+
+
+
+THROW __ DO ERROR__ ( o que fará com que o resto do código no nosso resolver seja _ IGNORADO, e com que ENTREMOS NO 'ERROR HANDLING MIDDLEWARE' lá em 'app.js'...)...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+     createPost: async function(args, req) {    
+
+
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+
+        const errors = [];
+
+
+
+
+
+--------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK.... SE CONSEGUIMOS PASSAR POR ESSE 
+
+
+
+'if(!req.isAuth)',
+
+
+
+
+_ NÓS __ VAMOS PROSSEGUIR COM NOSSO CÓDIGO, COM O RESTO DO RESOLVER.... --> EVENTUALMENTE,
+
+
+NESSE 
+
+
+RESOLVER,
+
+
+
+
+
+
+
+ANTES DE FAZERMOS CREATE DO POST,
+
+
+
+
+por meio de 'const post = new Post({})',,
+
+
+
+
+
+
+
+__ NÓS PODEMOS __ FINALMENTE_  FAZER 'GET' DO USER LÁ DA DATABASE... (
+
+
+  isso pq 
+
+  NÓS DE FATO 
+
+
+  ARMAZENAMOS/VAMOS ARMAZENAR/ESTÁVAMOS ARMAZENANDO 
+
+  'creator: {
+    userId: ashjfsajofi
+  }
+  '
+
+
+
+
+  __ DENTRO _ DE CADA 1 DE NOSSOS POSTS....
+)
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+VAMOS USAR 
+
+
+
+
+O USERID 
+
+
+QUE 
+
+
+
+AGORA FICA ARMAZENADO NO NOSSO REQUEST ( de novo, graças ao nosso JWT e À key de 'userId' armazenada no LOCAL STORAGE DE NOSSO BROWSER)...
+
+
+
+
+
+
+
+
+
+
+--> é por isso que 
+
+
+escrevemos,
+
+logo antes de 'const post = new Post({})',
+
+
+
+ISTO:
+
+
+
+
+
+
+const user = await User.findById(req.userId);
+
+if(!userId) {
+  const error = new Error ('invalid user.');
+  error.code = 401;
+  throw error;
+}
+
+
+const post = new Post(
+  {
+    title: postInput.title,
+    content: postInput.content,
+    imageUrl: postInput.imageUrl,
+    creator: user
+  }
+)
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+------> agora, nesse 'post',
+
+
+VAMOS DEFINIR O 
+
+
+'creator'
+
+COMO SENDO _ O USEr_ QUE RECÉM OBTEMOS LÁ DA DATABASE... (nesse trecho aí)...
+
+
+
+
+
+
+
+
+POR FIM, PROFESSOR EXECUTA 
+
+
+'user.posts.push(createdPost)'
+
+
+PARA EMPURRAR 
+
+ESSE RECÉM CRIADO POST __ pARA _ DENTRO DO ARRAY DE 'posts'
+
+
+
+NO NOSSO USER,
+lá na collection de 'users'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const user = await User.findById(req.userId);
+
+if(!userId) {
+  const error = new Error ('invalid user.');
+  error.code = 401;
+  throw error;
+}
+
+
+const post = new Post(
+  {
+    title: postInput.title,
+    content: postInput.content,
+    imageUrl: postInput.imageUrl,
+    creator: user
+  }
+)
+
+
+const createdPost = await post.save();
+
+
+user.posts.push(createdPost);
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+fazemos isso para SETTAR A CONNECTION ENTRE OS POSTS E O USER....
+
+
+
+
+
+
+
+
+
+--> AGORA SÓ PRECISAMOS TRABALHAR LÁ NO FRONTEND,
+
+
+para 
+
+QUE 
+
+
+CONSIGAMOS 
+
+
+'SEND A REQUEST TO THIS ENDPOINT/QUERY',
+
+
+
+PARA QUE 
+
+CONSIGAMOS VER TUDO ISSO EM AÇÃO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> TESTEI ESTA QUERY/MUTATION LÁ NO 
+
+
+'GRAPHIQL':
+
+
+
+
+
+
+     mutation {
+      createPost(
+        userInput: {
+              title: "asofjsaofjs",
+              content: "fasfsafaasaf",
+              imageUrl: "Dummy"
+        }
+     ) {
+			post {
+        title
+        content 
+        _id
+        imageUrl
+      },
+      creator {
+        name 
+        _id
+      }
+    }
+    }
+
+
+
+
+
+
+
+
+---> RECEBI ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+{
+  "errors": [
+    {
+      "message": "Not authenticated!",
+      "status": 401
+    }
+  ],
+  "data": null
+}
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+ 
+
+ O QUERY ESTÁ CERTO (seu formato),
+
+
+ MAS AINDA ASSIM ESTOU RECEBENDO ESSE ERRO DE AUTHENTICATE...
+
+
+
+
+
+
+
+
+ -> vou ver a aula do professor, no próximo arquivo....
+
+
+
+
+
+ 

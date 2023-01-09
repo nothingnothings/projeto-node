@@ -1,0 +1,1064 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> agora sabemos COMO __ARMAZENAMOS DATA NO 
+
+
+
+
+MONGODB,
+
+SABEMOS QUE 
+
+
+A DATA É ARMAZENADA EM UM FORMATO BSON (binary json)...
+
+ 
+
+
+
+
+
+ --> E O PROFESSOR MENCIONOU QUE 
+
+ ESSA MANEIRA DE STORAGE Tê DÁ MAIS FLEXIBILIDADE,
+
+
+ TAMBÉM FLEXIBILIDADE QUANTO à 'STORAGE' DE _RELATIONS __ 
+
+
+
+ _____ENTRE___ DIFERENTES__ TIPOS DE DATA....
+
+
+
+
+
+
+
+
+
+
+
+************
+
+
+
+
+NO MUNDO NOSQL, PORTANTO,
+
+
+
+TEMOS 
+
+DISPOSIÇÕES DE DATA EM COLLECTIONS 
+
+
+
+
+ASSIM:
+
+
+
+
+
+
+
+
+Users 
+
+{id: 1, name: 'Max', email: 'max@test.com'}
+{id: 2, name: 'Manu', email: 'manu@test.com'}
+{...}
+
+
+
+Products 
+
+{id: 1, title: 'Chair', price: 120.99}
+{id: 2, title: 'Book', price: 40.99}
+{...}
+
+
+
+
+Orders (EIS O EXEMPLO EM QUESTÃO):
+
+
+
+{id: 'ddjfa31', user: { id: 1, email: 'max@test.com'}, product: { id: 2, price: 40.99}}
+{id: 'iddao1', user: { id: 2, email: 'manu@test.com'}, product: { id: 1, price: 120.99}}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^^^
+    	                DUPLICATION                               DUPLICATION
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+OK, TEMOS DUPLICATE DATA... --> VAMOS 
+
+TER 
+
+1
+ COLLECTION DE 'users',
+
+
+
+
+
+ QUE VAI SEGURAR TODOS OS DETAILS ACERCA DE 1 USER... --> mas aí teremos 
+
+  
+
+  UMA CÓPIA 
+
+
+  DESSA DATA/de cada object 
+
+
+  EM 
+
+
+  1 
+
+  'EMBEDDED/NESTED DOCUMENT,
+
+
+
+  __EM OUTRA _ COLLECTION, dentro de OUTRO DOCUMENT (nesse caso, em 'users', na collection de 'orders'...)
+
+
+
+
+
+
+  ----------------------------------------------------
+
+
+
+
+
+  --->  ISSO SIGNFIIICA QUE 
+
+
+
+
+________EM VEZ __ DE 
+
+
+
+APENAS ___ 
+
+
+
+FAZER MATCH POR MEIO DE 'IDs',
+
+como fizemos 
+
+NO MUNDO 
+
+
+DO 
+
+
+SQL,
+
+
+
+
+AQUI 
+
+
+
+VOCÊ 
+
+
+
+___ TAMBÉM CONSEGUE __ DEFINIR UMA 'RELATION'
+ 
+
+
+ POR MEIO DO 
+
+
+ __________EMBED___ DE DATA___ EM 
+
+
+ 
+
+ OUTROS DOCUMENTS... ------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*****OBS::: VOCÊ AINDA PODERIA EMBED O 
+
+
+'ID' 
+
+
+
+NESSA OUTRA COLLECTION,
+
+PARA 
+
+QUE 
+
+
+ELA 
+
+
+APONTASSE PARA 
+OUTRO DOCUMENT EM OUTRA COLLECTION.... ---> se vocÊ fizer/FIZESSE 
+
+ISSO,
+
+VOCê 
+
+
+AINDA TERIA 
+
+DE 
+
+
+'MERGE TWO DOCUMENTS MANUALLY' (e, de fato, você 
+
+
+realmente terá de fazer isso manualmente COM BASTANTE FREQUÊNCIA, NO MUNDO NOSQL....)
+
+
+
+
+
+
+
+
+
+--------->   MAS ISSO SIGNIFICA QUE 
+
+VOCê 
+
+TBM 
+
+PODE 
+
+
+
+SÓ 
+
+
+'JUST TAKE 
+
+THE INFORMATION THAT 
+
+IS 
+
+IMPORTANT TO YOU ___ IN THE CONTEXT OF ANOTHER DOCUMENT....'''--. POR EXEMPLO,
+
+
+AQUI 
+
+
+VOCÊ 
+
+
+ARMAZENA/ARMAZENARIA 
+
+
+A 
+
+DATA 
+
+DE 
+
+'user'
+
+
+DENTRO 
+
+
+
+DE UM DOCUMENT 'ORDER' NA COLLECTION DE 'ORDERS',
+
+
+
+o que 
+
+fará
+ 
+
+ com que 
+
+
+ ESSA 
+
+
+ DATA 
+
+
+ 'NESTEADA'
+
+
+
+ passe a viver 
+ dentro dessa outra collection, o que 
+
+ deixará 
+
+ você 
+
+
+ CONSEGUIR 
+
+
+ data acerca de 1 'user'
+
+
+ __DIRETAMENTE __ DE 
+
+
+  
+  1 DOCUMENT 'order',
+
+  O QUE É BEM CONVENIENTE (pq aí não vamos ter que FETCHEAR TODOS OS USERS PARA DETERMINAR QUAL USER 
+  
+  ESPECÍFICO É O ALVO DESSA RELATION; vamos poder simplesmente procurar a data 
+  
+  desse document 'user'
+  
+  
+  ___DENTRO ___ DO DOCUMENT 'order', pq ele estará NESTEADO NO SEU INTERIOR)...
+
+
+
+
+
+
+
+  ---> ^^^^^^^^ ISSO É PARTE 
+
+  DA RAZÃO 
+
+
+  DO MONGODB E O NOSQL SEREM __ TÃO EFICIEENTES __ E RÁPIDOS....
+
+
+
+
+
+---> É 'BUILT' PARA ASSEGURAR QUE __ VOCÊ CONSIGA 'QUERY' SUA DATA 
+
+__DA MANEIRA _ QUE 
+
+VOCÊ PRECISAR, 
+
+
+
+
+____ QUE VOCÊ 'STORE' A DATA DA MANEIRA QUE VOCÊ PRECISAR,
+
+ 
+
+ __ QUE VOCê 
+
+ NÃO TENHA QUE FAZER UM MONTE DE 'MERGING' E ASSIM POR DIANTE,
+
+ _ TUDO PARA QUE VOCÊ 
+
+ CONSIGA 
+
+ FETCHEAR 
+
+
+ DATA DA FORMA QUE VOCê PRECISA, tudo sem ter __ QUE __ COMBINAR 
+
+
+ MÚLTIPLAS COLLECTIONS __ BEHIND THE SCENES__ LÁ NO SEU SERVIDOR...
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO DITO,
+
+
+
+ VOCÊ 
+ _____ AINDA PODE FAZER ISSO___.... (ainda pode fazer 'merge' de múltiplas collections lá no seu server, meio como uma versão alternativa de uma DATABASE SQL)....
+
+
+
+
+
+
+
+
+ --> isso significa que 
+
+'NESTED/EMBEDDED DOCUMENTS'
+
+SÃO APENAS 1
+
+ ALTERNATIVA 
+
+ PARA 
+
+
+
+ 'DEPICTING RELATIONS'.......
+
+
+
+
+
+ ---------------------------
+
+
+
+
+
+
+AS 2 MANEIRAS POSSÍVEIS DE 'DEPICTING RELATIONS' SÃO:
+
+
+
+
+
+1) NESTED/EMBEDDED DOCUMENTS:
+
+
+EXEMPLO...
+
+
+COLLECTION DE 'CUSTOMERS'....
+
+
+
+{
+        userName: 'Max',
+        age: 29,
+        address: {
+            street: 'Second Street',
+            city: 'New York'
+        }
+
+}
+
+
+---> E O ADDRESS É UM 'EMBEDDED DOCUMENT' dessa collection,
+
+pq em vez de SER UMA 
+
+COLLECTION SEPARADA, chamada de 'address', ELE __ É APENAS 1 DOCUMENT 
+NESTEADO NESSA 
+
+COLLECTION DE 'CUSTOMERS', QUE A ENGLOBA....
+
+(e existirá uma collection extra de 'Addresses', que SERÁ UMA DUPLICATA DESSA DATA AÍ... --> e quando alteramos/alterarmos os valores na collection de 'addresses', teremos de refletir essa mudança nessa collection de 'Customers'...)
+
+
+
+^^^^^^^^
+
+
+
+
+----->  E ISSO AÍ, DENTRO DO PARÊNTESES, É A RAZÃO PARA 
+
+
+ESSA MANEIRA DE 'DEPICT A RELATION' ser, Às vezes, ruim....
+
+
+
+
+
+
+--> HÁ CASOS EM QUE 
+
+
+VOCÊ __ TERIA __ UM MONTE DE 'DATA DUPLICATION',
+
+
+
+
+e em que 
+
+
+
+VOCÊ TERIA DE TROCAR __ DE DATA UM _MONTE___..... --> a data trocaria valores mt 
+
+
+rápido, e aí você teria de 
+
+'MANUALLY UPDATE' em todos os duplicate places em que você usou/usa 'embedded documents'... ------>
+
+
+
+E ISSO NÃO É IDEAL, NESSES CASOS...
+
+
+
+exemplo de CASO EM QUE ESSE TIPO DE STORAGE É UM LIXO :
+
+
+
+-------------------------------------
+
+collection de nome 'customers':
+
+
+{
+
+    userName: 'max',
+    favBooks: [{...}, {...}]
+}
+
+
+--------------------------------------
+
+
+
+---> nesse case aí, __NÓS 
+TEMOS 
+
+ALGUNS 'FAVORITE BOOKS' PARA CADA USER...
+
+
+nesse caso, 
+
+você teria/tem um __MONTE __ DE 'DATA DUPLICATION',
+
+
+pq 
+
+UM MONTE 
+
+DE 
+
+__USERS__ 
+
+PODEM ACABAR TENDO/PODEM __ TER __ OS 
+
+MESMOS 
+
+
+'FAVORITE BOOKS',
+
+
+E ESSES 
+
+
+BOOKS 
+
+
+PODEM, além disso,
+
+
+__MUDAR___ (change) um monte, frequentemente.... (
+    por exemplo,
+
+
+    um determinado livro pode ter uma NOVA EDIÇÃO PUBLICADA, E AÍ VOCÊ 
+
+    TERIA DE IR 
+
+    EM ___tODOS __OS 'CUSTOMER' documents que 
+
+
+    POSSUEM ESSE LIVRO COMO 'FAVORITE',
+
+    para então UPDATAR O VALOR DE um campo/field/propriedade 'edition: xxx'....
+)
+
+
+
+
+
+^^^^ nesse cenário, o uso de uma database NOSQL NÃO É RECOMENDADO.. --> 
+
+
+o que é recomendado, nesse case 
+
+É 
+
+
+O ___ SEGUNDO APPROACH__, QUE 
+
+EXPLICO LOGO ABAIXO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+É AÍ QUE ENTRA O APPROACH Nº2:
+
+
+
+
+
+
+
+
+
+2)  REFERENCES: 
+
+
+
+
+
+
+
+
+--> é o approach das REFERENCES...
+
+
+
+
+o exemplo desse tipo de formato de storage de data é assim:
+
+
+
+
+
+
+COLLECTION DE CUSTOMERS:
+
+{
+
+    UserName: 'Max',
+    favBooks: ['id1', 'id2']
+}
+
+
+
+COLLECTION DE 'BOOKS':
+
+{
+    _id: 'id', 
+    name: 'Lord of the Rings'
+}
+
+
+
+
+
+
+------------> NESSE CENÁRIO/CASE,
+
+
+
+
+CASES EM QUE 
+
+TEMOS 
+
+
+data acerca de 1 determinada collection/table que __MUDA FREQUENTEMENTE,
+
+e em que 
+
+VAMOS QUERER EVITAR 'DATA DUPLICATION' (como, por exemplo, nesse case, pq 
+
+UM MESMO LIVRO PODE 
+
+ESTAR COMO 'favBook' EM 
+
+
+MUITOS USERS DIFERENTES... --> se alguma hora quisermos updatar o document referente 
+
+a 
+
+UM 
+
+'GIVEN BOOK',
+
+
+seríamos/somos 
+
+forçados, NO MUNDO 'NOSQL',
+
+
+A UPDATAR 
+
+
+
+ESSE OBJETO 'BOOK' EMBEDDADO___ EM CADA 
+
+
+'NESTED/EMBEDDED DOCUMENT' 
+
+de 
+
+'favBooks',
+
+
+nos 
+
+
+nossos documents de 'customers'... -(
+
+
+
+
+
+            é o que acontece 
+
+            naquele código de 
+
+
+            ''
+
+                {
+
+    userName: 'max',
+    favBooks: [{...}, {...}]
+}
+
+
+''''
+
+)
+
+
+)
+
+
+
+
+
+
+
+
+
+
+-------> OU SEJA,
+
+
+NESSES CASES EM QUE QUEREMOS EVITAR DATA DUPLICATION 
+
+ao longo de 
+múltiplos 
+
+
+'documents' ao longo de várias collections,
+
+
+
+DATA DUPLICATION  + MUDANÇAS FREQUENTES EM VALORES EM TABLES 'related' por meio de 'nested/embedded documents',
+
+
+
+
+VAMOS QUERER 
+
+USAR 
+
+ESSE APPROACH 
+
+
+
+DAS 
+
+'references',
+
+
+dos 
+
+
+'IDS', ESSENCIALMENTE... ----> VAMOS APENAS 
+
+
+
+
+
+__ ARMAZENAR, NESSE APPROACH,
+
+
+
+OS 
+
+
+'IDS'
+
+
+
+DOS DOCUMENTS PERTINENTES, na 
+
+collection 
+
+
+em que nesteamos coisas... --> fazemos/faremos isso para 
+
+que 
+
+
+
+
+OS 
+
+
+__DOCUMENTS (no caso, 'Books'/Book)
+
+
+
+__ 
+
+ADEQUADOS/RELACIONADOS ÀQUELES IDs 
+
+
+em 'favBooks', nos 'Customers',
+
+
+sejam
+
+
+__MANUALMENTE__ MERGEADOS 
+
+
+
+AOS CUSTOMERS 
+
+que o possuem 
+
+no field/propriedade 
+de 
+
+
+'favBooks: ['id1', 'id2']'
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+--> EVENTUALMENTE VOCÊ DECIDIRÁ QUAL APPROACH 
+
+GOSTA MAIS.... 
+
+
+
+
+
+
+
+--> PROFESSOR VAI MOSTRAR ALGUNS EXEMPLOS NESTE CURSO,
+
+
+
+E DEVEMOS 
+
+VER 
+UM POUCO SOBRE O CURSO DE MONGODB 
+
+
+
+
+__ DO PROFESSOR...
+ 
+
+
+
+
+
+
+
+
+
+
+
+ ----> OK, ESSA É A MAIN IDEA:
+
+
+ PODEMOS 
+
+ OU:
+
+
+
+ 1) EMBED DOCUMENTS IN OTHER COLLECTIONS/DOCUMENTS IN OTHER COLLECTIONS 
+
+
+
+
+
+
+ OU 
+
+
+
+ 2) PODEMOS USAR REFERENCES....
+
+
+
+
+
+
+
+ ------> TEMOS QUE 
+
+ VER QUAL É MELHOR PARA UM DETERMINADO PROJECT....
+
+
+
+
+
+
+
+ --> AGORA SABEMOS COMO O MONGODB FUNCIONA EM GERAL... --> 
+
+
+
+ SABEMOS QUE:
+
+
+
+
+ 1) ELE NÃO TEM UM DATA SCHEMA DEFINIDO .... --> MAIOR FLEXIBILDIADE 
+
+
+
+
+
+
+
+ 2) O MONGODB/NOSQL DATABASES POSSUEM __ MENOS 
+
+ DATA RELATIONS,
+
+
+ PQ __ NÓS PODEMOS FAZER RELATE ENTRE AS COISAS POR MEIO DO 
+
+ 'EMBEDDING'....
+
+ (
+
+     you CAN _relate documents, but you don't have to (and you shouldn't do it 
+     
+     too much, 
+     
+     or your queries become slow)
+ ) --------> 
+
+
+
+ ISSO É O QUE CHAMAMOS 
+
+ DE 
+
+
+ 'BUILD RELATIONS MANUALLY',
+
+
+
+ construir relations MANUALMENTE NO MONGODB/NOSQL.... --> 
+
+
+ construímos 
+
+ essas 
+
+ relations por meio de REFRENCES,
+
+ exatamente como vimos mais acima.... -->  MAS VOCê 
+
+ deve 
+
+ sempre 
+
+
+
+averiguar se essa é a melhor approach,
+
+
+
+
+
+
+
+se é possível realmente usar um 'embedded document' 
+
+sem ter muito trabalho....
+
+
+
+ ------------- 
+
+
+
+
+
+
+ --> OK, ESSAS SÃO AS CARACTERÍSTICAS DAS NOSQL DATABASES, E DO MONGODB EM GERAL... --> 
+
+
+
+ TODAS ESSAS SÃO PARTES DA RAZÃO DO MONGOD SER TÃO POPULAR,
+
+ PQ 
+
+ É 
+
+ RÁPIDO E TE DÁ MT FLEXIBILDIADE...

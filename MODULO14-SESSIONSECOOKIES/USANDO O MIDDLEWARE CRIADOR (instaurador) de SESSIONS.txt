@@ -1,0 +1,1769 @@
+
+
+
+
+
+
+
+
+
+
+----> OK... ADICIONAMOS O MIDDLEWARE DE 
+
+'SESSIOn', lá em 'app.js' (que é onde deve ser escrito),
+
+
+
+
+
+
+QUE 
+
+
+
+CRIA/INSTAURA UMA SESSION NO FLOW DE NOSSO APP/NO NOSSO APP....
+
+
+
+
+
+
+SEU CÓDIGO É ESTE:
+
+
+
+
+
+
+
+app.use(session( ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+  {
+    secret: 'my secret', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+    // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+  
+    resave: false,//////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+    saveUnitialized: false ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+ 
+    
+    // cookie: { ////KEY USADA PARA _ DEFINIR CONFIGS ESPECÍFICAS DE NOSSO 'SESSION COOKIE', dos session cookies armazenados no browser de nosso user... (pleonasmo... todos session cookies são armazenados NO BROWSER DO USER...)
+    //   maxAge: ...
+    // }
+ 
+  }
+)); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> OK.... 
+
+
+
+
+AGORA 
+
+
+
+VAMOS __QUERER __ INICIAR __ NOSSO SERVER DNV,
+
+
+
+e AÍ 
+
+
+VAMOS QUERER __ USAR__ 
+ 
+
+ UM 
+
+
+
+
+'session middleware'... --> OK,
+
+
+MAS COMO 
+
+
+
+O UTILIZAMOS? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> BEM, PROFESSOR NOS EXPLICA QUE 
+
+
+
+__PODEMOS __ UTILIZAR 
+
+
+ESSE 
+
+
+
+
+MIDDLEWARE 
+
+DE 
+
+
+'session middleware'
+
+
+EM VÁRIOS LUGARES
+
+DE NOSSO APP... --------> 
+
+
+
+
+
+
+
+ELE 
+
+EXPLICA QUE 
+
+
+LÁ 
+
+
+
+
+
+
+NO NOSSO CONTROLLER de 
+
+
+
+'auth.js',
+
+
+
+
+
+que tem este código:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getLoginPage = (req, res, next) => {
+
+const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+    isLoggedIn: isLoggedIn
+    }
+  );
+};
+
+
+exports.postLogin = (req, res, next) => {
+
+        res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...)
+
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+CERTO... NESSE LUGAR AÍ,
+
+
+em vez 
+
+de 
+
+SETTARMOS AQUELE COOKIE pobre de 
+
+
+'loggedIn=true',
+
+
+
+
+QUE
+
+TINHA ESTE CÓDIGO:
+
+
+
+  res.setHeader('Set-Cookie', 'loggedIn=true');
+
+  ,
+
+
+
+
+
+
+__PODEMOS ___
+
+
+
+
+
+SIMPLESMNETE 
+
+
+
+'
+REACH OUT'
+ 
+
+
+
+
+ AO NOSSO OBJETO 
+
+
+
+
+ REQUEST (req) 
+
+
+
+
+ E ÁI 
+
+
+
+ ___
+
+
+
+ ACESSAR 
+
+ O 
+
+ OBJETO 
+
+
+
+
+
+
+ 'session' (req.session),
+
+
+
+
+
+ OBJETO QUE __ É ADICIONADO__ JUSTAMENTE __ PELO 
+
+
+
+
+ MIDDLEWARE 
+
+
+
+ de session (aquele 'app.use(session())' ),
+
+
+
+
+
+
+
+
+ QUE VAI 
+
+ TER COLOCADO ISSO DENTRO DE NOSSO OBJETO 'request'....
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> CERTO...
+
+
+
+
+ VAI FICANDO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+ exports.getLoginPage = (req, res, next) => {
+
+const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+    isLoggedIn: isLoggedIn
+    }
+  );
+};
+
+
+exports.postLogin = (req, res, next) => {
+
+        req.session.xxxxx;
+
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+----------------------------
+
+AÍ, DENTRO 
+
+DESSE 
+
+
+'req.session',
+
+
+
+PROFESSOR __ EXPLICA QUE __ PODEMOS 
+
+
+
+COLOCAR ___________ QUALQUER __ KEY QUE DESEJARMOS..... -------> 
+
+
+
+
+
+OU SEJA,
+
+
+PODEMOS 
+
+
+
+ESCREVER UMA KEY COMO 
+
+
+
+'isLoggedIn',
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.getLoginPage = (req, res, next) => {
+
+const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+    isLoggedIn: isLoggedIn
+    }
+  );
+};
+
+
+exports.postLogin = (req, res, next) => {
+
+        req.session.isLoggedIn; ///EIS O CÓDIGO EM QUESTÃO.
+
+        res.redirect('/');
+
+}
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+CERTo.... ---> 
+
+AÍ ELE 
+
+DEFINE 
+
+
+ESSE 
+
+'NEGÓCIO' nesse objeto 'session'
+
+
+COMO SENDO IGUAL A 'true'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ exports.getLoginPage = (req, res, next) => {
+
+const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+    isLoggedIn: isLoggedIn
+    }
+  );
+};
+
+
+exports.postLogin = (req, res, next) => {
+
+        req.session.isLoggedIn = true; ///EIS O CÓDIGO EM QUESTÃO.
+
+        res.redirect('/');
+
+}
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+OK....... ISSO TERÁ ADICIONADO 1 KEY DE 
+
+
+'isLoggedIn'
+
+
+AO SEU OBJETO 
+
+'session'... -------> 
+
+
+
+
+
+
+
+
+
+
+E AGORA, SE SALVARMOS TUDO ISSO E VOLTARMOS 
+
+AO 
+
+
+
+BROWSER,
+
+
+
+
+
+
+RECARREGARMOS A PÁGINA,
+
+
+
+
+
+
+DELETARMOS AQUELE COOKIE VELHO DE 'isLoggedIn'
+
+
+
+E ENTAÕ 
+
+
+
+__CLICARMOS NO BUTTON DE LOGIN (que dispara aquele controller de 'postLogin'),
+
+
+
+
+
+
+
+_____O QUE __ VAMOS 
+
+
+
+
+VER é __ QUE 
+
+
+1 NOVO 
+
+
+___COOKIE_ _ TERÁ SIDO ADICIONADO, lá 
+
+
+na aba 
+
+'application > cookies > localhost:3000',
+
+
+
+
+
+
+
+O COOKIE 
+
+DE
+
+
+
+
+
+'connect.sid' (
+
+
+
+
+
+
+
+
+
+ESSA SIGLA SIGNIFICA 
+
+
+'connect SESSION ID COOKIE'...
+
+
+) --------> AÍ,
+
+
+
+
+SE __EXPANDIRMOS O 'VALUE' 
+
+
+DESSA 
+
+KEY 
+
+de 
+
+
+'connect.sid',
+
+
+
+
+
+VEREMOS 
+
+
+
+
+
+
+__ UMA _________STRING __ESTRANHÍSSIMA,
+
+
+QUE SERÁ __ JUSTAMENTE ___ A COISA QUE O PROFESSOR HAVIA MENCIONADO,
+
+
+SERÁ AQUELE 
+
+'hashed id',
+
+
+
+
+
+
+
+O HASHED ID ARMAZENADO NOS 'SESSION COOKIES', no browser... ----> 
+
+
+
+E O PROFESSOR 
+
+
+ENTÃO NOS EXPLICA QUE 
+
+
+_ESSE 
+
+
+'connect.sid' é __POR DEFAULt__ 
+
+
+um 
+
+
+'session cookie'...
+
+
+
+
+
+
+
+
+
+
+
+---------> COMO ISSO É UM 'SESSION COOKIE',
+
+ELE 
+
+__ VAI NATURALMENTE ___ EXPIRAR__ 
+
+QUANDO VOCÊ 
+
+
+FECHAR O BROWSER... 
+
+
+
+
+
+
+
+
+
+
+------> É UM SESSION COOKIE,
+
+
+__SESSION COOKIE __ QUE VAI __ IDENTIFICAR __ O SEU 
+
+'user' aqui...  -----> NA VERDADE, VAI IDENTIFICAR 
+
+
+'''YOUR RUNNING INSTANCE OF THIS WEBSITE''',
+
+
+
+ESSE 
+WEBSITE EM QUE VOCÊ ESTÁ 'BROWSING AROUND',
+
+
+
+
+
+
+
+
+
+____ ESSE 'SESSION COOKIE'
+
+
+___ VAI ___IDENTIFICAR___ VOCÊ/O USER __ AO SERVER__ E 
+
+
+
+
+À SESSIOn armazenada no server...
+
+
+
+
+
+
+
+
+--> E O PROFESSOR NOS DIZ QUE __ CONSEGUE PROVAR ISSO A NÓS....
+
+
+
+
+
+
+
+
+
+--> CONSEGUE__ PROVAR__ QUE 
+
+
+
+
+ESSE 
+
+SESSION COOKIE ESTÁ SENDO ARMAZENADO...
+
+
+
+
+
+
+
+-> ELE ESCREVE UM CONSOLE.LOG DE 
+
+'console.log(req.session)'
+
+
+
+LÁ 
+
+
+
+em 
+
+'exports.getLoginPage'......
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.getLoginPage = (req, res, next) => {
+
+
+console.log(req.session); /////////EIS O CÓDIGO EM QUESTÃO.
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+    //  isLoggedIn: req.isLoggedIn
+    isLoggedIn: isLoggedIn
+    // isLoggedIn: 'xx'
+    }
+  );
+};
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+CERTO... ISSO FEITO,
+
+PROFESSOR 
+
+
+VOLTA 
+
+À 
+
+PÁGINA 
+
+
+
+DE LOGIN,
+
+
+e AÍ 
+
+ESSE CONSOLE.LOG É DISPARADO...
+
+
+
+
+
+
+
+
+-> OBSERVAMOS O SEGUINTE CÓDIGO NO TERMINAL:
+
+
+
+
+
+Session {
+  cookie: { path: '/', _expires: null, originalMaxAge: null, httpOnly: true },
+  isLoggedIn: true
+}
+
+
+
+
+
+
+
+
+
+
+--> ISSO É O OUTPUT DE 
+
+
+
+'req.session',
+
+
+
+
+_SINAL QUE _ NOSSA SESSION FOI __ ARMAZENADA NO OBJETO 'session' 
+
+
+
+DO 
+
+REQUEST DO BROWSER.... (sucesso)...
+
+
+
+
+
+
+-------------
+
+
+
+OK.... CONSERTEI O CÓDIGO...
+
+
+
+AGORA CONSIGO VER ESSE OUTPUT AÍ,
+
+
+
+esse 
+
+
+console.log de 'req.session',
+
+
+QUE VAI 
+
+
+NOS 
+
+RENDER 
+
+esse 
+
+
+objeto 
+
+
+
+aqui:
+
+
+
+
+
+Session {
+  cookie: { path: '/', _expires: null, originalMaxAge: null, httpOnly: true }
+}
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+ok.....  
+
+
+
+
+
+E SE CONSOLE.LOGGARMOS 
+
+
+
+
+'req.session.isLoggedIn' 
+
+
+
+
+NESSE 
+
+CÓDIGO de 'getLoginPage'
+,
+
+é CLARO QUE VAMOS CONSEGUIR 
+
+'undefined'
+
+como VALOR,
+
+
+
+
+JUSTAMENTE PQ 
+A PROPRIEDADE 
+
+'isLoggedIn=true'
+
+
+
+SÓ É ADICIONADA __ AO OBJETO 
+
+
+
+'session'
+
+
+QUANDO 
+
+
+REALMENTE FOR EXECUTADO O CÓDIGO DE 
+
+
+'
+
+
+
+
+exports.postLogin = (req, res, next) => {
+        req.session.isLoggedIn = true; //MANEIRA ___ LEGIT__ de SETTAR 1 SESSION COOKIE no browser de seu user... --> é claro que esse approach aí REQUER QUE VOCÊ TENHA A PACKAGE DE 'express-session' JÁ INSTALADA no seu projeto.... (pq só assim o objeto 'session' no objeto 'request' passa a existir)....
+
+        res.redirect('/');
+
+}
+
+
+
+
+'
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+ok..... ---> 
+
+MAS 
+
+
+SE ESSE CÓDIGO FOR EXECUTADO (clicarmos no button de 'login')
+
+
+E ENTÃO 
+
+
+RECARREGARMOS A PAGE DE 
+
+
+'getLogin' (esse controller aí),
+
+
+REALMENTE
+
+VEREMOS 
+
+O 
+
+
+VALUE de 'true'
+
+
+
+
+nesse console.log,
+
+
+
+PQ _ _AGORA__ DE FATO __ O 
+
+
+
+'isLoggedIn'
+
+
+
+
+__ESTARÁ ARMAZENADO NA NOSSA 'SESSION'.... 
+
+
+
+
+
+
+
+
+-----> CERTO... E AÍ 
+
+ 
+
+ PODEMOS __ IR PARA UMA PÁGINA DIFERENTE (como 'products')
+
+ E AÍ 
+
+
+
+
+ __VOLTAR__ à 
+
+ PAGE 
+
+ DE 
+
+ 'login',
+
+
+
+ E AÍ __ AINDA VEREMOS 
+
+ 'true'
+
+
+ OUTPUTTADO,
+
+ sinal 
+
+ QUE 
+
+ __NOSSA 'SESSION COOKIE'
+
+ e 
+
+ essa 
+
+ PROPRIEDADE 
+
+
+ 
+
+ ARMAZENADA NELA __ CONTINUAM EXISTINDO NO BROWSER DO USER... --> mesmo sendo 
+
+
+
+
+ DIFERENTES OS REQUESTS (pq cada request É AUTÔNOMO E INDEPENDENTE
+  EM RELAÇÃO AOS OUTROS, ATÉ MESMO REQUESTS ENVIADOS _ __ 
+  
+  DE 1 MESMO BROWSER/USER) QUE VAMOS ENVIAR/estamos enviando, 
+
+
+
+ ESSA DATA armazenada nessa SESSION COOKIE, nesse browser do user,
+
+ CONTINUA A MESMA....
+
+
+
+
+ ----------------------------------
+
+ 
+
+
+
+
+
+
+
+ -------> ok....... AINDA VEMOS 'true'
+
+ PQ 
+
+___AINDA__ ARMAZENAMOS ____:
+
+
+
+1) A 'SESSION', LÁ NO __SERVERSIDE___ (session com o SESSIONID DE VERDADE, PURO... sem SER HASHEADO)
+
+
+
+
+
+2) A 'SESSION' __DENTRO__ DO COOKIE ARMAZENADO NA STORAGE DO BROWSER DO USER... (session com o HASHEDID, id HASHEADO de forma que só possa ser compreendido pelo server.... não é TOTALMENTE EQUIVALENTE AO ID armazenado no server..., mas MATCHEIA IGUAL)
+
+
+
+
+
+
+
+
+------> ok... ENTRETANTO,
+
+
+CABE 
+
+
+RESSALTAR QUE __ AQUI NÓS __ AINDA __ NÃO ESTAMOS __ ARMAZENANDO 
+
+
+
+AS SESSIONS, NO NOSSO BACKEND,  EM UMA __DATABASE____,
+
+
+
+E SIM 
+
+
+___ESTAMOS ___ ARMAZENANDO 'IN MEMORY',
+
+
+
+
+
+
+pq ESTE CÓDIGO AQUI:
+
+
+
+'req.session.isLoggedIn = true',
+
+
+ESCRITO NO CONTEXTO DO __NODE__,
+
+
+
+
+VAI 
+
+
+ARMAZENAR ESSE NEGÓCIO __ DENTRO ___ DO OBJETO 'REQUEST' MANAGEADO AUTOMATICAMENTE PELO SERVER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+A RAZÃO DE AINDA VERMOS 'true' (daqele console.log de 'req.session')
+
+
+
+
+NO TERMINAL _ MESMO QUANDO TROCAMOS DE PAGE (diferentes requests)
+
+
+
+É 
+
+
+
+PQ __ NÓS ___ AINDA ARMAZENAMOS ESSA ___ SESSION ___ LÁ 
+
+
+NO 'SERVER' (node),
+
+
+
+ARMAZENAMOS LÁ NA MEMORY 
+
+DO 
+
+SERVER (e ainda não no database, é claro),
+
+
+
+
+
+
+
+
+O QUE SIGNIFICA QUE __OS DETALHES DE NOSSAS SESSIONS SÃO __ PERDIDOS__ QUANDO FECHAMOS O SERVER... 
+
+
+
+
+
+
+
+
+
+-----> MAS 1 PONTO POSITIVO:
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE CONSEGUE ___PROVAR__ QUE 
+
+
+
+
+
+
+ESSA SESSION __ VAI FICAR EXISTENTE SÓ PARA AQUELE 
+
+
+
+USER (aquele browser, nesse caso),
+
+
+
+POR MEIO 
+
+
+
+
+
+
+
+
+DA ABERTURA DE MÚLTIPLOS BROWSERS.. ------> 
+
+
+
+
+ELE 
+
+
+ABRE 
+
+
+
+
+
+O FIREFOX E O CHROME.. -----> 
+
+
+
+NO CHROME,
+
+AINDA ESTAREMOS 
+
+'LOGGED IN',
+
+
+ao passo que 
+
+NO 
+
+
+FIREFOX 
+
+
+
+
+___NÃO ESTAREMOS 'LOGGED IN' (objeto 
+
+
+'loggedIn: true' 
+
+
+
+
+NÃO ESTARÁ EXISTENTE NO 
+
+
+OBJETO 'req' 
+
+
+
+
+DO 
+
+
+
+FIREFOX... -------> 
+
+
+
+
+
+ISSO ACONTECE/ACONTECERÁ ___ PQ ___ O FIREFOX 
+
+
+
+
+_______NÃO RECEBEU ___ AQUELE COOKIE que é 
+
+produzido com 
+
+
+'''
+exports.postLogin = (req, res, next) => {
+
+
+        req.session.isLoggedIn = true; //MANEIRA ___ LEGIT__ de SETTAR 1 SESSION COOKIE no browser de seu user... --> é claro que esse approach aí REQUER QUE VOCÊ TENHA A PACKAGE DE 'express-session' JÁ INSTALADA no seu projeto.... (pq só assim o objeto 'session' no objeto 'request' passa a existir)....
+
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+''''',
+
+
+
+
+
+
+O QUE FAZ COM QUE 
+
+
+AQUELE PROCEDIMENTO DE 'match'
+
+COM A SESSION __ QUE ESTÁ ARMAZENADA LÁ NA DATABASE (com o id de verdade)
+
+
+NÃO ACONTEÇA...
+
+)
+
+
+
+
+
+
+
+
+OK.... REALMENTE, O STORAGE DO 
+
+'FIREFOX'
+
+
+
+ficou/está vazio,
+
+
+
+AO PASSO QUE 
+
+
+O 
+
+
+STORAGE 
+
+
+
+
+DO 
+
+
+
+CHROME, NÃO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--->OK, COM ISSO,
+
+JÁ VEMOS 
+
+O FUNCIONAMENTO DAS 'SESSIONS',
+
+sua 
+
+
+
+EXCLUSIVIDADE 
+
+
+em relação ao user em que 
+
+estão vinculadas (session armazenada no SESSION COOKIE no browser do user DEVE MATCHEAR/ter id (hashed id) matcheado com o __ID__ REAL, armazenado no SERVER/database.... )
+
+
+
+
+
+
+
+
+--> claro que 
+
+
+
+
+USAR _UM SERVER __ DE FORMA PURA para o store 
+
+de 
+
+
+sessions é um lixo,
+
+
+PRECISAMOS __ DE DATABASES, É UMA REAL NECESSIDADE,
+
+
+pq 
+
+n vamos querer 
+
+
+PERDER 
+
+TODAS NOSSAS 'SESSION' QUANDO NOSSO SV FOR DESLIGADO...
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+OK, NOSSA 'SESSION DATA' É __MANTIDA __ AO LONGO DE __ REQUESTS,
+
+
+
+MAS __ NÃO É MANTIDA__ 'ACROSS USERS' ( o que é ótimo, e é o que desejamos...)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSE É O PODER __ DO USO DE UMA SESSION.... -------> A SESSION 
+
+
+
+
+AINDA PRECISA __ DE 1 COOKIE PARA  __FUNCIONAR___, 
+
+
+
+MAS 
+
+
+O QUE INTERESSA/É BOM __ É QUE __ A 
+
+'SENSITIVE INFORMATION'
+
+
+É __ ARMAZENADA ___ LÁ NO SERVER EM SI/database,
+
+
+
+
+O QUE DEIXA 
+
+
+
+O USER SÓ COM 
+
+
+UM HASHEDID de merda (e mais algumas infos meio inúteis) lá 
+
+
+
+na 
+
+
+SESSION QUE é armazenada NO COOKIE retornado a ele...
+
+
+
+
+
+
+
+
+
+-------> AS SESSIONS AINDA PRECISAM DE SUA CONTRAPARTE,
+
+os 
+
+'COOKIES' (session cookies)
+
+
+PARA __ IDENTIFICAR __ OS 'USER',
+
+
+
+MAS 
+
+
+A 
+
+SENSITIVE INFORMATION ___ FICA __ ARMAZENADA NO SERVER/DATABASE... (
+
+  e isso é ótimo pq 
+
+
+  NÃO PODEMOS MODIFICAR ESSA INFORMAÇÃO, 1 HACKER N PODE 
+
+
+  MODIFICAR 
+
+  ESSA INFORMAÇÃO/LER DADOS...
+) --------- >
+
+
+
+
+E ISSO,
+
+
+ESSA 
+
+
+
+__IMPOSSIBILIDADE DE ACESSO,
+
+
+
+
+É ___ SUPER IMPORTANTE PARA O AUTHENTICATION, 
+
+
+
+
+
+E ISSO QUE 
+
+VIMOS AQUI 
+
+JÁ 
+
+
+
+
+É O 
+
+'CORE MECHANISM'
+
+
+
+POR TRÁS 
+
+DO 
+
+
+
+AUTHENTICATE GERAL DE USERS 
+
+
+NA WEB.... 
+
+(
+
+É CLARO QUE ___ EXISTEM OUTRAS TÉCNICAS,
+
+
+COMO 
+
+A VISTA 
+
+
+
+NO BUILD DE 'REST API's,
+
+
+
+ALGO QUE VEREMOS MAIS TARDE,
+
+
+
+MAS ISSO AQUI 
+É UMA 
+
+
+
+'CORE THING' 
+
+
+
+
+
+SOBRE COMO __A AUTHENTICATION 
+
+
+
+GERALMENTE FUNCIONA,
+
+
+_____ESPECIALMENTE___ COM 
+
+O 
+
+
+RENDER DE _ VIEWS__, COMO 
+
+estamos 
+
+
+vendo agora com EJS  --------> E É SOBRE ISSO QUE EXPANDIREMOS 
+
+
+
+NOSSOS CONHECIMENTOS,
+
+NO MÓDULO 
+
+DE 
+
+
+'authentication'.... -------> AÍ VEREMOS COISAS COMO 
+
+
+
+
+'VALIDATING CREDENTIALS',
+
+
+'LOGOUT DE USERS',
+
+
+
+
+
+
+
+e coisas assim....
+
+
+)
+
+
+
+
+https://github.com/expressjs/session
+
+

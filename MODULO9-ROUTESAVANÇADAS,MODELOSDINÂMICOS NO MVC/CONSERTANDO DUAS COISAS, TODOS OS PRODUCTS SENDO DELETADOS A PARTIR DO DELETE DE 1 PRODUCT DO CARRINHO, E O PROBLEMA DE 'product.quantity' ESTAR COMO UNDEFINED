@@ -1,0 +1,572 @@
+
+
+-------> OK.... MAS AINDA ESTOU COM O MESMO PROBLEMA DE ANTES... ---> QUANDO DELETO ALGUMA COISA, 
+
+
+______TODOS ___ OS 
+
+
+PRODUCTS SÃO REMOVIDOS...
+
+
+
+
+
+
+
+--> É UM BUG __ MEU...______
+
+
+
+
+
+
+
+
+---> PROFESSOR DIZ QUE MELHORAMOS UM MONTE NOSSO APP...
+
+
+
+
+
+
+----> PROFESSOR EXPLICA/ADMITE QUE NOSSO 
+
+APPROACH ATUAL COM OS MODELS 
+
+É UM 
+
+POUCO 
+
+SUBOPTIMAL... ---> ISSO PQ 
+
+
+
+
+___ O TRABALHO__ COM FILE/FILESYSTEM NÃO É 'TAO GREAT'..
+
+
+
+
+
+
+
+
+
+
+-_> ELE TAMBÉM ADMITE QUE 
+
+
+__PODEMOS__ MELHORAR ALGUMAS COISAS NOS CONTROLLERS... --> 
+
+PQ 
+
+POR EXEMPLO,
+
+
+ 
+__NÓS ___ DEVEMOS __ SÓ 
+
+
+'REDIRECT'
+
+
+SE 
+
+
+__SOUBERMOS QUE 
+
+
+
+O PROCESSO DE DELETE FOI UM SUCESSO... (e não sempre,
+
+
+como acontece 
+
+
+nesta linha:
+
+
+''''''''''''''''''''''''''''''
+
+Product.findById(
+    prodId, product => {
+        Cart.deleteProductFromCart(productId, product.price);
+        res.redirect('/cart');
+    }
+)
+
+
+''''''''''''''''''''''''
+
+)
+
+
+---------------> ISSO PQ 
+
+
+COMO 
+
+__ACESSAMOS UMA FILE por meio desse 'deleteProductFromCart',
+
+_NÓS TEORICAMENTE DEVERÍAMOS TER UM CALLBACK DENTRO DELA,
+
+TAMBÉM... ------> MAS ESSAS 
+
+SÃO 
+
+COISAS QUE 
+
+O 
+
+PROFESSOR 
+
+FARÁ 
+
+
+__ QUANDO __ADICIONARMOS __UMA DATABASE AO NOSSO APP, NO PRÓXIMO MÓDULO...
+
+
+
+
+------------------
+
+
+
+
+OK... MAS TENHO QUE CONSERTAR 
+
+
+ESSE PROBLEMA __ DE TODO O CART__ 
+
+
+
+SER DELETADO QUANDO REMOVO 1 ÚNICO ELEMENTO/product...
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+DESCOBRI O PROBLEMA... ERA 
+
+
+
+1 
+
+
+'return' faltando NESSE TRECHO DE CO´DIGO de 'deleteProductFromCart':
+
+
+
+
+
+
+
+
+
+
+
+static deleteProductFromCart(productId, productPrice) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+        const cart = JSON.parse(fileContent);
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity;
+        updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+                return prod.id !== productId; <<<<<<<<<<<<<<<NESTA LINHA AQUI...
+          }
+        )
+        console.log(updatedCart);
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+            fs.writeFile(
+              filePath, JSON.stringify(updatedCart), 
+              (err) => {
+                  console.log(err);
+              }
+            )
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+esse '.filter()'
+
+
+estava tipo 
+
+
+'
+
+
+
+    updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+                 prod.id !== productId; <<<<<<<<<<<<<<<NESTA LINHA AQUI...
+          }
+        )
+
+
+'
+
+
+
+QUANDO DEVIA ESTAR ASSIM:
+
+
+
+
+
+    updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+               return  prod.id !== productId; <<<<<<<<<<<<<<<NESTA LINHA AQUI...
+          }
+        )
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA SÓ FALTA CONSERTAR O BUG 
+
+
+do 
+
+'product.quantity'..
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR DIZ QUE __SE NÃO TIVERMOS NENHUM PRODUCT 
+NO CART, OU __ SE NÃO TIVERMOS O PRODUCT QUE QUEREMOS 
+DELETAR LÁ  NO CART... --> VAMOS RECEBER __ UM ERRO QUANDO TENTARMOS DELETAR ESSE PRODUCT, COMO ADMIN...--> 
+
+
+
+
+
+
+
+
+'Cannot read property quantity of undefined'... -----> 
+
+
+
+ISSO ACONTECE PQ 
+
+
+TENTAMOS CHECAR 
+a 
+
+'QUANTITY' 
+
+DE UM PRODUCT QUE 
+
+NÓS SIMPLESMENTE NÃO TEMOS... ------> E A RAZÃO PARA ISSO 
+
+É 
+
+QUE 
+
+
+
+
+
+LÁ 
+
+
+
+
+NO 
+
+MOdel 
+
+de 
+
+'product.js'
+
+
+
+NÓS USAMOS 
+
+o 
+
+
+'cart model' 
+
+
+EM 
+
+
+
+'Cart.deleteProduct(id, product.price)'
+
+
+__PARA __ DELETAR__ 
+
+
+
+O PRODUCT DO CART... --->  O PROBLEMA 
+
+
+É QUE 
+
+
+
+
+____ OBVIAMENTE __ NEM TODO ___ PRODUCT___ DE NOSSO APP ESTARÁ 
+
+
+
+
+NO CART 100% DAS VEZES... --> para remediar isso,
+
+
+
+LÁ 
+
+
+
+No 
+
+
+'deleteProductFromCart',
+
+
+
+
+ 
+
+
+ NÓS PRECISAMOS 
+
+
+ '''CHECK IF A GIVEN PRODUCT IS PART OF THE CART''',
+
+ antes de realizar qualquer operaçaõ...
+
+
+
+
+
+
+ ex(código de deleteProductFromCart):
+
+
+
+
+
+
+
+ static deleteProductFromCart(productId, productPrice) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+        const cart = JSON.parse(fileContent);
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity;
+        updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+                return prod.id !== productId;
+          }
+        )
+        console.log(updatedCart);
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+            fs.writeFile(
+              filePath, JSON.stringify(updatedCart), 
+              (err) => {
+                  console.log(err);
+              }
+            )
+    })
+}
+
+
+
+
+
+
+
+
+
+------> ALI,
+
+
+
+NAQUELAS LINHAS DE 
+
+
+
+'''
+
+        const cart = JSON.parse(fileContent);
+        const updatedCart = {...cart};
+
+        ''',
+
+
+
+LOGO ABAIXO DELAS, NAQUELA LINHA EM QUE O PROFESSOR 
+
+
+__ENCONTRA _ O PRODUCT NO CART,
+ 
+ POR MEIO DE 
+
+
+
+
+     '''    const product = updatedCart.products.find(prod => prod.id === productId); ''',
+
+
+
+
+
+
+
+
+     DEVEMOS CHECK __ SE ESSE PRODUCT REALMENTE 
+
+     EXISTE/FOI ENCONTRADO...
+
+
+
+
+
+
+
+
+     --> tipo 
+
+
+     'if (!product) {
+
+         return;
+     }
+     '
+
+
+
+     ISSO VAI BLOQUEAR A PROGRESSÃO DO CÓDIGO, IMPEDIR DE CONTINUAR 
+
+
+     A 
+
+     EXECUÇÃO 
+
+
+
+     de coisas 
+
+     como 
+
+
+     'const productQuantity = product.quantity',
+
+
+
+
+
+
+     __ JUSTAMENTE PQ ESSE PRODUCT NÃO EXISTE/NÃO ESTARÁ EXISTINDO..
+
+
+
+
+
+
+
+
+     --> SALVAMOS E RECARREGAMOS O APP.... 
+
+
+
+
+
+
+
+
+
+     --> AGORA SE ADICIONARMOS 1 PRODUCT RAPIDAMENTE E ENTÃO O DELETARMOS,
+
+
+     não vamos mais receber esse erro...
+
+
+
+
+
+
+
+
+
+
+     CERTO.... CONSERTAMOS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     hora do wrapup
+     

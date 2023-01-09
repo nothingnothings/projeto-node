@@ -1,0 +1,1599 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK.... AGORA DEVEMOS 
+
+
+
+'WIRE UP'
+
+nossa FUNCTION DE ADD 
+
+
+a 
+
+NOSSA FORM 
+
+
+no html,
+
+que tem este código:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typescript</title>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <input type="number" id="input1">
+    <input type="number" id="input2">
+    <p></p>
+    <button>Add</button>
+</body>
+</html>
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+PARA ISSO, 
+
+
+PROFESSOR 
+
+ADICIONA IDs aos inputs,
+
+PARA QUE 
+
+
+
+SEJA POSSÍVEL 
+GANHAR ACESSO A ESSES ELEMENTS 
+
+LÁ NO NOSSO 'app.ts'...
+
+
+
+
+
+
+
+
+-_> PODEMOS RODAR CÓDIGO JAVASCRIPT COMUM NO TYPESCRIPT, ISSO É PERFEITAMETNE POSSÍVEL (tanto javascript BROWSER COMO SERVERSIDE)...
+
+
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+const num1Element = document.getElementById('num1');
+
+
+
+
+function add (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+    return num1 + num2;
+    }
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+TAKEAWAY --> O TYPESCRIPT SEMPRE TRABLAHA A PARTIR DO JAVASCRIPT.... --> ISSO SIGNIFICA QUE TODO E QUALQUER 
+
+
+
+CO´DIGO JAVASCIRPT 
+
+FUNCIONA 
+
+EM 
+
+
+
+TYPESCRIPT FILES...
+
+
+
+
+
+
+
+------> VOCÊ PODE APRENDER TYPESCRIPT POR MEIO 
+
+DO 
+
+SIMPLES 
+
+'stick to what you know'
+
+
+
+E ENTÃO 
+
+
+ADICIONAR 
+
+
+AS COISAS ETAPA POR ETAPA...
+
+
+
+
+
+
+PRIMEIRO, VOCÊ VAI ADICIONAR OS 'TYPES',
+
+
+PARA DEIXAR SEU CÓDIGO MAIS ORGANIZADO....
+
+
+
+
+
+
+
+
+
+2) DEPOIS,
+
+VOCÊ PODE ENCONTRAR ALGUNS LUGARES EM QUE VOCÊ PODERÁ 
+ADICIONAR 
+
+ALGUMAS 
+ADVANCED TYPESCRIPT FEATURES, etc....
+
+
+
+
+
+
+
+
+
+
+
+MAS EM 1 NUTSHELL,
+
+VOCê 
+
+SEMPRE 
+
+
+
+PODERÁ ESCREVER 
+
+__ CÓDIGO JAVASCRIPT,,
+
+E ISSO VAI FUNCIONAR,
+
+PQ 
+
+O 
+
+TYPESCRIPT 'BUILDS UPON JAVASCRIPT',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E TODO CÓDIGO JAVASCRIPT É SUPORTADO NO TYPESCRIPT...
+
+
+
+
+
+
+
+
+
+-> É POR ISSO QUE PDEMOS USAR ESSE JAVASCRIPT VANILLA PARA CONSEUGIR 
+
+
+ACESSO ÀQUELES ELEMENTOS...
+
+
+
+ex:
+
+
+
+
+const num1Element = document.getElementById('input1'); //SIM, O TYPESCRIPT FUNCIONA COM QUALQUER TIPO DE JAVASCRIPT CODE, ATÉ CMO BROWSERSIDE VANILLA...
+
+
+const num2Element = document.getElementById('input1');
+
+
+
+const buttonElement = document.querySelector('button');
+
+
+
+
+// function add (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+//     return num1 + num2;
+//     }
+    
+
+
+function addSum (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(addSum(1, 6));
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+    -> O CÓDIGO VAI FICANDO ASSIM....
+
+
+
+
+
+
+
+    -----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    CERTO..
+
+    -_> AÍ QUEREMOS ADICIONAR UM LISTENER AO ELEMENTO BUTTON,
+
+    por meio do código:
+
+
+
+
+
+
+
+
+
+
+const num1Element = document.getElementById('input1'); //SIM, O TYPESCRIPT FUNCIONA COM QUALQUER TIPO DE JAVASCRIPT CODE, ATÉ CMO BROWSERSIDE VANILLA...
+
+
+const num2Element = document.getElementById('input1');
+
+
+
+const buttonElement = document.querySelector('button');
+
+
+
+
+// function add (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+//     return num1 + num2;
+//     }
+    
+
+
+function addSum (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(addSum(1, 6));
+    
+    
+
+
+
+buttonElement.addEventListener('click', 
+
+
+() => {
+
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+    buttonElement.addEventListener('click', 
+    
+    () => {
+
+
+        
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -> UMA COISA INTERESSANTE QUE VEREMOS, AQUI,
+
+
+
+
+    É QUE 
+
+    MEU IDE __ JÁ SABE
+    __ QUE 
+
+
+
+
+    NÓS PODEMOS 
+
+    CHAMAR 
+
+    '.addEventListener'
+
+
+    LÁ Nessa const 
+
+    'buttonElement'... ---------> A NÓS, ISSO PODE PARECER CLARO, ÓBVIO,
+
+    pq 
+
+    SABEMOS QUE 
+
+
+
+    NÓS SELECIONAMOS UM BUTTon,
+
+
+
+
+    E SABEMOS QUE O DOM ELEMENT DO BUTTON TEM ESSE method de 'addEventListener'... 
+
+
+
+
+
+
+
+
+--> MAS PQ DIABOS MEU IDE SABE DISSO?
+
+
+
+--> NO FINAL DAS CONTAS, É POR CAUSA DO TYPESCRIPT....
+
+
+
+
+
+
+
+
+-------> É PQ ELE SABE QUE QUANDO 
+
+NÓS SELECIONAMOS UM BUTTON COM 'querySelector',
+
+
+
+
+__ NÓS GANHAMOS DE VOLTA UM 'HTMLButtonElement' --> 
+
+
+SE VOCÊ 
+
+
+PASSAR O MOUSE POR CIMA 
+DESSE NEGÓCIO,
+
+
+VOCÊ 
+
+
+VERÁ 
+
+
+
+
+
+no IDE QUE 
+
+ELE 
+
+MOSTRA:
+
+
+
+const buttonElement: HTMLButtonElement
+
+
+
+
+
+
+
+
+
+
+
+
+
+==> ESSA COISA NA DIREITA do ':' 
+É CHAMADO 
+DE 
+
+'INFERRED TYPE'...
+
+
+
+
+
+
+
+
+
+INFERRED TYPE --> ISSO __ NÃO É SETTADO POR NÓS EXPLICITAMENTE...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... NÃO DEFINIMOS ESSE TYPE EXPLICITAMENTE... 
+
+
+
+
+
+(
+
+
+
+    isso quer dizer, em outras palavrsa,
+
+
+    QUE 
+
+    O PROFESSOR NÃO HAVIA ESCRITO 
+
+
+
+    'const buttonElement: HTMLButtonElement = document.querySelector('button)';'
+
+
+
+    ANTERIORMENTE,
+
+    APESAR DE QUE 
+
+    ELE CERTAMENTE PODERIA TER FEITO ISSO....
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADEMAIS,
+
+
+
+
+
+
+
+sabemos que 
+
+
+'HTMLButtonElement' 
+
+É __ UM DOS __ MUITOS __ 'builtin'
+
+
+TYPES _ QUE 
+
+SÃO SUPORTADOS 
+
+PELO 
+
+
+
+TYPESCRIPT _ OUT OF THE BOX...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------> MAS NÓS NÃO PRECISAMOS DEFINIR O TYPE DESSE 'BUtton' explicitamente,
+
+
+pq 
+O
+ 
+
+ TYPESCRIPT JÁ É CAPAZ DE 'INFER TYPES'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> E ELE É BEM ESPERTO QUANTO A ISSO:
+
+
+
+ ELE __É CAPAZ __ DE DESCOBRIR QUAL TIPO DE VALOR VAI EVENTUALMENTE 
+
+
+ SER 
+
+
+ ARMAZENADO DENTRO DESSA CONST de 'buttonElement',
+
+  
+
+
+
+
+
+
+
+  TUDO POR CAUSA DO CÓDIGO DE 'document.querySelector("button')'
+
+
+
+  QUE 
+
+  FOI ESCRITO/ASSIGNADO A ESSA CONST...
+
+
+
+
+
+
+
+
+
+
+
+  --> E ISSO TUDO É __ PRETTY NICE__... -->  ESSENCIALMENTE,
+
+
+  ELE 
+
+  SABE/VAI SABER QUE VAMOS TER 1 BUTTON DENTRO DESSA CONST,
+
+  e por isso 
+
+
+  ELE JÁ VAI NOS SUGERIR O CALL DE 
+
+  'addEventListener'...
+
+
+
+
+
+
+
+  --------> OK.... -------> MAS DENTRO DO EVENTLISTENER,
+
+
+
+  VAMOS QUERER 
+
+
+  EXTRAIR OS VALORES
+
+
+
+  DOS ELEMENTOS 
+
+  'num1Element'
+
+  E 
+
+  'num2Element'..
+
+
+
+
+
+
+
+
+
+
+  -> o professor escreve assim:
+
+
+
+
+
+
+  buttonElement.addEventListener('click', 
+
+
+
+() => {
+
+    const num1 = num1Element.value
+}
+
+
+  )
+
+
+
+
+
+
+
+
+
+
+
+  --> PARA OBTER O VALOR INPUTTADO NO INPUT,
+
+  profesosr acessa a propriedade 
+
+  'value'
+
+
+  NESSE 
+  ELEMENTO... --> MAS 
+
+  O 
+  IDE 
+
+  DO PROFESSOR IMEDIATAMENTE APITARÁ,
+
+  MOSTRARÁ UM ERRO: ---> 
+
+
+  A 
+
+
+  RAZÃO DISSO É QUE 
+
+
+
+
+
+
+  _________ NEM TODO __ ELEMENTO HTML__ POSSUI __ UMA 
+
+
+  PROPRIEDADE 
+
+  'value' NO SEU INTERIOR... --------> EX:
+
+
+
+
+
+
+
+
+
+  1) ELEMENTOS 'INPUT' POSSUEM ESSA PROPRIEDADE 'value'
+
+
+
+
+  2) ELEMENTOS '<p>' NÃO POSSUEM ESSA PROPRIEDADE...
+
+
+
+
+
+
+
+
+
+
+
+
+  --------> OK.... --> ISSO SIGNIFICA QUE 
+
+
+  ___PRECISAMOS ___ CONVENCER_ O TYPESCRIPT __ 
+
+
+
+
+  DE QUE __ 
+
+  A COISA A QUE 
+
+  GANHAREMOS ACESSO COM 
+
+
+
+
+  o código
+
+
+
+  'const num1Element = document.getElementById('num1');'
+
+
+
+
+  É ____ JUSTAMENTE__ UM INPUT ELEMENT...
+
+
+
+
+
+
+
+
+  -> PARA ISSO,
+
+
+  CHUTO QUE O PROFESSOR ESCREVERÁ ISTO:
+
+
+
+  const num1Element: input = document.getElementById('num1');
+
+
+
+
+
+
+
+
+
+^^^^^^^^^^^^^^^^ ISSO ESTÁ ERRADO, A SINTAXE É COMPLETAMENTE DIFERENTE...
+
+
+
+
+
+
+
+
+
+  --> QUANTO AO BUTTON,
+
+  ELE SABIA 
+
+
+  QUE 
+
+
+
+
+  ERA 1 BUTTON POR CAUSA DO QUERY SELECT PELA TAG DE 'BUTTOn'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -> MAS COMO EM 'const num1Element = DOCUMENT.getElementById('num1')'
+
+
+
+  ESTAMOS __ SELECIONANDO ___ POR __ ID,
+
+
+
+  NÃO 
+
+  HÁ MANEIRA PELA QUAL 
+
+
+  O TYPESCRIPT 
+
+  CONSEGUIRÁ 
+
+
+
+  __ DETERMINAR QUE TIPO DE ELEMENTO SERÁ ESSE 'num1Element' (não há como ele saber que se trata de UM INPUT ELEMENT)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> MAS PODEMOS FAZER ALGO DIFERENTE EM RELAÇÃO A 'types',
+
+
+  que 
+
+é 
+
+ALGO QUE CHAMAMOS 
+
+DE 
+
+'TYPE CASTING'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TYPE CASTING --> SE NÓS, COMO DESENVOLVEDORES,
+
+
+TEMOS CERTEZA 
+
+
+DE 
+
+QUE 
+
+ALGO ___ SERÁ _ DE CERTO DATA TYPE NO NOSSO CÓDIGO,
+
+
+
+
+
+____ NÓS __ PODEMOS_ _ USAR UMA KEYWORD __ ESPECIAL NO TYPESCRIPT,
+
+
+A
+
+
+KEYWORD DE 
+
+
+'as' (como),
+
+
+
+
+
+
+
+
+ADICIONADA PELO TYPESCRIPT,
+
+
+PARA __ DIZER AO __ 
+
+TYPESSCRIPT QUE 
+
+
+ESSA 
+
+CONSTANTE/COISA  
+
+
+
+
+
+
+___ QUE SELECIONAMOS AQUI __ SERÁ _ __ SOMENTE DESSE TIPO AÍ,
+
+
+e nada mais...
+
+
+
+
+
+
+
+
+
+-> NO CASO, ESPECIFICAREMOS QUE 
+
+
+
+
+ESSE ELEMENTO SERÁ DE 
+
+tipo ('as')
+
+
+
+
+
+HTMLInputElement...
+
+
+
+
+
+
+
+
+
+
+
+FAZEMOS ISSO ASSIM:
+
+
+
+
+
+
+
+
+  const num1Element = document.getElementById('num1') as HTMLInputElement; 
+  const num2Element = document.getElementById('num2') as HTMLInputElement; 
+
+
+
+
+
+------------------------------
+
+
+
+
+CERTO, ISSO FARÁ O TRUQUE....
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+HTMLInputElement --> é um dos GENERAL DOM TYPES DISPONÍVEIS 
+
+NO TYPESCRIPT...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO,
+
+PODEMOS ACESSAR 
+
+
+
+'num1Element.value'
+
+
+SEM 
+
+
+
+
+CHAMAR ERRORS..
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+buttonElement.addEventListener('click', 
+
+
+() => {
+
+
+    const num1 = num1Element.value;
+    const num2 = num2Element.value;
+    const result = add(num1 + num2);
+}
+
+)
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+OK... AÍ, NESSE CASO,
+
+
+O 
+
+
+
+__ TYPESCRIPT VAI SALVAR NOSSOS TRASEIROS,
+
+MAIS UMA VEZ...
+
+
+
+
+--> QUANDO TERMINARMOS DE ESCREVER 
+
+
+'add(num1 + num2)',
+
+
+ 
+
+ VAMOS 
+
+
+
+
+
+
+ 
+
+
+ VER QUE 
+
+ UM ERRO TERÁ APARECIDO...
+
+
+
+
+
+
+
+
+
+ -> PROFESSOR EXPLICA UQE 
+
+ ESSE ERROR TEM RELAÇÃO COM AQUELES 
+
+ 'BUGS QUE SÃO FÁCEIS DE INTRODUZIR NO CÓDIGO',
+
+
+
+ QUE 
+
+ ELE HAVIA MENCIONADO ANTES... --------> NÓS REALMENTE OBTEMOS 
+ O 
+
+ VALOR 
+
+ INPUTTADO PELO __ USER__ AQUI 
+
+ nesse local/elemento.... --------> 
+
+
+
+
+
+
+
+E O USER REALMENTE VAI DIGITAR ALGO... -------> SÓ QUE ESSE 'ALGO'
+
+
+
+__ VAI ___ SER PARSEADO/TRATADO COMO UMA _ STRING PELO JAVASCRIPT_,
+
+
+PQ __ ISSO É O COMPORTAMENTO 
+
+DEFAULT DO JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+
+----------> VOCÊ _ EXPECT CONSEGUIR NUMBERS,
+
+
+MAS 
+
+O 
+
+
+
+
+
+
+
+
+PROBLEMA, AQUI, É VISTO QUANDO VOCê 
+
+PASSA O MOUSE POR CIMA DE 
+
+
+
+
+
+'num1Element' (QUE É UM ELEMENTO DE TYPE 'input', como devemos nos lembrar)....
+
+
+
+
+
+
+
+
+
+-> QUANDO FAZEMOS ISSO,
+
+
+
+NOSSO IDE NOS DÁ A INFO DE 
+
+
+
+
+'(property) HTMLInputElement.value: string ' 
+
+
+
+
+
+
+
+
+
+
+
+-_> ISSO SIGNIFICA QUE 
+
+
+'.value'
+
+
+
+___SEMPRE__ VAI NOS RETORNAR UMA STRING,
+
+
+
+
+
+e nunca um NUMBER... ----> E PARA QUE CONSIGAMOS __ CONSERTAR _ ISSO,
+
+
+
+ACHO QUE 
+
+
+PRECISAMOS 
+
+DE UM CÓDIGO COMO 
+
+'+num1Element.value' ou PARSEINT...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+    buttonElement.addEventListener('click', 
+    
+    () => {
+
+        // const num1 = num1Element.value; ///SE ESCREVERMOS ISSO SEM _ EXPLICARMOS AO TYPESCRIPT QUE 'num1Element' É _ UMA CONSTANTE QUE SEGURA UM INPUT (pq inputs são elementos que REALMENTE POSSUEM ESSA PROPRIEDADE 'value', que é uma propriedade QUE MUITAS VEZES NÃO EXISTE EM ELEMENTOS HTML... -> precisamos usar aquilo que é chamado de 'TYPE CASTING'... ---> TYPE CASTING É AQUELE TRECHO 'as HTMLInputElement', QUE ESCLARECE QUE ESSE _ ELEMENTO QUE FOI SELECIONADO ___ SERÁ_ __ SEMPRE UM 'INPUT ELEMENT'... (assim, deixamos nosso código bem mais CLARO, EXPLÍCITO)...
+        ///o código de const num1Element = document.getElementById('input1') as HTMLInputElement;  VAI FAZER COM QUE O 'error/aviso' que surge por causa de 'num1Element.value' SUMA...
+        
+        // const num2 = num2Element.value;
+
+
+        const num1 = +num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = +num2Element.value;
+
+
+        const result = addSum(num1, num2);
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ISSO SIGNIFICA QUE:
+
+
+
+
+'(property) HTMLInputElement.value: string ' 
+
+
+
+
+
+
+
+
+
+NISSO, NESSA INFO DO IDE,
+
+
+VEMOS QUE 
+
+
+O VLAOR RETORNADO É MOSTRADO NA DIREITA... ('string')...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> E ISSO É, EM TODAS AS CIRCUNSTÂNCIAS,
+
+1 STRING.. -> COMO PRECISAMOS 
+
+
+DE 
+
+NUMBERS,
+
+
+
+CONVERTEMOS 
+
+
+ISSO 
+
+
+POR MEIO DE 
+
+'+num1'
+
+e 
+
+'+num2'
+
+
+
+
+
+
+--> MAS A PARTE BOA DO TYPESCRIPT É QUE __ AGORA SOMOS FORÇADOS A VER ESSE ERRO,
+
+
+NÃO CONSEGUIMOS 'OVERLOOK IT' --> e com isso SOMOS FORÇADOS 
+
+A 
+ESCREVER 
+
+CÓDIGO MAIS LIMPO....
+
+
+
+
+
+
+
+
+
+
+
+
+rodamos TSC APP.TS....
+
+
+
+
+
+
+
+
+
+
+-> NOSSO CÓDIGO COMPILADO FICA ASSIM:
+
+
+
+
+// const addButton = document.querySelector('button');
+// const input1 = document.getElementById('input1').textContent;
+// const input2= document.getElementById('input2').textContent;
+// const add = (num1, num2) => {
+//     const paragraphNumber = document.querySelector('p');
+//     paragraphNumber.textContent = num1 + num2;
+// }
+// addButton.addEventListener('click', add(input1, input2))
+var num1Element = document.getElementById('input1'); //SIM, O TYPESCRIPT FUNCIONA COM QUALQUER TIPO DE JAVASCRIPT CODE, ATÉ CMO BROWSERSIDE VANILLA...
+var num2Element = document.getElementById('input2');
+var buttonElement = document.querySelector('button');
+// function add (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+//     return num1 + num2;
+//     }
+function addSum(num1, num2) {
+    return num1 + num2;
+}
+console.log(addSum(1, 6));
+// console.log(add('1', '6')); // --> isso fará com que UM ERROR SEJA THROWN PELO TYPESCRIPT, PQ NAQUELA FUNÇÃO DEFINIMOS QUE O DATA TYPE __ DEVE SER, OBRIGATORIAMENTE, _ 'NUMBER', e não string... (como visto nesse CONSOLE.LOG)...
+buttonElement.addEventListener('click', function () {
+    // const num1 = num1Element.value; ///SE ESCREVERMOS ISSO SEM _ EXPLICARMOS AO TYPESCRIPT QUE 'num1Element' É _ UMA CONSTANTE QUE SEGURA UM INPUT (pq inputs são elementos que REALMENTE POSSUEM ESSA PROPRIEDADE 'value', que é uma propriedade QUE MUITAS VEZES NÃO EXISTE EM ELEMENTOS HTML... -> precisamos usar aquilo que é chamado de 'TYPE CASTING'... ---> TYPE CASTING É AQUELE TRECHO 'as HTMLInputElement', QUE ESCLARECE QUE ESSE _ ELEMENTO QUE FOI SELECIONADO ___ SERÁ_ __ SEMPRE UM 'INPUT ELEMENT'... (assim, deixamos nosso código bem mais CLARO, EXPLÍCITO)...
+    ///o código de const num1Element = document.getElementById('input1') as HTMLInputElement;  VAI FAZER COM QUE O 'error/aviso' que surge por causa de 'num1Element.value' SUMA...
+    // const num2 = num2Element.value;
+    var num1 = +num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+    var num2 = +num2Element.value;
+    var result = addSum(num1, num2);
+    console.log(result);
+});
+
+
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> RECARREGAMOS NOSSO CÓDIGO,
+
+e agora 
+
+COLOCAMOS NÚMEROS NOS INPUT FIELDS,
+
+PARA ENTÃO CLICAR EM 'ADD'...
+
+
+
+
+
+
+ok... isso deu certo...
+
+
+
+
+MAS AINDA ESTOU COM ALGUNS ERRORS/AVISOS 
+
+NO MEU CÓDIGO TYPESCRIPT,
+
+
+causados por alguma coisa que eu não conheço....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É UM ERRO DO ESLINT, ERRO BURRO...
+

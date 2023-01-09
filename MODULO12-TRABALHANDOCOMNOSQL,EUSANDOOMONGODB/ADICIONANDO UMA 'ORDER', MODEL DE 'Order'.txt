@@ -1,0 +1,2058 @@
+
+
+
+
+
+
+
+
+
+
+
+ESTAMOS CHEGANDO NO FINAL DESTE MÓDULO....
+
+
+
+
+
+
+
+--> A ÚNICA PARTE QUE FALTA É A DA 'ORDER'... ----> PROFESSOR QUER INCLUIR ESSA PARTE 
+
+DA 
+
+
+'ORDER' 
+
+PQ 
+
+
+__iSSO__ VAI NOS MOSTRAR 
+
+
+
+'OUTRA MANEIRA'
+
+
+DE CRIAR RELATIONS......... ---------> 
+
+
+
+
+VAI NOS MOSTRAR __ A FORMA DE CRIAR 
+
+
+
+
+__RELATIONS ___ POR MEIO 
+
+
+DE 
+
+ 
+
+e não 
+
+por meio 
+de 
+
+'embedding'' (que vimos, por exemplo, com o embed do CART em nosso objeto/objetos 'user'...) ------> 
+
+
+ISSO ERA UM EXEMPLO 
+
+DE 
+
+'EMBEDDED DOCUMENT'... (ideal para relations 'one-to-one').... 
+
+
+
+
+
+
+
+
+---------> OK, O CART ERA UM 'EMBEDDED DOCUMENT',
+
+
+
+MAS 
+
+
+OS 'ITEMS'
+
+
+
+NO CART
+
+
+__ ERAM OUTRA COISA_,
+
+
+ERAM UMA 
+
+
+__COMBINAÇÃO __ DE
+
+
+'references' 
+
+E 
+
+
+
+'EXTRA META DATA'.... -----------> 
+
+
+
+
+
+
+
+
+
+
+AGORA, PARA AS 'ORDERS',
+
+TUDO ISSO VAI __ MUDAR__... ---------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NAS ORDERS, VAMOS FAZER DIFERENTE....
+
+
+
+
+
+
+
+
+
+-> PARA COMEÇARMOS O TRABALHO COM AS ORDERS,
+
+VAMOS 
+
+ATÉ 
+
+
+NOSSO ARQUIVO 
+
+
+'shop.js',
+
+
+EM QUE 
+
+
+__POSTAMOS ___
+
+
+
+
+
+
+A 'ORDER' ,
+
+o user 
+
+
+faz post da order...
+
+
+
+
+
+
+
+
+
+
+
+--> DE NOVO, 
+
+O PROFESSOR 
+
+
+
+
+VAI QUERER 
+
+
+ARMAZENAR 
+
+
+
+
+
+
+algo dentro de user... -> NO CASO, ELE VAI QUERER ____ ARMAZENAR __ 
+
+ORDERS 
+
+DENTRO DO USER... 
+
+
+
+
+
+
+
+
+
+
+------> É POR ISSO QUE 
+
+
+DENTRO DE 'USER', o 'model' (e também o OBJETO QUE EXISTE/É ENFIADO NO BROWSER DO NOSSO USUA´RIO, dentro 
+do objeto 'request', quando entramos no nosso website) ADICIONARMEOS 
+
+UM OUTRO MÉTODO,
+
+chamado de 
+
+
+
+
+
+
+
+'addOrder()'....c
+
+
+
+
+
+
+
+------> 
+
+
+
+E ESSE 
+
+MÉTODO 
+
+
+
+
+
+______NÃO VAI EXIGIR NENHUM ARGUMENTO,
+
+
+isso pq 
+ 
+
+
+
+
+ ________ O 'CART',
+
+ 
+
+ O CART QUE 
+
+ SERÁ 
+
+ PASSADO/USADO __ COMO 
+
+
+
+ BASE PARA A ORDER,
+
+
+ sua data,
+
+
+
+ __ SUA DATA JÁ ESTÁ REGISTRADA 
+
+ DENTRO 
+
+
+ DESSE NOSSO 
+
+ 'user',
+
+
+
+
+ O QUE QUER DIZER QUE 
+
+
+
+
+ ELE EXISTE  E PODE SER REPRESENTADO POR 
+
+ 'this.cart'... 
+
+
+
+
+
+
+
+
+
+
+
+ -------> OK...
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE _ _A  ÚNICA COISA QUE 
+
+ EU PRECISO FAZER,
+
+
+ NESSE 
+
+ 'addOrder',
+
+
+ É __ 
+
+ ADICIONAR __ 
+
+
+
+
+
+ AS 'orders'/uma order 
+
+
+ ao meu USER...
+
+
+
+
+
+
+
+
+
+ -> MAS PARA ISSO, PROFESSOR DIZ QUE É BOM CRIARMOS UMA PROPRIEDADE 
+
+ de 
+
+
+
+ 'orders'
+
+ DENTRO DO NOSSO USER,
+
+ por isso 
+
+ ele 
+
+ vai até o constructor do model de 'user.js'
+
+
+ e então escreve:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ class User {
+  constructor(username, email, cart, id) {
+   
+    this.username = username;
+    this.email = email;
+    this.cart = cart;
+    this._id = id;
+    this.orders = orders
+  }
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+NÃO SEI SE ISSO ESTÁ CERTO...
+
+
+
+
+
+
+
+
+-> professor admite que 
+
+
+
+PENSA QUE VOCÊ TAMBÉM 
+
+PODERIA 
+
+QUERER ARMAZENAR ESSAS ORDERS TODAS EM UMA 
+
+'NEW COLLECTION',
+
+isso 
+
+pq 
+
+VOCÊ TALVEZ TENHA 
+MILHARES 
+
+
+
+___ DE ORDERS___, e aí você 
+
+NÃO VAI QUERER 
+
+
+
+EMBEDDAR TODAS ELAS 
+
+
+
+EM OBJETOS/NOS SEUS OBJETOS 'USER',
+
+
+PQ 
+
+
+
+AÍ ESSES OBJETOS 
+
+
+__VÃO ENTÃO __ ficar CADA VEZ MAIS GIGANTES, E ISSO NÃO É BOM.... (carts geralmente n ficam tão grandes, mas ORDER HISTORIES ficam enormes, geralmente....)
+
+
+
+
+
+
+
+
+
+-------> É POR ISSO QUE 
+
+VAMOS QUERER 
+
+TRABALHAR COM UMA __NOVA COLLECTION, AQUI, dentro de 
+
+'addOrder'...
+
+
+
+
+
+
+
+
+---> PROFESSOR VAI CRIAR UMA NOVA 'DATABASE' 
+
+dentro 
+
+de nosso cluster,
+
+
+tudo por meio deste código:
+
+
+
+
+
+addOrder() {
+
+
+    const db = getDb();
+
+
+    db.collection('orders').insertOne({});
+}
+
+
+
+
+
+
+
+
+---> esse código/método será adicionado ___DENTRO___ 
+
+
+DO MODEL DE 
+
+'user'... no entanto, 
+
+
+
+O OBJETO 'user' em si NÃO FICARÁ COM 
+
+
+
+
+UM objeto 'orders' no seu interior, pq isso, conforme explicamos anteriormente,
+
+
+seria muito ruim em questão de performance (ÀS vezes um mesmo user pode ter centenas de 
+orders, e fetchear todas elas quando queremos só fetchear, por exemplo, o cart, seria algo mt ineficiente...)
+
+
+
+
+
+----------> OK...
+ 
+
+
+
+
+
+
+ AÍ VAMOS QUERER CRIAR 1 NOVO 
+
+
+
+
+ objeto/document 'order'... -> E 
+
+ ESSE 
+
+ NOVO 
+
+ 'order' 
+
+
+
+
+
+
+ __ VAI SER____ 
+
+
+
+ O 'CART' 
+
+
+ QUE O PROFESSOR ATUALMENTE POSSUI...
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+addOrder() {
+
+
+    const db = getDb();
+
+
+    db.collection('orders').insertOne({});
+}
+
+
+
+
+
+
+
+
+
+----> ok......
+
+
+
+
+
+VAMOS QUERIR INSERIR
+ 
+
+
+
+ 'this.cart',
+
+ essencialmente.........
+
+
+
+
+
+
+
+
+
+ --------> 
+
+
+
+
+
+ CERTO... TIPO ASSIM:
+
+
+
+
+
+
+
+
+ addOrder() {
+
+
+    const db = getDb();
+
+
+    db.collection('orders').insertOne(this.cart);
+}
+
+
+
+
+
+
+
+
+
+
+--> EU ACHO QUE SERÁ ASSIM, MAS NÃO TENHO CERTEZA...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+  addOrder() {
+
+
+    const db = getDb();
+    return db.collection('orders').insertOne(this.cart) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+      .then(
+        (result) => {
+
+          console.log(result);
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+  
+  }
+
+
+
+
+
+
+
+
+
+------> OK.... VAMOS TESTAR ISSO, COM O BUTTON DE 
+
+
+'place an order'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK....
+
+
+CÓDIGO DO CONTROLLER FICOU ASSIM:
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+  req.user.addOrder()
+  .then(
+    (result) => {
+
+
+      console.log(result);
+      res.redirect('/');
+    }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+  -------------------> NO ENTANTO, AQUI HÁ 
+
+  OUTRA COISA QUE VAMOS QUERER 
+
+  FAZER ,
+
+  APÓS 
+
+
+
+
+
+  ESSA ORDER SER SALVA NA NOSSA DATABASE, em 'orders'.... --> O QUE 
+
+
+
+  VAMOS QUERER FAZER,
+
+  AQUI,
+
+
+  É ___ LIMPAr__ TODOS __OS 
+
+  ITEMS 
+
+
+
+
+
+  DO CART DO USER ATUAL,
+
+
+
+
+
+
+deixar ele completamente vazio (pq a order já terá sido feita, essencialmente)...
+
+
+
+
+
+
+
+--> PARA ISSO, PROVAVELMENTE VAMOS PRECISAR 
+
+
+ESCREVER MAIS LÓGICA 
+
+
+em 
+
+
+'addOrder',
+
+lá 
+
+no model de 'user'...
+
+
+
+
+
+
+
+
+
+
+
+---> ok.... eu escrevi tbm a lógica de 'getOrdersPage',
+
+
+
+QUE FICOU ASSIM:
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+
+  
+
+  req.user.getOrders()
+  .then(
+    (orders) => {
+
+
+
+      res.render(
+        'shop/orders',
+        {
+          pageTitle: 'Your Orders',
+          orders: orders,
+          path: '/orders'
+        }
+      )
+    } 
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ----> E ASSIM:
+
+
+
+
+
+
+
+
+
+    getOrders() {
+
+        const db = getDb();
+
+        return db.collection('orders').find({}).toArray()
+        .then(
+          (orders) => {
+
+            // return orders;
+          return  orders.map(
+              (order) => {
+
+                return  order.products.map(
+                  (p) => {
+                    return {
+                      ...p,
+                      quantity: this.cart.products.find((prod) => {
+                        return prod.productId.toString() === p._id.toString();
+                      }).quantity,
+                      title: this.cart.products.find((prod) => {
+                        return prod.productId.toString() === p._id.toString();
+                      }).title
+                    };
+                  }
+                  )
+              }
+            )
+
+
+          }
+        )
+        .then(
+          (orders) => {console.log(orders, 'THEN BLOCK')}
+        )
+        .catch(
+          (err) => {console.log(err)}
+        )
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> ENTRETANTO, AQUI NOS DEPARAMOS COM UM __GRANDE ERRO ___ LÓGICO...
+
+
+
+
+
+
+----> o erro lógico é assim:
+
+
+
+
+
+
+
+1) quando executamos 'addOrder', uma ORDER é criada a partir do CONTEÚDO 
+DE NOSSO 
+
+CART....
+
+
+
+
+
+
+2) no meio de sua execução, 
+
+ESVAZIAMOS o conteúdo de 'cart', dentro de 'user',
+
+
+por meio do código '.updateOne(... ,{$set: {cart: {products: []}}})'
+
+
+
+
+
+
+
+3) O PROBLEMA É O QUE VEM DEPOIS, pq 
+
+nós vamos querer 
+
+PEGAR INFOS desse 'cart' que recém excluímos, para 
+
+fazer 'show de nossa order',
+
+lá 
+
+
+na page de 'getOrders'... (vamos querer o 'title' e a 'quantity' de cada product que foi colocado em 1 order...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> UMA SOLUÇÃO POSSÍVEL, AQUI, É __FORRAR__ CADA 
+
+'ORDER'
+
+com mais info acerca 
+
+de cada product... o que pode ser feito,
+
+de fato.... --> vou tentar fazer isso,
+
+lá em 
+
+'addOrder'...
+
+
+
+
+
+
+
+
+
+
+--> OK... CONSEGUI....  peguei um pouco da lógica que já havia 
+
+
+em 
+
+'getCart'....
+
+
+
+MEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MÉTODO 'addOrder':
+
+
+
+
+addOrder() {
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.products.find((prod) => {
+              return prod.productId.toString() === p._id.toString();
+            }).quantity,
+          };
+        });
+      })
+      .then((products) => {
+        const formattedOrder = {
+          ...this.cart,
+        };
+
+        formattedOrder.products = products;
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) },
+                { $set: { cart: { products: [] } } }
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+MÉTODO 
+
+'getOrders':
+
+
+
+
+
+
+
+
+  getOrders() {
+    const db = getDb();
+
+    return db
+      .collection('orders')
+      .find({})
+      .toArray()
+      .then((orders) => {
+        console.log(orders, 'TITLE');
+        return orders;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+
+
+
+  --> CONTROLLERS 
+
+
+
+  de 
+
+
+  'getOrdersPage'
+
+
+
+
+  e 
+
+
+  'postOrder':
+
+
+
+
+
+
+
+
+
+
+
+
+
+  exports.getOrdersPage = (req, res, next) => {
+
+  
+
+  req.user.getOrders()
+  .then(
+    (orders) => {
+
+      console.log(orders, 'YOUR ORDERS');
+
+
+      res.render(
+        'shop/orders',
+        {
+          pageTitle: 'Your Orders',
+          orders: orders,
+          path: '/orders'
+        }
+      )
+    } 
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E:
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+  req.user.addOrder()
+  .then(
+    (result) => {
+
+
+      console.log(result);
+      res.redirect('/orders');
+    }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+CERTO....
+
+ HORA 
+
+
+ DE ASSISTIR 
+
+ À AULA DO PROFESSOR.....
+
+
+
+
+
+
+
+
+
+ ----> 
+
+
+ ELE COMEÇA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+ addOrder() {
+
+
+          const db = getDb();
+
+
+          return db.collection('orders').insertOne(this.cart).then(
+
+
+
+
+                (result) => {
+
+                      this.cart = {products: []}
+                }
+          )
+
+
+ }
+
+
+
+
+
+
+
+
+
+
+ -----> ELE EXPLICA QUE É CLARO QUE 
+
+ ELE VAI QUERER 
+
+ FAZER 
+
+ 'EMPTY' 
+
+ DESSE CART 
+
+
+
+ MAIS DO QUE APENAS LOCALMENTE, NESSE NOSSO USER... é óbvio que 
+
+ ELE VAI TBM QUERER 
+
+ 'EMPTY OUR CART' ( ou seja, 'products = []')
+
+
+
+ LÁ 
+
+
+ NA DATABASE TBM....
+
+
+
+
+
+
+
+ -> MAS EU HAVIA ME ESQUECIDO DE INCLUIR UM CÓDIGO 
+
+
+ LIMPADOR 
+
+ DE 
+
+ 'this.cart' LOCAL,
+
+
+
+
+
+ do 
+
+ objeto 'user' mesmo, armazenado no nosso browser.... vou adicionar agora...
+
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+ 
+  addOrder() {
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.products.find((prod) => {
+              return prod.productId.toString() === p._id.toString();
+            }).quantity,
+          };
+        });
+      })
+      .then((products) => {
+        const formattedOrder = {
+          ...this.cart,
+        };
+
+        formattedOrder.products = products;
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+
+              this.cart = { products: []} ////////EIS O CÓDIGO EM QUESTÃO.
+
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) },
+                { $set: { cart: { products: [] } } }
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+----> certo... continuando o código do professor.... 
+
+
+
+
+
+
+-----> PARA FAZER 'CLEAR' DO NEGÓCIO 
+
+NA DATABASE,
+
+
+professor 
+
+copia o código
+
+
+de 
+
+
+'return db.collection('users').updateOne()'
+
+QUE 
+
+USAMOS 
+
+LÁ 
+
+
+NO 'DELETE ITEM FROM CART'....
+
+
+
+
+
+
+
+--> AÍ ELE COLA 
+
+ESSE CÓDIGO NO 'addOrder',
+
+e fica assim:
+
+
+
+
+
+
+
+
+
+
+
+ addOrder() {
+
+
+          const db = getDb();
+
+
+          return db.collection('orders').insertOne(this.cart).then(
+
+
+
+
+                (result) => {
+
+                      this.cart = {products: []}
+
+
+                        return db.collection('users').updateOne(
+
+                          {_id: new ObjectId(this._id)},
+                          {$set: {cart: { products: [] }}}
+                        )
+                      
+                }
+          )
+
+
+ }
+
+
+
+
+
+
+ 
+
+
+ ----------> COM ISSO, 
+
+ ESTAREMOS 'CLEARANDO' 
+
+
+ OS CART ITEMS DESSE USER __ TANTO __ 
+
+
+ LOCALMENTE ( no user object)
+
+
+ COMO 
+
+TBM NA DATABASE... ------->  
+
+
+
+
+
+
+
+
+
+
+E O LEGAL AQUI É 
+
+
+
+QUE _ ACABAMOS _ INSERINDO __ 
+O 
+
+
+
+nosso cart atual dentro da 'orders collection'
+
+ANTES 
+
+
+
+DE LIMPARMOS 
+
+o nosso cart... (E essa ordem de execução é importante, senão o negócio não vai funcionar)...
+
+
+
+
+
+
+
+É 
+
+'INSERT ONE (nosso cart, nas orders)' 
+
+PARA 
+
+ENTÃO 
+
+
+'updateOne(remover products de nosso 'cart', tanto localmente como na database)....
+
+
+
+
+
+
+
+
+
+
+
+------> COM ISSO,
+
+
+
+
+
+JÁ ESTAREMOS 'ADDING THE ORDER'...
+
+
+
+
+
+
+
+
+
+
+----> é claro que meu código 
+
+de 
+
+'addOrder'
+
+
+ficou mais elaborado,
+
+pois 
+
+possui um 
+
+
+'db.collection('products').find()'
+
+
+
+ANTES DO 
+
+CALL DESSES 
+
+
+'insertOne'
+
+
+e 
+
+'updateOne'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> JÁ EM 'shop.js',
+
+
+NAQUELE LOCAL 
+
+DE 
+
+
+'orderpost',
+
+
+ficamos com isto:
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+  req.user.addOrder()
+  .then(
+    (result) => {
+
+
+      console.log(result);
+      res.redirect('/orders');
+    }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+  --------> CERTO.... 
+
+
+
+
+
+
+
+  E ISSO É TUDO, POR ENQUANTO...
+
+
+
+
+
+  --> seria legal adicionar um 
+
+
+
+
+
+lugar na minha página que mostrasse 'total price', ou algo assim...
+
+
+'valor total dos products',
+
+ etc etc...
+
+
+
+
+
+
+
+
+
+ Hehe... mas eu não sei como fazer isso... como 
+
+
+ SOMAR 
+
+ TODOS 
+ OS 
+ FIELDS 
+
+ de 
+
+
+ 'product.price' 
+
+ em 
+
+ 1 único valor... ---> isso talvez tenha de ser feito 
+
+
+ LÁ 
+
+
+
+
+
+ EM 
+
+
+ 'addOrder',
+
+
+
+ quando definimos 
+
+ os 
+
+ fields 
+
+ que 
+
+ existirão em cada 1 de nossas 'order'....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> CONSEGUI... IMPLEMENTEI ESSA LÓGICA 
+
+
+
+ DE 
+
+ 'totalPrice' com sucesso....
+
+
+
+
+
+
+
+
+
+ -- o código que usei foi este (uso de 'reduce' para juntar todos os valores das propriedades 'price' nos meus 'product'...):
+
+
+
+
+
+
+
+
+
+
+
+      .then((products) => {
+
+
+
+        const prices = products.map(
+          (product) => {
+                  return product.price * product.quantity;
+          }
+        )
+
+
+        const totalPrice = prices.reduce((total, currentValue) => {
+
+
+          return total + currentValue;
+        },
+        
+        0
+        )
+
+
+        const formattedOrder = {
+          ...this.cart,
+          totalPrice: totalPrice
+        }
+
+        formattedOrder.products = products;
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+
+              this.cart = { products: []}
+
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) },
+                { $set: { cart: { products: [] } } }
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> DEPOIS,
+
+
+
+
+
+
+  IMPLEMENTEI O 'TOTAL PRICE'
+
+
+
+  por meio desse código aqui, no view:
+
+
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/orders.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul class="order__items">
+ <% orders.forEach(order => { %>
+     <li class="order__item">
+        <h1>Order Code: <%= order._id %></h1>
+        <ul>
+          <% order.products.forEach(product => { %>
+
+            <li><%= product.title %> (<%= product.quantity %>)
+              <p>Price: $<%= product.price %></h1>
+            
+            </li>
+
+        <%  }) %>
+        <h1>Total Price: <%= order.totalPrice %></h1>
+        </ul>
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------> OK....
+
+
+
+
+
+
+qual o próximo desafio?
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE A ROUTE DE 'orders'
+
+
+ainda 
+
+não foi readicionada (mas eu já 
+
+havia 
+
+feito isso....)
+
+
+
+
+
+
+
+
+
+
+
+-----> OK........ 
+
+
+
+VAMOS VER A PRÓXIMA AULA,
+
+
+
+em que 
+
+talvez ele 
+
+
+
+tente reimplementar a route de orders, que eu já implementei...

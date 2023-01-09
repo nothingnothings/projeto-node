@@ -1,0 +1,741 @@
+
+
+
+
+
+
+
+
+
+
+
+
+------> ATÉ AGORA,
+
+
+
+TIVEMOS UM CÓDIGO BEM BÁSICO,
+
+
+
+
+QUE FUNCIONA COM NÚMEROS E STRINGS...
+
+
+EX:
+
+
+
+
+
+function add (num1, num2) {
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(add(1, 6));
+    
+    
+    console.log(add('1', '6'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS 
+
+
+
+AGORA VAMOS QUERER __ EVITAR_ QUE 
+
+
+STRINGS POSSAM SER PASSADAS COMO PARÂMETROS... -> E O TYPESCRIPT 
+
+NOS AJUDARÁ COM ISSO...
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR LIMITAR 
+
+
+NOSSOS PARÂMETROS A ACEITAR __ aPENAS NÚMEROS,
+
+
+
+
+EM 
+
+
+TYPESCRIPT FILES PODEMOS __ 
+
+
+
+
+
+'SET TYPES'... --> PODEMOS _ DEFINIR 
+
+TYPES __ EM 
+
+
+VARIÁVEIS,
+
+
+
+
+
+EM __ PARÂMETROS,
+
+
+
+E EM UM MONTE DE OUTROS LOCAIS do código...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO DEFINIMOS 'SUPPORTED TYPEs' 
+
+
+
+para uma variável?
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER DEIXAR AQUELES 2 PARAMETERS,
+
+
+'num1' e 'num2',
+
+
+
+
+
+COMO __ APENAS __ TYPE 'number'... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS ADICIONAMOS UM TYPE A UMA VARIÁVEL/PARÂMETRO (aos dois),
+
+
+
+
+por meio do  
+
+ADD 
+
+
+
+
+DE 
+
+
+UM ':'
+
+
+
+DEPOIS DO 
+
+
+VARIABLE/PARAMETER 
+
+NAME,
+
+
+
+
+E AÍ __ 
+
+
+ADICIONAMOS __ O TYPE _ QUE QUEREMOS USAR...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+function add (num1: , num2: ) { ////////EIS O CÓDIGO EM QUESTÃO.
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(add(1, 6));
+    
+    
+    console.log(add('1', '6'));
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+certo.... 
+
+
+
+
+--> o TYPESCRIPT SABE UM PUNHADO DE TYPES,
+
+TYPES QUE 
+
+SÃO 
+
+'BUILTIN' no próprio typescript....
+
+
+
+
+
+
+
+
+
+
+
+
+-> POR EXEMPLO,
+ 
+
+
+ TEMOS TYPES:
+
+
+
+
+ 1) NUMBER ---> ESSE TYPE ACEITA NÚMEROS INTEGRAIS, E TAMBÉM FLOATING POINT NUMBERS... ---> TAMBÉM NÚMEROS NEGATIVOS...
+
+
+
+---> TODOS NUMBERS, SEM DIFERENCIAÇAÕ ENTRE INTEGERS OU FLOATS... 
+
+
+
+
+
+
+
+
+
+ 2) STRING --> DEVE SER USADO SE VOCÊ QUER APENAS TEXT, text assim: "", '', ``
+
+
+
+TODOS TEXT VALUES  
+
+
+
+
+
+
+
+
+ 3) BOOLEAN --> PARA QUANDO QUEREMOS TRUE OU FALSE... --> ACEITA SÓ 'TRUE' OU 'FALSE' (e NÃO ACEITA TRUTHY/FALSY VALUES....)
+
+
+
+
+
+
+
+ 4) OBJECT --> COM ESSE TYPE, DEFINIMOS 'OBJECT TYPES' --> ex: {age: 30}  ----> VAMOS QUERER UM OBJECT COM _ ESSA ESTRUTURA ESPECÍFICA...
+
+
+
+
+
+
+
+
+ o object é mais COMPLEXO do que os outros, pq aí temos a opção 
+
+
+ ENTRE __ ACEITAR UM 
+
+ 'GENERAL OBJECT TYPE' (qualquer OBJETO {} javascript, não interessa qual)
+
+
+
+
+OU UM 
+
+
+OBJETO MAIS ESPECÍFICO (diferentes TIPOS DE OBJETO EM SI)...
+
+
+
+
+
+
+
+
+--> PODEMOS DESCREVER COMO CADA OBJECT DEVE SE PARECER,
+
+
+
+QUAIS PROPRIEDADES DEVE TER, E QUAIS TYPES CADA UMA DESSAS PROPERTIES DEVERÁ TER....
+
+
+
+
+
+
+5) ARRAY TYPE --->  [1, 2, 3] --> MESMA COISA DO OBJETO,
+
+
+PODEMOS 
+
+DEFINIR 
+
+SE QUEREMOS/ACEITAMOS QUALQUER TIPO DE ARRAY,
+
+OU SE o
+ARRAY 
+
+DEVE SER DE NUMBERS (type can be FLEXIBLE OR STRICT (regarding the element types))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TEMOS OUTROS TYPES AINDA,
+
+
+
+mas 
+
+
+VAMOS 
+
+
+
+
+EXAMINAR OS TYPES SIMPLES, PARA COMEÇAR...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... 
+
+
+
+temos aquela function:
+
+
+
+
+
+
+
+
+function add (num1: , num2: ) { ////////EIS O CÓDIGO EM QUESTÃO.
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(add(1, 6));
+    
+    
+    console.log(add('1', '6'));
+
+
+
+
+
+
+
+
+
+
+
+----------> QUEREMOS QUE ESSES 2 PARÂMETROS 
+
+SEJAM 
+
+
+DE 
+
+TYPE 
+
+'number,'
+
+
+POR ISSO ESCREVEMOS:
+
+
+
+
+
+
+
+
+function add (num1: number , num2: number ) { ////////EIS O CÓDIGO EM QUESTÃO.
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(add(1, 6));
+    
+    
+    console.log(add('1', '6'));
+
+
+
+
+----------------------------------
+
+
+
+
+
+--> RODAMOS 
+
+
+
+'tsc app.ts'---> 
+
+
+
+
+
+
+
+
+QUANDO EU RODAR ISSO, VOU __ iMEDIATAMENTE RECEBER UM __ ERRO, O QUE É MUITO BOM...
+
+
+
+-_> O ERRO QUE RECEBI/RECEBO É ESTE;
+
+
+
+
+app.ts:54:21 - error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+
+54     console.log(add('1', '6'));
+
+
+
+
+
+
+
+
+
+
+-_> CHECANDO NOSSO CÓDIGO, TEMOS ESTE TRECHO:
+
+
+
+   console.log(add(1, 6));
+    
+    
+    console.log(add('1', '6'));
+
+
+
+
+
+
+
+
+
+
+    --> COMO VOCÊ PODE VER,
+
+
+
+    O TYPESCRIPT 
+
+
+    ESTÁ 
+
+    APITANDO PARA O SEGUNDO CONSOLE.LOG,
+
+    que 
+    está 
+
+    TENTANDO 
+
+    PASSAR ___ STRINGS__ AOS NOSSOS PARÂMETROS 'num1' e 'num2',
+
+    QUE 
+
+
+
+
+    SÓ PODEM SER __ NUMBERS__ (pq é isso que definimos na sua função)..
+
+
+
+
+
+
+
+
+
+    -> EIS A UTILIDADE DO TYPESCRIPT: ELE DÁ __ THROW __ DE ERRORS __ quando 
+
+    percebe que 
+
+
+    VOCê ESTÁ PASSANDO 
+
+
+    __ DATA TYPES INCORRETOS A SEUS PARÃMETROS/VARIABLES _ DURANTE __ O RUNTIME...
+
+
+
+
+
+
+
+    ---> OCORRIDO ESSE ERRO, BASTA COMENTAR PARA FORA ESSE CONSOLE.LOG COM AS STRINGS,
+
+    PARA ENTÃO 
+    RODAR 
+
+
+
+    'tsc app.js'
+
+
+    MAIS UMA VEZ,
+
+    PARA QUE NOSSO ARQUIVO SEJA COMPILADO...
+
+
+
+
+
+
+
+
+
+
+
+    -_> OK... AGORA CONSEGUIMOS COMPILAR ESSE CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+    ----------> PROFESSOR EXPLICA QUE VOC~E PODE _ CONFIGURAR_ _ O TYPESCRIPT PARA CANCELAR 
+
+    O 
+
+    COMPILE SE ELE DETECTAR UM ERRO DESSES... (o default é DE CONTINUAR COMPILANDO, MAS COM O ERROR)....
+
+
+
+
+
+
+
+
+    --> É... ISSO É VERDADE.... 
+
+
+
+
+
+
+
+
+
+
+
+    --> O PROFESSOR DIZ QUE 
+
+    ISSO É BOM,
+
+    ESSE 
+
+
+
+    'compilE'... --> NO CÓDIGO COMPILADO,
+
+    essa parte 
+
+
+
+    ':xxxx ':yyy'
+
+
+
+    SOME.... -------> SOME PQ, COMO O PROFESSOR MENCIONOU ANTERIORMETNE,
+
+
+
+
+
+    ISSO É 
+
+
+    UMA 'PURE TYPESCRIPT FEATURE'... --> isso significa que 
+
+
+
+    
+
+
+    ESSE 'CONSTRUCT'/coisa 
+
+
+    SÓ EXISTE DURANTE O DEVELOPMENT,
+    pq 
+
+    ELA 
+
+    VAI SUMIR QUANDO VOCÊ COMPILAR SEU CÓDIGO JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+    --> SÓ EXISTE DURANTE O DEVELOPMENT JUSTAMENTE PARA NOS 
+    DAR 
+
+    AQUELE ERROR QUE VIMOS LÁ EMBAIXO... é a ratio essendi dessa feature...
+
+
+
+
+
+
+
+
+
+
+    --> O TYPESCRIPT EXISTE PARA ISSO,
+
+    PARA EVITARMOS ESSE TIPO DE ERRO,
+
+    ETC ETC...
+
+
+
+
+
+
+
+
+
+    --> ISSO PODE PARECER TRIVIAL,
+
+    MAS 
+
+    ESSA É SUA 'CORE FEATURE',
+
+
+
+    e a essencia do typescript.... --> VOCê 
+
+    VAI QUERER 
+
+    SER BEM CLARO SOBRE 
+
+
+
+    O TYPE DE DATA COM QUE VOCê QUER TRABALHAR EM DIFERENTES PARTES DO SEU APP... -> ISSO, OVERALL,
+
+
+    LEVA 
+    A CÓDIGO MELHOR E MENOS BUGS....

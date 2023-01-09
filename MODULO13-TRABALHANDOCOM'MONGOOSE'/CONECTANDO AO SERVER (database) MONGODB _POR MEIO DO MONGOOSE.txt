@@ -1,0 +1,1142 @@
+
+
+
+
+
+
+
+
+
+
+--> ANTES DE MAIS NADA,
+
+PROFESSOR QUER NOS MOSTRAR OS 
+
+OFFICIAL DOCS DO MONGOOSE... 
+
+
+
+
+
+
+
+
+
+--> 
+
+
+
+VEMOS TODOS OS DETALHES 
+
+DO MONGOOSE,
+
+as features, etc...
+
+
+
+
+
+
+
+
+
+
+------> OK.... 
+
+
+
+
+
+
+
+
+---> PROFESSOR VAI NOS MOSTRAR OS FUNDAMENTALS DO MONGOOSE...
+
+
+
+
+
+
+
+
+--> VAMOS CONTINUAR USANDO MONGOOSE PELO RESTO DESTE CURSO....
+
+
+
+
+
+
+--> VAMOS USAR MAIS FEATURES 
+
+
+DO MONGOOSE A MEDIDA QUE 
+
+
+VAMOS 
+
+APRENDENDO OUTRAS FEATURES DE NOSSO APP....
+
+
+
+
+
+
+
+
+
+
+
+---- PARA ADICIONAR O MONGOOSE AO NOSSO PROJETO,
+
+
+rodamos 
+
+
+'npm install --save mongoose'... 
+
+
+
+
+
+
+
+
+
+
+--> ISSO VAI O ADICIONAR AO NOSSO PROJECT,
+
+E AÍ 
+
+JÁ PODEMOS COMEÇAR A O UTILIZAR...
+
+
+
+
+
+
+
+
+
+
+
+--> A PRIMEIRA COISA QUE VAMOS QUERER FAZER, COM O MONGOOSE,
+
+É 
+
+
+
+CONECTÁ-LO A 
+
+NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+
+->>> PARA ISSO,
+
+
+
+
+PODERÍAMOS/PODEMOS USAR 
+
+
+
+NOSSA 
+
+UTILITY 
+
+FILE 
+
+
+DE 
+
+
+'database.js'..
+
+
+
+
+
+
+
+
+
+
+------> MAS, NA VERDADE,
+
+O FATO É QUE 
+
+O 
+
+
+MONGOOSE FAZ TODO ESSE 'UTILITY MANAGEMENT'
+
+E 
+
+
+
+A CONNECTION __ AO 
+
+
+
+'MONGODB DATABASE'
+
+
+
+__POR TRÁS DAS CENAS, PARA NÓS....
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUE NÓS PODEMOS FAZER, NO CASO,
+
+
+
+É 
+
+
+
+__NOS LIVRARMOS __ DO ARQUIVO 
+
+'database.js',
+
+
+E AÍ 
+
+
+
+
+
+
+
+
+
+VAMOS ATÉ 
+
+O 
+
+
+
+
+
+
+ARQUIVO 
+
+'app.js',
+
+STARTER DE NOSSO APP NODE.JS,
+
+
+
+
+E AÍ SIMPLESMENTE 
+
+
+PODEMOS 
+
+
+IMPORTAR
+ 
+
+ O 
+
+ MONGOOSE LÁ 
+ DENTRO,
+
+ no nosso projeto...
+
+
+
+
+
+
+
+
+
+
+ --> ESCREVEMOS TIPO ASSIM:
+
+
+
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> COM O MONGOOSE
+
+
+
+
+
+
+
+IMPORTADO,
+
+
+
+
+PODEMOS 
+
+
+
+SETTAR 
+1 
+
+CONNECTION 
+à 
+
+DATABASE...
+
+
+
+
+
+
+
+
+
+--> lá embaixo,
+
+
+
+em 
+
+
+'mongoConnect(
+    () => {
+        app.listen(3000);
+    }
+)
+',
+
+
+
+
+
+
+PODEMOS ____REMOVER__ ESSE 
+
+
+'mongoConnect()',
+
+
+
+
+JUSTAMENTE 
+
+
+PQ 
+
+ESSA 
+
+ERA UMA FUNÇÃO 
+
+CRIADA/USADA 
+
+
+POR NÓS 
+
+
+
+
+E EXPORTADA 
+
+
+
+em 
+
+'database.js',
+
+QUE AGORA 
+
+
+JÁ NÃO É MAIS USADO...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS ESCREVER ISTO, NO SEU LUGAR:
+
+
+
+
+
+
+'mongoose.connect()'
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS USAR ESSE MÉTODO 'CONNECT'... ------> 
+
+
+
+
+
+
+E ESSE MÉTODO 
+
+'CONNECT' 
+
+
+
+ACEITA/EXIGE __ A MESMA 'URL' 
+
+QUE 
+
+USAMOS 
+
+PARA 
+
+FAZER 
+
+O 
+
+'
+CONNECT'
+
+
+à NOSSA 
+
+DATABASE 
+
+
+
+'mongodb'
+
+
+mais cedo... -------> OU SEJA,
+
+
+
+
+
+
+
+
+
+
+É AQUELE 
+
+
+
+LINK DA DATABASE,
+
+AQUELE 
+
+
+LINK DE 
+
+
+'''
+
+
+    'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+
+''''
+,
+
+
+
+QUE PODE SER OBTIDO LÁ 
+
+
+
+NO SITE DO MONGODB,
+
+
+
+na sua database, em 'connect' 
+
+
+
+
+
+
+
+
+
+
+----> OK..........
+
+
+
+VAI FICAR TIPO ASSIM:
+
+
+
+
+
+
+
+'mongoose.connect('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')'
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO....
+
+
+
+
+
+
+--> ISSO VAI NOS CONECTAR AO MONGODB, VAI REALMENTE ESTABLECER UMA 
+
+
+__CONNECTION AO 
+
+
+'MONGODB',
+
+
+__MEDIADA/ QUERYZADA PELO 
+
+
+
+MONGOOSe......
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ISSO FEITO,
+
+
+PROFESSOR DIZ QUE 
+ESSE 
+
+'mongoose.connect()'
+
+VAI 
+
+
+NOS __RETORNAR UMA PROMISE,
+
+
+por isso 
+
+
+podemos 
+
+CHAINAR 
+
+
+'.then()'
+
+
+ 
+
+
+
+ SOBRE ELA... ------> 
+
+
+
+
+ AÍ NESSE THEN BLOCKK 
+
+
+ VOCÊ VAI GANHAR O 'RESULT' DESSA CONNECTION, MAS MAIS IMPORTANTE 
+
+
+ DO QUE 
+
+ ISSO,
+
+
+
+
+VOCê 
+
+
+__SABE___ 
+
+QUE 
+
+
+
+
+NESSE PONTO NO TEMPO __ VOCÊ ___ESTARÁ__ CONECTADO__ A SUA DATABASE 
+
+MONGODB.... -----------> 
+
+
+
+
+E É EXATAMENTE POR ISSO QUE 
+
+VAMOS CHAMAR 
+
+
+
+'app.listen(3000)'
+
+
+NESSE 
+
+THEN BLOCK,
+
+
+pq 
+
+
+ESTABELECIDA ESSA CONEXÃO AO DATABASE,
+
+
+podemos 
+
+
+iniciar 
+
+
+
+a atuação de nosso server,
+
+QUE 
+
+
+VAI CAPTURAR QUAISQUER 
+
+REQUESTS 
+
+ENVIADOS 
+
+A SI....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+mongoose.connect('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+
+
+.then(
+    (result) => {
+
+             console.log(result);
+            app.listen(3000);
+       
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ISSO 'COMEÇA NOSSO NODE SERVER'/FAZ COM QUE ELE 
+
+passe a 
+
+
+
+fazer 'listen to' a incoming requests...
+
+
+
+
+
+
+-> PROFESSOR TAMBÉM COLOCA UM CATCH 
+BLOCK,
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+mongoose.connect(
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+
+  (result) => {
+
+    app.listen(3000);
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+---------> COM ISSO,
+
+
+
+
+
+
+TEMOS TUDO DE QUE PRECISAMOS PARA NOS CONECTAR à DATAbase,
+
+
+
+E O MONGOOSE 
+
+
+
+
+___ VAI FAZER MANAGE __ DESSA 
+
+
+'ONE CONNECTION' 
+por trás das cenas,
+
+para nós... -------> em todos os outros lugares do código, de nosso projeto,
+
+em que 
+
+
+
+fizermos operações, vamos usar 
+
+essa MESMA CONNECTION definida 
+
+
+por meio 
+
+desse 
+
+'mongoose.connect()'...
+
+
+
+
+
+
+
+
+
+
+--> E ISSO, NO CASO, 
+
+
+JÁ NOS LEVA
+ 
+ A SEGUNDA  
+
+
+
+ COISA QUE 
+
+ PRECISAMOS FAZER.... ------> PRECISAMOS 
+
+
+
+ 'MOVE OVER OUR CODE 
+
+ TO 
+
+
+
+ MONGOOSe'... ------> ISSO SIGNIFICA QUE 
+
+
+
+
+ 
+
+
+
+ VAMOS ___ DEIXAr__ DE USAR 
+
+
+
+ O 
+
+
+
+ DRIVER 
+
+
+ DO 'MONGODB'
+
+ DIRETAMENTE 
+
+ COMO 
+
+ ESTIVEMOS 
+
+
+ FAZENDO ATÉ AGORA....
+
+
+
+
+ (
+
+
+
+
+
+
+      ou seja,
+
+
+
+      vamos parar de escrever queries como 
+
+
+      'db.collection('users).find()'....
+ )
+
+
+
+
+
+
+
+
+
+
+ -------> ISSO SIGNIFICA 
+
+
+ QUE 
+
+ __VAMOS TER QUE _ REESCREVER 
+
+
+ NOSSOS 
+
+
+ 'MODELS'
+
+
+ ______MAIS 1 VEZ,
+
+
+
+
+
+
+
+MAS O PROFESSOR ESPERA 
+
+
+
+
+
+QUE 
+
+
+
+SAIBAMOS VER 
+a VANTAGEM EM TUDO ISSO:
+
+
+
+
+
+PRIMEIRAMENTE APRENDEMOS A VANTAGEM 
+
+DE 
+
+USAR 
+
+
+O 
+
+
+
+
+
+______
+
+
+
+MONGODB DRIVER,
+
+
+
+
+
+mas 
+
+AGORA 
+
+
+
+O PROFESSOR 
+
+VAI 
+
+NOS MOSTRAR 
+
+
+
+
+
+COMO 
+
+
+O MONGOOSE NOS AJUDA A FOCAR 
+
+MAIS 
+
+
+
+EM 
+
+'HOW OUR DATA SHOULD LOOK LIKE',
+
+
+
+
+E MENOS 
+
+
+
+EM 
+'ALL THE LOGIC FOR INTERACTING WITH THE DATABASE'...
+
+
+
+
+
+
+
+
+
+----------> BEM... PARA CONTINUAR,
+
+
+NOVAMENTE,
+
+O PROFESSOR 
+
+
+
+
+VAI FAZER AQUILO QUE ELE JÁ FEZ UMA VEZ... ELE VAI 
+
+COMENTAR 
+
+PARA 
+FORA DO CÓDIGO 
+
+TODAS 
+
+NOSSAS 
+
+ROUTES 
+
+em 
+
+'shop.js'
+
+
+
+
+
+
+
+
+e 
+
+
+
+'admin.js'...
+
+
+
+
+
+
+
+
+
+-----> FAZEMOS ISSO PARA 
+
+QUE POSSAMOS 
+
+
+
+IR AS ADICIONANDO GRADUALEMNTE,
+
+conforme vamos as consertando...
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... 
+
+
+
+
+
+
+
+
+--> VAMOS TER QUE REFORMULAR TODOS OS MODELS, TAMBÉM (pq eles ainda usam 'getDb()', uma função que era usada com O MONGODB DRIVER PADRÃO...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK, AGORA VAMOS ESTAR CONECTADOS 
+
+
+NA MESMA 
+
+DATABASE 
+
+MONGODB,
+
+
+mas agora 
+
+
+
+USANDO A PACKAGE 
+DE 
+
+'MONGOOSE'...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS COMEÇAR COM O WORK COM NOSSOS MODELS E ETC 
+
+
+para fazer com que 
+
+eles 
+
+
+FUNCIONEM COM O MONGOOSE,
+
+tudo na próxima lição...
+
+
+
+https://mongoosejs.com/docs/

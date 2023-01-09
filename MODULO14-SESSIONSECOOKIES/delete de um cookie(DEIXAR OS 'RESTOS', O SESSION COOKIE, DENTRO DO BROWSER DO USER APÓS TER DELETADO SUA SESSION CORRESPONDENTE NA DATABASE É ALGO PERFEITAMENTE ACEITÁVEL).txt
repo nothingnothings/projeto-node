@@ -1,0 +1,2018 @@
+
+
+
+
+DELETANDO UM COOKIE (IMPORTANTE, BASTANTE COISA IMPORTANTE.... DESCOBRIMOS QUE DEIXAR OS 'RESTOS', O SESSION COOKIE, DENTRO DO BROWSER DO USER APÓS TER DELETADO SUA SESSION CORRESPONDENTE NA DATABASE É ALGO PERFEITAMENTE ACEITÁVEL)
+
+
+
+
+
+-----> AGORA QUE 
+
+ESTAMOS USANDO SESSIONS 'everywhere' (no nosso app; tbm estamos fazendo a parte necessária de __aRMAZENAR _eSSAS SESSIONS EM 1 DATABASE, database MONGODB, na collection de 'sessions')...
+
+
+
+
+
+
+
+
+
+
+-----> E AGORA QUE 
+
+TEMOS 
+
+
+NOSSO 
+
+
+
+'DUMMY AUTH PROCESS'
+
+
+
+
+NO LUGAR (
+
+
+    esse auth process ainda está com COISAS FALTANDO, COMO 
+
+    VALIDATION,
+
+
+    LOGOUT, ETC ETC, mas ISSO VEREMOS MAIS TARDE, 
+
+    NO MÓDULO DE AUTHENTICATION...
+)
+
+
+
+
+
+
+
+
+
+
+--> MAS O IMPORTANTE É QUE 
+
+'WE ALREADY HAVE SOMETHING IN PLACE'...
+
+
+
+
+
+
+
+
+-------> E VOCÊ JÁ DEVE TER PERCEBIDO,
+ 
+ É CLARO,
+
+
+
+ QUE 
+
+
+
+ A RESPEITO DO 'LOGOUT',
+
+
+
+
+ ___ O PROFESSOR__ SEMPRE __ 
+
+
+
+ SÓ FOI LÁ 
+
+ EM FRENTE 
+
+ E 
+
+ DELETOU O SESSION COOKIE 
+
+ LÁ 
+
+
+ NA __ STORAGe__ DE NOSSO BROWSER,
+
+
+
+ diretamente no browser devtools 
+
+ do 
+
+
+ chrome...
+
+
+
+
+
+
+ ----> PROFESSOR 
+
+
+ FEZ ISSO,
+
+
+
+ O 
+
+ DELETE 
+
+ DE 
+
+
+ 
+
+
+ NOSSO 
+
+ 'SESSION COOKIE' 
+
+
+ no browser,
+
+
+
+ PARA 
+
+ ENTÃO 
+
+
+ MOSTRAR 
+
+ O QUE 
+
+
+ ACONTECE QUANDO TENTAMOS FAZER ALGO 
+
+
+ QUE 
+
+
+ __ É DEPENDENTE __ DE DATA QUE 
+
+ ESTÁ 
+
+ __ARMAZENADA__ NA SESSIOn.... -------> É EVIDENTE QUE ESSE PROCESSO VAI __FALHAR; VAI FALHAR PQ 
+
+
+  O 
+
+
+  'SESSION COOKIE'
+
+
+
+  QUE É NECESSÁRIO PARA 
+
+  'IDENTIFY THE CORRECT SESSIOn'
+
+
+  NÃO ESTARÁ 
+
+  NO BROWSER DO USER...
+
+
+
+
+
+
+
+
+
+
+  -------> OK.... PELO VISTO 
+
+
+
+  O 
+
+  PROFESSOR 
+
+  HAVIA PASSADO 1 ASSIGNMENT,
+
+  QUE EU AINDA _ NÃO FIZ,
+
+
+
+
+
+  E QUE BAIXEI AGORA, DO OUTRO LINK DE TUTORIAL.... (
+
+
+
+
+      e tenho que fazer esse assignment,
+
+      pq 
+
+      ele 
+      é referenciado nesse vídeo de 
+
+
+      'deleting a cookie'...
+  )
+
+
+
+
+
+
+
+
+  ---> ainda NÃO SEI QUAL É O ASSIGNMENT,
+
+
+
+
+
+  PQ 
+
+
+
+  O DOWNLOAD LÁ N me mostrou mt bem...
+
+
+
+
+
+
+
+
+
+
+
+  --> OK... VOU TENTAR DELETAR O 
+
+
+  COOKIE 
+
+,
+
+
+
+O 
+
+'SESSION COOKIE',
+
+e aí 
+
+
+TENTAR 
+
+
+
+
+FAZER ALGO QUE 
+
+DEPENDE 
+
+
+DE DATA QUE 
+
+É 
+
+'
+STORED IN THE SESSION'... 
+
+
+(provavelmente vou GANHAR 1 ERRO NA VIEW...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> BEM.... O QUE ACONTECE, SE EU:
+
+
+
+
+
+
+
+
+1) APAGAR O 'SESSION COOKIE' NO BROWSERSIDE --> vou só receber a PÁGINA NORMAL, mas sem a TOOLBAR 'de admin', pq NÃO VOU TER o 'req.session.isLoggedIn', o que fará com aquele render condicional lá na minha view de 'navigation.ejs', que tem o código 'if (isLoggedIn)', NÃO SEJA TRIGGADO...
+
+
+
+
+
+
+
+
+2) APAGAR/DELETAR A 'SESSION' correspondente a esse cookie, lá na DATABASE MONGODB, COLLECTION DE 'sessions' ---->   BEM, SIMPLESMENTE VOU TAMBÉM PERDER ACESSO à 'ADMIN TOOLBAR', pq agora não terei 1 objeto/document 'session' a QUE CORRESPONDER A ESSE SESSION COOKIE NO MEU BROWSER, LÁ NA DATABASE...
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+no primeiro caso,
+
+
+
+
+
+O 
+
+
+
+SESSION COOKIE QUE É NECESSÁRIO PARA IDENTIFICAR  ___ A 'CORRECT SESSION'
+
+
+
+na database, NÃO ESTARÁ LÁ....
+
+
+
+
+
+
+
+
+
+
+------> E É ÓBVIO QUE _ DELETAR__ APENAS 
+
+
+
+O 
+
+
+
+COOKIE (session cookie) __DE UMA RELAÇÃO 
+
+
+'session cookie <--> session'
+
+
+
+
+É __ ALGO TOTALMENTE ___ NÃO IDEAL__..... --------> ISSO PQ 
+
+
+
+
+
+
+SE FORMOS 
+
+
+
+FAZENDO ISTO AQUI:
+
+
+
+1) LOGIN, lá no frontend (vai acabar: a) ARMAZENANDO SESSION COOKIE NO NOSSO BROWSER; b)  CRIANDO OBJETO/DOCUMENT 'session' LÁ NA COLLECTION 'sessions', na minha database mongodb....       )
+
+
+
+2) __ DELETE__ DE UM COOKIE/SESSION COOKIE, lá no browserside....
+
+
+
+3) MAIS NADA .... 
+
+
+
+
+
+
+
+
+
+
+------> SE EU FIZER ISSO AÍ, ESSES PASSOS,
+
+
+VOU ACABAR APAGANDO O COOKIE EM MEU BROWSER,
+
+
+__SIM,
+
+
+__ MAS 
+
+
+A 
+
+SESSION CORRESPONDENTE A ESSE COOKIE ESPECÍFICO,
+
+ARMAZENADA 
+
+LÁ 
+
+
+NA DATABASE na collection de 
+
+
+'sessions'
+
+
+
+_________NUNCA __ SERÁ DELETADA... --> vai ficar lá, ocupando espaço...  ------->
+
+
+
+E ISSO 
+
+É 
+
+
+
+
+TOTALMENTE SUBÓPTIMO/NÃO IDEAL,
+
+
+
+
+pq vai preenchendo espaço na nossa database... ---------> PROFESSOR NOS EXPLICA QUE 
+
+
+
+____HÁ UMA MANEIRA BEM MAIS 'CLEAN' DE FAZER ISSO,
+
+
+
+
+
+E 
+
+ESSA 
+
+
+
+
+MANEIRA __ 'CLEAN'
+
+
+
+__ É 
+
+
+OBTIDA ___ POR MEIO DO USO __ 
+
+
+DE 
+
+
+
+1 METHOD 
+
+PROVIDENCIADO 
+
+pelo 
+
+
+'session-express'......
+
+
+
+
+
+
+
+
+O PROFESSOR QUER NOS MOSTRAR ESSE METHOD ESPECIAL....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PROFESSOR 
+
+VAI 
+
+
+ATÉ 
+
+
+AS VIEWS,
+
+até 
+
+o 
+
+arquivo de 
+
+'navigation.ejs',
+
+
+
+
+
+
+E AÍ,
+
+
+
+
+
+PERTO 
+
+
+
+DAQUELE BOTÃO DE 'login',
+
+
+
+ELE 
+
+
+
+VAI 
+
+COLOCAR 
+
+
+
+
+OUTRO 
+
+
+
+
+
+
+_______ FIELD__,
+
+
+
+OUTROO 
+
+
+
+
+
+
+_____LIST ITEM (<li>),
+
+
+
+
+
+
+
+LIST ITEM 
+
+QUE 
+
+TERÁ ___ UMA FORM,
+
+
+
+FORM QUE 
+
+VAI 
+
+LEVAR 
+
+
+
+__A UMA ROUTE __ DE 
+
+
+'/logout',
+
+
+
+
+
+E AÍ VAI USAR 
+UM 
+
+METHOD de 
+
+'POST',
+
+
+
+E NESSA FORM TEREMOS 
+
+
+UM BUTTON QUE 
+
+
+
+
+
+____ SERÁ DE TYPE 'submit',
+
+
+
+
+EM QUE PROFESSOR DIRÁ 
+
+'logout':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav_item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="mobile-nav_item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="mobile-nav_item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="mobile-nav_item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+        <li>
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      </ul>
+    </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> CERTo....
+
+
+
+
+
+
+
+
+
+
+
+SE SALVARMOS ISSO E __RECARREGARMOS NOSSA PAGE,
+
+VEREMOS 
+
+
+
+o 
+
+
+'LOGOUT'
+
+
+do 
+
+LADO DE 
+
+'LOGIN'...
+
+
+
+
+
+
+--> COLOCAMOS UM STYLE DE 
+
+'main-header__item-list',
+
+COISA PADRÃO...
+
+
+
+
+
+
+--> SALVAMOS TUDO ISSO E RECARREGMOS,
+
+
+aí o styling fica normal....
+
+
+
+
+
+
+
+OK... CORRIGI O STYLING....
+
+
+
+
+
+
+
+
+--> TEMOS ESSE 'LOGOUT' BUTTON AÍ..
+
+
+
+
+
+
+
+--> QUANDO CLICARMOS NESSE BUTton,
+
+
+
+
+
+PROFESSOR VAI QUERER __ QUE SEJA 
+
+
+'CLEARED OUT'
+
+QUALQUER SESSION QUE 
+
+
+NÓS 
+
+
+
+
+TALVEZ JÁ TENHAMOS 
+
+no nosso browser...
+
+
+
+
+
+
+
+-------> para isso,
+
+
+
+ELE DIZ QUE PRIMEIRAMENTE VAMOS PRECISAR DE UMA NOVA ROUTE.... 
+
+
+
+
+
+
+
+--> É POR ISSO QUE VAMOS ATÉ O ARQUIVO ROUTE DE 'auth.js'
+
+
+
+E ADICIONAMOS UMA 
+
+ROUTE DE 
+
+
+'/logout',
+
+
+DE TIPO 
+
+'router.post()'...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> router.post('/logout', 
+
+
+
+authController.postLogout
+)
+
+
+
+
+
+
+
+
+
+
+
+------> PRECISAMOS DE UM CONTROLLER PARA ISSO,
+
+UMA ACTION PARA ISSO...
+
+
+
+
+
+
+
+
+---> OK...
+
+
+
+
+
+
+
+
+--_> AÍ ESCREVEMOS:
+
+
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSA ACTION/CONTROLLER,
+
+
+
+
+VAMOS QUERER 
+
+
+
+'CLEAR OUT OUR SESSION'.... -----> 
+
+
+
+
+PODEMOS/VAMOS 
+
+FAZER 
+
+ISSO 
+
+
+
+JUSTAMENTE 
+
+
+PELO __ REACH OUT 
+
+
+AO 
+
+
+OBJETO 
+
+'session'
+
+
+
+LÁ 
+
+
+
+NO NOSSO SERVER,
+
+
+
+
+
+E AÍ 
+
+
+
+
+PELO 
+
+CALL 
+
+DE 
+
+
+'destroy'
+
+
+EM CIMA 
+
+
+
+DE NOSSA SESSIOn...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+
+
+
+            req.session.destroy();
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR EXPLICA QUE 
+
+ESSE 
+
+METHOD 
+
+'destroy()'
+
+É UM MÉTODO 
+
+
+
+___ 
+
+
+PROVIDENCIADO __ PELA PRÓPRIA 
+
+
+PACKAGE 
+
+
+'express-session'
+
+
+QUE 
+
+ESTAMOS USANDo....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+
+
+
+  req.session.destroy(); ///////'.destroy()' em cima do objeto 'session' no OBJETO REQUEST daquele user específico... -----> 'destroy()' É UM METHOD EM 'session' PROVIDENCIADO __ PELO PACKAGE DE 'express-session'... ---> ELE ___ VAI ___dESTRUIR__ A SESSION CORRESPONDENTE __ AO 'SESSION COOKIE' do user que ENVIOU ESSE REQUEST de 'logout'.... (aí, com isso, VAMOS ACABAR DESTRUINDO ___TANTO O SESSION COOKIE EM NOSSOS BROWSERS/BROWSERS DOS USERS__ COMO ___ TAMBÉM __ A SESSION ARMAZENADA_ LÁ NA NOSSA DATABASE, na collection de 'sessions'...)
+}
+
+
+
+
+
+
+
+
+----------> OK.........
+
+
+
+
+
+
+
+MAS É EVIDENTE QUE 
+
+
+
+ESSE 
+
+
+METHOD 
+
+
+
+'req.session.destroy()'
+
+
+
+
+
+_____TAMBÉM ACEITA/EXIGE __ UMA FUNÇÃO__ COMO 
+
+PARÂMETRO,
+
+
+
+
+
+__ UMA FUNÇÃO ANÔNIMA,
+
+
+
+
+QUE 
+
+
+
+
+
+SERÁ __ CHAMADA __ 
+
+
+
+
+QUANDO __ 
+
+ESSE METHOD TIVER __aCABADO__ DE 
+
+
+___dESTRUIR__ 
+
+ESSA 
+
+
+SESSION CORRESPONDENTE A ESSE 'SESSION COOKIE',
+
+lá na nossa database...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+
+
+
+  req.session.destroy(       ///////'.destroy()' em cima do objeto 'session' no OBJETO REQUEST daquele user específico... -----> 'destroy()' É UM METHOD EM 'session' PROVIDENCIADO __ PELO PACKAGE DE 'express-session'... ---> ELE ___ VAI ___dESTRUIR__ A SESSION CORRESPONDENTE __ AO 'SESSION COOKIE' do user que ENVIOU ESSE REQUEST de 'logout'.... (aí, com isso, VAMOS ACABAR DESTRUINDO ___TANTO O SESSION COOKIE EM NOSSOS BROWSERS/BROWSERS DOS USERS__ COMO ___ TAMBÉM __ A SESSION ARMAZENADA_ LÁ NA NOSSA DATABASE, na collection de 'sessions'...)
+
+
+        () => { //EIS O CÓDIGO EM QUESTÃO.
+
+
+
+                console.log('DESTROYED SESSION IN DATABASE');
+        }
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE 
+
+
+___DENTRO _DESSA FUNÇÃO INTERNA,
+
+
+
+
+
+
+O 
+
+
+'req.session' (A __SESSION NO OBJETO REQUEST_  )
+
+
+
+
+
+__NÃO FICARÁ/ESTARÁ MAIS DISPONÍVEL,
+
+
+
+JUSTAMENTE 
+
+PQ 
+
+
+__RECÉM __ 
+
+
+NOS LIVRAMOS DESSA SESSION NA DATABASE,
+
+
+por 
+
+meio de 
+
+'req.session.destroy()"... ------->  ENTRETANTO,
+
+
+
+
+É 
+
+
+__CLARO QUE __ 
+
+
+
+
+
+ESSA SESSION DATA/uma session SERÁ __ RECRIADa/CRIADa 
+
+
+
+
+NA DATABASE 
+
+
+QUANDO 
+
+
+
+
+UM NOVO REQUEST FOR ENVIADO,
+
+
+
+
+
+aqui por meio 
+
+daquele código 
+
+
+de 
+
+'exports.postLogin',
+
+
+QUE TEM ESTAS LINHAS:
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+        req.session.isLoggedIn = true; 
+        req.session.user = user;
+
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+(OBS.... AGORA VI O 
+
+
+
+QUE O 
+
+
+PROFESSOR HAVIA 
+
+FEITO 
+
+LÁ 
+
+
+NO ASSIGNMENT.... -----> ELE __ PAROU___ DE USAR 
+
+o 
+
+código de 
+
+'User.findById('xxxx')' 
+
+LÁ 
+
+
+NO NOSSO MIDDLEWARE QUE CRIAVA/USAVA/DEFINIA UM USER,
+
+lá 
+
+
+
+em 
+
+'app.js'... ----> ISSO PQ __ É _ÓBVIO__ QUE AGORA 
+
+
+SÓ 
+
+
+VAMOS QUERER 
+
+
+
+
+
+'TER ESSE USER'/fazer com que esse user ENTRE no app 
+
+
+
+QUANDO FOR CLICADO O 
+
+
+BUTTON DE 
+
+
+
+'login'... ------> E É EXATAMENTE 
+
+
+
+POR ISSO 
+
+
+
+QUE PROFESSOR 
+
+TRANSPLANTOU 
+
+
+
+'User.findById('xxxx')
+.then(
+    (user) => {
+
+    }
+)
+'
+
+
+
+
+
+
+PARA DENTRO DE NOSSO CONTROLLER DE 
+
+
+
+'exports.postLogin'...
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+O 
+
+
+
+'exports.postLogin'
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+User.findById('6178c60a90464c24983b0847') ////////EIS O CÓDIGO EM QUESTÃO....
+.then(
+    (user) => {
+
+                req.session.isLoggedIn = true;
+                req.session.user = user;
+                res.redirect('/');
+
+    }
+)
+.catch(
+    err => {
+        console.log(err);
+    }
+)
+
+
+}
+
+
+
+
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+
+    req.session.destroy(
+        () => {
+
+        }
+    )
+}
+
+
+
+
+
+
+
+--->  OK...
+
+
+
+
+
+
+
+----> PROFESSOR ENTÃO ESTAVA 
+
+
+NOS EXPLICANDO 
+
+
+
+
+QUE 
+
+__VAMOS SEMPRE 
+
+'recreate'
+
+
+ESSA SESSION 
+
+
+NO/PARA O 
+
+PRÓXIMO REQUEST,
+
+
+tudo 
+
+por meio 
+
+
+DAQUELE 
+
+CÓDIGO 
+
+
+de 
+
+
+
+
+''
+
+User.findById('6178c60a90464c24983b0847')
+.then(
+    (user) => {
+
+                req.session.isLoggedIn = true;
+                req.session.user = user;
+                res.redirect('/');
+
+    }
+)
+
+
+''',
+
+
+
+
+
+
+
+
+
+
+QUE 
+
+VAI 
+
+SETTAR 
+
+NOSSA 
+
+SESSION DATA 
+
+
+
+DNV... ( NA NOSSA DATABASE, no caso)... -------> MAS O QUE INTERESSA 
+
+É 
+
+
+
+
+O NOSSO SISTEMA DE CLEANUP,
+
+
+
+implementado por meio de 
+
+
+'postLogout' COM 
+
+
+aquele 
+
+
+'req.session.destroy()',
+
+
+QUE 
+
+
+__VAI ________dESTRUIR__ _ 
+
+
+
+
+
+A SESSION DATA CORRESPONDENTE ÀQUELE SESSION COOKIE ESPECÍFICO,
+
+lá 
+
+
+NA NOSSA DATABASE MONGODB...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> NO POSTLOGOUT, por fim,
+
+
+PROFESSOR VAI QUERER ENVIAR UMA RESPONSE DE REDIRECT,
+
+
+PARA REDIRECIONAR À PÁGINA INICIAL...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+User.findById('6178c60a90464c24983b0847') ////////EIS O CÓDIGO EM QUESTÃO....
+.then(
+    (user) => {
+
+                req.session.isLoggedIn = true;
+                req.session.user = user;
+                res.redirect('/');
+
+    }
+)
+.catch(
+    err => {
+        console.log(err);
+    }
+)
+
+
+}
+
+
+
+
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+
+    req.session.destroy(
+        () => {
+                res.redirect('/');
+        }
+    )
+}
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+OK.... MAS O PROBLEMA, AGORA,
+
+
+É QUE 
+
+
+
+
+
+
+
+1) NOSSAS PAGES DE 'orders' 
+
+e 
+
+'cart'
+
+
+NÃO ESTÃO MAIS FUNCIONANDO...
+
+
+
+
+
+
+
+
+2)  __ MEU COOKIE/SESSION COOKIE, NO BROWSER, __ NÃO ESTÁ SENDO DELETADO 
+
+
+__ QUANDO OCORRE ESSE DELETE 
+
+
+
+da 'SESSION' correspondente a ele,
+lá 
+
+
+
+NA 
+
+COLLECTON DE 'sessions',
+
+LÁ 
+
+NA 
+
+DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+-------> CERTO.... e como podemos 
+
+
+deletar 
+
+esse cookie? 
+
+
+
+
+
+
+
+
+------> O SESSION COOKIE AINDA EXISTE,
+
+
+MAS O __PROFESSOR __ EXPLICA QUE 
+
+
+___________ISSO NÃO É UM PROBLEMA.... -->
+
+
+
+'NÃO É PROBLEMA MEU/NOSSO'.... --> não é PROBLEMA
+PQ 
+
+
+
+
+__________NENHUMA 'MATCHING SESSION', 
+
+
+nenhuma session com seu 'id'
+
+
+VAI 
+
+MATCHEAR 
+
+
+o 
+
+'HASHEDID'
+
+
+
+ARMAZENADO 
+
+
+
+nesse 
+
+
+
+SESSION COOKIE, NO browser do seu user... -------> É POR ISSO QUE 
+
+
+
+ISSO 
+
+É 
+
+'BASICALLY FINE',
+
+
+PQ 
+
+
+ESSE 
+
+COOKIE 
+
+
+
+'WILL BASICALLY NOT DO ANYTHING',
+
+
+
+
+
+
+__ E ALÉM DE NÃO FAZER NADA/NÃO ATRAPALHAR,
+
+
+
+
+ESSE 
+
+COOKIE/SESSION COOKIE ENFIADO 
+
+
+
+__ NO BROWSER __ DO USER_ _ VAI SER __AUTOMATICMANETE
+
+
+
+
+'RENEWED'
+
+
+
+
+
+
+
+
+__________NO MOMENTO EM QUE O USER/NÓS FIZERMOS LOGIN DE NOVO... --> AÍ O 'NOVO COOKIE'
+
+
+
+
+VAI 
+
+DAR ___ OVERWRITE___ 
+
+
+NO COOKIE VELHO, session cookie que já não tem PAR na database.... --------> 
+
+
+
+
+E QUANDO FECHAMOS/FECHARMOS 
+
+O
+  __bROWSER___ 
+
+
+
+  ESSE 
+
+  COOKIE __ 
+
+
+
+  ÁI, 
+
+
+  SESSION COOKIE,
+
+
+
+
+
+
+  __ELE ___ TAMBÉM __ VAI SER DELETADO AUTOMATICAMENTE.... -------> (ISSO 
+  
+  
+  PQ 
+  
+  
+  ESSE 
+  
+  'SESSION COOKIE'
+  
+
+  __________NÃO É UM PERMANENT COOKIE,
+
+
+  
+
+
+  __ É 
+
+
+  REALMENTE 
+
+
+
+  1 
+
+  'SESSION COOKIE',
+
+
+  O 
+
+  QUE SIGNIFICA QUE 
+
+
+
+  ___________ ELE __ NÃO TEM 1 EXPIRY DATE,
+
+  E QUE 
+
+
+  __ELE VAI NATURALMENTE __ 
+
+  EXPIRAR 
+
+  QUANDO 
+
+  VOCÊ 
+
+
+  FECHAR 
+
+
+
+  __ O BROWSER....
+  
+  
+  
+  
+  )
+
+
+
+
+
+
+
+
+  --> OK.... O SESSION COOKIE VAI __SIMPLESMENTE SER __ DELETADO__ 
+
+  QUANDO FECHARMOS O BROWSER,
+
+
+
+
+
+  E ELE É 'COMPLETELY WORTHLESS'
+
+
+  no estado 
+
+
+
+
+  'PÓS-DELETE DE SUA SESSION, NA DATABASe'...
+
+
+
+
+
+  
+
+
+
+  OK... ACHO QUE ENTENDI.
+
+
+
+
+
+
+  

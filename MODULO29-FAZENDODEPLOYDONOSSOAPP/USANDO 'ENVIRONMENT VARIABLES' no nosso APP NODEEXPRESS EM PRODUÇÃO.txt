@@ -1,0 +1,3546 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> DEPOIS DE TODA AQUELA TEORIA,
+
+DEVEMOS VOLTAR AO NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS VOLTAR AO 
+
+PROJETO 
+
+DO 
+
+'SHOP',
+EXATAMENTE 
+
+COMO HAVÍAMOS O CONSTRUÍDO,
+
+
+MUITAS AULAS ATRÁS... 
+
+
+
+
+
+
+
+--> COMO VOCÊ DEVE SE LEMBRAR,
+
+ESTE 
+
+__ NÃO __ ERA UM 
+
+
+PROJETO  nodeexpress 'GRAPHQL API',
+
+
+OU 'REST API' 
+
+
+(esse tipo de projeto aí se utiliza do REACT, e outros frameworks),
+
+
+
+
+
+E SIM __ 
+
+
+UM 
+
+
+PROJETO CLÁSSICO,
+
+COM RENDER DE VIEWS E USO DE TEMPLATING ENGINES (ejs)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> É O SHOP ANTIGÃO, NO CASO... (vou copiar esse projeto para esta pasta)....
+
+
+
+
+
+
+
+
+--> é o 'NOVONOVOPROJETO26'...
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE CÓDIGO,
+
+
+
+O PROFESSOR QUER COMEÇAR COM A EXPLICAÇÃO DE ENVIRONMENT VARIABLEs....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> A PRIMEIRA PERGUNTA: O QUE CONTROLARÍAMOS/CONTROLAMOS EM UMA ENVIRONMENT VARIABLE,
+
+
+
+
+
+E O QUE É UMA ENVIRONMENT VARIABLE? 
+
+
+
+
+
+
+--> ENVIRONMENT VARIABLES 
+
+SÃO 
+
+UM CONCEITO 
+SUPORTADO PELO NODEJS... 
+
+(
+
+
+    será que isso não é simplesmente só escrever uma variável GLOBAL com um 
+
+    VALOR DE UMA URL/API KEY e depois só MUDAR ISSO NA HORA QUE FOR FAZER DEPLOY?
+)
+
+
+
+
+
+
+
+
+
+--> SÃO UM CONCEITO SUPORTADO PELO NODEJS,
+
+EM QUE 
+
+PODEMOS 
+
+PASSAR 
+
+'CERTAS CONFIGURATIONS/VALUES' PARA DENTRO 
+
+DE 
+
+NOSSO 
+
+APP,
+
+MAS 
+TUDO 
+
+
+
+DO 'LADO DE FORA' DO NOSSO APP.... -> ISSO SIGNIFICA 
+
+QUE 
+
+NÓS ___ NÃO VAMOS 'HARDCODE'
+
+alguns valores 
+
+diretametne no nosso código node,
+
+
+
+
+
+
+E SIM _ QUE __ VAMOS 
+
+
+
+IMPORTAR/INJETAR__ ESSES VALORES QUANDO 
+
+
+
+_ NOSSO SERVIÇO NODE _ INICIAR... -> E ISSO NOS DEIXA 'USE DIFFERENT VALUES DURING DEVELOPMENT AND PRODUCTIOn',
+
+
+
+E TAMBÉM 
+
+NOS 
+
+
+DEIXA 
+
+
+__MUDAR __ CONVENIENTEMENTE __ OS VALORES , ___ DURANTE__ A FASE DE PRODUCTION_, 
+
+SEM 
+
+TERMOS 
+
+DE 
+
+
+'REDEPLOY OUR ENTIRE CODE'.... (
+
+    ou seja,
+
+
+    é realmente bem útil....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> E UM BOM EXEMPLO PODE SER VISTO JÁ 
+
+NO NOSSO ARQUIVO STARTER DE 
+
+'app.js'... 
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ ENCONTRAMOS NOSSA URL/ENDPOINT DO MONGODB:
+
+
+
+
+
+const MONGODB_URI = 'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+
+
+
+
+
+
+
+
+
+--> ESSA 'CONNECTION STRING'
+
+
+
+
+POSSIBILITA A SIMPLES CONEXÃO AO NOSSO MONGOOSE/MONGODB CLUSTER... -> E É CLARO QUE TEMOS ALGUNS VALORES HARDCODADOS
+ 
+
+ NESSE LUGAR.... -> 
+
+
+ por exemplo,
+
+ temos 
+
+ aquele 
+
+ trecho de 'username' (madblorga),
+
+
+
+
+
+
+ E __ TAMBÉM O PASSWORD _ PARA O 'USER' ('MADBLORGA:xasxjaissijsx') ,
+
+
+
+
+ E TAMBÉM 
+
+
+ O FIELD 
+
+ FINAL, 
+
+
+
+tipo
+
+'''
+
+
+ net/shop?retryWrites=true&w=majority';
+
+
+
+
+ '''
+
+
+
+
+
+
+ --> SE QUEREMOS MUDAR 
+
+
+
+ALGUMA DESSAS COISAS,
+ 
+ NO MOMENTO,
+
+
+
+ SEREMOS FORÇADOS A MUDAR ALGO NO CÓDIGO E ENTÃO __O  REDEPLOYAR_, O QUE É UM SACO...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ALÉM DISSO,
+
+SE 
+ALGUMA HORA 
+
+
+
+
+
+COMPARTILHARMOS ESSE CÓDIGO COM ALGUÉM,
+
+ESSA 
+
+
+PESSOA 
+
+
+
+VAI 
+
+
+OBTER NOSSO PASSWORD TAMBÉM,
+
+O QUE É PERIGOSO.... (vai obter as credentials)...
+
+
+
+
+
+
+
+
+--> ISSO NÃO TEM PERIGO AGORA, COM O PROFESSOR, PQ ELE VAI MUDAR O CÓDIGO DEPOIS DA GRAVAÇÃO... -> MAS 
+
+
+EM UM APP DE VERDADE,
+
+
+
+VOCê NÃO PODE 'CHANGE YOUR PASSWORDS EVERY TIME YOU SHARE YOUR CODE WITH YOUR CO-WORKERS'... (isso seria muito imprático)....
+
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE VOCÊ VAI QUERER USAR 
+
+
+'NODE ENVIRONMENT VARIABLES' 
+
+
+
+
+nesses slots aí....
+
+
+
+
+
+
+
+
+
+--> OUTRO LUGAR QUE SERIA BOM USAR UMA DESSAS 'ENVIRONMENT VARIABLES'
+
+É 
+
+LÁ 
+
+
+NA PARTE INFERIOR DESSE ARQUIVO,
+
+
+
+EM QUE 
+
+SETTAMOS __ 
+
+
+
+O __ PORT__ EM QUE FAREMOS 'LISTEN' 
+
+DESSE NOSSO APP:
+
+
+
+
+
+
+mongoose
+  .connect(
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+    app.listen(3000); ////AQUI, VAMOS COLOCAR UMA ENVIRONMENT VARIABLE....
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+----------> QUEREMOS COLOCAR UMA ENV VARIABLE 
+
+
+NESSE LUGAR JUSTAMENTE PQ 
+
+
+AS PORTAS QUE UTILIZAMOS 
+
+DURANTE O DEVELOPMENT 
+E 
+O 
+
+DEPLOYMENT SÃO/SERÃO DIFERENTES.... -> na fase 
+
+
+de 
+
+
+development,
+
+USAMOS 
+
+A PORTA DE 
+
+
+'3000'... ------> NA VERDADE,
+ 
+ PODEMOS USAR __ QUALQUER __ NÚMERO ACIMA DE 1000 --> MAS 
+
+
+
+ _ NA FASE DE PRODUCITON,
+
+
+
+
+ QUEREMOS CERTAMENTE 
+
+
+
+
+
+ DEIXAR NOSSO 
+
+ 'SERVER'/HOSTING PROVIDER DEFINIR ESSA 
+
+
+
+
+ PORT PARA NÓS... -----> ISSO PQ ESSE PROVIDER/COISA É, NO FINAL DAS CONTAS,
+
+
+ A 
+
+ COISA/SERVIÇO QUE VAI 
+
+ 'OPEN OUR APP TO THE WEB'... ---------> E É O HOSTING PROVIDER QUE VAI 
+
+
+ 'CONFIGURAR TODAS AS NETWORK SETTINGS'...
+
+
+
+
+
+
+
+
+
+
+ -----> OK.. ISSO SIGNIFICA QUE 
+
+
+ NÃO SEREMOS NÓS QUE CONTROLAremos O 'PORT NUMBER',
+
+
+ e sim 
+
+
+
+
+ o _ HOSTING PROVIDER CONTROLARÁ...
+
+
+
+
+
+
+
+
+
+
+
+ -------> OUTRO EXEMPLO DE __ ALGO QUE QUEREMOS CONTROLAR EM UM 'ENVIRONMENT VARIABLE' 
+
+
+ PODE SER ENCONTRAOD 
+
+ LÁ 
+
+
+
+ NO ARQUIVO DE 'shop.js' (controller).... -->  
+
+
+
+
+
+ LÁ, NÓS TEMOS AQUELE CÓDIGO DO STRIPE:
+
+
+
+
+
+
+
+ const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L');
+
+
+
+
+
+
+
+
+
+
+
+
+---> NO CASO, 
+
+
+ESSA STRIP KEY __ É 
+
+UMA 'DEVELPOMENT KEY' (secretkey_test).... -->  
+
+
+
+
+
+
+
+MAS 
+
+
+
+
+É UMA MÁ IDEIA HARDCODAR ESSA STRING AÍ.... ---> É UMA MÁ IDEIA JUSTAMENTE 
+
+
+
+PELOS MESMOS MOTIVOS 
+
+
+
+
+
+
+
+DE NÃO ESCREVERMOS 
+
+
+isto:
+
+
+
+
+
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+ok... vamos usar algumas ENVIRONMENT VARIABLes....
+
+
+
+
+
+
+
+
+--> PARA FAZER ISSO, É BEM SIMPLES... ( acho que eu já fiz isso uma vez)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> o primeiro passo é converter 
+
+
+
+ESSA 
+
+STRING DE 
+
+
+
+
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+
+
+
+
+
+    EM UM TEMPLATE LITERAL...
+
+
+
+
+
+
+
+
+    TRANSFORMADO EM UM TEMPLATE LITERAL,
+
+
+    SÓ PRECISAMOS 
+
+    SUBSTITUIR OS TRECHOS QUE 
+
+    VAMOS QUERER 
+
+    INJETAR 
+
+
+    por 
+
+    '${}'...
+
+
+
+
+
+
+    ex:
+
+
+
+    `mongodb+srv://${user}:${password}@cluster0.nhtjo.mongodb.net/${database}?retryWrites=true&w=majority`
+
+
+
+
+
+
+
+
+
+
+    -> OK... AGORA TEMOS 'USER',
+
+
+    'PASSWORD'
+
+
+
+e 
+
+'database'... 
+
+
+
+
+
+esses são os valores que INJETAREMOS NESSE LOCAL...
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+CERTO... ENTRETANTO,
+
+AQUI COMETEMOS UM ___ ERRO__... --> 
+
+
+
+em vez de 
+
+
+INJETAR DIRETAMENTE UMA VAR/CONST _ QUE NÃO EXISTE NO NOSSO ARQUIVO,
+
+
+
+O PROFESSOR 
+
+EXPLICA QUE 
+
+
+
+DEVEMOS 
+
+
+
+
+
+referenciar/citar 
+
+
+
+
+aquele OBJETo 
+
+
+'process',
+
+
+QUE 
+
+É 
+
+
+
+ A __ CHAVE___ PARA CONSEGUIRMOS __ USAR ENVIRONMENT VARIABLES...
+
+
+
+
+
+
+
+
+ --> É DENTRO DESSE OBJETO 'process' QUE VAMOS ACESSAR NOSSAS  DIFERENTES VARIABLES...
+
+
+
+ TIPO ASSIM:
+
+
+
+     `mongodb+srv://${process.user}:${process.password}@cluster0.nhtjo.mongodb.net/${process.database}?retryWrites=true&w=majority`
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+'process' 
+
+É UM OBJETO QUE NÃO É DEFINIDO POR NÓS,
+
+E SIM EXISTE 
+
+
+
+'COMO PARTE DO CORE NODE RUNTIME'...
+
+
+
+
+
+
+
+
+
+
+---------> NESSE OBJETO 'process',
+
+
+
+
+
+TEMOS __ A PROPRIEDADE SUPER _ ÚTIL DE _ __
+
+
+
+
+
+'.env' ---> ESSE É UM OBJETO __ COM TODAS AS 'ENVIRONMENT VARIABLES' que 
+
+esse 
+
+objeto 'process' 
+
+CONHECE..
+
+
+
+
+
+ex:
+
+
+
+     `mongodb+srv://${process.env.user}:${process.env.password}@cluster0.nhtjo.mongodb.net/${process.env.database}?retryWrites=true&w=majority`
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+EXISTEM ALGUMAS VARIABLes 
+
+
+
+DEFAULT DENTRO DESSE OBJETO 'env',
+
+
+
+MAS QUE 
+
+É ÓBVIO QUE PODEMOS 
+
+
+DEFINR 
+
+
+
+
+ALGUMAS VARIABLES __ CUSTOM,
+
+
+de nossa autoria...
+
+
+
+
+
+
+
+
+-----> AQUI, NO CASO,
+
+
+O PROFESSOR 
+
+
+
+VAI QUERER USAR UMA VARIABLE QUE ELE CHAMARÁ 
+
+
+de 
+
+
+'MONGO_USER'....
+
+
+
+ELE FAZ A MESMA COISA COM O MONGO PASSWORD,
+
+
+E COM O MONGO_DATABASE...
+
+
+
+ex:
+
+
+
+
+     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.nhtjo.mongodb.net/${process.env.MONGODATABASE}?retryWrites=true&w=majority`
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... -> ELE VAI NOS MOSTRAR COMO DEFINIR ESSAS VARIABLES EM UM SEGUNDO....
+
+
+
+
+
+
+
+
+
+--------> ALTERNATIVAMENTE,
+
+VOCê PODERIA, É CLARO,
+
+DEIXAR 
+
+ESSA 
+
+CONNECTION STRING INTEIRA 
+
+
+
+UMA 
+
+'ENVIRONMENT VARIABLE',
+
+
+
+A DEPENDER DA FREQUÊNCIA COM QUE 
+ELA 
+
+MUDRÁ 
+
+
+
+NO SEU PROJETO....
+
+
+
+
+
+
+
+
+
+--> agora lá embaixo,
+
+
+
+
+
+no 
+
+
+
+''
+
+mongoose
+  .connect(
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+    app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+'',
+
+
+
+
+
+
+VAMOS QUERER SUBSTITUIR 
+
+AQUELE 
+
+
+
+'app.listen(3000)'
+
+
+
+
+por 
+
+
+'
+app.listen(process.env.PORT)' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK .... MAS VAMOS COLOCAR UMA GAMBIARRA,
+
+AQUI... --_> 
+
+
+VAMOS USAR O 
+
+PIPE OPERATOR 
+
+PARA 
+
+
+
+
+DEFINIR O 'DEFAULT',
+
+QUE SERÁ DE 
+
+'3000' (
+
+
+    isso significa que 
+
+    SE NÓS 
+
+
+    NÃO ESTIVERMOS NO MODO DEPLOY/NÃO ESTIVER DEFINIDA ESSA VARIABLE DE 'PORT',
+
+
+__ VAMOS AUTOMATICAMENTE 
+
+TROCAR PARA O PORT DO MODO DE 'DEVELOPMENT',
+
+
+que será esse 3000 aí...
+)
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ app.listen(process.env.PORT || 3000);  //  ---> OK .... MAS VAMOS COLOCAR UMA GAMBIARRA,
+
+    // AQUI... --_> 
+    
+    
+    // VAMOS USAR O 
+    
+    // PIPE OPERATOR 
+    
+    // PARA 
+    
+    
+    
+    
+    // DEFINIR O 'DEFAULT',
+    
+    // QUE SERÁ DE 
+    
+    // '3000' (
+    
+    
+    //     isso significa que 
+    
+    //     SE NÓS 
+    
+    
+    //     NÃO ESTIVERMOS NO MODO DEPLOY/NÃO ESTIVER DEFINIDA ESSA VARIABLE DE 'PORT',
+    
+    
+    // __ VAMOS AUTOMATICAMENTE 
+    
+    // TROCAR PARA O PORT DO MODO DE 'DEVELOPMENT',
+    
+    
+    // que será esse 3000 aí...
+    // )
+    
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+certo.. vou dar uma breve checada no código do projeto NEXTJS,
+
+ver se 
+
+
+
+eu já estava usando essa sintaxe das env variables..
+
+
+
+
+
+
+O CÓDIGO ERA ESTE: 
+
+
+
+
+
+
+
+module.exports = (phase) => {
+
+  if (phase === PHASE_DEVELOPMENT_SERVER) {
+
+    return {
+    env: {
+      ////EXEMPLO DE ENVIRONMENT VARIABLES
+      mongodb_username: 'madblurga',
+      mongodb_password: 'papanacuas',
+      mongodb_clustername: 'cluster0',
+      mongodb_database: 'contactFormsTest', ////DATABASE USADA PARA A VERSÃO DE 'DEVELOPMENT', distinta da utilizada nas versões de 'PRODUCTION' (ver código mais abaixo)...
+    }
+  }
+
+  
+}
+
+else {
+
+
+  return {
+    env: {
+      ////EXEMPLO DE ENVIRONMENT VARIABLES
+      mongodb_username: 'madblurga',
+      mongodb_password: 'papanacuas',
+      mongodb_clustername: 'cluster0',
+      mongodb_database: 'contactForms', ////DIFERENTE DATABASE PARA AS VERSÕES DE 'PRODUCTION'
+    }
+  }
+
+
+}
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+MAS ISSO SÓ FUNCIONAVA COM  o
+
+
+
+
+
+NEXTJS,
+
+
+
+dentro de um arquivo de nome 
+
+
+'next.config.js'....
+
+
+
+
+
+
+
+
+
+
+
+--> NÃO SEI COMO É EM UM APP 'NODE EXPRESS PURO', como o nosso...
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+
+
+--> OK... 
+
+
+
+
+MAS VOLTANDO À AULA DO PROFESSOR:
+
+
+
+
+
+
+app.listen(process.env.PORT || 3000); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA __ QUE __ A GRANDE __ MAIORIA __ DOS HOSTING PROVIDERS __ VAI AUTOMATICAMENTE INSERIR 
+
+
+
+
+
+
+UMA VARIÁVEL DE 'PORT = xxxx'
+
+
+DENTRO 
+
+
+
+DO RUNTIME DE SEU APP NODE,
+
+
+
+
+
+POR ISSO 
+
+
+ESCREVEMOS 
+
+ESSE 
+
+'app.listen()'
+
+
+assim ... -> PQ 
+
+
+
+NA GRANDE MAIORIA DOS CASOS PODEMOS CONFIAR NOS HOSTING PROVIDERS, ACREDITAR QUE 
+
+ELES VAO SETTAR ESSE NÚMERO DO PORT AUTOMATICAMENTE.... ( o fallback existe para os cases em que ELES NÃO FAZEM ISSO, e para o case em que ESTAMOS NO MODO DE DEVELOPMENT COM NOSSO CÓDIGo...)
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+   app.listen(process.env.PORT || 3000);  //  ---> OK .... MAS VAMOS COLOCAR UMA GAMBIARRA,   (a grande maioria dos hosting providers vai enfiar uma variável de 'PORT' no seu runtime AUTOMATICAMENTE, o que fará com que esse valor seja preenchido...)
+
+    // AQUI... --_> 
+    
+    
+    // VAMOS USAR O 
+    
+    // PIPE OPERATOR 
+    
+    // PARA 
+    
+    
+    
+    
+    // DEFINIR O 'DEFAULT',
+    
+    // QUE SERÁ DE 
+    
+    // '3000' (
+    
+    
+    //     isso significa que 
+    
+    //     SE NÓS 
+    
+    
+    //     NÃO ESTIVERMOS NO MODO DEPLOY/NÃO ESTIVER DEFINIDA ESSA VARIABLE DE 'PORT',
+    
+    
+    // __ VAMOS AUTOMATICAMENTE 
+    
+    // TROCAR PARA O PORT DO MODO DE 'DEVELOPMENT',
+    
+    
+    // que será esse 3000 aí...
+    // )
+    
+
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  CERTO... MAS AQUI TEMOS OUTRA QUESTÃO:
+
+
+
+
+
+  AINDA TEMOS 
+
+
+  O 
+
+
+
+  'STRIPE',
+
+  aquela api 
+
+  key do STRIPE,
+
+  QUE EXISTE LÁ 
+
+
+  NO CONTROLLER DE 
+
+
+  'shop.js'...
+
+
+
+
+
+
+
+
+  --> LÁ, TEMOS ESTE CÓDIGO:
+
+
+
+
+
+  const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L');
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER SUBSTITUIR ESSA LONGA _ STRING__ 
+
+
+POR UMA ENVINROMENT VARIABLE.... -> VAMOS 
+
+USAR 
+
+
+
+uma escrita de 
+
+
+'process.env.STRIPE_KEY' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+const Product = require('../models/product');
+
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+
+
+const fs = require('fs'); ///vamos precisar disso para RETORNAR O PDF DAS FATURAS DINÂMICAS...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+// const stripe = require('stripe')('sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L'); //VERSÃO DO USO DESSA API KEY __ SEM __ USO __ DE ENVIRONMENT VARIABLES
+
+
+
+const stripe = require('stripe')(process.env.STRIPE_KEY); //VERSÃO DO STRIPE __ COM O USO DE ENVIRONMENT VARIABLES (óptimo)....
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... COM ISSO,
+
+TEREMOS 
+
+SUBSTITUÍDO UM PUNHADO DE COISAS NO NOSSO CÓDIGO __ POR __ 
+
+
+'ENVIRONMENT VARIABLES', 
+
+O QUE 
+
+FAZ SENTIDO...
+
+
+
+
+
+
+
+
+
+
+--------> É CLARO QUE SE VOCÊ EXAMINAR O REST DO CÓDIGO,
+
+VOCÊ VAI ENCONTRAR MAIS DE 1 LUGAR EM QUE VOCÊ PODE CONSTATAR:
+
+
+
+'
+OK, EU NÃO VOU SETTAR ISSO AQUI, VOU SETTAR DO LADO DE FORA, 
+
+
+NÃO QUERO HARDCODAR ISSO'.... -->  MAS ESSAS COISAS QUE 
+
+VIMOS AGORA SÃO DEFINITIVAMENTE 
+
+IMPORTANTES...
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA PRECISAMOS 
+
+
+
+
+LER ESSAS ENVIRONMENT VARIABLES 
+
+NO NOSSO CÓDIGO NODE... (
+
+    preicsamos as definir, de alguma forma...
+)
+
+
+
+
+
+
+
+
+
+
+
+--------> COMO PODEMOS AS PASSAR PARA DENTRO DO NODE? 
+
+
+
+
+
+
+--> BEM ,
+FAZEMOS 
+
+ISSO 
+
+
+
+__JUSTAMENTE__ QUANDO 
+
+
+__EXECUTAMOS _ NOSSO 
+
+
+'NODE APPLICATION'... --> ou seja,
+
+
+
+É __ BEM NA HORA QUE O NODE/NODEMON É INICIADO.... 
+
+
+
+
+
+
+
+
+
+--------> COM 'NODEMON',
+
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE __ PODEMOS 'PROVIDE A CONFIGURATION FILe'... ---------> 
+
+
+
+
+
+
+
+
+
+
+
+PARA PROVIDENCIAR ESSE ARQUIVO,
+
+VOCÊ SÓ ESCREVE 
+
+
+
+
+'nodemon.json'
+
+
+
+NO __ ROOt__ DO 
+
+SEU APP/BACKEND NODEEXPRESS.... 
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE ARQUIVO,
+
+
+VOCÊ VAI ESCREVER UM OBJETO JSON DATA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> você começa com '{}',
+
+
+
+
+ái você 
+
+escreve 
+
+
+
+
+'{
+
+
+    "env": {
+
+    }
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+
+
+-> DENTRO DESSE OBJETO 'env',
+
+
+VOCê VAI SETTAR SUAS 
+
+ENVIRONMENT VARIABLES QUE VOCê QUER USAR/REFERENCIAR NO SEU CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+{
+
+
+    "env": {
+
+    }
+}
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+vamos settar aquelas 4:
+
+
+
+MONGO_USER,
+
+MONGO_PASSWORD
+
+
+MONGO_DATABASE,
+
+
+
+
+
+STRIPE_KEY....
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+{
+
+
+    "env": {
+
+        "MONGO_USER": "madblorga" ,
+        "MONGO_PASSWORD": 
+    }
+}
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+{
+
+
+
+
+"env": {
+
+    "MONGO_USER": "madblorga",
+    "MONGO_PASSWORD": "T5lws5TGxtclEbKI",
+    "STRIPE_KEY": "sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L"
+
+
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+{
+
+
+
+
+"env": {
+
+    "MONGO_USER": "madblorga",
+    "MONGO_PASSWORD": "T5lws5TGxtclEbKI",
+    "STRIPE_KEY": "sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L",
+    "MONGO_DATABASE": "shop"
+
+
+}
+}
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... ISSO FEITO,
+
+
+
+
+
+
+__ PROFESSOR DIZ QUE 
+
+
+
+
+__ PODERÍAMOS SETTAR A 'PORT' DO NOSSO APP,
+
+mas que 
+
+NÓS 
+
+
+JÁ TEMOS UM VALOR DEFAULT ('.env.PORT || 3000)'....
+
+
+
+
+
+
+
+
+
+,
+
+
+
+
+VALOR DE 3000 NESSA PORT....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> BEM.. PARA O STRIPE, PROFESSOR EXPLICA QUE __ TAMBÉM __ VAMOS QUERER INSERIR ALGO NAS VARIABLES... ---> 
+
+EU COOLOQUEI MINHA 'STRIPE KEY'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> RODAMOS NPM START -->   OK, AGORA ESTAMOS RODANDO NOSSO APP E USANDO 'ENVIRONMENT VARIABLES' ao mesmo tempo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, PROFESSOR EXPLICA UQE 
+
+ESSES 
+
+AINDA SÃO 
+
+'DEVELOPMENT VALUES',
+
+
+MAS QUE 
+
+
+AINDA ASSIM É UM ÓTIMO PASSO 
+
+já conseuguir os settar..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->>>> MAS É CLARO/ÓBVIO QUE __ NEM SEMPRE _ VAMOS USAR O 'NODEMON'... -------> ESPECIALMENTE QUEANDO TRATARMOS 
+
+DE 
+
+'FAZER DEPLOY DO NOSSO APP' (production ) --------> ISSO PQ NÓS __ NÃO VAMOS QUERER QUE 
+
+
+O CÓDIGO DO NOSSO BAKCNED SEJA 
+
+ATUALIZADO PARA CADA PESSOA QUE ENTRA NO RESTAURANTE.... (talvez pq NÓS NÃO VAMOS MAIS MUDAR O C´DOIGO, GONE GOLD,ETC ETC....)
+
+
+
+
+
+
+
+
+
+
+
+-------> O QUE O PROFESSOR FAZ, Aaqui,,
+
+
+
+
+
+É _ CRIAR UM NOVO SCRIPT'... -------> 
+
+
+
+
+
+
+
+
+ELE ESCREVE:
+
+
+"start:dev": nodemon.app.js"
+
+
+
+
+
+
+
+
+
+
+
+
+--------> CERTO.... E O SCRIPT 
+DO 
+
+
+
+'start',
+
+
+
+O PROFESSOR COLOCA 
+
+
+
+SÓ UM RUN NORMAL DE 'node app.js'.... (sem o NODEMON).. -> ISSO, NOCASO,
+
+
+
+]
+
+
+
+ _ VAI EVITAR __ O USO __ DO ARQUIVO 
+
+
+ 'req.file'...
+
+
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE 
+
+ PARA __ PASSAR __1 ENVIRONMENT VARIBLE NESSE 'PACKAGE.JSON,
+
+
+
+
+
+
+ HÁ _ DIVERSAS OPÇÕES_... ------>  E AÍ, TIPICAMENTE, QUAUNDO VOCÊ 
+
+
+
+ _ USA UM 'HOSTING PROVIDER',
+
+
+
+
+ VOCÊ TIPICAMENTE PODE DEFINIR OS VALORES DAS VARIABLES LÁ NA 'DASHBOARD' DO SEU HOSTING PROVIDER (como visto com next)..
+
+ (
+
+
+     isso é algo que v eremos mais tarde....
+ )
+
+
+
+
+
+
+ -------->  OK.... 
+
+
+
+
+ MAS SE VOCê NÃO ESTIVER USANDO ESSA FEATURE DOS SITES/HOSTING PROVIDER,
+
+
+ VOCÊ PODE INJTAR/USAR VARIABLES NORMALMENTE NO SUEU CÓDIGO... -------> 
+
+
+
+
+ PARA CONSEGUIR 
+
+ ESSE EFITO,
+
+
+
+
+
+
+
+ seguir a simples SOLUÇÃO DE:
+
+
+
+ 1) TAKE THE KEY-VALUE PAIRS YOU WANT TO SETup 
+
+
+
+
+ 2) ADICIONE OS KEY-VALUE PAIRS
+
+
+
+
+ _ LÁ NO ARQUIVO 'package.json',
+
+
+
+ LOGO ___ ANTES_ 
+
+
+ DO 
+
+ SCRIPT DE 
+
+ 'start'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "MONGO_USER=madblorga node app.js", 
+    "start:dev": "nodemon app.js"
+  },
+
+
+
+
+
+
+  ---------------------------------------
+
+
+
+
+
+
+
+
+
+SIM.... É ASSIM MESMO... (definimos que o valor de 'MONGO_USER' deve ser 'madblorga')..
+
+
+
+
+
+
+
+
+
+
+
+
+E É CLARO QUE VOCÊ TEM DE FAZER ISSO PARA __ TODOS __ OS VALORES 
+
+
+
+
+
+
+QUE VOCÊ VAI QUERER PASSAR PARA OS SLOTS DE SEU PROJETO, SLOTS QUE ACEITAMM/POSSUEM 
+
+
+
+
+
+
+
+
+
+
+
+
+-----> É POR ISSO QUE FAZEMOS ISSO COM todos os valores do nosos appp.....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "node --inspect app.js",
+    "start:dev": "node app.js", 
+    "start:dev": "nodemon app.js"
+  },
+
+
+
+
+
+  --------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "MONGO_USER=madblorga MONGO__PASSWORD=  MONGO_DATABASE=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js", 
+    "start:dev": "nodemon app.js"
+  },
+
+
+  -------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---------------------------
+
+
+
+
+
+
+  OK.... QUANDO NÓS VAMOS ___ DEPLOYAR ESSE APP DE VERDADE,
+
+
+
+  __ NÃO VAMOS USAR O NODEMON (vamos usar, no caso, uma versão PURA DO NODE, E NÃO 'NODEMON'...) --> ISSO 
+
+
+
+  PQ 
+
+
+  NÓS 
+
+  NÃO VAMOS QUERER 
+
+  RESTARTAR O SERVER A PARTIR DE QUALQUER MUDANÇA,
+
+
+  PQ 
+
+
+  NÃO VAMOS MUDAR O CÓDIGO DURANTE O RUNTIME, NA VERDADE....
+
+
+
+
+
+
+
+
+
+
+  ----> É POR ISSO QUE 
+
+  O 
+
+  PROFESSOR 
+
+
+
+  ESCREVE 
+
+
+
+
+
+  'start:dev' --> nodemon app.js -->  OU SEJA,
+
+
+
+  VAMOS USAR 
+
+
+
+  'npm run start:dev'
+
+
+  PARA 
+
+
+  INICIALIZAR 
+
+
+
+  NOSSA VERSÃO 'DEVELOPMENT'
+
+
+  
+
+
+  DE NOSSO CÓDIGO, VERSÃO QUE _ VAI USAR__ 
+
+  ESSE 
+
+
+  'NODEMON' 
+
+  COM 
+
+  ESSAS ENVIRONMENT VARIABLES __ DE TESTE__.... (definidas lá em 'nodemon.json', esse arquivo aí)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> JÁ QUANDO NÓS FORMOS _ EXECUTAR __ NOSSO APP 
+
+  'FOR REAL',
+
+
+
+
+
+  com um comando/script de 
+
+
+
+  "start": "node app.js" (VERSÃO PURA DO NODE),
+
+
+
+
+
+
+
+
+VAMOS QUERER 
+
+INSERIR 
+
+
+
+
+VALORES DENTRO DESSAS VARIABLES... --> OK .... MAS 
+
+NESSE CASO,
+
+
+
+NÓS __ NÃO VAMOS UTILIZAR/NÃO VAMOS PODER UTILIZAR 
+
+O 
+
+ARQUIVO DE 
+
+
+
+'nodemon.json' .... ------> É POR ISSO QUE 
+
+
+
+VAMOS TER QUE USAR UMA SINTAXE 
+
+
+ALTERNATIVA,
+
+
+SINTAXE QUE 
+
+SERÁ 
+
+
+
+____ESTA AQUI_:
+
+
+
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "MONGO_USER=madblorga MONGO__PASSWORD=T5lws5TGxtclEbKI  MONGO_DATABASE=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js", 
+    "start:dev": "nodemon app.js"
+  },
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+(
+
+  isso é claro, é a opção que resta a você 
+
+  QUANDO VOCÊ NÃO TEM UM 'DASHBOARD'
+
+  PROVIDENCIADO PELO SEU HOSTING PROVIDER...
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NÓS VAMOS SEPARAR NOSSOS VALORES DOS ENV VARIABLES 
+
+
+por meio de 1 white space....
+
+
+
+ex:
+
+
+
+
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "MONGO_USER=madblorga MONGO__PASSWORD=T5lws5TGxtclEbKI  MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js", 
+    "start:dev": "nodemon app.js"
+  },
+
+
+
+
+
+
+
+
+
+
+
+  -------------------
+
+
+
+
+  OK.... COM ISSO,
+
+  TEREMOS 
+
+
+
+  UMA 
+
+
+
+  'VERY LONG STARTUP STRING'.... (nesse package.json)--> 
+
+
+
+  PROFESSOR 
+
+
+  EXPLICA QUE 
+
+  TIPICMAENTE 
+
+
+  NÃO VAMOS 
+
+
+  PASSAR NOSSOS VALORES ASSIm... --> entretatno,
+
+
+
+  ISSO VAI FUNCIONAR....
+
+
+
+
+
+
+
+
+
+
+
+
+  --> SE EXECUTARMOS 
+
+
+
+
+
+  O NOSSO APP POR MEIO DE 'npm start',
+
+
+
+  VAMOS EXECUTAR O NODE E ACTUALLY CONECTAR AO 
+
+
+  'MONGODB DATABASE',
+
+
+
+
+  PQ 
+
+
+
+  AGORA 
+
+
+
+  NÓS ESTAREMOS RODANDO ESSE CÓDIGO COM AS NOSSAS ENVIRONMENT VARIABLES APROPRIADAS... (que são, por enquanto,
+  
+  
+  as variables de DEVELOPMENT, pq colocamos as mesmas que settamos lá em 'nodemon.json',
+  
+  
+  MAS É CLARO QUE 
+  
+  
+  
+  EVENTUALMENTE VOCÊ COLOCARÁ NESSE SCRIPT NO 'package.json'
+
+
+
+  OS 
+
+
+  VALORES/VERSÕES ___ DE DEPLOYMENT__ DE SUAS 
+
+  ENVIRONMENT VARIABLES
+  )
+
+
+
+
+  ----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> O PROFESSOR TAMBÉM MENCIONA UMA ENVIRONMENT VARIABLE __ ESPECIAL__, 
+
+
+
+
+
+  VARIABLE _ QUE VOC~E PODE SETTAR MANUALMENTE,
+
+
+
+  QUE É 
+
+
+
+
+
+
+  A VARIABLE DE 
+
+
+
+
+  'process.env.NODE_ENV' -------> 
+
+
+
+
+
+
+
+
+
+
+
+  PROFESSOR MOSTRA O QUE 
+
+
+
+  TEM DENTRO DESSA VARIABLE,
+
+
+  POR MEIO DE UM CONSOLE.LOG NO NOSSO 'app.js":
+
+
+
+
+
+
+
+
+  console.log(process.env.NODE_ENV);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> BEM, MAS EU RECEBI UM ERRO, 
+
+  QUANDO EXECUTEI 'npm start'.... 
+
+
+
+
+
+
+  'MONGO_USER' não é reconhecido como um comando interno
+ou externo, um programa operável ou um arquivo em lotes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> BEM... PARA CONSERTAR ISSO,
+
+
+EU SÓ INVERTI A ORDEM (coloquei 'node app.js' no início, para só depois digitar os valores das env variables):
+
+
+
+
+
+
+
+"start": "node app.js MONGO_USER=madblorga MONGO__PASSWORD=T5lws5TGxtclEbKI MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L", 
+
+
+
+
+
+
+
+
+
+
+
+
+BEM, AÍ RECEBI OUTRO ERRO:
+
+
+
+Error: Error connecting to db: bad auth : Authentication failed.
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA É ESTE:
+
+mongodb+srv://undefined:undefined@cluster0.nhtjo.mongodb.net/undefined?retryWrites=true&w=majority
+
+
+
+
+
+
+---> OS 3 VARIABLES ESTÃO 
+
+
+APARECENDO COMO UNDEFINED (os valores não estão sendo injetados)...
+
+
+
+
+
+
+
+
+
+
+
+--> ACABEI DE VER A SOLUÇÃO PARA ISSO.... 
+
+
+
+
+
+
+
+--> É O PACOTE DE 'cross-env'... -> 
+
+
+
+
+DEVEMOS O UTILIZAR PARA SETTAR 
+
+
+
+ENVIRONMENT 
+
+VARIABLES 
+
+NO NOSSO PACKAGE.JSON...
+
+
+
+
+
+
+--> o link dessa package é 
+
+
+
+https://www.npmjs.com/package/cross-env
+
+
+
+
+
+--> O INSTALL É 
+
+
+
+'npm install --save-dev cross-env' 
+
+
+
+
+
+
+
+
+
+
+-------> DESCRIÇÃO:
+
+
+
+
+
+
+Most Windows command prompts will choke when you set environment variables with NODE_ENV=production like that. (The exception is Bash on Windows, which uses native Bash.) Similarly, there's a difference in how windows and POSIX commands utilize environment variables. With POSIX, you use: $ENV_VAR and on windows you use %ENV_VAR%.
+
+
+
+
+
+cross-env makes it so you can have a single command without worrying
+
+
+ about setting or using the environment variable properly for the platform.
+ 
+ 
+  Just set it like you would if it's running on a POSIX system, and cross-env will take care of setting it properly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUANDO VOCÊ USA 
+
+
+
+'cross-env',
+
+
+
+
+
+
+
+O FORMATO DE SEUS SCRIPTS QUE POSSUEM ENV VARIABLES FICA ASSIM:
+
+
+
+"server": "cross-env SERVERPORT=3002 node ./fiboserver"
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OU SEJA, É SÓ ESCREVER 'cross-env' no início para 
+
+ENTÃO FAZER COM QUE 
+
+O INSERT DOS VALORES DE SUAS ENVIRONMENT VARIABLES _ FUNCIONE__....
+s
+
+
+
+
+
+
+ex:
+
+
+
+ "start": "cross-env MONGO_USER=madblorga MONGO__PASSWORD=T5lws5TGxtclEbKI MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CERTO... AGORA TESTAMOS, COM NPM START...
+
+
+
+
+
+
+
+
+ --> ainda deu errado...
+
+
+
+
+ não, espere.... deu um pouco certo.... 
+
+
+
+
+
+
+ O 'MONG_USER' 
+
+
+ e 
+
+ o 
+
+
+
+ 'MONGO_DATABASE'
+
+ foram settados,
+
+
+ MAS 
+
+
+ o 
+
+
+
+ PASSWORD, NÃO...
+
+
+
+
+
+
+
+ CONSERTEI, ERA UM MISTYPE...
+
+
+
+
+
+
+
+
+
+
+ -->> sucesso... agora 
+
+
+
+ pelo menos consegui substituir essas variables lá 
+
+
+
+ no meu código do projeto... os valores dos env variables no PACKAGE.JSON foram inseridos com sucesso em 'app.js'...
+
+
+
+
+
+
+
+
+ ----------------------
+
+
+
+
+
+
+
+
+ AÍ GANHEI UM ERRO:
+
+
+ Error: listen EADDRINUSE: address already in use :::3000
+
+
+
+
+
+
+
+
+ não entendi... não sei se esse endereço realmente está em uso...
+
+
+
+
+
+
+
+
+ --> BEM, O 3001 ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+ -----------
+
+
+
+
+
+
+
+
+
+
+
+
+ POR FIM, 
+
+
+ PROFESSOR 
+
+
+ ESTAVA 
+
+
+ NOS EXPLICANDO 
+
+ SOBRE 
+
+
+
+ AQUELA 
+
+ 
+
+ ENV VARIABLE 
+
+ ESPECIAL DE 
+
+
+
+ 'process.env.NODE_ENV',
+
+
+
+
+
+
+
+ QUE SIGNIFICA 'NODE_ENVIRONMENT'... ------> 
+
+
+
+
+
+ O SENSO COMUM É QUE SÓ EXISTEM 2 TIPOS 
+
+
+
+ DE 
+
+ 'AMBIENTE NODE',
+
+
+ que são o AMBIENTE 
+
+
+ DE DEVELOPMENT 
+
+
+
+
+
+ e o ambiente 
+
+ de 
+
+
+ 'PRODUCTION'....
+
+
+
+
+
+
+
+
+
+
+ ---> SE CONSOLE.LOGGARMOS ESSE 
+
+
+
+ 'process.env.NODE_ENV',
+
+
+
+ veremos 
+
+
+ 'UNDEFINED',
+
+
+ na nossa versão do projeto...
+
+
+
+
+
+
+
+
+
+
+
+ ---> ENTRETANTO,
+
+
+ ESSA VARIÁVEL É ESPECIAL, PQ SE 
+
+ VOCÊ DEFINIR 
+
+ 'production' 
+ ou 
+
+ 'development'
+
+
+ NELA,
+
+
+ ELA 
+
+
+ __ ALTERA_ O COMPORTAMENTO DE ALGUMAS PACKAGES/FRAMEWORKS... -------> 
+
+
+
+ UM EXEMPLO CLÁSSICO É 
+
+ O 
+
+
+
+ __ PRÓPRIO EXPRESSJS... --> 
+
+
+ SE VOCÊ 
+
+ DEFINE,
+
+ LÁ 
+
+
+ NO SEU 
+
+ 'package.json',
+
+
+ POR EXEMPLO,
+
+
+
+
+ 'NODE_ENV=production',
+
+
+
+
+
+ VOCê 
+
+
+
+ FARÁ COM QUE 
+
+
+ 
+
+ SEU PROJETO INTEIRO SEJA CONSIDERADO COMO SENDO DE UM 'MODO PRODUCTION'  
+
+
+
+
+
+
+
+
+
+
+ --> OK, MAS QUE DIFERENÇA ISSO FAZ? 
+
+
+
+
+
+
+
+
+
+
+
+ -------> BEM, VÁRIOS HOSTING PROVIDERS VÃO 
+
+
+
+ AUTOMATICAMENTE DEFINIR ISSO COMO 'production' 
+
+
+
+ no 
+
+
+
+
+ seu projeto... --> ISSO FAZ, NO CASO DO EXPRESS,
+
+
+
+ COM QUE 
+
+
+ _ ERRORS __ MOSTREM MENOS INFORMAÇÕES (sigilo, informações que 
+ 
+ não devem ser repassadas ao useR)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> OK.... O EXPRESS VAI REDUZIR DETALHES PARA OS 
+
+
+
+
+ ERRORS QUE 
+
+ ELE VAI MOSTRAR,
+
+ ALÉM DE TAMBÉM OPTIMIZAR CERTAS COISAS PARA O DEPLOYMENT (
+
+
+
+   é por isso que, em geral,
+
+   você vai querer 
+
+
+   DEFINIR ESSE '
+
+   NODE_ENV' como 
+
+   'production',
+
+
+   NO SEU PACKAGE.JSON,
+
+
+   qunado 
+
+   você for 
+
+   'RUN YOUR APP IN PRODUCTIOn'...
+ )
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ console.log(process.env.NODE_ENV); /////////ENVIRONMENT VARIABLE ESPECIAL __ DO NODE.... 
+///////geralmente será definido OU COMO 'PRODUCTION' ou como 'DEVELOPMENT' ------> quando vocÊ for deployar seu app, VOCÊ SEMPRE VAI QUERER DEFINIR 'NODE_ENV=production', lá no seu PACKAGE.JSON, no seu script de 'start'... (e os hosting providers que você usar __ TIPICAMENTE__ VÃO DEFINIR ESSA VARIABLE EXATAMENTE COMO ISSO, como 'production')..
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "cross-env NODE_ENV=production MONGO_USER=madblorga MONGO_PASSWORD=T5lws5TGxtclEbKI MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js",
+    "start:dev": "nodemon app.js"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------> OBVIAMENTE,
+
+  VOCÊ SEMPRE PODE CHECAR OS DOCS OFICIAIS 
+
+
+
+
+
+  DO SEU HOSTING PROVIDER FAVORITO,
+  PARA ENTÃO 
+
+
+  SABER 
+  SE 
+
+  ESSE É O CASO/SERÁ O CASO...

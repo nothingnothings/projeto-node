@@ -1,0 +1,4365 @@
+
+
+
+
+
+
+
+
+
+AGORA VAMOS QUERER ADICIONAR A FEATURE DE 'UPLOAD DE IMAGES'...
+
+
+
+
+
+
+
+
+
+
+
+--> só não sei se o professor vai querer usar AQUELA MESMA PACKAGE DE 
+
+
+
+'
+multer'
+
+que usamos 
+
+
+
+
+NO NOSSO 
+
+
+APP NODEEXPRESS COMUM...
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---> bem... mas a questão é que 
+
+VAMOS QUERER UPLOADAR 
+
+
+1 IMAGE,
+ isso é um fato....
+
+
+
+
+
+
+
+
+ --> e temos components lá no nosso frontend que tratam disso... (como 'image.js')...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> PROFESSOR DIZ QUE É HORA DE ADICIONAR UMA NOVA ROUTE 
+
+ LÁ NO ARQUIVO DE 
+
+ 'feed.js',
+
+
+arquivo de ROUTES...
+
+
+
+
+
+
+
+---->  ESQUEÇA... ESSE ARQUIVO DE VÍDEO __ ESTÁ DUPLICADO,
+
+É A MESMA AULA DE ANTES... (alguém uploadou uma aula duplicada, baita burrice)..
+
+
+
+
+
+
+
+
+
+
+tenho que obter o arquivo legit dessa aula do professor....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+In the next lecture, you'll learn how to upload images in a REST world.
+
+One important note for Windows users only:
+
+On Windows, the file name that includes a date string is not really supported and will lead to some strange CORS errors. Adjust your code like this to avoid such errors:
+
+Instead of
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'images');
+    },
+    filename: function(req, file, cb) {
+        cb(null, new Date().toISOString() + file.originalname);
+    }
+});
+which we'll write in the next lecture, you should use this slightly modified version:
+
+const { uuidv4 } = require('uuid');
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'images');
+    },
+    filename: function(req, file, cb) {
+        cb(null, uuidv4())
+    }
+});
+For this, install the uuid package by running:
+
+npm install --save uuid
+
+To ensure that images can be loaded correctly on the frontend, you should also change the logic in the feed.js controller:
+
+in createPosts, change the imageUrl const:
+
+exports.createPost = (req, res, next) => {
+    ...
+    const imageUrl = req.file.path.replace("\\" ,"/");
+    ...
+}
+and in updatePost (once we added that later):
+
+exports.updatePost = (req, res, next) => {
+    ...
+    imageUrl = req.file.path.replace("\\","/");
+}
+On macOS and Linux, you can ignore that and stick to the code I show in the videos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ou seja, professor nos mostra outro gerador de ids (unique identifiers),
+
+que é O 
+
+
+
+
+UUIDV4 
+(gerador de 'UNIVERSALLY UNIQUE IDENTIFIERS'...)
+
+
+
+--> vamos usar isso para EVITAR ERROS DE FILE NAME NO WINDOWS....
+
+
+
+
+
+
+
+
+
+
+--> precisamos instalar essa package com 
+
+
+'npm install --save uuid'....
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+ok...... CONTINUANDO O VÍDEO DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR COMEÇA NOS RELEMBRANDO DAQUELE ESQUEMA QUE ESCREVEMOS NO INÍCIO DESTE MÓDULO:
+
+
+
+
+
+
+
+1) NODE + EXPRESS APP SETUP  ----> SETUP GERAL, __ NENHUMA CHANGE __ NECESSÁRIA... SERÁ + OU - O MESMO (o que pode mudar é só a PORT usada no hosting do backend/frontend)
+
+
+
+ainda settamos um NORMAL NODEEXPRESS SERVER...
+
+
+2) ROUTING/ENDPOINTS  -----> TAMBÉM __ NENHUMA CHANGE __ SERÁ APLICADA AO NOSSO ROUTING... --> A ÚNICA COISA QUE MUDA É QUE VAMO SETTAR MAIS ALGUNS HTTP METHODS DIFERENTES, COMO 'PATCH', 'DELETE' e 'PUT'...
+
+
+
+
+
+
+3) HANDLING REQUESTS E RESPONSES ----> AQUI HÁ UMA MUDANÇA... --> VAMOS TRABALHAR ___ COM JSON DATA___  EM VEZ DE HTML/VIEWS -->  O QUE FAZEMOS, AGORA, É O 'PARSE + SEND' de JSON DATA ao nosso browser/serverside... (apenas fazemos EXCHANGE OF DATA)...
+
+
+(mas isso não é tão difícil de implementar)....
+
+
+
+
+4) REQUEST VALIDATION  (VALIDATION PARA 'INCOMING REQUEST DATA') --->  SE VOCÊ QUISER TER VALIDATION PARA 'INCOMING REQUEST DATA', VOCê __ NÃO TERÁ DE MUDAR__ COISA ALGUMA... --> FICARÁ __ IGUAL_ ao nosso app NORMAL NODEEXPRESS...
+
+
+(
+    Isso significa que NÓS AINDA VAMOS ADICIONAR VALIDATION POR MEIO DE COISAS 
+
+    COMO
+    'EXPRESS-VALIDATOR' (ver módulo de validation),
+
+    E A MANEIRA QUE 
+
+    O USAMOS, A LÓGICA QUE EMPREGAMOS, É A MESMA...
+
+
+)
+
+
+
+5) DATABASE COMMUNICATION  ----> COMUNICAÇÃO COM DATABASE, SEJA ELA SQL OU NOSQL, -------> TAMBÉM NÃO MUDA ---> A COMUNICAÇÃO COM A DATABASE __ ACONTECE __ NO SERVERSIDE__, EM 1 CONTROLLER ACTION (tipicamente), E A LÓGICA QUE NÓS ESCREVEMOS LÁ, O CÓDIGO, __ NÃO É AFETADO __ PELA DATA QUE NÓS 'EXCHANGE', ou pelo FATO DE QUE __ RENDERIZAMOS 1 VIEW ou 'SEND AROUND JSON DATA'...  
+
+
+
+6) FILES, UPLOADS, DOWNLOADS  -----> QUANTO A ISSO, TAMBÉM __ NÃO HÁ MUITAS MUDANÇAS... --> A ÚNICA COISA QUE MUDA, NA VERDADE, É O CÓDIGO ____ CLIENTSIDE, OS __ REQUESTS_ E SUA ESTRUTURA (pq não vamos mais usar FORMS..)
+
+
+
+
+(vamos ver como implementar file upload, e como serve files, nesse módulo...)
+
+
+
+
+
+7) SESSIONS E COOKIES  ------------> AQUI, SIM, NÓS TEMOS CHANGES....  ----> TEMOS CHANGES __ PQ NÃO VAMOS MAIS USAR __ COOKIES E SESSIONS.... --> 'DECOUPLED FRONTEND'... ---> com rest APIS,  não usamos mais isso... --> A RAZÃO PARA ISSO RESIDE NOS 'REST API PRINCIPLES', aquele principle de 'EACH REQUEST IS TREATED SEPARATELY' (cada request é examinado de forma INDEPENDENTE DE REQUESTS ANTERIORES... ) --> ISSO SIGNIFICA QUE NÃO TEMOS CONEXÃO ALGUMA ENTRE O SERVER E O CLIENT, nenhuma 'shared connection history',
+
+por isso não TEMOS O MANAGE __ DE SESSION ALGUMA NO SERVER_, PQ ___ A REST API __ NÃO SE IMPORTA COM 
+OS CLIENTS OU __ SE __ O CLIENT__ ESTÁ CONECTADO/SE CONECTOU A API ANTIGAMENTE/ANTERIORMENTE....
+
+
+
+(NO SESSION AND COOKIE USAGE)....
+
+
+
+
+
+
+8) AUTHENTICATION 
+
+
+
+
+-----> A AUTH TAMBÉM TERÁ QUE MUDAR.... --> VAMOS USAR UM APPROACH DE AUTHENTICATION 
+
+DIFERENTE,
+
+E O PROFESSOR 
+
+
+
+VAI MOSTRAR 
+
+
+
+
+___ QUE APPROACH É ESSA,
+ 
+ E COMO A IMPLEMENTAR... (nesse módulo)...
+
+
+
+
+
+
+
+
+OK, ENTÃO AS MAIORES MUDANÇAS SÃO EM 
+
+
+
+
+'3',
+
+
+
+'7' 
+
+
+e 
+
+
+'8'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> PARAMOS LÁ NA ETAPA 
+
+
+de numero
+ 
+
+
+
+
+
+ SEIS,
+
+ que é 
+
+ o 
+
+ 'file uploads, downloads'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> O PROFESSOR NOS EXPLICOU, ANTERIORMENTE,
+  
+
+
+  QUE __ ESSA FASE/ETAPA __ NÃO 
+
+
+
+  INTRODUZ NENHUMA DIFERENÇA/ALTERAÇÃO NO NOSSO BACKEND... 
+
+
+(ou seja, AINDA USAREMOS MULTER, E AINDA USAREMOS AQUELA LÓGICA DE 
+
+
+'''
+
+1) armazenar PATH A IMAGE que está armazenada no backend, LÁ NA DATABASE... 
+
+
+2) ARMAZENAR A IMAGE EM SI EM UMA 'STATICALLY SERVED FOLDER', lá no BACKEND/app nodeexpress...
+
+
+'''
+
+
+
+)
+
+
+
+
+
+
+
+
+
+----> ok, devemos instalar o MULTER 
+
+E 
+
+
+'uuid'....
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.... ACHO QUE CONSEGUI SETTAR O MULTER....
+
+
+
+
+
+
+
+O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(
+  {
+    destination: (req, file, cb) => {
+
+      cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+
+      console.log(file.fieldname, 'LINE');
+
+      cb(null, uuidv4()); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+    }
+
+
+  }
+)
+
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+
+const upload = multer(
+  {
+    storage: fileStorage,
+    fileFilter: fileFilter
+  }
+).single('image');
+
+
+
+app.use(
+  (req, res, next) => {
+    upload(req, res, (error) => {
+
+      if(error instanceof multer.MulterError) {
+        console.log('MULTER ERROR HAS OCCURRED');
+      } else if (error) {
+        console.log('AN UNKNOWN ERROR HAS OCCURRED');
+        console.log(error);
+      }
+
+    }
+  
+)
+next();
+  }
+)
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+agora, quanto àquela alteração no FRONTEND, para 
+
+aceitar o UPLOAD DE IMAGES,
+
+eu ainda não tenho ideia daquilo que o professor havia mencionado...
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+eu só sei que 
+
+
+
+no meu serverside eu ainda devo ter me esquecido de escrever algo no controller,
+
+algo 
+
+
+
+sobre 
+
+esse upload da image por meio do multer...
+
+
+
+
+
+
+
+
+
+
+---> de fato, pois ESQUECI DOS CÓDIGOS:
+
+
+
+1) DE ARMAZENAR 'PATH' no nossos post, lá na database....
+
+
+
+
+2) de armazenar a ACTUAL IMAGE... (isso no backend...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, O CÓDIGO DO MEU ANTIGO CONTROLLER DE 'ADDPRODUCT'
+
+
+era este:
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl; ///versão que ainda usava urls..
+  // const image = req.body.image; ////versão que usa o FILE UPLOAD de uma IMAGE...
+  const image = req.file;
+
+  console.log(image, 'POSTADDPRODUCT');
+
+  const price = req.body.price;
+  const description = req.body.description;
+
+
+
+    if(!image) { ///se image estiver como UNDEFINED, isso significa que o multer RECUSOU o arquivo... --> se ele RECUSOU O ARQUIVO, vamos querer RE-RENDERIZAR A PAGE DE ADD/EDIT PRODUCT e aí __ INFORMAR O USER (por meio de 'errorMessage') QUE __ ELE INPUTTOU/SUBMITTOU UMA IMAGE INVÁLIDA (ao mesmo tempo que enviamos um RESPONSE STATUS DE 422, invalid input...)
+
+
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: 'admin/add-product',
+        editing: false,
+        errorMessage: 'Attached file is not an image.',
+        validationErrors: validationErrors,
+          prod: {
+            price: price, 
+            description: description,
+            title: title
+          }
+      });
+
+
+    }
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+
+  const imageUrl = image.path; //só vamos querer ARMAZENAR O PATH NA NOSSA DATABASE (em cada 'product'), E NÃO O ARQUIVO EM SI...
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    // req.file === null; não funciona.
+    // console.log(req.file, 'EXEMPLO'); /
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+      console.log(req.session, 'EXAMPLE');
+      return res.status(422).render('admin/product-list-admin/?page=1', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl,                        ////por meio desse código/referência a essa const, armazenamos o PATH A ESSE ARQUIVO (que é o que interessa) lá na nossa database... (é o path AO ARQUIVO ARMAZENADO LÁ NO NOSSO SERVER/APP NODEEXPRESS...., no filesystem dele...)
+      // image: image, ////NUNCA ARMAZENE 'A IMAGE EM SI' nas suas databases... (o store de arquivos em databases É INEFICIENTE E RUIM... SEMPRE PREFIRA __ ARMAZENZA O 'PATH' A ESSA IMAGE, IMAGE QUE DEVE SER ARMAZENADA NO SEU APP NODEEXPRESS/backend servidor...) -------> no caso, vamos __ ARMAZENAR A 'FILE' da image NO BACKEND, no folder de 'images', e APENAS __ ARMAZENAREMOS __ O PATH__ ('req.file.path') NA NOSSA DATABASE, dentro dos documents 'product'...
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        console.log(req.session, 'EXAMPLE');
+        res.redirect('/admin/product-list-admin/?page=1');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        console.log('TEST52');
+        error.httpStatusCode = 500;
+        console.log(req.session, 'EXAMPLE');
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+parece que minha 'image'
+
+será armazenada dentro de 
+
+
+'req.file'....  (como visto em 'const image = req.file;'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PORTANTO, PARA CONSEGUIR ARMAZENAR ESSE NEGÓCIO NA MINHA DATABASE,
+
+
+
+não preciso fazer muita coisa... (processo é meio automático, nesse controller....)
+
+
+
+
+
+
+
+
+
+--> o multer vai detectar que 
+
+
+
+POSSUO UMA IMAGE/file no meu REQUEST,
+
+
+
+e aí vai automaticamente 
+
+
+
+armazenar essa image no folder de 'images',
+
+
+
+PQ FOI ISSO QUE DEFINIMOS EM 'fileStorage', lá com 
+
+o uso de 
+'multer.diskStorage'..
+
+
+
+
+
+
+
+
+
+
+--> mas isso não é verdade, pois __ NENHUMA 'IMAGE' FOI ARMAZENADA 
+
+
+NO MEU 
+
+
+FOLDER DE 'images'
+ 
+ quando 
+
+
+a 'uploadei'....
+
+
+
+
+
+
+--> sinal de que fiz algo errado/esqueci de codar alguma coisa...
+
+
+
+
+
+
+
+
+
+
+OK.... PROFESSOR FEZ EXATAMENTE A MESMA COISA QUE NÓS,
+
+
+
+ESSENCIALMENTE....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const fileStorage = multer.diskStorage(
+  {
+    destination: (req, file, cb) => {
+
+      cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+
+      console.log(file.fieldname, 'LINE');
+
+      cb(null, uuidv4()); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+    }
+
+
+  }
+)
+
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+
+const upload = multer(
+  {
+    storage: fileStorage,
+    fileFilter: fileFilter
+  }
+).single('image');
+
+
+
+app.use(
+  (req, res, next) => {
+    upload(req, res, (error) => {
+
+      if(error instanceof multer.MulterError) {
+        console.log('MULTER ERROR HAS OCCURRED');
+      } else if (error) {
+        console.log('AN UNKNOWN ERROR HAS OCCURRED');
+        console.log(error);
+      }
+
+    }
+  
+)
+next();
+  }
+)
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+isso feito, MULTER REGISTRADO,
+
+ 
+
+
+professor 
+
+
+
+
+
+
+
+
+DIZ QUE DEVEMOS 'USE THE FILE'
+
+
+no nosso controller em que CRIAMOS UM NOVO POST...
+
+
+
+
+
+
+
+--> PARA ISSO, EM 'CREATE NEW POST',
+
+professor primeiramente escreve 
+
+
+
+
+'
+
+if(!req.file) {
+
+
+
+}
+'
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+  if(
+    !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+  ) {
+
+    
+  }
+
+
+
+
+
+
+
+
+
+
+
+-----> SE EU NÃO TIVER ESSA FILE, EU ESTOU 'MISSING' ESSA FILE... ----> É POR ISSO QUE 
+
+
+
+SE ISSO ACONTECER,
+
+
+PROFESSOR VAI QUERER 
+
+'CREATE A NEW ERROR',
+
+
+
+
+e aí 
+
+
+VAI ESCREVER 
+
+
+'No image found',
+
+
+
+COLOCAR UM STATUS CODE DE 422 (PQ ISSO N DEIXA DE SER 'A KIND OF VALIDATION ERROR'),
+
+
+
+
+e aí 
+
+
+
+VAI 
+
+
+DAR __ THROW __ DESSE ERROR... --> para que consigamos alcançar o catch block.......
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  if(
+    !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+  ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422;
+      throw error;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> BEM... 
+
+
+E SE PROSSEGUIRMOS SEM ENTRAR NESSE BLOCK,
+
+SIGNIFICA QUE 'ALL IS GOOD',
+
+
+
+multer foi capaz de extrair um arquivo...
+
+
+
+
+
+
+
+
+--> bem, por meio desse IF CHECK,
+
+IMEDIATAMENTE RECEBEMOS ESSE ERROR NO CONSOLE:
+
+
+
+
+
+Error: No image attached to request.
+
+
+
+
+
+
+
+--> não sei a razão desse error..
+
+
+
+
+
+
+
+
+
+--> enfim, o professor 
+
+quer o PATH DESSA 'image',
+
+
+
+pq ele VAI QUERER ARMAZENAR ESSE NEGÓCIO EM CADA 'DOCUMETN' 'post'
+
+
+
+LÁ NA DATABASE...
+
+
+
+por isso ele escreve 
+
+
+
+'const imageUrl = req.file.path;'....
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  if(
+    !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+  ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+  }
+
+
+  const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY',
+    creator: {
+      name: 'Maximillian',
+    },
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+'req.file.path' 
+
+
+GUARDA O PATH 
+
+DO ARQUIVO, COMO ELE FOI ARMAZENADO NO NOSSO SERVER....
+
+
+
+
+
+
+
+ok.....
+
+
+
+
+
+
+
+
+AÍ VAMOS PASSAR ESSA 'imageUrl'
+
+lá em 
+
+'const post = new Post({})',
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  if(
+    !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+  ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+  }
+
+
+  const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+    ////imageUrl: 'DUMMY',
+    imageUrl: imageUrl,
+    creator: {
+      name: 'Maximillian',
+    },
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+    });
+};
+
+
+
+
+
+
+
+--------------------
+
+
+
+AGORA, COM ISSO, 
+
+
+'WE SHOULD BE ABLE TO EXTRACT FILES AND REALLY STORE THEM'....
+
+
+
+
+
+
+
+
+
+
+
+--> RODAMOS NOSSO 
+
+APP,
+
+
+
+
+
+
+MAS O PROFESSOR 
+
+
+DIZ QUE TAMBÉM TEMOS QUE __ TWEAKAR__ NOSSO FRONTEND,
+
+PARA QUE O 
+
+
+UPLOAD DESSA IMAGE TAMBÉM FUNCIONE...
+
+
+
+
+mas em que lugar do frontend temos esse código que vai ACTUALLY UPLOADAR NOSSA IMAGE?
+
+
+
+
+
+
+
+
+
+
+
+
+BEM, TEMOS AQUELE ARQUIVO uTIL de 'image',
+
+
+no folder de 'util',
+
+QUE TEM AQUELA FUNCTION EXPORTADA 
+
+de 
+
+
+
+''
+
+export const generateBase64FromImage = (imageFile) => {
+  const reader = new FileReader();
+
+  const promise = new Promise((resolve, reject) => {
+    reader.onload = (e) => resolve(e.target.result);
+    reader.onerror = (err) => reject(err);
+  });
+
+  reader.readAsDataURL(imageFile);
+  return promise;
+};
+
+
+
+
+
+''''
+
+
+
+
+
+
+--> TALVEZ SEJA ISSO QUE QUEREMOS...
+
+
+
+
+
+
+
+
+
+
+--> o problema, eu acho, está 
+
+
+NESTE CÓDIGO DE 'Feed.js' (component),
+LÁ NO FRONTEND:
+
+
+
+
+
+ finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    let url = 'http://localhost:8080/feed/post';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+
+    console.log(postData, 'LINE');
+
+
+    fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+  --_> esse método aí __ _NÃO ESTÁ FAZENDO O UPLOAD DE NOSSA IMAGE, POR ALGUMA RAZÃO...
+
+
+
+
+
+
+
+
+
+
+  hmmm.... acho que temos um problema, aqui... --> 
+
+
+
+  NÓS ESTAMOS FAZENDO O SEND DE JSON DATA,
+
+
+  MAS NÃO ESTAMOS FAZENDO O UPLOAD DE NOSSA IMAGE AO 
+
+  SERVIDOR...
+
+
+  ex:
+
+
+
+
+
+
+
+
+
+   fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  e EU __NÃO ACHO QUE É POSSÍVEL DEFINIR 
+
+  UM 'Content-Type' 
+
+
+  header de 
+
+  MÚLTIPLOS VALORES (como 'application/json' e 'image/png'...)
+
+
+
+
+
+
+
+  ---> talvez temos de escrever DOIS REQUESTS, SEND DE 2 REQUESTS 
+
+
+  DISTINTOS?
+
+
+
+  Try using Mulitpart/Fromdata post. Using this you can send files and your JSON Data at the same time. However you need to change you API to read multipartformdata. This way file size will be less as compared to base64string.
+
+
+
+
+
+
+
+
+  RESPOSTA:
+
+
+
+  https://stackoverflow.com/questions/30490313/post-json-with-data-and-file-to-web-api-jquery-mvc
+
+
+
+
+
+  24
+
+You can't upload a file(that is arbitrary binary data) with JSON as JSON is a text format. you'll have to use multipart form data.
+
+// create model for controller
+var model = new FormData();
+model.append('Name', $.trim($contestForm.find('[name="nombre"]').val()) + ' ' + $.trim($contestForm.find('[name="apellido"]').val()));
+model.append('Email', $.trim($contestForm.find('[name="email"]').val().toLowerCase()));
+model.append('City', $.trim($contestForm.find('[name="cuidad"]').val()));
+model.append('Title', $.trim($contestForm.find('[name="title"]').val()));
+model.append('Description', $.trim($contestForm.find('[name="description"]').val()));
+model.append('CountryCode', 'co');
+model.append('Image', $contestForm.find('[name="file-es"]')[0].files[0]);  // this has the file for sure
+
+$.ajax({
+    url: '/Umbraco/api/ControllerName/CreateContestEntry',
+    type: 'POST',
+    dataType: 'json',
+    data: model,
+    processData: false,
+    contentType: false,// not json
+    complete: function (data) {
+        var mediaId = $.parseJSON(data.responseText); //?
+
+    },
+    error: function (response) {
+        console.log(response.responseText);
+    }
+});
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+professor fala exatamente isso....
+
+
+vamos até o component 'Feed.js',
+
+
+
+
+E LÁ DENTRO 
+
+
+
+TEMOS 
+
+
+AQUELE 
+
+
+
+'finishEditHandler'.... ----> 
+
+
+
+LÁ DENTRO, SETTAMOS 
+
+
+
+
+TUDO DE QUE PRECISÁVAMOS PARA 'SEND A REQUEST TO THE BACKEND' (request JSON)...
+
+
+
+
+
+
+
+
+
+-----> MAS ___ PROFESSOR_ _ EXPLICA QUE __ NÓS ___ NÃO VAMOS MAIS USAR SÓ 
+
+
+ESSE 
+
+
+
+
+'json data';
+
+
+NÃO VAMOS MAIS USAR SÓ 
+
+AQUELE HEADER DE 
+
+'
+headers: {
+  'Content-Type': 'application/json'
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+----------> ELE EXPLICA QUE JSON DATA ___ É 'ONLY TEXT', OU SEJA,
+
+
+
+APENAS 
+
+DATA QUE 
+
+PODE SER REPRESENTADA COMO 
+
+'TEXT'...
+
+
+
+
+
+
+------> UMA FILE,
+ PORTANTO, NÃO PODE SER REPRESENTADA COMO TEXT( 
+
+
+   pelo menos não facilmente, pq 
+
+
+   se você tentar converter,
+
+  será 
+
+
+  um ARQUIVO DE TEXTO MUITO GRANDE,
+
+  impossível de ser uploadado...
+ )
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE 
+
+
+NÃO PODEMOS USAR 'JSON' 
+
+PARA 
+
+
+
+SEND DE DATA __ EM QUE__ TEMOS 
+
+
+
+
+AO MESMO TEMPO 'FILES' E 'TEXT'... ----------> EM VEZ DISSO,
+
+
+EM VEZ DE USAR JSON DATA,
+
+
+
+
+
+
+VAMOS ________ NOVAMENTE___ USAR 
+
+
+'FORM DATA'.... ---------> NÓS ESTÁVAMOS USANDO 'FORM DATA' 
+
+
+AUTOMATICAMENTE,
+
+
+
+MAIS CEDO NO CURSO,
+
+
+
+QUANDO SUBMITTÁVAMOS 
+
+
+EM FORMS... (botões em forms, comportamento de SUBMIT da form, quando o button é clicado... é o comportamento default do elemento html...)
+
+
+
+
+
+--> quando tivemos de usar 'multipart form data' 
+
+
+no curso, mais cedo,
+
+tivemos 
+
+que 
+
+definir 
+
+
+
+'
+
+enctype="multipart/form-data"
+
+
+
+'
+
+
+LÁ NO HTML, LÁ 
+
+
+
+NO <form>...
+
+
+
+
+
+---> como aqui NÃO TEMOS 'RENDERED VIEWS',
+
+
+nós provavaelmente 
+
+
+
+VAMOS NOS UTILIZAR DESSE HEADER DE 
+
+'Content-Type' 
+
+
+
+
+PARA DEFINIR ESSE 'multipart/form-data'...
+
+
+
+
+
+
+
+
+--> pelo visto, podemos fazer isso, pois encontramos este código na internet:
+
+
+
+Content-Type: text/html; charset=UTF-8
+Content-Type: multipart/form-data; boundary=something
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+OU SEJA, PARA FAZER COM QUE O MULTER FUNCIONE 
+
+
+COM APPS 
+
+
+
+'REACT'/ MODO REST API de nosso backend,
+
+
+
+DEVEMOS 
+
+
+
+COLOCAR, SEMPRE, 
+
+
+NOS 
+
+
+REQUESTS FEITOS PELOS CLIENT,
+
+
+
+ESSE HEADER DE 
+
+'content-type: multipart/form-data'...
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE NOSSO CÓDIGO VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+ fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+                                'multipart/form-data'
+          }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> MAS NOSSO CÓDIGO AINDA DEU UM ERRO....
+
+
+
+
+
+
+
+
+
+
+  O ERRO, AGORA, FOI ESTE:
+
+
+
+
+
+  Error: Multipart: Boundary not found
+
+
+
+
+
+
+
+
+
+
+
+  ---> não sei o que é esse 'boundary'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -> PROFESSOR DIZ QUE 
+
+
+
+  NÃO VAMOS 'ADD ANYTHING TO ANY FORM ELEMENT',
+
+
+
+  e que devemos 
+
+
+  FAZER 
+  O 
+
+  SET 
+
+  DESSE 
+
+
+  'MULTIPART/form-data'
+
+
+
+  _INTEGRALMENTE _ NO NOSSO CÓDIGO JAVASCRIPT 
+
+
+  DO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+  --> para isso,
+
+
+  professor vai começar uma LOUCURA JAVASCRIPT nesse 
+
+
+
+
+  arquivo frontend de 'Feed.js':
+
+
+
+
+
+
+
+
+  até agora 
+
+
+  eu tinha 
+
+
+  TENTADO ESCRVER 
+
+
+um header 
+
+
+tipo assim:
+
+
+
+
+
+ fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+    })
+
+
+
+
+
+
+----> MAS ISSO AÍ NÃO FUNCIONOU,
+
+
+
+JUSTAMENTE POR CAUSA DAQUELE ERRO 
+
+
+DE 
+
+
+'Multipart: boundary not found'...
+
+
+
+
+
+
+
+
+
+
+---> no caso do professor, o código que ele começa a escrever É __bEM DIFERENTE__...
+
+
+
+
+
+
+
+
+--> ele começa pela criação de uma const de nome 'formData',
+
+
+
+em que coloca/armazena um valor 
+
+
+de 
+
+
+'new FormData()' --------> ELE NOS EXPLICA QUE 
+
+ESSE OBJECT 
+
+
+
+É UM OBJECT OFERECIDO PELO 'BROWSERSIDE JAVASCIRPT'....
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    const formData = new FormData();  ///////EIS O CÓDGO EM QUESTÃO...
+
+    let url = 'http://localhost:8080/feed/post';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+
+    console.log(postData, 'LINE');
+
+
+    fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+                                'multipart/form-data'
+          }
+    })
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+ESSE OBJETO TEM UM FUNCIONAMENTO SEMELHANTE AO DE 'const error = new Error()',
+
+
+
+PQ 
+
+ELE 
+
+
+__ NOS DEIXA_ ANEXAR COISAS A ELE... (mas não por meio de '.propriedade = 404', como no ERROR, e sim de uma maneira distinta)...
+
+
+
+
+
+
+
+
+--------> para __ ANEXAR___ COISAS A ELE,
+
+
+
+USAMOS 
+
+
+
+O 
+
+MÉTODO 
+
+
+'.append()'... -->  ------>  PODEMOS __ ANEXAR__ DATA __A  ESSE OBJETO... 
+
+
+
+
+
+
+
+
+
+--> A PRIMEIRA COISA QUE _ VAMOS QUERER _ ANEXAR A ELE, NO CASO,
+ 
+ É 
+
+
+
+ 'title', o nosso TITLE...
+
+
+
+
+
+
+ fica tipo assim:
+
+
+
+
+
+
+
+ const formData = new FormData();
+
+
+formData.append('title', postData.title);
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR NOS EXPLICA QUE A ESTRUTURA DO MÉTODO APPEND É ESTA:
+
+
+
+
+
+1) parâmetro 1 será o NOME DO FIELD QUE VAMOS QUERER DENTRO DESSE OBJETO 'formData'...
+
+
+
+2) PARÂMETRO 2 __ SERÁ O VALOR _ DESSE FIELD, no objeto 'formData'...
+
+
+
+
+
+
+
+
+
+
+NO CASO,
+
+
+
+
+escrevemos assim:
+
+
+
+
+
+
+ const formData = new FormData();
+
+
+formData.append('title', postData.title);
+
+formData.append('content', postData.content);
+
+
+---------------------------------------------
+
+
+
+
+
+
+POR FIM, VAMOS 'APPEND' 
+
+A NOSSA IMAGE,
+
+
+PQ __ POR MEIO __ DESSE 
+
+
+
+'formData',
+
+
+
+CONSEGUIMOS __ ACTUALLY___ 
+
+FAZER APPEND_ _ DE 
+
+NOSSAS IMAGES... (
+  de nossos FILES, no caso...
+)
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+ const formData = new FormData();
+
+
+formData.append('title', postData.title);
+
+formData.append('content', postData.content);
+
+formData.append('image', postData.image); 
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    let url = 'http://localhost:8080/feed/post';
+
+
+      const formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+
+    console.log(postData, 'LINE');
+
+
+    fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+          //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+          //                       'multipart/form-data'
+          // }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+----> COM ESSES 3 FIELDS ADICIONADOS,
+
+
+ficamos 
+
+com 
+
+
+essa const de 'formData'
+
+__ACTUALLY _ 'PREPARED',
+
+
+
+
+
+um preparado/misto de 
+
+
+'TEXT CONTENT' 
+
+e 
+
+'FILE CONTENT'...
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+-------> É CLARO QUE AGORA EU QUERO USAR ESSA 'FORMDATA' ('const formData')
+
+
+
+COMO UM BODY NO/PARA MEU REQUEST...
+
+
+
+
+
+
+--------> TIRAMOS AQUELE SET DE 
+
+'headers: {
+  'Content-Type': 'application/json'
+}
+
+',
+
+
+
+
+PQ 
+
+ISSO SERIA INCORRETO,
+
+E QUEBRARIA 
+
+
+
+NOSSO APP.... (
+
+
+  pq obrigaríamos nosso app a tentar 
+
+  parsear 
+
+
+  essa data da 'formData'
+
+  de forma incorreta..
+)
+
+
+
+
+
+
+
+
+
+--> EM VEZ DISSO,
+
+
+A 
+
+'formData' (objeto)
+
+
+
+VAI 
+
+_AUTOMATICAMENTE SETTAR OS HEADERS PARA NÓS,
+
+O QUE É BEM CONVENIENTE...
+
+
+
+
+
+
+
+
+-_> A ÚNICA COISA QUE PRECISAMOS FAZER, AQUI, É 
+
+SETTAR 'body' como igual a 'formData'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    let url = 'http://localhost:8080/feed/post';
+
+      ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+      const formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+
+    console.log(postData, 'LINE');
+
+
+    fetch(url, {
+          method: 'POST',
+          body: formData ////////EIS O CÓDIGO EM QUESTÃO.
+          // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+          //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+          //                       'multipart/form-data'
+          // }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+----------
+
+agora
+
+
+
+temos outro erro,
+
+
+
+
+dessa vez com o pacote 'uuid':
+
+
+
+
+
+    cb(null, uuidv4()); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+               ^
+
+
+
+
+               A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\app.js:54
+      cb(null, uuidv4()); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+               ^
+
+TypeError: uuidv4 is not a function
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+a sintaxe de import deve ser esta:
+
+
+
+
+
+const uuid = require('uuid').v4;
+
+uuid();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+const uuid = require('uuid').v4;
+
+const multer = require('multer'); /////sim, vamos usar o multer novamente, para FAZER HANDLE DOS FILE UPLOADS FEITOS PELO USER AO NOSSO BACKEND/APP...
+
+const mongoose = require('mongoose'); ///nem mesmo precisamos do 'mongodb' driver.... (mas instale mesmo assim).
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+const feedRoutes = require('./routes/feed');
+
+const authRoutes = require('./routes/auth');
+
+app.use(bodyParser.json());
+
+app.use('/images', express.static(path.join(__dirname, 'images')));  //não se esqueça do '/images' no início...
+
+// console.log(path.join(__dirname, 'images'));
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+const fileStorage = multer.diskStorage(
+  {
+    destination: (req, file, cb) => {
+
+      cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+
+      console.log(file.fieldname, 'LINE');
+
+      cb(null, uuid()); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+    }
+
+
+  }
+)
+
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+
+const upload = multer(
+  {
+    storage: fileStorage,
+    fileFilter: fileFilter
+  }
+).single('image');
+
+
+
+app.use(
+  (req, res, next) => {
+    upload(req, res, (error) => {
+
+      if(error instanceof multer.MulterError) {
+        console.log('MULTER ERROR HAS OCCURRED');
+      } else if (error) {
+        console.log('AN UNKNOWN ERROR HAS OCCURRED');
+        console.log(error);
+      }
+
+    }
+  
+)
+next();
+  }
+)
+
+
+
+
+
+app.use(authRoutes);
+
+app.use('/feed', feedRoutes);
+
+// app.listen(3000);
+
+app.use(
+  (error, req, res, next) => {
+      console.log(error);
+      const status = error.statusCode || 500; ///COM ESSA SINTAXE, DEFINIMOS '500' por default.... será o default caso nenhum status code tiver sido definido anteriormente, no objeto 'erro'...
+      const message = error.message; ////'message' é uma propriedade QUE SEMPRE EXISTE NOS OBJETOS 'error'... é a mensagem que você escreve tipo em 'new Error('Mensagem escrita')' ....
+
+
+      res.status(status).json( ///RESPOSTA PADRONIZADA...
+        {
+          message: message
+        }
+      )
+  }
+)
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// app.listen(8080); // usamos a porta 8080 PQ NO REACT JÁ USAMOS AUTOMATICAMENTE A PORTA '3000'...
+
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---> agora parece que algo mudou..
+
+
+
+
+
+
+
+
+
+--> 1 arquivo foi criado lá em 'images'...... -----> 
+
+
+
+É UM DAQUELES ARQUIVOS 
+
+QUE 
+
+
+
+'NÃO FICOU COM EXTENSÃO' (
+
+
+
+  arquivos soltos, 
+
+  sem extensão....
+
+
+
+
+)
+
+
+
+
+
+--> para que esse arquivo 
+
+seja 
+
+
+ARMAZENADO COMO 
+
+'.png',
+
+etc etc,
+
+
+
+
+
+'.jpg',
+
+
+
+DEVEMOS SETTAR ALGUM HEADER, 
+
+
+EU ACHO...
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+outro problema é que 
+
+
+nosso post, lá na database,
+
+não está sendo criado...
+
+(
+
+  erro de 
+
+'
+Error: Validation failed, entered data is incorrect.
+    at exports.createPost (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\controllers\feed.js:74:19)
+
+    '
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+---> BEM, O ERROR QUE OBTIVEMOS FOI ESTE:
+
+
+      value: '',
+      msg: 'Title should be more than 6 characters long.',
+      param: 'title',
+      location: 'body'
+    }
+
+
+
+
+
+
+
+
+->mas eu havia colocado 
+
+um 
+
+
+'title'
+
+superior a 6 
+
+characters,
+
+por isso há um engano aqui...
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO DO MULTER ESTAVA ERRADO, o do 'diskStorage':
+
+
+
+const fileStorage = multer.diskStorage(
+  {
+    destination: (req, file, cb) => {
+
+      cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+
+      console.log(file.fieldname, 'LINE');
+
+      cb(null, uuid() + '-' + file.originalname); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+    }
+
+
+  }
+)
+
+
+
+
+
+
+
+
+
+
+coloquei 'file.originalname',
+
+em vez de 
+
+
+'file.filename' (que estava causando um problema, pq aquela parte do arquivo estava ficando como 
+'undefined')....
+
+
+
+
+
+
+
+--> ok, agora os arquivos estão sendo armazenados com '.jpg'
+
+
+
+ao final, e com os nomes dos arquivos tbm... (
+  bom...
+)
+
+
+
+
+
+
+
+
+
+
+--> o único problema, agora, é que 
+
+nossos posts ainda não estão sendo salvos 
+
+na database...
+
+
+
+
+
+
+
+
+
+há algo de bem errado no nosso código...
+
+
+
+
+
+
+-> O PROBLEMA, NA VERDADE, É ESTE:
+
+
+
+undefined
+Error: No image attached to request.
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+o fato é que minha image está actually sendo 'appended' ao 
+
+
+'formData'...
+
+
+
+
+
+
+
+
+---> eu só não entendo o pq 
+
+desse 
+
+
+
+
+'formData'
+
+
+no 'body' 
+
+
+do 
+
+request 
+
+não estar sendo enviado...
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+consertei.... o problema era/É ___BEM BIZARRO....
+
+
+
+
+
+
+
+o problema era aquele error handler do multer(que eu havia escrito no passado):
+
+
+
+
+
+
+isso estava errado:
+
+
+
+
+
+const upload =  multer(
+  {
+    storage: fileStorage, //versão mais completa/recomendada. ----> É A VERSÃO QUE USA A 'STORAGE ENGINE' que críamos previamente, como visto logo acima...
+    fileFilter: fileFilter,
+  }
+).single('image')
+
+
+
+
+
+
+app.use(
+
+  (req, res, next) => {
+
+
+  upload(req, res, (error) => {
+
+    if(error instanceof multer.MulterError) {
+      console.log('MULTER ERROR HAS OCCURRED');
+    } else if (error) {
+      console.log('AN UNKNOWN ERROR HAS OCCURRED');
+      console.log(error);
+    
+    }
+
+  })
+  next();
+}
+);
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+esse código mais complexo aí ESTAVA CAUSANDO O ERRO...
+
+
+
+
+
+
+CONSEGUI RESOLVER O PROBLEMA QUANDO ADOTEI A FORMA MAIS SIMPLES DO 
+
+USO DESSE MIDDLEWARE DO MULTER:
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(
+  {
+    destination: (req, file, cb) => {
+
+      cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+
+      console.log(file.fieldname, 'LINE');
+
+      cb(null, uuid() + '-' + file.originalname); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+    }
+
+
+  }
+)
+
+
+
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+
+
+app.use(bodyParser.json());
+
+
+app.use(
+  multer({storage: fileStorage, fileFilter: fileFilter}).single('image')
+)
+
+
+
+app.use('/images', express.static(path.join(__dirname, 'images')));  //não se esqueça do '/images' no início...
+
+// console.log(path.join(__dirname, 'images'));
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+
+
+
+app.use(authRoutes);
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO... A BOA NOTÍCIA É QUE 
+
+
+
+AGORA 
+
+
+
+
+AS FILES 
+
+ESTÃO SENDO ARMAZENADAS NO NOSSO BACKEND, em 'images',
+
+
+e os 
+
+
+POSTS CRIADOS A PARTIR 
+
+DESSAS FILES/images 
+
+
+ESTÃO COM AQUELA PROPRIEDAED 
+
+de 
+
+
+
+'imagePath',
+
+com o caminho a elas 
+
+
+no nosso backend... (era o que queríamos)....
+
+
+
+
+
+
+
+
+
+
+-_> AGORA SÓ FALTA:
+
+
+
+
+
+
+1) FAZER COM QUE CADA 'POST' (página post)
+
+
+CONSIGA RENDERIZAR A IMAGE 
+
+
+
+CORRESPONDENTE A SI, a partir do uso de cada 'imageUrl' em cada document 'post'...
+
+
+
+
+(acho que isso não está sendo renderizado devido À maneira pela qual 
+
+cada 
+
+'imageUrl' 
+está sendo armazenada, que é assim:
+
+
+
+
+{
+    "_id": {
+        "$oid": "61a834f51817a806bcb576d7"
+    },
+    "title": "EXEMPLO3",
+    "content": "2142152151",
+    "imageUrl": "images\\cf638d27-13cc-4a9c-b8a4-604eeddde7d2-DOCUMENTO DE ENVIO.jpg",
+    "creator": {
+        "name": "Maximillian"
+    },
+    "createdAt": {
+        "$date": "2021-12-02T02:52:37.662Z"
+    },
+    "updatedAt": {
+        "$date": "2021-12-02T02:52:37.662Z"
+    },
+    "__v": 0
+}
+
+
+
+)
+
+
+
+
+
+
+
+
+--> TEMOS QUE SUBSTITUIR ESSe '\\' por '/'..., por meio de 'replace()'...
+
+
+
+
+
+
+
+
+
+--> ESTE CÓDIGO, LÁ NO BACKEND,
+
+RESOLVEU:
+
+
+
+  const post = new Post({
+    title: title,
+    content: content,
+    // imageUrl: 'DUMMY',
+    imageUrl: imageUrl.replace(/\\/g, "/"),
+    creator: {
+      name: 'Maximillian',
+    },
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+
+
+
+
+
+
+'imageUrl.replace('/\\/g, "/")'....
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+ok, isso ao mesmo tempo 
+
+
+RESOLVEU 
+
+
+
+
+A FORMA PELA QUAL ESSE PATH ESTAVA SENDO ARMAZENADA 
+
+
+
+NA DATABASE,
+
+
+
+
+E __ TAMBÉM __ CONSERTOU O DISPLAY_ IRREGULAR__ 
+
+
+DA IMAGE DE CADA 'post',
+
+
+na page 
+
+de 'singlePOst'...
+
+
+
+
+
+
+
+
+
+--> devo continuar vendo as aulas do professor...
+
+
+
+
+
+
+
+
+
+
+
+
+--> professor diz, ao criar 1 novo post,
+
+
+
+QUE 
+
+
+
+conseguimos ver nossas pages de 'post',
+
+
+
+
+e que 
+
+agora 
+
+temos 
+
+
+images que 
+
+
+SÃO ARMAZENADAS NO BACKEND....
+
+
+
+
+
+
+
+
+--> ok, como pudemos observar,
+
+
+
+
+a lógica NO SERVERSIDE É __ EXATAMENTE_ A MESMA,
+
+
+e SÓ __ NO 
+
+CLIENTSIDE A LÓGICA TEM QUE MUDAR UM POUCO (vamos 
+
+
+usar aquele 
+
+
+'const formData = new FormData()' para fazer APPEND de toda a data necessária ao nosso post request, sem nos esquecermos de appendar também a 'image'...)
+
+
+
+
+
+
+
+
+---> só há um negócio que eu ainda acho que está ruim...
+
+
+
+
+
+
+
+--> images são uploadadas e SALVAS NO NOSSO BACKEND __ MESMO __ QUANDO __ 
+
+
+
+NOSSA VALIDATION FALHA/HÁ UM ERRO 
+
+
+
+NO PROCESSAMENTO DO REQUEST DO 
+
+USER... 
+
+
+--> quero que A IMAGE __ NÃO SEJA SALVA no backend QUANDO ISSO OCORRER...
+
+
+
+
+
+
+
+
+
+
+--> vi um post no 
+stackoverflow:
+
+
+
+
+
+1
+
+You can have the validation middleware BEFORE the multer middleware. That way, when the validation fails, all the subsequent middlewares would not be executed -- and thus, the files will not be uploaded.
+
+Separate out the validation like so:
+
+const validateSeamUpload = (req, res, next) => {
+    const { error } = validateSeam(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    return next();
+
+
+
+
+  
+  -------------------------
+
+
+
+  Hi, i know this issue is old, and closed. But searching for how to validate multer fileuploads (and any file uploads actually) this is one of the first search results.
+
+In case you're searching for an easy way to validate the files in the request, one way to do it's using "checkSchema" to check for basically anything in the request object.
+
+You can do something like this:
+
+
+
+
+
+
+const multer = require('multer');
+
+const upload = multer({
+    limits: {fileSize: 10 * Math.pow(1024, 2 /* MBs*/)},
+    fileFilter(req, file, cb){
+        //Validate the files as you wish, this is just an example
+        cb(null, file.mimetype === 'application/pdf');
+    },
+});
+
+const {check, checkSchema, validationResult} = require('express-validator');
+
+app.post('/test', [
+    upload.fields([
+        {name: 'resume_file', maxCount: 1},
+        {name: 'another_file', maxCount: 3},
+    ]),
+    check('email', 'Email field is invalid, etc etc').not().isEmpty().isEmail().isLength({max: 255}),
+    checkSchema({
+        'resume_file': {
+            custom: {
+                options: (value, { req, path }) => !!req.files[path],
+                errorMessage: 'You should upload a PDF file up to 10Mb',
+            },
+        },
+        'another_file': {
+            custom: {
+                options: (value, { req, path }) => !!req.files[path] && req.files[path].length >= 2,
+                errorMessage: 'You should upload at least two PDF files, up to 10Mb',
+            },
+        },
+    }),
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            return res.status(422).json({
+                message: 'Request fields or files are invalid, but im handling all of them together!',
+                errors: errors.array(),
+            })
+        }
+
+        //Your route logic, knowing that both the fields, and the files are valid
+
+        return res.status(200).json({
+            message: 'Request fields and files are valid!',
+        })
+    }
+]);
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+uma solução BRUTA, mas eficaz,
+
+é só fazer um 
+
+
+code manual 
+
+
+desses checks,
+
+lá 
+
+
+
+na função 
+
+'fileFilter'
+
+do multer....
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+const fileFilter = (req, file, cb) => {
+  console.log(file);
+
+  console.log(req.body.title, 'LINE3');
+
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    if (
+      req.body.title.length > 6 &&
+      req.body.title.match(/^[A-Za-z]+$/) &&
+      req.body.content.length > 6
+    ) {
+      console.log('UPLOAD CANCELED')
+      return cb(null, true);
+    } else {
+      return cb('Invalid data inputted, file was not saved.', false);
+    }
+
+
+  } else {
+   return cb(null, false); ///isso é o que interessa... vai parar nosso fileupload, se o chamarmos... (ou não).
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--> claro que isso funcionou,
+
+
+mas 
+
+o problema é que 
+
+agora 
+
+
+
+
+meu error handler está mostrando 'failed to fetch'
+
+
+ao user,
+
+
+quando ocorre esse erro de 
+
+
+validation...
+
+(
+
+  bem estranho...
+)
+
+
+
+
+
+queria que fosse mostrada a mensagem de 
+
+''Invalid data inputted, file was not saved.''....
+
+
+
+
+
+
+
+
+-> isso aconteceu, pelo visto,
+
+
+por causa deste erro:
+
+
+
+Access to fetch at 'http://localhost:8080/feed/post' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+
+
+
+
+
+
+
+
+
+
+OK... AGORA CONSEGUI...
+
+
+
+
+
+
+
+--> foi só eu colocar aquele código DEFINIDOR DOS HEADERS,
+
+
+código de 
+
+
+'''
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+''',
+
+
+
+LÁ NO INÍCIO 
+
+
+DO MEU ARQUIVO 
+
+'app.js'
+
+
+do backend...
+
+
+
+
+
+
+
+
+
+----> e agora, com isso,
+
+
+
+mostro uma MENSAGEM DE ERRO 
+
+quando o CREATE DO POST FALHA,
+
+e 
+
+AÍ 
+
+
+A IMAGE TAMBÉM NÃO É SALVA.... (sucesso total)...
+
+
+
+
+'''
+
+
+Error: Creating or editing a post failed!
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+agora só falta dar uma retocada no FRONTEND, para 
+
+
+colocar essa validation de 'NO NUMBERS IN YOUR TITLE'...
+
+
+
+
+
+(
+
+  para isso,
+
+  vou até o component de 'FeedEdit.js',
+
+
+  que é onde tenho essa validation browserside....
+)
+
+
+
+
+
+
+-> NESSE LOCAL,
+
+
+DESCUBRO QUE 
+
+O PROFESSOR ESTÁ USANDO AQUELE ARQUIVO 'validators' (no folder de util.js, no frontend)
+
+
+
+PARA 
+
+
+
+FAZER MINHA VALIDATIOn....
+
+
+
+
+
+
+
+
+
+OS CÓDIGOS EM 'validators.js'
+
+
+SÃO ESTES:
+
+
+
+
+export const required = (value) => value.trim() !== '';
+
+export const length = (config) => {
+  return (value) => {
+    let isValid = true;
+    if (config.min) {
+      isValid = isValid && value.trim().length >= config.min;
+    }
+    if (config.max) {
+      isValid = isValid && value.trim().length <= config.max;
+    }
+    return isValid;
+
+}
+
+}
+
+export const email = (value) => {
+    return /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(
+      value
+    );
+  };
+
+
+
+
+  --------> VOU QUERER ADICIONAR MAIS UM 
+
+
+
+  VALIDATOR,
+
+  VALIDATOR 
+
+  DE 
+
+  'isLetter',
+
+
+  ou algo assim...
+
+
+
+
+
+
+
+
+  TIPO ISTO AQUI:
+
+
+
+  export const isLetter = (value) => {
+ 
+        let isValid = true;
+        if(!value.match(/^[A-Za-z]+$/)) {
+          console.log('INVALID');
+              isValid = false;
+        } else {
+          console.log('TEST');
+          return isValid;
+        }
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+--> E LÁ NO 'FeedEdit',
+
+
+ESTE CÓDIGO:
+
+
+
+
+
+
+
+  postInputChangedHandler = (input, value, files) => {
+    if (files) {
+      generateBase64FromImage(files[0])
+        .then((base64) => {
+          console.log('ENTERED');
+          this.setState({ imagePreview: base64 });
+        })
+        .catch((event) => {
+          console.log('ENTERED2');
+          this.setState({ imagePreview: null });
+        });
+    }
+
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.postForm[input].validators) {
+        isValid = isValid && validator(value);
+      }
+      const updatedForm = {
+        ...prevState.postForm,
+        [input]: {
+          ...prevState.postForm[input],
+          valid: isValid,
+          value: files ? files[0] : value,
+        },
+      };
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+      return {
+        postForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+  };
+
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+pronto... por enquanto, estou satisfeito...
+
+
+
+
+
+-------------------------------
+

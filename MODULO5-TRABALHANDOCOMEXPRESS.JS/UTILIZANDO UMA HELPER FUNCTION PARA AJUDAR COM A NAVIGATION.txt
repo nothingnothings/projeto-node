@@ -1,0 +1,644 @@
+
+
+
+
+
+
+
+
+
+--> ANTES DE TRABALHARMOS NO STYLING,
+
+
+
+
+
+
+
+
+_PROFESSOR QUER 
+
+FAZER UMA SIDENOTE 
+
+SOBRE 
+
+
+
+
+___COMO __ NÓS NAVEGAMOS ATÉ O 
+
+
+
+'root folder' 
+
+
+
+PARTINDO 
+
+
+
+
+de 
+
+
+'admin.js' 
+
+
+
+e 
+
+'shop.js'... ------->  
+
+
+
+
+
+
+
+
+
+
+
+EU ME LEMBRO DAQUELE COMANDO LÁ,
+
+o 
+
+
+'process.cwd()' .... --> TALVEZ ISSO AÍ AINDA FUNCIONE....
+
+
+
+
+
+
+
+
+
+
+----> O PROFESSOR APONTA QUE 
+
+
+PODERÍAMOS 
+
+SIMPLESMENTE 
+
+USAR 
+
+
+
+
+
+'..' EM VEZ DE 
+
+
+'/..',
+
+
+
+LÁ NAQUELE CÓDIGO DE 
+
+
+
+
+'res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'))'...
+
+
+
+
+
+--> ELE DIZ QUE ISSO É OPTIMAL/PREFERRABLE (ainda que isso não
+
+impossibilite esse código de rodar em windows/mac/linux)
+
+
+PQ 
+
+ISSO 
+
+
+FAZ COM QUE 
+
+
+EVITEMOS 
+
+
+
+ 'MAKE ASSUMPTIONS ABOUT THE SEPARATOR WE ARE USING WHEN CONSTRUCTING A PATH'... 
+
+
+
+
+
+
+
+
+
+ ------> ok... -----> com isso, 
+
+
+
+ TEREMOS EXATAMENTE O MESMO FUNCIONAMENTO DE ANTES,
+
+ MAS AGORA COM UM CÓDIGO MAIS 'CLEAN',
+
+ uma maneira melhor de fazer isso..
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> OK... MAS HÁ UMA MANEIRA AINDA MAIS 
+
+ NICE DE IMPLEMENTAR ISSO DO QUE 
+
+
+
+
+ ''res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'))'...''
+
+
+
+
+
+
+
+
+
+ ------> EM VEZ DISSO,
+
+
+
+ PROFESSOR DIZ QUE PODEMOS 
+
+
+ 'GET THE PARENT DIRECTORY'
+
+
+ COM __ A AJUDA__ DE UMA PEQUENA 
+
+
+
+ HELPER FUNCTION (little helper function)...
+
+
+
+
+
+
+
+ --------------> PARA ISSO, PROFESSOR CRIA UM NOVO FOLDER
+
+
+
+
+ NO NOSSO PROJETO, FOLDER CHAMADO DE 
+
+ 'util',
+
+
+ EM QUE 
+
+ FICARÃO
+
+ NOSSAS 
+
+ UTILITY FUNCTIONS...
+
+
+
+
+
+
+
+
+
+
+ ----> DENTRO DESSE FOLDER,
+
+
+ ELE 
+
+
+ CRIA UM 
+
+ ARQUIVO 
+
+ 'path.js'... -------> 
+
+
+
+
+
+ DENTRO DESSE NEGÓCIO, 
+
+
+ PROFESSOR 
+
+ ADICIONA UM EXPORT 
+
+
+ COM 
+
+
+
+ 'module.exports = xxxx'....
+
+
+
+
+
+
+
+ --> DENTRO DESSE 'module.exports'
+
+ O PROFESSOR 
+
+ VAI QUERER 
+
+
+
+
+
+
+ TER UMA FUNÇAÕ QUE VAI AJUDAR ELE A CONSTRUIR 
+
+ UM 
+
+ PATH 
+
+
+
+ __ AO PARENT DIRECTORY.... ----> PROFESSOR 
+
+
+
+
+ 
+
+ FALA MELHOR:
+
+ ele quer 
+
+ DIZER UMA VARIÁVEL,
+
+ E NÃO 
+ UMA FUNÇÃO... -------> 
+
+
+ PARA 
+
+ ISSO,
+
+
+ PRIMEIRAMENTE 
+
+ ELE 
+
+
+
+
+
+
+
+
+
+ IMPORTA 
+
+
+ 'path',
+
+
+ com 
+
+
+
+
+ 'const path = require('path');'
+
+
+
+ ------------------------------------
+
+
+
+
+ ---> ISSO FEITO,
+
+
+
+
+ professor 
+
+ escreve 
+
+
+
+
+ 'module.exports = path.dirname()'.... -------> 
+
+
+
+ AÍ O PROFESSOR NOS EXPLICA QUE 
+
+
+ '.dirname()' 
+
+
+
+
+
+
+
+___NOS RETORNA __ ''O  DIRECTORY NAME DE UM PATH''... 
+
+
+
+
+
+
+
+
+
+----> OK... -----> OK... --> AGORA SÓ TEMOS QUE SABER QUAL DIRECTORY/PARA QUAL FILE 
+
+
+
+VAMOS QUERER CONSEGUIR O 'DIRECTORY NAME'... -----> para isso,
+
+simplesmente usamos 
+
+A VARIÁVEL
+
+
+
+GLOBAL 
+
+
+
+'process', QUE É UMA VARIÁVEL QUE 
+
+
+
+FICA DISPONÍVEL EM TODOS OS ARQUIVOS,
+
+
+e que 
+
+você nunca tem que importar, por causa disso...
+
+
+
+
+
+
+
+
+------> DENTRO DE 'process', TEMOS UMA PROPRIEDADE 
+
+CHAMDA 
+
+
+DE 
+
+
+
+'mainModule'... ------> E ISSO VAI, EM OUTRAS PALAVRAS,___ 
+
+
+
+SE REFERIR AO 'MAIN MODULE' 
+
+
+_QUE INICIOU SEU APLICATIVO...  ----------> 
+
+
+
+
+NO CASO,
+
+
+VAI SE REFERIR AO 'MÓDULO' QUE CRIAMOS LÁ EM 
+
+'app.js'... 
+
+
+
+
+
+
+
+
+
+
+
+
+vai ficando assim:
+
+
+
+
+
+
+
+
+
+module.exports = path.dirname(process.mainModule....); 
+
+
+
+
+
+
+
+
+
+
+
+----> POR FIM, 
+
+
+PROFESSOR DIZ QUE DEVEMOS CHAINAR 
+
+
+'.filename' 
+
+
+
+SOBRE __ ESSE 
+
+'process',
+
+PARA QUE 
+
+CONSIGAMOS 
+
+
+
+
+___ SABER __ 
+
+
+EM QUAL FILE ESSE MODULE foi 'spun up'.... --------> 
+
+
+
+
+
+
+
+
+
+
+EM OUTRAS PALAVRAS,
+
+
+ESSE CÓDIGO INTEIRO NOS DÁ 
+
+
+
+'THE PATH TO THE FILE THAT IS RESPONSIBLE FOR THE FACT 
+
+THAT OUR APPLICATION IS RUNNING...' 
+
+
+
+
+
+
+
+--> e esse 'filename' É JUSTAMENTE 
+
+
+A COISA 
+
+
+
+
+__ QUE NÓS PASSAMOS __ EM 'dirname'
+
+PARA 
+
+
+CONSEGUIR UM __ PATH__ ATÉ 
+
+ESSE 
+
+DIRECTORY/AQUELE DIRECTORY....
+
+
+
+
+
+
+
+
+
+O CÓDIGO DE EXPORT COMPLETO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+'''''''''module.exports = path.dirname(process.mainModule.filename); ''''''''''
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ, LÁ EM 'app.js', vamos IMPORTAR ASSIM:
+
+
+
+'''''''''
+
+
+const rootDir = require('../../util/path.js');
+
+
+
+'''''''
+
+
+
+
+
+
+
+
+E FICARÁ ASSIM,
+
+
+
+DENTRO 
+
+DO NOSSO CÓDIGO:
+
+
+
+'''''''''''''
+
+
+res.sendFile(path.join(rootDir, 'views', 'add-product.html'))
+
+
+
+
+(ou seja, substituiu o '__dirname' e o '..' nesse .join() ....)
+
+''''''''''
+
+
+
+
+
+
+
+
+
+---> ok............. -------> O OLD APPROACH 
+
+AINDA FUNCIONA,
+
+
+
+
+
+MAS ESSE É UM APPROACH BEM CLEAN,
+
+E QUE 
+
+
+FUNCIONA 
+
+EM TODOS OPERATING SYSTEMS,
+
+E QUE 
+
+TAMBÉM SEMPRE TE DÁ O PATH AO 'ROOT FILE'...
+
+
+
+
+
+
+----> AGORA DEVEMOS VER O STYLING..

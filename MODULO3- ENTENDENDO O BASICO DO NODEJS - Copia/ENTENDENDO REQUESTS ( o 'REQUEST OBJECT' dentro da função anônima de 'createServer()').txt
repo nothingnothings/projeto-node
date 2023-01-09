@@ -1,0 +1,772 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> AGORA DEVEMOS VOLTAR AO OBJETO 
+
+
+
+
+
+'request'
+
+
+QUE CONSOLE.LOGGAMOS 
+
+
+
+AQUI...
+
+
+ex:
+
+
+
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req);       ////////EIS O CÓDIGO EM QUESTÃO.
+                        /////process.exit();  
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+
+ ------------------------------------
+
+
+
+
+ OK....
+
+
+
+ SÓ RELEMBRANDO:
+
+
+
+
+
+ ESSE OBJETO 
+
+ 'request' 
+
+ que console.loggamos 
+
+
+ É 
+
+ APENAS 
+
+ 'THE OBJECT 
+
+ NODEJS 
+
+ GENERATED FOR US 
+
+ WITH ALL THE 
+
+
+ DATA 
+
+ OF THE INCOMING REQUEST'... ----------------->  TODA A 
+
+
+
+
+ DATA 
+
+ 'OF THE INCOMING REQUEST'
+
+
+ QUE 
+
+
+ __ FOI RECEBIDA/CAPTADA QUANDO O USER VISITOU 
+
+
+
+ 'localhost:3000'.... -----> 
+
+
+
+
+
+
+
+
+
+
+ NÓS PODEMOS 
+
+
+VISITAR 
+
+'localhost:3000' PQ FAZEMOS 
+
+'LISTEN TO'
+ 
+ a 
+
+ requests 
+
+ feitos 
+
+ nesse 
+
+
+ port... 
+
+
+
+
+
+
+
+ -------> o objeto REQUEST É MT COMPLEXO...
+
+
+
+
+
+
+
+ -> HÁ MAIS DO QUE APENAS DATA,
+
+ HÁ TAMBÉM FUNÇÕES...
+
+
+
+
+
+
+
+
+
+ ------> MAS DENTRE AS COISAS QUE TEMOS NO INTERIOR 
+
+ DESSE OBJETO 'request',
+
+
+
+ TEMOS 
+
+
+ 'headers'...
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+   rawHeaders: [
+    'Host',
+    'localhost:3000',
+    'Connection',
+    'keep-alive',
+    'sec-ch-ua',
+    '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
+    'sec-ch-ua-mobile',
+    '?0',
+    'sec-ch-ua-platform',
+    '"Windows"',
+    'Upgrade-Insecure-Requests',
+    '1',
+    'User-Agent',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
+    'Accept',
+    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Sec-Fetch-Site',
+    'none',
+    'Sec-Fetch-Mode',
+    'navigate',
+    'Sec-Fetch-User',
+    '?1',
+    'Sec-Fetch-Dest',
+    'document',
+    'Accept-Encoding',
+    'gzip, deflate, br',
+    'Accept-Language',
+    'pt-BR,pt;q=0.9'
+  ],
+
+
+
+
+
+
+
+
+
+
+
+  O ESTRANHO, aqui, é que 
+
+  não temos 
+
+  a key 
+
+  de 
+
+  'headers',
+
+
+  e sim apenas 
+
+  'RAW HEADERS'....
+
+
+
+
+
+
+
+
+
+
+
+  ----> HEADERS --> SÃO 'METADATA',
+
+
+
+  meta dados adicionados 
+
+
+  a um request... (e também a responses, btw)....
+
+
+
+
+
+
+  ---> ALI NÓS VEMOS O 
+
+
+
+  'host' 
+
+
+
+  de 
+
+  'localhost:3000'...,
+
+
+
+
+ 
+ AÍ INFORMAÇÕES 
+
+ sobre 
+
+
+ a 'connection' 
+
+
+ (INFORMA COMO 
+ 
+
+ __ A RESPONSE DATA DEVERÁ 
+
+
+ SER 
+
+ 'CACHED' (ex: 'cache-control: max-age=0'),
+
+
+
+ TAMBÉM 
+
+
+
+
+
+ QUAL BROWSER USAMOS PARA 
+
+
+ AQUELE 
+
+ REQUEST (user-agent, que diz Mozilla, etc etc...)
+ 
+
+
+
+
+
+
+
+
+
+
+
+ ---> também 
+
+ TEMOS A KEY DE 
+
+
+ 'accept', que informa QUAL TIPO DE RESPONSE 
+
+
+
+ aceitamos no nosso servidor... --> no caso, aceitamos 'text/html', 'application/xthml+xml',
+
+
+ 
+
+
+
+ TAMBÉM
+
+ QUE 
+
+
+ ACEITAMOS 
+
+
+
+
+
+'encoded responses', COMO 
+
+VISTO 
+
+NA KEY 
+
+
+'accept-encoding: 'grip, deflate, br'  ( COM ISSO, NOSSA RESPONSE É 'MINIFIED' PARA SALVAR BANDWIDTH...)
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ -----> TAMBÉM RECEBEMOS UM 'COOKIE', 
+
+
+
+ É UM COOKIE 
+
+ DO GOOGLE ANALYTICS...
+ )
+
+
+
+
+
+lá no início 
+
+vemos 
+
+
+a VERSÃO 
+
+de 
+
+
+
+http que foi usada, 
+
+
+
+E ASSIM POR DIANTE...
+
+
+
+------------------------
+
+
+
+
+
+--> HÁ MT QUE 
+
+PODEMOS 
+
+
+CONSEGUIR 
+
+DESSE REQUEST... --> 
+
+
+
+
+
+
+
+HÁ SÓ 
+
+
+UNS POUCOS 
+
+
+
+'FIELDS'
+
+
+
+QUE 
+
+SÃO REALMENTE NECESSÁRIOS,
+
+
+
+que nós realmente devemos saber...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> O PRIMEIRO FIELD __INTERESSANTE/IMPORTANTE__ que devemos 
+
+
+conhecer 
+
+é 
+
+o 
+
+
+
+'url'...
+
+
+
+
+-------> 
+
+
+
+POR ISSO O PROFESSOR 
+
+ESCREVE
+
+
+
+'
+console.log(req.url)'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req.url);       ////////EIS O CÓDIGO EM QUESTÃO.
+  
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+
+
+
+
+
+ ----------------------------
+
+
+
+
+ A SEGUNDA COISA QUE O PROFESSOR VAI QUERER CONSOLE.LOGGAR 
+
+
+ é 
+
+ 'req.method'... (isso vai nos dar 'GET', é claro, pq esse é o valor padrão.)
+
+
+
+
+
+
+
+
+
+
+ --> TAMBÉM 
+
+ VAMOS CONSOLE.LOGGAR 
+
+
+
+ 'req.headers'...
+
+
+
+
+
+
+
+
+
+
+ ok, entramos no nosso site +1 vez/no servidor +1 vez com o browser,
+
+
+
+ E AÍ RECEBEMOS:
+
+
+
+
+
+
+
+ /
+
+GET
+
+{
+  host: 'localhost:3000',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br',
+  'accept-language': 'pt-BR,pt;q=0.9'
+}
+
+
+
+
+
+
+
+
+
+
+URL --> FOI '/',
+
+
+pq 
+
+
+esse é o PATH dessa nossa 'home page' nesse 'localhost:3000'....
+
+
+
+
+
+
+METHOD -- FOI 'GET',
+
+
+o tipo de 
+
+
+HTTP REQUEST 
+
+padrão...
+
+
+
+
+
+O TERCEIRO OBJETO 
+
+FOI 
+
+
+UM OBJETO CONTENDO 
+
+
+NOSSOS 
+
+HEADERS...
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+---> URL --> É 'BASICALLY EVERYTHING AFTER OUR HOST'... ----> 
+
+
+
+
+ou seja,
+
+
+
+é o 'path', em outras palavras...
+
+
+
+
+
+
+
+
+
+SE ENTRÁSSEMOS EM UM LINK/URL DE 
+
+
+
+
+
+'localhost:3000/test' 
+
+
+
+NO NOSSO 
+
+
+
+APLICATIVO,
+
+
+receberíamos 
+
+
+
+'/test' 
+
+nesse 
+
+
+console.log(req.url);
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+É ASSIM QUE BASICAMENTE 
+
+
+
+PODEMOS 
+
+'ACCESS SOME INFORMATION'
+
+
+sobre/no nosso request.... 
+
+
+
+
+
+
+
+
+--> MAS UMA COISA CRUCIAL QUE ESTÁ FALTANDO AQUI É A 
+
+
+
+___RESPONSE___ ---> 
+
+
+
+
+por isso vamos ver COMO ENVIAR RESPONSES 
+
+
+na próxima aula...

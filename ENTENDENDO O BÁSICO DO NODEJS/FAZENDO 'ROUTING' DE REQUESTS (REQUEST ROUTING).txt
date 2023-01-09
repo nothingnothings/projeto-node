@@ -1,0 +1,1957 @@
+
+
+
+
+
+
+
+
+ok.... NOSSO CÓDIGO HAVIA FICADO ASSIM:
+
+ 
+
+
+
+ const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        console.log(req);
+        console.log(req.url);
+        console.log(req.method);
+        console.log(req.headers);
+        console.log(res);
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+        //process.exit(); ///fecha nosso webserver, TERMINA O 'ONGOING EVENT LOOP'/execução de nosso servidor (vai parar de receber requests, pois terminamos o MAIN PROCESS que continha o eventListener que fazia listen aos REQUESTS) ------> este recurso é raramente usado, pois se usarmos 'process.exit()', PARAMOS DE RECEBER INCOMING REQUESTS, E O SERVER PARA DE FUNCIONAR...
+}) 
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+NAS ÚLTIMAS LIÇÕES,
+
+APRENDEMOS SOBRE COMO 
+
+'SPIN UP THAT SERVER',
+
+
+
+__ E TAMBÉM ___ QUE NÓS 
+
+CONSEGUIMOS UM OBJETO 
+
+'REQUEST'
+
+
+COM 
+
+INFORMAÇÃO 
+
+SOBRE O REQUEST,
+
+
+
+E O 
+
+OBJETO 
+
+
+
+'RESPONSE',
+
+
+
+QUE PODEMOS USAR PARA RETORNAR UMA RESPONSE...
+
+
+
+
+
+
+
+
+
+-> AGORA VAMOS CONECTAR O REQUEST COM A RESPONSE...
+
+
+
+
+
+
+
+
+
+
+
+
+----> agora vamos começar 
+
+
+A ESCREVER UM 
+
+WEBSERVER BEM SIMPLES _ QUE FARÁ__ DIFERENTES COISAS 
+
+
+
+DEPENDENDO 
+
+DE QUE 
+
+'ROUTE'
+
+
+
+
+__ O USUÁRIO ENTRAR__ (ou seja,
+
+
+
+
+dependente do '/xxxx' que o 
+
+usuário 
+
+inputtar 
+
+
+na url bar...
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+---> OK... PARA 
+
+
+'/' (slash nothing),
+
+
+
+
+VAMOS QUERER 
+
+CARREGAR UMA PAGE 
+
+
+EM QUE 
+
+O USER 
+
+
+
+PODERÁ 
+
+
+
+'ENTER SOME DATA',
+
+
+DATA QUE 
+
+ENTÃO 
+
+ARMAZENAREMOS NO 
+
+SERVER,
+
+
+
+
+quando essa data for enviada e processada lá....
+
+
+
+
+
+
+
+
+
+
+
+------> PARA CONSEGUIR FAZER ISSO,
+
+
+
+
+
+
+NÓS PRIMEIRAMENTE VAMOS PARSEAR 
+
+
+
+A 
+
+'URL' 
+
+
+DO USUÁRIO... --------> 
+
+
+
+
+
+PARA 
+
+
+
+
+___PARSEAR/ ARMAZENAR__ A URL 
+
+
+
+
+DO USUÁRIO 
+
+QUE 
+
+VAI 
+
+ACESSAR NOSSA PÁGINA,
+
+
+
+o PROFESSOR VAI USAR 
+
+AQUELE MÉTODO/PROPRIEDADE 
+
+
+
+de 
+
+'.url' NO REQUEST....
+
+
+
+
+
+ex:
+
+
+
+const server = http.createServer((req, res) => { 
+
+
+
+        const url = req.url; ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end();
+
+
+}) 
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+OK.... 
+
+
+ESSE CÓDIGO DE 
+
+
+'const url = req.url' 
+
+
+
+É MT ÚTIL,
+
+PQ 
+
+SERÁ 
+
+USADO 
+
+
+PARA 
+
+
+
+___FAZERMOS 
+
+'ROUTE' 
+
+
+
+
+DOS REQUESTS 
+
+A DIFERENTES 
+
+'OUTCOMES'
+ 
+
+ NO NOSSO SERVER.... (parecia super complexo, mas não é tanto assim...)
+
+
+
+
+
+
+
+
+
+
+ OK...
+
+
+
+
+
+
+ -------> aí,
+
+
+
+
+ VAMOS __ ADICIONAR UM IF STATEMENT,
+
+
+ IF STATEMENT EM QUE 
+
+
+ CHECAREMOS 
+
+
+ 'if (url === '/')',
+
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+
+SE NOSSA URL FOR IGUAL A 
+
+'slash nothing',
+
+
+VAMOS QUERER 
+
+
+EXECUTAR 
+
+
+O CÓDIGO 
+
+
+
+DESSE 
+
+
+
+IF BLOCK....
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const server = http.createServer((req, res) => { 
+
+
+
+        const url = req.url; 
+
+        if (url === '/') { ////EIS O CÓDIGO EM QUESTÃO.
+
+        }
+
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end();
+
+
+}) 
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+SE ESSE FOR O CASE,
+
+
+SE O USER 
+
+
+ACESSAR 
+
+
+
+
+
+NOSSO SITE 
+
+DE 
+
+'localhost:3000',
+
+
+
+
+
+VAMOS QUERER __ RETORNAR __ UMA RESPONSE 
+
+
+
+QUE VAI 
+
+SEGURAR 
+
+UM 
+
+
+
+HTML 
+
+COM UMA 
+
+INPUT 
+
+FORM __ 
+
+
+
+E UM __ BOTÃO____ (button)... -------> 
+
+
+
+
+
+E 
+
+
+ESSE BUTTON, POR SUA VEZ,
+
+
+VAI ENVIAR/RETORNAR __ UM NOVO REQUEST___ AO NOSSO SERVER.... (e esse 
+
+
+REQUEST SERÁ UM __ POST__ REQUEST, E NÃO UM 'GET REQUEST', é claro...)
+
+
+
+
+
+
+
+
+
+--------> OK... PARA 
+
+
+CONSEGUIR 
+
+ESCREVER 
+
+ESSE 
+
+'<input>'
+
+
+
+E 
+
+esse 
+
+'<button>',
+
+
+
+PROFESSOR 
+
+replica o código de 
+
+'res.write()'
+
+E EDITA PARA 
+
+
+CONSTAREM ESSES ELEMENTOS...
+
+
+
+ex:
+
+
+
+
+
+
+
+const server = http.createServer((req, res) => { 
+
+
+
+        const url = req.url; 
+
+        if (url === '/') {
+
+            res.write('<html>');
+            res.write('<head><title>My first page</title></head>')
+            res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+            res.write('<div>');
+            res.write('<form>');
+            res.write('<input>Send some data to the server!</input>');
+            res.write('<button>SEND</button>');
+            res.write('</form>');
+            res.write('</div>');
+        res.write('</html>');
+        res.end();
+
+
+
+        }
+
+        res.setHeader('Content-Type', 'text/html');
+
+
+
+}) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM, 
+
+
+
+CREIO EU...... ----> MAS EU ERREI... ---> isso 
+
+pq 
+
+
+
+EU DEVO 
+
+COLOCAR UMA 'FORM' ENVOLVENDO ESSE BUTTON,
+
+pq 
+
+se eu não fizer isso,
+
+o comportamento 
+
+DEFAULT DE 'SUBMIT' 
+
+de um 
+
+BUTTON 
+
+ENFIADO EM UMA FORM 
+
+__não será __ triggado....
+
+
+
+
+(ok,
+
+é 
+
+só colocar essa form envolvendo o input e o button, dentro daquela div....)
+
+
+
+
+EX:
+
+
+
+
+
+
+const server = http.createServer((req, res) => { 
+
+
+
+        const url = req.url; 
+
+        if (url === '/') {
+
+            res.write('<html>');
+            res.write('<head><title>My first page</title></head>')
+            res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+            res.write('<div>');
+            res.write('<form>');
+            res.write('<input type="text">Send some data to the server!</input>');
+            res.write('<button type="submit">SEND</button>');
+            res.write('</form>');
+            res.write('</div>');
+        res.write('</html>');
+        res.end();
+
+
+
+        }
+
+        res.setHeader('Content-Type', 'text/html');
+
+
+
+}) 
+
+
+-----------------------------------------
+
+
+
+
+FALTOU O TYPE 
+
+DO 
+
+
+'input',
+
+tbm...
+
+
+
+
+
+
+--> O BUTTON TBM DEVE SER DE TYPE 'submit',
+
+PARA QUE 
+
+FAÇA 
+
+
+___SUBMIT__ DA FORM...
+
+
+
+
+
+
+(ESSE É UM COMPORTAMENTO  DEFAULT DO JAVASCRIPT) --------> 
+
+
+
+
+um button de TYPE SUBMIT DENTRO DE UM 'FORM ELEMENT' 
+
+
+__ VAI SEMPRE ___ ENVIAR UM REQUEST__ E 
+
+
+REFRESHAR NOSSA PÁGINA....
+
+
+
+
+
+
+
+
+
+-------> CERTO.... MAS POR FIM,
+
+O PROFESSOR 
+
+DIZ QUE 
+
+DEVEMOS 
+
+ESCREVER UM ATTRIBUTE 
+
+
+DE 
+
+
+'action'
+
+
+lá 
+
+
+
+na FORM... ----> 
+
+
+
+
+ESSE ATTRIBUTE BASICAMENTE 
+
+
+
+
+É 
+
+A 
+
+___URL__ a  QUE 
+
+
+ESSE REQUEST, que será gerado AUTOMATICAMENTE,
+
+
+
+
+____ DEVERÁ SER ENVIADO.... -------> 
+
+
+
+
+
+E O PROFESSOR 
+
+
+VAI 
+
+
+ESCREVER 
+
+
+''''
+
+action="/message",
+
+'''''''
+
+O QUE 
+
+FARÁ 
+
+
+COM QUE 
+
+
+
+
+
+ESSE VALOR QUE O USUÁRIO INPUTTA 
+
+
+
+SEJA 
+
+__ ENVIADO 
+
+AO ENDEREÇO
+ 
+ DE 
+
+
+ 'localhost:3000/message'...
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+         if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<input type="text">Enter Message!</input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+        }
+
+
+
+
+-------------------------------------
+
+
+
+
+ISSO FEITO,
+
+finalmente 
+
+
+TEREMOS DE DEFINIR, NESSA 
+
+'form',
+
+
+O 
+
+___METHOD__ 
+
+
+QUE 
+
+QUEREMOS 
+
+QUE 
+
+
+
+
+OS SUBMITS DENTRO DELA SIGAM/UTILIZEM.... ----> VAMOS QUERER 
+
+
+QUE 
+
+SEJA 
+'POST',
+
+é claro... -------->  
+
+
+
+VAMOS QUERER 
+
+'POST'
+
+PQ 
+
+NÃO VAMOS QUERER 
+
+'ENTER A URL' 
+
+
+COM ESSA FORM,
+
+E SIM VAMOS QUERER 
+
+
+
+'SEND SOME DATA'
+
+
+A ESSA URL.... -----> VAMOS QUERER 
+
+
+
+
+ENVIAR 
+
+UM 
+
+
+POST REQUEST...
+
+
+
+
+
+
+
+------> GET E POST ---> SÃO OS 2 MAIS IMPORTANTES..
+
+
+
+
+
+
+--> GET REQUEST --> É ENVIADO AUTOMATICAMENTE 
+
+QUANDO 
+
+
+VOCÊ CLICA EM UM LINK OU INPUTTA UMA URL.... 
+
+
+
+
+
+
+
+
+
+
+----> JÁ UM POST REQUEST __ TEM QUE SER SETTADO POR NÓS_,
+
+
+
+POR MEIO DO CREATE DE UMA 'FORM' COMO ESSA...
+
+
+
+
+
+
+
+
+
+
+--------> É EVIDENTE QUE HÁ OUTRAS MANEIRAS DE CRIAR UM POST REQUEST,
+
+
+por meio de uso de javascript,
+
+
+
+MAS VAMOS AS IGNORAR POR ENQUANTO....
+
+
+
+
+
+
+---------> OK.... EM HTML CRIAMOS UMA FORM DESSAS ,
+
+
+E AÍ 
+
+DEFINIMOS 
+
+
+
+QUE O METHOD DEVERÁ SER 
+
+'POST'..
+
+
+
+
+
+
+
+
+-------> OK, O POST REQUEST SERÁ ENVIADO A '/message'... ----->
+
+
+
+E 
+
+
+A COISA 
+
+LEGAL 
+
+
+SOBRE 
+
+'form'
+
+
+ 
+
+
+
+ É QUE 
+
+
+ ELE 
+
+ FAZ 
+
+
+ MAIS DO QUE 
+
+ APENAS 
+
+
+ 'SEND THE REQUEST YOU MADE',
+
+
+
+
+ MAS TAMBÉM 
+
+ VAI 
+
+
+ 'LOOK INTO THE FORM,
+
+ DETECTING ANY INPUTS OR INPUT-RELATED ELEMENTS 
+
+
+SUCH AS 
+
+'''SELECTS'''' ',
+
+
+
+
+
+E AÍ,
+
+
+
+SE 
+
+DERMOS UM __ NOME __ A ESSE INPUT (coisa que devemos fazer),
+
+
+
+
+O 
+
+
+
+'form'
+
+VAI 
+
+AUTOMATICAMENTE  
+
+
+
+
+_______'PUT THAT MESSAGE'  DENTRO 
+
+DO REQUEST 
+
+QUE 
+
+
+
+SERÁ ENVIADO AO NOSSO SERVER...
+ 
+
+ (e o nome do seu input não precisa ser 'message'; pode ser o que vocÊ quiser,
+ 
+ 
+ a única coisa que o 
+ 
+ input 
+ 
+ vai fazer 
+ 
+ é 
+ 
+ ADICIONAR QUALQUER INPUT DATA 
+ 
+ 
+ inputtado nesse input __ DENTRO DO REQUEST,
+
+
+ data que será 
+
+ ACESSÍVEL PELO 'ASSIGNED NAME', como 'message'..
+ 
+ 
+ )
+
+
+
+
+
+
+
+
+------> OK.... ENTÃO O CÓDIGO FICA ASSIM:
+
+
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<input type="text" name="message">Enter Message!</input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+        }
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+OK, ENTÃO AQUI,
+
+
+quando 
+
+o usuário 
+
+
+
+visita nossa HOME/   localhost:3000,
+
+
+
+
+ELE 
+
+VAI 
+
+RECEBER 
+
+ESSE CÓDIGO HTML AÍ... (sim... mas precisamos settar o header antes, senão isso não vai funcionar...).
+
+
+
+E TAMBÉM PRECISAMOS 
+
+
+DE UM 
+
+
+'res.end()',
+
+
+
+
+um 
+
+
+'res.end()'
+
+
+COM UM 
+
+
+RETURN 
+
+STATEMENT 
+
+
+
+
+ANTES DELE,
+
+
+PQ 
+
+NÓS __NÃO VAMOS QUERER __ CONTINUAR A 
+
+EXECUÇÃO 
+
+
+
+
+DO RESTO DO NOSSO CÓDIGO (aquele codigo de write de 'Hello from my node.js server!')
+
+
+
+
+EX:
+
+
+
+(req, res) => {
+
+        if (url === '/') {
+                res.setHeader('Content-Type', 'text/html'); ///necessário para comunicar que estamos RETORNANDO UMA RESPONSE 'página html' ao usuário....
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<input type="text" name="message">Enter Message!</input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                return res.end(); //NECESSÁRIO PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+
+            res.setHeader('Content-Type', 'text/html'); ////CÓDIGO QUE SERÁ IGNORADO PELA EXECUÇÃO DE NOSSA FUNÇÃO, se alcançamos esse primerio if check de 'url === /'....
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end();
+
+
+
+}
+------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+CÓDIGO COMPLETO:
+
+
+
+const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        console.log(req); 
+        console.log(req.url); ////método essencial (usado no ROUTING de requests, e outras coisas)...
+        console.log(req.method); ///método essencial (usado para LIMITAR O TIPO DE INCOMING REQUESTS QUE RECEBEMOS)....
+        console.log(req.headers); ///método essencial, usado para DETERMINAR/DESCOBRIR NOSSOS HEADERS...
+        console.log(res);
+
+
+
+        const url = req.url;
+
+
+
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<input type="text">Enter Message!</input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                return res.end(); // 'return' e '.end()' NECESSÁRIOS PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+
+
+
+        res.setHeader('Content-Type', 'text/html'); ////CÓDIGO QUE SERÁ IGNORADO PELA EXECUÇÃO DE NOSSA FUNÇÃO, se alcançamos esse primerio if check de 'url === /'....
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+        //process.exit(); ///fecha nosso webserver, TERMINA O 'ONGOING EVENT LOOP'/execução de nosso servidor (vai parar de receber requests, pois terminamos o MAIN PROCESS que continha o eventListener que fazia listen aos REQUESTS) ------> este recurso é raramente usado, pois se usarmos 'process.exit()', PARAMOS DE RECEBER INCOMING REQUESTS, E O SERVER PARA DE FUNCIONAR...
+}) 
+
+
+
+
+server.listen(3000); 
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... RETORNAREMOS DA 'ANONYMOUS FUNCTION',
+
+
+
+
+
+__ PARA EVITAR DE CONTINUAR O RESTANTE DO CÓDIGO.... ---> 
+
+
+
+E PRECISAMOS 
+
+
+
+
+
+
+_ FAZER ISSO, __ 
+
+ESCREVER 
+
+
+ESSE 
+
+'res.end()'
+
+
+PQ __ DEPOIS __ 
+
+
+DE 
+
+'res.end()'
+
+
+
+NÓS __ NÃO PODEMOS/DEVEMOS 
+
+CHAMAR QUAISQUER 
+
+
+'res.write()'
+
+
+ou 
+'res.headers()' 
+
+
+
+(O QUE TERIA ACONTECIDO AQUI,
+
+
+caso o resto do código fosse 
+
+
+executado..)
+
+
+
+
+
+
+
+
+----------> SE NÓS NÃO ESCREVÊSSEMOS 
+
+ESSE 
+
+'return res.end()',
+
+
+
+
+A EXECUÇÃO DAS LINHAS LOGO ABAIXO,
+
+
+
+o 
+
+
+'res.setHeader()'
+
+
+E O CONJUNTO DE 
+
+WRITES,
+ 
+
+
+ TODAS ELAS SERIAM EXECUTADAS...
+
+
+
+
+
+
+
+
+
+
+ (E NÃO QUEREMOS ISSO) -----> 
+
+
+
+
+
+
+
+
+ SE ENTRARMOS NESSE IF STATEMENT,
+
+
+
+
+ VAMOS QUERER ISSO,
+
+
+
+ VMAOS QUERER 
+
+ QUITAR,
+ SAIR 
+
+ DESSA FUNÇÃO 
+
+ E PARAR 
+
+
+ NOSSA EXECUÇÃO DE CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> ok,
+  
+
+  reiniciamos nosso server e testamos 
+
+
+
+
+  esse send desses elementos html....
+
+
+  OK, FUNCIONOu...
+
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+  const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        console.log(req); 
+        console.log(req.url); ////método essencial (usado no ROUTING de requests, e outras coisas)...
+        console.log(req.method); ///método essencial (usado para LIMITAR O TIPO DE INCOMING REQUESTS QUE RECEBEMOS)....
+        console.log(req.headers); ///método essencial, usado para DETERMINAR/DESCOBRIR NOSSOS HEADERS...
+        console.log(res);
+
+
+
+        const url = req.url;
+
+
+
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<label htmlFor="message">Enter a Message!</label>')
+                res.write('<br/>')
+                res.write('<input type="text" name="message"></input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                return res.end(); // 'return' e '.end()' NECESSÁRIOS PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+
+
+
+        res.setHeader('Content-Type', 'text/html'); ////CÓDIGO QUE SERÁ IGNORADO PELA EXECUÇÃO DE NOSSA FUNÇÃO, se alcançamos esse primerio if check de 'url === /'....
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+        //process.exit(); ///fecha nosso webserver, TERMINA O 'ONGOING EVENT LOOP'/execução de nosso servidor (vai parar de receber requests, pois terminamos o MAIN PROCESS que continha o eventListener que fazia listen aos REQUESTS) ------> este recurso é raramente usado, pois se usarmos 'process.exit()', PARAMOS DE RECEBER INCOMING REQUESTS, E O SERVER PARA DE FUNCIONAR...
+}) 
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+OK... 
+
+
+SE ESCREVERMOS ALGO E APERTARMOS O BOTÃO DE 'SEND',
+
+
+
+
+
+VEREMOS 
+
+
+
+NOSSA PÁGINA INICIAL ('localhost:3000/', método GET),
+
+
+
+
+
+
+
+MAS VEREMOS QUE MAIS ALGUMA COISA ACONTECEU....
+
+
+
+
+
+
+
+
+---> BASICAMENTE, 
+
+UM 
+
+
+REQUEST DE METODO 
+
+'POST'
+
+
+
+foi enviado ao nosso server.... ---> MAIS PROPRIAMENTE,
+
+FOI ENVIADO 
+
+À 
+
+
+'req.url' 
+
+
+de 
+
+
+'/message',
+
+
+POR ISSO PRECISAMOS ESCREVER 
+
+
+
+O CÓDIGO CONDICIONAL
+ 
+
+
+ DESSA URL/ROUTE ESPECÍFICA,
+
+
+ PARA PODER A UTILIZAR/UTILIZAR OS DADOS ANEXADOS A ELA 
+
+
+ PARA 
+
+
+ ESCREVER ESSES DADOS 
+
+
+ DENTRO 
+
+ DE UM ARQUIVO QUE SERÁ CRIADO NO SERVIDOR....
+
+
+ EX
+
+
+
+
+
+
+
+
+
+
+ 
+
+  const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        console.log(req); 
+        console.log(req.url); ////método essencial (usado no ROUTING de requests, e outras coisas)...
+        console.log(req.method); ///método essencial (usado para LIMITAR O TIPO DE INCOMING REQUESTS QUE RECEBEMOS)....
+        console.log(req.headers); ///método essencial, usado para DETERMINAR/DESCOBRIR NOSSOS HEADERS...
+        console.log(res);
+
+
+
+        const url = req.url;
+
+
+
+
+        if (url === '/') { 
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<label htmlFor="message">Enter a Message!</label>')
+                res.write('<br/>')
+                res.write('<input type="text" name="message"></input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                return res.end(); 
+        }
+
+
+
+        if (url === '/message') { ///EIS O CÓDIGO EM QUESTÃO.
+
+            
+        }
+
+
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end();
+
+
+
+
+     
+}) 
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+OK.... PARA __ CRIAR UM ARQUIVO__
+
+
+E ENTAÕ 
+
+
+ESCREVER DENTRO 
+
+DELE,
+
+
+
+VAMOS PRECISAR, OBVIAMENTE,
+
+
+DE 
+
+'writeFileSync()'....
+
+
+
+
+
+-----> 
+
+para isso,
+
+vamos precisar 
+
+
+
+IMPORTAR O MODULE
+
+
+DE 
+
+
+'fs'...
+
+
+
+
+ex:
+
+
+
+
+
+
+const fs = require('fs');
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+OK, MAS NÃO É SÓ ISSO;
+
+VAMOS QUERER 
+
+
+
+
+__ MANIPULAR O FILE SYSTEM ___ APENAS__ 
+
+
+SE 
+A 
+
+URL 
+
+'/message' 
+
+FOR ALCANÇADA __ E 
+
+
+__ APENAS_ _ 
+
+
+
+SE O MÉTODO 
+
+DO HTTP REQUEST FOR DE TIPO 'POST'...
+
+
+
+
+
+
+
+
+--> por isso, escrevemos:
+
+
+
+       if (url === '/message' && req.method === 'POST') {
+
+                
+        }
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+OK.... 
+
+
+
+
+ISSO FEITO,
+
+VAMOS 
+
+QUERER 
+
+EXECUTAR 
+
+
+
+'writeFileSync',
+
+coisa normal...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+VAMOS 
+
+ESCREVER como primeiro parâmetro 
+
+
+
+um 
+
+negócio 
+
+'test.txt' (vamos criar um ARQUIVO TXT 
+
+
+
+
+em que 
+
+
+ARMAZENAREMOS 
+
+
+A DATA EXTRAÍDA DO REQUEST DO USER que clica no button)...
+
+
+
+
+
+
+
+JÁ COMO SEGUNDO PARÂMETRO, VAMOS QUERER PROVAVELMENTE 
+
+EXTRAIR 
+
+ALGO COMO 
+
+
+'req.body.message',
+
+
+
+
+
+
+A PROPRIEDADE 
+
+'message'  (que contém o valor inserido no input field do usuário, naquela form...)
+
+
+
+CONTIDA 
+
+DENTRO 
+
+
+DO 'BODY' 
+
+de nossa response,
+
+
+acessada por meio dessa sintaxe...
+
+
+
+
+
+
+OK...... MAS ISSO ___DEU ERRADO___ ... ------> 
+
+
+
+
+
+não sei, talvez essa data não esteja contida no body especificamente...
+
+
+
+
+
+
+
+
+
+minha url está bugada... --> ela está ficando assim:
+
+
+
+/message?message=,
+
+
+
+
+QUANDO DEVIA FICAR ASSIM:
+
+
+
+
+'/message'...
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE DEVEMOS VER A PRÓXIMA LIÇÃO...

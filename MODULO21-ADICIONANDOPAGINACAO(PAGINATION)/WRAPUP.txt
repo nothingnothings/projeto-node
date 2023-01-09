@@ -1,0 +1,170 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ADICIONAMOS 'PAGINATION' AO NOSSO APP....
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE PODEMOS 
+
+
+FACILMENTE 
+
+AJUSTAR 
+
+ISSO 
+
+
+PARA 
+
+SE ADEQUAR AS NOSSAS NECESSIDADES.. ----> 
+
+
+
+
+VOCÊ PODE ALTERAR O 
+
+'ITEMS_PER_PAGE',
+
+
+
+PARA ALTERAR O NÚMERO DE ITEMS POR PAGE...
+
+
+
+
+
+
+
+
+--> PAGINATION TE AJUDA A 
+
+
+
+
+'SHOULD ALLOW YOU TO DISPLAY THE DATA YOU WANT TO DISPLAY, AND TO NOT 
+DISPLAY ALL THE 
+
+DATA IN ONE GO'...
+
+
+
+
+ 
+
+
+-----> E É IMPORTANTE ENTENDER QUE__ COMO __ 
+
+
+
+
+'Product.find()'  USA __ UM CURSOR____... e ele 'RETRIEVES ONLY THE ITEMS YOU NEED'...
+
+
+
+
+
+
+
+JÁ 
+
+'.countDocuments()"
+
+
+___ NÃO RETRIEVA TODOS OS DOCUMENTS,
+
+E SIM 
+
+APENAS 
+
+OS __cONTA__ (o que é mais rápido do que RETRIEVAR)....
+
+
+
+
+
+
+
+-----> E 'skip()' 
+
+
+
+
+E 
+
+
+'limit()'
+
+
+
+
+
+___ SÃO MANAGEADOS PELO MONGODB/MONGOOSE 
+
+
+DE 
+
+
+MODO QUE 
+
+
+VOCÊ 
+
+'ONLY TRANSFERS OVER THE WIRE THE ITEMS/DOCUMENTS __ YOU REALLY NEED' -------> ISSO SIGNIFICA QUE 
+
+
+
+ISSO ___ NÃO ESTÁ FAZENDO UM 
+
+'SERVERSIDE FILTERING' 
+
+
+dos dados (filtering feito no SEU SERVER/app node... não é isso que está acontecendo),
+
+
+E SIM QUE 
+
+
+ELE 
+
+ESTÁ 
+
+
+_______rEALMENTE__ 
+
+
+
+
+
+FILTRANDO ESSE NEGÓCIO LA NO DATABASE SERVER MESMO (database mongodb, é ela que faz esse filtering por meio do 'limit()' e 'skip()', E NÃO  O SEU 
+
+
+APP NODEEXPRESS, que fica livre/só recebe os dados já filtrados por sua database mongodb...)
+
+
+
+
+
+
+
+
+
+--> OK, É ASSIM QUE PODEMOS ADICIONAR PAGINATION AO NOSSO APP NODEJS...

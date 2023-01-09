@@ -1,0 +1,2864 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> O QUE É O GRAPHQL?
+
+
+
+
+
+
+
+
+
+-> PARA ENTENDER,
+
+
+DEVEMOS O COMPARAR COM 
+
+'REST APIs',
+
+
+
+
+
+
+
+PQ 
+
+JÁ APRENDEMOS SOBRE ELAS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> REST API --> É UMA 'STATELESS, CLIENT-INDEPENDENT API FOR EXCHANGING DATA'...
+
+
+
+
+
+OU SEJA,
+
+É UM APLICATIVO 
+
+
+NODE/EXPRESSJS (ou qualquer outra framework application)
+
+
+
+
+
+QUE ___ NÓS CONSTRUÍMOS PARA 
+
+FAZER ___ EXCHANGE__ 
+
+DE DATA -----> ISSO SIGNIFICA QUE 
+
+
+NÓS:
+
+
+
+1) NÃO FAZEMOS RENDER DE VIEWS 
+
+
+
+2) NÃO ARMAZENAMOS SESSIONS 
+
+
+
+
+3) NÓS NÃO NOS IMPORTAMOS COM O CLIENT...
+
+
+
+
+
+
+
+
+4) NÓS SÓ NOS IMPORTAMOS 
+
+
+_ COM OS REQUESTS_,
+
+
+PARSEAMOS A DATA RECEBIDA,
+
+
+E AÍ 
+
+
+__RETORNAMOS RESPONSES COM DATA (json)....
+
+
+
+
+
+
+
+
+OK....
+
+
+
+
+
+
+
+
+
+
+-> JÁ UMA 
+
+GRAPHQL 
+
+
+API 
+
+
+
+É __ ALGO ___ BEM PARECIDO.... --> 
+
+
+
+TAMBÉM 
+
+É 
+
+
+' A STATELESS CLIENT-INDEPENDENT API 
+
+FOR EXCHANGING DATA'.... 
+
+
+
+
+WITH HIGHER QUERY FLEXIBILITY....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+É A MESMA COISA,
+
+
+
+MAS COM 
+
+'HIGHER QUERY FLEXIBILITY'..... --> não sei o que é isso...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA ENTENDER A RAZÃO DESSA MAIOR FLEXIBILIDADE COM QUERIES,
+
+
+DEVEMOS 
+
+
+
+VER ALGUMAS DAS LIMITAÇÕES COM REST APIs....
+
+
+
+
+
+
+
+
+
+
+
+
+---> DIGAMOS QUE NA NOSSA REST API 
+
+temos 
+
+
+
+um 
+
+
+
+
+_ ENDPOINT __ QUE 
+
+SE PARECE ASSIM:
+
+
+
+
+
+
+
+
+
+
+'''
+
+
+
+GET/post 
+
+
+
+
+
+''
+
+
+
+
+
+
+(OU SEJA,
+
+
+É 
+UMA 
+
+ROUTE/PATH DE 
+
+
+GET REQUEST, ENVIADA A ROUTE DE POST...
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+------> isso, no caso ,
+
+
+
+PROVAVELMENTE NOS FETCHEARIA/FETCHARÁ 
+
+
+UM 
+
+
+POST__ LÁ __ DA DATABASE __ CONECTADA AO NOSSO APP...  (também poderia ser de um ARQUIVO, mas isso não é recomendado)...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+GET/post                       Fetch Post                         
+
+
+
+
+
+
+{
+
+
+    id: '1',
+    title: 'First Post',
+    content: ' ... ',
+    creator: '{ ... }' 
+}
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... E O POST VAI SE PARECER ASSIM.... ---> OK, 
+
+AÍ 
+
+ESSE 
+
+POST VAI SER RETORNADO AO CLIENT,
+
+
+NA FORMA DE JSON DATA,
+
+E AÍ 
+
+
+TODOS FICAM FELIZES...
+
+
+
+
+
+
+
+
+
+
+
+--> MAS E SE NÓS _ 
+
+
+___ACTUALLY__ 
+
+
+
+
+
+
+
+
+
+SÓ PRECISÁSSEMOS __ 
+
+
+
+DO 
+
+
+'title' 
+
+
+
+e 
+
+do 
+
+'id' 
+
+
+
+NO CLIENT,
+
+
+
+E NÃO 
+
+
+___ DO _ RESTO __ DESSA DATA AÍ (
+
+
+    ou seja,
+
+
+
+    se pudéssemos 
+
+
+    __DESCARTAR/NÃO PRECISAR FETCHEAR 
+
+
+    AQUELE 'content' 
+
+    e 
+
+    'creator'
+     
+
+     keys...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ESSA É A PROPOSTA 
+
+DO 
+
+
+
+'GRAPHQL';
+ 
+
+
+ É 
+
+
+ 'flexibilizar'
+
+
+ AS QUERIES DE DATAS 
+
+ ENTRE CLIENT E SERVERSIDE,
+
+ PARA 
+
+
+ AGILIZAR 
+
+ A 
+ TROCA DE DADOS...
+
+
+ (
+
+     acho que é isso, pelo menos...
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> CERTO,
+
+ E SE REALMENTE NÃO PRECISARMOS DO 'CONTENT'/
+
+
+ creator ? 
+
+
+
+
+
+
+
+
+ --> É EVIDENTE QUE 
+
+ VAMOS 
+
+ TER 
+
+ CENÁRIOS 
+
+
+
+ EM QUE 
+
+ USAMOS 
+
+
+
+ 1 E O MESMO 
+
+
+ ENDPOINT 
+
+
+
+
+ NO NOSSO APP... -_> E AÍ,
+
+
+
+
+
+ EM 1 
+
+
+ PAGE/PLACE 
+
+ DE 
+
+ NOSSO 
+
+
+ APP 
+
+
+ PODEMOS __ PRECISAR,
+
+ EVENTUALMENTE,
+
+
+
+ DE SÓ 1 PEDACINHO 
+
+
+ DESSA 
+
+
+ DATA 
+
+
+ armazenada na database 
+
+ (
+
+     talvez 
+
+
+     só o id 
+
+     e o title,
+
+     por exemplo...
+ ) -------> 
+
+
+
+
+
+
+ EM OUTRA PAGE,
+
+ PODEMOS PRECISAR DE 
+
+
+ 'content' 
+
+ e 
+ de 
+
+
+ 'creator'....
+
+
+
+
+
+
+
+
+ ---> OK, MAS COMO PODERÍAMOS SOLUCIONAR ISSO,
+
+ EM UMA 
+
+ REST API?
+
+
+
+
+
+
+
+
+
+
+
+ -> BEM, A SOLUÇÃO 1, DIZ O PROFESSOR,
+ É OBVIAMENTE
+
+
+
+ __ CRIAR, DE FORMA SIMPLES,
+
+
+
+ 
+
+ MAIS __ ENDPOINTS__ no nosso server,
+
+ QUE 
+
+ ENTÃO 
+
+ VÃO 
+
+ RETORNAR 
+
+ 'THE DIFFERENT KINDS OF DATA'.... --> OU SEJA,
+
+
+
+
+ PODEMOS CRIAR UM NOVO 'REST API endpoint'....
+
+
+
+
+
+
+
+
+
+
+ EX: 
+
+
+
+
+ CRIAR UM NOVO REST API ENDPOINT,
+
+
+ route de 
+
+
+ 
+ GET /post-slim 
+
+
+
+
+
+
+ PARA __ RETORNAR ___ APENAS O 'TITLE' E O 'ID' 
+
+ DAQUELE POST....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> É CLARO QUE, OBVIAMENTE,
+
+
+
+
+ _ VOCÊ _ PODERIA/PODE USAR O MESMO ENDPOINT O TEMPO INTEIRO,
+
+
+ e 
+
+ AÍ 
+
+
+
+ SÓ 
+
+
+ FAZER FILTER/PARSE DA 
+
+
+ __ DATA DE QUE 
+
+
+ VOCê PRECISA,
+
+ LÁ NO FRONTEND.... ------------> MAS AÍ, 
+
+ SE VOCê 
+
+
+ FIZER/FIZESSE ISSO,
+
+
+ OBVIAMENTE 
+ VOCÊ 
+
+
+ ESTARIA 
+
+
+ 'SENDING A LOT OF UNECESSARY DATA'
+
+
+ 
+
+ __ OVER THE WIRE_, 
+
+
+
+ O QUE __ É UM PROBLEMA,
+
+
+ ESPECIALEMNTE 
+
+
+
+
+ QUANDO O ASSUNTO É MOBILE DEVICES.... -------> 
+
+
+
+
+
+
+
+
+
+ OK... ENTÃO A PRIMEIRA SOLUÇÃO É SIMPLESMENTE 
+
+
+ 'CREATE MORE ENDPOINTS',
+
+
+
+ ENDPOINTS QUE 
+
+ SIMPLESNETE 
+
+
+
+ RETORNAM A DATA ESPECÍFICA DE QUE VOCÊ PRECISA,
+
+
+ PARA CADA 1 DESSES ENDPOINTS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----> O PROBLEMA É QUE 
+
+ __ VOCê VAI TER__ 
+
+
+
+ 1 BILHAO DE ENDPOINTS,
+
+
+ E AÍ __ _ VOCÊ __ VAI 
+
+
+ TER QUE 
+
+
+ 'UPDATE THEM CONTINUOUSLY' (esses endpoints aí)...
+
+
+
+
+
+
+
+
+ -_-----> ALÉM DISSO,
+
+
+
+
+ VOCÊ __ VAI TER UMA SOLUÇÃO __ BEM INFLEXÍVEL, AQUI...
+
+
+
+
+
+
+
+
+
+ ---> E SE OS SEUS 'FRONTEND ENGINEERS' (
+
+
+     pq 
+
+     em 
+
+     projetos maiores,
+
+
+     você tipicamente trabalha em 
+
+     DIFERENTES EQUIPES 
+ ),
+
+
+
+ SE ELES __ PRECISAREM DE __ MAIS DADOS__ EM 
+
+
+ 1 
+
+ NOVA PAGE,
+
+
+
+
+ ELES
+
+
+ VIRÃO A VOCE,
+
+
+ COMO UM 
+
+
+
+ 'BACKEND DEVELOPER',
+
+
+
+
+ E __ AÍ VÃO PEDIR_ PARA VOCê 
+
+ DAR 
+
+ A 
+
+ ELES 
+
+
+ 1 
+
+ ENDPOINT 
+
+ QUE 
+
+
+
+
+ LHES FORNEÇA 
+
+ ESSA DATA QUE 
+
+
+ ESTÃO PEDINDO... --------> E ELES VÃO FICAR 'STUCK' 
+
+
+
+ NO FRONTEND DEVELOPMENT 
+
+ DELES
+  
+
+  __ ATÉ__ QUE 
+
+  VOCÊ _ ADICIONE/EDITE__ ESSE 
+
+
+
+  ENDPOINT... ----------->  
+
+
+
+
+
+
+  (
+
+
+      PROBLEM: LOTS AND LOTS OF ENDPOINTS, AND LOTS OF UPDATING...
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> OK... --> ISSO SIGNIFICA QUE 'FAST ITERATION ON THE FRONTEND IS MADE HARDER'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> POR OUTRO LADO,
+
+  VOCÊ NO BACKEND VAI TER QUE 
+
+
+  CONTINUAMENTE __ TER DE __ ADICIONAR _ NOVOS ENDPOINTS
+
+
+
+  QUE SATISFAÇAM AS NECESSIDADES DOS SEUS FRONTEND ENGINEERS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> A SOLUÇÃO 2, NO CASO,
+
+  É 
+
+  USAR 
+
+
+  'QUERY PARAMETERS' (na sua url...)
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+  GET/  post?data=slim 
+
+
+
+
+
+
+
+
+
+  -------> VOCÊ 
+
+
+
+  PODERIA ENFIAR ISSO AÍ NAS SUAS URLS, 
+
+  para 
+
+  então fazer manage no backend (parse e return de json data apropriada, de acordo com essas urls com query params)....
+
+
+
+
+
+
+
+
+
+
+
+  --> OBVIAMENTE ISSO É UMA SOLUÇÃO,
+
+
+
+
+  MAS DE NOVO VOCê TEM ESSA DEPENDÊNCIA DO 
+
+
+
+  FRONTEND COM O BACKEND,
+
+
+
+  
+
+  E VOCÊ 
+
+
+  VAI 
+
+
+  TER QUE 
+
+  SEMPRE ADICIONAR 
+
+
+
+  O CÓDIGO QUE PARSEIE 
+
+  essas
+
+  QUERY PARAMS,
+
+
+  e aí 
+  você ainda terá essa dependência entre o frontend e o backend...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ADICIONALMENTE,
+
+
+  SUA API PODE ACABAR 
+
+
+
+
+  'HARD TO UNDERSTAND',
+
+
+  PQ 
+
+
+
+
+  PODE NÃO FICAR TÃO CLARO 
+
+
+  __ QUAL QUERY _ PARAM _ _ FAZ O QUE ...
+
+
+
+
+
+
+
+
+
+  (
+
+
+      which PARAMETERS CAN I SET,
+
+
+      WHAT VALUES CAN I SET ON THEM...
+  ) --> isso nem sempre vai ficar tão claro,
+
+
+  se 
+
+  você 
+  usar 
+  esse 
+
+  approach 2 ,
+
+  dos query params...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ok.... os approaches,
+  até agora,
+
+  foram:
+
+
+
+
+
+
+
+
+
+
+
+
+  1) CRIAR 1 MONTE DE ENDPOINTS NA SUA REST API... (trabalhoso)
+
+
+
+
+
+  2) USAR QUERY PARAMETERS (trabalhoso, TAMBÉM PODE SER CONFUso, e feio, urls cheias de QUERY PARAMS)... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AÍ TEMOS A TERCEIRA OPÇÃO...
+
+
+
+
+
+
+--> É O GRAPHQL,
+
+
+
+
+QUE É IDEAL __ PARA __ PROJETOS __ EM QUE 
+
+
+
+VOCê __ 
+
+TEM 
+
+
+'DIFFERENT DATA REQUIREMENTS, ON DIFFERENT PAGES',
+
+
+
+
+
+
+
+
+__  __ NESSES CASOS,
+
+VOCê USA 
+
+O 
+
+
+'GRAPHQL'... ---> COM O 
+
+
+GRAPHQL 
+
+
+
+
+VOCÊ NÃO TEM 
+
+
+OS PROBLEMAS QUE O PROFESSOR EXPLICOU ANTERIORMENTE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM O GRAPHQL,
+
+VOCê TEM UMA 
+
+
+RICA 
+
+
+
+__ QUERY LANGUAGE,
+
+
+
+QUE VOCê USA NO SEU FRONTEND __ _PARA __ 
+
+
+
+
+
+ENVIAR __ DADOS __ AO BACKEND...-- ->  ESSA QUERY LANGUAGE É ENTÃO __ PARSEADa_ NO BACKEND,
+
+
+
+
+E __ AÍ __ 
+
+
+
+
+O BACKEND RETRIEVA DINAMICAMENTE A DATA DE QUE VOCÊ PRECISA.. --> OU SEJA,
+
+ISSO 
+
+É 
+QUASE 
+
+COMO 
+UMA 
+
+
+'DATABASE QUERY LANGUAGE' (
+
+    como aquelas que nós usamos NO BACKEND,
+
+    COMO SQL ou MONGODB, query languages
+),
+
+
+
+
+
+
+
+QUASE ALGO COMO ISSO,
+
+
+
+
+___ MAS __ PARA O FRONTEND__..... -----> (
+
+
+
+
+    'para o frontend' ---> ou seja,
+
+    VOCê COLOCA ESSA LANGUAGE __ NO REQUEST__ QUE VOCÊ ENVIA AO BACKEND...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... --> VOCÊ COLOCA ESSA SINTAXE/ QUERY LANGUAGE 
+
+
+NO __ REQUEST__ QUE VOCÊ VAI ENVIAR AO BACKEND...
+
+
+
+
+
+
+
+
+
+----> ESSA É A IDEIA, SIM, 
+
+MAS 
+
+
+COMO 
+
+
+
+
+EXATAMENTE O 
+
+
+
+
+'GRAPHQL' funciona?
+
+
+qual é o seu FLOW?
+
+
+
+
+
+
+
+
+
+
+BEM, TEMOS O 
+
+
+
+
+__CLIENT E O SERVER...
+
+
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CLIENT                         SERVER     <--->   (lógica server-side, ACESSO À DATABASE, ETC)....
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+OK.... --> MAS O QUE VOCÊ VAI ENVIAR __ DO CLIENT __ PARA __ O SERVERSIDE,
+
+NESSE MUNDO 
+
+
+'GRAPHQL'? -----> BEM, NESSE 
+
+
+MUNDO
+
+
+
+
+
+
+
+_________ VOCÊ __ SÓ VAI _ ENVIAR 
+
+
+
+1 ÚNICO TIPO DE REQUEST,
+
+
+
+
+NO SENTIDO 'BROWSER -> SERVERSIDE'....
+
+
+
+
+
+
+
+------> E O ÚNICO ___ TIPO _ DE REQUESt___ QUE 
+
+
+SERÁ 
+
+ENVIADO 
+
+
+SERÁ 
+
+
+
+
+
+O REQUEST/UM REQUEST 
+
+
+
+DE TIPO 
+
+
+
+
+'POST',
+
+
+enviado __ 
+
+
+
+à ROUTE 
+
+DE 
+
+
+
+'/graphql'....
+
+
+
+
+
+
+
+
+
+
+-> OU SEJA,
+
+ 
+
+
+ VOCÊ __ SÓ __ VAI TER 
+
+
+ '''ONE SINGLE ENDPOINT''',
+
+
+
+ endpoint _ em que ___ 
+
+ VOCê __ VAI 
+
+ ENVIAR__ 
+
+
+
+ TODOS SEUS HTTP REQUESTS__...
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> E SIM, ATÉ __ MESMO __ OS REQUESTS_ _DE TIPO 'GET' (ou seja, 
+ 
+ QUE __ VÃO QUERER __ FAZER O __ GET__ DE DADOS, sem CRIAR NOVOS DADOS/ENVIAR DADOS AO BACKEND)
+
+
+
+
+
+
+
+ __ VÃO ___ SER INCLUÍDOS/ENVIADOS__ A ESSE 
+
+
+
+
+
+ ENDPOINT ÚNICO DE 'POST /graphql'... -------> 
+
+
+
+
+
+
+
+ MAS PQ DIABOS __ 
+
+
+
+ VOCÊ __ VAI TER QUE __ SEGUIR _ESSA SINTAXE? 
+
+
+
+
+
+ PQ 
+
+ DIABOS FAZER ASSIM?
+
+(pq essa restrição?)
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+É 
+
+PQ 
+
+
+
+__ PARA__ 1 'POST REQUEST',
+
+
+
+
+VOCÊ __ PODE ___ 
+
+
+
+ADICIONAR/ESCREVER/EMBUTIR 
+
+
+UM 
+
+'request body'.... 
+(
+
+
+
+
+
+    ou seja,
+
+    a utilidade de usar um 
+
+
+    endpoint que SÓ ACEITA REQUESTS DE TIPO POST 
+
+    É 
+
+    QUE 
+
+    SEMPRE 
+
+    EXISTIRÁ UM 
+
+
+    'REQUEST BODY'...
+)
+
+
+
+
+
+
+
+--> E É __ JUSTAMENTE__ 
+
+ESSE 
+
+
+REQUEST BODY__ DO SEU __ REQUEST__ 
+
+
+QUE 
+
+VAI 
+
+
+CONTER__ 
+
+ 
+
+
+
+
+ A 'QUERY EXPRESSION' PERTINENTE,
+
+
+ QUE VAI 
+
+ SER 
+
+ ANALISADA/PARSEADA PELA 
+
+
+ LINGUAGEM DO 
+
+
+ 'GRAPHQL',
+
+ lá 
+
+ no backend....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ professor escreve:
+
+
+
+ 'POST REQUEST contains QUERY EXPRESION (to define the DATA that should be returned)'...
+
+
+
+
+
+
+
+
+ -------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ -------> ISSO SIGNIFICA QUE 
+
+
+
+ O 
+
+
+
+ GRAPHQL DEFINE SUA __ PRÓPRIA 'QUERY LANGUAGE' (e o professor vai nos mostrar mais sobre essa language neste módulo)....
+
+
+
+
+
+
+
+
+
+
+
+ ------> E VOCÊ USA ESSA QUERY LANGUAGE do 'graphQL' 
+
+
+ __ LÁ NO REQUEST_ _ BODY que você envia,
+
+
+ em cada 
+
+
+
+ body de cada request 
+
+ que vocÊ vai querer enviar... --------> E VOCê NÃO PODE 
+
+
+
+
+ ENVIAR 
+
+
+
+ REQUEST BODIES EM REQUESTS 
+
+ DE 
+
+ TIPO 'get',
+
+ E É JUSTAMENTE 
+
+ POR ISSO 
+
+ QUE 
+
+ USAMOS 
+
+ SÓ 
+
+ REQUESTSS
+
+
+ DE TIPO 
+ 'POST'
+
+ para 
+ 
+
+
+ trabalhar com graphQL....
+
+
+
+
+
+
+
+
+
+ --> OK.... --> VOCÊ COLOCA SUA 'QUERY LANGUAGE EXPRESSION'
+
+
+ dentro 
+
+ do 
+
+ request 
+
+ BODY,
+
+
+ E 
+
+ AÍ 
+ ESSE BODY
+
+
+ VAI SER PARSEADO 
+
+
+ NO SERVER,
+
+
+ PARA QUE 
+
+
+ 'SOME MAGIC GETS DONE ON IT',
+
+E PARA QUE 
+
+
+
+ENTÃO SEJA RETORNADA 
+
+
+'SÓ A DATA QUE VOCÊ PRECISA/PEDIU NO QUERY'... -----------> 
+
+
+
+ESSA É A IDEIA 
+
+POR TRÁS 
+
+DO 
+
+GRAPHQL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK..... --------> MAS COMO __ 
+
+
+
+SE PARECE UMA 'GRAPHQL QUERY',,
+
+
+
+
+UMA QUERY DO GRAPHQL?
+
+
+
+
+
+
+
+
+
+
+
+--> bem, elas 
+
+tipicamente
+possuem 
+
+ESTA APARENCIA:
+
+
+
+
+
+
+
+
+
+
+{
+        query {
+            user {
+                name
+                age
+            }
+        }
+
+}
+
+
+
+-------------------------------------
+
+
+
+
+OU SEJA,
+
+
+
+'ITS A JSON OBJECT-LIKE 
+
+STRUCTURE',
+
+
+
+
+
+
+uma estrutura SIMILAR A UM OBJETO JSON,
+
+
+
+
+EM QUE 
+
+VOCÊ 
+
+TEM, 
+
+
+PRIMEIRAMENTE:
+
+
+
+
+
+
+
+
+
+
+
+1) UM ___ OPERATION TYPE___ ------> ex: ('query', la no início....) --> 'QUERY' é o operation type usado para fazer GET de data....
+
+
+--> você também tem OUTROS __ TYPES, como 
+
+'MUTATION' (usado 
+
+para 
+
+EDIT ou DELETE de data/documents....
+
+
+)
+
+
+
+
+e 
+
+
+
+
+
+
+'SUBSCRIPTION' --> SUBSCRIPTIONS SÃO USADOS PARA 'SETUP REAL TIME DATA SUBSCRIPTIONS, USING WEB SOCKETS'.... ( ou seja, é usado para settar/trabalhar com WEBSOCKETS...)
+
+
+
+
+
+
+2) DEPOIS DISSO,
+
+
+
+VOCÊ TEM A FIGURA DOS 
+
+
+'ENDPOINTS',
+
+
+representada, no nosso exemplo,
+
+por aquele 
+
+
+
+'user'...
+
+
+
+
+
+
+
+
+SÃO CHAMADOS DE 'ENDPOINTS', ou 'COMMANDS'... --> SÃO OS COMMANDS QUE 
+
+VOCÊ PODE 
+
+'EXECUTE'.... ---------> VOCê OS DEFINE,
+
+COMO DESENVOLVEDOR,
+
+
+
+__ LÁ NO SEU BACKEND.... .----->  VOCÊ DEFINE OS ENDPOINTS __ DISPONÍVEIS__ LÁ 
+
+NO SEU 
+
+BACKEND... --> se o request __ TIVER ALGO __ INVÁLIDO/INDISPONÍVEL/DESCONHECIDO INPUTTADO 
+
+
+
+NESSE CAMPO DOS 'endpoints' (como 'user2' em vez de user, nesse nosso exemplo),
+
+PROVAVELMENTE 
+
+
+
+
+ESSE REQUEST 
+
+'graphQL'
+
+
+será 
+
+
+REJEITADO...
+
+
+
+
+
+
+
+
+
+
+
+3) POR FIM, 
+
+
+
+TEMOS A __ PARTE__ 'REALMENTE FLEXÍVEL'
+ 
+
+
+
+DOS graphQL 
+
+queries/linguagem graphQL,
+
+
+
+QUE É _ 
+
+
+
+aquele último trecho,
+
+
+
+de 
+
+'name' e 'age',
+
+
+_ QUE SÃO __ EXEMPLOS,
+
+
+
+
+REPRESENTAM OS __ FIELDS__ QUE QUEREMOS _ EXTRAIR/vamos querer extrair...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+{
+        query {
+            user {
+                name
+                age
+            }
+        }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+--> portanto, aqui temos:
+
+
+1) operação de tipo QUERY (quer fazer GET de dados)....
+
+
+
+
+
+2) endpoint 'USER', que deve ser algo que já settamos anteriormente no backend... (endpoints disponíveis/permitidos)....
+
+
+
+
+
+3) POR FIM, 
+
+
+'NAME' e 'AGE' 
+
+
+
+são OS __ FIELDS_ QUE VAMOS __ QUERER __ EXTRAIR__, 
+
+LÁ 
+
+
+
+__ DESSE 
+
+
+ENDPOINT __ DE 
+
+
+'user'...  
+
+(
+
+    vamos querer, nesse exemplo,
+
+    SÓ O 'NAME' E A 'AGE',
+
+
+
+DEIXANDO DE LADO COISAS COMO 
+
+'address',
+ 
+
+
+ 'email', '_id',
+
+
+ etc etc.... 
+
+
+
+    
+
+)
+
+
+
+
+
+
+
+
+
+
+------> EM UM LUGAR, VOCÊ PODE QUERER O 'name' e a 'age',
+
+
+
+
+
+AO PASSO QUE EM OUTRO VOCÊ 
+
+
+
+PODE 
+
+ACABAR DESEJANDO 
+
+'email' e 'id',
+
+por exemplo....
+
+
+
+
+
+
+
+
+
+
+--> E ESSA É A VANTAGEM DO GRAPHQL,
+
+
+
+poder 
+
+especificar exatamente a data que você vai quererr 
+
+
+
+NESSA SUA QUERY QUE VOCÊ ENVIA NO SEU REQUEST DE TIPO POST AO 
+
+SERVERSIDE/BACKEND,
+
+
+
+
+
+
+ONDE É PARSEADO ESSE REQUEST....
+
+
+
+
+
+
+
+
+
+
+
+--> ANTERIORMENTE,
+
+
+PROFESSOR MENCIONOU OS 
+
+
+
+___ 3 OPERATION TYPES__ DISPONÍVEIS 
+
+
+
+__ NO GRAPHQL....
+
+
+
+
+
+
+
+
+
+
+SÃO ELES:
+
+
+
+
+
+
+
+
+
+
+1) QUERY ----> EM QUERIES, NÓS __ RETRIEVAMOS DADOS (Data).... --->  'RETRIEVE DATA' (GET, mas com formato de POST)...
+--> nós USAMOS UM POST REQUEST__ PARA EFETUAR __ UM __ GET__ DE DATA, o que é bizarro.... ------> USAMOS UM POST 
+
+REQUEST PARA ISSO,
+ MAS SE FOSSEMOS COMPARAR ISSO AO MUNDO DO REST API,
+
+
+
+ AÍ ___ O EQUIVALENTE A ESSAS OPERATIONS DE 'query'
+
+ SERIAM SIMPLES 
+
+
+ 'GET REQUESTS' enviados ao backend, em algum path....
+
+
+
+
+
+
+
+
+
+ 2) MUTATION(s) -----> '''BASICALLY ARE USED FOR EVERYTHING THAT CHANGES DATA''''... -------> OU SEJA, SÃO USADOS PARA OS METHODS/VERBS/operations de 'POST, PUT, PATCH , DELETE'....
+
+
+
+ (a maior parte das FEATURES/OPERAÇÕES VAI DEPENDER DESSE OPERATION TYPE)...
+
+
+
+
+
+
+
+
+
+
+
+ 3) SUBSCRIPTIONS ------> AS SUBSCRIPTIONS, COMO O PROFESSOR MENCIONOU,
+
+ ___ SETTAM 'REALTIME CONNECTIONS' __ POR MEIO DE WEBSOCKETS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> NÃO VAMOS FOCAR TANTO EM 'subscriptions' 
+
+ NESSE MÓDULO;
+
+ ISSO PQ 
+
+
+ __ESTE NÃO É UM CURSO DE 
+
+
+ GRAPHQL,
+
+
+
+ MAS É CLARO QUE 
+
+ VOCÊ PODE VER OUTROS CURSOS SOBRE GRAPHQL,
+
+ para aprender 
+
+
+
+ SOBRE COMO HANDLAR SUBSCRIPTIONS COM ESSA LINGUAGEM DE QUERY...
+
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR QUER FOCAR NAS CORE FEATURES DO GRAPHQL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ RESUMINDO:
+
+
+
+
+
+
+
+
+
+
+ NÓS TEMOS O CLIENT,
+
+ AÍ NÓS ENVIAMOS 
+
+
+
+ 1 REQUEST_  'TO THAT SINGLE GRAPHQL ENDPOINT',
+
+
+
+
+ ENDPOINT QUE EXIGE REQUESTS DE TIPO 'POST'... ------> LÁ, 
+
+
+
+ NESSE ENDPOINT DO GRAPHQL/BACKEND,
+
+
+
+ VOCÊ VAI BASICAMENTE 
+
+
+ SETTAR 
+
+
+ SUAS 
+
+ 'DEFINITIONS FOR _ QUERIES_, 
+
+
+ MUTATIONS AND (POSSIBLY) SUBSCRIPTIONS'....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+query definitions 
+
+
+
+mutation definitions 
+
+
+subscription definitions... 
+
+
+
+
+
+
+
+
+ ---------> CERTO.... --> E NESSAS DEFINITIONS,
+
+
+
+ VOCê 
+
+ BASICAMENTE 
+
+ USA 
+
+ 'TYPE DEFINITIONS',
+
+
+
+
+
+
+ISSO PQ O 'GRAPHQL'
+
+
+usa 
+
+
+
+UMA 
+
+
+'''TYPED QUERY LANGUAGE'',
+
+
+
+
+
+
+O QUE __ SIGNIFICA QUE 
+
+
+'É VOCÊ QUE DEFINE OS 
+
+TYPES DE DATA COM OS QUAIS VOCê VAI TRABALHAR,
+
+OS 
+
+TYPES DE DATA QUE 
+
+VOCÊ VAI RETORNAR EM UMA QUERY',
+
+
+
+e assim por diante...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... E TODAS ESSAS 'QUERIES, MUTATIONS, SUBSCRIPTIONS'
+
+
+
+
+que 
+
+vocÊ DEFINE NO BACKEND,
+
+aqui,
+
+
+
+VÃO __ ESTAR __ CONECTADAS___ A 
+
+
+
+AQUILO QUE 
+
+O PROFESSOR CHAMA DE 
+
+
+
+
+'RESOLVERS'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESOLVERS -------> SÃO AS FIGURAS__ QUE __ CONTÊM 
+
+
+SUA 'SERVERSIDE-LOGIC'...
+
+
+
+
+
+
+
+
+--> RESOLVERS --> SÃO FUNÇÕES QUE 
+
+
+CONTÊM SUA 
+
+SERVERSIDE LOGIC... --------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS 
+
+
+
+
+
+COMO 
+
+
+
+É A ESTRUTURA DO GRAPHQL,
+
+
+
+QUANDO COMPARADA A UMA RESTFUL API?
+
+
+
+
+
+
+
+
+
+
+
+
+-> bem,
+
+
+
+
+
+
+
+1) AS 'DEFINITIONS' SÃO BASICAMENTE SUAS __ ROUTES... SÃO AS ROUTES DE UMA REST API, em outras palavras... 
+
+
+(
+
+    são as possibilidades que o user/client tem,
+
+    os endpoints possíveis nesse seu app/backend...
+)
+
+
+
+
+
+
+
+
+2) RESOLVERS ---> SÃO SEUS 'CONTROLLERS',
+
+
+pois vão 
+
+conter 
+
+
+SUA 
+
+
+'SERVER-SIDE LOGIC'...
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+OK... É ASSIM QUE 
+
+PODEMOS 
+
+EXAMINAR O GRAPHQL,
+
+
+E É ASSIM QUE 
+
+VAMOS O IMPLEMENTAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> RESUMO:
+
+
+
+
+
+
+
+
+UM SERVER GRAPHQL 
+
+é:
+
+
+
+
+
+1) É UM SERVER NORMAL 'NODE + EXPRESS'....
+
+
+
+(
+
+    mas o graphql LANGUAGE/APPROACH PODE SER USADO COM QUALQUER PROGRAMMING LANGUAGE,
+
+
+
+    EXATAMENTE COMO REST APIs (que também podem ser usados em qualquer prog language)....
+)
+
+
+
+
+--> MAS ESTE É UM CURSO DE NODE, POR ISSO VAMOS FOCAR NISSO....
+
+
+
+
+
+
+
+
+
+
+
+2) COM __ GRAPHQL,
+
+
+
+
+VOCÊ __ VAI TER 
+
+'ONE SINGLE ENDPOINT',
+
+
+
+QUE 
+
+TIPICAMENTE 
+
+
+__ SERÁ 
+
+
+'/graphql',
+
+
+de tipo POST....
+
+(
+
+    MAS VOCê PODE MUDAR ISSO, SE QUISER,
+    MAS NÃO É RECOMENDADO....
+)
+
+
+
+
+
+
+
+
+
+
+3) VOCê É OBRIGADO A ENVIAR POST REQUESTS A SEU BACKEND,
+
+
+pq 
+
+O GRAPHQL __ FUNCIONA __ POR MEIO DO PARSE __ DAQUELA QUERY GRAPHQL 
+
+QUE VOCÊ ESCREVE NO BODY 
+DOS SEUS REQUESTS....
+
+
+(
+
+    e  body não existe em requests de tipo GET....
+)
+
+
+
+
+
+
+
+4) POR FIM, VOCÊ TEM 'RESOLVERS' no serverside QUE FAZEM O _ ANALYZE_ DO REQUEST BODY,
+
+
+
+PARA ENTÃO __ FAZER O __ FETCH__ E PREPARO __ DA DATA A SER RETORNADA AO CLIENT...  (organização da data que será retornada, retornar apenas a data que foi requisitada  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> QUANTO À CARACTERÍSTICA 
+
+'4',
+
+
+PROFESSOR APONTA QUE 
+
+
+
+'NÓS VAMOS USAR THIRD PARTY PACKAGES'
+
+
+
+PARA ___ FAZER _ O PARSING __ DESSAS QUERIES __ GRAPHQL 
+
+
+QUE VAO CHEGAR AO NOSSO BACKEND/RESOLVERS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... -----> 'POSTING FOR GETTING DATA' --> ESSA É A COISA MAIS CONFUSA COM QUE 
+
+NOS DEPARAMOS,
+
+QUANDO ESTUDAMOS 
+
+GRAPHQL.... --> MAS É ISSO QUE FAZEMOS,
+
+
+ISSO É OK,
+
+
+PQ 
+
+
+
+NÓS 
+
+'DESCRIBE THE DATA WE WANNA GET'
+
+
+DENTRO 
+
+
+DO REQUEST BODY DO REQUEST DE TIPO POST QUE VAMOS ENVIAR AO BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, VIMOS UM MONTE DE TEORIA,
+ HORA DE VER ISSO NA PRÁTICA....

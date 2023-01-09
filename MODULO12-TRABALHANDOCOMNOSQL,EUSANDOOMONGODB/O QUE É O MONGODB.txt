@@ -1,0 +1,795 @@
+
+
+
+
+
+
+
+
+--> O QUE É O MONGODB?
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ELE TEM, NA VERDADE, UM CURSO INTEIRO PARA 
+
+DESENVOLVEDORES,
+
+SOBRE 
+
+
+O 
+
+MONGODB...
+
+
+
+
+
+
+
+----> VOCÊ PODE 
+
+
+CHECAR ESSE CURSO SE VOCÊ QUISER APRENDER BEM MAIS SOBRE MONGODB,
+
+
+mais do que o professor mostrará neste curso...
+
+
+
+
+
+
+
+
+
+--> MAS COM ISSO,
+
+
+PROFESSOR DIZ QUE 
+
+DEVEMOS 
+
+
+
+
+TER UMA BREVE INTRODUÇÃO 
+
+
+AO MONGODB....
+
+
+
+
+
+
+
+--> MONGODB ----> É O NOME DA COMPANHIA 
+
+
+QUE 
+
+
+DESENVOLVEU e também o nome da database....
+
+
+
+
+
+
+
+
+
+
+-----> DATABASE SOLUTION ---> É O MONGODB --> é uma ferramenta que vocÊ pode usar 
+
+PARA 
+
+RODAR
+ 
+
+
+DATABASES NOSQL 
+
+
+MT EFICIENTES...
+
+
+
+
+
+
+'mongoDB'---> vem da palavra 'humongous'...
+
+
+
+
+
+
+
+
+--> PQ 'humongous'? --> PQ O MONGODB FOI construído 
+
+
+com 
+
+
+
+1 único propósito em mente:
+
+
+
+___ ARMAZENAR E TRABALHAR COM MONTES E MONTES DE 
+
+
+DATA....
+
+
+
+
+
+
+
+--> armazenar __E __ trabalhar ---> 
+
+
+
+
+
+'''trabalhar''' --> isso é importante,
+
+
+
+
+PQ VOCÊ 
+
+PODE 
+
+TRABALHAR COM 
+
+
+QUANTIDADES ABSURDAS DE DATA... =-------> ISSO SIGNIFICA QUE 
+
+O 
+
+MONGODB 
+
+FOI CONSTRUÍDO 
+
+PARA 
+
+
+SUPORTAR 
+
+
+'LARGE SCALE APPLICATIONS'... -----> 
+
+
+
+
+
+
+
+__MONGODB FOI BUILT PARA 
+
+
+
+
+
+'QUERY DATA',
+
+'STORE DATA',
+
+
+'INTERACT WITH DATA',
+
+
+tudo da forma mais eficiente e rápida possível....
+
+
+
+
+
+
+
+
+---> ISSO SIGNIFICA QUE 
+
+
+É MT RÁPIDA,
+
+
+
+E 
+
+
+A PHILOSOPHY 
+
+POR TRÁS 
+
+DO MONGODB E DAS NOSQL DATABASES É MUITO LEGAL...
+
+
+
+
+
+
+
+
+OK, MAS COMO 
+
+
+
+
+O MONGODB FUNCIONA?
+
+
+
+
+
+
+
+
+---> BEM, EXATAMENTE COMO VIMOS NO 
+
+
+'MUNDO SQL',
+
+
+
+aqui 
+
+nós 
+
+
+'SPIN UP A 
+
+
+MONGODB SERVER',
+
+
+
+
+__E AÍ __ NELE PODEMOS TER 
+
+
+MÚLTIPLAS DATABASES... ---> 
+
+
+
+
+podemos, por exemplo,
+
+
+ter uma 
+
+
+database 
+
+
+de ___'SHOP'.... -----> 
+
+
+
+
+DENTRO DE UMA DATABASE 
+
+
+
+
+DESSAS, NO MUNDO 
+
+'SQL',
+
+
+nós teríamos 
+
+
+
+MÚLTIPLAS 'TABLES'... ----->
+
+
+
+
+
+
+TIPO ISTO:
+
+
+
+
+
+SHOP -> users 
+    --> orders 
+    --> carts 
+
+
+MarketPlace --> products 
+            ---> admins 
+            --> etc....
+
+
+
+
+
+
+
+
+
+
+
+            --> TABLES DENTRO DE 'DATABASES', esse é o mundo SQL....
+
+
+
+
+
+
+
+
+--> JÁ NO MUNDO 'NOSQL',
+
+
+
+
+___ NÓS TEMOS 
+
+
+MÚLTIPLAS 
+
+
+
+
+
+
+
+
+''''COLLECTIONS'''',
+
+
+collections 
+
+
+como 
+
+
+
+
+
+'Users'
+
+
+
+e 
+
+
+'Orders',
+
+por exemplo.....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+(database)     (Collections)
+Shop |-----> Orders
+     |------> Users
+
+
+    ------------------------------
+
+
+
+
+
+
+
+
+E DENTRO DE CADA 'COLLECTION',
+
+nós não temos 
+
+aquilo que chamamos 
+
+
+de 
+
+
+
+'records',
+
+
+
+__MAS ___ SIM UM MONTE DE 'DOCUMENTS'... ---->
+
+
+
+
+
+
+
+
+
+
+DOCUMENTS POSSUEM ESTE FORMATO:
+
+
+
+{ name: 'Max', age: 29}
+
+
+{ name: 'Manu'}
+
+
+
+-------------------------------
+
+
+
+
+E OS FORMATOS PODEM __VARIAR_, NÃO HÁ UM 'SCHEMA' RÍGIDO...
+
+
+
+
+
+
+
+
+
+--> A CORE PHILOSOPHY POR TRÁS DA DATABASE É __ UMA ___ 
+
+TOTALMENTE DISTINTA DAQUELA DO 
+
+SQL...
+
+
+
+
+
+
+--> MONGODB É SCHEMALESS..
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE DENTRO DE 1 COLLECTION, SEUS DOCUMENTS (Que são seus entries/data),
+
+
+
+NÃO PRECISAM TER 
+
+A MESMA 'STRUCTURE'...
+
+
+
+
+
+
+---> isso significa que 
+em uma collection podemos ter documents com DIFERENTES ESTRUTURAS... --> totalmente 
+
+diferente 
+
+
+
+do 
+
+'SQL', em que 
+
+
+SEMPRE TÍNHAMOS 1 ÚNICO MODELO DE 'RECORD' em 1 table...
+
+
+
+
+
+
+--------> OK... --> FREQUENTEMENTE VOCÊ TERÁ UMA ESTRUTURA 'SIMILAR' EM 
+
+
+
+1 COLLECTION,
+
+
+
+mas você nunca será forçado a ter '1 ÚNICA ESTRUTURA' 
+
+
+
+em 
+
+
+1 'table'/collection, nas NOSQL databases... ------> ISSO TE DÁ 
+
+
+
+
+
+__MAIS FLEXIBILIDADE,
+
+
+TAMBÉM 
+
+MAIS FLEXIBILIDADE  __ PARA __ SEU APLICATIVO __ CRESCER,
+
+E PARA 
+
+TROCAR 
+SEUS 
+
+'DATA REQUIREMENTS'
+
+AO LONGO DO TEMPO,
+
+
+SEM ISSO SER DIFÍCIL DE __ REPRESENTAR no seu 'database world'....
+
+
+
+
+
+
+
+
+
+
+--> OK... ESSA É 1 COISA....
+
+
+
+
+
+
+
+
+------> 1 DOCUMENT NO MONGODB TEM ESTA ESTRUTURA:
+
+
+
+
+
+{
+
+
+    "name": "Max",
+    "age": 29,
+    "address": 
+            {
+                "city": "Munich"
+            },
+
+    "hobbies": [
+        {"name": "Cooking"},
+        {"name": "Sports"}
+    ]
+}
+
+
+
+
+
+
+
+----> OU SEJA,
+
+
+
+OS DOCUMENTS DO MONGODB 
+
+SE PARECEM 
+
+MT COM 
+
+JSON (javascript object notation
+)
+
+
+data........
+
+
+
+
+
+
+
+------> E  PARA  SER MAIS PRECISO,
+
+
+OS DOCUMENTS __SÃO __ JSON DATA____. .... (kind of is),
+
+
+PQ O MONGODB USA 
+
+'JSON' 
+
+PARA 
+
+ARMAZENAR DATA EM COLLECTIONS...
+
+
+
+
+
+
+--> CADA DOCUMENT QUE VOCÊ ARMAZENA SEGUE ESSE FORMATO,
+
+
+O FORMATO 
+
+
+
+'JSON' ..... -------->  
+
+PARA SER 
+
+MAIS PRECISO,
+
+
+
+O 
+
+
+MONGODB 
+
+
+USA 
+
+UM NEGÓCIO CHAMADO DE 
+
+'BSON' (BINARY JSON),
+
+
+
+__ MAS __ ISSO APENAS SIGNIFICA QUE 
+
+
+___ O MONGODB____ 'KINDOF' TRANSFORMA 
+
+
+___ OS DADOS QUE VOCê ENVIA NO FORMATO 'JSON',
+
+
+antes de armazenar esses dados em FILES.... 
+
+
+
+
+
+
+
+
+--> O BSON É UM POUCO DIFERENTE,
+
+MAS É ESSENCIALMENTE JSON,
+
+você vai usar/trabalhar com 
+
+a data 
+
+do mongodb 
+
+COMO 
+
+SE 
+
+FOSSE COM JSON...
+
+
+
+
+
+
+
+
+--> CERTO.... MAS UM 'JSON DOCUMENT' COMO ESSES 
+
+É 
+
+'BASICALLY THE SAME AS A JAVASCRIPT OBJECT',
+
+você poderia dizer.... --> E LÁ 
+
+DENTRO,
+
+
+
+NÓS 
+
+TEMOS 
+
+
+'NESTED/EMBEDED DOCUMENTS'....--->
+
+
+
+por exemplo,
+
+
+
+
+
+em 
+
+"address" 
+
+
+NÓS TEMOS 
+
+
+
+UM 
+
+
+'EMBEDDED ADDRESS DOCUMENT'....
+
+
+
+
+
+
+----> E VOCê TAMBÉM PODE TER __ ARRAYS__ DENTRO DE UM DOCUMENT,
+
+E ESSE ARRAY, POR SUA VEZ,
+
+VAI CONTER MAIS DOCUMENTS (
+
+    visto lá em 'hobbies', com os documents 'hobby' nesteados dentro dele...
+) ----> MAS ELE NÃO PRECISA 
+
+SEGURAR APENAS DOCUMENTS, ELE PODE __ SEGURAR_ TBM STRINGS, OU NÚMEROS, ETC, QUALQUER COISA...
+
+
+
+
+
+
+
+
+----------> ENTÃO, DE NOVO, 
+
+PARA SUA 'DATA'
+
+VOCÊ TEM GRANDE FLEXIBILIDADE...
+
+
+
+--> E A EXISTÊNCIA DESSES 'NESTED DOCUMENTS' 
+
+
+___SIGNIFICA, ALÉM DISSO,
+
+__ QUE 
+
+
+RELATIONS SÃO 'MANAGED' DE UMA FORMA UM POUCO DIFERENTE 
+
+DAQUELA 
+
+VISTA
+
+
+NO MUNDO 
+
+'SEQUEL'..
+
+
+
+
+--> VEREMOS ESSA COISA DAS 'RELATIONS' NA PRÓXIMA AULA....

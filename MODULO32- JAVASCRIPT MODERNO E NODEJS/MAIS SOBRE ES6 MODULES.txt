@@ -1,0 +1,1023 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> BEM, ESSA NOVA SINTAXE DE IMPORT/EXPORT 
+
+
+
+SE TORNA INTERESSANTE QUANDO 
+USAMOS 
+
+ 
+
+ ALGO CHAMADO DE 
+
+
+
+ 'NODEJS GLOBALS'....
+
+
+
+
+
+
+
+
+
+
+ NODEJS GLOBALS, O QUE É ISSO?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----> BEM, O PROFESSOR ESTÁ MANDANDO DE VOLTA O CÓDIGO/CONTEÚDO DO ARQUIVO 
+
+
+
+ 'my-page.html',
+
+
+
+
+ POR MEIO DAQUELE CO´DIGO DE 
+
+
+
+
+
+ const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+      res.send(data);
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+-------> E ESTAMOS FAZENDO ISSO, É CLARO, POR MEIO DO USO DO 'FILESYSTEM':
+
+
+
+
+
+
+
+
+import fs from 'fs';
+
+const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+      res.send(data);
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+--> E É CLARO QUE ABSOLUTAMENTE PODEMOS FAZER ISSO, É ALGO VÁLIDo...
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO,
+
+PROFESSOR NOS EXPLICA QUE __ PODERÍAMOS FAZER ISSO DE _ OUTRA FORMA__, 
+
+
+de uma maneira diferente...
+
+
+
+
+
+
+
+
+
+--> O OBJETO 'response' EXPOSTO __ PELO 'NODEJS'
+
+
+
+TAMBÉM
+ 
+
+ TEM UM 
+
+
+
+
+
+ METHOD DE 'sendFile()',
+
+
+ QUE JÁ VIMOS ANTES...
+
+
+
+
+ ex:
+
+
+
+ 
+import fs from 'fs';
+
+const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+      res.sendFile(); //EIS O CÓDIGO EM QUESTAÕ.
+    });
+  }
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+-> E ESSE MÉTODO EXIGE 1 FILE QUE VOCÊ QUER ENVIAR DE VOLTA....
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS SE VOCÊ SÓ ESCREVER O _ _NOME __ DO ARQUIVO, MEIO SOLTO,
+TIPO ASSIM:
+
+
+
+
+
+
+import fs from 'fs';
+
+const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+      res.sendFile('my-page.html'); //EIS O CÓDIGO EM QUESTAÕ.
+    });
+  }
+
+
+
+
+
+
+
+
+  ,
+
+
+
+
+
+
+
+
+  ISSO _ NÃO FUNCIONARÁ...
+
+  (
+
+
+
+      essa escrita de 
+
+      ''''
+        res.sendFile('my-page.html');
+
+        ''' NÃO FUNCIONA....
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---> SE VOCÊ SÓ ESPECIFICAR O FILENAME,
+
+  ISSO NÃO VAI FUNCIONAR...
+
+
+
+
+
+
+
+  --> O ERRO QUE VAMOS OBTER É 
+
+
+  'o path da file deve ser ABSOLUTE'... 
+
+
+
+
+
+
+
+
+
+  ---------->>>>>>>>>>>> path--> 
+
+  PRECISAMOS DO PACKAGE DE
+  'path',
+
+
+  QUE 
+
+
+
+  CONSTRÓI ABSOLUTE PATHS...
+
+
+
+
+
+
+
+
+
+
+  é tipo 
+
+
+  'import path from 'path',
+
+
+
+
+
+  aí,
+
+
+
+
+  path.join(__dirname, '', ' .html'),
+
+
+
+
+  ETC ETC....
+
+
+
+
+
+
+
+
+  ESCREVEMOS:
+
+
+
+  res.sendFile(path.join(__dirname, 'my-page.html'));
+
+
+
+
+
+
+
+
+
+
+
+---> AQUI USAMOS '__dirname',
+
+que é o path em que 
+
+ESSE 
+
+
+ARQUIVO ESTÁ SENDO EXECUTADO... ---> MAS ISSO 
+
+
+
+__ VAI NOS DAR UM ERRO__....
+
+
+
+
+
+
+--> VAMOS RECEBER O ERRO DE 
+
+
+
+'__dirname is not defined'...
+
+
+
+
+
+
+
+
+
+
+---> opa, que bosta.... --> 
+
+
+
+
+SERÁ QUE 'process.cwd()',
+
+
+NÃO FUNCIONA, NO LUGAR DE DIRNAME?
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, ISSO FUNCIONOU:
+
+
+  const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+    //   res.sendFile(path.join(__dirname, 'my-page.html')) //ISSO __ NÃO FUNCIONARÁ, NOS DARÁ UM __ ERRO ('__dirname' is not defined)....
+
+    res.sendFile(path.join(process.cwd(), 'my-page.html' ))
+    });
+  }
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+__dirname, É CLARO,
+
+É UMA GLOBAL VARIABLE QUE USAMOS 
+
+
+VÁRIAS VEZES AO LONGO DO CURSO... -> E ELE 'JUST WORKED' --> 
+
+
+
+
+MAS 
+
+
+COM A SINTAXE DE MÓDULOS ES6 MODERNA,
+
+
+isso não funciona mais...
+
+
+
+
+
+
+
+
+
+
+--> ESSA SINTAXE __DIRNAME __ NÃO FUNCIONA MAIS __ JUSTAMENTE PQ
+
+'THERE ARE NO GLOBALS ANYMORE', com essa sintaxe...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+ESSAS VARIA´VEIS GLOBAIS,
+
+COMO 
+
+'__dirname'
+
+e 
+
+'filename',
+
+
+ 
+
+ QUE VOCÊ PODIA USAR COM 
+
+ 'require()',
+
+
+ ISSO 
+
+
+ __ NÃO EXISTE MAIS.... --------> É CLARO QUE 
+
+ ESSA 
+
+ É UMA 
+
+ 'KNOWN ISSUE'...
+
+
+
+
+
+
+
+
+ --> E SE PROCURARMOS PELAS 
+
+
+ VARIÁVEIS GLOBAIS DE 
+
+
+
+ 'require, exports, module.exports, __filename E __dirname',
+
+
+
+LÁ 
+
+NOS DOCS DO NODEJS,
+
+
+VEREMOS QUE 
+
+
+
+
+
+'THESE COMMONJS VARIABLES ARE NOT AVAILABLE IN ES MODULES'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> MAS TAMBÉM VEMOS, NOS DOCS, UM __ WORKAROUND,
+
+UMA MANEIRA _ DE AINDA CONSEGUIR ESSE '__dirname'
+
+DE VOLTA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> para conseguir 
+
+
+
+'REPLICAR' um __dirname no seu código, para então o utilizar,
+
+
+você 
+deve 
+
+escrever 
+
+
+
+
+AS LINHAS:
+
+
+
+
+
+
+import { fileURLToPath } from 'url';
+
+import { dirname } from 'path';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO AÍ 
+
+
+
+
+
+
+USA UNS IMPORTS DE 'CORE NODE MODULES',
+
+
+para 
+
+ENTÃO 
+
+'CONSTRUCT DIRNAME AND FILENAME VARIABLES',
+
+
+
+
+meio makeshift,
+
+
+TUDO 
+
+POR MEIO DESSA 'SPECIAL PSEUDO GLOBAL VARIABLE'  de 'import.meta.url'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... ADICIONAMOS ESSES 2 IMPORTS 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> 'PATH' --> IMPORTAMOS O PATH OBJECT INTEIRO,
+
+QUE EXPÕE TODOS OS SEUS METHODS...
+
+
+
+
+
+
+
+
+
+
+--> O PATH MODULE, NA VERDADE,
+
+
+FAZ 2 COISAS:
+
+
+
+1) EXPORTA O OBJETO 'path' INTEIRO,
+
+para que consigamos os IMPORTAR ASSIM,
+
+
+
+tipo assim:
+
+
+import path from 'path' ( ou seja, COMO SE FOSSE UM DEFAULT EXPORT),
+
+
+
+
+
+
+
+2) TAMBÉM DEIXA, ALTERNATIVAMENTE,
+
+
+
+
+_ NÓS EXPORTARMOS __ TODOS OS METHODS DELE __ COMO 'NAMED FUNCTIONS'...
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+import { dirname } from 'path' (
+
+
+    AÍ IMPORTAMOS 
+
+    SÓ 
+
+    O 
+
+    DIRNAME, NO CASO....
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PODEMOS IMPORTAR O PACOTÃO INTEIRO,
+OU SÓ 
+
+
+
+1 PEDAÇO/FUNÇÃO DELE....
+
+
+ex:
+
+
+
+
+
+import path, { dirname } from 'path'....
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+-> ok...
+
+
+
+
+
+
+
+
+aí temos aquele código de 
+
+
+
+
+const __filename = fileURLToPath(import.meta.url);
+
+
+
+
+
+
+
+
+
+
+--> import.meta.url --> É UMA VARIÁVEL DISPONÍVEL GLOBALMENTE,
+
+QUE ESSENCIALMENTE 
+
+TE 
+
+DÁ 
+O 
+
+PATH 
+
+
+
+AO FILENAME de 
+
+
+'route.js', ESSENCIALMENTE....
+
+
+
+
+
+
+
+
+
+--> JÁ A FUNÇÃO 'fileURLToPath()'
+
+SÓ CONVERTE 
+ESSA FILE url 
+EM 
+
+ 
+
+
+ 1 'PATH',
+
+ path com 
+
+
+ QUE 
+
+ O 
+
+
+
+ PACKAGE 'PATH'
+
+ poderá TRABALHAR, POR MEIO DA FUNÇÃO 
+
+ 'dirnmae'....
+
+
+
+
+
+
+
+
+
+
+
+ 'dirname' function --> É UMA FUNÇÃO QUE ACEITA/EXIGE __ O 'PATH à CURRENT FILE'
+
+
+
+ PARA 
+
+
+
+ TE DAR O 'CURRENT FOLDER' em que 
+
+
+ ESSA FILE RESIDE....
+
+
+
+
+
+
+
+
+
+ --> COM ISSO,
+
+
+ NÓS ESSENCIALMENTE 
+
+
+ REDEFINIMOS/CONSERTAMOS 
+
+
+  
+
+  NOSSA VARIABLE '__dirname',
+
+  QUE 
+  AGORA 
+
+
+  NÃO FUNCIONA MAIS GLOBALMENTE,
+
+  MAS QUE PODE SER 
+
+  CHAMADA 
+
+  VÁRIAS VEZES 
+
+
+  NO SEU CÓDIGO POR MEIO DESSAS 
+
+
+
+
+LINHAS DE CÓDIGO QUE RECÉM ESCREVEMOS:
+
+
+
+
+
+ 
+import { fileURLToPath } from 'url'; ///gambiarra para podermos usar '__dirname'...
+
+import { dirname } from 'path';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+
+
+
+
+
+---------------------------
+
+
+
+SALVAMOS TUDO E REINIICAMOS O APP...
+
+
+
+
+
+
+
+
+
+
+
+------. agora podemos recarregar essa 
+
+
+página e enviar a file do HTML ao nosso user...
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+APENAS MENCIONOU ISSO 
+
+
+PARA 
+
+MOSTRAR QUE 
+
+PODEMOS 
+
+
+
+USAR 
+
+ESSAS MESMAS VARIABLES 
+
+COM 
+
+A 
+
+SINTAXE 
+ES6 DE EXPORTS/IMPORTS....
+
+
+
+
+
+
+
+
+
+
+--> O USO DESSA SINTAXE É 100% OPCIONAL...
+
+
+
+
+
+
+
+
+--> O USO DA OUTRA SINTAXE É TOTALMENTE FINE, NA VERDADE....
+
+
+
+--> ESSA SINTAXE É EXPERIMENTAL, 
+
+
+
+no momento...
+
+
+
+
+
+
+

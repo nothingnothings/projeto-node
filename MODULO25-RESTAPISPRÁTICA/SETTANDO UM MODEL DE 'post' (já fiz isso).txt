@@ -1,0 +1,923 @@
+
+
+
+
+
+
+
+
+
+
+-->  PROFESSOR DIZ QUE 
+
+
+
+É HORA DE ADICIONAR UMA 'DATABASE LOGIC' 
+
+
+na nossa route/api route de 
+
+'CREATE A NEW POST'...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+VAMOS USAR 
+
+
+O MESMO 
+
+SERVER MONGODB ATLAS 
+
+
+que usamos 
+
+
+mais cedo...
+
+
+
+
+
+
+
+------> VAMOS USAR O MONGOOSE....
+
+
+
+
+
+
+
+
+
+--> PODERÍAMOS USAR O MYSQL (sequelize),
+ 
+
+ se quiséssemos..
+
+
+
+
+
+
+
+
+
+
+
+ -------> MAS PROFESSOR DIZ QUE 
+
+
+ É MELHOR USAR O MONGODB, PARA ACOMPANHAR....
+
+
+
+
+
+
+
+
+
+
+ ------> instalamos o mongoose e o mongodb driver...
+
+
+
+
+
+
+
+
+
+ -------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ professor importa/instala o mongoose no nosso 'app.js',
+
+
+
+
+
+
+
+ tipo assim:
+
+
+
+ const mongoose = require('mongoose');
+
+
+
+
+ mongoose.connect(
+     'URL'
+ ).then(
+     () => {
+
+         app.listen(8080);
+
+     }
+ )
+ .catch(
+     (err) => {
+         console.log(err);
+     }
+ )
+
+
+
+
+
+
+
+ -------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+CERTO....
+
+AGORA ESTAMOS CONECTADOS AO MONGODB, POR MEIO DO MONGOOSE...
+
+
+
+
+
+
+
+
+
+--> AÍ PROFESSOR DECIDE CRIAR MODEL DE 'Post',
+
+PARA PODER INTERAGIR COM A DATABASE...
+
+
+
+
+
+
+
+
+--> LÁ 
+
+ELE 
+
+
+
+ESCREVE 
+
+
+
+'const mongoose = require('mongoose')'
+
+const Schema = mongoose.Schema;
+
+
+
+
+
+const postSchema = new Schema(
+    {
+
+
+
+
+    }
+)
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI QUERER TER 1 TITLE,
+
+
+
+
+E 
+
+1 CONTENT...
+
+
+
+
+
+
+
+
+
+'const mongoose = require('mongoose')'
+
+const Schema = mongoose.Schema;
+
+
+
+
+
+const postSchema = new Schema(
+    {
+
+            title: {
+                type: String,
+                required: true
+
+            },
+            
+ 
+
+
+    }
+)
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+--> mas aí o professor adiciona uma 'imageUrl',
+
+
+
+
+
+
+DE TIPO STRING...
+
+
+
+
+TAMBÉM 'required'...
+
+
+
+
+
+--> VAMOS TER 'content',
+
+
+TAMBÉM DE TYPE STRING....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        }
+    }
+)
+
+
+
+
+
+
+
+
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+ok.... MAS ELE TAMBÉM 
+
+
+ADICIONA UM FIELD DE 'creator'... 
+
+
+
+
+
+
+
+
+ 
+
+ const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        },
+
+        creator: {
+
+        }
+    }
+)
+
+
+
+
+
+
+
+
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+-> ESSE 'creator' 
+
+NO FUTURO SERÁ __ UM LINK/relation com um user... (
+
+    mas por enquanto não temos isso,
+
+
+    portanto deixamos apenas 
+
+
+    seu type como 'Object',
+
+    e required como true...
+)
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        },
+
+        creator: {
+            type: Object,
+            required: true
+        }
+    }
+)
+
+
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+-----> ok.... esse será o nosso setup...
+
+
+
+
+
+
+
+
+-----> MAS PROFESSOR VAI PASSAR ALGO QUE NÃO TÍNHAMOS PASSADO 
+
+
+
+
+
+ANTERIORMENTE, A ESSE SCHEMA... --> ELE VAI_ _ PASSAR 
+
+
+UMA 
+
+
+'OPTION' (
+
+    é 
+
+    o 
+
+    SEGUNDO PARÂMETRO 
+
+    DE 
+
+    'new Schema',
+
+
+
+    como você pode observar:
+
+
+)
+
+
+
+
+
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        },
+
+        creator: {
+            type: Object,
+            required: true
+        }
+    }, 
+
+
+    {} ///SEGUNDO PARÂMETRO/ARGUMENTo..
+)
+
+
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+
+-----------------------------------------------
+
+
+
+NESSE SEGUNDO OBJETO-PARÂMETRO,
+
+
+professor 
+
+adiciona uma 
+
+
+key 
+
+
+de 
+
+
+'timestamps',
+
+
+
+E AÍ 
+
+DEIXA ESSA KEY COMO 'true'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        },
+
+        creator: {
+            type: Object,
+            required: true
+        }
+    }, 
+
+
+    {
+        timestamps: true
+    } 
+)
+
+
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+-------------------------------------------------
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE ESSE PARÂMETRO AÍ FAZ COM QUE 
+
+
+
+'MONGOOSE AUTOMATICALLY ADD TIMESTAMPS WHENEVER 
+
+A NEW VERSION IS ADDED TO THE DATABASE, WHEN A NEW OBJECT IS 
+ADDED TO THE DATABASE'...
+
+
+
+
+
+
+
+
+ou seja, SEMPRE QUE _ UM NOVO _ POST FOR CRIADO 
+
+por 1 user,
+
+TEREMOS SEU 'TIMESTAMP' 
+
+dentro do document correspondente a ele...
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+ok: 
+
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        },
+
+        creator: {
+            type: Object,
+            required: true
+        }
+    }, 
+
+
+    {
+        timestamps: true
+    } 
+)
+
+
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE OBTEMOS AUTOMATICAMENTE 'createdAt'
+
+
+e 
+
+
+'updatedAt' 
+
+
+
+a partir de 
+
+
+'timestamps: true' ... ---> MAIS DETALHES PODEM SER ENCONTRADOS ACERCA DESSA FEATURE LÁ 
+
+
+NOS 
+
+
+DOCS DO MONGOOSE...
+
+
+
+
+
+
+
+
+
+
+------> POR FIM,
+
+PROFESSOR EXPORTA 
+
+
+
+O 'MODEL BASEADO NO SCHEMA'
+
+
+por meio do código 
+
+
+
+'module.exports = mongoose.model('Post', postSchema)'...
+
+
+
+
+
+
+
+
+
+----> ISSO VAI CRIAR UMA COLLECTION DE 'posts'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+como na nossa connection string 
+
+temos isto:
+
+
+
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+
+
+
+
+
+
+
+--> colocamos 'postFeed',
+
+
+
+vamos usar ESSA DATABASE AÍ,
+
+e aí 
+
+vamos usar 
+
+a collection de 
+
+
+'posts',
+
+
+quando estivermos 
+
+criando 
+
+documents a partir desse model....
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+--> VAMOS USAR ESSE MODEL DE 'post' na próxima aula...

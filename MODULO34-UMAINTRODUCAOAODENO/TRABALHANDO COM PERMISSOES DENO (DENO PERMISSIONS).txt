@@ -1,0 +1,1430 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESCREVEMOS ALGUM CÓDIGO DENO,
+
+que era este:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// let message: string = 'Hi there!';
+
+
+
+
+
+
+// console.log(message);
+
+
+
+
+
+
+
+
+const text = 'this is a text - and it should be stored in a file';
+    
+
+
+
+
+const encoder = new TextEncoder();  ////CONSTRUCTOR FUNCTION __ DISPONÍVEL___ GLOBALMENTE NO DENO.... (vamos o utilizar para CONVERTER NOSSA STRING EM BYTES, EM 1 DATA NO FORMATO 'Uint8Array', que é o formato ACTUALLY SUPORTADO POR 'writeFile'...)
+
+
+
+
+const data = encoder.encode(text);
+
+
+
+Deno.writeFile('message.txt', data)
+.then(
+    (result) => { ////COMO O DENO É UMA LANGUAGE QUE 'embraces new javascript features', ELE ACEITA TOTALMENTE PROMISES, E ODEIA CALLBACKS em funções... (pq elas fedem)...
+            console.log( ///NOSSO CÓDIGO VAI __ FALHAR/DAR ERROR, INICIALMENTE, POR 'FALTA DE PERMISSOES' no execute dessa função...
+                'wrote to file!'
+            )
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+// Deno.seek
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS EM VEZ DESSE CÓDIGO SER EXECUTADO,
+
+ELE ESTAVA 
+NOS 
+
+DANDO __ THROW __ DE 1 ERROR....
+
+
+
+
+
+
+
+
+---> ERROR DE PERMISSIONS.... --> E ISSO NÃO É UM PROLBEMA NO NOSSO CÓDIGO,
+
+E SIM 
+
+UMA FEATURE DENO.....
+
+
+
+
+
+
+
+
+
+
+
+
+--> É UMA DAS FEATURES DO DENO --. DENO É 'SECURE BY DEFAULT'...
+
+
+
+
+
+
+
+
+
+
+--> ISSO NÃO SIGNIFICA QUE O CÓDIGO DENO QUE ESCREVEMOS É + OU - SECURE
+
+
+
+QUE 
+
+CÓDIGO NODE,
+
+
+
+
+E SIM 
+
+
+É __ NÓS QUE __ ESCREVEMOS O CÓDIGO,
+
+E PODEMOS ESCREVER CÓDIGO BOM/RUIM....
+
+
+
+
+
+
+
+
+
+
+
+
+--> ENTÃO ISSO N SIGNIFICA QUE SE ESTIVERMOS USANDO DENO,
+
+NOSSO
+CÓDIGO SEMPRESERÁSEGURO... (pq nosso código ainda pode ficarcom 
+
+furos de segurança)
+
+
+
+
+
+
+
+
+  
+
+--> ISSO SIGNIFICA OUTRA COISA;
+
+
+SIGNIFICA QUE QUANDORODAMOS UM SCRIPT COM O DENO,
+
+
+
+ESSE 
+
+SCRIPT NAO VAI TER TODAS AS PERMISSIONS HABILITADAS 'OUT OF THE BOX'...
+
+
+
+
+
+OPERATIONS NAO PERMITIDAS OUTOFTHEBOX:
+
+
+
+
+1) SEND DE NETWORK REQUESTS 
+
+
+
+2) LISTEN A NETWORK REQUESTS 
+
+
+3) WRITE E READ DE FILES.....
+
+
+
+
+
+
+
+
+
+
+
+
+-> JÁ COM O NODE,
+
+
+OS CÓDIGOS NODE NUNCA TEM LIMITAÇÕES DE PERMISSAO,
+
+ELES SEMPRE FAZEM 
+
+
+AS COISAS 
+DE CARA,
+
+
+SEM PEDIR PERMISSAO.. (até mesmo deletar TODOS OS ARQUIVSO 
+
+
+
+DO SISTEMA DO BACKEND, ETC ETC) ---> e nada o impede de fazerisso --> ÉPORISSO 
+
+QUE 
+
+QUANDO VOCê EXECUTA CÓDIGO NODE,
+
+
+VOC~e TEM QUE 
+
+CONFIAR 100% NESSE CÓDIGO,
+
+
+
+
+TANTO PQ FOI VOCE QUE O ESCREVEU, OU PQ 
+
+
+
+VOCE ESTA USANDO UMA THIRD PARTY LIBRARY EM QUE VOCE CONFIA (PQ O NODE PODE FAZER UM MONTE DE COISAS 
+RUINS)
+
+
+
+
+
+
+
+
+--> O DENO, PELO CONTRÁRIO,
+ 
+
+
+ É EXTREMAMENTE LIMITADO NA EXECUCAO DE SCRIPTS/CODIGOS OUT OF THE BOX --> POR DEFAULT,
+
+ quando voce 
+
+ roda code com ele,
+
+
+ O CODE 
+
+ NAO
+ VAI
+ FAZER
+ AQUEALS 
+
+
+
+ 3 
+
+ COISAS...]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> É POR ISSO QUE QUANDO TENTAMOS FAZER WRITE DE DATA EM 1
+
+
+ FILE,
+
+
+
+ MAS ISSO É 'DENIED' POR DEFAULT,
+
+ COMO 
+
+ __PARTE_ DO MODELO DE SEGURANÇA DO DENO...
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> OK.... QUANDO QUEREMOS ESCREVER 1 FILE,
+
+
+ VAMOS TER QUE DIZER AO 
+
+ DENO QUE
+
+
+VAMOS QUERERSETTAR 
+
+
+AS 
+
+
+PERMISSIONS APROPRIADAS 
+
+('''queremos realmente escrever a 1 arquivo''') -->
+
+
+PARA ISSO,
+
+
+ANTES 
+
+
+DE
+EXECUTARMOS 
+
+'deno run app.ts',
+
+
+
+
+DEVEMOS DEFINIR ALGUMAS 'EXTRA FLAGS' a essa execução -->
+
+
+
+E AÍ DEVEMOS DEFINIR ALGUMAS FLAGS DE SEGURANÇA EXTRAS....   
+
+
+
+
+
+
+
+SÃO SECURITY-SPECIFIC OPTIONS,
+
+
+como 
+
+'--allow-write' --> ISSO VAI 
+
+
+DEIXAR O 'app.ts'
+
+FAZER 'WRITE'
+
+a files..
+
+
+
+
+
+-> TAMBÉM HÁ A FLAG DE 
+
+
+'--allow-read' 
+
+
+
+
+
+
+POR FIM, VOCê TAMBÉM PODE AFUNILAR _O ARQUIVO __ A QUE 
+
+ESSE ARQUIVO/code PODE 'WRITE'... 
+
+
+
+
+
+
+
+
+
+--> para isso, escrevemos assim:
+
+
+
+
+'deno run --allow-write=message.txt app.ts' ------> ISSO VAI DIZER QUE SÓ 
+
+QUEREMOS 
+
+DEIXAR ELE FAZER WRITE TO A ESSE ARQUIVO ESPECÍFICo....  
+
+
+
+
+
+
+
+
+--> VOCÊ PODE ADICIONAR MAIS ARQUIVOS PERMITIDOS, TODOS SEPARDOS POR ',':
+
+
+ex:
+
+
+
+
+'deno run --allow-write=message.txt, message2.txt app.ts'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> MAS OUTRAS FILES NÃO PODERÃO SER 'WRITTEN TO'..
+
+
+
+
+
+
+
+
+
+--> OK.... AGORA SE TENTARMOS RODAR NOSSO CÓDIOG,
+
+
+
+ELE 
+
+VAI 
+
+RODAR NORMALMENTE,
+
+e teremos aquele arquivo 'message.txt'
+
+sendo críado,
+
+com nosso 
+
+códiog 
+
+inserido no interior....
+
+
+
+
+OK... ESSA É UMA DAS CORE DIFFERENCES DO NODE....
+
+
+
+
+
+
+
+
+--> MAS VAMOS VER MAIS SOBRE O DENO, LER MAIS SOBRE ELE,
+
+
+MAS ANTES DISSO 
+
+
+TEMOS DE ESCREVER O EXATO MESMO SCRIPT COM O NODE...
+
+
+(
+
+
+    devemos testar isso por conta própria...
+)
+
+
+
+--> veremos isso na próxima aula...
+
+
+
+
+
+
+
+
+
+
+---> obs:::: no TYPESCRIPT, QUANDO TENTAMOS IMPORTAR ALGUMA COISA/MODULO CORE DO 
+
+'node'
+
+,
+
+
+
+NÓS RECEBEMOS ERRORS COMO:
+
+
+
+Cannot find module 'path' or its corresponding type declarations.
+
+
+
+
+
+
+
+
+
+-_> PARA SOLUCIONAR ISSO,
+
+
+LEMOS ISTO AQUI NO STACKOVERFLOW:
+
+
+https://stackoverflow.com/questions/48438495/import-native-node-modules-correctly-in-typescript
+
+
+
+
+
+
+12
+
+I've managed to solve this issue thanks to some light reading from this simple tutorial
+
+To my understanding, the native modules are standalone modules that are not namespaced under node. You should therefore import from them directly.
+
+Simply done so:
+
+import * as http from "http";
+import * as os from "os";
+import * as path from "path";
+.
+.
+.
+and so on
+
+
+
+
+One more thing - you will need to tell the typescript compiler where do these come from - it is done in the tsconfig.json,
+
+ with the following line: "compilerOptions": { "types": [ "node" ] }
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> E ISSO __ REALMENTE__ FUNCIONOU__...
+
+
+
+ EX:
+
+
+
+
+
+
+
+ 
+
+// import fs from 'fs';
+
+// import path from 'path'; ///ESSES 2 TIPOS DE CÓDIGO (que importam CORE NODE MODULES) não vao funcionar com o typescript.... siga o modelo logo abaixo:
+
+
+
+
+import * as fs from 'fs';
+
+import * as path from 'path';
+
+
+// One more thing - you will need to tell the typescript compiler where do these come from - it is done in the tsconfig.json, with 
+
+// the following line: "compilerOptions": { "types": [ "node" ] } //// CERTO, ISSO FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA BASTA ESCREVERMOS O RESTO DO CÓDIGO  'DENO' com 
+
+
+
+nosso código node...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+// import fs from 'fs';
+
+// import path from 'path'; ///ESSES 2 TIPOS DE CÓDIGO (que importam CORE NODE MODULES) não vao funcionar com o typescript.... siga o modelo logo abaixo:
+
+
+
+
+import * as fs from 'fs/promises';    ////vamos querer a versão PROMISES desse código do 'fileSystem'....
+
+import * as path from 'path';
+
+
+// One more thing - you will need to tell the typescript compiler where do these come from - it is done in the tsconfig.json, with 
+
+// the following line: "compilerOptions": { "types": [ "node" ] } //// CERTO, ISSO FUNCIONOU....
+
+
+
+
+
+
+
+
+
+const text = 'this is a text - and it should be stored in a file, with the help of NODE.'
+
+
+
+const filePath = 'message.txt';
+
+
+
+
+fs.writeFile(
+    filePath, text
+)
+.then(
+    (result) => {
+        console.log(result);
+    }
+)
+.catch(
+    (error) => {
+        console.log(error);
+    }
+)
+
+
+
+
+//VERSÃO DO DENO DESTE NOSSO CÓDIGO:
+
+
+
+
+
+
+
+
+
+// const text = 'this is a text - and it should be stored in a file';
+    
+
+
+
+
+// const encoder = new TextEncoder();  ////CONSTRUCTOR FUNCTION __ DISPONÍVEL___ GLOBALMENTE NO DENO.... (vamos o utilizar para CONVERTER NOSSA STRING EM BYTES, EM 1 DATA NO FORMATO 'Uint8Array', que é o formato ACTUALLY SUPORTADO POR 'writeFile'...)
+
+
+
+
+// const data = encoder.encode(text);
+
+
+
+// Deno.writeFile('message.txt', data)
+// .then(
+//     (result) => { ////COMO O DENO É UMA LANGUAGE QUE 'embraces new javascript features', ELE ACEITA TOTALMENTE PROMISES, E ODEIA CALLBACKS em funções... (pq elas fedem)...
+//             console.log( ///NOSSO CÓDIGO VAI __ FALHAR/DAR ERROR, INICIALMENTE, POR 'FALTA DE PERMISSOES' no execute dessa função...
+//                 'wrote to file!'
+//             )
+//     }
+// )
+// .catch(
+//     (err) => {
+//         console.log(err);
+//     }
+// )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK, ESSA É A VERSÃO 'TS' do código.....
+
+
+
+
+
+
+----> JÁ A VERSÃO 'javascript' (compilada) 
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+"use strict";
+// import fs from 'fs';
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// import path from 'path'; ///ESSES 2 TIPOS DE CÓDIGO (que importam CORE NODE MODULES) não vao funcionar com o typescript.... siga o modelo logo abaixo:
+const fs = __importStar(require("fs/promises")); ////vamos querer a versão PROMISES desse código do 'fileSystem'....
+// One more thing - you will need to tell the typescript compiler where do these come from - it is done in the tsconfig.json, with 
+// the following line: "compilerOptions": { "types": [ "node" ] } //// CERTO, ISSO FUNCIONOU....
+const text = 'this is a text - and it should be stored in a file, with the help of NODE.';
+const filePath = 'message.txt';
+fs.writeFile(filePath, text)
+    .then((result) => {
+    console.log(result);
+})
+    .catch((error) => {
+    console.log(error);
+});
+//VERSÃO DO DENO DESTE NOSSO CÓDIGO:
+// const text = 'this is a text - and it should be stored in a file';
+// const encoder = new TextEncoder();  ////CONSTRUCTOR FUNCTION __ DISPONÍVEL___ GLOBALMENTE NO DENO.... (vamos o utilizar para CONVERTER NOSSA STRING EM BYTES, EM 1 DATA NO FORMATO 'Uint8Array', que é o formato ACTUALLY SUPORTADO POR 'writeFile'...)
+// const data = encoder.encode(text);
+// Deno.writeFile('message.txt', data)
+// .then(
+//     (result) => { ////COMO O DENO É UMA LANGUAGE QUE 'embraces new javascript features', ELE ACEITA TOTALMENTE PROMISES, E ODEIA CALLBACKS em funções... (pq elas fedem)...
+//             console.log( ///NOSSO CÓDIGO VAI __ FALHAR/DAR ERROR, INICIALMENTE, POR 'FALTA DE PERMISSOES' no execute dessa função...
+//                 'wrote to file!'
+//             )
+//     }
+// )
+// .catch(
+//     (err) => {
+//         console.log(err);
+//     }
+// )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> DEU TUDO CERTO, EM OUTRAS PALAVRAS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> AGORA VOU VER A VERSÃO DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+--> ELE QUER ARMAZENAR 'TEXT' EM 1 FILE,
+
+COMO ISSO FUNCIONA?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> bem, ele vai escrever diretamente no 'app.js'...
+
+
+
+
+
+
+
+
+
+
+
+--> ELE 
+
+
+escreve:
+
+
+
+
+
+
+
+
+
+'const fs = require('fs')' 
+
+
+
+
+
+
+
+------> O 
+
+
+
+
+VS DO PROFESSOR 
+
+
+
+DIZ QUE ESSE IMPORT DE 'fs' 
+
+ESTÁ ERRADO;
+
+ISSO ACONTECE/ACONTECEU POR CAUSA DO 
+
+'deno extension'.....
+
+
+
+
+
+
+
+
+
+--> ELE DESINSTALA ESSA EXTENSÃO BREVEMENTE, E O PROBLEMA SOME....
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ ELE ESCREVE 
+
+
+
+'fs.writeFile()' ------> ISSO VAI QUERER O 'FILENAME'/path,
+
+
+
+E AÍ __ 
+
+A 
+NOSSA DATA -------> 
+
+
+
+
+
+
+AQUI ENCONTRAMOS UMA _ DAS DIFERENÇAS__ EM RELAÇÃO AO DENO:
+
+
+em vez de 
+
+
+SERMOS OBRIGADOS A PASSAR UM 'BYTE ARRAY', como fizemos no DENO,
+
+
+
+aqui 
+
+PODEMOS 
+
+
+___ SÓ PASSAR A STRING DIRETAMENTE....
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+fs.writeFile(
+    filePath, text
+)
+.then(
+    (result) => {
+        console.log(result);
+    }
+)
+.catch(
+    (error) => {
+        console.log(error);
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE AQUI ESTAMOS USANDO A VERSÃO 'PROMISE '
+
+
+
+
+de 'writeFile'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> UMA DIFERENÇA CRUCIAL
+ 
+
+
+ EM RELAÇAÕ 
+
+
+
+ AO 
+
+
+ DENO,
+
+
+ se usarmos 
+
+ A VERSÃO NATIVA DE 'fs' ( e naõ essa versão PROMISE-BASED),
+
+ é que 
+
+
+
+ NÓS __ NÃO VAMOS _ RETORNAR UMA PROMISE POR MEIO DESSA FUNÇÃO,
+
+
+
+
+
+SENDO UTILIZADO, NO SEU LUGAR,
+
+
+_ UM CALLBACK.... -----> 
+
+
+
+
+
+
+
+
+
+
+passamos um CALLBACK COMO TERCEIRO PARÂMETRO DESSE MÉTODO,
+
+
+
+
+
+
+
+
+QUE VAI SER EXECUTADO QUANDO A OPERAÇÃO COMPLETA COM SUCESSO/FALHA....
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO
+,
+
+
+
+TAMBÉM 
+
+APRENDEMOS QUE PODEMOS IMPORTAR 
+
+PROMISES 
+
+
+
+NESSE ARQUIVO,
+
+
+
+A VERSÃO PROMISES DE 'FS'...
+
+
+
+
+
+
+
+
+
+
+
+--> FAZEMOS ISSO POR MEIO DAS SINTAXES 
+
+
+'const fs = require('fs').promises' 
+
+
+
+
+
+
+
+
+OU 
+
+
+
+import * as fs from 'fs/promises'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA TER A MELHOR COMPARAÇÃO POSSÍVEL ENTRE O 
+
+DENO E O NODE,
+
+
+
+PROFESSOR REALMENTE 
+
+
+
+IMPORTA A VERSÃO 'PROMISe' 
+
+
+
+
+DE 'fs'.... ------> E AÍ ELE VAI REALMENTE USAR 'THEN-CATCH'....
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER _ CONSOLE.LOGGAR UMA MENSAGEM DE 'Wrote file!' 
+
+
+
+
+
+
+
+
+
+-----> AGORA QUANDO FORMOS EXECUTAR ESSE CÓDIGO __ COM O NODE__,
+
+
+TUDO QUE PRECISAMOS FAZER É ESCREVER 
+
+'node 
+
+app.ts' (
+
+
+    SEM PRECISAR DEFINIR TODAS AQUELAS DEFINIÇÕES DE SEGURANÇA, DEFINIÇÕES QUE PERMITIAM O WRITE 
+
+    EM FILES/SEND DE REQUESTS....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ESSA  É UMA DAS DIFERENÇAS MAIS MARCANTES, PQ 
+
+
+NÃO VAMOS PRECISAR DEFINIR 
+
+PERMISSÕES PARA ISSO... --> 
+
+
+ISSO ACONTECE PQ NODE SCRIPTS 
+
+
+
+'HAVE FULL WRITE-READ ACCESS' ------> E É ÓBVIO QUE __iSSO _ PODE 
+
+SER 
+
+
+UM RISCO,
+
+pq 
+
+
+se 
+
+
+você 
+
+RODAR 
+
+UM SCRIPT 
+
+
+DE 1 FONTE QUE VOCÊ NÃO CONHECE,
+
+
+VOCÊ SERÁ OBRIGADO A CONFIAR NESSE SCRIPT (ou confiar em todo o underlying code, e rezar para não dar algo errado)....
+
+
+
+
+
+
+
+
+
+JÁ COM O DENO, ESSE NÃO É O CASO:
+
+
+SE VOCÊ RODA UM SCRIPT,
+
+VOCÊ 
+
+
+
+
+PODE CONFIAR QUE 
+ELE SÓ _ VAI __ EXEcutar as coisas que 
+
+VOCÊ __ QUER EXECEUTAR...
+
+
+
+
+
+
+
+
+
+
+
+
+------> É CLARO QUE SE OVCÊ 
+
+
+ESTÁ EXECUTANDO UM THIRD PARTY  __ SCRIPT__ COM O DENO,
+
+é bem provável que você terá um cenário em que 
+
+
+
+O SCRIPT 'WILL NEED TO HAVE 
+
+
+PERMISSIONS TO DO WHAT IT NEEDS TO DO, to access a file' ,
+
+
+
+
+
+
+SITUAÇÃO EM QUE VOCÊ SERÁ __ OBRIGADO_  A ACEITAR o run desse script,
+
+
+e em que 
+
+você VAI TER QUE 'CONFIAR' que esse TPP não vai __ ABUSAR__ DESSAS PERMISSIONS....
+
+
+
+
+
+
+
+
+
+
+--> OK.... MAS O CÓDIGO DO PROFESSOR FUNCIONOU, E AOGRA ELE ESTÁ 
+
+
+GRAVANDO AQUELA MENSAGEM EM UM ARQUIVO 'message.txt'...
+
+
+
+
+
+
+
+
+
+
+-> ESSE É O EQUIVALENTE 'NODE' DO NOSSO CÓDIGO DENO,
+
+mas com algumas features 1 pouco extras...
+
+
+
+
+
+
+
+
+
+
+----> MAS APESAR DE USAR ALGUMAS FEATURES NOVAS DO JAVASCRIPT,
+
+
+ESSES CÓDIGOS  CONSEGUEM + OU - O MESMO RESULTADO DO PAI.
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFCA QUE AS DIFERENÇAS 'KEYS' aqui, no caso, 
+
+
+É O 'TYPESCRIPT' (builtin no deno)
+
+E AQUELA COISA DE 'PERMISSIONS'...

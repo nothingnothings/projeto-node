@@ -1,0 +1,1080 @@
+
+
+
+
+
+
+
+
+
+
+---> EXPRESSJS 
+
+é 
+
+'ALL ABOUT MIDDLEWARE'.... 
+
+
+
+
+
+
+-----> PROFESSOR NOS MOSTRA UM DIAGRAMA:
+
+
+
+
+
+
+
+
+    REQUEST 
+    
+    V 
+    V 
+    V 
+    V 
+
+    MIDDLEWARE (req, res, next) => { ... }
+
+    V
+    V 
+    V   (   '''''  next() '''')
+    V 
+    V 
+
+    MIDDLEWARE (req, res, next) => { ... }
+
+    V 
+    V 
+    V  (  '''''   res.send()  ''''''    )
+    V 
+    V 
+
+    RESPONSE (enviada de verdade)...
+
+
+
+
+
+
+    -------------------------------------
+
+
+
+    NO FINAL DAS CONTAS,
+
+
+    MIDDLEWARE SIGNIFICA BASICAMENTE 
+
+    QUE 
+
+    UM 
+
+    INCOMIGN REQUEST 
+
+
+É 
+
+'FUNNELED' POR UM MONTE 
+
+
+DE FUNÇÕES 
+
+
+'EM CASCATA',
+
+
+definidas 
+
+por você, com o EXPRESSJS...
+
+
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE EM VEZ DE VOCÊ TER 1 ÚNICO REQUEST HANDLER QUE 
+
+FAZ 
+
+TUDO,
+
+
+AQUI VOCÊ 
+
+
+TERÁ A POSSIBILIDADE/TEM A POSSIBILIDADE 
+
+DE 
+
+
+'HOOKING IN MULTIPLE FUNCTIONS WHICH THE REQUEST 
+
+WILL GO THROUGH UNTIL YOU SEND THE REQUEST'...
+
+
+
+
+
+
+
+
+-> ISSO TE DEIXA SPLITTAR O SEU CÓDIGO EM MÚLTIPLOS BLOCKS/PIECES 
+
+
+EM VEZ 
+
+DE 
+
+TER 
+
+APENAS 1 
+
+GRANDE FUNÇÃO que faz tudo.... ------------> 
+
+
+
+
+
+E 
+ESSA 
+É 
+
+
+A 
+
+'PLUGGABLE NATURE' (plug and play)
+
+
+DO 
+
+EXPRESSJS,
+
+
+
+
+que te dá 
+
+essas middleware functions,
+
+as quais você PODE ATÉ MESMO 
+
+TIRAR
+ 
+ DE 
+
+ 'THIRD PARTY PACKAGES',
+
+
+
+ que você pode PLUGGAR NO EXPRESSJS 
+
+ E ENTÃO 
+
+ ADICIONAR 
+
+ CERTAS 
+
+ FUNCIONALIDADES...
+
+
+
+
+
+
+
+
+
+
+ -----> OK, ESSE É UM CONCEITO CORE DO EXPRESSJS....
+
+
+
+
+
+
+
+
+
+ --> ONDE SÃO ADICIONADOS OS MIDDLEWARES? ---> DEVEM SER 
+
+ ADICIONADOS ___ DEPOIS 
+
+
+
+ DA CRIAÇÃO 
+
+
+ DO 
+
+
+ OBJETO/CONST
+
+ 'app',
+
+
+
+
+MAS __ ANTES__ DE PASSARMOS ESSE 
+
+
+
+OBJETO 
+
+AO 
+
+
+'createServer'....
+
+
+
+
+
+
+-----> PARA ISSO,
+
+FICARÁ ASSIM O CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+const http = require('http');
+
+const express = require('express'); ///necessário.
+
+
+const app = express(); /////necessário.
+
+
+app.  /////////AQUI SERÃO ESCRITOS OS MIDDLEWARES DO EXPRESSJS....
+
+
+
+const server = http.createServer(app); ////app ---> é a constante que temos logo acima (sim, o expressJS, quando armazenado em uma CONST, fica com um formato parecido com o de um REQUESTHANDLER, parecido com um '(req, res) => {}')
+
+
+server.listen(3000);
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+--> NESSE LUGAR AÍ,
+
+USARMEOS 
+
+
+
+O MÉTODO 
+
+'.use()'
+
+
+CONTIDO DENTRO DESSA CONST 'app'.....
+
+
+
+
+
+
+
+--> E 'USE' 
+
+
+NOS DEIXA 
+
+ADICIONAR UMA __ NOVA MIDDLEWARE__ FUNCTION AO NOSSO 
+
+CÓDIGO_....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+app.use();
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+E O MÉTODO 'USE' É BEM FLEXÍVEL... ---> ELE 
+
+
+
+ACEITA/EXIGE UM ARRAY __ 
+
+
+
+DE 
+
+
+'SO-CALLED' 'request HANDLERS' ----------> E O MÉTODO 'USE' TEM ALGUNS OUTROS USE CASES TBM....
+
+
+
+
+
+
+
+
+-----> UMA MANEIRA FÁCIL DE USAR O 
+
+
+'.use()'
+
+
+É SIMPLESMENTE PASSAR UMA _ FUNÇÃO___ 
+
+
+
+aRROW ALI DENTRO...
+
+
+
+ex:
+
+
+
+
+
+
+app.use(() => {})
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+E ESSA FUNÇÃO ARROW QUE VOCÊ ESCREVE ALI DENTRO __ SERÁ EXECUTADA___ 'FOR EVERY INCOMING REQUEST'...
+
+
+
+
+
+
+
+
+
+
+--> E ESSA FUNÇÃO VAI RECEBER ___ 3 ARGUMENTOS__... -------> 
+
+
+
+
+
+
+
+
+
+1) REQUEST 
+
+
+
+2) RESPONSE 
+
+
+
+
+
+(claro que ESSES OBJETOS TERÃO UMAS 'EXTRA TRICKS', além daquelas que vocÊ aprendeu...)
+
+
+
+
+3) NEXT -----> ÚLTIMO ARGUMENTO,
+
+
+
+argumento 'next'...
+
+
+
+
+
+
+
+
+
+
+--->OK, O QUE FAZEM ESSES 3 ARGUMENTOS? 
+
+
+
+
+
+
+REQ E RES --> É BASICAMENTE O QUE CONHECEMOS, COM ALGUMAS EXTRA FEATURES....
+
+
+
+
+
+
+
+
+
+
+--> NEXT --> É UMA FUNÇÃO 
+
+
+QUE 
+
+SERÁ PASSADA AUTOMATICAMENTE 
+
+A 
+
+ESSA FUNÇÃO 
+
+'app.use(() =>{}))'
+
+
+
+PELO EXPRESSJS EM SI... 
+
+
+(e isso pode parecer 
+
+
+confuso,
+
+
+PQ 
+
+VOCÊ 
+
+
+VAI PASSAR UM 
+
+
+
+UMA 
+
+
+
+FUNÇAÕ COMO ARGUMENTO 
+
+A 
+
+ESSA FUNÇAÕ 
+
+
+
+DE 
+
+
+'app.use()',
+
+
+
+
+e essa funçaõ,
+
+POR SUA VEZ,
+
+
+
+ESTARÁ RECEBENDO OUTRA FUNÇÃO (nesse argumento 'next'/ esse argumento 'next()'...)--> 
+)
+
+
+
+
+
+
+
+
+
+
+
+E ESSE 
+
+ARGUMENTO 'NEXT()'
+
+
+é o negócio que 
+
+ENCERRA AS ATIVIDADES 
+
+DE UM MIDDLEWARE 
+
+E FAZ COM QUE 
+
+'PULEMOS'
+
+PARA 
+O PRÓXIMO MIDDLEWARE....
+
+
+
+
+
+
+
+
+
+
+
+--> para mostrar o funcionamento disso,
+
+
+professor escrve:
+
+
+
+
+
+
+
+--------------------------------------------------------------
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        console.log('test; IN THE MIDDLEWARE');
+
+
+    }
+)
+
+
+
+
+
+
+
+------------------------------
+
+
+
+---------> se entrarmos nisso aí COM O NOSSO SERVER,
+
+
+nossa página NO BROWSER NUNCA VAI PARAR DE CARREGAR;
+
+
+ISSO ACONTECE JUSTAMENTE 
+
+PQ 
+
+NUNCA 
+
+DEFINIMOS 
+
+UMA RESPONSE NO NOSSO CÓDIGO NODEJS....
+
+
+
+
+
+
+
+---------> mas você vai ver 'in the middleware' 
+
+
+
+
+NO SEU TERMINAL,
+
+o que 
+significa que 
+
+
+
+ESSE 'app.use()'
+
+
+NOS DEIXOU 
+
+'HOOK INTO THIS FUNNEL' 
+
+
+pelo qual o request é enviado...
+
+
+
+
+
+
+
+
+-------> AGORA, SE O PROFESSOR ___ DUPLICAR __ 
+
+
+ESSE 
+'app.use()',
+
+
+
+ficando tipo assim:
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        console.log('test; IN THE MIDDLEWARE');
+
+
+    }
+)
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        console.log('test; IN ANOTHER MIDDLEWARE');
+
+
+    }
+)
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+SE RESTARTARMOS NOSSA PAGE/SERVER,
+
+
+
+veremos 
+
+
+que SÓ 
+
+
+
+
+1 CONSOLE.LOG TERÁ SIDO DISPARADO,
+
+O 
+
+
+
+
+CONSOLE.LOG 
+
+
+
+DO 
+
+
+
+'In the middleware',
+
+
+MAS 
+NÃO 
+
+O 
+
+
+DE 
+
+'In another middleware' .... ---> 
+
+
+
+
+
+A RAZÃO PARAI ISSO É QUE 
+
+
+
+
+___TEMOS QUE __ CHAMAR 
+
+
+'.next()'
+
+
+DENTRO 
+
+
+
+DA FUNÇÃO INTERNA 
+
+DE 
+'app.use()',
+
+
+o 
+
+
+'(req, res, next) => {
+
+
+}
+'
+
+PARA 
+
+
+
+PERMITIR 
+
+
+QUE O 
+
+
+
+___REQUESST__ 
+
+
+TO 
+
+
+'TRAVEL ON' 
+
+
+
+
+___ AO __ PRÓXIMO MIDDLEWARE NA FILA....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        console.log('test; IN THE MIDDLEWARE');
+
+        next(); /////EIS O CÓDIGO EM QUESTÃO.
+    }
+)
+
+
+
+
+app.use( 
+    (req, res, next) => {
+
+        console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+
+
+    }
+)
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+ISSO BASICAMENTE SIGNIFICA QUE 
+
+
+O 
+
+
+EXPRESS 
+
+FAZ 
+
+
+COM QUE O NEGÓCIO SEJA LIDO 'TOP TO BOTTOM',
+
+
+
+por meio de TODAS AS MIDDLEWARE FUNCTIONS,
+
+
+
+NOS CASOS EM QUE ELE ENCONTRA 
+
+'next()' no meio de suas callback functions/funções internas...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        console.log('test; IN THE MIDDLEWARE');
+
+        next(); /////EIS O CÓDIGO EM QUESTÃO.
+    }
+)
+
+
+
+
+app.use( 
+    (req, res, next) => {
+
+        console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+
+
+    }
+)
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+-->  SE NÃO CHAMAMOS 'NEXT' dentro da execução de um middleware,
+
+ele só 
+
+'MORRE',
+
+
+faz com que O 
+
+
+REQUEST __ DEIXE DE SEGUIR ADIANTE__...
+
+
+
+
+
+
+
+
+
+
+------> NOS CASOS EM QUE NÃO CHAMAMOS 'NEXT()' em um middleware,
+
+
+SEMPRE DEVEMS 
+
+
+
+__'SEND BACK A RESPONSE' (por meio de 'res.send()', etc),
+
+
+
+
+
+___ DEVEMOS MANDAR UMA RESPONSE PQ 
+
+
+
+
+__ A AUSÊNCIA DE 'NEXT()'
+
+vai 
+
+justamente 
+
+significar que 
+
+'it will never reach a place where we might send the response'...
+
+
+
+
+
+--> E ISSO SIGNIFICA QUE SE NÃO ENVIARMOS UMA RESPONSE NESSE 
+
+BLOCO EM QUE NÃO HÁ 
+
+
+UM 'NEXT()',
+
+NUNCA 
+
+ACABAREMOS ENVIANDO UMA RESPONSE....
+
+
+
+
+
+
+
+
+
+
+
+------> ok, agora vemos os 2 console.logs....
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+---> aí, como próximo passo,
+
+
+
+
+
+PODEMOS ENVIAR UMA RESPONSE (mas veremos iss ona próxima lição)...
+
+
+
+
+
+
+
+
+---> REINICIAMOS A PÁGINA E VEMOS OS 2 CONSOLE.logs... --> tudo graças ao 
+
+
+'next' 
+
+
+
+no 
+
+
+'app.use()'..
+
+
+
+
+
+
+
+
+--> ESSA IDEIA/CONCEITO DE MIDDLEWARES É ESSENCIAL...
+
+
+
+
+
+
+
+
+--> E VOCÊ PODE USAR QUALQUER FUNÇÃO QUE TEM ESSE FORMATO,
+
+que 
+
+recebe 
+
+
+'req, res, next',
+
+
+
+e VOCÊ 
+
+
+DEVE 
+
+
+CHAMAR 
+
+
+
+
+'next()'
+
+SE VOCÊ PRETENDER DEIXAR ESSE REQUEST PASSAR POR OUTROS MIDDLEWARES... --> E VOCÊ CHAMA
+
+
+
+'res.send()'
+
+
+SE VOCÊ TIVER OUTROS PLANOS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS CHAMAR UM 'RES.SEND()'
+
+nesse middleware NA PRÓXIMA LIÇÃO...

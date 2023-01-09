@@ -1,0 +1,958 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR FEZ ALGUMAS MUDANÇAS NO NOSSO PROJETO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUE ELE MUDOU? 
+
+
+
+
+
+
+
+
+
+---> ELE COMENTOU PARA FORA 
+
+
+
+OS LINKS 
+
+
+
+
+
+
+
+DA NAVBAR/toolbar 
+
+
+
+ÀS PAGES 
+
+DE 
+
+
+
+'add product' 
+
+
+
+
+
+e 
+
+
+'admin products'...
+
+
+(arquivo 'navigation.ejs')...
+
+
+
+
+
+
+
+---> ALÉM DISSO,
+
+
+
+ELE 
+
+
+
+ADICIONOU 
+
+
+__UMA NOVA 'UNORDERED LIST',
+
+
+
+
+EM QUE 
+
+
+
+
+ELE COLOCOU 
+
+
+
+___O NOVO LIST ITEM,
+
+
+que é 
+
+
+'Login'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+<ul class="main-header__item-list">
+    <li class="main-header__item">
+        <a href="/login">Login</a>
+    </li>
+</ul>
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <!-- <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li> -->
+        <!-- <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li> -->
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav_item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <!-- <li class="mobile-nav_item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li> -->
+        <!-- <li class="mobile-nav_item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li> -->
+        <li class="mobile-nav_item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="mobile-nav_item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="mobile-nav_item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login">Login</a>
+        </li>
+    </ul>
+    </nav>
+
+
+
+
+
+----------------------
+
+
+
+
+
+CERTO..
+
+
+
+
+
+
+
+O QUE MAIS?
+
+
+
+
+
+
+
+----> ELE TAMBÉM MEXEU NOS STYLES...
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR MEXEU 
+
+
+O 
+
+'.main-heaer__nav' 
+,
+
+
+
+
+COLOCOU UM DISPLAY FLEX,
+
+
+
+
+
+
+COISA PADRÃO...
+
+
+
+
+
+
+
+
+
+
+--> BOTÃO DE LOGIN FOI ADICIONADO....
+
+
+
+
+
+
+
+
+
+
+--> MAS PQ ELE ADICIONU ESSE 'login'? 
+
+
+
+
+
+
+
+
+--> É PQ ELE PLANEJA 
+
+
+TER 
+
+ESSA 'DUMMY LOGIN PAGE'....
+
+
+
+
+
+
+
+
+------> VAMOS TER 1 MÓDULO COMPLETO SOBRE AUTHENTICATION,
+
+
+
+
+VER __ TUDO __ QUE É RELACIONADO AO AUTHENTICATING,
+
+
+
+
+
+
+
+
+__MAS AQUI __ 
+
+
+
+A 
+
+
+
+AUTHENTICATION 
+
+
+
+__ É UM EXCELENTE EXEMPLO DE DATA 
+
+QUE 
+VOCÊ 
+
+
+
+
+____ PROVAVELMENTE 
+
+GOSTARIA/GOSTA 
+
+DE 
+
+ARMAZENAR 
+
+
+
+__PARA 
+
+
+1 USER ESPECÍFICO,
+
+
+
+
+___ E ESSE É UM DOS TÍPICOS USE-CASES  
+
+
+
+
+
+___ DOS COOKIES E SESSIONS, COOKIES E SESSIONS SÃO TIPICAMENTE 
+
+
+USADOS 
+
+PARA 
+
+ARMAZENAR 
+
+
+
+'AUTH INFORMATION'... --> E É EXATAMENTE POR ISSO 
+
+
+
+
+QUE O PROFESSOR JÁ VAI QUERER ADICIONAR 
+
+
+
+
+ALGUMA 'DUMMY AUTHENTICATION' neste módulo aqui,
+
+MESMO 
+
+
+
+
+ELE NÃO 
+
+
+SENDO 
+
+
+
+PROPRIAMENTE SOBRE AUTH...
+
+
+
+
+
+
+
+
+
+
+--------> OK......... --> E O QUE PODEMOS FAZER COM ISSO?
+
+
+
+
+
+
+
+
+
+
+--> BEM, COM ESSE BUTTON DE LOGIN,
+
+
+NÓS FAZEMOS 'NAVIGATE'
+
+
+até 
+
+
+
+'/login',
+
+
+
+
+
+E __ESSA É UMA ROUTE__ QUE AINDA NÃO EXISTE,
+
+AINDA NÃO SETTAMOS 
+
+
+
+
+ROUTES PARA LOGIN/SIGNUP, QUALQUER COISA DO GÊNERo...
+
+
+
+
+
+
+
+
+----> É POR ISSO QUE 
+
+O 
+
+PROFESSOR 
+
+QUER ADICIONAR ISSO AÍ..
+
+
+
+
+
+
+
+
+--> DEVEMOS PRATICAR TUDO ISSO....
+
+
+
+
+
+
+
+
+
+---> OK... SETTEI AS ROUTES, SETTEI O CONTROLLER DE 'getLoginPage',
+
+
+
+
+
+SETTEI A ROUTE LÁ NO 'app.js',
+
+
+
+E __TAMBÉM __ CONFIGUREI O STYLE 'active '
+
+
+
+
+
+DO LINK/NAVITEM 'login'...
+
+
+
+
+-----------------------------
+
+
+
+ACHO QUE AGORA POSSO 
+
+
+
+VER COMO É ESSE VIEW DE 
+
+'login'
+
+DO 
+
+
+professor...
+
+
+
+
+
+
+
+
+--> HMMM PELO VISTO ELE CRIOU UMA PASTA SEPARADA... de nome 'auth'...
+
+
+
+
+
+
+--> nessa pasta, temos 
+
+
+
+
+este código:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <form class="login-form" action="/login" method="POST">
+            <div class="form-control">
+                <label for="email">E-Mail</label>
+                <input type="email" name="email" id="email">
+            </div>
+            <div class="form-control">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password">
+            </div>
+            <button class="btn" type="submit">Login</button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs') %>
+
+
+
+
+
+
+
+
+
+
+---> É MAIS OU MENOS O QUE EU ESPERAVA...
+
+
+
+
+
+vou copiar linha por linha....
+
+
+
+
+
+
+
+
+CERTO.... acho que terminei..
+
+
+
+VOU VER A AULA DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR CRIA UM ARQUIVO 'route' 
+
+
+de 
+
+'auth.js',
+
+
+
+EXATAMENTE COMO FIZ...
+
+
+
+
+
+
+
+
+
+
+--> AÍ ELE ESCREVE UMA ROUTE 
+
+de 
+
+
+
+
+router.get('/login',  
+
+
+            authController.getLoginPage
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK...
+
+
+
+
+
+
+
+
+--> ELE REGISTRA ESSA ROUTE LÁ EM 'app.js',
+
+tudo normal...
+
+
+
+
+
+
+--> CRIA UMA 'authRoutes',
+
+tudo normal...
+
+
+
+
+
+
+
+
+
+--> ELE CRIA UM CONTROLLER EXATAMENTE COMO FIZ...
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+exports.getLoginPage = (req, res, next) => {
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+    }
+  );
+};
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK....
+
+
+
+
+
+
+
+
+O QUE MAIS?
+
+
+
+
+
+
+--> PRECISAMOS DE ALGUM CONTEÚDO NA PAGE DE 
+
+
+'login.ejs'..
+
+
+
+
+
+
+
+ela ficou assim:
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+            <form class="login-form" action="/login" method="POST">
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button class="btn" type="submit">Login</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+----> VAMOS PRECISAR 
+DE 
+
+
+1 
+
+
+NOVO 
+
+arquivo css,
+
+
+de 
+
+'auth.css'...
+
+
+
+
+
+
+
+-----> AÍ TEREMOS 
+
+OS
+
+
+
+styles de 
+
+
+'login-form',
+ 
+
+
+ etc...
+
+
+
+
+
+
+
+ --> VAMOS USAR AQUELE CLASSICO BUTTON DE TYPE 'submit',
+
+  
+
+
+
+  TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+      <main>
+            <form class="login-form" action="/login" method="POST">
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button class="btn" type="submit">Login</button>
+            </form>
+    </main>
+
+
+
+
+
+    -----------------------------
+
+
+
+
+
+
+
+
+
+
+    -----> PROFESSOR COLOCA 
+
+
+
+
+
+
+    NO ARQUIVO DE CSS 
+
+
+
+
+    o seguinte código:
+
+
+
+
+
+
+
+
+
+
+
+    .login-form {
+
+          width: 20rem;
+          max-width: 90%;
+          margin: auto;
+          display: block;
+
+
+    }
+
+
+
+
+
+
+
+
+  
+  ----------------------------
+
+
+  certo, tudo pronto.....
+
+
+
+
+
+
+
+
+  --> O PROFESSOR NOS EXPLICA QUE SÓ VAMOS CRIAR UM 'FULL ON LOGIN FLOW'
+
+
+
+  no próximo módulo (veremos authentication e tudo relacionado a ela....),
+
+  que não faremos isso agora....
+
+
+
+
+
+
+
+
+
+
+  ---> AGORA O PROFESSOR SÓ QUER 
+
+
+  NOS MOSTRAR COMO PODEMOS 'USE A COOKIE'
+
+
+  PARA 
+
+  SALVAR INFO DE 
+
+  QUE 
+
+  ESSE 
+
+  USER ESTÁ 
+
+  'LOGGED IN'
+
+
+  no nosso browser(acho que posso usar uma das aulas do NEXTJS de referência, para escrever isso....)
+
+
+
+  

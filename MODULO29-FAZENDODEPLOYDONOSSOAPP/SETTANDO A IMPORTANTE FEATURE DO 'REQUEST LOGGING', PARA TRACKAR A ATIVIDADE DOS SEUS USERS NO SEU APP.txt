@@ -1,0 +1,1617 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS DEMOS UMA OLHADA EM:
+
+
+
+
+1) environment variables (PRODUCTION E DEVELOPMENT) --> PACKAGE DE 'cross-env' utilizada para DESBUGGAR O SET DE ENV VARIAABLES NO PACKAGE.JSON, NO WINDOWS...
+
+
+
+
+2) SECURE HEADERS NAS SUAS RESPONSES (package de HELMET)  ---> USADO PARA DEIXAR SEU APP UM POUCO MAIS SEGURO A ATAQUES, GRAÇAS AO ADD DE HEADERS bonus nas suas responses....
+
+
+
+
+3) COMPRESSION DE ARQUIVOS JAVASCRIPT E CSS ENVIADOS AOS SEUS USERS --> usado para deixar nosso APP MENOS PESADO---> (package de 'compression'/node compression...)
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
+app.use(helmet()); ////USE ISTO PARA DEIXAR SEU APP NODE MAIS 'SECURE' (é usado para DEIXAR SEUS RESPONSE HEADERS MAIS SEGUROS CONTRA ATAQUES, EM DEPLOYMENT)...
+
+
+app.use(compression()); ////VAMOS UTILIZAR ESSE MIDDLEWARE DESSA PACKAGE __ PARA COMPRIMIR OS ARQUIVOS .JS E .CSS QUE ENVIAMOS AOS NOSSOS USERS...
+///obs: o package de 'compression' NÃO VAI COMPRIMIR SUAS IMAGES, pq esse processo de compressão deixaria o load delas AINDA MAIS LENTO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS VER 
+
+
+
+
+
+O TÓPICO DO 'LOGGING'... -----> LOGGING TAMBÉM É ALGO QUE INTERESSA...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR QUITA O SERVER,
+
+
+
+
+E AÍ INSTALA UMA PACKAGE CHAMADA DE 'morgan'...
+
+
+
+
+
+
+
+
+
+
+--> MORGAN É UMA 
+
+PACKAGE QUE 
+
+
+
+
+
+FACILITA O LOGGING DE 'REQUEST DATA' 
+
+
+durante o runtime de nosso app....
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> DEPOIS DE ADICIONAR O MORGAN ,
+
+
+
+
+
+
+
+
+PODEMOS 
+
+
+
+
+RECOMEÇAR NOSSO SERVER DE DEVELOPMENT NODEMON..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> para usar o morgan,
+
+
+devemos o importar 
+
+
+com 
+
+
+
+'const morgan = require('morgan')' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA UTILIZAR O MORGAN,
+
+NÓS TAMBÉM 
+
+
+
+DEVEMOS 
+
+O UTILIZAR COMO MIDDLEWARE,
+
+ANTES DE HANDLAR QUAISQUER 
+
+
+
+REQUESTS NO NOSSO 'app.js'...
+
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE VAMOS O ADICIONAR LOGO DEPOIS DE 
+
+'helmet'
+
+e 
+
+'compression'....
+
+
+
+
+
+ex:
+
+
+
+
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
+app.use(helmet()); ////USE ISTO PARA DEIXAR SEU APP NODE MAIS 'SECURE' (é usado para DEIXAR SEUS RESPONSE HEADERS MAIS SEGUROS CONTRA ATAQUES, EM DEPLOYMENT)...
+
+
+app.use(compression()); ////VAMOS UTILIZAR ESSE MIDDLEWARE DESSA PACKAGE __ PARA COMPRIMIR OS ARQUIVOS .JS E .CSS QUE ENVIAMOS AOS NOSSOS USERS...
+///obs: o package de 'compression' NÃO VAI COMPRIMIR SUAS IMAGES, pq esse processo de compressão deixaria o load delas AINDA MAIS LENTO...
+
+
+
+
+app.use(morgan()); 
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK... MAS O MORGAN __ VAI _ EXIGIR __ UM PARÂMETRO.... --> NESSE PARÂMETRO,
+
+VAMOS 
+
+ESPECIFICAR 
+
+
+
+
+
+
+
+
+
+
+'pass the information on HOW TO LOG THIS INTO THIS FUNCTION'... ------> ENCONTRAMOS MAIS INFORMAÇÕES NOS OFFICIAL DOCS...
+
+
+
+
+
+
+
+
+
+
+
+------> ESSE PARÂMETRO DO MORGAN 
+
+SIMPLESMENTE 
+
+
+'DEFINES WHICH DATA IS BEING LOGGED',
+
+
+
+
+e 
+
+
+
+'COMO SERÁ FORMATADA ESSA DATA'...
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+VAI USAR 
+
+
+
+
+
+
+a opção de 'combined':
+
+
+
+
+
+
+
+
+
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
+app.use(helmet()); ////USE ISTO PARA DEIXAR SEU APP NODE MAIS 'SECURE' (é usado para DEIXAR SEUS RESPONSE HEADERS MAIS SEGUROS CONTRA ATAQUES, EM DEPLOYMENT)...
+
+
+app.use(compression()); ////VAMOS UTILIZAR ESSE MIDDLEWARE DESSA PACKAGE __ PARA COMPRIMIR OS ARQUIVOS .JS E .CSS QUE ENVIAMOS AOS NOSSOS USERS...
+///obs: o package de 'compression' NÃO VAI COMPRIMIR SUAS IMAGES, pq esse processo de compressão deixaria o load delas AINDA MAIS LENTO...
+
+
+
+
+app.use(morgan('combined')); 
+
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+RECARREGADA A PÁGINA,
+
+VAMOS 
+
+
+ENCONTRAR ALGUMAS INFORMAÇÕES 
+
+
+NO TERMINAL/CONSOLE,
+
+INFORMAÇÕES SOBRE O REQUEST...
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+VAMOS TESTAR ISSO AGORA:
+
+
+
+
+
+
+::1 - - [26/Dec/2021:05:05:27 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:05:27 +0000] "GET /css/product.css HTTP/1.1" 200 383 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:05:27 +0000] "GET /css/main.css HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:05:27 +0000] "GET /js/main.js HTTP/1.1" 200 547 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+LOCALS SET
+TEST
+::1 - - [26/Dec/2021:05:05:27 +0000] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+
+
+
+
+
+
+
+-----> ESSAS FORAM AS INFORMAÇÕES.... SÃO INFORMAÇÕES SOBRE QUAL TIPO DE BROWSER FOI UTILIZADO PARA FORMULAR ESSES REQUESTS,
+ 
+ etc etc....
+
+
+
+
+
+
+
+
+ --> TAMBÉM VEMOS 
+
+
+ OS REQUESTS... ----> 
+
+
+
+
+
+
+ REQUESTS DE 'GET'..
+
+
+
+
+
+
+ --> OBVIAMENTE,
+
+
+
+
+
+
+
+ __ NÓS __ NÃO VAMOS QUERER __ 
+
+
+
+
+ VISUALIZAR ISSO NO CONSOLE QUANDO DEPLOYAMOS NOSSO APP... --> EM VEZ DESSE OUTPUT AÍ,
+
+
+ O IDEAL 
+
+ SERIA 
+
+
+ TER ISSO 
+
+ EM ALGUNS __ ARQUIVOS__... -> E PARA __ LOGGAR/OUTTPUTAR ISSO 
+
+ EM ARQUIVOs,
+
+
+
+
+
+
+
+ BASTA 
+
+ ADICIONARMOS ALGO NO NOSSO CÓDIGO.... -> VAMOS ADICIAONR UMA 
+
+
+ NOVA CONSTANTE 
+
+ NO NOSSO 
+
+ 'app.js',
+
+
+ UMA CONSTANTE 
+
+ DE NOME 
+
+
+
+ 'accessLogStream' ------> 
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+ app.use(morgan());
+
+
+
+
+
+
+ const accessLogStream = ...
+
+
+
+
+
+
+
+
+
+ ------------------------------
+
+
+
+
+
+ ISSO FEITO,
+
+
+ VAMOS RECORRER AO PACOTE DE 'file system'
+
+ DO NODE (fs) 
+
+
+
+
+ PARA __ __
+
+
+ GRAVAR 
+ ESSA 
+
+ DATA 
+
+
+
+
+
+ OBTIDA POR MEIO DO 'MORGAN'
+
+
+ em arquivos de texto...
+
+
+
+
+
+
+
+
+ faremos isto assim:
+
+
+
+
+
+
+
+
+
+
+const fs = require('fs');
+ 
+
+
+
+ app.use(morgan());
+
+
+
+
+
+
+ const accessLogStream = ...
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+PARA CONSEGUIRMOS ESCRVER ESSE LOG de texto,
+
+
+
+PRECISAMOAS USAR O MÉTODO 
+
+
+'fs.createWriteStream()',
+
+
+
+
+
+
+QUE É UM MÉTODO QUE EXIGE:
+
+
+
+
+
+1) PARAMETRO 1 --> O PATH EM QUE VAMOS QUERER ESCREVER ESSE NOSSO ARQUIVO de texto...
+
+
+
+
+
+
+PARA CONSEGUIR ESSE PATH, VAMOS USAR  o pacote de 'path',
+
+
+aquele método de '.join()",
+
+
+
+PARA 
+
+
+
+JOINAR '__dirname' 
+
+
+
+
+
+
+COM 
+
+
+
+
+'access.log',
+
+
+
+QUE SERÁ O _ NOME DO ARQUIVO EM QUE VAMOS QUERER ESCREVER TUDO ISSO....
+
+
+
+
+
+
+
+
+
+
+
+fica tipo assim:
+
+
+
+
+
+
+
+
+const fs = require('fs');
+ 
+
+
+
+ app.use(morgan());
+
+
+
+
+
+
+ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'))
+
+
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+É CLARO QUE VAMOS PRECISAR DE MAIS ARGUMENTOS...
+
+
+
+
+
+
+
+
+ARGUMENTO 2) -------> NESSE ARGUMETNO, 
+
+VAMOS 
+
+
+COLOCAR UM OBJETO,
+
+
+
+OBJETO DE CONFIG DESSE 
+
+'createWriteStream' ---> 
+
+
+
+
+O PROFESSOR 
+
+VAI ESCREVER 
+
+
+'{
+    flags: 'a'
+}
+
+'
+
+
+
+
+
+
+--> A FLAG DE 'a' 
+
+SIGNIFICA 
+
+'APPEND',
+
+o que 
+
+
+SIGNIFICA QUE NOVOS DADOS VAO SER 
+
+
+'APPENDED' 
+
+
+AO FILE ANTIgo ( o que significa que o 
+
+
+
+ARQUIVO ANTERIOR _ NÃO VAI SER OVERWRITTADO,
+
+E SIM 
+
+QUE 
+
+
+
+
+A NOVA DATA _ VAI __ SER SIMPLESMENTE ADICIONADA AO FINAL DESSE ARQUIVO DE TEXTO VELHO....
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const accessLogStream = fs.createWriteStream( ///////ESSE WRITE STREAM VAI __ SER USADO __ PELO 'MORGAN', para escrever/criar arquivos de texto com info sobre os requests dos users feitos ao nosso app...
+
+                          path.join(__dirname, 'access.log'),  ///argumento em que ESPECIFICAMOS O LOCAL EM QUE VAMOS QUERER SALVAR ESSE ARQUIVO DE TEXTO '.log'....
+                          { flags: 'a'} //////SE DEFINIMOS ESSE FLAG DE 'a', DECLARAMOS QUE VAMOS SÓ QUERER APPENDAR O NOVO CONTEÚDO/TEXTO __ AO FINAL __ DO ARQUIVO ANTIGO DE TEXTO, E NÃO OVERWRITTAR O ARQUIVO ANTIGO POR INTEIRO... (comportamento default).
+                          )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... POR FIM, PARA QUE CONSIGAMOS 
+
+
+
+ESCREVER A DATA OBTIDA PELO MORGAN NESSE ARQUIVO DE 'access.log',
+
+PRECISAMOSS 
+
+
+
+__ PASSAR ESSA CONST COMO ARGUMENTO AO 
+
+
+
+call do middleware de morgan,
+
+
+
+
+de código 
+
+
+
+'app.use(morgan('combined'))' 
+
+
+
+
+
+
+
+
+
+
+--> NO CASO, 
+
+ISSO 
+
+SERÁ COLOCADO __ NO SEGUNDO ARGUMENTO 
+
+
+
+DO 
+
+
+MIDDLEWARE DE 'MORGAN'...
+
+
+
+
+
+ex:
+
+
+
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
+
+
+const accessLogStream = fs.createWriteStream( ///////ESSE WRITE STREAM VAI __ SER USADO __ PELO 'MORGAN', para escrever/criar arquivos de texto com info sobre os requests dos users feitos ao nosso app...
+
+                          path.join(__dirname, 'access.log'),  ///argumento em que ESPECIFICAMOS O LOCAL EM QUE VAMOS QUERER SALVAR ESSE ARQUIVO DE TEXTO '.log'....
+                          { flags: 'a'} //////SE DEFINIMOS ESSE FLAG DE 'a', DECLARAMOS QUE VAMOS SÓ QUERER APPENDAR O NOVO CONTEÚDO/TEXTO __ AO FINAL __ DO ARQUIVO ANTIGO DE TEXTO, E NÃO OVERWRITTAR O ARQUIVO ANTIGO POR INTEIRO... (comportamento default).
+                          )
+
+
+app.use(helmet()); ////USE ISTO PARA DEIXAR SEU APP NODE MAIS 'SECURE' (é usado para DEIXAR SEUS RESPONSE HEADERS MAIS SEGUROS CONTRA ATAQUES, EM DEPLOYMENT)...
+
+
+app.use(compression()); ////VAMOS UTILIZAR ESSE MIDDLEWARE DESSA PACKAGE __ PARA COMPRIMIR OS ARQUIVOS .JS E .CSS QUE ENVIAMOS AOS NOSSOS USERS...
+///obs: o package de 'compression' NÃO VAI COMPRIMIR SUAS IMAGES, pq esse processo de compressão deixaria o load delas AINDA MAIS LENTO...
+
+
+
+
+
+app.use(morgan('combined', { stream: accessLogStream})); ///USADO PARA CONSOLE.LOGGAR _ INFORMAÇÕES SOBRE OS REQUESTS DE NOSSOS USERS, NO TERMINAL...
+                          ///se você não definir algum código logo abaixo para REGULAR ESSE MIDDLEWARE, ele sempre vai OUTPUTTAR a info dos requests NO SEU TERMINAL ,O QUE PODE SER SUBÓPTIMO (poluição visual)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OU SEJA,
+
+
+
+
+ESCREVA ASSIM:
+
+
+
+
+
+
+
+
+app.use(morgan('combined', { stream: accessLogStream})); ///USADO PARA CONSOLE.LOGGAR _ INFORMAÇÕES SOBRE OS REQUESTS DE NOSSOS USERS, NO TERMINAL...
+                          ///se você não definir algum código logo abaixo para REGULAR ESSE MIDDLEWARE, ele sempre vai OUTPUTTAR a info dos requests NO SEU TERMINAL ,O QUE PODE SER SUBÓPTIMO (poluição visual)....
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO CASO, 
+
+VOCÊ 
+
+
+VAI 
+
+COLOCAR UM OBJETO OPTION,
+
+em que 
+escreverá 
+
+
+
+'{ 
+
+    stream: accessLogStream
+}
+
+
+'
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... ISSO AGORA SIGNIFICA QUE 
+
+
+
+
+
+VAMOS REALMENTE 
+
+
+
+
+VER ESSE ARQUIVO 'access.log'
+
+criado no root de nosso app...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E CADA VEZ QUE ENTRARMOS 
+
+
+
+NESSE NOSSO SITE/APP (for enviado o request)),
+
+
+
+
+
+
+
+NOSSO LOG VAI AUMENTAR CADA VEZ MAIS, NESSE ARQUIVO:
+
+
+::1 - - [26/Dec/2021:05:17:48 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:48 +0000] "GET /css/main.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:48 +0000] "GET /css/product.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:48 +0000] "GET /js/main.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:54 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:54 +0000] "GET /css/main.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:54 +0000] "GET /css/product.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:54 +0000] "GET /js/main.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:56 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:56 +0000] "GET /css/main.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:56 +0000] "GET /css/product.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:17:56 +0000] "GET /js/main.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:18:00 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:18:00 +0000] "GET /css/main.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:18:00 +0000] "GET /css/product.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+::1 - - [26/Dec/2021:05:18:00 +0000] "GET /js/main.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... É ASSIM QUE 
+
+VAMOS QUERER 
+
+
+ 
+
+ CONSOLE.LOGGAR OS REQUESTS DE NOSSOS USERS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS, COMO O PROFESSOR MENCIONOU NOS SLIDES,
+
+
+
+ FREQUENTEMENTE O 
+
+ LOGGING 
+
+
+ DE SEU APP __ SERÁ FEITO POR SEUS PRÓPRIOS 'HOSTING PROVIDERS'...
+
+
+
+
+ (
+
+
+
+     MAS SE VOCÊ TIVER QUE FAZER ISSO 
+
+
+     POR CONTA PRÓPRIA,
+
+
+     SEM A AJUDA 
+
+
+     DO 
+
+     SEU 
+
+     PROVIDER,
+
+     esse package aí pode ser uma boa opção..
+ )
+
+
+
+
+
+
+
+
+
+ Besides using morgan to log requests in general, you can also add your own log messages in your code.
+
+For one, you can of course use the good old console.log() command to write logs.
+
+For a more advanced/ detailed approach on logging (with higher control), see this article: https://blog.risingstack.com/node-js-logging-tutorial/
+
+
+
+
+
+
+
+
+
+
+https://blog.risingstack.com/node-js-logging-tutorial/
+
+
+
+
+
+The most basic kind of logging one can think of is using the built in console logging. With the console module, you can put messages on both the stdout and stderr:
+
+console.log('some msg') will put some msg to the standard output (stdout),
+console.error('some error') will put some error to the standard error (stderr).
+
+
+
+
+
+
+
+
+
+
+In this situation, you can use the debug module. Adding it to your project is as easy as:
+
+npm install debug --save
+Then:
+
+const debug = require('debug')('my-namespace')
+const name = 'my-app'
+debug('booting %s', name)
+By default, it will not produce any output. To enable this logger, you have run your application with a special environment variable, called DEBUG.
+
+DEBUG=my-namespace node app.js
+Once you do that, the debug module will come to life and will start producing log events for stdout.
+
+Luckily, this module is widespread in the Node.js community, so if you are using a popular project, like Express, chances are high you can use the debug module with that. Also, you can inspect multiple modules at once, by separating the names with a comma.
+
+DEBUG=my-namespace,express* node app.js
+
+
+
+
+
+
+
+
+
+
+Once you do that, the debug module will come to life and will start producing log events for stdout.
+
+Luckily, this module is widespread in the Node.js community, so if you are using a popular project, like Express, chances are high you can use the debug module with that. Also, you can inspect multiple modules at once, by separating the names with a comma.
+
+
+
+
+
+-------------------------------------------------------
+
+Once you do that, the debug module will come to life and will start producing log events for stdout.
+
+Luckily, this module is widespread in the Node.js community, so if you are using a popular project, like Express, chances are high you can use the debug module with that. Also, you can inspect multiple modules at once, by separating the names with a comma.
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "cross-env NODE_ENV=production DEBUG=meuProjeto MONGO_USER=madblorga MONGO_PASSWORD=T5lws5TGxtclEbKI MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js",
+    "start:dev": "cross-env DEBUG=meuProjeto nodemon app.js"
+  },
+
+
+
+
+
+
+
+  E ASSIM:
+
+
+
+
+
+
+
+
+const morgan = require('morgan'); //MIDDLEWARE USADO PARA CONSOLE.LOGGAR A ATIVIDADE DO USUÁRIO (requests) NO NOSSO TERMINAL/CONSOLE...
+
+const debug = require('debug')('meuProjeto'); //melhor console.logging de seu projeto....
+
+
+const name = 'meuProjeto'
+
+
+
+debug('booting %s', name);
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+debug exposes a function; simply pass this
+
+ function the name of your module, and it will return a decorated version of console.error 
+ 
+ for you to pass debug statements to. This will allow you to toggle the debug output
+ 
+  for different parts of your module as well as the module as a whole.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ah, deu certo.... 
+
+
+
+
+--> QUANDO VOCÊ QUISER FAZER UM __CONSOLE.LOG __ MELHORADO_ NO SEU APP,
+
+
+
+SIMPLESMENTE CHAME 
+
+
+
+
+'debug('sua mensagem')'
+
+
+
+NO SEU CÓDIGO,
+
+PARA AUTOMATICAMETNE 
+
+
+RECEBER UM OUTPUT COMO ESTE:
+
+
+  app Sua mensagem +211ms
+
+
+
+
+
+  -----------------------------
+
+
+
+
+  vou testar em outrAS PARTES 
+
+  DE MEU CÓDIGO,
+
+  COMO 
+
+
+  nos controllers...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ex: shop controller:
+
+
+
+
+
+  
+
+debug('SHOP CONTROLLER CODE'); /// ----> AGORA FIZ FUNCIONAR... APARENTEMENTE APENAS É NECESSÁRIO IMPORTAR/ESCREVER AQUELE CÓDIGO DE IMPORT VISTO LOGO ACIMA, CÓDIGO QUE É:
+
+
+
+//////////////////////////////////////////////
+// const debug = require('debug')('app'); 
+
+
+// const name = 'meuProjeto'
+
+
+
+// debug('booting %s', name);
+//////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+OU SEJA, PRECISAMOS ESCREVER TODO AQUELE CÓDIGO DE IMPORT __ CORRETO__ para então 
+
+
+
+conseguirmos 
+
+
+
+escrever 
+
+'debug()'
+
+nas partes de nosso controller... e aparentemente temos que fazer isso em TODOS OS ARQUIVOS UQE QUEREMOS DEBUGGAR, NO NOSSO CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS EM VEZ DE FAZER ESSA SINTAXE MERDA,
+
+
+VOCÊ PODE SEGUIR ESTA DICA:
+
+
+
+
+
+
+
+
+Also, you can inspect multiple modules at once, by separating the names with a comma.
+
+
+
+
+DEBUG=my-namespace,express* node app.js
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ISSO NÃO DEU CERTO... --> APARENTEMENTE, PRECISO __ DEFINIR O NOME DE CADA 'MODULE', e aí referenciar 
+
+
+lá no package.json 
+
+
+
+nas minhas env variables...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEU CERTO:
+
+
+
+
+  app booting meuProjeto +0ms
+mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority
+  app booting shop +0ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY\faturas
+  app SHOP CONTROLLER CODE +169ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY
+  app Test debug log +222ms
+production
+  app booting admin +0ms
+  app booting auth +0ms
+  app AUTH CONTROLLER +1ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> em cada um dos meus controllers, podemos encontrar código como este:
+
+
+
+
+
+
+const debug = require('debug')('app'); //melhor console.logging de seu projeto....
+
+
+const name = 'auth'
+
+
+
+debug('booting %s', name);
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... 
+
+
+
+AGORA CONSEGUI DE VERDADE:
+
+
+
+
+  app booting meuProjeto +0ms
+mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority
+  shop booting shop +0ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY\faturas
+  shop SHOP CONTROLLER CODE +171ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY
+  app Test debug log +215ms
+production
+  admin booting admin +0ms
+  auth booting auth +0ms
+  auth AUTH CONTROLLER +1ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> E O CÓDIGO DOS CONTROLLERS FICA TIPO ASSIM:
+
+
+
+
+
+
+  const debug = require('debug')('shop'); //melhor console.logging de seu projeto....
+
+
+const name = 'shop';
+
+
+
+debug('booting %s', name);
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+When it comes to your application, you can do more sophisticated application logging.
+
+For that, you can use one of the most popular package called winston. Winston is a multi-transport async logging library for Node.js.
+
+You can add winston to your project by installing it:
+
+npm install winston --save
+
+
+
+
+
+

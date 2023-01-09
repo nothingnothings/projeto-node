@@ -1,0 +1,324 @@
+
+
+
+
+
+
+
+
+
+---_> AGORA QUE SABEMOS 
+
+SOBRE 
+
+OBJECTS E ARRAYS,
+
+
+há 
+
+UMA MISCONCEPTION 
+
+
+
+que 
+
+
+
+frequentemente vemos:
+
+
+
+
+
+
+
+
+É SOBRE PRIMITIVE VS REFERENCE TYPES --> É UM 
+
+
+
+CONCEITO 
+
+
+
+CRUCIAL....
+
+
+
+
+
+
+
+
+-------> REFERENCE TYPES SÃO OBJETOS E ARRAYS... --> QUANDO 
+
+
+ARMAZENAMOS 
+
+UM 
+
+ARRAY 
+EM UMA 
+
+CONSTANTE 
+
+DE 
+
+'HOBBIES',
+
+
+
+
+
+_______ EU CONSIGO __ AINDA __ 'EDITAR' 
+
+ESSE 
+
+
+ARRAY 
+
+
+___ SEM ___ VIOLAR __ A RESTRIÇAÕ DE QUE 
+
+'
+CONSTANTS MUST NOT CHANGE'... 
+
+
+
+
+
+
+
+
+--> PODEMOS FAZER ISSO POR MEIO DO MÉTODO CLÁSSICO '.push()',
+
+
+
+com ele podemos 
+
+
+ALTERAR 
+
+O VALOR 
+
+DE NOSSO 
+
+ARRAY,
+ 
+ ADICIONAR 1 ELEMENTO A MAIS A ELE,
+
+
+
+
+
+ SEM QUE ISSO RESULTE EM UM ERRO POR TERMOS ALTERADO 
+
+ O 
+
+ VALOR 
+
+ Da 
+
+ CONSTANT que 
+
+
+ o abriga...
+
+
+
+
+
+
+
+
+
+ PROFESSOR ESCREVE:
+
+
+
+
+const hobbies = ['Sports', 'Cooking'];
+
+
+ hobbies.push('BOWLING');
+
+
+console.log(hobbies);
+
+
+
+
+
+
+
+
+--> ISSO VAI NOS RETORNAR 
+
+
+O OUTPUT 
+
+
+DE 
+
+
+
+
+['Sports', 'Cooking', 'BOWLING'];,
+
+
+
+
+e não 
+
+vereoms 
+
+
+
+NENHUM 
+
+ERRO 
+
+ACERCA 
+
+
+
+
+
+
+DE NOSSA CONSTANTE...
+
+
+
+
+
+
+
+
+
+
+--------> PQ ISSO ACONTECE?
+
+
+
+
+
+
+------> A RAZÃO PARA ISSO É QUE REFERENCE TYPES __ SÓ __ 
+
+ARMAZENAM 
+
+
+
+1 'ADDRESS' 
+
+APONTANDO AO PONTO NA MEMORY EM QUE 
+
+
+
+
+
+ESSE ARRAY ESTÁ ARMAZENADO.... --> E ESSE 
+
+
+
+'POINTER'
+
+
+
+___ NÃO MUDOU/NÃO MUDA___ QUANDO 
+
+
+
+
+NÓS FAZEMOS 
+
+
+
+'ADD' 
+
+DE UM NOVO ELEMENTO 
+
+A 
+ESSE 
+
+ARRAY 
+
+REPRESENTADO PELO POINTER... -------> ENTÃO A COISA 
+
+ARMAZENADA 
+
+NESSA 
+
+'CONST'
+
+É 
+
+SÓ ESSE POINTER,
+
+E 
+
+ESSE 
+POINTER 
+
+
+NÃO MUDOU,
+
+
+por isso
+
+
+
+ O VALUE DE NOSSA CONST NÃO MUDOU (e por isso não recebemos um erro)... -----> 
+
+
+
+
+ A COISA __ A QUE __ ESSE POINTER APONTA__ REALMENTE MUDOU,
+
+
+ MAS __ ISSO NÃO MUDA NEM UM POUCO AQUI,
+
+ PQ 
+
+ O 
+
+ POINTER EM SI N MUDOu (e é isso que a const armazenou/armazena)....
+
+
+
+
+
+
+
+
+ ------> E ISSO VOCÊ TEM QUE ENTENDER PARA QUE 
+
+ VOCÊ NÃO FIQUE 
+
+ CONFUSO 
+
+
+
+
+
+ QUANDO 
+
+ NÓS 
+
+ 'DO  ''''EDIT'''' A CONSTANT VALUE''' .... --> isso pq 
+
+
+ NÃO VAMOS 
+
+ EDITAR A COISA QUE ESTÁ ARMAZENADA NA CONSTANT,
+ E SIM 
+
+
+
+ ESTAREMOS ALTERANDO 
+
+ 'THE THING AT WHICH 
+
+ THE 
+
+ CONSTANT POINTS AT (o objeto na memória)'....

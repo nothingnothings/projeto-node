@@ -1,0 +1,3452 @@
+
+
+
+
+
+
+
+--> SETUP E VALIDATION BÁSICA....
+
+
+
+
+
+
+
+-> VOLTAMOS AO NOSSO PROJETO, E O PROFESSOR NOS DIZ QUE 
+
+
+
+JÁ TEMOS O PRIMEIRO 'CASE'
+
+EM QUE 
+
+PODERÍAMOS/PODEMOS ADICIONAR VALIDATION... --> ELE 
+
+FALA 
+
+DA 
+
+PAGE 
+
+DE 
+
+'login' e ' signup'... 
+
+
+
+
+
+
+
+
+--------> OK.. LÁ 
+
+
+NOS VAMOS QUERER 
+
+'VALIDATE',
+
+
+
+
+
+___ vamos querer __ ASSEGURAR__ QUE 
+
+
+
+
+O 
+
+
+'EMAIL ADDRESS'
+
+é 
+
+um 
+
+EMAIL ADDRESS VÁLIDO,
+
+
+
+
+
+__ COM um '@' e um '.com'....
+
+
+
+
+
+
+
+-----> NÓS TAMBÉM VAMOS QUERER _ QUE 
+
+
+
+
+O 
+
+
+PASSWORD 
+
+TENHA 
+NO MÍNIMO 
+
+
+
+6 
+
+
+CARACTERES, COMO REQUISITO...
+
+
+
+
+
+
+
+
+--> E AÍ, VAMOS QUERER QUE 
+
+O 
+
+
+
+FIELD DE 'confirm password'
+
+
+MATCHEIE 
+
+O 
+
+
+
+
+FIELD 
+DE 
+
+'password'... (isso seria HELPFUL também...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> AÍ, MAIS TARDE,
+
+QUANDO CRIARMOS 
+
+
+
+1 PRODUCT 
+
+
+
+
+
+____ EM QUE __ INPUTTAMOS 
+
+
+
+1 
+
+
+URL (imageUrl),
+
+
+
+___TALVEZ QUEIRAMOS __ FAZER VALIDATE TBM,
+
+VALIDAR QUE ESSA 
+
+É 
+
+'A VALID URL' também....
+
+
+
+
+
+
+
+
+
+
+
+-----> E ESSAS COISAS TODAS __ SÕA COISAS QUE PODEMOS ADICIONAR COM A AJUDA 
+
+DE 
+
+
+'PROPER VALIDATION'... --> e isso 
+
+É 
+
+
+
+
+
+EXATAMENTE O QUE 
+O PROFESSOR 
+
+
+NOS MOSTRARÁ...
+
+
+
+
+
+
+
+
+
+
+
+----------> PARA ADICIONAR VALIDATION,
+
+
+PROFESSOR 
+
+APONTA QUE 
+TEREMOS 
+
+
+DE 
+
+USAR 
+
+
+1 
+
+PACKAGE ESPECIAL... ---> A PACKAGE QUE USAREMOS 
+
+
+
+
+CHAMA-SE 
+
+
+
+
+'express-validator'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> rodamos 
+
+'npm install --save express-validator'...
+
+
+
+
+
+
+
+
+
+--> HÁ UNS DOCS COMPLEXOS...
+
+
+
+
+
+
+
+
+
+-->  OK... --> 
+
+
+
+
+
+
+HÁ BASTANTES DETALHES SOBRE 'SANITIZATION',
+
+
+
+
+custom error messages, 
+
+wildcards,
+
+
+schema validation, etc....
+
+
+
+
+
+
+
+
+
+
+
+-------------> OK...
+
+
+
+
+
+
+
+PROFESSOR PEDE QUE 
+
+O INSTALEMOS....
+
+
+
+
+
+
+
+
+
+--> DE VOLTA AO NOSSO PROJETO,
+
+
+
+
+PODEMOS 
+
+
+
+
+
+escrever npm install --save express-validator...
+
+
+
+
+
+
+
+
+
+-------------> OK... AGORA DEVEMOS VER COMO PODEMOS USAR O 
+
+
+'express-validator'...
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ UQE 
+
+
+
+DEVEMOS COMEÇAR PELAS ROUTES/CONTROLLERS DE 
+
+'auth.js'...
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE 
+
+
+
+
+TEMOS 
+
+
+TANTO 
+
+
+
+
+OS CONTROLLERS COMO 
+
+
+AS 
+
+
+
+routes, na pasta 'routes'... --> ELE NOS DIZ QUE
+
+
+TIPICAMENTE__ VAMOS QUERER 
+
+
+'VALIDATE'
+
+
+__LÁ 
+
+
+NAS SUAS ROUTES DE 
+
+
+
+'POST',
+
+
+
+
+OU SUAS ROUTES QUE NÃO SÃO DE 'GET',
+
+
+
+
+ISSO 
+
+
+
+
+_ PQ VOCÊ VAI QUERER 'VALIDATE' 
+
+SEMPRE 
+
+QUE 
+
+O 
+
+USER __ FIZER __ SEND DE DATA__ A VOCÊ _,
+
+
+
+
+
+E ESSE NÃO É O CASO 
+
+COM 
+
+AS ROUTES 
+
+de 
+
+'get'....
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA O POST DE 'LOGIN' data',
+
+
+
+
+COMO VISTO EM 
+
+
+
+''
+
+router.post('/login', 
+
+
+
+authController.postLogin
+
+)
+
+
+
+'',
+
+
+
+
+
+
+
+
+OU O POST 
+
+DE 
+
+SIGNUP DATA,
+
+
+
+
+
+
+
+
+
+____ VAMOS QUERER __ FAZER 
+
+
+___VALIDATE__ DESSA DATA... -----> E O PROFESSOR APONTA QUE 
+
+
+DEVEMOS 
+
+__COMEÇAR__ PELO 
+
+
+
+
+'signup',
+
+
+
+pelo 
+
+
+
+
+
+
+
+'
+
+
+router.post(
+    '/signup',
+    authController.postSignup
+)
+
+
+
+
+
+
+
+'
+
+
+
+
+
+
+
+--> DIGAMOS QUE 
+
+QUEREMOS 
+
+
+ADICIONAR 
+
+
+
+
+ALGUMA VALIDATION A ESSA ROUTE... --> E QUEREMOS ASSEGURAR 
+
+
+
+QUE:
+
+
+
+1) nosso email É UM EMAIL,
+
+
+
+
+2) QUE O PASSWORD TEM NO MÍNIMO 5 CARACTERES 
+
+
+
+
+3) O CONFIRM PASSWORD 
+
+
+
+
+MATCHEIE O 
+
+
+'password'...
+
+
+
+
+
+
+
+
+
+
+
+---> NO MEU CÓDIGO ATUAL, EU HAVIA ESCRITO ISTO AQUI, PARA TENTAR FAZER O 'confirm password':
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+
+
+
+
+
+
+
+
+
+
+  ------------------------------------------
+
+
+
+
+
+
+
+
+  NÃO SEI SE ESSE MEU CÓDIGO ESTAVA CERTO/ESTÁ CERTO...
+
+
+
+
+
+
+
+
+
+  -----> PARA ADICIONAR 
+
+
+
+
+  ESSE TIPO DE VALIDATION, COM 
+
+  ESSA 
+  PACKAGE DE 
+
+
+  'express-validator'
+
+
+
+  INSTALADA,
+
+
+
+
+
+
+  O PROFESSOR DIZ QUE 
+
+  LÁ 
+
+
+  em 
+
+
+
+  'auth.js'
+
+
+  _NÓS _dEVEMOS __ IMPORTAr__ ALGO DESSA PACKAGE...
+
+
+
+
+
+
+
+
+
+
+  -----> PROFESSOR ESCREVE 
+
+
+  'const expValidator = require('express-validator');'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> OK... MAS PROFESSOR NOS EXPLICA QUE A SINTAXE DE IMPORT VAI PARECER UM POUCO DIFERENTE,
+
+  AQUI...
+
+
+
+
+
+
+
+  --> VAMOS QUERER IMPORTAR__ APENAS 1 SUBPACKAGE de 
+
+
+  'express-validator',
+
+
+(isso pq o express-validtor é COMPOSTO DE ALGUMAS SUBPACKAGES, você poderia dizer...)
+
+
+
+
+
+
+
+
+
+------> E É POR ISSO QUE VAMOS ESCREVEr 
+
+
+
+'express-validator/check',
+
+
+
+PQ 
+
+
+ESSA 
+
+APCAKGE 
+
+
+DE 
+
+
+'check'
+ 
+
+
+
+ É A PACKAGE QUE _ VOCÊ USA _ PARA TODA E QUALQUER 'VALIDATION LOGIC'
+
+ QUE 
+
+ VOCê 
+ QUER 
+
+ ADICIONAR NO SEU PROJETO...
+
+
+
+
+
+
+ EX:
+
+
+
+
+ 
+
+const expValidator = require('express-validator/check'); ////SE VOCÊ QUER ADICIONAR 'VALIDATION LOGIC' AO SEU SERVERSIDE CODE, importe essa package  DE 'check', dentro da package de 'express-validator'....
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR COMPLEMENTA AINDA MAIS... ----> ele NOS DIZ QUE 
+
+
+
+__NÓS AINDA PODEMOS USAR UMA 
+
+
+FEATURE NEXTGEN JAVASCRIPT EM CIMA 
+
+
+desse 
+
+
+''
+
+
+
+const expValidator = require('express-validator/check'); ////SE VOCÊ QUER ADICIONAR 'VALIDATION LOGIC' AO SEU SERVERSIDE CODE, importe essa package  DE 'check', dentro da package de 'express-validator'....
+
+
+'',
+
+
+
+
+
+
+QUE PODEMOS,
+
+
+
+
+___ COMO 'expValidator'
+
+
+É _ UM OBJETO JAVASCRIPT__, 
+
+USAR 
+
+
+AQUELA 
+
+FEATURE 
+
+CHAMADA 
+
+DE 
+
+
+'destructuring' (CONST {} = xx, xx, xx),
+
+
+
+PARA QUE 
+
+
+
+__ENTÃO __ 
+
+
+
+ESCREVAMOS __ ALGUNS PROPERTY __ NAMES _ QUE 
+
+VOCÊ 
+
+
+QUER/VAI QUERER 
+
+'PULL OUT' 
+
+
+dessa package de 'check'/objeto 'check'... ------>   É POR ISSO QUE 
+
+AQUI O 
+
+PROFESSOR 
+
+ESCREVE:
+
+
+
+
+
+
+
+const  {  } = require('express-validator/check');
+
+
+
+
+
+
+
+
+
+
+-> ELE ESCREVE ASSIM:
+
+
+
+
+
+const  { check,   } = require('express-validator/check');
+
+
+
+
+
+
+
+
+
+
+
+
+----> ESSA PROPRIEDADE 'check' VAI __ SEGURAR_ 1 FUNCTION, QUANDO VOCÊ A ESCREVER/ESCREVE ASSIM....
+
+
+
+
+
+
+
+------> COMO SEGUNDO NEGÓCIO, PODEMOS ESCREVER 'validationResult', que 
+
+é 
+
+O SEGUNDO OBJETO existente em 'express-validator/check',
+
+
+
+
+APESAR DE QUE 
+
+
+__NÃO VAMOS PRECISAR_ DISSO AGORA,
+
+E SIM 
+APENAS
+MAIS TARDE...
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+const { check, validationResult, } = require('express-validator/check');
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ADMITE QUE EXISTEM OUTRAS FUNCTIONS QUE PODEMOS APRENDER,
+
+MAS QUE 
+
+AÍ DEVEMOS LER OS DOCS..
+
+
+
+
+
+
+
+----> OK... O QUE ISSO FAZ, NO FINAL, 
+
+É 
+
+
+NOS 
+
+
+
+DAR 
+
+1 FUNÇÃO DE 'CHECK'
+
+
+
+
+
+
+QUE __ IMPORTAMOS__ 
+
+
+DESSA PACKAGE DE 'express-validator/check'...
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+--> AGORA, COM ISSO,
+
+ADICIONAR 'VALIDATION'
+
+A UMA ROUTE/CONTROLLER 
+
+É __ ALGO REALMENTE_ MT SIMPLES... -------> 
+
+
+
+
+
+
+
+
+NESSA ROUTE DE 'signup',
+
+
+
+
+
+DE TIPO 'POST',
+
+
+SE VOCÊ _____QUER __ ADICIONAR VALIDATION__, BASTA/É SÓ VOCÊ 
+
+
+
+
+
+
+ADICIONAR UM NOVO MIDDLEWARE 
+
+entre 
+
+
+
+
+'/login' e 'authController.postLogin'...
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+// const expValidator = require('express-validator/check'); ////SE VOCÊ QUER ADICIONAR 'VALIDATION LOGIC' AO SEU SERVERSIDE CODE, importe essa package  DE 'check', dentro da package de 'express-validator'....
+
+const { check, validationResult, } = require('express-validator/check');
+
+
+const authController = require('../controllers/auth');
+
+const router = express.Router();
+
+router.get(
+  '/login',
+
+  authController.getLoginPage
+);
+
+router.post(
+  '/login',
+
+
+    ////CÓDIGO VAI AQUI, CÓDIGO IMPORTADo..
+  authController.postLogin
+);
+
+router.post(
+  '/logout',
+
+  authController.postLogout
+);
+
+router.get(
+  '/signup',
+
+  authController.getSignupPage
+);
+
+router.post('/signup', authController.postSignup);
+
+router.get('/reset-password', authController.getResetPassword);
+
+router.post('/reset-password', authController.postResetPassword);
+
+router.get('/reset-password/:token', authController.getNewPasswordPage);
+
+router.post('/new-password', authController.postNewPassword);
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok, isso significa QUE 
+
+TEREMOS DE ADICIONAR UM __ NOVO MIDDLEWARE A ESSE ARQUIVO 
+
+
+'auth.js'...
+
+
+
+
+
+
+
+
+-------> ok..... 
+
+
+
+
+O PROFESSOR VAI ADICIONAR UM NOVO 
+
+
+middleware no meio desse código...
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+const express = require('express');
+
+// const expValidator = require('express-validator/check'); ////SE VOCÊ QUER ADICIONAR 'VALIDATION LOGIC' AO SEU SERVERSIDE CODE, importe essa package  DE 'check', dentro da package de 'express-validator'....
+
+const { check, validationResult, } = require('express-validator/check');
+
+
+const authController = require('../controllers/auth');
+
+const router = express.Router();
+
+router.get(
+  '/login',
+
+  authController.getLoginPage
+);
+
+router.post(
+  '/login',
+
+
+  check(),  ////CÓDIGO VAI AQUI, CÓDIGO IMPORTADo..
+  authController.postLogin
+);
+
+router.post(
+  '/logout',
+
+  authController.postLogout
+);
+
+router.get(
+  '/signup',
+
+  authController.getSignupPage
+);
+
+router.post('/signup', authController.postSignup);
+
+router.get('/reset-password', authController.getResetPassword);
+
+router.post('/reset-password', authController.postResetPassword);
+
+router.get('/reset-password/:token', authController.getNewPasswordPage);
+
+router.post('/new-password', authController.postNewPassword);
+
+module.exports = router;
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK.... -->
+
+
+
+
+
+ router.post(
+  '/login',
+
+
+  check(),  ////CÓDIGO VAI AQUI, CÓDIGO IMPORTADo..
+  authController.postLogin
+);
+
+
+
+
+
+
+
+----> VOCê COLOCA UM EXTRA MIDDLEWARE de 'expValidator'
+
+
+AÍ DENTRO, essa function de 'check()'
+
+
+
+
+
+
+
+
+
+--> E O INTERESSANTE, AQUI, É QUE O CALL DESSE 
+
+'check()'
+
+
+vai, AUTOMATICAMENTE,
+
+
+ME ___ RETORNAR 1 MIDDLEWARE__...
+
+
+
+
+
+
+
+certo.... --> e é claro que vamos passar algo  
+
+
+como parâmetro desse call de 'check()' -->  
+
+
+
+
+
+
+
+
+
+
+VAMOS PASSAR
+
+
+
+OU:
+
+
+
+
+1) UM 'FIELD NAME' (só 1 )
+
+
+
+
+OU 
+
+
+
+2) __ UM __ARRAY__ DE FIELDS__ QUE 
+
+EU VOU QUERER CHECK (quando quero checar múltiplos inputs...)
+
+
+
+
+
+
+
+
+
+
+
+-----> ok, mas como isso funciona?
+
+
+
+
+
+
+BEM, 
+
+
+
+A ÚNICA COISA QUE TEMOS QUE FAZER É 
+
+ESCREVER 
+
+
+'check('nossoFieldName');'
+
+
+
+
+
+
+
+------------> POR EXEMPLO, NA NOSSA VIEW NOMEAMOS ELES ASSIM:
+
+
+
+
+
+
+
+
+
+         <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+
+
+
+
+
+
+---> COMO VOCÊ PODE OBSERVAR,
+
+
+NÓS NOMEAMOS 
+
+
+esse 
+
+
+
+field como 'email',
+
+
+POR ISSO 
+
+V
+AMOS USAR 
+
+
+'email'
+
+nesse 
+
+call de 'check'...
+
+
+
+(
+
+    ou seja, temos que PROCURAR O VIEW QUE VAI SER RENDERIZADO NESSA NOSSA ROUTE EM QUE 
+
+    ESTAMOS COLOCANDO ESSE MIDDLEWARE, E AÍ QUANDO ACHARMOS ESSE VIEW,
+
+
+    VAMOS __ PROCURAR__ O INPUT FIELD__ DE DENTRO DESSE VIEW QUE VAMOS QUERER QUE SEJA 
+
+    'VALIDATED'...
+)
+
+
+
+
+
+----> OK....  ----->
+
+
+
+
+
+É POR ISSO QUE 
+
+ESCREVEMOS:
+
+
+'check('email');'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK, ISSO AÍ VAI 
+
+
+
+'TELL THIS MIDDLEWARE/EXPRESS VALIDATOR 
+
+
+__ QUE __ NÓS ESTAMOS ___ INTERESSADOS__ EM 
+
+CONFIRMAR __ SE ESSE EMAIL AÍ É VÁLIDO OU NÃO..." ------->  ESTOU INTERESSADO 
+
+
+EM 
+
+
+'VALIDATING THAT VALUE'...
+
+
+
+
+
+
+
+
+
+Ex(até agora):
+
+
+
+
+
+
+
+
+
+router.post(
+    '/signup', check('email'), authController.postSignup
+)
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+ok.... MAS NÃO ACABAMOS POR AQUI... --> AÍ NÓS _ _VAMOS CHAMAR__ 
+
+
+
+
+1 'METHOD' EM 
+
+
+CIMA 
+
+DE
+
+
+
+'check('email')',
+
+
+
+__ E É _ _ESSE METHOD __ QUE 
+
+VAI 
+
+SER 
+
+REALMENTE 
+
+'UNDERSTOOD BY EXPRESSJS'... ------->  ISSO QUER 
+
+
+DIZER QUE 
+
+VAMOS 
+
+
+
+CHAMAR 1 METHOD NESSE OBJECT __ QUE É __ RETORNADO __ PELA 
+
+
+FUNCTION 
+
+DE 
+
+'check('email')',
+
+
+
+
+
+
+E __ É ESSE METHOD__ QUE 
+
+VAI 
+
+NOS 
+
+DEIXAR 
+
+
+
+
+'DO ALL KINDS OF CHECKS'...
+
+
+
+
+
+
+
+
+POR EXEMPLO,
+
+
+PROFESSOR VAI QUERER __ CHECAR__ SE 
+
+
+
+
+'isEmail()'   (ESSE É UM DOS BUILT-IN METHODS.... --> HÁ 
+
+
+UM MONTE DE 
+
+
+BUILT-IN METHODS,
+
+E O PROFESSOR 
+
+
+VAI NOS MOSTRAR ONDE PODEMOS OS ENCONTRAR DAQUI A POUCO...
+
+
+)
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+router.post(
+    '/signup', check('email').isEmail(), authController.postSignup
+)
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+OK.... 
+
+
+VAMOS CHECAR 
+
+
+
+'isEmail()'
+
+
+
+
+
+
+
+
+--> O QUE ESSE METHOD AÍ VAI FAZER _É 'USE THIS PACKAGE'
+
+
+PARA __ CHECAR___ SE 
+
+
+O 
+
+FIELD 
+
+'EMAIL'
+ 
+
+
+ NO INCOMING REQUEST (e ele 
+ 
+ VAI PROCURAR 
+ 
+ 
+ POR 
+ 
+ ESSE 
+ 
+
+ 'field' 
+
+
+ NO BODY, NOS QUERY PARAMS,
+  
+
+
+  NOS HEADERS, NOS COOKIES,
+
+
+  em todos esses lugares ele vai procurar por um 
+
+  field 
+  de 
+
+
+  'email'... -----------> E AÍ, 
+
+
+  ELE 
+
+
+  VAI 
+
+  ENCONTRAR ESSE 
+
+
+ FIELD, NÃO INTERESSA O LUGAR EM QUE ELE ESTÁ,
+
+
+
+ __ E AÍ __ VAI 'CHECK IF THAT IS A VALID EMAIL ADDRESS'...
+ 
+ 
+ 
+ ) ---------->  E ESSE __ É O PRIMEIRO PASSO__ 
+
+
+ PARA 
+
+ VALIDARMOS 
+
+
+ O INPUT DO USER....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> O CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+ 
+router.post(
+    '/signup', check('email').isEmail(), authController.postSignup
+)
+
+
+
+
+
+
+
+
+
+
+-------> COM ISSO, AGORA TEMOS ESSE MIDDLEWARE 
+
+de 
+
+
+'check('email').isEmail()'
+
+
+
+___POSICIONADO/NO LUGAR,
+
+
+
+
+
+E __ AGORA __ PODEMOS ___ _IR 
+
+
+ATÉ 
+
+
+
+
+
+
+___ O NOSSO CONTROLLER __ DE 
+
+'auth.js',
+
+
+
+
+
+
+O ARQUIVO,
+
+
+EM QUE 
+
+
+
+__PODEMOS__ 
+
+
+
+IMPORTAR 
+
+
+
+
+
+
+
+_________OUTRA PARTE_ DESSA PACKAGE DE 'express-validator'... ------> vamos QUERER 
+
+
+IMPORTAR 
+
+
+
+
+
+
+___ ALGO ___ COM  AQUELA SYNTAX DE DESTRUCTURING... -------> 
+
+
+
+
+
+
+--> VAMOS USAR A SINTAXE DE DESTRUCTURING PQ ESSA 
+
+PACKAGE 
+
+DE 
+
+
+
+'express-validator' __ REALMENTE__ EXPÕE UMA PORRADA DE COISAS,
+
+
+E SÓ VOU QUERER 
+
+ALGUMAS 
+
+
+DE SUAS 'FEATURES'...
+
+
+
+
+
+
+
+
+ESCREVEMOS:
+
+
+
+
+
+'const { validationResult } = require('express-validator/check');' 
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER IMPORTAR, PORTANTO, 
+
+
+'validationResult'...,
+
+
+
+
+essa package/objeto aí...
+
+
+
+
+
+
+
+
+
+
+
+
+---> OBS::: a sintaxe aqui é quase que intuitiva,
+
+pois lemos 
+
+
+
+'check: is xxx Email() ?' 
+
+
+resultado: '''check('email').isEmail() '''
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+OK... MAS VOLTANDO AO 
+
+
+'validationResult':
+
+
+
+
+
+
+
+
+
+--> VALIDATIONRESULT SERÁ UMA FUNCTION QUE __ VAI 
+
+
+NOS DEIXAR 'GATHER ALL THE ERRORS'
+
+
+________ QUE AQUELE MIDDLEWARE 
+
+DE 
+
+
+'check('email').isEmail()' (EXTRAÍDO LÁ DO EXPRESS-VALIDATOR) __ PODE TER 
+
+DADO 
+
+
+THROW...
+
+
+
+
+
+
+-----------------------
+
+
+OK... FICOU TIPO ASSIM ('auth.js'):
+
+
+
+
+
+
+const crypto = require('crypto'); /////PACKAGE 'BUILTIN' DO NODEJS... ---> EXPLICAÇÃO: É UMA LIBRARY QUE __ NOS AJUDA A 'CREATE SECURE UNIQUE RANDOM VALUES' (e outras coisas, mas essa é a principal)....
+
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer'); ////USADO PARA __ FAZER O HANDLE/SEND DE EMAILS DENTRO DE NOSSO APP NODE....
+const sendgridTransport = require('nodemailer-sendgrid-transport'); ////USADO PARA __ FAZER O HANDLE/SEND DE EMAILS DENTRO DE NOSSO APP NODE....
+
+const { validationResult } = require('express-validator');// --> VALIDATIONRESULT SERÁ UMA FUNCTION QUE __ VAI NOS DEIXAR 'GATHER ALL THE ERRORS' ________ QUE AQUELE MIDDLEWARE   DE  'check('email').isEmail()' (EXTRAÍDO LÁ DO EXPRESS-VALIDATOR) __ PODE TER   DADO  THROW...
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+--> CERTO... --> ISSO FEITO,
+
+SÓ TEMOS QUE 
+
+
+
+IR ATÉ A ROUTE DE 
+
+
+'exports.postSignup',
+
+PQ 
+
+
+
+__ É 
+
+
+NESSA __ ROUTE_/CONTROLLER COMBO QUE __ EU 
+
+ADICIONEI 
+
+
+
+O MIDDLEWARE 
+de 
+
+'check('email').isEmail()',
+
+
+
+
+
+
+
+
+
+
+
+QUE TEM UM CÓDIGO DE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+
+NESSE CONTROLLER AÍ,
+
+PROFESSOR EXPLICA QUE PODMEOS 
+
+'
+SIMPLY EXTRACT OUR ERRORS'
+
+
+e então 
+
+
+OS ARMAZENAR 
+
+EM UMA CONSTANTE,
+
+de nome 
+
+'errors'.... -------------> 
+
+
+
+
+
+PARA CONSEGUIR 
+
+ISSO,
+
+
+
+CHAMAMOS 
+
+
+'validationResult()'
+
+
+
+E ENTÃO __ PASSAMOS, COMO PARÂMETRO__, O OBJETO 'REQUEST'
+
+em si...
+
+
+
+
+
+EX:
+
+
+
+
+
+const errors = validationResult(req);
+
+
+
+
+
+
+----------------------------
+
+
+
+
+CÓDIGO COMPLETO FICA ASSIM:
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  const errors = validationResult(req);
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        // return res
+        //   .status(400)
+        //   .json({
+        //     message:
+        //       'An user with that email already exists, please use a different email address.',
+        //   });
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+OK, MAS PQ PASSAR ESSE OBJETO 'request'?
+
+
+
+
+
+
+
+--> É PQ 
+
+
+ESSE MIDDLEWARE DE 'check()',
+ 
+ adicionado/importado lá do EXPRESS-VALIDATOR,
+
+
+ __ JÁ __ VAI 
+
+ TER 
+
+ ADICIONADO __ ERRORS__
+
+
+
+
+ ___ NO NOSSO REQUEST,
+
+ ERRORS 
+ QUE 
+
+ PODERÃO/PODEM 
+
+
+ SER 
+
+ RETRIEVED 
+
+ por meio
+
+
+ desse call de 
+
+
+ 'validationResult()'... ---------> 
+
+
+
+
+ COM ISSO,
+
+
+
+
+ POR MEIO DE 
+
+
+
+ ''
+
+
+ 
+ 
+router.post(
+    '/signup', check('email').isEmail(), authController.postSignup
+)
+
+
+
+'''
+
+
+
+e 
+
+
+
+
+''  
+
+
+const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+
+'',
+
+
+VAMOS CONSEGUIR 
+
+'STORE ERRORS'/COLLECT ERRORS QUE 
+
+
+
+
+
+encontramos 
+
+no objeto 
+
+'errors',
+
+
+por assim dizer.... --> E ESSE 'validationResult(req)'
+
+
+
+VAI JUSTAMENTE 
+
+'GO THROUGH THAT ERROR OBJECT', MANAGEADO PELO MIDDLEWARE no request,
+
+
+E AÍ 
+
+__ VAI 
+COLECIONAR TODOS ESSES ERRORS
+NESSA 
+
+CONST 
+
+de 
+
+
+
+'errors'..
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+--------> E AÍ, A PARTIR DESSA CONST de 'errors' que críamos,
+
+
+PODEMOS EXECUTAR 
+
+__CHECKS__ PARA 
+
+
+CONSTATAR/CHECAR _ _ 
+
+
+
+
+
+
+
+SE ___REALMENTE
+
+
+
+TEMOS 
+
+ERRORS... ---------> ok, mas como isso funciona^?
+
+
+
+
+
+
+
+BEM, PRIMEIRAMENTE TEMOS O CÓDIGO COMPLETO DO CONTROLLER:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+PARA CHECAR ISSO,
+
+
+
+
+
+
+escrevemos 
+
+
+'if(errors)',
+
+
+
+
+E AÍ 
+
+O 
+
+PROFESSOR 
+
+DIZ QUE 
+
+EXISTIRÁ 
+
+
+
+1 METHOD QUE PODEMOS/PODEREMOS CHAMAR 
+
+
+NESSA 
+
+
+
+const/array 
+
+de 
+
+'errors',
+
+QUE 
+
+
+É 
+
+
+O METHOD 
+
+de  
+
+
+
+
+
+
+'isEmpty()' -------------> ESSE METHOD __ VAI SEMPRE RETORNAR _ OU 
+
+
+
+_____tRUE___ OU FALSE__, 
+
+
+DEPENDENDO ___ 
+
+
+SE O OBJETO 'errors' estiver cheio de errors ou não..
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+        if(errors.isEmpty())  { }//////EIS O CÓDIGO EM QUESTÃO.
+
+  if (password !== confirmPassword) {
+
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+CERTO, ESSE NEGÓCIO VAI NOS RETORNAR 'TRUE' OU 'FALSE',
+
+
+DEPENDENDO 
+
+
+
+DO RECEIVE OU NÃO DE ERRORS NO NOSSO MIDDLEWARE...
+
+
+
+
+
+
+
+
+
+---------> E SE ESSE NEGÓCIO __NÃO FOR EMPTY (bang operator),
+
+
+
+
+
+
+
+VAMOS ___ QUERER __ RETORNAR UMA RESPONSE 
+
+
+
+
+
+EM QUE __ 
+
+
+ENVIAMOS ___ 
+
+
+
+UM STATUS DE 
+
+'422' (É  UM COMMON STATUS CODE QUE SINALIZA 'A VALIDATION FALHOU'... É UM 
+
+ERROR STATUS CODE...) --------->
+
+
+
+
+ISSO FARÁ COM QUE 
+
+
+UMA RESPONSE AINDA SEJA ENVIADA, SÓ 
+
+SERÁ 
+UMA 
+
+
+RESPONSE COM ESSE STATUS CODE 1 POUCO DIFERENTE...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+        if(errors.isEmpty())  {
+
+          return res.status(422);  //////EIS O CÓDIGO EM QUESTÃO.
+
+         }
+
+  if (password !== confirmPassword) {
+
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, ///////EIS O CÓDIGO EM QUESTÃO.
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+--------> MAS PROFESSOR NÃO ACABOU POR AQUI... --> ALÉM DE CHAMAR 
+
+
+
+'res.status(422)',
+
+
+PROFESSOR VAI QUERER _ CHAINAR___ O METHOD '.render()',
+
+PARA 
+
+
+QUE 
+
+
+FORCEMOS ___ A PÁGINA A SER __ RENDERED __ MAIS UMA VEZ...
+
+
+
+
+
+
+
+--> EX:
+
+
+The res.render() function is used to render a view 
+and sends the rendered HTML string to the client. 
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+OU SEJA, SE_ __ FALHARMOS_, VAMOS QUERER __ SIMPLESMENTE 'RENDER THE PAGE AGAIN'...
+
+
+
+
+
+
+
+
+----> para RENDERIZAR A PAGE DE NOVO,
+
+
+VAMOS PRECISAR 
+
+DAQUELES 
+
+
+
+PARÂMETROS 
+de 
+
+
+
+''
+
+      'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: message,
+                }
+
+'''
+
+
+
+
+
+
+
+
+--> CÓDIGO COMPLETO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+  if(!errors.isEmpty()) { ///ou seja, se NOSSO OBJETO/ARRAY 'errors' __ NÃO ESTIVER EMPTY (ou seja, o email que o user inputtou é INVÁLIDO E GEROU ERRORS), vamos querer executar esse código do block...
+///isEmpty é um method que existe DENTRO DO OBJETO RETORNADO por 'validationResult(req'), e vai sempre retornar OU TRUE OU FALSE (dependendo se estiver VAZIO ou PREENCHIDO COM ERRORS)...
+    return res.status(422).render(
+                //OU SEJA, SE NÓS/USER (validation failed)_ __ FALHARMOS_, VAMOS QUERER __ SIMPLESMENTE 'RENDER THE PAGE AGAIN'.. ( E NÃO VAMOS REDIRECIONAR, E SIM __ APENAS RENDERIZAR A PAGE DE 'SIGNUP' MAIS UMA VEZ)...
+
+                'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: message,
+                }
+
+    ); 
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------------------------------> OK...
+
+
+
+
+
+
+
+  -_> MAS É CLARO QUE ___ 
+
+
+
+  PODEMOS ADICIONAR UMA COISINHA ESPECIAL NESSA PAGE... -----> PODEMOS 
+
+
+
+
+
+  ADICIONAR NOSSOS 'ERRORS'
+
+
+
+  nessa page,
+
+  BASTA SUBSTITUIR o 
+
+
+  'message' 
+
+
+  em 
+
+  'errorMessage: message' 
+
+  por 
+
+
+  'errorMessage: errors'...
+
+
+
+
+
+
+
+
+
+
+  --> MAS NÃO PODEMOS SÓ CHAMAR 'errors' SOLTO ASSIM,
+
+
+
+  temos que 
+
+  CHAINAR 
+
+  O METHOD DE 
+
+  '.array' 
+
+
+  PARA ___ 
+  RETORNAR 1 
+
+  'ARRAY OF ERRORS'...
+
+
+
+
+
+
+
+  ex:
+
+
+
+
+
+
+
+  exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); 
+
+
+  if(!errors.isEmpty()) { 
+    return res.status(422).render(
+              
+
+                'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: errors.array ////EIS O CÓDIGO EM QUESTÃO.
+                }
+
+    ); 
+
+  }
+
+
+
+
+
+
+
+  -------------------------------------------------
+
+
+
+
+
+
+
+
+
+  PROFESSOR FAZ UM CONSOLE.LOG de 
+
+  'errors.array()'
+
+  PARA 
+
+
+  VER O QUE 
+
+APARECEE...
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+-> PROFESSOR QUER DIGITAR 1 EMAIL INVÁLIDO NO INPUT FIELD 
+
+DE 
+
+'email',
+
+
+
+MAS AÍ O NOSSO BROWSER SIMPLESMENTE DIZ 
+
+'você não pode digitar esse email',
+
+PQ __ FALTA 
+
+@ e '.com'... ---------> PROFESSOR NOS EXPLICA IMEDIATAMENTE 
+
+QUE 
+
+ESSE 
+
+É 
+
+
+O 
+
+'DEFAULT BROWSER VALIDATION',
+
+que existe/trigga 
+
+
+
+JUSTAMENTE PQ 
+
+
+DEFINIMOS 
+
+'<input type="email" />',
+
+
+LÁ NA NOSSA VIEW...
+
+
+
+
+
+
+
+
+
+
+-> ISSO ADICIONA ESSA 'DEFAULT BROWSER VALIDATIOn' ---> MAS 1 
+
+COISA QUE VOCE PODE FAZER 
+
+
+
+
+
+
+______ PARA __BURLAR__ COMPLETAMENTE___ 
+
+
+ESSE 
+
+
+
+
+attribute de 'type=email'
+
+
+É 
+
+
+__ADICIONAR __ A BOOLEAN PROP/attribute 
+de 
+
+
+'novalidate' __ NA FORM__ QUE SEGURA ESSE 'input field',
+
+
+PARA ____ DESABILITAR 
+
+ESSE CHECK...
+
+
+
+
+OU SEJA,
+
+FICA TIPO ASSIM:
+
+
+
+
+                <div class="form-control" novalidate>
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email" >
+                </div>
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+ VOCê GERALMENTE VAI QUERER DEIXAR 
+
+ESSA VALIDATION 
+DEFAULT,
+
+
+PQ __ ELA É UMA 'CLIENTSIDE VALIDATION' QUE 
+
+
+___ BEM NICE,
+
+E QUE 
+
+MELHORA A USER EXPERIENCE... --------> MAS 
+
+AQUI, PARA VER 
+
+COMO 
+
+
+
+
+NOSSO VALIDATE FUNCIONA,
+
+
+como funciona o SERVERSIDE VALIDATE,
+
+
+PROFESSOR VAI DEIXAR 
+
+ESSE ATTRIBUTE AÍ __PARA __ 
+
+CONSEGUIR FAZER 
+
+'DELIBERATE MISTAKES'
+
+e 
+
+
+
+verificar como o 
+
+
+
+express-validator,
+
+o 
+
+'check' + 'isEmail()' 
+ 
+
+ e o 
+
+
+ 'validationResult' + 'isEmpty()'
+
+
+ FUNCIONAM...
+
+
+
+
+
+
+ OPS.... GANHEI 1 ERROR:
+
+
+
+
+
+
+ express-validator: requires to express-validator/check are deprecated.
+ You should just use require("express-validator") instead.
+
+
+
+
+
+
+
+
+
+--> OUTRA ALTERNATIVA PARA _BURLAR__ ESSE NEGÓCIO É SIMPLESMENTE 
+
+TROCAR O 
+
+
+
+'input type="email" ' 
+
+por 
+
+
+'input type="text" '...
+
+
+
+
+
+
+
+---> OK... MAS QUANDO FAÇO ESSA 'CAGADA',
+
+
+EU SIMPLESMENTE RECEBO:
+
+
+
+'[object Object]' ----> O QUE SIGNIFICA QUE ESTOU DISPLAYANDO O NEGÓCIO DE FORMA ERRADA...
+
+
+
+
+
+
+
+---> BEM, O OBJETO ERRORS FOI CONSOLE.LOGGADO ASSIM:
+
+
+[
+  {
+    value: 'mad',
+    msg: 'Invalid value',
+    param: 'email',
+    location: 'body'
+  }
+]
+
+
+
+
+
+
+
+
+
+--> PARA CONSERTAR MEU 
+DISPLAY DE ERROR,
+
+formatei meu código assim:
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req);
+
+
+  console.log(errors.array()[0].msg);
+
+  if(!errors.isEmpty()) {
+    return res.status(422).render(
+                //OU SEJA, SE NÓS/USER (validation failed)_ __ FALHARMOS_, VAMOS QUERER __ SIMPLESMENTE 'RENDER THE PAGE AGAIN'.. ( E NÃO VAMOS REDIRECIONAR, E SIM __ APENAS RENDERIZAR A PAGE DE 'SIGNUP' MAIS UMA VEZ)...
+
+                'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: errors.array()[0].msg //// EIS O CÓDIGO EM QUESTÃO.
+                }
+
+    ); 
+
+  }
+
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+----> OK, AGORA O SHOW DO ERROR FUNCIONOU... --> APARECEU:
+
+
+Invalid value
+
+
+NAQUELA 
+
+DIV 
+
+DE 
+
+ERROR QUE EU HAVIA ADICIONADO NOS MÓDULOS ANTERIORES...
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+----> ok.....
+
+
+
+
+
+
+deu certo..

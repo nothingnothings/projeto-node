@@ -1,0 +1,953 @@
+VAMOS TERMINAR DE VER AS FUNCIOALIDADES DE 'POST' 
+
+
+
+com o 'graphql'.... --> 
+
+
+
+
+
+PARA ISSO,
+
+
+DEVEMOS VER COMO 
+
+
+__DELETAR___ POSTS USANDO QUERIES GRAPHQL....
+
+
+
+
+
+--> COMEÇAMOS 
+
+
+
+PELO 
+
+
+
+
+'schema.js',
+
+
+EM QUE 
+
+VAMOS 
+
+DEFINIR UMA NOVA OPERAÇAÕ,
+
+OPERAÇÃO DE 'deletePost',
+
+
+
+lá nas 'RootMutation'....
+
+
+
+
+
+eu acho que vai ficar ASSIM:
+
+
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): Post!
+      updatePost(userInput: UserPostInputData, postId: ID!): Post!
+      deletePost(postId: ID!)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+------>
+
+vamos escrever SEM TER O RETURN DE DATA,
+
+PQ 
+NÃO VAMOS QUERER RETORNAR COISA ALGUMA COM O DELETE (não vamos querer retornar alguma data ao frontend)...
+
+
+
+
+
+
+
+
+
+
+--> https://stackoverflow.com/questions/44737043/is-it-possible-to-not-return-any-data-when-using-a-graphql-mutation
+
+
+
+
+
+
+-> NÃO É POSSÍVEL 'RETORNAR NADA'.... --> você é obrigado a retornar ALGUMA COISA, NO GRAPHQl...
+
+
+
+
+
+
+In case of deletion you are better off returning the product ID,
+
+ as suggested (since it's graphql, perhaps even the whole product). 
+ 
+ However, some operations truly require no data. For those cases one could define type Void
+ 
+  and then do someOperation(input: InputObject!): Void to indicate the intent clearly.
+
+
+
+
+
+
+
+
+
+
+------------
+
+
+
+
+
+OK.. 
+
+
+
+EU DIGITEI TODA A LÓGICA DE DELETE, MAS AINDA ASSIM 
+
+
+MEU POST NÃO ESTÁ SENDO DELETADO... (a página recarrega, mas ele não é deletado)....
+
+
+
+
+---> é pq eu tenho que RETORNAR O 'POSTID'
+
+lá  no meu resolver de 
+
+'deleteProduct',
+
+em 
+
+'resolvers.js':
+
+
+
+
+  deletePost: async function(args, req) {
+
+    const errors = [];
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+
+
+      const postId = args.postId;
+
+      const userId = req.userId;
+
+
+
+      const post = await Post.findOne({_id: ObjectId(postId)});
+3
+
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.code = 404;
+        throw error;
+      }
+
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.code = 403;
+        throw error;
+      }
+
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+     const removedPost = Post.findByIdAndRemove(postId); //isto já vai chamar 'save' para nós, nessa collection de 'Posts'...
+
+     const user = await User.findById(req.userId);
+
+     user.posts.pull(postId);
+
+     await user.save();
+
+
+
+     return postId;
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS ISSO AINDA NÃO FUNCIONOU...
+
+
+
+
+--> O ERROR É ESTE:
+
+
+"Field "deletePost" must not have a selection since type "ID!" has no subfields."
+
+
+
+
+
+
+
+
+--> para consertar isso, eu só tirei aquele 
+
+return de 
+
+'{
+    postId
+}
+
+'
+
+
+na minha query, em 'Feed.js'....---> 
+
+
+
+ISSO FEITO,
+
+
+
+
+
+
+AGORA O DELETE DE 1 POST ESTÁ FUNCIONANDO....
+
+
+
+
+
+
+
+O CÓDIGO DO FRONTEND FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+deletePostHandler = async (postId) => {
+    try {
+      this.setState({ postsLoading: true });
+
+
+
+      const graphqlQuery = {
+        query: `
+
+        mutation {
+              deletePost(postId: "${postId}") 
+        }
+        
+        `
+      }
+
+      const deleteResult = await fetch(
+        // `http://localhost:8080/feed/delete-post/${postId}`, ///versão REST API...
+        `http://localhost:8080/graphql`, ///VERSÃO _ GRAPHQL_...
+
+        {
+          method: 'POST',
+          // method: 'DELETE',
+
+          headers: {
+            //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+            Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(graphqlQuery)
+
+          // headers: {
+          //   'Content-Type': 'application/json',
+          // },
+          // body: JSON.stringify({ ///Não é mais necessário, pois não vamos mais querer extrair o 'postId' de dentro do BODY DO REQUEST de tipo 'POST', e sim vamos extrair LÁ DA URL DESSE REQUEST de method de tipo 'DELETE' (que nunca aceitam BODIES, deve-se relembrar...)
+          //   postId: postId,
+          // }),
+        }
+      );
+
+      // .then((res) => {
+      // if (deleteResult.status !== 200 && deleteResult.status !== 201) { ///VERSÃO DA REST API...
+      //   throw new Error('Deleting a post failed!');
+      // }
+
+
+
+      const manipulatedDeleteResult = await deleteResult.json();
+
+      console.log(manipulatedDeleteResult);
+
+
+      if(manipulatedDeleteResult.errors) {
+        throw new Error(
+          'Post delete failed'
+        )
+      }
+
+
+      this.loadPosts();
+
+      // return res.json();
+      // })
+      // .then((data) => {
+      // console.log(deleteResult);
+      // this.setState((prevState) => {
+
+      //   console.log(prevState.posts, postId);
+      //   const updatedPosts = prevState.posts.filter((post) => {
+
+      //     return post._id.toString() !== postId.toString();
+      //   });
+
+      //   return { posts: updatedPosts, postsLoading: false };
+      // });
+
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      console.log(err);
+      this.setState({ postsLoading: false });
+      // });
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+CERTO... SUCESSO...
+
+
+
+
+
+
+
+
+---------> 
+
+
+
+
+
+
+
+
+a versão do professor 
+
+
+
+
+
+começou de forma diferente...
+
+
+
+
+
+
+
+
+
+
+
+mas ele também 
+
+vai começar 
+
+pelo SCHEMA GRAPHQL de nosso proejto.... -- > MAS EM VEZ DE 
+
+RETORNAR 
+
+
+
+UM 'ID', como 
+
+
+
+FIZEMOS NO NOSSO SCHEMA, QUE FICOU ASSIM:
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): Post!
+      updatePost(userInput: UserPostInputData, postId: ID!): Post!
+      deletePost(postId: ID!): ID! 
+
+}
+
+
+
+
+
+
+
+-_> EM VEZ DE FAZER ISSO,
+
+
+ELE DECIDE _ RETORNAR UM 
+
+'
+Boolean!',
+
+QUE 
+
+VAI NOS INDICAR SE AQUELE POST FOI DELETADO OU NÃO...
+
+
+
+
+
+
+
+
+
+-------> MAS MAIS INTERESSANTE DO QUE 
+O 
+
+SCHEMA 
+
+É 
+
+O 
+
+RESOLVER 
+
+
+
+PARA 
+FAZER ESSE DELETE... 
+
+
+
+
+
+
+
+
+
+--> o professor extrai o 
+
+
+id 
+
+
+
+
+
+do 'postId'
+
+lá 
+
+
+
+de 
+
+'args',
+
+
+
+
+
+aí 
+
+ELE 
+
+
+
+
+CHECA O 
+
+'req.isAuth',
+
+
+
+
+PARA __ 
+
+QUE 
+
+CONSIGAMOS 
+
+
+
+CHECAR O STATUS DE AUTH DO USUÁRIO (tokens e etc, no localStorage)...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+VAMOS 
+
+
+
+
+DETERMINAR SE ESSE POST EXISTE,
+
+
+
+
+
+
+E SE 
+
+
+O 
+
+USER REALMENTE FOI RESPONSÁVEL PELA CRIAÇÃO DESSE USER (todas essas coisas são lógica que 
+
+já havíamos escrito anteriormente)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... TUDO CERTO...
+
+
+
+
+
+
+
+
+
+
+DEPOIS DE TUDO ISSO,
+ 
+
+ VAMOS QUERER 
+ D
+ ELETAR 
+
+
+
+ A 
+
+ IMAGE VINCULADA A ESSE POST,
+
+ por meio de 
+
+ 'fs.unlink',
+
+
+
+
+
+ QUE É O QUE FIZEMOS...
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+ deletePost: async function(args, req) {
+
+    const errors = [];
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+
+
+      const postId = args.postId;
+
+      const userId = req.userId;
+
+
+
+      console.log(userId, 'USERSID');
+
+
+
+      const post = await Post.findOne({_id: ObjectId(postId)});
+
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.code = 404;
+        throw error;
+      }
+
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.code = 403;
+        throw error;
+      }
+
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+     const removedPost = await Post.findByIdAndRemove(postId); //isto já vai chamar 'save' para nós, nessa collection de 'Posts'...
+
+
+      console.log(removedPost, 'XXXXXXXX');
+
+
+     const user = await User.findById(userId);
+
+     user.posts.pull(postId);
+
+     await user.save();
+
+
+
+     return postId;
+
+
+  }
+
+
+
+
+
+
+
+
+
+  -------------------------------------------
+
+
+
+
+
+
+  CERTO... ISSO ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+
+
+  --> o professor também executa 'await Post.findByIdAndRemove(postId)'...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> DEPOIS DISSO ELE TIRA O 'POST' de dentro do document/object 'User' correspondente/responsável por sua criação...
+
+
+
+
+
+
+
+
+  (
+
+
+      por meio do 'user.posts.pull(id)'
+
+
+      e 
+
+      depois 
+
+
+
+      'await user.save()'...
+
+
+
+
+
+  )
+
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR EXPLICA QUE 
+
+
+
+
+  PODERÍAMOS ADICIONAR 'TRY-CATCH'
+
+  em todos os nossos resolvers,
+
+  inclusive este,
+
+
+  para 
+
+  então 
+
+  retornar 
+
+
+  'true/false' ( o boolean em questão)
+
+
+  DEPENDENDO 
+
+
+  DO 
+
+  RESULTADO DESSA OPERAÇAÕ DE DELETE...
+
+
+
+
+
+
+
+
+
+  --> ENTRETANTO,
+
+  ELE ADMITE QUE PODERÍAMOS FAZER ISSO,
+
+  E QUE 
+  
+
+  ELE SÓ __ NÃO FEZ__ PQ QUERIA DEIXAR NOSSO CÓDIGO UM POUCO MAIS SIMPLES...
+
+
+
+
+
+
+
+
+
+  --------> eu retornei o 'postId',
+
+
+  PQ ESSA É UMA COMMON PRACTICE...
+
+
+
+
+
+
+
+
+
+  --> NO FRONTEND,
+
+
+  PROFESSOR VAI ATÉ 
+
+  'deletePostHandler'
+
+
+
+  E AÍ 
+
+
+  escreve 
+
+  as coisas 
+
+
+
+
+  clássicas....
+
+
+
+
+
+  ex:
+
+
+
+
+
+  const graphqlQuery = {
+      query: `
+
+        mutation {
+            deletePost(id: "${postId}")
+        }
+      
+      
+      `
+  }
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR EXPLICA QUE COMO NÓS VAMOS RECEBER UM SIMPLES TRUE/FALSE/postId,
+
+
+  NÕA PRECISAMOS ESCREVER NADA SOBRE O RETURN DESSA QUERY....
+
+
+
+
+
+
+
+
+
+  --> AÍ ELE DEFINE 
+
+
+  os headers de 
+
+  'Authorization' (a JWT/token do local storage anexada)
+
+
+
+
+e 
+
+'Content-Type' (para declarar o type de 'application/json')...
+
+
+
+
+
+
+
+
+--> COLOCAMOS 
+
+
+
+
+O _ BODY, body que será aquela QUERY PARSEADA por meio de 'JSON.stringify(graphqlQuery')....
+
+
+
+
+
+
+
+
+
+
+--> CLICAMOS EM DELETE,
+
+
+E AÍ 
+
+NOSSO POST É DELETADO....
+
+
+SUCESSO...
+
+
+
+
+
+
+
+
+
+-----> na próxima aula, vermeos pagination (que eu já adicionei, mas tudo bem).... (e também o USER STATUS... o view e edit do user status dos users...)
+
+
+
+

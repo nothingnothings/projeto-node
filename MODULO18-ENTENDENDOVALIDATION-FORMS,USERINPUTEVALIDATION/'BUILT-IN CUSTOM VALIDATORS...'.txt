@@ -1,0 +1,1319 @@
+
+
+
+
+
+
+
+
+
+
+
+--> OK... NÓS 
+
+
+
+ADICIONAMOS AQUELE VALIDATOR 
+
+de 
+
+
+
+
+'
+
+
+
+
+
+router.post('/signup', 
+
+check('email')  
+.isEmail()
+,  
+authController.postSignup);
+
+
+
+
+
+
+
+''''
+
+
+
+
+
+
+
+
+MEU CÓDIGO COM ANOTAÇÕES ESTAVA ASSIM:
+
+
+
+
+
+
+
+
+router.post('/signup', 
+
+check('email')  ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+.isEmail() ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....)
+// .withMessage('Please enter a valid email address.'),   ////ver aula 'USANDO VALIDATION ERROR MESSAGES' --> 'withMessage()' é usado PARA DEFINIR _CUSTOM_ _ ERROR MESSAGES, que vão aparecer no field de 'msg', lá no nosso array de 'errors', nos CONTROLLERS em que USAMOS 'validationResult' (Que também é importado de 'express-validator', como o é 'check()' )...
+,  //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...             
+authController.postSignup);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK.... 
+
+
+
+
+
+
+
+
+
+
+NÓS ADICIONAMOS ESSE VALIDATOR DE 
+
+
+'isEmail()',
+
+MAS 
+
+
+É ÓBVIO QUE __ EXISTEM 
+
+MT 
+
+MAIS 
+
+
+
+'BUILTIN VALIDATORS'
+
+disponíveis 
+
+
+a nós... 
+
+
+
+
+
+
+
+-------> VOCÊ ENCONTRA 
+
+
+OS VALIDATORS 
+DISPONÍVEIS 
+LÁ 
+
+
+NOS DOCS 
+
+DO 
+
+
+'express-validator' .... ---------> 
+
+
+
+
+
+
+
+
+LÁ 
+
+
+
+
+
+TEMOS 
+
+
+
+
+
+A INFORMAÇÃO 
+
+
+
+de que 
+
+
+
+
+'express-validator' 
+
+É 
+
+UM 
+
+SET DE 
+
+
+
+___MIDDLEWAREs__ DO 
+
+
+
+'express.js'
+
+
+
+QUE ___ WRAPPA__ 
+
+
+
+
+o validator de 'validator.js' ..........
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+ 
+
+ oo 
+
+
+
+ 'express-validator'
+
+ É _ UM WRAPPER__ 
+
+
+
+
+ __ EM VOLTA DO VALIDATOR DE 'validator.js'... ------> VALIDATORJS, PORTANTO,
+ 
+ 
+ 
+ É 
+
+
+ OUTRA PACKAGE QUE __ 
+
+
+
+ ERA/É 
+
+ __IMPLICITAMENTE 
+
+ INSTALADA 
+
+
+
+ COM O 
+
+
+ 'express-validator'.. ----------> E 
+
+
+
+ 'validator.js'
+
+
+ É 
+
+
+
+
+ REALMENTE UMA PACKAGE DIFERENTE,
+
+
+ MAS 
+
+ VÁRIAS 
+
+ DAS COISAS 
+
+ DELA 
+
+
+ SÃO USADAS EM 
+
+ 'express-validator'...-----> UMA DESSAS COISAS 
+
+
+ SÃO 
+
+ OS 
+
+
+ 'BUILT-IN 
+
+ VALIDATORS'
+
+
+
+ DISPONÍVEIS 
+
+ A NÓS...
+
+
+
+
+
+--> TAMBÉM HÁ INFORMAÇÕES DE _ COMO VOCÊ PODE _ CONFIGURAR CADA 1 DESSES VALIDATORS,
+
+
+SE POSSÍVEL/NECESSÁRIO...
+
+
+
+
+ ---> VEMOS ASSIM:
+
+
+
+
+
+
+
+
+
+Here is a list of the validators currently available.
+
+Validator	Description
+contains(str, seed [, options ])	check if the string contains the seed.
+
+options is an object that defaults to { ignoreCase: false, minOccurrences: 1 }.
+Options:
+ignoreCase: Ignore case when doing comparison, default false
+minOccurences: Minimum number of occurrences for the seed in the string. Defaults to 1.
+equals(str, comparison)	check if the string matches the comparison.
+isAfter(str [, date])	check if the string is a date that's after the specified date (defaults to now).
+isAlpha(str [, locale, options])	check if the string contains only letters (a-zA-Z).
+
+Locale is one of ['ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-MA', 'ar-QA', 'ar-QM', 'ar-SA', 'ar-SD', 'ar-SY', 'ar-TN', 'ar-YE', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR', 'en-AU', 'en-GB', 'en-HK', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'en-ZM', 'es-ES', 'fa-IR', 'fi-FI', 'fr-CA', 'fr-FR', 'he', 'hi-IN', 'hu-HU', 'it-IT', 'ku-IQ', 'nb-NO', 'nl-NL', 'nn-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'ru-RU', 'sl-SI', 'sk-SK', 'sr-RS', 'sr-RS@latin', 'sv-SE', 'tr-TR', 'uk-UA']) and defaults to en-US. Locale list is validator.isAlphaLocales. options is an optional object that can be supplied with the following key(s): ignore which can either be a String or RegExp of characters to be ignored e.g. " -" will ignore spaces and -'s.
+isAlphanumeric(str [, locale, options])	check if the string contains only letters and numbers (a-zA-Z0-9).
+
+Locale is one of ['ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-MA', 'ar-QA', 'ar-QM', 'ar-SA', 'ar-SD', 'ar-SY', 'ar-TN', 'ar-YE', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR', 'en-AU', 'en-GB', 'en-HK', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'en-ZM', 'es-ES', 'fa-IR', 'fi-FI', 'fr-CA', 'fr-FR', 'he', 'hi-IN', 'hu-HU', 'it-IT', 'ku-IQ', 'nb-NO', 'nl-NL', 'nn-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'ru-RU', 'sl-SI', 'sk-SK', 'sr-RS', 'sr-RS@latin', 'sv-SE', 'tr-TR', 'uk-UA']) and defaults to en-US. Locale list is validator.isAlphanumericLocales. options is an optional object that can be supplied with the following key(s): ignore which can either be a String or RegExp of characters to be ignored e.g. " -" will ignore spaces and -'s.
+isAscii(str)	check if the string contains ASCII chars only.
+isBase32(str)	check if a string is base32 encoded.
+isBase58(str)	check if a string is base58 encoded.
+isBase64(str [, options])	check if a string is base64 encoded. options is optional and defaults to {urlSafe: false}
+when urlSafe is true it tests the given base64 encoded string is url safe
+isBefore(str [, date])	check if the string is a date that's before the specified date.
+isBIC(str)	check if a string is a BIC (Bank Identification Code) or SWIFT code.
+isBoolean(str [, options])	check if a string is a boolean.
+options is an object which defaults to { loose: false }. If loose is is set to false, the validator will strictly match ['true', 'false', '0', '1']. If loose is set to true, the validator will also match 'yes', 'no', and will match a valid boolean string of any case. (eg: ['true', 'True', 'TRUE']).
+isBtcAddress(str)	check if the string is a valid BTC address.
+isByteLength(str [, options])	check if the string's length (in UTF-8 bytes) falls in a range.
+
+options is an object which defaults to {min:0, max: undefined}.
+isCreditCard(str)	check if the string is a credit card.
+isCurrency(str [, options])	check if the string is a valid currency amount.
+
+options is an object which defaults to {symbol: '$', require_symbol: false, allow_space_after_symbol: false, symbol_after_digits: false, allow_negatives: true, parens_for_negatives: false, negative_sign_before_digits: false, negative_sign_after_digits: false, allow_negative_sign_placeholder: false, thousands_separator: ',', decimal_separator: '.', allow_decimal: true, require_decimal: false, digits_after_decimal: [2], allow_space_after_digits: false}.
+Note: The array digits_after_decimal is filled with the exact number of digits allowed not a range, for example a range 1 to 3 will be given as [1, 2, 3].
+isDataURI(str)	check if the string is a data uri format.
+isDate(input [, options])	Check if the input is a valid date. e.g. [2002-07-15, new Date()].
+
+options is an object which can contain the keys format, strictMode and/or delimiters
+
+format is a string and defaults to YYYY/MM/DD.
+
+strictMode is a boolean and defaults to false. If strictMode is set to true, the validator will reject inputs different from format.
+
+delimiters is an array of allowed date delimiters and defaults to ['/', '-'].
+isDecimal(str [, options])	check if the string represents a decimal number, such as 0.1, .3, 1.1, 1.00003, 4.0, etc.
+
+options is an object which defaults to {force_decimal: false, decimal_digits: '1,', locale: 'en-US'}
+
+locale determine the decimal separator and is one of ['ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-MA', 'ar-QA', 'ar-QM', 'ar-SA', 'ar-SD', 'ar-SY', 'ar-TN', 'ar-YE', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR', 'en-AU', 'en-GB', 'en-HK', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'en-ZM', 'es-ES', 'fa', 'fa-AF', 'fa-IR', 'fr-FR', 'fr-CA', 'hu-HU', 'id-ID', 'it-IT', 'ku-IQ', 'nb-NO', 'nl-NL', 'nn-NO', 'pl-PL', 'pl-Pl', 'pt-BR', 'pt-PT', 'ru-RU', 'sl-SI', 'sr-RS', 'sr-RS@latin', 'sv-SE', 'tr-TR', 'uk-UA', 'vi-VN'].
+Note: decimal_digits is given as a range like '1,3', a specific value like '3' or min like '1,'.
+isDivisibleBy(str, number)	check if the string is a number that's divisible by another.
+isEAN(str)	check if the string is an EAN (European Article Number).
+isEmail(str [, options])	check if the string is an email.
+
+options is an object which defaults to { allow_display_name: false, require_display_name: false, allow_utf8_local_part: true, require_tld: true, allow_ip_domain: false, domain_specific_validation: false, blacklisted_chars: '', host_blacklist: [] }. If allow_display_name is set to true, the validator will also match Display Name <email-address>. If require_display_name is set to true, the validator will reject strings without the format Display Name <email-address>. If allow_utf8_local_part is set to false, the validator will not allow any non-English UTF8 character in email address' local part. If require_tld is set to false, e-mail addresses without having TLD in their domain will also be matched. If ignore_max_length is set to true, the validator will not check for the standard max length of an email. If allow_ip_domain is set to true, the validator will allow IP addresses in the host part. If domain_specific_validation is true, some additional validation will be enabled, e.g. disallowing certain syntactically valid email addresses that are rejected by GMail. If blacklisted_chars receives a string, then the validator will reject emails that include any of the characters in the string, in the name part. If host_blacklist is set to an array of strings and the part of the email after the @ symbol matches one of the strings defined in it, the validation fails.
+isEmpty(str [, options])	check if the string has a length of zero.
+
+options is an object which defaults to { ignore_whitespace:false }.
+isEthereumAddress(str)	check if the string is an Ethereum address using basic regex. Does not validate address checksums.
+isFloat(str [, options])	check if the string is a float.
+
+options is an object which can contain the keys min, max, gt, and/or lt to validate the float is within boundaries (e.g. { min: 7.22, max: 9.55 }) it also has locale as an option.
+
+min and max are equivalent to 'greater or equal' and 'less or equal', respectively while gt and lt are their strict counterparts.
+
+locale determine the decimal separator and is one of ['ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-MA', 'ar-QA', 'ar-QM', 'ar-SA', 'ar-SD', 'ar-SY', 'ar-TN', 'ar-YE', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'en-AU', 'en-GB', 'en-HK', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'en-ZM', 'es-ES', 'fr-CA', 'fr-FR', 'hu-HU', 'it-IT', 'nb-NO', 'nl-NL', 'nn-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'ru-RU', 'sl-SI', 'sr-RS', 'sr-RS@latin', 'sv-SE', 'tr-TR', 'uk-UA']. Locale list is validator.isFloatLocales.
+isFQDN(str [, options])	check if the string is a fully qualified domain name (e.g. domain.com).
+
+options is an object which defaults to { require_tld: true, allow_underscores: false, allow_trailing_dot: false, allow_numeric_tld: false, allow_wildcard: false }. If allow_wildcard is set to true, the validator will allow domain starting with *. (e.g. *.example.com or *.shop.example.com).
+isFullWidth(str)	check if the string contains any full-width chars.
+isHalfWidth(str)	check if the string contains any half-width chars.
+isHash(str, algorithm)	check if the string is a hash of type algorithm.
+
+Algorithm is one of ['md4', 'md5', 'sha1', 'sha256', 'sha384', 'sha512', 'ripemd128', 'ripemd160', 'tiger128', 'tiger160', 'tiger192', 'crc32', 'crc32b']
+isHexadecimal(str)	check if the string is a hexadecimal number.
+isHexColor(str)	check if the string is a hexadecimal color.
+isHSL(str)	check if the string is an HSL (hue, saturation, lightness, optional alpha) color based on CSS Colors Level 4 specification.
+
+Comma-separated format supported. Space-separated format supported with the exception of a few edge cases (ex: hsl(200grad+.1%62%/1)).
+isIBAN(str)	check if a string is a IBAN (International Bank Account Number).
+isIdentityCard(str [, locale])	check if the string is a valid identity card code.
+
+locale is one of ['LK', 'PL', 'ES', 'FI', 'IN', 'IT', 'IR', 'MZ', 'NO', 'TH', 'zh-TW', 'he-IL', 'ar-LY', 'ar-TN', 'zh-CN'] OR 'any'. If 'any' is used, function will check if any of the locals match.
+
+Defaults to 'any'.
+isIMEI(str [, options]))	check if the string is a valid IMEI number. Imei should be of format ############### or ##-######-######-#.
+
+options is an object which can contain the keys allow_hyphens. Defaults to first format . If allow_hyphens is set to true, the validator will validate the second format.
+isIn(str, values)	check if the string is in a array of allowed values.
+isInt(str [, options])	check if the string is an integer.
+
+options is an object which can contain the keys min and/or max to check the integer is within boundaries (e.g. { min: 10, max: 99 }). options can also contain the key allow_leading_zeroes, which when set to false will disallow integer values with leading zeroes (e.g. { allow_leading_zeroes: false }). Finally, options can contain the keys gt and/or lt which will enforce integers being greater than or less than, respectively, the value provided (e.g. {gt: 1, lt: 4} for a number between 1 and 4).
+isIP(str [, version])	check if the string is an IP (version 4 or 6).
+isIPRange(str [, version])	check if the string is an IP Range (version 4 or 6).
+isISBN(str [, version])	check if the string is an ISBN (version 10 or 13).
+isISIN(str)	check if the string is an ISIN (stock/security identifier).
+isISO8601(str)	check if the string is a valid ISO 8601 date.
+options is an object which defaults to { strict: false, strictSeparator: false }. If strict is true, date strings with invalid dates like 2009-02-29 will be invalid. If strictSeparator is true, date strings with date and time separated by anything other than a T will be invalid.
+isISO31661Alpha2(str)	check if the string is a valid ISO 3166-1 alpha-2 officially assigned country code.
+isISO31661Alpha3(str)	check if the string is a valid ISO 3166-1 alpha-3 officially assigned country code.
+isISO4217(str)	check if the string is a valid ISO 4217 officially assigned currency code.
+isISRC(str)	check if the string is a ISRC.
+isISSN(str [, options])	check if the string is an ISSN.
+
+options is an object which defaults to { case_sensitive: false, require_hyphen: false }. If case_sensitive is true, ISSNs with a lowercase 'x' as the check digit are rejected.
+isJSON(str [, options])	check if the string is valid JSON (note: uses JSON.parse).
+
+options is an object which defaults to { allow_primitives: false }. If allow_primitives is true, the primitives 'true', 'false' and 'null' are accepted as valid JSON values.
+isJWT(str)	check if the string is valid JWT token.
+isLatLong(str [, options])	check if the string is a valid latitude-longitude coordinate in the format lat,long or lat, long.
+
+options is an object that defaults to { checkDMS: false }. Pass checkDMS as true to validate DMS(degrees, minutes, and seconds) latitude-longitude format.
+isLength(str [, options])	check if the string's length falls in a range.
+
+options is an object which defaults to {min:0, max: undefined}. Note: this function takes into account surrogate pairs.
+isLicensePlate(str [, locale])	check if string matches the format of a country's license plate.
+
+(locale is one of ['cs-CZ', 'de-DE', 'de-LI', 'fi-FI', pt-PT', 'sq-AL', 'pt-BR'] or any)
+isLocale(str)	check if the string is a locale
+isLowercase(str)	check if the string is lowercase.
+isMACAddress(str)	check if the string is a MAC address.
+
+options is an object which defaults to {no_separators: false}. If no_separators is true, the validator will allow MAC addresses without separators. Also, it allows the use of hyphens, spaces or dots e.g '01 02 03 04 05 ab', '01-02-03-04-05-ab' or '0102.0304.05ab'.
+isMagnetURI(str)	check if the string is a magnet uri format.
+isMD5(str)	check if the string is a MD5 hash.
+
+Please note that you can also use the isHash(str, 'md5') function. Keep in mind that MD5 has some collision weaknesses compared to other algorithms (e.g., SHA).
+isMimeType(str)	check if the string matches to a valid MIME type format
+isMobilePhone(str [, locale [, options]])	check if the string is a mobile phone number,
+
+(locale is either an array of locales (e.g ['sk-SK', 'sr-RS']) OR one of ['am-Am', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IQ', ar-JO', 'ar-KW', 'ar-PS', 'ar-SA', 'ar-SY', 'ar-TN', 'az-AZ', 'az-LY', 'az-LB', 'bs-BA', 'be-BY', 'bg-BG', 'bn-BD', 'ca-AD', 'cs-CZ', 'da-DK', 'de-DE', 'de-AT', 'de-CH', 'de-LU', 'dv-MV', 'el-GR', 'en-AU', 'en-BM', 'en-BW', 'en-CA', 'en-GB', 'en-GG', 'en-GH', 'en-GY', 'en-HK', 'en-MO', 'en-IE', 'en-IN', 'en-KE', 'en-KI', 'en-MT', 'en-MU', 'en-NG', 'en-NZ', 'en-PK', 'en-PH', 'en-RW', 'en-SG', 'en-SL', 'en-UG', 'en-US', 'en-TZ', 'en-ZA', 'en-ZM', 'en-ZW', 'es-AR', 'es-BO', 'es-CL', 'es-CO', 'es-CR', 'es-CU', 'es-DO', 'es-HN', 'es-PE', 'es-EC', 'es-ES', 'es-MX', 'es-PA', 'es-PY', 'es-SV', 'es-UY', 'es-VE', 'et-EE', 'fa-IR', 'fi-FI', 'fj-FJ', 'fo-FO', 'fr-BE', 'fr-BF', 'fr-FR', 'fr-GF', 'fr-GP', 'fr-MQ', 'fr-PF', 'fr-RE', 'ga-IE', 'he-IL', 'hu-HU', 'id-ID', 'it-IT', 'it-SM', 'ja-JP', 'ka-GE', 'kk-KZ', 'kl-GL', 'ko-KR', 'lt-LT', 'ms-MY', ''mz-MZ', nb-NO', 'ne-NP', 'nl-BE', 'nl-NL', 'nn-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'pt-AO', 'ro-RO', 'ru-RU', 'si-LK' 'sl-SI', 'sk-SK', 'sq-AL', 'sr-RS', 'sv-SE', 'tg-TJ', 'th-TH', 'tk-TM', 'tr-TR', 'uk-UA', 'uz-UZ', 'vi-VN', 'zh-CN', 'zh-HK', 'zh-MO', 'zh-TW', 'dz-BT'] OR defaults to 'any'. If 'any' or a falsey value is used, function will check if any of the locales match).
+
+options is an optional object that can be supplied with the following keys: strictMode, if this is set to true, the mobile phone number must be supplied with the country code and therefore must start with +. Locale list is validator.isMobilePhoneLocales.
+isMongoId(str)	check if the string is a valid hex-encoded representation of a MongoDB ObjectId.
+isMultibyte(str)	check if the string contains one or more multibyte chars.
+isNumeric(str [, options])	check if the string contains only numbers.
+
+options is an object which defaults to {no_symbols: false} it also has locale as an option. If no_symbols is true, the validator will reject numeric strings that feature a symbol (e.g. +, -, or .).
+
+locale determine the decimal separator and is one of ['ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-MA', 'ar-QA', 'ar-QM', 'ar-SA', 'ar-SD', 'ar-SY', 'ar-TN', 'ar-YE', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'en-AU', 'en-GB', 'en-HK', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'en-ZM', 'es-ES', 'fr-FR', 'fr-CA', 'hu-HU', 'it-IT', 'nb-NO', 'nl-NL', 'nn-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'ru-RU', 'sl-SI', 'sr-RS', 'sr-RS@latin', 'sv-SE', 'tr-TR', 'uk-UA'].
+isOctal(str)	check if the string is a valid octal number.
+isPassportNumber(str, countryCode)	check if the string is a valid passport number.
+
+(countryCode is one of [ 'AM', 'AR', 'AT', 'AU', 'BE', 'BG', 'BY', 'BR', 'CA', 'CH', 'CN', 'CY', 'CZ', 'DE', 'DK', 'DZ', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'IE' 'IN', 'IR', 'ID', 'IS', 'IT', 'JP', 'KR', 'LT', 'LU', 'LV', 'LY', 'MT', 'MY', 'MZ', 'NL', 'PL', 'PT', 'RO', 'RU', 'SE', 'SL', 'SK', 'TR', 'UA', 'US' ].
+isPort(str)	check if the string is a valid port number.
+isPostalCode(str, locale)	check if the string is a postal code,
+
+(locale is one of [ 'AD', 'AT', 'AU', 'AZ', 'BE', 'BG', 'BR', 'BY', 'CA', 'CH', 'CN', 'CZ', 'DE', 'DK', 'DO', 'DZ', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HT', 'HU', 'ID', 'IE' 'IL', 'IN', 'IR', 'IS', 'IT', 'JP', 'KE', 'KR', 'LI', 'LK', 'LT', 'LU', 'LV', 'MT', 'MX', 'MY', 'NL', 'NO', 'NP', 'NZ', 'PL', 'PR', 'PT', 'RO', 'RU', 'SA', 'SE', 'SG', 'SI', 'TH', 'TN', 'TW', 'UA', 'US', 'ZA', 'ZM' ] OR 'any'. If 'any' is used, function will check if any of the locals match. Locale list is validator.isPostalCodeLocales.).
+isRFC3339(str)	check if the string is a valid RFC 3339 date.
+isRgbColor(str [, includePercentValues])	check if the string is a rgb or rgba color.
+
+includePercentValues defaults to true. If you don't want to allow to set rgb or rgba values with percents, like rgb(5%,5%,5%), or rgba(90%,90%,90%,.3), then set it to false.
+isSemVer(str)	check if the string is a Semantic Versioning Specification (SemVer).
+isSurrogatePair(str)	check if the string contains any surrogate pairs chars.
+isUppercase(str)	check if the string is uppercase.
+isSlug	Check if the string is of type slug. Options allow a single hyphen between string. e.g. [cn-cn, cn-c-c]
+isStrongPassword(str [, options])	Check if a password is strong or not. Allows for custom requirements or scoring rules. If returnScore is true, then the function returns an integer score for the password rather than a boolean.
+Default options:
+{ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, returnScore: false, pointsPerUnique: 1, pointsPerRepeat: 0.5, pointsForContainingLower: 10, pointsForContainingUpper: 10, pointsForContainingNumber: 10, pointsForContainingSymbol: 10 }
+isTaxID(str, locale)	Check if the given value is a valid Tax Identification Number. Default locale is en-US.
+
+More info about exact TIN support can be found in src/lib/isTaxID.js
+
+Supported locales: [ 'bg-BG', 'cs-CZ', 'de-AT', 'de-DE', 'dk-DK', 'el-CY', 'el-GR', 'en-GB', 'en-IE', 'en-US', 'es-ES', 'et-EE', 'fi-FI', 'fr-BE', 'fr-FR', 'fr-LU', 'hr-HR', 'hu-HU', 'it-IT', 'lb-LU', 'lt-LT', 'lv-LV' 'mt-MT', 'nl-BE', 'nl-NL', 'pl-PL', 'pt-BR', 'pt-PT', 'ro-RO', 'sk-SK', 'sl-SI', 'sv-SE' ]
+isURL(str [, options])	check if the string is an URL.
+
+options is an object which defaults to { protocols: ['http','https','ftp'], require_tld: true, require_protocol: false, require_host: true, require_port: false, require_valid_protocol: true, allow_underscores: false, host_whitelist: false, host_blacklist: false, allow_trailing_dot: false, allow_protocol_relative_urls: false, allow_fragments: true, allow_query_components: true, disallow_auth: false, validate_length: true }.
+
+require_protocol - if set as true isURL will return false if protocol is not present in the URL.
+require_valid_protocol - isURL will check if the URL's protocol is present in the protocols option.
+protocols - valid protocols can be modified with this option.
+require_host - if set as false isURL will not check if host is present in the URL.
+require_port - if set as true isURL will check if port is present in the URL.
+allow_protocol_relative_urls - if set as true protocol relative URLs will be allowed.
+allow_fragments - if set as false isURL will return false if fragments are present.
+allow_query_components - if set as false isURL will return false if query components are present.
+validate_length - if set as false isURL will skip string length validation (2083 characters is IE max URL length).
+isUUID(str [, version])	check if the string is a UUID (version 1, 2, 3, 4 or 5).
+isVariableWidth(str)	check if the string contains a mixture of full and half-width chars.
+isVAT(str, countryCode)	checks that the string is a valid VAT number if validation is available for the given country code matching ISO 3166-1 alpha-2.
+
+Available country codes: [ 'GB', 'IT','NL' ].
+isWhitelisted(str, chars)	checks characters if they appear in the whitelist.
+matches(str, pattern [, modifiers])	check if string matches the pattern.
+
+Either matches('foo', /foo/i) or matches('foo', 'foo', 'i').
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> O QUE ESTAMOS USANDO É 
+
+'isEmail()',
+
+
+
+
+
+
+
+
+
+
+E __ É CLARO QUE __PODEMOS O 
+
+
+
+CONFIGURAR PARA _ 'CHANGE DIFFERENT EMAIL FORMATS YOU WANT 
+
+TO ACCEPT OR NOT',
+
+
+
+
+
+
+
+
+__ E TAMBÉM PODEMOS CHECAR POR 'EMPTYNESS'... 
+
+(
+
+
+    'isEmpty()'...
+)
+
+
+
+
+
+
+
+
+--> TAMBÉM PODEMOS CHECAR __ SE 
+
+
+ALGO É 
+
+UM 
+
+'FULL DOMAIN',
+
+
+POR MEIO 
+
+DO 
+
+CÓDIGO 
+
+
+
+
+'isFQDN()'...
+
+
+
+
+
+(CHECK IF THE STRING IS A FULLY QUALIFIED DOMAIN NAME, like 'domain.com'..)
+
+
+
+
+
+
+
+
+
+
+
+--> TAMBÉM PODEMOS 
+CHECAR 
+
+
+
+SE 
+
+
+
+TEMOS UMA 'FULL URL',
+
+
+
+
+__ OU ENTAÕ 
+
+
+se 
+
+
+1 
+
+
+
+__ VALUE/O VALUE QUE O USER INPUTTOU É 
+
+__ UM VALUE __ QUE 
+
+ESTÁ 
+
+
+
+
+__ DENTRO DE 1 ARRAY DE VALORES POSSÍVEIS/ACEITOS...(
+
+
+
+    é o method de 
+
+
+    'isIn()',
+
+
+
+    QUE 
+
+    LÊ:
+
+
+    'check is the string is in a array of allowed values....'
+)
+
+
+
+
+
+
+
+
+
+
+--------> OK.... NÓS TAMBÉM 
+
+
+
+
+
+TEMOS UM CHECK _POR LENGTH... ----> 
+
+
+
+(
+
+
+    'isLength()' ------> CHECA SE 
+
+
+
+        A LENGTH DA STRING 
+
+
+
+
+        _CAI EM 1 DETERMINADA RANGE... ----------> FAZEMOS O DEFINE DISSO POR MEIO DO SEGUNDO PARÂMETRO, QUE É UM __ARRAY_ EM QUE DEFINIMOS AS OPTIONS, QUE SÃO 'min' e 'max'...
+) -----> VAMOS USAR 
+
+ESSE 
+
+
+'isLength'
+
+
+PARA 
+
+
+O 
+
+
+NOSSO PASSWORD, BTW...
+
+
+
+
+
+
+
+
+--> E É CLARO QUE 
+
+EXISTEM 
+
+
+
+
+UM MONTE DE COISAS PELAS QUAIS PODEMOS 'CHECK',
+
+e devemos 
+
+IR 
+
+POR 
+
+ESSA LIST 
+
+
+
+PARA _ 
+
+ENTENDER__ MAIS SOBRE 
+
+
+
+OS 'BUILTIN VALIDATORS'...
+
+
+
+
+
+
+
+
+
+------> VOCê __ TAMBÉM__ PODE ___ ADICIONAR __ SEU PRÓPRIO VALIDATOR,
+
+
+
+SE 
+
+VOCÊ ESTIVER SE SENTINDO O TAL...
+
+
+
+
+
+
+
+--> E PARA DEMONSTRAR 
+ESSA FEATURE 
+
+BEM RÁPIDo,
+
+
+
+
+DIGAMOS __ QUE 
+
+
+__ 
+
+
+NÃO VAMOS QUERER ___ CHECAR 
+
+
+
+POR 
+UM 
+
+EMAIL GENÉRICO,
+
+
+
+E __ SIM VAMOS QUERER ___ CHECAR_ 
+
+
+
+
+SE 
+
+
+
+ESSE 
+
+INPUT É __ 1 EMAIL ___ESPECÍFICO....
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+------> OK... 
+
+
+
+
+
+----> TALVEZ USAR REGEX? 
+
+
+
+
+
+
+
+
+
+--> BEM... PARA ISSO, 
+
+PARA ADICIONAR 
+
+
+
+1 VALIDATOR,
+
+
+
+
+DEVEMOS 
+
+USAR O METHOD DE 
+
+'.custom()'
+
+
+EM CIMA 
+
+DO 
+
+
+'.check()'.... --------> O PROFESSOR NOS EXPLICA QUE 
+
+
+
+1
+ 
+ VALIDATOR É, NO FINAL DAS CONTAS,
+
+
+
+
+ ____UMA FUNÇÃO (pode ser anônima),
+
+
+
+
+ UMA FUNCTION __ QUE VAI _ RECEBER O 'value'
+
+
+ DO FIELD QUE 
+
+ VAMOS CHECAR...
+
+
+
+
+
+
+ ex:
+
+
+
+ router.post('/signup', 
+
+check('email')  
+.isEmail()
+.custom((value) => {}) //////EIS O CÓDIGO EM QUESTÃO.
+,  
+authController.postSignup);
+
+
+
+
+
+
+
+
+
+
+-----> O VALUE, NESSE CASO,
+ 
+ SERÁ 
+
+ O 
+
+
+ 'VALUE NO INPUT FIELD', pq chamamos esse '.custom()" 
+
+ SOBRE 
+
+ o 
+
+
+ call de 
+
+ 'check('email')' ---------> 
+
+
+
+
+
+
+
+
+ E AÍ, OPCIONALMENTE,
+
+ NO SEGUNDO PARÂMETRO 
+
+
+
+ __TEMOS 1 OBJECT__ EM QUE __ PODEMOS 
+
+
+ 'EXTRACT THINGS', 
+
+
+ COISAS COMO 
+ A 
+
+
+
+
+ _______LOCATION___ (a location a que esse input foi enviado ),
+
+
+
+
+
+ O _ PATH__ 
+
+
+
+
+E/OU O __REQUEST OBJECT_... (
+
+
+    nos casos em que __ PRECISAMOS __ EXTRAIR MAIS COISAS DO REQUEST..
+)
+
+
+
+
+
+--> ok, as opções são 'location', 
+
+'path' 
+
+
+
+e 
+
+
+'req'... 
+
+
+
+
+
+
+
+-----------> OK...  NESSA FUNÇÃO,
+
+
+VOCÊ 
+
+
+
+_VAI QUERER _ FAZER 'THROW' 
+
+DE 
+
+1 
+
+ERROR _ QUANDO A VALIDATION FALHAR... -----> 
+
+
+
+EX:
+
+
+
+
+
+
+ router.post('/signup', 
+
+check('email')  
+.isEmail()
+.custom((value, {req}) => {
+
+
+      if (value)              //////EIS O CÓDIGO EM QUESTÃO.
+
+}) 
+,  
+authController.postSignup);
+
+
+
+
+
+
+-----------------------
+
+
+AQUI, NO CASO, VAMOS QUERER 
+
+
+'CHECK'
+
+
+se O 
+
+
+'value'
+
+É 
+
+IGUAL 
+
+
+A 
+
+
+
+
+'test@test.com',
+
+POR EXEMPLO...
+
+
+
+
+
+
+
+--> SE ESSE FOR O CASO,
+
+
+VAMOS QUERER DAR THROW DE UM ERRO.... (só a título de exemplo... digamos que NÃO QUEREMOS DEIXAR 1 EMAIL ESPECÍFICO 
+
+CRIAR 1 CONTA NO NOSSO APP...)
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+----> OK, 
+
+AÍ O PROFESSOR 
+
+
+ESCREVE 
+
+'throw new Error('This email address sucks.')'
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+ router.post('/signup', 
+
+check('email')  
+.isEmail()
+.custom((value, {req}) => {
+
+
+      if (value === 'test@test.com')  {            //////EIS O CÓDIGO EM QUESTÃO.
+
+        throw new Error('This email address sucks, please choose another one.');
+
+      }
+}) 
+,  
+authController.postSignup);
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+---> ESSA PODE PARECER UMA FEATURE BOBA, MAS 
+
+SERVE 
+
+
+__ PARA QUE VOCÊ CONSIGA 'WRITE YOUR OWN VALIDATORS',
+
+
+nos casos 
+
+em que 
+
+
+OS 
+
+
+'MANY BUILTIN VALIDATORS'
+
+
+não são o bastante...
+
+
+
+
+
+
+-------> OK...
+
+
+
+
+--> SE AGORA SALVARMOS NOSSO CÓDIGO 
+
+
+E 
+
+
+
+
+
+TESTARMOS O email 'test@test.com',
+
+
+RECEBEREMOS AQUELA MESSAGE DE 
+
+'This email address sucks, please choose another one.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> MAS SE TENTARMOS OUTRO VALOR, 
+
+
+VAMOS RECEBER 
+
+
+
+UMA MENSAGEM DE ERROR... --> A RAZÃO PARA ISSO É QUE ESQUECEMOS DE ESCREVEr 
+
+'return true'
+
+
+NO CASE FORA DE 'if(value === test@test.com)'..
+
+
+
+
+
+
+EX:
+
+
+ router.post('/signup', 
+
+check('email')  
+.isEmail()
+.custom((value, {req}) => {
+
+
+      if (value === 'test@test.com')  {            //////EIS O CÓDIGO EM QUESTÃO.
+
+        throw new Error('This email address sucks, please choose another one.');
+
+      }
+      return true;
+}) 
+,  
+authController.postSignup);
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ISSO É PQ 
+
+
+
+SE NÓS 'SUCCEED',
+
+vamos querer 
+
+__RETORNAR __ TRUE.. -----> e se quisermos 
+
+
+a 
+
+
+
+
+DEFAULT ERROR MESSAGE, RETORNAMOS 'return false',
+
+
+
+OU ENTAÕ 
+
+
+
+RETORNAMOS 
+
+'true'
+
+
+
+SE 
+
+NÃO TIVERMOS INPUTTADO AQUELE 'test@test.com'....
+
+
+
+
+
+
+
+
+
+
+
+------> ok... TUDO CERTo.
+
+
+
+
+
+
+
+
+--> AGORA 
+
+
+
+VIMOS COMO ADICIONAR NOSSO PRÓPRIO, CUSTOM VALIDATOR....
+
+
+
+
+
+
+
+--> E TAMBÉM 
+
+
+
+APRENDEMOS QUE PODEMOS __ CHAINAR MÚLTIPLOS VALIDATORS,
+
+
+1 
+ATRÁS 
+
+DO 
+
+OUTRO,
+
+para 
+
+ter 
+
+
+'MULTIPLE VALIDATORS'
+
+
+
+
+CONECTADOS A 1 MESMO FIELD...
+

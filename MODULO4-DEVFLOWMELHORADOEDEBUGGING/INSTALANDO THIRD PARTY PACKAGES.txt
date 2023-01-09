@@ -1,0 +1,537 @@
+
+
+
+
+
+
+
+
+
+
+
+----> NA ÚLTIMA LIÇÃO, ADICIONAMOS UM SCRIPT 
+
+PARA 
+
+
+COMEÇAR NOSSO APP,
+
+o script 
+
+de 
+
+"start": "node app.js".... 
+
+
+
+
+
+
+
+
+
+
+
+-----> POR ESSE AGORA SER UM 'MANAGED NODE PROJECT',
+
+agora 
+
+
+
+PODEMOS 
+
+INSTALAR 
+
+
+THIRD PARTY PACKAGES.... --> ISSO PQ UM 
+
+
+
+NODE PROJECT TÍPICO 
+
+
+SE PARECE ASSIM:
+
+
+
+
+
+
+
+
+
+1) LOCAL PROJECT 
+
+
+2) <Your Code>
+
+
+3) Core Node Packages... 
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS ESSES 3 BUILDING BLOCKS _ GERALMENTE NÃO SÃO SUFICIENTES,
+
+
+PQ TIPICAMENTE VOCÊ VAI PRECISAR 
+
+DE COISAS A MAIS, 
+
+'THIRD PARTY PACKGES'...  (DEPENDENCIES) ---> 
+
+
+VOCÊ 
+
+VAI PRECISAR 
+
+
+
+DE CÓDIGO QUE VOC~E NÃO ESCREVEU,
+
+ 
+
+
+_ MAS QUE 
+
+TAMBEM 
+
+
+NÃO 
+
+ESTÃO INCLUSOS NO NODEJS,
+
+
+
+como 
+
+PACKAGES 
+
+
+
+__ QUE TE AJUDAM A PARSEAR INCOMING REQUESTS,
+
+
+
+VALIDATE DE USER INPUT,
+
+etc etc...
+
+
+
+
+
+
+
+
+
+-------> USAREMOS PACKAGES COMO:
+
+
+
+1) EXPRESS 
+
+
+2) BODY-PARSER 
+
+
+
+3) MUITO E MUITO MAIS, milhares de outras packages,
+
+
+
+
+
+
+
+
+
+
+
+TPPs --> SÃO DISPONÍVEIS ATRAVÉS DO REPOSITÓRIO 'npm'... --> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+VOCê PODE CONVENIENTEMENTE INSTALAR ESSAS PACKAGES ATRAVE´S DO NPM .... 
+
+
+
+
+
+---> FAREMOS ISSO PARA 
+
+
+
+INSTALAR 
+
+
+
+UMA __ UTILITY_ PACKAGE__ NESSE EXATO MOMENTO,
+
+
+PARA INSTALAR 
+
+UMA 
+
+PACKAGE 
+
+QUE 
+
+VAI 
+
+
+'SPEED UP OUR DEV WORKFLOW.'...
+
+
+
+
+
+
+
+
+
+----> ISSO PQ NÃO VAMOS QUERER TER QUE RESETTAR NOSSO DEVSERVER PARA 
+
+TER NOSSAS 
+
+ALTERAÇÕES 
+
+APLICADAS AO NOSSO 
+
+
+
+SERVER...
+
+
+
+
+
+
+
+
+
+-----> OK... MAS QUAL A PACKAGE QUE DEVEMOS INSTALAR?
+
+
+
+
+
+
+
+------> O PACKAGE QUE QUEREMOS 
+
+É 
+
+O 
+
+PACKAGE 
+
+
+DE 
+
+
+
+
+
+
+
+
+'nodemon'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> ok..... INSTALAMOS ESSA PACKAGE....
+
+
+
+
+
+
+
+
+
+
+
+----> MAS PROFESSOR VAI QUERER 
+
+QUE 
+
+
+INSTALEMOS 
+
+
+
+com 
+
+'--save-dev',
+
+
+
+PARA 
+
+SALVAR COMO __ DEVELOPMENT 
+
+DEPENDENCY.....
+
+
+
+
+
+
+
+
+
+-->(ISSO PQ SÓ O UTILIZAMOS NO DEV PROCESS, NÃO VAMOS 
+
+PRECISAR 
+
+DESSE PACKGE 
+
+
+LÁ NA FASE DE PRODUCTION)....
+
+
+
+
+
+
+
+
+
+
+---> É POR ISSO QUE 
+
+VAMOS 
+
+ESCREVER 
+
+
+
+'--save-dev'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ok.... 
+
+
+
+
+
+
+
+----> ELE FALA TAMBÉM DO 
+
+'npm install -g',
+
+
+
+PARA INSTALAR 
+
+ESSE PACKAGE GLOBALMENTE...
+
+
+
+
+
+
+
+
+--> OK, BAIXOU E INSTALOU 
+
+
+
+ESSA 
+
+PACKAGE NO NOSSO PROJETo...
+
+
+
+
+
+
+
+
+
+--> O NODEMON VAI FICAR 
+
+
+INSTALADO LÁ NO FOLDER DE 'node_modules', é claro... ---> E O NODEMON,
+
+POR SUA VEZ,
+
+
+
+TAMBÉM 
+
+
+TEM DEPENDENCIEs...
+
+
+
+
+
+
+
+---> OK... MAS O NODEMON AINDA NÃO FUNCIONA COM O NOSSO PROJETO( é possível que eu tenha que O IMPORTAR, realmente, dentro de 'app.js'..)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> VOCÊ SEMPRE PODE DELETAR AQUELE FOLDER DE 'node_modules'... -> PARA SALVAR ESPAÇO.. --> 
+
+
+AÍ, SE VOCÊ 
+
+RE-EXECUTAR 
+
+
+'npm install',
+
+
+VOCÊ 
+
+
+
+VAI RECUPERAR TODOS OS FOLDERS PERDIDOS 
+
+
+DO NODE_MODULES,
+
+
+
+
+
+a partir do package.json....
+
+
+
+
+
+
+
+
+
+'package-lock.json' --> ISSO TE MOSTRA 
+
+AS EXACT VERSIONS QUE VOCÊ ESTÁ USANDO 
+
+
+DAQUELES PACKAGES...
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+EX:
+
+
+
+The last lectures contained important concepts about available Node.js features and how to unlock them.
+
+You can basically differentiate between:
+
+Global features: Keywords like const or function but also some global objects like process
+
+Core Node.js Modules: Examples would be the file-system module ("fs"), the path module ("path") or the Http module ("http")
+
+Third-party Modules: Installed via npm install - you can add any kind of feature to your app via this way
+
+Global features are always available, you don't need to import them into the files where you want to use them.
+
+Core Node.js Modules don't need to be installed (NO npm install is required) but you need to import them when you want to use features exposed by them.
+
+Example:
+
+const fs = require('fs');
+
+You can now use the fs object exported by the "fs" module.
+
+Third-party Modules need to be installed (via npm install in the project folder) AND imported.
+
+Example (which you don't need to understand yet - we'll cover this later in the course):
+
+// In terminal/ command prompt
+npm install --save express-session
+// In code file (e.g. app.js)
+const sessions = require('express-session');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXEMPLO DE THIRD PARTY MODULE IMPORT:
+
+
+
+
+const sessions = require('express-session');
+

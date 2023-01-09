@@ -1,0 +1,1363 @@
+
+
+
+
+
+
+
+--> agora sabemos + OU - 
+
+
+
+
+O QUE É O NODEJS,
+
+
+
+
+
+
+
+PQ O UTILIZAR, E PARA QUE O UTILIZAR...
+
+
+
+
+
+
+
+
+
+
+
+--> TIPICAMENTE, VOCÊ UTILIZA 
+
+O NODEJS 
+
+PARA 
+
+
+RODAR 
+
+SERVERSIDE CODE... -----> 
+
+
+
+
+
+
+
+
+NÓS TEMOS NOSSOS USERS,
+
+USANDO 
+
+
+BROWSERS/MOBILE APPS (O NODEJS TAMBÉM CONSEGUE SE COMUNICAR 
+
+COM 
+
+MOBILE APPS,
+
+mais tarde veremos como ele consegue fazer isso....)
+
+
+
+
+
+
+
+
+--> MAS POR ENQUANTO,
+
+VAMOS 
+
+FOCAR NA 'TRADITIONAL BROWSER PICTURE'...
+
+
+
+
+
+
+
+
+
+--------> USUÁRIOS ACESSAM NOSSO SITE 
+
+E 
+
+
+
+CARREGAM JAVASCRIPT/CSS/HTML...
+
+
+
+
+
+
+--->USUÁRIOS VISITAM UMA PÁGINA,
+
+
+
+
+'mypage.com',
+
+
+
+
+E AÍ 
+
+
+
+
+
+
+ENVIAM UM REQUEST PARA VISITAR ESSA URL... ----> 
+
+
+
+
+
+
+
+OK... --> AÍ, LÁ, O SERVER ENTRA EM JOGO... --->  TEMOS 
+
+
+UM 
+
+
+SERVIDOR,
+
+
+
+
+UM COMPUTADOR RODANDO NA INTERNET,
+
+
+QUE 
+
+TEM 
+
+UM IP 
+
+ASSOCIADO ÀQUELE DOMAIN,
+
+que é 
+
+automaticamente 
+
+'resolved' PARA NÓS.... --> E AÍ, NAQUELE 
+
+
+SERVER,
+
+
+NÓS 
+
+AÍ VAMOS QUERER  EXECUTAR UM CÓDIGO QUE 
+
+
+
+
+______ ___ faz algo____ COM 
+
+
+OS INCOMING REQUESTS,
+
+
+
+FAZ ALGO COM ESSES REQUESTS E ENTÃO 
+
+
+
+__RETORNA UMA RESPONSE___ --->  FREQUENTEMENTE 
+
+
+ESSA 
+
+RESPOSTA 
+
+SERÁ 
+
+UMA 
+
+PÁGINA HTML,
+
+
+PÁGINA 
+
+
+
+QUE 
+O BROWSER, POR SUA VEZ,
+
+
+PODERÁ/VAI 
+
+
+'DISPLAY'...
+
+
+
+
+
+
+
+
+
+--> BTW,
+
+NÃO É NECESSARIAMENTE 
+
+SÓ 
+
+
+HTML,
+
+
+PQ 
+
+
+
+PODEM SER RETORNADAS COISAS 
+
+
+COMO ___ CSS FILES__ OU JAVASCRIPT FILES... (com código 
+
+JAVASCRIPT PARA __ O BROWSER, E NÃO PARA O SERVER... PQ ISSO SERIA IDIOTA, CONTRÁRIO AO FLOW 
+DE DATA...)
+
+
+
+
+
+
+----> BEM, LÁ NO SERVER,
+
+
+
+
+NÓS ___ TIPICAMENTE___ 
+
+
+FAZEMOS/REALIZAMOS 
+
+
+TASKS 
+
+
+
+QUE 
+
+NÃO PODEMOS OU NÃO QUEREMOS FAZER 
+
+DE DENTRO 
+
+DO 
+
+BROWSER (tanto por razões de PERFORMANCE ___ COMO  DE __ SEGURANÇA (validation/authentication...))
+
+
+
+
+
+-----> NÓS NOS CONECTAMOS, NO SERVER, 
+
+A DATABASES,
+
+PARA 
+
+'STORE/FETCH DATA'.... ------> 
+
+
+
+
+
+NÓS FAZEMOS USER AUTHENTICATION NO SERVER TBM,
+
+
+PQ OBVIAMENTE 
+
+
+
+FAZEMOS 
+
+
+AUTHENTICATION EM UM LUGAR QUE  O USER NÃO CONSEGUE ACESSAR,
+
+justamente 
+
+para 
+
+
+deixar as operações mais 'secure',
+
+
+
+
+E EVITAR
+
+
+
+O HACK DESSAS INFORMAÇÕES... -----> 
+
+
+
+
+
+
+NÓS TAMBÉM 
+
+
+FAZEMOS 
+
+ISSO 
+
+
+PARA 
+
+'INPUT VALIDATION',
+
+para 
+
+
+checar 
+
+
+SE 
+O 
+
+USER 
+
+
+___INPUTTOU __ O EMAIL ADDRESS CORRETO... ---> 
+
+
+
+
+
+
+
+ISSO PQ OS USERS SEMPRE PODEM MANIPULAR O CÓDIGO BROWSERSIDE... ---> 
+
+USERS 
+
+PODEM 
+
+ABRIR O 
+
+
+
+DEVTOOLS 
+
+
+
+no browser 
+
+E ENTÃO 
+
+COMEÇAR 
+
+A MODIFICAR A PÁGINA EM QUE ESTÃO... ------> 
+
+
+
+
+
+
+
+MAS O SERVER, É CLARO, É 
+
+PROTEGIDO 
+
+
+CONTRA ELES, CONTRA O USUÁRIO... 
+
+
+
+
+
+
+
+
+E NÓS, É CLARO,
+
+TEMOS 
+
+TODA 
+
+NOSSA 
+
+'BUSINESS LOGIC' 
+
+
+LÁ NO SERVER... -----> TUDO QUE NOSSO USER NÃO DEVE VER,
+
+
+
+
+ou coisas que 
+
+DEMORAM MUITO PARA RODAR NO BROWSER (queremos uma user experience RÁPIDA..) ----> 
+
+
+
+
+É LÁ, NO SERVER,
+
+
+
+QUE 
+
+USAMOS 
+
+
+
+__NODEJS___, 
+O 
+
+
+
+JAVASCRIPT CODE DO SERVER... ------> também é javascript,
+
+MAS 
+
+NO 
+
+SERVER,
+E NÃO 
+
+NO BROWSER...
+
+
+
+
+
+
+---------> E É AQUI QUE USAMOS AS 'MANY FEATURES' concedidas pelo 
+
+
+nodejs...  -------> É ASSIM QUE 
+
+NÓS 
+
+
+'INDIRECTLY ALLOW'
+
+
+
+os nossos usuários a TRABALHAR COM O SERVER,
+ 
+
+POR MEIO DAQUELE PADRÃO DE 'REQUEST-RESPONSE'... -----> 
+
+
+
+
+
+PQ É EVIDENTE QUE 
+
+O 
+
+
+
+'DIRECT ACCESS' ao server,
+ 
+
+ pela mão dos users,
+
+
+
+ É __ ALGO UNAVAILABLE___.... -------> 
+
+
+
+
+
+
+
+
+ É ASSIM QUE 
+
+ VAMOS USAR 
+
+ O NODEJS 
+
+
+
+ DURANTE ESTE CURSO.... -----> VAMOS 
+
+
+
+ O UTILIZAR PARA 
+
+ 'WRITE CODE ON THE SERVER',
+
+
+
+ CÓDIGO QUE VAI 
+
+ RETURN DATA,
+
+
+ DATA 
+
+ COM A QUAL NOSSOS USERS PODERÃO 
+
+ 'WORK WITH'...
+
+
+
+
+
+
+
+
+ -----------> ok.... MAS 1 IMPORTANTE NOTE, NESTE MOMENTO:
+
+
+
+
+ 
+
+
+
+__NODEJS___ -----> NÃO FICA LIMITADO AO RUN DE 
+
+ 
+
+ JAVASCRIPT __ EM SERVIDORES__ ... -----> 
+
+
+ É UM 
+
+ JAVASCRIPT RUNTIME,
+
+
+
+
+
+ E NÓS ATÉ MESMO VIMOS UM PRIMEIRO DEMO __ QUE NÃO __ 
+
+
+FEZ QUALQUER COISA QUE PRECISASSE DE UM BROWSER;
+
+
+nós não 
+
+
+fizemos 'spin up' 
+
+de um server 
+
+
+LÁ,
+
+
+
+
+NÓS TAMBÉM NÃO FIZEMOS ___ NADA___ 
+
+
+
+
+
+que devesse/pudesse ser 'reached' POR MEIO DE UM BROWSER...
+
+
+
+
+
+
+
+--> FAREMOS ISSO UM MONTE 
+
+AO LONGO DO CURSO,
+
+MAS AINDA NÃO FIZEMOS...
+
+
+
+
+
+
+------> ISSO PQ O 
+
+NODEJS É SÓ UM JAVASCRIPT RUNTIME... --> podemos 
+
+rodar qualquer código 
+javascript 
+
+QUE NÃO SEJA BROWSERSIDE 
+
+
+com 
+
+o 
+
+NODEJS... ----> 
+
+
+
+E FREQUENTEMENTE ESSE É CÓDIGO QUE __ RODA EM UM SERVER __ E QUE 
+
+
+É __ EXECUTADO A PARTIR DE INCOMING REQUESTS,
+
+
+
+
+
+MAS É CLARO QUE VOCÊ PODE USAR 
+
+
+O 
+
+NODEJS 
+
+PARA 
+
+OUTRAS COISAS,
+
+
+
+PARA OUTROS CÓDIGOS,
+
+como 
+para 
+
+
+
+'local utility scripts' 
+
+
+e 
+
+
+'BUILD TOOLS'.. 
+
+
+
+
+
+
+
+
+---> SE VOCÊ TRABALHAR/TRABALHA COM 
+
+
+
+'REACT' 
+
+OU 
+
+'ANGULAR',
+
+
+ou 
+
+'vue',
+
+
+
+
+
+OU QUALQUER COISA DESSE TIPO (webpack tbm),
+
+
+VOCÊ 
+
+
+
+
+NA VERDADE JÁ USOU NODEJS 
+
+
+INDIRETAMENTE UM MONTE,
+
+
+
+por causa
+ 
+ de 
+
+ 
+
+
+ todos 
+
+ os 
+
+ BUILD PROCESSES  de que esses frameworks/languages se utilizam...
+
+
+
+
+
+
+
+ --> ISSO PQ O NODEJS É UMA EXCELENTE FERRAMENTA PARA __ ESCREVER __ 
+
+
+
+ ''''UTILITY SCRIPTS'''' (como 'db-util' e 'api-util'),
+
+
+ ISSO 
+
+ PQ 
+
+ VOCÊ 
+
+
+
+
+ TEM ACESSO AO FILE SYSTEM,
+
+
+
+E POR TER ACESSO AO FILE SYSTEM,
+
+VOCÊ PODE 
+
+
+WRITE/READ/MANIPULATE 
+
+arquivos,
+
+
+
+
+
+
+E ISSO TE DEIXA FAZER UM MONTE DE UTILITY STUFF NO SEU PRÓPRIO COMPUTADOR,
+
+
+
+
+
+__ COISAS QUE NUNCA ACABAM 'EXPOSED TO THE PUBLIC'... ---> 
+
+
+ 
+
+ PROFESSOR TERÁ UMA 
+
+ SEÇÃO DO CURSO EM QUE 
+
+ FALARÁ 
+
+ MAIS 
+
+ DAS BUILD TOOLS 
+
+
+
+
+
+E 
+
+
+
+DE 
+
+'NON SERVERSIDE LANGUAGE USES' 
+
+do 
+
+nodeJS...
+
+
+
+
+
+
+
+
+
+
+--> MAS NO GERAL,
+
+
+
+A COISA MAIS POPULAR FEITA COM O NODEJS,
+
+É 
+
+a UTILIZAÇÃO DELE NO 
+
+
+
+
+DESENVOLVIMENTO DE CÓDIGO SERVERSIDE... ----> 
+
+
+
+serverside e web development...
+
+
+
+
+
+
+
+
+
+
+----> NODEJS ------------> VOCÊ USA ELE PARA _ EXECUTAR__ UM SERVIDOR__....
+
+
+
+
+
+
+--> E ESSA É UMA DIFERENÇA IMPORTANTE EM RELAÇÃO AO CÓDIGO PHp ---> 
+
+
+
+COM O NODEJS,
+
+
+
+VOCÊ 
+
+
+FAZ MAIS DO QUE 
+
+
+APENAS 'WRITE THE CODE THAT IS RUNNING ON YOUR SERVER',
+
+
+
+
+
+MAS 
+
+
+
+TAMBÉM 
+
+
+
+
+'WRITE THE SERVER YOURSELF'... ----------> 
+
+
+
+
+OU SEJA,
+
+
+
+___ VOCÊ É __ O CARA_ QUE 
+
+ESCREVE 
+
+'
+THE CODE THAT TAKES THE INCOMING REQUESTS AND ROUTES THEM 
+
+TO YOUR 
+
+OTHER CODE...' (ou seja, é VOCÊ QUE CODA O TRATAMENTO DADO AOS REQUESTS e é VOCÊ QUE FORMULA AS RESPONSES formuladas a partir desses requests...)
+
+
+
+
+
+
+
+
+
+
+---> LÁ NO PHP,
+
+POR SUA VEZ,
+
+
+
+VOCÊ TEM TOOLS EXTRAS COMO 
+
+'APACHE' 
+
+ou 
+
+'nginx' (isso eu já vi várias vezes...),
+
+
+
+
+
+QUE SÃO TOOLS 
+
+
+QUE __ RODAM OS SERVERS;
+
+
+são 
+
+
+
+FERRAMENTAS QUE FAZEM 'LISTEN TO' AOS 
+
+
+incoming requests e que 
+ENTÃO 
+
+EXECUTAM SEU CÓDIGO PHP especial... (que é a parte das 'diretrizes' que você quer dar ao server....)
+
+
+
+
+
+
+
+
+
+
+
+-------> JÁ O NODEJS 
+
+
+
+____ FAZ ___ AS 2 COISAS:
+
+
+
+
+
+
+1) ELE 
+
+FAZ AQUELE 
+
+'LISTENING' aos incoming requests 
+
+
+('Create server and listen to incoming requests...')
+
+
+
+
+^^^^^^^ ISSO AÍ É ALGO IMPORTANTE,
+
+
+
+e veremos 
+
+
+isso em ação logo logo...
+
+
+
+
+
+
+
+
+
+-----> NÓS TAMBÉM/portanto USAMOS 
+
+
+
+O NODEJS 
+
+
+PARA 
+
+
+
+
+
+2 ) RODAR 
+
+
+TODA NOSSA 
+
+'BUSINESS LOGIC'..  ----> OU SEJA,
+
+
+
+usamos para não 
+
+só 
+
+fazer 
+
+'listen to' 
+
+
+dos incoming requests,
+
+
+MAS TAMBÉM 
+
+PARA  
+
+'DO WHATEVER YOU WANNA DO IN YOUR CODE'...,
+
+
+
+COMO POR EXEMPLO 
+
+
+
+
+
+'WORK WITH THE REQUEST DATA',
+
+
+
+'WORK WITH FILES'
+
+
+
+
+'WORK WITH DATABASES',
+
+
+
+
+todas 
+
+as coisas 
+
+divertidas 
+
+de que o nodejs é capaz...
+
+
+
+
+('Handle requests, Validate Input, Connect to Database, work with files'....)
+
+
+
+
+
+
+
+
+-------> POR FIM, TAMBÉM TEMOS '3':
+
+
+
+
+
+
+3) o NODEJS 
+
+
+TAMBÉM 
+
+
+FAZ HANDLE DO 'RESPONSE SIDE',
+
+
+pq 
+
+
+
+ele também nos deixa customizar as RESPONSES.... (não está limitado ao handle dos INCOMING REQUESTS...) ----> 
+
+
+
+
+
+NÓS FAZEMOS HANDLE DAS RESPONSES.... 
+
+
+
+
+VOCÊ 
+
+
+VAI APRENDER SOBRE COMO USAR 
+
+O 
+
+NODEJS 
+
+PARA 
+
+'SEND BACK DATA' 
+AOS SEUS CLIENTS,
+
+
+
+
+
+
+SEJA ELA 
+
+
+__'HTML PAGES',
+
+
+
+
+
+'HTML PAGES COM CONTEÚDO DINÂMICO',
+
+
+ou 
+
+
+'DATA ONLY' (no formato de .JSON ou html,
+
+OU ATÉ MESMO ARQUIVOS...)
+
+
+
+
+
+
+
+
+-----> É PARA ISSO QUE 
+
+USAMOS 
+
+O 
+
+NODEJS,
+
+
+
+E É NISSO 
+
+QUE 
+
+VAMOS MERGULHAR 
+
+
+PROFUNDAMENTE NESSE CURSO...
+
+
+
+
+
+
+
+
+
+
+
+-------> ALTERNATIVAS AO NODEJS 
+
+
+SÃO: 
+
+
+
+
+
+
+1) PHYTON... PHYTOM COM FRAMEWORKS COMO FLASK E DJANGO...
+
+
+
+
+
+
+2) PHP.... TANTO O PHP VANILLA COMO TAMBÉM FRAMEWORKS COMO O 'LARAVEL'....
+
+
+
+
+
+
+3) OUTROS... ---> OUTROS COMO 
+
+    a) RUBY ON RAILS ...
+
+    b) ASP.NET...
+
+
+
+---------------------------------
+
+
+
+
+
+TODOS ESSES SÃO 'REPLACEMENTS FOR NODEJS',
+
+
+
+ou 
+
+o NODEJS é um replacement para eles....
+
+
+
+
+
+
+---> E NÃO HÁ UM VENCEDOR 
+
+
+EM QUESTÃO DE LINGUAGEM SERVERSIDE... 
+
+
+
+
+
+
+
+
+
+------> TODAS ESSAS LANGUAGES SÃO CAPAZES 
+
+DE FAZER AS MESMAS COISAS,
+
+
+
+mas é claro que 
+
+elas diferem um pouco 
+
+NAQUILO QUE DIZ RESPEITO 
+
+
+AO 
+
+ASPECTO TÉCNICO,
+
+
+
+MAS 
+
+EM 
+
+GERAL 
+
+
+___ É BOM TER __ UMA VARIEDADE DE LINGUAGENS.. ------> 
+
+
+
+
+
+
+UMA VANTAGEM 
+
+
+IMENSA DO NODEJS 
+
+
+É 
+
+
+
+
+QUE ELE ___USA_____ JAVASCRIPT___ ---> 
+
+
+
+
+JAVASCRIPT É UMA 
+
+LINGUAGEM 
+
+QUE 
+
+VOCÊ PRECISA 
+
+MT 
+
+
+NO WEBDEV MODERNO... ---> PRECISA 
+
+
+
+
+PARA O FRONTEND,
+PRECISA 
+
+PARA 
+
+ALGUMAS BUILD TOOLS,
+
+
+
+E 
+
+
+
+
+SE VOCÊ CONSEGUE 
+
+
+
+
+O UTILIZAR NO SERVERSIDE,
+
+VOCÊ 
+
+EVITA TER DE APRENDER UM MONTE DE LINGUAGENS 
+
+DIFERENTES,
+
+
+
+
+pq aí você só usa essa mesma 
+
+linguagem 
+
+
+
+e fica feliz...
+
+
+
+
+
+
+------->  É POR ISSO QUE O NODEJS É UMA LINGUAGEM EXCELENTE PARA APRENDER,
+
+
+É 
+
+
+TRI EFICIENTE,
+
+
+
+
+ALTA PERFORMANCE E POPULAR,
+
+
+
+
+
+há mtos trabalhos para o nodejs..
+
+
+
+
+--> é usado em um monte de negócios 
+
+CUTTING EDGE...
+
+
+
+
+
+--> EM GERAL,
+
+
+É 
+
+UMA SOLUÇÃO MT BOA,
+
+
+rápida, eficiente, etc....
+
+
+
+
+
+
+
+-----> 

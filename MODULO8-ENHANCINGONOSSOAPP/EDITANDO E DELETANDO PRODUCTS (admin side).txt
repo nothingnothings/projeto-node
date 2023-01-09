@@ -1,0 +1,1223 @@
+
+
+
+
+
+
+
+--> VAMOS TRABALHAR NO ADMIN SIDE.... -------> 
+
+
+
+
+TEMOS UM ARQUIVO 
+
+
+'products-list-admin.ejs',
+
+
+
+E QUEREMOS 
+
+
+RENDERIZAR NOSSOS PRODUCTS NELE... --> 
+
+
+para isso,
+
+
+PODEMOS SIMPLESMENTE COPIAR 
+
+
+
+NOSSA PRODUCTLIST DAQUELE VIEW DE 'PRODUCT LIST', 
+
+
+
+a 
+
+mesma lógica...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <button class="btn">Add to Cart</button>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+VAMOS QUERER ISSO, SIM, 
+
+
+MAS AGORA 
+
+
+COM 
+
+2 
+
+BUTTONS ADICIONAIS,
+
+buttons 
+
+
+
+de 
+
+'edit' 
+
+
+e 
+
+
+'delete'...
+
+
+
+
+
+
+(PATCH E DELETE...)
+
+
+
+
+
+
+
+
+-------->>>> PROFESSOR DIZ QUE É CLARO QUE PODERÍAMOS MUDAR 
+
+
+'EVEN THE WAY WE DISPLAY THE PRODUCTS',
+
+
+mas que 
+
+por agora 
+
+
+DEVEMOS FOCAR NA LÓGICA...
+
+
+(e menos no DISPLAY EFETIVO..., parte visual...)
+
+
+
+
+
+
+
+
+
+--> VAMOS TIRAR O CAPTION DE 'Add to Cart',
+
+
+E AÍ 
+
+
+
+VAMOS COLOCAR 
+
+
+
+UM
+
+
+BUTTON 
+
+DE 
+
+'Edit'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <button class="btn">Edit</button>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+AÍ PRECISAMOS DEFINIR UMA ROUTE DESSAS LÁ NO ARQUIVO ROUTE 
+
+
+'admin.js'...
+
+
+
+
+
+
+
+
+--> PROVAVELMENTE VAMOS PRECISAR DE UMA LÓGICA DE DELETE LÁ NO NOSSO 
+
+'model' 
+
+de 
+
+'product'... (QUE SERÁ UM MÉTODO __ ESTÁTICO, PROVAVELMENTE__)....
+
+
+
+
+--> OPS... MAS ACHO QUE ELE NÃO SERÁ ESTÁTICO.... ISSO NÃO FARIA SENTIDO (pq eu 
+
+preciso que ele 
+
+
+exista DENTRO DE CADA OBJETO 'product' para que 
+
+
+
+
+EU CONSIGA DELETÁ-LO por meio de um button vinculado a esse object...)
+
+
+
+
+
+
+ex:
+
+
+
+
+static deleteProduct() {
+
+}
+
+
+
+
+OU 
+
+
+
+'deleteProduct() {
+
+}
+
+'
+-----------------------------
+
+
+
+
+OK... 
+
+
+
+
+MAS ESQUECEMOS DO SEGUNDO BUTTON,
+
+
+
+que 
+é 
+
+o 
+
+BUTTON DE 
+
+'delete'...
+
+
+
+
+ex:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <button class="btn" action="PATCH" type="submit">Edit</button>
+              <button class="btn" action="DELETE" type="submit">Delete</button>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+------->  OK... OS BUTTONS ESTÃO ASSIM:
+
+
+
+
+
+            <button class="btn" action="PATCH" type="submit">Edit</button>
+              <button class="btn" action="DELETE" type="submit">Delete</button>
+
+
+
+
+
+
+
+
+
+
+----> OK.... MAS O PROBLEMA, AQUI, É QUE O PROFESSOR NÃO VAI QUERER 
+
+
+FAZER 
+
+NOSSO 
+
+'EDIT' 
+
+ASSIM... --> ELE VAI QUERER QUE O 
+
+
+'EDIT'
+
+SEJA _ UM 
+
+
+
+BUTTON_ QUE 
+
+NOS LEVA A OUTRA PÁGINA... -------> 
+
+
+
+
+
+AÍ ELE NOS DIZ QUE 
+
+
+TAMBÉM PODERÍAMOS TROCAR NOSSO 
+
+'EDIT PRODUCT',
+
+
+
+
+PODERÍAMOS FAZER COM QUE ESSE BUTTON FOSSE UM LINK,
+
+
+um link com um 'a href' 
+
+PARA OUTRA PAGE...
+
+
+
+
+
+
+
+--> E ELE FAZ EXATAMENTE ISSO.... --> o styling fica um lixo,
+
+
+MAS ELE 
+
+DIZ QUE 
+
+
+CONSERTARÁ ISSO MAIS TARDE....
+
+
+
+
+
+
+
+
+
+--> CERTO... FIZ ESSA ALTERAÇÃO...
+
+
+
+
+
+--> CONSERTEI O STYLING...
+
+
+
+
+
+
+
+
+
+----> registrei a route e etc.... 
+
+
+
+
+
+---> OK...... AGORA VEM A PARTE INTERESSANTE:
+
+
+
+ISTO AQUI:
+
+
+
+<a href="/admin/edit-product" class="btn">Edit</a>
+
+
+
+
+
+
+--> ISSO NÃO __ ESTÁ CERTO__... ---------> 
+
+
+
+
+
+NÃO ESTÁ CERTO__ PQ 
+
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+
+
+
+__VAMOS QUERER __  IR ATÉ 
+
+UMA 
+
+'ROUTE DINÂMICA'
+
+POR MEIO 
+
+
+DESSE LINK... -------> ou seja,
+
+
+
+'WE NEED TO MAKE SURE THAT WE GO TO A ROUTE WHERE WE __KNOW__
+
+
+WHICH PRODUCT TO EDIT'...
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+VAMOS PRECISAR PASSAR __ ALGO DINÂMICO ___ COMO 
+
+PARTE 
+
+
+
+DESSA URL.... (sistema de IDS...) --------> 
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+SERIA BOM SE CONSEGUÍSSEMOS 
+
+escrever algo como 
+
+
+''<a href="/admin/edit-product/1" class="btn">Edit</a>''',
+
+
+
+
+
+E AÍ 
+
+
+
+__RETRIEVAR __ 
+
+ESSE SEGMENTO __ DINâMICO LÁ 
+
+NA 
+
+'ROUTE'
+
+
+QUE 
+
+
+ESTIVERMOS CARREGANDO,
+
+
+PARA QUE 
+
+
+SAIBAMOS 
+
+QUAL 
+
+PRODUTO 
+
+
+DEVEMOS/DEVEREMOS 
+
+
+FETCHEAR 
+
+
+
+LÁ DE NOSSA DATABASE/arquivo... (por enquanto...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> MAS ESSA É UMA LÓGICA UM POUCO MAIS COMPLEXA... --> VEREMOS 
+
+
+
+COMO ADICIONÁ-LA __ NO PRÓXIMO MÓDULO, a lógica de 'routes dinâmicas', ou algo assim...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> DEVEMOS IGNORAR 
+
+
+ESSE PATH DE 'EDIT'
+ 
+
+
+ E FOCAR, EM VEZ DISSO,
+
+
+
+ NO 'DELETE', POR ENQUANTo...
+
+
+
+
+
+
+
+
+
+
+
+ ----> OK... MAS MESMO NO PATH DO DELETING,
+
+
+ VAMOS ENCONTRAR O MESMO PROBLEMA... ---> 
+
+ ISSO 
+
+ PQ 
+
+
+ __NÓS VAMOS QUERER 
+
+
+ DELETAR 
+
+ 1
+  
+
+
+  PRODUCT ESPECÍFICO, 1 ÚNICO PRODUCT,
+
+
+  E PARA 
+
+  ISSO 
+
+  VAMOS PRECISAR DE ALGUM IDENTIFICADOR....
+
+
+
+
+
+
+
+
+  ------> E PARA DELETAR 1 PRODUCT ESPECÍFICO, 
+
+
+  _ VAMOS 
+
+
+
+  TAMBÉM 
+
+  PRECISAR DE 
+
+
+  1 'LINK' (a href),
+
+
+
+  MAS 
+
+  TECNICAMENTE 
+
+  UM 
+
+
+  'DELETE PROCESS'
+
+
+  NÃO DEVE MANDAR UM GET REQUEST 
+
+  ÀLGUMA ROUTE,
+
+
+  e sim 
+
+   
+
+   ___ VAMOS QUERER __ ENVIAR 
+
+   UM 
+
+   REQUEST 
+
+   DE 
+   TIPO 
+
+   'DELETE'...
+
+
+
+
+
+
+
+
+
+   --> PARA ENVIAR ESSE REQUEST 
+
+   DE TIPO DELETE POR MEIO DESSE BUTTON,
+
+   PROFESSOR 
+
+   DIZ QUE 
+
+
+   VAI WRAPPAR ESSE BUTTON 
+
+
+   EM 
+
+   UMA 
+
+   FORM,
+
+
+   FORM QUE 
+
+   LEVARÁ 
+
+
+
+   a 
+
+
+
+   '/admin/delete-product',
+
+
+   e
+
+
+
+   QUE TERÁ UM 
+
+    
+
+
+METHOD DE TIPO 'DELETE'...-------> 
+
+
+
+
+
+EX:
+
+
+
+
+
+<form action="/admin/delete-product" method="DELETE">
+    <button class="btn" type="submit">Delete</button>
+</form>
+
+
+
+
+
+
+------> OBS:: NUNCA SE ESQUEÇA 
+
+DO 
+
+
+'type=submit' 
+
+
+
+EM _ BUTTONS DENTRO DE FORMS,
+
+
+
+pq é isso que 
+
+vai 
+
+realmente 
+
+TRIGGAR 
+
+O 
+
+SUBMIT 
+
+
+
+desse request 
+
+de 
+tipo 
+
+
+
+'delete'
+
+
+
+ÀQUELA ROUTE DE 'delete-product'...
+
+
+
+(comportamento default de buttons com type submit dentro de forms... )
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/">Edit</a>
+              <form action="/admin/delete-product" method="DELETE"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OBS::: PROFESSOR 
+
+
+ESCREVEU 
+
+'POST' em vez de 'DELETE',
+
+mas ambos funcionam...
+
+
+
+
+
+-------------------------------
+
+
+
+
+OK...
+
+
+TEMOS ISSO CONECTADO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ESSAS ROUTES AINDA NÃO FUNCIONAM, POIS AINDA NÃO AS IMPLEMENTAMOS...
+
+
+
+
+
+
+
+
+
+------>  NOSSA ROUTE DE 'add to cart'
+
+TAMBÉM 
+
+AINDA 
+
+
+ESTÁ INSATISFATÓRIA... -> LÁ EU TBM QUERO FAZER 
+
+ALGO 
+
+
+__ QUE DEMANDA INFORMAÇÃO EXTRA... ---> EU PRECISO 
+
+
+TER: 
+
+
+
+
+1) O ID DO PRODUCT QUE EU QUERO ADICIONAR...
+
+
+
+2) E TBM EU QUERO ADICIONAR ESSE ID AO 'PATH' QUE ESTAMOS CARREGANDO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSOR VAI ATÉ A VIEW 
+
+DA 
+
+PRODUCTLIST 
+
+DO USUÁRIO,
+
+
+
+e aí 
+
+
+
+
+ADICIONA UMA OUTRA FORM,
+
+
+WRAPPANDO 
+
+
+
+o 
+
+
+'btn' 
+
+de 
+
+'Add to cart'...
+
+
+
+
+
+----> E AÍ ELE VAI COLOCAR UM ATTRIBUTE 'action' que vai levar até '/add-to-cart'...
+
+
+
+
+--> O METHOD SERÁ 'POST'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+          <div class="card__actions">
+              <form action="/add-to-cart/" method="POST">
+              <button class="btn" >Add to Cart</button>
+            </form>
+        </div>
+
+
+
+
+
+
+
+
+
+---> E OBVIAMENTE 
+
+GOSTARÍAMOS 
+
+ 
+
+DE 
+
+ALGO COMO 
+
+
+'/add-to-cart/1',
+
+
+
+PARA QUE 
+
+
+SOUBÉSSEMOS QUAL PRODUCT,
+
+COM QUAL ID,
+
+
+
+GOSTARÍAMOS 
+
+
+DE ADICIONAR AO CART... -----> MAS ISSO É ALGO QUE VEREMOS NO PRÓXIMO MODULE,
+
+
+
+MESMA COISA COM AS ADMIN ROUTES...
+
+
+
+
+
+
+
+
+---> OK... PRATICAMENTE 
+
+
+TERMINAMOS ESTE MÓDULO...
+
+
+
+
+
+
+
+NÓS:
+
+
+
+
+
+1) ADICIONAMOS MAIS VIEWS 
+
+
+
+2) REESTRUTURAMOS NOSSOS CONTROLLERS 1 POUQUINHO
+
+
+
+
+3) PRATICAMOS UM POUCO O QUE 
+
+APRENDEMOS ANTES...
+
+
+
+
+
+
+
+--> MAS AGORA A COISA 
+
+
+EXCITANTE VAI SER O TRABALHO COM 
+
+
+DATA DINÂMICA DENTRO 
+
+
+DOS NOSSOS 'ROUTE PATHS',
+
+
+
+
+
+
+
+
+MOMENTO EM QUE 
+
+
+__ VAMOS COMEÇAR A ADICIONAR ITEMS AO CART,
+
+e aí 
+
+também 
+
+
+'EDITING AND DELETING ITEMS'... ---> VEREMOS ISSO AO LONGO DOS PRÓXIMOS MODULES...

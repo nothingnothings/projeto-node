@@ -1,0 +1,2215 @@
+
+
+
+
+
+
+---->  estamos JÁ NO FINAL DESTE MÓDULO... ISSO PQ 
+
+JÁ 
+
+
+APRENDEMOS UM MONTE SOBRE 
+
+OS 
+
+
+'CORE CONCEPTS'
+
+DO 
+
+
+
+EXPRESSJS...   -------> 
+
+
+
+
+
+
+CERTO... ESTE É UM MÓDULO CRUCIAL,
+
+
+PQ TODOS OS MÓDULOS DO RESTO DO CURSO 
+
+VÃO
+
+
+
+
+PARTIR DESTE AQUi,
+
+
+
+
+
+__ VÃO BUILDUP NESSE CONHECIMNETO DE COMO O 
+
+
+
+
+EXPRESSJS funciona...
+
+
+
+
+
+
+
+
+
+--------> TODO NOSSO CÓDIGO 'DUMMY' ATÉ AGORA ESTÁ _ ficando grandinho_... -> 
+
+
+
+ESTMAOS 
+
+COM TODO ELE 
+
+
+
+REGISTRADO 
+
+
+EM 
+
+
+'app.js'... ----->  E É CLARO QUE PARA UM APP PEQUENO COMO O NOSSO,
+
+isso não é um problema,
+
+
+PQ 
+
+NOSSO 
+APP 
+
+
+SERVERSIDE 
+
+
+é bem simples... ----> 
+
+
+
+
+MAS NÓS TIPICAMENTE VAMOS QUERER SPLITTAR_ _ NOSSO 
+
+
+'ROUTING CODE' 
+
+
+
+_ AO LONGO DE MÚLTIPLOS 
+
+
+ARQUIVOS... --------> ISSO SIGNIFICA QUE VAMOS QUERER 
+
+
+
+BASICAMENTE 
+
+
+'EXPORT OUR LOGIC' 
+
+EM DIFERENTES 
+
+ARQUIVOS 
+
+
+
+
+E ENTÃO IMPORTAR 
+
+
+
+ESSA LÓGICA 
+
+
+
+DENTRO 
+
+DO 
+
+ARQUIVO EM QUE É NECESSÁRIA.. (em 'app.js', no caso...) 
+
+
+
+
+
+
+
+
+
+
+
+
+--> E NÓS PODERÍAMOS FAZER ISSO,
+
+
+
+FAZER MÚLTIPLOS ARQUIVOS EM QUE 
+
+
+__ __EXPORTAMOS __ FUNÇÕES 
+
+COMO 
+
+
+'(req, res, next) => {
+    res.send('.....x')
+
+
+}
+
+'
+
+
+
+
+
+
+
+
+-----> MAS O EXPRESSJS NA VERDADE 
+
+
+
+_ NOS DÁ 
+
+
+'A PRETTY NICE  WAY'  
+DE 
+
+
+FAZER OUTSOURCING 
+
+ 
+
+
+DO ROUTING DE UM PROJETO A OUTROS ARQUIVOS... ----> E PARA O DEMONSTRAR,
+
+
+
+
+
+
+___ O PROFESSOR VAI MUDAR A ESTRUTURA DE NOSSOS FOLDERS UM POUCO....--> 
+
+
+
+ELE 
+
+VAI CRIAR UM FOLDER DE 'ROUTES'
+
+
+
+
+no __ROOT__ do folder do nosso projeto... ------> 
+
+
+
+
+PROFESSOR DIZ QUE 
+ESSA PASTA NÃO É OBRIGATÓRIA,
+
+
+
+MAS QUE 
+
+É UMA CONVENÇÃO QUE AINDA VEREMOS MUITO... ----> A CONVENÇÃO É 
+
+
+
+'PUT YOUR ROUTING RELATED CODE (ou seja, CÓDIGO QUE DEVE SER 
+
+EXECUTADO 'FOR DIFFERENT PATHS AND HTTP METHODS')
+
+
+
+
+IN FILES THAT YOU STORE ON THE ROUTES FOLDER...'
+
+
+
+
+
+
+
+
+
+
+
+
+E COMO NÓS ESTAMOS TENTANDO LENTAMENTE CONSTRUIR UMA ONLINE SHOP,
+
+O PROFESSOR 
+VAI ADICIONAR UMA 
+ROUTE QUE 
+
+
+
+
+DEVE SER CHAMADA DE 
+
+'admin.js'... ---> PROFESSOR EXPLICA QUE 
+ESSA DEVE 
+
+
+SER A ROUTE 
+
+
+
+__ QUE SERÁ RESPONSÁVEL __ PELA CRIAÇÃO_  DE NOVOS PRODUTOS NA LOJA,
+
+
+tarefa que 
+SÓ O ADMIN DO SHOP CONSEGUIRÁ FAZR...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ELE TAMBÉM VAI ADICIONAR UM OUTRO ARQUIVO,
+
+
+'shop.js',
+
+
+QUE 
+
+DEVERÁ 
+
+SER 
+'ESSENCIALMENTE A COISA QUE O USER VÊ'...
+
+
+
+
+
+
+--------> É CLARO QUE NÃO VAMOS DESENVOLVER O 'shop.js' 
+
+POR INTEIRO AQUI.... --> VAMOS O DESENVOLVER AO LONGO DOS PRÓXIMOS MÓDULOS/AULLAS,
+
+
+
+pq 
+
+
+ELE USA UM MONTE DE FEATURES LEGAIS  COMO 'DATABASE'
+
+e assim por diante....
+
+
+
+
+
+
+
+
+---------> MAS PODEMOS COMEÇAR PELO 'PUT' DE NOSSO CÓDIGO ATUAL DENTRO 
+
+
+DESSES ARQUIVOS AÍ...
+
+
+
+
+
+
+
+
+
+----------> A ROTA DE 
+
+
+'add-product',
+
+que é 
+
+
+'''
+
+
+
+
+
+
+app.use(
+    '/add-product', ///PATH FILTER. cumpre a mesma funçaõ de 'if(url === '/')' NO NODEJS NORMAL...
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+  // res.send('<h1>Hello from product!</h1>');
+});
+
+
+
+
+
+''',
+
+
+e 
+
+
+
+A ROUTE 
+
+DE 
+
+
+
+'/product', que é 
+
+
+
+
+  app.post( 
+  '/product', (req, res, next) => {
+      console.log(req.body);  ///feature do EXPRESSJS.... -> ver middleware de 'urlencoded', que é o que possibilita isto...
+      res.redirect('/');
+  }
+)
+
+
+
+
+
+
+
+
+DEVE/DVERÃO __ CLARAMENTE __ 
+
+
+SER MOVIDOS  __PARA DENTRO ___DO ARQUIVO 
+
+
+'admin.js',
+
+
+
+JUSTAMENTE 
+
+PQ 
+
+
+ESSAS 
+
+2 ROUTES 
+
+__ SERÃO ALCANÇADAS __ APENAS PELO ADMIN....
+
+
+
+
+
+
+
+--> JÁ 
+
+O 
+
+
+
+'app.use('/')', NOSSA 'GENERAL ROUTE',
+
+
+DEVERÁ __ 
+
+
+
+SER TRANSPORTADO PARA O ARQUIVO 'shop.js',
+
+
+
+
+
+
+
+
+ISSO PARA QUE 
+
+USUÁRIOS QUE VISITEM
+ 
+ 
+ NOSSA PÁGINA INICIALMENTE __ ACABEM__ VENDO __ 
+
+ 
+
+ ESSA NOSSA ROUTE 'DEFAULT'..
+
+
+
+
+
+
+
+
+
+
+
+ --> OK... MAS UMA FEATURE conveniente 
+
+
+ OFERECIDA PELO EXPRESSJS 
+
+
+
+ para 
+
+
+CONSEGUIR ESSE RESULTADO é 
+
+
+
+
+
+IR ATÉ OS 
+ARQUIVOS 
+
+DE 
+
+'admin.js' 
+
+e 
+
+'shop.js'
+
+
+E ENTÃO 
+
+ADICIONAR 
+
+O EXPRESS + UMA VEZ... 
+
+
+
+
+
+
+
+
+
+escrevemos 
+
+
+'const express = require('express)'...
+
+
+
+
+
+
+
+
+
+---> AÍ, DEPOIS DISSO, VAMOS QUERER__ CRIAR UMA CONST 
+
+DE NOME 
+
+
+'router'..
+
+
+
+
+
+
+
+
+
+--> AÍ, DENTRO 
+
+DESSA 
+
+
+CONSTANTE,
+
+vamos querer 
+
+
+
+executar o código de 
+
+
+
+'express.Router()'....   (sim, esse 'R' é maiúsculo...)
+
+
+
+
+
+
+----------> 
+
+
+
+EX:
+
+
+
+
+
+
+
+const express = require('express');
+
+
+
+
+const Router = express.Router();
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+E VAMOS ADICIONAR ESSE CÓDIGO AÍ DENTRO DE 'admin.js'....
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR ENTÃO NOS EXPLICA QUE UM 'ROUTER' NO EXPRESSJS 
+
+
+É 
+
+ESSENCIALMENTE UM 'MINI EXPRESS APP'...--> um mini express app 
+
+
+
+
+VINCULADO/PLUGÁVEL ___ 
+
+
+
+NO ''OUTRO EXPRESS APP''' (no 'main express app'...)
+
+
+
+
+
+
+
+
+
+
+---------> OK.... E PARA USARMOS/PLUGGARMOS ESSE 'ROUTER' NO NOSSO 
+
+
+APLICATIVO EXPRESS,
+ 
+
+ DEVEMOS 
+
+ O 
+
+ EXPORTAR 
+
+ COM 
+
+
+
+ 'module.exports = router';
+
+
+
+
+
+
+
+
+ --------------------------
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ const express = require('express');
+
+
+
+
+const router = express.Router();
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+-----> É CLARO QUE ISSO POR SI SÓ NÃO FARÁ MT COISA.... --> para que 
+
+esse 
+
+ROUTER REALMENTE TENHA 
+
+UM 
+
+
+EFEITO SOBRE NOSSO APP EXPRESSJS,
+
+
+
+
+TEMOS ___ QUE __ REGISTRAR COISAS __ NELE..___  -----> 
+
+
+
+
+
+
+
+-----> OK....
+
+
+
+
+
+
+
+---> AGORA ESSE ROUTER AÍ PODE SER USADO
+ 
+
+
+ __PARA, NOVAMENTE,
+
+
+
+ __DEFINIR UMA 
+
+
+
+
+ FUNÇÃO 
+
+ '.use()'
+
+
+ PARA ___'ALL REQUESTS' ----> TODOS OS REQUESTS SERÃO INTERCEPTADOS POR ESSE USE,
+
+
+ E FARÃO COM QUE 
+
+
+ SEU 
+
+
+ CÓDIOG INTERNO SEJA EXECUTADo...
+
+
+ (mesma coisa de antes, com 'get', 'post', etc etc..)
+
+
+
+
+
+
+
+
+ -------->
+
+
+
+
+
+
+ PARA DEMONSTRAR O USO DO ROUTER,
+
+
+ O PROFESSOR 
+
+
+
+ MOVE AQUELAS LINHAS 
+
+ DE 
+
+
+
+''''''''''''''
+
+ app.use(
+    '/add-product', 
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+});
+
+
+  app.post( 
+  '/product', (req, res, next) => {
+      console.log(req.body);  
+      res.redirect('/');
+  }
+)'
+
+
+
+'''''''''''''
+
+PARA DENTRO 
+
+DO 
+
+'admin.js'... (só vamos trocar 'app' por 'router', no caso...)
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+router.use('/add-product', (req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+  res.send(
+    '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+  );
+});
+
+router.post('/product', (req, res, next) => {
+  console.log(req.body);
+  res.redirect('/');
+});
+
+// router.use();
+
+// router.get();
+// router.post();
+
+module.exports = router;
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK.... AGORA, PORTANTO, O ROUTER ACABA SENDO EXPORTADO,
+
+
+
+E AOGRA ELE TEM ESSAS 2 ROUTES REGISTRADAS... (
+
+
+
+e é no objeto 'router' 
+
+EM QUE REGISTRAMOS 
+
+ESSAS ROUTES...
+
+)
+
+
+
+
+
+
+
+-----> O RESTANTE DO CÓDIGO (todo código que não é 'app.use'/'router.use')
+
+
+
+
+PODERÁ 
+
+
+FICAR EXATAMENTE 
+
+
+DA MESMA FORMA,
+
+
+PQ ___ AS ROUTER FUNCTIONS 
+
+FUNCIONAM __ BASICAMENTE__ 
+
+
+
+DA MESMA MANEIRA QUE 
+
+
+
+as functions 
+
+
+de 
+
+'app.use()'.../app.get()/app.post....
+
+
+
+
+
+
+
+
+
+
+-------> NO ENTANTO,
+
+
+PROFESSOR VAI RENOMEAR  
+
+
+
+
+o 'router.use()'
+
+PARA 
+
+
+'router.get()'
+
+
+PQ ELE 
+
+SÓ VAI QUERER 
+
+
+
+ACEITAR 'GET REQUESTS'
+
+
+
+
+nesse case aí, no case de '/add-product'....
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+// router.use('/add-product', (req, res, next) => {
+    router.get('/add-product', (req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+  res.send(
+    '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+  );
+});
+
+router.post('/product', (req, res, next) => {
+  console.log(req.body);
+  res.redirect('/');
+});
+
+// router.use();
+
+// router.get();
+// router.post();
+
+module.exports = router;
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+CERTO.... COM ESSE 'ROUTER' CRIADO AQUI,
+
+
+
+DEVEMOS O __IMPORTAR__ PARA DENTRO DE 'app.js'... ------> 
+
+
+
+
+
+
+__ PARA ISSO, PROFESSOR ADICIONA UM 
+
+
+
+IMPORT 
+
+LÁ NO 
+
+
+INÍCIO DO 'app.js',
+
+
+
+LOGO DEPOIS 
+
+DE 
+
+'const app = express();',
+
+
+
+JUSTAMENTE 
+
+
+
+PARA DEIXAR BEM CLARO QUE 
+
+
+
+ESSE IMPORT __ VEM _ DE NOSSA 'PRÓPRIA FILE'.. 
+
+
+
+
+
+
+
+
+-----> OK... AÍ, O PROFESSOR VAI ESCREVER 
+
+
+
+'const adminRoutes = require('./routes/admin');
+
+
+
+
+
+
+
+
+
+
+-------> OU SEJA,
+
+
+VAMOS QUERER 
+
+
+
+
+ESSE ARQUIVO AÍ,
+
+ARMAZENAR NESSE OBJETO/CONSTRUCT 
+
+de 
+
+'adminRoutes' 
+
+
+
+___ QUE __ VAI ESSENCIALMENTE __ REPRESENTAR O NOSSO OBJETO 'ROUTER' que foi criado e 
+
+
+
+exportado 
+
+
+em 
+
+
+'admin.js'....
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const app = express();
+
+const adminRoutes = require('/routes/admin.js');
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+OK..... -----> AGORA QUE ESSE NEGÓCIO ESTÁ IMPORTADO NESSE ARQUIVO,
+
+
+
+BASTA CHAMARMOS 
+
+
+
+'adminRoutes',
+
+
+PQ 
+
+
+é 
+ELE QUE 
+
+ESTÁ COM AQUELAS 
+
+ROUTES 
+
+DE 
+
+
+''
+
+
+    router.get('/add-product', (req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+  res.send(
+    '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+  );
+});
+
+router.post('/product', (req, res, next) => {
+  console.log(req.body);
+  res.redirect('/');
+});
+
+
+'''
+
+
+REGISTRADAS..... ---> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> A COISA LEGAL SOBRE ESSE 'ROUTER' É QUE ELE É CONSIDERADO 
+
+
+
+' VALID MIDDLEWARE FUNCTIOn'... --> ISSO, EM OUTRAS PALAVRAS,
+
+
+
+
+QUER __ DIZER QUE __ PODEMOS 
+
+
+
+
+
+
+
+
+SIMPLESMENTE 
+
+ESCREVER 
+
+
+
+uma sintaxe alternativa,
+
+sintaxe 
+
+de 
+
+
+
+
+
+'
+app.use(
+  adminRoutes
+)
+
+'
+
+
+
+
+
+
+
+__ PARA IMPORTAR__ ESSAS NOSSAS ROUTES DEFINIDAS EM 'admin.js'...
+
+
+
+
+
+
+
+
+
+EX (arquivo 'app.js'):
+
+
+
+
+
+
+
+
+
+
+const app = express();
+
+const adminRoutes = require('/routes/admin.js');
+
+
+
+app.use(bodyParser.urlencoded({extended: false}))
+
+
+
+
+app.use(adminRoutes); ///EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+app.use(
+  '/', (req, res, next) => {
+
+    res.send('<h1>Hello from Express!</h1>');
+
+  }
+)
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+----> OK... O CALL DO OBJETO 'adminRoutes'
+
+
+
+
+EM SI _ JÁ VAI IMPORTAR ESSAS ROUTES AO NOSSO ARQUIVO 
+
+MAIN 
+
+
+'app.js'...
+
+
+
+
+
+-------------> CERTO.... -----------> 
+
+
+
+
+
+
+
+COM ESSE NEGÓCIO IMPORTADO,
+
+NOSSAS ROUTES SERÃO 'AUTOMATICALLY CONSIDERED' DENTRO 
+
+DO 
+
+ARQUIVO 
+
+
+
+'admin.js',
+
+QUANDO 
+
+ESTIVERMOS 
+
+'FUNNELING THE REQUEST THROUGH THIS app.js file'....
+
+
+
+
+
+
+
+
+
+-----> OK.... --> EXATAMENTE COMO ANTES,
+
+
+
+
+
+__ 'THE ORDER MATTERS'.... ------> ISSO SIGNIFICA QUE SE ESCULHAMBARMOS A ORDEM,
+
+
+colocarmos o 
+
+
+'app.use(adminRoutes);'
+
+
+
+____DEPOIS__ 
+
+
+DAQUELE 
+
+
+
+'app.use()'
+UQE
+ 
+
+ FAZ O SEND DE UMA RESPONSE ('res.send(xxxx)'),
+
+
+ NÓS NUNCA 
+
+ VAMOS 
+
+
+
+ ALCANÇAR ESSE CÓDIGO 
+
+ DE 
+
+
+ 'app.use(adminRoutes);'...
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+const app = express();
+
+const adminRoutes = require('/routes/admin.js');
+
+
+
+app.use(bodyParser.urlencoded({extended: false}))
+
+
+
+
+
+
+
+
+app.use(
+  '/', (req, res, next) => {
+
+    res.send('<h1>Hello from Express!</h1>');
+
+  }
+)
+
+
+app.use(adminRoutes); ///ESSE CÓDIGO NUNCA SERÁ ALCANÇADO, SE DEIXARMOS A ORDER ASSIM... (só será executado o primeiro 'app.use()', jjustamente PQ NÃO DEFINIMOS 'next()" dentro dele...
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK....E O PROFESSOR DIZ QUE PODEMOS FAZER _a MESMA COISA COM 
+
+
+NOSSO 
+
+'FRONT FACING ROUTE' aqui... -----> OU SEJA,
+
+
+PODEMOS 
+
+TRANSPLANTAR
+ 
+
+ TAMBÉM 
+
+ O 
+
+
+ CÓDIGO 
+
+ DE 
+
+
+ 'app.use('/', (req, res, next) =>
+
+ {
+   res.send('<h1>Hello from Express!</h1>');
+
+
+ }
+ )
+'
+
+
+
+
+
+
+
+
+
+ -----------> PROFESSOR MOVE ESSE CÓDIGO PARA DENTRO 
+
+ DO 
+
+
+ 'shop.js'...
+
+
+
+
+
+
+
+ --> ESCREVO ESSE CÓDIGO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+ 
+
+
+
+const express = require('express');
+
+
+
+
+
+const router = express.Router();
+
+
+
+
+
+
+
+router.use( ///diferente de 'app.use()', pq aqui vamos querer USAR AQUELE ROUTER ALI...
+    '/', ///////PATH FILTER.
+    (req, res, next) => {
+
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>');
+});
+
+
+
+
+
+
+
+module.exports = router; ///////// DIFERENTE DOS IMPORTS ES6...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX( app.js):
+
+
+
+
+
+
+
+
+
+
+
+// const http = require('http'); desnecessário, pois ESSE MÓDULO JÁ É 'IMPLÍCITO'/utilizado __ lá no EXPRESSJS, já está contido naquele MÉTODO '.listen(3000)' DE 'app' (que É O NOSSO APLICATIVO EXPRESSJS, no final das contas....)
+
+const express = require('express'); ///necessário.
+
+const bodyParser = require('body-parser');
+
+const app = express(); /////necessário.
+
+
+
+
+const adminRoutes = require('/routes/shop');
+
+
+
+
+// app.use(
+//     (req, res, next) => { ////////ESSE MIDDLEWARE FARÁ COM QUE ESSE HEADER SEJA SETTADO/ENVIADO EM TODAS AS ROUTES/PATH FILTERS DE NOSSO APP....
+//         res.json({
+//             message: 'EXEMPLO'
+//         })
+
+//     }
+// )
+
+
+
+app.use(bodyParser.urlencoded({extended: false})); ////1 DE _DIVERSOS_ MÉTODOS__ que podemos usar para PARSEAR NOSSAS 'INCOMING REQUESTS'....--> nesse caso, vamos usar 'urlencoded()', que é algo que usamos PARA PARSEAR DADOS ENVIADOS POR MEIO DE UMA FORM...
+
+
+
+/////// LINHAS MOVIDAS LÁ PARA O 'admin.js', que é ONDE DEFINIMOS UM 'EXPRESS ROUTER'...
+
+// app.use( 
+//     '/add-product', ///PATH FILTER. cumpre a mesma funçaõ de 'if(url === '/')' NO NODEJS NORMAL...
+//     (req, res, next) => {
+            
+//   console.log('test; IN THE MIDDLEWARE');
+//   res.send('<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+//   // res.send('<h1>Hello from product!</h1>');
+// });
+
+
+// // app.use( ///ACEITA/RECEBE __ REQUESTS__ DE TODO E QUALQUER METHOD, não se importa....
+//   //app.get//// ACEITA/RECEBE APENAS REQUESTS DE METHOD 'GET', e nenhum outro....
+//   app.post( ////ACEITA/RECEBE APENAS REQUESTS DE METHOD 'post', e nenhum outro... (isso nesse PATH específico...)
+//   '/product', (req, res, next) => {
+//       console.log(req.body);  ///feature do EXPRESSJS.... -> ver middleware de 'urlencoded', que é o que possibilita isto...
+//       res.redirect('/');
+//   }
+// )
+
+
+/////// ver mensagem logo acima... 
+
+
+
+
+
+
+
+app.use(
+   ////uso do EXPRESSJS...
+   adminRoutes
+);
+
+
+
+
+
+app.use(
+  ////uso do EXPRESSJS...
+  adminRoutes
+);
+
+
+
+// app.use(
+//     '/', ///////PATH FILTER.
+//     (req, res, next) => {
+
+
+//   console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+//   res.send('<h1>Hello from express!</h1>'); ////o 'send()' já setta nos headers UM CONTENT-TYPE DE 'html/text' POR DEFAULT.. (e é claro que você pode OVERWRITTAR ESSE COMPORTAMENTO POR MEIO DE CÓDIGOS COMO  'setHead' e 'setHeader'...)
+// });
+
+// const server = http.createServer(app); ////app ---> é a constante que temos logo acima (sim, o expressJS, quando armazenado em uma CONST, fica com um formato parecido com o de um REQUESTHANDLER, parecido com um '(req, res) => {}')
+                    /////^^^^^SUBSTITUÍDO POR 'app.listen(3000)', assim como a linha logo abaixo....
+
+
+// server.listen(3000); ///resumido/substituído por 'app.listen(3000)', que age como shorthand disso... (É UMA FEATURE DO EXPRESS.).
+
+
+
+
+
+
+app.listen(3000); ///é um resumo/shorthand de 'const server = http.createServer(app);' e 'server.listen(3000)'...
+                    ///também torna desnecessário o import de 'const http = require('http'), PQ ESES MÓDULO JÁ VEM COM esse método '.listen()' no nosso app EXPRESS..
+
+
+
+
+
+
+
+
+
+
+                    ------------------------------------
+
+
+
+                    O QUE VOCÊ DEVE ATENTAR É QUE 
+
+
+                    __a ORDEM DOS MIDDLEWARE IMPORTA.... ------> 
+
+
+                    OU SEJA,
+
+
+
+                    COMO ANTES,
+
+
+                    SE NÓS 
+
+                    TROCARMOS 
+
+
+                    'app.use(adminRoutes)'
+
+
+
+                    ____ embaixo ___ DA OUTRA FUNÇÃO,
+
+                    NADA MUDRÁ...
+
+
+
+
+
+
+
+
+
+
+
+                    ----------> E PODEMOS FAZER A MESMA COISA COM O 'FRONT FACING CODE'....
+
+
+
+
+
+
+
+
+                    -------> TENTAR IMPLEMENTAR COM O 
+
+
+                    'shop.js'....
+
+
+
+
+
+
+
+
+
+OK, NOSSO CÓDIGO FICOU EXATAMENTE IGUAL AO DO PROFESSOR:
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express'); ///necessário.
+
+const bodyParser = require('body-parser');
+
+const app = express(); /////necessário.
+
+
+
+
+const adminRoutes = require('/routes/admin');
+
+
+const shopRoutes = require('/routes/shop')
+
+
+
+
+// app.use(
+//     (req, res, next) => { ////////ESSE MIDDLEWARE FARÁ COM QUE ESSE HEADER SEJA SETTADO/ENVIADO EM TODAS AS ROUTES/PATH FILTERS DE NOSSO APP....
+//         res.json({
+//             message: 'EXEMPLO'
+//         })
+
+//     }
+// )
+
+
+
+app.use(bodyParser.urlencoded({extended: false})); ////1 DE _DIVERSOS_ MÉTODOS__ que podemos usar para PARSEAR NOSSAS 'INCOMING REQUESTS'....--> nesse caso, vamos usar 'urlencoded()', que é algo que usamos PARA PARSEAR DADOS ENVIADOS POR MEIO DE UMA FORM...
+
+
+
+
+
+
+app.use(
+   ////uso do EXPRESSJS...
+   adminRoutes
+);
+
+
+
+app.use(
+  shopRoutes
+)
+
+
+
+
+---------------------------
+
+
+
+
+(E LÁ EM 'shop.js'):
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+router.get(
+  ///diferente de 'app.use()', pq aqui vamos querer USAR AQUELE ROUTER ALI...
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+    console.log('test2; IN ANOTHER MIDDLEWARE');
+    res.send('<h1>Hello from express!</h1>');
+  }
+);
+
+module.exports = router; ///////// DIFERENTE DOS IMPORTS ES6...
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+OK... SALVAMOS TUDO ISSO E RECARREGAMOS 
+
+'add-product'...
+
+
+
+
+
+
+
+
+
+--> ISSO FUNCIONA...
+
+
+--> AQUI HÁ OUTRA COISA IMPORTANTE DE ENTENDER... 
+
+
+
+
+
+
+--------> SE O PROFESSOR__ 
+
+INVERTESSE A ORDER,
+
+SE TIVESSE 
+
+
+A ROUTE DA 
+
+
+SHOP __ ANTES___ 
+
+
+
+
+DA ROUTE 
+
+
+
+DO 
+
+'admin',
+
+
+TIPO ASSIM:
+
+
+
+
+
+app.use(
+   ////uso do EXPRESSJS...  //INVERTIDAS AS ORDENS de 'shopRoutes' e 'adminRoutes'....
+  shopRoutes
+);
+
+
+
+app.use(
+  adminRoutes
+)
+
+
+
+
+
+
+
+
+
+
+....... SE FIZERMOS ISSO E RECARREGAMOS,
+
+
+
+
+
+
+
+
+--O NEGÓCIO VAI FUNCIONAR/FUNCIONOU.... (vamos alcançar a route de 'add-product',  E NÃO A DE '/'..) --------> 
+
+
+
+
+MAS ISSO ACONTECE, DIZ O PROFESSOR,
+
+
+PQ 
+
+
+ELE 
+
+
+
+
+DEFINIU UMA CONDIÇÃO PARA ALCANÇAR A NOSSA ROUTE,
+
+A CONDIÇÃO 
+
+DE 
+
+
+'.get()' SÓ MÉTODOS '.get()'
+
+
+
+
+ALCANÇARÃO 
+
+ O NOSSO 
+
+
+
+
+SERVER....
+
+
+
+
+
+
+
+
+
+
+
+----> MAS ISSO SÓ ACONTECEU/ACONTECE 
+
+POR CAUSA 
+
+
+DO MÉTODO 
+
+
+
+'.get()'
+
+ESCRITO 
+
+NO NOSSO 
+
+'router.get' (MAS O MESMO SE APLICA A '.post' e '.patch', '.put', etc... )
+
+
+
+
+
+
+
+
+
+SE VOCÊ USA 
+
+
+'.get'/'.post' ,
+
+
+VOCÊ 
+
+
+__ 
+
+
+OBRIGA A USAR_ 
+O APPROACH 
+
+DO 
+
+
+
+
+
+'EXACT-MATCH' ('EXACT MATCHING' PARA A URL.... ------. JÁ SE O PROFESSOR HOUVESSE UTILIZADO 
+
+
+
+'.use()' AQUI,
+
+CMO ELE HAVIA FEITO ANTES,
+
+PARA 
+
+HANDLAR QUAISQUER INCOMING HTTP REQUESTS,
+
+
+
+
+SE ELE TIVESSE FEITO ISSO,
+
+
+
+
+_ NOSSO 
+
+COMPORTAMENTO 
+
+SERIA
+ 
+
+
+
+ O DE 'SEM EXACT MATCH',
+
+ aquele comportamento 
+
+ DEFAULT DO ROUTER, SEM 'ROUTE EXACT MATCIHNG'..
+
+
+ (e o mesmo se aplica 
+ 
+ À 
+ 
+ versão 
+ 
+ 
+ 'app.use()',  A VERSÃO VANILLA SEM USO DE 'express' e 'express.Router'..... )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----------> OKKKKKK.... AGORA, SE O PROFESSOR TENTAR 
+
+
+
+
+
+ ENFIAR UMA URL QUALQUER (random stuff) NA SUA BARRA DE ENDEREÇOS,
+
+ ELE VAI 
+
+ 'ACTUALLY 
+
+
+
+GET AN ERROR'... --> ISSO PQ 
+
+
+AGORA 
+
+NÃO TEREMOS 'NOT A SINGLE MIDDLEWARE THAT WILL HANDLE THIS',
+
+
+
+___MAS NÓS DE FATO __ TEMOS NOSSAS ROUTES 
+
+
+
+SETTADAS EM 'admin.js'
+
+
+e 
+
+
+'shop.js',
+
+
+
+
+
+E TAMBÉM 
+
+
+
+
+__ essas routes__ foram 'split up and registered'........ --> TAMBÉM,
+
+
+
+quando usamos 
+
+'.get()'/'.post()', '.patch(), etc,
+
+
+
+DEVEMOS __ SEMPRE ASSEGURAR_ QUE 
+
+A URL SERÁ AQUELA 
+
+
+
+URL EXATA, 
+
+'MATCHING URLs'... ----> E É EXATAMENTE POR ISSO QUE 
+
+
+AGORA O 
+
+PROFESSOR RECEBE UM ERRO, É 
+
+PQ 
+
+
+'I GOT NO SINGE MIDDLEWARE 
+
+
+
+THAT WOULD HANDLE THIS'... 
+
+
+
+
+
+
+
+
+-------------
+
+
+
+--> NÃO É A PIOR PRACTICE AINDA SE IMPORTAR COM A ORDER DE NOSSO CÓDIGO... ---> 
+
+
+
+a ordem não importa nesse exato momento,
+
+MAS SE EM ALUGM MOMENTO VOCÊ ALTERAR ALGUMA COISA
+
+
+
+
+PARA 
+
+'.use()',
+
+
+
+
+ESSA MUDANÇA __ IMPORTARIA_, 
+
+
+
+
+E É EXATAMENTE PQ 
+
+NÓS 
+
+DEVEMOS 
+
+
+'CARE ABOUT IT RIGHT FROM THE START'...

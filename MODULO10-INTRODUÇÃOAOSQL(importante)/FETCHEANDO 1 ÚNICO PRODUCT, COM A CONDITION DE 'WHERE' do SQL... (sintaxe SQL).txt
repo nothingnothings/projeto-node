@@ -1,0 +1,327 @@
+
+
+
+
+
+
+
+
+---> AGORA DEVEMOS SER CAPAZES 
+
+DE 
+
+
+
+
+FETCHEAR 
+
+
+1 
+
+
+ÚNICO PRODUCT DE NOSSA DATABASE,
+
+
+por meio do uso 
+
+
+
+
+DA CONDITION de 'WHERE'
+
+
+em 1 SQL QUERY...
+
+
+
+
+
+
+
+
+--> EU ACHO QUE EU JÁ CONSEGUI ESCREVER ISSO AÍ....
+
+
+
+
+
+TINHA FICADO ASSIM:
+
+
+const findProductInDatabase = (id) => {
+  return db.execute(`SELECT * FROM products WHERE id = ${id}`);
+}
+
+
+
+
+
+
+
+
+---> BASTA USAR ISSO 
+
+
+AÍ 
+
+
+
+PARA __  CONSEGUIR __  O NOSSO PRODUCT... (isso lá na route adequada...)
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... CONSEGUI FAZER FUNCIONAR:
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+  const productId = req.params.productId;
+    Product.findProduct(productId)
+    .then(
+      (rows, fieldData) => {
+            console.log(rows[0]);
+
+            const productDetail = {...rows[0][0]}
+            console.log(productDetail);
+                res.render('shop/product-detail', {
+      pageTitle: productDetail.title,
+      path: '/products',
+      product: productDetail,
+    });
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+};
+
+
+
+
+
+------------------------------
+
+
+
+
+
+--> NO CÓDIGO DO PROFESSOR, ELE ESCREVE ASSIM:
+
+
+
+
+
+
+
+
+
+
+static findById(id) {
+
+    db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
+
+}
+
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+DE NOVO EU ESCREVI 
+
+ERRADO
+ 
+
+
+
+ ESSA SINTAXE AÍ... (ESQUECI o ARRAY COM OS VALORES A SEREM INJETADOS....)
+
+
+
+
+
+
+
+
+
+
+
+  ----> SÓ NÃO SEI SE ESTA SINTAXE ESTÁ CORRETA:
+
+
+
+    db.execute('UPDATE products SET ? WHERE id = ?', [{title: this.title, price: this.price, description: this.description, imageUrl: this.imageUrl}, this.id]) ////SINTAXE __ SAFE__...
+
+
+
+
+
+------------------
+
+
+
+
+--> PARECE QUE NÃO, POIS RECEBI UM ERRO DE SINTAXE...
+
+
+
+
+
+
+-> VOU COPIAR ESTE FORMATO:
+
+
+
+async function updateCustomer(id, customer){
+    const conn = await connect();
+    const sql = 'UPDATE clientes SET nome=?, idade=?, uf=? WHERE id=?';
+    const values = [customer.nome, customer.idade, customer.uf, id];
+    return await conn.query(sql, values);
+}
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+OK.... FUNCIONOU...
+
+
+ESTE STATEMENT:
+
+
+
+
+  db.execute('UPDATE products SET title=?, price=?, description=?, imageUrl=? WHERE id=?', [this.title, this.price, this.description, this.imageUrl, this.id]) ////SINTAXE __ SAFE__...
+
+
+
+
+
+  FUNCIONOU....
+
+
+
+
+
+  E ESTE SITE É BOM 
+  PARA 
+
+
+RELEMBRAR A SINTAXE 
+
+SQL:
+
+
+https://www.luiztools.com.br/post/como-usar-nodejs-mysql/
+
+
+
+
+
+
+
+AGORA SÓ FALTA CONSERTAR ESTE ERRO:
+
+
+
+
+TypeError: Cannot read property 'title' of undefined
+    at A:\projeto4 - NODEJS\MODULO10-INTRODUÇÃOAOSQL(importante)\NOVONOVOPROJETO8-TRABALHANDOCOMDATABASESQL\controllers\shop.js:176:33
+
+
+
+
+
+
+    O STORE 
+
+
+
+    DOS VALORES EM CONSTANTES FEZ O ERRO SUMIR...
+
+
+
+    EX:
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+  const productId = req.params.productId;
+  console.log(productId);
+    Product.findProduct(productId)
+    .then(
+      ([rows, fieldData]) => {
+        const productData = { ////EIS O CÓDIGO EM QUESTÃO.
+          ...rows[0]
+        }
+        console.log(productData);
+
+                res.render('shop/product-detail', {
+      pageTitle: productData.title,
+      path: '/products',
+      product: productData
+    });
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+};
+
+
+----------------------
+
+
+
+certo...
+
+
+acho que acabei por aqui.....

@@ -1,0 +1,3188 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA UQE 
+
+
+
+ELE HAVIA CLICADO 
+
+
+
+
+EM 
+
+
+'ADD TO CART' 
+
+NA ÚLTIMA 
+
+
+LIÇÃO,
+
+
+
+
+
+
+e aí 
+
+nada 
+
+aconteceu... ----> 
+
+
+
+
+ELE 
+
+
+
+
+DIZ QUE 
+
+
+ESTAMOS FALHANDO, AGORA,
+
+
+
+
+POR CAUSA 
+
+DE UM 
+ERRO 
+
+
+
+de 
+
+
+
+
+'TypeError: req.session.user.addToCart is not a function'...
+
+
+
+
+
+
+
+
+
+---> ELE APONTA 
+
+QUE NÓS __ __BASICAMENTE__
+
+
+FALHAMOS,
+
+
+NÃO CONSEGUIMOS,
+
+
+EXECUTAR 
+
+
+A FUNÇÃO DE 
+
+
+'addToCart',
+
+
+que 
+
+EXISTE 
+NAQUELE 
+
+
+
+MODEL DE 'User',
+
+
+QUE 
+
+
+SUPOSTAMENTE 
+
+TERIA 
+
+
+SIDO 
+
+OBTIDO POR MEIO DAQUELE 
+
+
+código 
+
+
+
+de 
+
+
+'User.findById()',
+
+
+LÁ 
+
+
+
+EM 
+
+'postLogin',
+
+
+
+
+
+NESSE TRECHO DE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+      User.findById('6178c60a90464c24983b0847') //EIS O CÓDIGO EM QUESTÃO.
+      .then(
+        (user) => {
+
+                                    
+      
+        req.session.isLoggedIn = true; 
+      req.session.user = user; 
+
+
+            req.session.user.save( //talvez funcione.... (não parece funcionar, mas tudo bem...)
+              () => { //callback function, vai redirecionar APENAS __aPÓS___  o 'SAVE' da session na DATABASE ter ocorrido, e apenas APÓS A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+                res.redirect('/');
+              }
+            )
+
+
+        }
+      )
+
+
+
+
+
+
+
+}
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+O PROBLEMA, AQUI, É QUE 
+
+TEMOS 
+VÁRIAS 
+
+FUNÇÕES/métodos 
+
+
+
+em nossos models 
+
+QUE 
+
+___DEPENDEM __ DO OBJETO 
+
+'user' 
+
+
+ESTAR __DENTRO DO OBJETO 'request' 
+
+
+
+de nosso user/pessoa que está usando o browser, na sua relação browser-server, no 
+
+objeto 'request'... ------> ENTRETANTO,
+
+
+
+ACONTECE QUE 
+
+
+__NÓS NÃO ESTAMOS MAIS __ARMAZENANDO____ O 
+
+
+'user'
+
+
+
+
+
+em 
+
+1 propriedade 
+
+'user'
+
+
+DENTRO 
+
+
+
+DO OBJETO 'request',
+
+
+
+justamente por isso ser SUBÓPTIMO, como aprendemos nas aulas passadas...
+
+
+
+
+
+
+
+
+
+
+
+------> OK........ ARMAZENÁVAMOS O  USER NO REQUEST,
+
+
+
+e essa era uma ação que era realizada 'PER USER REQUEST',
+
+
+era 
+
+
+REPETIDA INFINITAMENTE, cada vez que 
+
+entrávamos em 1 page de nosso app,
+
+
+__ 
+
+SEMPRE ERA 
+
+COLOCADO 
+
+
+1 objeto 'user' (o user pertinente)
+
+
+
+EM __ TODO __ E 
+
+CADA 
+
+'REQUEST' 
+
+que era 
+
+
+criado no startup das pages.... ----> E NÓS 
+
+'FETCHEAVAMOS' 
+
+ESSE 
+
+USER (por meio de 'User.findById()'), LÁ DO DATABASE, 
+
+
+
+PARA __ 
+
+
+CADA_ REQUEST,
+
+ 
+
+
+
+ NO MIDDLEWARE 
+
+
+ de 
+
+
+
+ 'app.use(
+     (req, res, next) => {
+         User.findById()
+     }
+ )',
+
+
+ etc etc...,
+
+
+ LÁ NO APP.JS.... ------------> 
+
+
+
+
+
+
+ E É CLARO QUE 
+
+
+
+
+ ESSE 
+
+ USER FETCHEADO DO DATABASE ___ JÁ 
+
+
+ VINHA, GRAÇAS AO MONGOOSE,
+
+
+ COMO UM 
+
+ 'FULL USER OBJECT',
+
+
+ recheado COM 
+
+
+
+
+ MÉTODOS MONGOOSE E NOSSOS 
+ 
+ MÉTODOS TBM, e não só os dados puros/básicos...  ------>  E AÍ 
+
+
+
+ NÓS SEMPRE 
+
+
+ _ARMAZENÁVAMOS __ 
+
+
+
+ ESSE USER 
+
+ OBJECT ESPECIAL AÍ,
+
+ CHEIO DE MÉTODOS,
+
+ DENTRO 
+
+ De uma propriedade 
+
+ de 
+
+ nome 'user',
+
+
+ no REQUEST OBJECT...
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+ 
+// app.use((req, res, next) => { 
+//   User.findUserById('616fa02db3544414dae89f26') 
+//     .then((user) => {
+//    req.user = new User(user.name, user.email, user.cart, user._id); ///////////CÓDIGO NOVO, COM OS METHODS NECESSÁRIOS... ---> ISSO AÍ ARMAZENAVA O 'user' e seus methods convenientes DENTRO DO OBJETO 'request.'..
+//       next();
+//       
+   
+   
+//     })
+
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+
+OK................. MAS COM A 'SESSION',
+
+
+
+ISSO ACONTECE DE FORMA UM POUCO DIFERENTE (fazemos de forma diferente, no caso),
+
+
+
+
+
+COM A SESSION,
+
+
+
+
+_____NÓS _______NÃO VAMOS FETCHEAR 
+
+ESSE 
+
+'OBJETO USER'
+
+
+___ PARA CADA REQUESTZINHO 
+
+
+
+
+elaborado no startup de nossas pages,
+
+
+
+
+
+
+E __ EM VEZ DISSO,
+
+_____ APENAS___ ARMAZENAMOS ___ 
+
+
+1 'user'
+
+
+
+
+NA NOSSA SESSION 
+
+
+
+____ QUANDO __ OCORRE O 
+
+
+'login'.... ------------> ISSO VISTO 
+
+LÁ 
+
+
+NO CÓDIGO DE 
+
+
+
+''
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+      User.findById('6178c60a90464c24983b0847') //EIS O CÓDIGO EM QUESTÃO.
+      .then(
+        (user) => {
+
+                                    
+      
+        req.session.isLoggedIn = true; 
+      req.session.user = user; 
+
+
+            req.session.user.save( //talvez funcione.... (não parece funcionar, mas tudo bem...)
+              () => { //callback function, vai redirecionar APENAS __aPÓS___  o 'SAVE' da session na DATABASE ter ocorrido, e apenas APÓS A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+                res.redirect('/');
+              }
+            )
+
+
+        }
+      )
+
+
+
+
+
+''''
+
+
+
+
+
+
+--> NO CASO, O 
+
+
+'user'
+
+É ARMAZENADO, no objeto 'request', dentro de 'session',
+
+
+lá 
+
+naquela linha de 
+
+'      req.session.user = user;  ''''
+
+
+
+
+
+
+
+
+
+
+
+-----> OK..... MAS A QUESTÃO É:
+
+
+
+MAS O QUE 
+
+
+
+ACONTECE COM O 
+
+'USER',
+
+
+
+nessa linha aí...?????????? --------> BEM, O QUE ACONTECE´E QUE 
+
+
+ESSE 
+
+'user', objeto cheio de métodos mágicos,
+
+
+
+__aCABA__ 
+
+ARMAZENADA__ 
+
+LÁ 
+
+
+
+NA DATABASE...  ------>  O PROBLEMA, JUSTAMENTE,
+
+É QUE 
+
+ESSE 
+
+OBJETO 
+
+'user'
+
+
+VAI 
+
+
+SER CONVERTIDO EM APENAS DATA, LÁ NA DATABASE...
+
+
+
+
+
+
+--> BASTA VER O FORMATO 
+
+
+DE 
+
+1 
+
+OBJETo 'user',
+
+
+DENTRO 
+
+DE 
+
+
+
+
+
+1 SESSION/DOCUMENTO SESSION, na collection de 'sessions':
+
+
+
+
+
+{
+    "_id": "vZBxw04VCTXOwHPiXE6H-rScyLr3e82U",
+    "expires": {
+        "$date": "2021-11-15T20:29:23.035Z"
+    },
+    "session": {
+        "cookie": {
+            "originalMaxAge": null,
+            "expires": null,
+            "secure": null,
+            "httpOnly": true,
+            "domain": null,
+            "path": "/",
+            "sameSite": null
+        },
+        "isLoggedIn": true,
+        "user": {
+            "cart": {
+                "products": [{
+                    "productId": {
+                        "$oid": "6179bcb8a05105d79005d70b"
+                    },
+                    "quantity": 1,
+                    "_id": {
+                        "$oid": "617b6aefead3c7bf9cabb771"
+                    }
+                }]
+            },
+            "_id": {
+                "$oid": "6178c60a90464c24983b0847"
+            },
+            "name": "Max",
+            "email": "max@test.com",
+            "__v": 33
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--------> COMO VOCÊ PODE PERCEBER, TODOS OS 'MAGIC METHODS'
+
+
+SUMIRAM... ---> ficamos com SÓ A DATA... --------> 
+
+
+
+
+
+
+
+
+
+
+
+E AGORA, PARA CADA 
+
+'NEW REQUEST',
+
+
+
+
+O 
+
+MIDDLEWARE 
+
+DE 
+
+
+'session',
+
+
+
+lá 
+em 
+
+
+''
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+      User.findById('6178c60a90464c24983b0847') //EIS O CÓDIGO EM QUESTÃO.
+      .then(
+        (user) => {
+
+                                    
+      
+        req.session.isLoggedIn = true; 
+      req.session.user = user; 
+
+
+            req.session.user.save( //talvez funcione.... (não parece funcionar, mas tudo bem...)
+              () => { //callback function, vai redirecionar APENAS __aPÓS___  o 'SAVE' da session na DATABASE ter ocorrido, e apenas APÓS A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+                res.redirect('/');
+              }
+            )
+
+
+        }
+      )
+
+
+
+
+'',
+
+
+
+
+ELE __ NÃO VAI 
+ 
+
+
+
+
+ ___FETCHEAR__  O 
+
+
+
+
+ 'USER'
+
+ COM A AJUDA 
+
+
+ DO 
+
+
+  
+
+
+
+  'MONGOOSE',
+
+
+
+
+  E SIM 
+
+  SÓ VAI 
+
+  FETCHEAR A 'SESSION DATA'
+
+  LA 
+
+
+
+  DO MONGODB, COISA normal, 
+
+  MAS 
+
+
+
+
+
+SEM 
+
+
+FETCHEAR 'O USER COM A AJUDA DO MONGOOSE',
+
+
+
+
+
+sendo esse justamente o PROBLEMA,
+
+
+
+problema que NÃO TEMOS 
+
+ESSES 
+
+METHODS ESPECIAIS 
+
+nesse 'user' que é retrievado... ------> 
+
+
+
+
+
+
+
+PARA __ RETRIEVAR__ AS 
+
+
+
+SESSIONS __ COM 
+
+
+
+OS 
+
+
+'user',
+
+
+
+
+
+
+
+NOSSO APP ESTÁ USANDO 
+
+AQUELE 
+
+
+'MongoDBStore',
+
+
+
+QUE É SETTADO NAQUELE CÓDIGO DE 
+
+
+'''
+
+
+
+
+
+
+
+const store = new MongoDBStore( ////usado junto de 'app.use(session())', lá embaixo. Os 2 são necessários...
+  {///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+
+
+    uri: MONGODB_URI, ///mesma connection string de nosso CONNECT GERAL AO NOSSO DATABASE... (usado lá em 'mongoose.connect()')...
+
+    collection: 'sessions', //aqui você define a COLLECTION em que você vai querer ARMAZENAR SUAS SESSIONS....
+    //expires// opcional.... ---> SE VOCÊ SETTAR ISSO, o mongodb VAI AUTOMATICAMENTE LIMPAR suas sessions ARMAZENADAS NESSA collection aí, quando o tempo delas expirar, tempo definido nessa key...
+
+
+  } //em 'uri' você deve colocar A __sTRING__ DA DATABASE EM QUE VOCê VAI QUERER ARMAZENAR (o seu store) SUAS SESSIONS...
+  
+)
+
+
+
+
+
+
+
+
+'''''''''''''''
+
+
+
+
+
+
+
+
+E O PROBLEMA, AQUI,
+
+É QUE 
+
+
+ESSE 
+
+
+'MongoDBStore'
+
+
+
+_______ NÃO __ SABE DA __EXISTÊNCIA DE NOSSOS MODELS MONGOOSE (como o model 'user'),
+
+
+
+ESSES MODELS COM TODOS ESSES METHODS ESPECIAIS... -------> ISSO SIGNFICA QUE 
+
+
+
+
+QUANDO ELE 
+
+
+FETCHEIAA 
+
+
+
+
+A 
+
+DATA 
+
+LÁ 
+
+DA 
+
+'SESSION DATABASE',
+
+
+
+__ELE __ SÓ FETCHEIA  
+
+
+A 
+
+DATA,
+
+E NÃO 
+
+
+
+1 OBJETO 
+
+COM 
+
+TODOS OS METHODS PROVIDENCIADOS PELO MONGOOSE... -->   MAS O QUE 
+
+
+
+PODEMOS FAZER QUANTO A ISSO,
+
+
+O 
+
+QUE 
+
+PODEMOS 
+FAZER 
+
+
+PARA 
+
+RESOLVER ESSE PROBLEMa?  ------> PROFESSOR 
+
+
+
+DIZ QUE 
+
+
+
+UMA 
+
+COISA 
+
+
+
+QUE 
+
+
+__É __ CLARO __ QUE 
+
+
+
+PODEMOS FAZER,
+
+
+
+
+____ AO MESMO TEMPO QUE 'REVERTEMOS NOSSO CÓDIGO UM POUCO',
+
+
+
+
+É ___ READICIONAR__ 
+
+AQUELE 
+
+
+
+
+MIDDLEWARE 
+
+
+
+
+
+
+
+_QUE TÍNHAMOS ANTES,
+
+LÁ 
+
+
+EM 
+
+'app.js',
+
+
+
+NO NOSSO PROJETO.... ----> 
+
+
+
+
+OU SEJA,
+
+
+
+
+
+VAMOS 
+
+ESCREVER 
+
+
+
+
+'app.use(
+  (req, res, next) => {
+
+
+
+
+
+  }
+)
+
+',
+
+
+
+
+
+
+E ÁI 
+
+
+
+_VAMOS 
+
+
+
+
+
+__  REUTILIZAR 
+
+A LÓGICA 
+
+LÁ DA 
+
+ROUTE DE 
+
+'postLogin',
+
+
+
+QUE 
+
+É 
+ESTA AQUI:
+
+
+
+
+'''''
+    
+      User.findById('6178c60a90464c24983b0847') //todos os códigos abaixo SÃO NECESSÁRIOS para armazenar nossa SESSION DATA (uma 'ENTRY' de SESSION, em 'sessions') LÁ NA NOSSA DATABASE... --> essas linhas TAMBÉM VÃO CRIAR 1 'session cookie' no browser do user, AUTOMATICAMENTE.... (e esse session cookie terá um id HASHEADO que corresponderá AO ID da SESSION ARMAZENADA NA DATABASE, tbm por meio deste código aqui....)
+      .then(
+        (user) => {
+    
+       
+        req.session.isLoggedIn = true;
+      req.session.user = user; 
+            req.session.user.save( 
+              () => { 
+                res.redirect('/');
+              }
+            )
+
+
+        }
+
+
+
+
+
+''''
+
+
+
+
+
+
+ESSA LÓGICA AÍ, LÓGICA QUE 
+
+
+FAZ 
+
+O 
+
+
+
+'FETCH' 
+
+
+DE 
+
+1 USER 
+_PARA __ 1 DADO ID... -------> 
+
+
+
+VAMOS PEGAR 
+
+
+
+ESSA 
+
+LÓGICA __E  A 
+
+ENFIAR 
+
+
+
+DENTRO
+
+
+DAQUELE 
+
+
+middleware recém inventado 
+
+
+
+em 
+
+
+'app.js',
+
+
+
+
+
+
+ONDE SERÁ EXECUTADO __ APÓS ___ O SET DE NOSSA 'session'...
+
+
+
+
+
+(
+
+  ou seja,
+
+
+
+  SERÁ 1 CÓDIGO MT SEMELHANTE/EXATAMENTE IGUAL AO 
+
+
+  CÓDIGO DE 'app.use( SET DE NOSSO USER)' 
+
+  QUE 
+
+  TÍNHAMOS ANTES, NOS 
+
+  MÓDULOS ANTERIORES DO CURSO... (NAS AULAS EM QUE AINDA TÍNHAMOS AQUELE MIDDLEWARE QUE _ ADICIONAVA O OBJETO 'user' DIRETAMENTE A TODOS NOSSOS OBEJTOS 'request' recém criados quando startávamos nossas pages...)
+)
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+
+O 
+
+
+CÓDIGO VAI FICANDO ASSIM, LÁ EM 'APP.JS':
+
+
+
+
+
+
+
+
+
+app.use(session( 
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+  
+    resave: false,
+    saveUninitialized: false, 
+    store: store 
+
+ 
+  }
+)); 
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+
+
+    User.findById('xsaashisiahsiaxsix')
+    .then(
+      (user) => {
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            next();
+
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err); 
+      }
+    )
+
+
+
+
+
+
+})
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+OK.... MAS A DIFERENÇA, COM ESSE CÓDIGO AÍ,
+
+
+
+
+É QUE 
+
+
+VAMOS REMOVER AS LINHAS 
+DE 
+
+''
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+'',
+
+
+
+
+POIS ____ NÃO VAMOS QUERER ___ ARMAZENAR___ 
+
+
+
+NADA NA NOSSA 'session'... 
+
+(
+
+
+  isso 
+
+  pq 
+
+
+  A SESSION 
+
+
+ __ JÁ É ALGO QUE SERÁ 'MANAGED' PARA NÓS __ AUTOMATICAMENTE,
+
+
+
+já 
+
+é um 
+
+
+SERVIÇO 
+
+
+FEITO 
+PELO 
+
+
+MIDDLEWARE DE 
+
+'app.use(section({...}))',
+
+
+
+
+
+ESCRITO LOGO ACIMA...
+
+
+)
+
+
+
+
+
+
+
+--> aquele middleware ' app.use(session({}))' 
+
+
+JÁ 
+
+
+VAI 
+
+
+
+__FAZER AS COISAS DE 'SESSION' PARA NÓS... ELE JÁ VAI 
+
+
+'LOOK FOR A SESSION COOKIE',
+
+
+
+E SE __ ENCONTRAR__ 1 SESSION COOKIE 
+
+
+NO BROWSER DO USER,
+
+
+ELE _ VAI __ TENTAR__ ENCONTRAR 
+
+
+1 
+
+
+SESSION CORRESPONDENTE AO ID DESSE COOKIE,
+
+lá 
+
+
+NA DATABASE/SERVER... (e se encontrar isso na database, VAI CARREGAR A DATA DESSA 'SESSION'  no 
+
+nosso app...)
+
+
+
+
+
+
+
+
+------> OK....  ISSO SIGNIFICA QUE 
+
+___ _ NO MOMENTO QUE _ 
+
+
+ESSE MIDDLEWARE 
+
+
+
+de BAIXO (logo após o middleware DA SESSION, do 'express-session')
+
+
+FOR 
+
+__ALCANÇADO__,
+
+
+CERTAMENTE__ JÁ 
+
+
+
+TEREMOS __ 
+
+
+NOSSA 
+
+'SESSION DATA'
+
+
+
+CARREGADA NO NOSSO APP.......... --------> E COMO 
+
+
+
+_VAMOS TER ESSA __'SESSION DATA'
+
+JÁ 
+
+
+__CARREGADA __
+
+NO NOSSO APP,
+
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+
+ISSO 
+
+
+________REALMENTE__ SIGNIFICA QUE __ NÓS VAMOS QUERER 
+
+USAR 
+
+
+
+
+AQUELA 
+
+'SESSION DATA'
+
+
+
+QUE RETRIEVAMOS _________ JUSTAMENTE__ PARA 
+
+
+
+
+GARANTIR _ O FETCH __ DE NOSSO 'USER DE VERDADE',
+
+
+
+O 
+
+
+__USEr__ QUE REALMENTE 
+
+
+TERÁ/TEM 
+
+TODOS 
+
+AQUELES 
+
+'MONGOOSE METHODS',
+
+
+
+pq será UMA INSTANCIAÇÃO 
+
+
+
+de um MODEL MONGOOSe... -->  OK......--> RESUMINDO:
+
+
+
+
+
+
+
+
+
+1) JÁ TEMOS NOSSA SESSION DATA quando o 'app.use()' subsequente ao MIDDLEWARE da 'session' É __ ALCANÇADO...
+
+
+
+
+
+
+
+
+2) AÍ, NESSE MIDDLEWARE SUBSEQUENTE,
+
+VAMOS QUERER __ FETCHEAR__ O 'REAL USER OBJECT',
+
+
+O __ 'MODEL' DO USER,
+
+
+
+model mongoose com todos métodos necessários, que queremos...., E VAMOS FETCHEAR ESSE 
+'REAL USER OBJECT' (E não a session, nem o 'user' dentro da session, que SÃO OUTRAS COISAS)
+
+
+__ POR MEIO 
+
+
+
+
+
+
+___ DO USO DA 'SESSION DATA' (Que vai ser usada no fetch desse 'real user object')...
+
+
+
+
+
+
+---> OK, 
+
+
+MAS COMO FAZEMOS ISSO?  --------> BEM, 
+
+
+
+
+PROFESSOR 
+
+DIZ QUE _________NÃO PRECISAMOS ___ 
+
+
+FAZER 
+
+
+
+'REACH OUT' 
+
+
+A NOSSA DATABASE _DE NOVO.... -------> EM VEZ DISSO,
+
+
+
+
+PODEMOS 
+
+
+
+___SIMPLESMENTE__ SETTAR 
+
+
+
+
+
+
+DE __ NOVO __ O
+
+
+
+
+'user' (objeto user) 
+
+
+
+
+DENTRO __ DO OBJETO 'request'
+
+
+,
+
+
+
+
+TUDO POR MEIO 
+
+
+DAQUELA 
+
+ESCRITA 
+
+
+
+'req.user = ....'
+
+
+
+
+
+---------> CÓDIGO VAI FICANDO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use(session( 
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+  
+    resave: false,
+    saveUninitialized: false, 
+    store: store 
+
+ 
+  }
+)); 
+
+
+
+app.use((req, res, next) => {
+
+
+    User.findById('xsaashisiahsiaxsix')
+    .then(
+      (user) => {
+
+
+
+            req.user = ...;       //////EIS O CÓDIGO EM QUESTÃO.
+            next();
+
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err); 
+      }
+    )
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+--> ok... e dentro desse 'objeto user'
+
+QUE
+
+VAMOS 
+
+SETTAR 
+
+NO OBJETO 'REQUEST'
+
+
+SEMPRE QUE 
+
+
+
+VISITAMOS UMA PAGE (pq esse é o comportamento de 'app.js"),
+
+
+
+
+O 
+
+
+
+PROFESSOR VAI QUERER ________  
+
+
+____________CRIAR___ 1 USER 
+
+
+
+________ COM BASE __ NA 
+
+
+DATA __ 
+
+
+
+
+QUE ESTAVA __ ARMAZENADA__ 
+
+
+NA 
+
+
+SESSION QUE FOI RETRIEVADA 
+
+
+
+AUTOMATICAMENTE PELO 
+
+MIDDLEAWRE 
+
+
+de 
+
+'app.use(session({}))'...
+
+
+
+
+
+
+
+
+-------> para isso, ELE __ PROVAVELMENTE__ VAI TER QUE INSTANCIAR 
+
+
+O 
+
+MODEL DE 
+
+'user'... 
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR FAZ __ TUDO ISSO__ 
+
+
+POR 1 SIMPLES FATO:
+
+
+
+
+
+ELE QUER __ CRIAR 
+
+
+
+1 OBJETO 'USER' 
+
+A PARTIR 
+
+
+DE ___ DATA_ QUE 
+
+'PERSISTE AO LONGO DE REQUESTS (de 1 mesmo browser/user)',
+
+
+
+
+
+
+
+
+
+
+
+E AÍ 
+
+O 
+PROFESSOR 
+
+VAI QUERER 
+
+
+ARMAZENAR ESSE 'objeto user'
+
+
+__DENTRO ___ DAQUELE 
+
+
+
+objeto 'user'
+
+
+DENTRO 
+
+DO 
+
+OBJETO 'request'.... (E 
+
+
+
+aí,
+
+
+
+esse objeto 'user'
+
+VAI PASSAR A VIVER_ APENAS__ DENTRO DESSE REQUEST,
+
+
+
+
+MAS __ 
+
+
+COMO 
+
+
+
+
+O 
+
+
+'user', esse user aí 
+
+_É 
+
+
+'FUELED BY DATA ORIGINATED FROM THE SESSION',
+
+
+
+ELE _ VAI SEMPRE _SER 
+
+
+
+RENOVADO/recolocado 
+
+
+no 
+
+
+objeto 'request',
+
+
+
+
+
+___VAI SOBREVIVER AO 'CROSS REQUEST', diz o professor....
+
+)  -----> 
+
+
+
+
+
+E O PROFESSOR 
+
+
+
+
+
+
+RESSALTA QUE 
+
+
+__PRECISAMOS _ DESTE SETUP __ PQ 
+
+
+
+ELE _______ PRECISA DE __ 1 MODELO 'MONGOOSE' __ com que 
+
+trabalhar,
+
+para 
+
+fazer nossas features funcionarem... -----> ISSO PQ 
+
+
+A 
+
+DATA 
+
+QUE 
+ARMAZENAMOS 
+
+
+
+NA 'SESSION STORE',
+lá 
+
+
+no mongodb,
+
+
+
+ELA __É SÓ RETRIEVADA COMO 'plain data',
+
+
+E __ NÃO COM TODOS OS 'COOL METHODS'
+
+
+fornecidos pelos mongoose models.... --------> E É __eXATAMENTE __ POR ISSO 
+
+
+
+
+
+
+QUE 
+
+
+VAMOS 
+
+
+QUERER 
+
+
+
+ESSE 
+
+MIDDLEWARE __COMPLEMENTAr__ AO middleware 
+
+
+de 
+
+'app.use(session({})'...)
+
+
+
+
+
+
+----------> E ISSO, NO CASO, 
+
+
+VAI ___SOLUCIONAR_ AQUELE 
+
+ERRO DE 
+
+
+
+'''addToCart' is not a function at Product.findByid.product, etc etc....'''
+
+
+
+
+
+-------------------------------
+
+
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, ///define o STORE que você vai querer usar.... (vamos passar nossa CONSTANTE de 'store' que definimos mais acima..., com o 'new MongoDBStore()'...)
+      // cookie: { ////KEY USADA PARA _ DEFINIR CONFIGS ESPECÍFICAS DE NOSSO 'SESSION COOKIE', dos session cookies armazenados no browser de nosso user... (pleonasmo... todos session cookies são armazenados NO BROWSER DO USER...)
+      //   maxAge: ...
+      // }
+    }
+  )
+);
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  User.findById('xsaashisiahsiaxsix')
+    .then((user) => {
+      req.user; //////EIS O CÓDIGO EM QUESTÃO.
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK ... 
+
+
+
+
+
+
+
+ALI,
+
+
+
+naquela linha de 
+
+
+
+'req.user',
+
+O PROFESSOR__ VAI __ INICIALIZAR 'request.user'.... -------> 
+
+
+
+
+
+
+
+
+
+
+MAS ANTES DISSO,
+
+ELE 
+
+ESCLARECE A __ NÓS __ QUE 
+
+
+NÃO VAI QUERER 
+
+ACTUALLY PROCURAR 
+
+
+1 
+
+
+'user'
+
+
+POR Meio 
+
+de 
+
+'findById'
+
+
+como ele está fazendo aqui... ----------> EM VEZ DISSO,
+
+
+PROFESSOR 
+
+
+VAI QUERER 
+
+
+
+
+'find an user by id'
+
+
+
+QUE __ 
+
+SEJA __ IGUAL 
+
+a 
+
+
+
+'req.session.user._id'
+
+
+
+(
+
+
+
+  PROFESSOR APONTA QUE __iSSO FAZ SENTIDO PQ ___ 
+
+
+  ESSA __ REALMENTE É A DATA... ----> ISSO PQ 
+
+
+
+
+  __ 'user'
+
+  É 
+
+  O QUE 
+
+  EFETIVAMENTE __ ARMAZENAMOS NAS NOSSAS 'SESSION',
+
+
+
+
+E AÍ EU VOU QUERER 
+
+
+PEGAR O 
+
+'_id' 
+
+DESSE USER,
+
+
+VOU QUERER 
+
+PEGAR 
+
+
+
+_ESSE '._id'
+
+
+PARA __ ENTÃO  __ PROCURAR__ 
+
+
+
+
+
+
+
+__ ESSE USER ESPECÍFICO 
+
+NA 
+
+DATABASE__, TUDO COM A AJUDA DO 
+
+'MONGOOSE MODEL' (e seu método 'findById'),
+
+QUE 
+
+
+
+
+___TAMBÉM _ É PROVIDENCIADO 
+
+
+
+PELO MONGOOSE, obviamente...
+
+
+)
+
+
+
+
+
+
+
+
+
+
+----------> É POR ISSO QUE O CÓDIGO VAI FICANDO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use(session( 
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk',
+  
+    resave: false,
+    saveUninitialized: false, 
+    store: store 
+
+ 
+  }
+)); 
+
+
+
+app.use((req, res, next) => {
+
+
+    User.findById(req.session.user._id)   //////EIS O CÓDIGO EM QUESTÃO.
+    .then(
+      (user) => {
+
+
+
+            req.user = ...;     
+            next();
+
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err); 
+      }
+    )
+
+
+
+})
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+----> OK... POR FIM,
+
+
+PROFESSOR __ VAI __ SE APROVEITAR__ 
+
+DO CALL DAQUELE MÉTODO 
+
+mongoose 
+
+de 
+
+'User.findById(req.session.user._id)'
+
+
+
+
+__ PARA ___ 
+
+
+
+
+__ ARMAZENAR 
+
+
+
+esse 'user' retrievado, 
+
+armazená-lo 
+
+
+
+_DENTRO DO OBJETo 'user'
+
+
+DENTRO DO OBJETO 
+
+'req' (requesT)...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+app.use(session( 
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk',
+  
+    resave: false,
+    saveUninitialized: false, 
+    store: store 
+
+ 
+  }
+)); 
+
+
+
+app.use((req, res, next) => {
+
+
+    User.findById(req.session.user._id)   
+    .then(
+      (user) => {
+
+
+
+            req.user = user; ////EIS O CÓDIGO EM QUESTÃO.
+            next(); 
+
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err); 
+      }
+    )
+
+
+
+})
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, ///define o STORE que você vai querer usar.... (vamos passar nossa CONSTANTE de 'store' que definimos mais acima..., com o 'new MongoDBStore()'...)
+      // cookie: { ////KEY USADA PARA _ DEFINIR CONFIGS ESPECÍFICAS DE NOSSO 'SESSION COOKIE', dos session cookies armazenados no browser de nosso user... (pleonasmo... todos session cookies são armazenados NO BROWSER DO USER...)
+      //   maxAge: ...
+      // }
+    }
+  )
+);
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... 
+
+AGORA, DIZ O PROFESSOR,
+
+
+SÓ 
+
+RESTA __ ASSEGURAR QUE __ 
+
+AQUELES 
+
+
+METHODS 
+
+de nosso CÓDIGO/MODELS PASSEM A FUNCIONAR DNV...
+
+
+
+
+
+
+
+------> PARA ISSO, PROFESSOR DIZ QUE 
+
+PRECISAMOS _______AJUSTAR______ 
+
+
+
+
+
+
+OS CONTROLLERS 
+
+DE 
+
+'shop.js'
+
+E 
+
+'admin.js'
+
+
+__ DE NOVO__;
+
+
+
+
+
+
+
+
+PRECISAMOS IR LÁ E TROCAR 
+
+
+
+OS 
+
+CALLS DE 
+
+'req.session.user'
+
+
+POR 
+
+
+
+'req.user',
+
+
+
+PQ __ AGORA 
+
+
+É 
+NESSE LUGAR 
+
+
+
+QUE 
+ESTAREI 
+
+'STORING MY MONGOOSE MODEL '''user''' '
+
+ 
+
+
+
+
+
+
+
+
+
+ ------> EX:
+
+
+
+
+
+
+(getCart, que estava com uma SINTAXE ERRADA no 'req.session.user'):
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+  //  req.user.getCart() MÉTODO MONGODB DRIVER COMUM...
+
+  req.user ///CÓDIGOS/métodos BUILTIN do mongoose....
+    .populate('cart.products.productId') //////EIS O CÓDIGO EM QUESTÃO
+    ///.execPopulate() ///OPCIONAL. antes era obrigatório, vocÊ tinha que chamar isso para poder EXECUTAR then/catch em cima do 'populate' (pq antigamente o POPULATE NÃO RETORNAVA SEMPRE UMA PROMISE, como hoje em dia...)
+    .then((user) => {
+      ///////RESTO DO CÓDIGO CONTINUA O MESMO....
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+      console.log(user.cart.products);
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: user.cart.products,
+        isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+  req.session.user  ///ISSO ESTAVA/ESTÁ __ COMPLETAMENTE_ ERRADo_...
+    .populate('cart.products.productId')
+
+    .then((user) => {
+
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+      console.log(user.cart.products);
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: user.cart.products,
+        isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    });
+
+
+
+
+
+
+
+
+
+
+
+-----> VAMOS QUERER __ REVERTER__ ESSE CÓDIGO,
+
+fazer com que volte a ser 'req.user'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+  req.user  ///AGORA ISSO ESTÁ CERTO....
+    .populate('cart.products.productId')
+
+    .then((user) => {
+
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+      console.log(user.cart.products);
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: user.cart.products,
+        isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    });
+
+
+
+
+
+
+
+
+
+
+
+-> OK, ISSO SIGNIFICA QUE 
+
+
+
+DEVEMOS IR POR TODOS OS LUGARES EM QUE USAMOS 'req.session.user'
+
+
+E TROCAR ISSO APRA 
+
+'req.user'.... (Que é UM OBJECT/PROPRIEDADE que agora terá TODOS OS METHODS LEGAIS/CONVENIENTES DO MONGOOSe...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ok........ EXEMPLO,
+
+LA 
+
+em 
+
+'postAddProduct':
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  console.log(req.user);
+  const userId = req.user._id; 
+
+
+
+    
+  const product = new Product({
+
+                           
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl,
+      userId: userId //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+  }); 
+
+   product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+   .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+   .then(
+     (result) => {
+
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+};
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+---> ok...  (mas meu 'userId' já está como 'req.user', nesse caso aí... )
+
+
+
+
+
+
+
+
+-----> SALVAMOS TUDO 
+
+
+ISSO 
+
+
+
+E AÍ 
+
+
+
+
+PROFESSOR NOS EXPLICA ALGO:
+
+
+
+
+_____ --> DE NOVO, ESSE STORE  ____ do OBJETO 
+'user
+'
+
+
+__NÃO SIGNIFICA QUE __ 
+
+
+ESSE 
+
+
+
+OBJETO ESTÁ _ SENDO ARMAZENADO 'FOR ONLY THIS REQUEST',
+
+
+ISSO 
+
+PQ 
+
+OS 'MONGOOSE MODEL OBJECTS'
+
+
+
+
+__SÃO ABASTECIDOS (fueled)
+
+
+
+
+____ POR DATA _ QUE 
+
+
+
+FICA _ ARMAZENADA __ LÁ 
+
+
+NA 
+
+SESSION, O QUE, PORTANTO, 
+
+
+
+_SIGNIFICA QUE __ 
+
+
+ESSA DATA VAI SEMPRE 'PERSIST ACROSS REQUESTS'.. ----> 
+
+
+
+
+
+
+
+E AGORA QUE SALVAMOS TUDO ISSO,
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE DEVEMOS VOLTAR AO NOSSO PROJETO E _TENTAR_ ADICIOANR ALGO AO 'CART' 
+
+
+DE NOVO...
+
+
+
+
+
+
+
+--> CERTO,
+
+AGORA 
+
+ESSE 
+
+'ADD TO CART'
+
+funcionou...
+
+
+
+
+
+
+
+
+----> NOSSO APP ESTÁ FUNCIONANDO COMO ANTES,
+
+
+
+
+
+
+
+O NOSSO APP __ ´SO VAI __ DAR ERRO, AGORA,
+ 
+ QUANDO __ CLICAMOS EM 'LOG OUT'....
+
+
+
+
+  ----> PROFESSOR 
+
+
+
+DIZ QUE 
+
+ESSE 
+
+ERRO 
+
+
+
+
+TEM ORIGEM 
+
+
+naquele código de 
+
+
+
+''
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+''',
+
+
+
+
+
+PROFESSOR NOS EXPLICA QUE 
+
+
+
+ESSA FUNÇÃO MIDDLEWAARE AÍ 
+
+
+de 
+
+
+
+
+'User.findById()'
+
+
+
+É __ SIMPLESMENTE __ 
+
+
+
+
+
+
+
+
+TRIGGADA__ PARA __ TODO E QUALQUER REQUEST QUE CHEGA O SEU SERVER... -----> 
+
+
+
+
+
+
+
+
+E ISSO __ VAI SIMPLESMENTE __ FALHAR__ depois do 'logout',
+
+
+_______ JUSTAMENTE__ PQ 
+
+
+ O 
+
+
+
+
+ 'req.session.user._id'
+
+
+
+ NÃO ESTÁ __ SETTADO  __ DENTRO __ DO nosso app, ainda... -----> E PROFESSOR 
+ DZI QUE 
+
+
+
+ __PODEMOS__ CONSERTAR ISSO, esse PROBLEMAa,
+
+
+
+
+ DENTRO 
+
+ DAQUELA 
+
+ FUNÇÃO/MIDDLEWARE 
+
+ de 
+
+
+ 'app.use()'
+
+
+
+ subsequente 
+
+ AO MIDDLEWARE DE SESSIONs...
+
+
+
+
+
+
+
+
+
+ ---> NESSE CÓDIGO, PROFESSOR VAI CHECAr 
+
+ ____PELA EXISTÊNCIA 
+
+ de 
+
+ 'req.session.user',
+
+
+ tudo para que 
+
+
+
+
+ _ SE NÃO FOR ENCONTRADO 
+
+ 1 USER 
+
+
+
+____ ARMAZENADO _ NA 
+
+NOSSA 
+
+
+
+'session',
+
+
+
+
+NO NOSSO OBJETO REQUEST,
+
+
+AÍ __ VOU QUERER __ SIMPLEMSMENTE 
+
+
+
+CHAMAR 
+
+'return next()'
+
+
+PARA 
+
+FAZER COM QUE 
+
+TODO O CÓDIGO QUE VEM LOGO DEPOIS, dentro de 'app.use()',
+
+
+
+_SEJA __ IGNORADO_.... (não será executado)...
+
+
+
+
+
+
+
+
+CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+  if (!req.session.user) {  
+
+return next(); ///VAI __PULAR__ TODA A EXECUÇAÕ DE CÓDIGO escrita mais abaixo, 'next()' é mt versátil, ainda mais com 'return'....
+
+
+    
+  }
+  User.findById(req.session.user._id) //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+    .then((user) => {
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+----> COM ISSO, COM A ADIÇÃO desse 'if(!req.session.user)',
+
+
+
+
+
+__ FAREMOS __ COM QUE 
+
+
+
+O CÓDIGO 
+
+
+DE 
+__RETRIEVE DO 'MONGOOSE SPECIAL OBJECT' de 'user'
+
+
+__SÓ OCORRA_ 
+
+
+SE 
+
+
+
+1 
+
+
+
+OBJETO 'session' VÁLIDO __ FOR ENCONTRADO__ DENTRO 
+
+
+de 'user'...
+
+
+
+
+
+--> COM ISSO,
+
+
+PROFESSOR 
+
+
+
+
+SALVA DNV A PÁGINA 
+
+
+DE NOSSO APP,
+
+
+E AÍ TESTA 
+
+
+TODAS AS FEATURES... estão funcionando....
+
+
+
+
+
+
+-----------------------
+
+
+
+OK, TODAS AS FEATURES ESTÃO FUNCIONANDO...
+ 
+
+
+ falta pouco, agora.

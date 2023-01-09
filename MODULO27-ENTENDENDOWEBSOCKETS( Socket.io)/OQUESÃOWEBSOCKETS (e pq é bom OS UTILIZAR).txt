@@ -1,0 +1,1002 @@
+
+
+
+
+
+
+
+
+
+
+--> COMO OS WEBSOCKETS FUNCIONAM?
+
+
+
+
+
+
+
+
+
+--> BEM, ANTES DISSO,
+
+
+
+
+DEVEMOS 
+
+ANALISAR __ COMO NOSSO APP QUE _ CONSTRUÍMOS ATÉA GORA FUNCIONA...
+
+
+
+
+
+
+
+
+
+-----> COM ISSO,
+ 
+ PROFESSOR NÃO ESTÁ SE REFERINDO APENAS À 'REST API' 
+
+ que 
+
+ construímos no 
+
+
+ MÓDULO PASSADO,
+
+
+
+ E SIM 
+
+
+
+
+
+ AO SHOP/APPS EM GERAL,
+
+
+
+
+
+
+
+ aplicativos TÍPICOS/GENÉRICOS 
+
+
+ NODE,
+
+
+ COMO 
+
+ ELES 
+
+
+
+ FUNCIONAM, em geral?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> BEM, PARA INÍCIO DE CONVERSA,
+
+ TEMOS O CLIENT E O SERVER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ | CLIENT | 
+
+
+
+
+
+
+
+
+
+
+
+
+ | SERVER | (Server que construímos, nosso NODE APP)...
+
+
+
+
+
+
+
+
+
+ ATÉ AGORA,
+
+ NÓS SEMPRE 
+
+ ENVIAMOS/ENVIÁVAMOS UM 
+
+ REQUEST 
+
+ DO 
+
+
+
+
+ SERVERSIDE 
+
+ AO BROWSERSIDE... -------> isso feito,
+
+
+ NÓS SEMPRE 
+
+
+ 'WAITED FOR A REQUEST on the server',
+
+
+ 
+
+
+ SETTÁVAMOS ALGUMAS ROUTES PARA 
+
+ 'HANDLE DIFFERENT KINDS OF REQUESTS'.... ------> E QUANDO ACABÁVAMOS DE FAZER ALGO NO SERVEr (como o REACH OUT A UMA DATABASe),
+
+
+
+
+ NÓS ENVIÁVAMOS/EVNIAMOS ESSE 
+
+ CÓDIGO 
+
+
+ DE 
+ VOLTA AO CLIENT...
+
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ | CLIENT | 
+
+|           ^
+|           |
+|           |
+|           |
+| request   |
+|           |
+|           |(RESPONSE)...
+|           |
+|           |
+V           |  
+
+ | SERVER | (Server que construímos, nosso NODE APP)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É ASSIM QUE 
+
+NOSSO APP FUNCIONOU ATÉ AGORA,
+
+
+E É ASSIM QUE 
+
+A GRANDE MAIORIA 
+
+DOS 
+
+
+
+WEBAPPS 
+FUNCIONA...
+
+
+
+
+
+
+
+
+---> E, BTW,
+
+
+NÃO SERÁ AGORA QUE VAMOS INTRODUZIR 
+
+
+
+
+ALGO TOTALMENTE NOVO,
+
+QUE 
+
+RODA TODO O TEMPO,
+
+
+E IGNORA essas regras do 'request - response'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSE PADRÃO 'CLÁSSICO' É UM PADRÂO 'NICE' 
+
+PQ __ UM MONTE DE __ RECURSOS __ 
+
+
+NA INTERNET 
+
+ DEVEM 
+
+ FICAR
+  
+
+  'DISPONÍVEIS'
+
+  POR MEIO DESSE APPROACH DE 'PULL' (puxar),
+
+
+
+
+  
+
+  PADRÃO EM QUE VOCÊ 'DIZ AO SERVER QUE VOCÊ VAI QUERER ALGO DELE'... ------> É UM 
+
+
+  APPROACH TÍPICO,
+
+  E UM APPROACH BOM...
+
+
+
+
+
+
+
+
+
+  --> ENTRETANTO,
+
+
+
+  ÀS VEZES 
+
+  VOCÊ TERÁ UM 
+
+
+  'DIFFERENT REQUIREMENT'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------
+
+
+
+
+
+
+EXISTIRÃO SITUAÇÕES DIFERENTES...
+
+
+
+
+
+
+
+
+
+A situação de que falamos agora é uma em que 
+
+
+
+
+__ ALGO ACONTECE__ NO BACKEND (servidor nodeexpress),
+
+
+
+E AÍ _ QUEREMOS INFORMAR 
+
+O 
+
+
+
+
+FRONTEND (Client) dessa 
+
+
+MUDANÇA ESPECÍFICA...-----------------> 
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+ESTAMOS CONSTRUINDO UM APP DE 
+
+'CHAT'.. .--- >
+
+
+
+
+AÍ ,
+
+
+
+O USER
+ 
+ NO PC/MOBILE A   ___ ENVIA UMA __ MESSAGE__ 
+
+
+
+ AO 
+
+
+ USER 
+
+
+ 'B' .....-------> É ÓBVIO QUE ESSES 2 USERS 
+
+ _NÃO COMPARTILHAM/NÃO ESTÃO COMPARTILHANDO O MESMO APARELHO....  --> PODEM SER 2 LOCAIS 
+
+
+
+
+ TOTALMENTE 
+
+
+ DIFERENTES NO PLANETA TERRA.... -----> BEM... O USER A VAI ENVIAR UM REQUEST 
+
+
+
+
+
+
+ __ AO SERVER, QUE__ VAI FAZER O 'STORE' DESSA MESSAGE EM UMA DATABASE.... -----> A PARTIR DESSE 'STORE',
+
+
+ O 
+
+
+
+ SERVER 
+
+
+ PODE 
+
+ RETORNAR UMA __ RESPONSE__ AO USER A..... ------> MAS O 'USER B',
+
+
+
+
+ A PESSOA 
+
+
+
+
+ _______COM QUEM __ O USER A 'CONVERSA' (chats)  _______ NÃO __ ENVIOU/NÃO VAI ENVIAR UM 
+
+
+
+ REQUEST 
+
+
+
+ AO 
+
+
+
+ SERVER 
+
+
+ ___ REQUISITANDO AQUELA MESSAGE (ou, pelo menos, isso É IMPROVÁVEL DE ACONTECER...),
+
+
+
+  
+
+
+___ vocÊ CERTAMENTE PODERIA USAR ALGUNS PADRÕES  ______ DE FRONTEND/BACKEND EM QUE __ 
+
+
+
+
+1 REQUEST É DISPARADO, NO FRONTEND, A CADA POUCOS SEGUNDOS,
+PARA 
+
+
+ENTÃO 
+
+
+CHECAR 
+
+SE 
+
+
+'THERE ARE ANY NEW MESSAGES' 
+
+
+destinadas àquele user.... -----------> MAS SE VOCÊ FIZER ISSO,
+
+
+ESSE 
+
+
+APPROACH DE 'HANDLING',
+VOCê 
+
+VAI 
+
+
+
+
+__FORRAR__ O SEU SERVER/BACKEND COM REQUESTS,
+
+
+
+
+
+FORRAR COM REQUESTS QUE __ VÃO, NA GRANDE MAIORIA, ESTAR 
+
+
+
+'VAZIOS'/not yield any messages... ---------> OK... --> É POR ISSO 
+
+
+
+
+QUE SERIA LEGAL 
+
+
+SE 
+
+EXISTISSE UMA MANEIRA 
+
+
+'PUSH' 
+
+
+
+DE INFORMAR O USER 'B' 
+
+
+
+_ ACERCA _ DESSA NOVA MESSAGE CRIADA/COMUNICADA/ARMAZENADA 
+
+PELO USER 
+
+
+A... ---------> E É EXATAMENTE ISSO QUE 
+
+
+
+VEREMOS AGORA...  ---------> SITUAÇÃO EM QUE 
+
+
+
+
+
+'SOMETHING CHANGES ON __ THE SERVER/BACKEND',
+
+
+
+e aí _ 
+
+
+
+
+EM QUE _ QUEREMOS 'ACTIVELY INFORM THE CLIENT'... ---------->  EM SITUAÇÕES 
+
+
+
+
+
+ESPECÍFICAS COMO ESSA,
+
+
+
+
+
+podemos/devemos usr 
+
+
+
+
+
+
+'WEB SOCKETS' 
+
+
+em 
+
+vez 
+
+de 
+
+
+
+'HTTP'...
+
+
+
+
+
+
+
+
+
+
+-------> HTTP --> É O PROTOCOLO MAIS COMUM, E É O QUE UTILIZAMOS ATÉ AGORA:
+
+
+
+--> ENVIAMOS UM REQUEST,
+
+RECEBEMOS UMA RESPONSE...
+
+
+
+
+
+
+
+---> WEBSOCKETS ---> SÃO ALGO QUE __ 'BUILD UPON HTTP'. ... --->  
+
+
+
+
+
+
+OS WEBSOCKETS __ SÃO ___ ESTABELECIDOS (established) 
+
+
+POR MEIO DE 
+
+
+HTTP,
+ 
+
+
+
+
+USAM AQUILO QUE 
+
+É CHAMADO DE 
+
+
+
+'HTTP HANDSHAKE' 
+
+
+
+__ PARA __ 'UPGRADEAR' _ O PROTOCOLO 
+
+
+
+HTTP, CONVERTER O PROTOCOLO HTTP EM 
+
+
+
+
+
+PROTOCOLO 'WEBSOCKETS'.... ------------> 
+
+
+
+
+
+
+
+
+
+
+
+
+E O 
+
+
+
+PROTOCOLO 'WEBSOCKETS' simplesmente fala/trata 
+
+de 
+
+
+
+
+'HOW DATA IS EXCHANGED'... --------> ESSE PROTOCOLO É ALGO QUE 
+
+
+
+
+VOCÊ ___ NÃO TEM _ QUE 
+
+'MANAGE ACTIVELY',
+
+
+
+pq 
+
+
+
+O SERVER E O BROWSER VÃO SE COMUNICAR 
+
+
+
+
+
+
+___ POR MEIO DESSE PROTOCOL, 
+
+
+
+E 
+
+O 
+
+
+
+'PROTOCOL UTILIZADO' 
+
+
+vai 
+
+ditar/DEFINIR
+
+
+como 
+
+
+
+__  __ A COMMUNICATION SERVER-CLIENT 
+
+
+
+DEVE/VAI ACONTECER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+COM HTTP,
+
+TEMOS REQUEST <-> RESPONSE...
+
+
+
+
+
+
+
+
+
+
+
+
+--_> JÁ COM 
+
+
+
+
+'WEBSOCKETS',
+
+
+tratamos 
+
+APENAS DE 
+
+
+
+
+
+'PUSH DATA'...
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+** push data __ DO SERVIDOR (backend) PARA O __ CLIENT.... 
+
+
+
+
+
+
+
+
+
+
+
+--> na verdade, explica o professor,
+
+
+
+
+É AMBOS:
+
+
+PUSH DE DATA 
+
+
+DO SERVER PARA O CLIENT,
+
+
+e do 
+
+
+
+
+CLIENT PARA O SERVER...
+
+
+(
+
+
+MAS APESAR 
+
+DE 
+ESTAR INCLUÍDO ESSE SEND DE DADOS 
+
+
+CLIENT-SERVER,
+
+
+O 
+
+MAIS IMPORTANTE/FEATURE MAIS 
+
+PROMINENTE 
+
+
+
+NO WEBSOCKETS,
+
+
+E QUE 
+
+O 
+PROFESSOR 
+
+QUER NOS MOSTRAR,
+
+
+
+
+
+
+É QUE PODEMOS 
+
+
+'PUSH DATA' 
+
+
+
+lá do server, para o CLIENT...
+)
+
+
+
+
+
+
+
+
+----------->  CERTO.... E O QUE O PROFESSOR QUER DIZER COM ISSO?
+
+
+
+
+
+
+
+
+
+
+--> BEM, ELE QUER NOS EXPLICAR QUE __ TIPICAMENTE__ VOCÊ VAI USAR OS 2 TIPOS DE PROTOCOL 
+
+
+
+EM UM 
+
+APP NODE... --> VOCê VAI USAR 
+
+
+TANTO 
+
+
+
+
+
+O 'HTTP' 
+
+COMO O 
+
+
+'WEBSOCKETS'...
+
+
+
+
+
+
+
+
+----------> VOCÊ 
+
+
+
+
+FREQUENTEMENTE 
+
+VAI USAR 
+
+OS 
+
+
+2  NOS SEUS APPS NODE... (eles não se excluem)...
+
+
+
+
+
+
+
+
+
+
+
+--> EXISTIRÃO MUITOS LUGARES EM QUE 
+
+
+
+VOCÊ VAI QUERER MANTER AQUELE FORMATO 'http-response' (Como no SEND DE UMA MESSAGE AO SERVER),
+
+
+
+
+
+OU ENTÃO NO 'CREATE DE UM USER'  (são situações em que você de fato envia informações do BROWSER ao server, e em que 
+
+
+
+O USO DO HTTP-RESPONSE FAZ TOTAL SENTIDO)...
+
+
+
+
+
+
+
+
+
+---> CONTUDO, SE VOCÊ TIVER UMA SITUAÇÃO EM QUE VOCÊ VAI QUERER MOSTRAR UMA 'ACTIVE NOTIFICATION' AO USER,
+
+
+
+
+__ _AÍ __ 
+
+
+
+O USO DE 'WEBSOCKETS' É BEM MAIS RECOMENDADO...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS VER COMO ADICIONAR WEBSOCKETS NAS PRÓXIMAS AULAS...

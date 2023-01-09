@@ -1,0 +1,1247 @@
+ 
+
+
+
+ Certo.
+
+
+
+ QUEREMOS __CRIAR UMA PÁGINA HTML COMPLETA AO USUÁRIO___. ('full html page')...
+
+
+
+
+ NÓS PODEMOS FAZER ISSO POR MEIO DA CRIAÇÃO DE UM NOVO FOLDER....
+
+
+
+
+ O nome típico para esses folder que segurarão o 'html bonus' de nossa página é 
+
+
+ 'VIEWS'... 
+
+
+ views, é o diretório onde os arquivos de modelo estão localizados. Por exemplo: app.set('views', './views')....
+
+
+
+
+É evidente que podemos dar o nome que quisermos a esse folder, mas 'views' é o nome recomendado...
+
+
+
+
+ --------------------------------------------------
+
+
+
+Dentro de views nós vamos ARMAZENAR TODOS OS ARQUIVOS 'HTML' QUE VAMOS QUERER ENVIAR 
+
+DE VOLTA AO USUÁRIO (enviar de volta por meio das responses)....
+
+
+
+
+Mas dentro desse folder 'views', nós não vamos criar um arquivo html propriamente dito, e 
+sim, em vez disso, 
+
+
+um ___TEMPLATE___....
+
+
+ESSE TEMPLATE VAI SEMPRE ___conter conteúdo html__... MAS ALÉM 
+DE ELE SEMPRE TER CONTEÚDO HTML, ELE NOS DEIXA INJETAR 
+
+
+__CONTEÚDO DINÂMICO__ (dynamic content) em seu interior... COMO ELE DEIXA NÓS FAZERMOS ISSO,
+
+NÓS PODEMOS TER, DENTRO DELE, UMA MISTURA DE CONTEÚDO HTML 'estático' e 'DINÂMICO'...
+
+
+
+---------------------------------------------------------
+
+
+
+
+Todos esses conteúdos estáticos e dinâmicos serão então FUNDIDOS (merged) EM 
+
+UM ARQUIVO HTML no 'SERVERSIDE'...
+
+ESSE ARQUIVO HTML NO SERVERSIDE ___sERÁ ENVIADO DE VOLTA AO 'CLIENT' (clientside)...
+
+
+isso significa que NO CLIENTE NÓS VAMOS RECEBER UM ARQUIVO HTML........
+
+
+mas a função do template É NOS DEIXAR __ENRIQUECER___ ESSE ARQUIVO HTML
+
+
+cOM ___CONTEÚDO DINÂMICO____....
+
+
+express.js release date ---> november 16, 2010.
+
+
+
+
+Para isso, para ser possível esse enriquecimento do html enviado pelo servidor POR MEIO DE UM TEMPLATE, 
+
+nós vamos precisar 
+
+de uma 
+
+PACKAGE, DE UMA LIBRARY ___ QUE NOS DEIXE __ DEFINIR UM DESSES TEMPLATES___...
+
+
+
+Essa library sempre vai PARSEAR O ARQUIVO 'TEMPLATE'... ela encontra uma SINTAXE ESPECIAL DENTRO 
+
+DO TEMPLATE, uma sintaxe QUE PODEMOS USAR PARA __OUTPUTTAR___ CONTEÚDO DINÂMICO....
+
+e essa sintaxe FAZ COM QUE NOSSO TRABALHO COM TEMPLATES SEJA __MAIS FÁCIL___.
+
+
+
+PARA ISSO, O PROFESSOR PRECISA INSTALAR ESSA PACKAGE....
+
+
+E o nome da package 
+
+é :
+
+
+
+'EJS'... (embedded Javascript Templates)...
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE EXISTEM, NA VERDADE, ALTERNATIVAS A ESSA PACKAGE...
+
+e que no curso de NODE.JS dele há EXPLICAÇÕES SOBRE ISSO...
+
+
+
+
+Entretanto, aqui podemos usar essa package 'ejs', que é bem popular...
+
+
+digitamos 
+
+
+'npm install --save ejs'...
+
+
+
+Isso vai instalar o ejs como LIBRARY EXTRA NO NOSSO PROJETO...
+
+
+
+
+
+Isso feito, devemos DIZER AO EXPRESS.JS que vamos querer importar essa third party library, essa feature...
+
+
+Fazemos isso por meio de OUTRO 'REQUIRE' (outro import) no 
+código 
+
+de 'app.js'...
+
+
+
+                    (só o express suporta; o node.js puro NÃO SUPORTA...)
+Como o express.js SUPORTA 'TEMPLATING ENGINES', ela consegue usar o ejs sem problema (o ejs é UMA DESSAS 'TEMPLATING ENGINES'..)
+
+
+--------------------------------------------------------------
+
+
+Ok, mas como usamos 'ejs'/como dizemos ao node.js que vamos querer usar o 'ejs'...?
+
+
+
+Bem, para isso nós devemos chamar o método 
+
+'SET()' no 
+
+
+'app' (na constante que está segurando o 'objeto'/coisa 'express()')....
+
+
+
+
+'set()' ---> NOS DEIXA DEFINIR ALGUMAS ___OPÇÕES___ __GLOBAIS___....
+
+
+Devemos chamar esse método e passar 
+
+
+
+
+OS parâmetros de 
+
+
+'view engine' e de 'ejs'...
+
+
+(ISSO VAI DIZER AO EXPRESS QUE "QUEREMOS DEFINIR O VALOR DA 'VIEW ENGINE' COMO SENDO DE 'ejs'...") 
+
+
+
+---> ISSO VAI DIZER QUE A ENGINE RESPONSÁVEL PELO PARSING DE nossas 'views' (dos arquivos/templates dentro do folder 'VIEWS')
+SERÁ __A ENGINE ____ DO 'ejs'...
+
+
+
+
+REPRESENTAÇÃO:
+
+
+
+const express = require('express');
+
+const app = express();
+
+
+app.set('view engine', 'ejs');
+
+
+
+
+--------------------------------------
+
+
+'ejs', de fato, é a PACKAGE QUE NÓS RECÉM INSTALAMOS....
+
+
+
+
+Depois disso, devemos COMUNICAR ao EXPRESS.JS ___O LUGAR ___ EM QUE ELE DEVERÁ 
+
+ENCONTRAR AS NOSSAS 'views'... ----> para isso, 
+
+nós devemos usar 'set()' DE NOVO....
+
+
+
+
+NESSE NOVO CHAMADO DE '.set()', devemos 
+
+PASSAR, DE NOVO, 2 PARÂMEROS:
+
+
+1o parâmetro ---> passar a string de 'views' ---> isso vai dizer que QUEREMOS ALTERAR/COLOCAR UM VALOR PARA A SETTING DE 'views'...
+
+
+2o parâmetro ----> DEVE-SE COLOCAR ___ O CAMINHO ATÉ O FOLDER DE 'views', ou seja, o folder em que estão os nossos arquivos 'template'..........
+                    no caso do professor, nesse nosso exemplo, esse folder está 
+                    no ROOT, no mesmo contexto do arquivo 'app.js'...
+                    POR isso, ele simplesmente coloca 'views'...
+
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+const app = express();
+
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+
+-------------------------------------
+
+
+CERTO.
+
+
+
+COM ISSO, NÓS PODEMOS AGORA FINALMENTE ADICIONAR UM 
+
+
+___TEMPLATE____ dentro do folder de 'views'...
+
+
+
+
+O professor decide criar um arquivo ali chamado de 'index.ejs'... ( e fazemos o mesmo).
+
+
+
+(TERÁ A EXTENSÃO '.ejs')... ---> ISSO SIGNIFICA, ESSA EXTENSÃO, 
+
+QUE ESSA PACKAGE QUE NÓS RECÉM INSTALAMOS ___SERÁ CAPAZ DE DETECTAR ___ E PARSEAR __ 
+ESSE ARQUIVO... 
+
+
+------------------------------------
+
+
+
+Dentro desses arquivos '.ejs', você tipicamente/geralmente 
+
+APENAS ESCREVE O CÓDIGO HTML DA FORMA NORMAL, DO JEITO COSTUMEIRO...
+
+
+------> ENTRETANTO, ESSE FORMATO '.ejs' TE DEIXA A OPÇÃO __DE ADICIONAR/USAR UMA 
+
+SINTAXE ESPECIAL... é uma sintaxe especial ___COMPREENDIDA ___ pela package 'ejs'...
+
+
+
+ESSA SINTAXE É USADA PARA __INJETAR CONTEÚDO DINÂMICO___....
+
+
+
+Devemos criar um arquivo html aqui, para exemplificar...
+
+
+
+
+Professor explica que SE VOCÊ DIGITA 'html' no visual studio code, ele 
+
+te dá UMAS OPÇÕES... a opção 'html 5' NOS DÁ AQUELE MODELO QUE O PROFESSOR USA TODA HORA, 
+
+AQUELE NEGÓCIO PADRÃO DOS HTML... vamos começar a usar, pois é muito útil e economiza tempo...
+
+Isso te dá um ESQUELETO do arquivo html...
+
+
+
+
+ex (opções):
+
+index-> html 
+        html:5 
+        html:xml
+
+
+
+ex(modelo/coiso cagado pelo 'html:5')...
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+
+
+
+-------------------------------
+
+
+
+CERTO.
+
+
+Agora temos esse código, então.
+
+
+
+
+O professor configura o body desse html...
+
+
+
+ELE DIZ QUE PODEMOS OUTPUTTAR __ O CONTEÚDO__ QUE VAMOS QUERER MOSTRAR ao usuário...
+
+
+Ele coloca uma '<h1>' tag em que diz 'HELLO'...
+
+Ele diz que também colocará algo dinâmico aqui, em breve....
+
+
+
+Debaixo desse 'hello', o professor vai querer a nossa FORM...
+
+
+
+por isso ele vai lá no código do app.js 
+
+
+E COPIA NOSSA FITA DE CÓDIGO HTML...
+
+
+
+
+ex (código até agora):
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJs Demo</title>
+</head>
+<body>
+    
+    <h1>Hello</h1>
+    <h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>
+</body>
+</html>
+
+
+
+
+-------------------------------------
+
+
+Mas o professor faz um AUTO FORMAT dessa form, OU SEJA, ELE REMOVE AS COISAS QUE HAVÍAMOS DEFINIDO dinamicamente...
+
+
+
+
+ex:
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJs Demo</title>
+</head>
+<body>
+    
+    <h1>Hello</h1>
+    <form method="POST" action="/">
+    <input name="username" type="text"/>
+    <button type="submit">Send</button>
+    </form>
+</body>
+</html>
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+PROFESSOR EXPLICA QUE AGORA TEMOS ESSE NOSSO CÓDIGO DE UMA MANEIRA BEM MAIS LEGÍVEL...
+
+
+
+Professor diz que quer OUTPUTTAR O USERNAME (essa constante/variável) 
+
+DENTRO DA NOSSA '<H1>' tag... ele quer outputtar o username 
+DE FORMA __DINÂMICA__.
+
+
+
+
+PARA ISSO, ELE DIZ QUE DEVEMOS USAR UMA SINTAXE ESPECIAL __QUE O EJS (essa package) ENTENDE__.....
+
+ 
+
+
+ PODEMOS APRENDER TUDO SOBRE AS FEATURES DE SINTAXE SUPORTADAS PELO EJS __no CURSO DE EJS__ do 
+ professor...
+
+
+
+
+
+AQUI O PROFESSOR VAI QUERER USAR SOMENTE UMA DAS FEATURES MAIS BÁSICAS DO EJS...
+
+
+a sintaxe é:
+
+
+
+'
+
+
+<%=  > 
+
+
+'
+
+
+    (ou seja, < + % + = + > )
+
+
+
+
+
+    DENTRO DESSA MARCAÇÃO BIZARRA, VOCÊ PODE SE REFERIR ____ A QUALQUER ____ nome de variável 
+
+
+    QUE VOCÊ PLANEJA "PROVIDENCIAR A ESSE 'view' " .... ---> e o professor vai 
+
+    voltar a explicar 'como providenciar essas variáveis' em alguns segundos...
+
+
+
+
+
+    O que importa é que, aqui, o professor 
+
+
+    Ele explica que poderíamos ter usado 'userName' aqui, ou qualquer outra coisa, o nome 
+
+    NÃO IMPORTA... (não é uma referência direta à variável/constante 'userName')....
+
+
+
+
+
+
+    REPRESENTAÇÃO:
+
+
+
+
+
+
+
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJs Demo</title>
+</head>
+<body>
+    
+    <h1>Hello <%= user></h1> /////////EIS O CÓDIGO EM QUESTÃO.
+    <form method="POST" action="/">
+    <input name="username" type="text"/>
+    <button type="submit">Send</button>
+    </form>
+</body>
+</html>
+
+
+
+----------------------------------
+
+
+
+
+
+COM ISSO, AGORA NÓS TEMOS ESSA SINTAXE ESPECIAL...
+
+
+é evidente que esse código aqui não É CÓDIGO HTML REGULAR...
+
+essa é uma sintaxe ENTENDIDA PELO 'EJS'..., pela PACKAGE 'ejs.'....
+
+
+VAI SER ENTENDIDA PELO EJS... O EJS VAI ENTENDER ESSA SINTAXE QUANDO PARSEAR ESSE ARQUIVO....
+
+
+
+
+
+BEM, PARA DIZER AO EJS QUE ELE __DEVERÁ__ PARSEAR ESSE ARQUIVO 'index.ejs',
+
+
+DEVEMOS NOS ASSEGURAR QUE NÓS NÃO ESTAMOS ENVIANDO UMA 'response' por meio de um 
+
+código como 
+
+
+'res.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`)',
+
+
+
+ex (do que NÃO FAZER):
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user'
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`); ////não usar esse código... Usar essa versão que o professor vai nos mostrar agora.... Devemos usar essa versão DO """EJS""""/express, com as VIEWS....
+})  
+
+
+----------------------------------------------------------------------------------
+
+
+
+
+
+EM VEZ DE ENVIAR UMA RESPOSTA COMO ESSA, 
+
+
+O professor diz que nós 
+
+
+devemos 
+
+
+'RENDERIZAR UMA 'view' ' COMO UMA 
+
+
+RESPONSE/RESPOSTA ('we should RENDER A VIEW as a response...')...
+
+
+
+
+
+------------------------------------------------------
+
+
+E como devemos renderizar essa view?
+
+
+
+POR MEIO DE UM MÉTODO ESPECIAL NO OBJETO 'response'.... (que no caso, é o parâmetro 'resp'...)
+
+
+
+
+
+Esse método é o método 'RENDER()'!!! -->
+
+
+
+
+ex:
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  
+    resp.render(); ///////professor explica que esse método 'render()' TAMBÉM É ADICIONADO POR MEIO DO EXPRESS.JS... (Esse método não existe no node.js puro...).
+
+
+})  
+
+
+
+----------------------------------------
+
+
+
+
+
+
+O MÉTODO 'RENDER()' ACEITA/EXIGE ALGUNS ARGUMENTOS....
+
+
+
+
+
+1o argumento) ----> É O NOME DA 'VIEW' QUE VOCÊ QUER ____RENDERIZAR___...
+
+NO nosso caso/caso do professor, o view desejado é 'index.ejs'...
+
+mas digitamos apenas 'index' (o '.ejs', a extensão, é pressuposta... é pressuposta pq nós já definimos a 'view engine' como sendo de um valor/como sendo 'ejs...' ('app.set('view engine', 'ejs') ----> é isso que faz o negócio dispensar o '.ejs' nesse local, aqui, por isso que podemos escrever apenas 'index') ) -------------->
+
+--------->
+
+
+----> professor explica que NÓS NÃO PRECISAMOS ESPECIFICAR O 'PATH' até esse arquivo 
+
+PQ NÓS JÁ HAVÍAMOS O ESPECIFICADO/O ESPECIFICAMOS QUANDO digitamos 'app.set('views', 'views')'  ----> (O PRIMEIRO PARÂMETRO dessa função É O 'PATH', A PASTA EM QUE ESTARÃO OS VIEWS)
+
+
+
+
+
+REPRESENTAÇÃO:
+
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  
+    resp.render('index'); //EIS O CÓDIGO EM QUESTÃO.
+
+
+})  
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+CERTO.
+
+
+
+
+
+2o argumento do método 'RENDER()'  ---->  É UM __OBJETO__
+
+
+
+                                (propriedades/dados)
+
+É UM OBJETO CHEIO DE PROPRIEDADES, CHEIO DE DADOS QUE QUEREMOS 
+
+PROVIDENCIAR ____A ESSE TEMPLATE___ (a esse 'index.ejs'...)....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  
+    resp.render('index', {
+        DATA
+    }
+    ); 
+
+
+})  
+
+
+
+----------------------------- 
+
+
+
+
+
+
+CERTO.
+
+
+E A PROPRIEDADE QUE VAMOS QUERER ESTABELECER/DEFINIR DENTRO DESSE OBJETO É 
+
+
+UMA PROPRIEDADE DE nome 'user', POIS ___É ____ ESSE O NOME___ DO NEGÓCIO/PROPRIEDADE___ 
+
+QUE SERÁ USADO ____ PELO '.EJS' ___ NAQUELE ARQUIVO 'index.ejs'... esse foi o nome que 
+definimos lá, 
+se lembra?
+
+
+
+ex:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJs Demo</title>
+</head>
+<body>
+    
+    <h1>Hello <%= user></h1> /////////NESTE LUGAR FOI DEFINIDO ESSE NOME....
+    <form method="POST" action="/">
+        <input name="username" type="text">
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
+
+
+
+------------------------------------------
+
+
+
+
+
+
+SE DEFINIRMOS COISAS/DADOS NA PROPRIEDADE DESSE OBJETO, 
+
+
+O '.ejs' PODERÁ ENTÃO UTILIZAR ESSES DADOS, INSERÍ-LOS NO LUGAR 
+
+
+'username' QUANDO ELE FOR PARSEAR ESSE ''''TEMPLATE'''' (esse arquivo com extensão '.ejs'...)...
+
+
+
+
+
+
+
+Para exemplificar isso, o professor 
+
+
+define uma 
+
+propriedade/key 
+
+
+
+de 
+
+'user' (como precisávamos) E ENTÃO 
+
+DEFINE O VALOR DELA 
+
+
+COMO SENDO 
+
+
+'userName' (aquela variável/const extraída pelo INPUT 
+DO USUÁRIO NA NOSSA PÁGINA...)...  (que é igual a 'req.body.username || 'Unknown User'')...
+
+
+ 
+
+
+
+
+ex(representação dos 2 arquivos, 'app.js' e 'index.ejs'...):
+
+
+
+
+
+
+(app.js)
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  
+    resp.render('index', {
+        user: userName
+    }
+    ); 
+
+
+})  
+
+
+
+
+
+
+(index.ejs)
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJs Demo</title>
+</head>
+<body>
+    
+    <h1>Hello <%= user></h1> /////////NESTE LUGAR FOI DEFINIDO ESSE NOME....
+    <form method="POST" action="/">
+        <input name="username" type="text">
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
+
+
+
+
+---------------------------------------------
+
+
+
+COM ISSO, AGORA TEMOS UM SETUP EM QUE:
+
+
+
+
+
+1) O ARQUIVO 'index.ejs' (que contém o código html da nossa página, da 
+
+FORM com o input e tudo mais...
+) SERÁ ___RENDERIZADO/ENVIADO__ AO USUÁRIO.... esse arquivo é chamado de ''__VIEW__''  ----> NÓS ESTAREMOS RENDERIZANDO UMA DAS "VIEWS" DO NOSSO FOLDER "Views'...
+
+
+
+ 2) Além de renderizar essa VIEW, o EJS vai levar em CONTA O CÓDIGO QUE VOCÊ 
+
+ INSERIU NO SEGUNDO PARÂMETRO, AQUELE OBJETO que tem a propriedade 
+
+ de 'user', de valor 'userName', que 
+
+ será INSERIDO NO ESPAÇO 
+
+
+' <h1>Hello <%= user></h1>'
+
+
+
+DO 'index.ejs'.....
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+SE NÓS AGORA SALVARMOS TUDO ISSO E RESTARTARMOS NOSSO SERVIDOR, 
+
+
+
+
+SE NÓS FORMOS ATÉ A NOSSA URL E APERTARMOS 'enter' no send.... (com um input), 
+
+
+
+veremos...
+
+
+
+ 
+
+ UM BELO ERRO!
+
+
+
+
+
+ ERRO:
+
+
+
+ Error: No default engine was specified and no extension was provided.
+    at new View (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\view.js:61:11)
+    at Function.render (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\application.js:570:12)
+    at ServerResponse.render (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\response.js:1012:7)
+    at C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\app.js:32:9
+    at Layer.handle [as handle_request] (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:317:13)
+    at C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:284:7
+    at Function.process_params (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:335:12)
+    at next (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:275:10)
+    at C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\app.js:20:5
+
+
+
+
+
+    (o erro do professor é diferente: 'could not find matching closing tag'... ---> esse erro existe 
+    
+    PQ ELE ERROU A SINTAXE 
+    
+    
+    do 
+    
+    '<%= user >' ----> o correto 
+
+
+    É 
+
+
+    '<%= user %>'  --------> ESSE É O CORRETO.
+    
+    
+    
+    
+    ).
+
+
+------------------------
+
+
+
+MAS O NOSSO ERRO(
+
+
+
+ Error: No default engine was specified and no extension was provided.
+    at new View (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\view.js:61:11)
+    at Function.render (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\application.js:570:12)
+    at ServerResponse.render (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\response.js:1012:7)
+    at C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\app.js:32:9
+    at Layer.handle [as handle_request] (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:317:13)
+    at C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:284:7
+    at Function.process_params (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:335:12)
+    at next (C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\node_modules\express\lib\router\index.js:275:10)
+    at C:\projeto\MODULO27NODE.JSUMAINTRODUCAO\app.js:20:5
+
+
+
+)
+
+
+
+EXISTIU NO NOSSO CÓDIGO PQ NÓS __NÃO ESPECIFICAMOS__ a engine que iriamos usar,
+ 
+ NÃO ESPECIFICAMOS O 'ejs'...
+
+
+ (
+
+
+     fazemos isso por meio 
+
+
+     do código 
+
+
+
+     'app.set('view engine', 'ejs')'....
+
+
+
+ )
+
+
+
+
+
+CERTO.
+
+
+
+CONSERTAMOS OS CÓDIGOS DOS 2 ARQUIVOS:
+
+
+
+'app.js':
+
+
+
+
+
+
+const express = require('express');
+
+
+
+
+const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+app.use(express.urlencoded({extended: false})); ///////ESSE CÓDIGO FAZ A MESMA COISA DO DE CIMA (teoricamente)... mas não ESTÁ DEPRECADO, o que é melhor
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+   resp.render('index', {
+       user: userName
+   })
+})  
+
+
+app.listen(3000);
+
+
+
+
+-----------------------------------------------------------------
+
+
+'index.ejs'...
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJs Demo</title>
+</head>
+<body>
+    
+    <h1>Hello <%= user %></h1>
+    <form method="POST" action="/">
+        <input name="username" type="text">
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
+
+
+-------------------------------------------
+
+
+
+
+
+Certo, agora a página FUNCIONOU.
+
+
+Reiniciamos o servidor, e o negócio funciona.
+
+
+
+
+
+NOSSO SERVIDOR/WEBPAGE ESTÁ FUNCIONANDO COM A AJUDA DO NOSSO TEMPLATE.....
+
+
+
+
+
+
+Mas é óbvio que PODEMOS RENDERIZAR ___BEM MAIS COISAS ____ DO QUE APENAS 
+
+
+esse único outputzinho de '<%= user %>' nas NOSSAS PÁGINAS....
+
+
+
+
+
+Você poderia ter MUITO MAIS PEDAÇOS/PIECES DINÂMICOS na sua página 
+
+html...
+
+
+
+Você pode ter muito mais desses pedaços, basta que VOCÊ PROVIDENCIE OS 
+
+___dADOS___ (naquele objeto que é o segundo parâmetro de 'render') ao 
+
+
+'view' que você vai querer renderizar.....
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE NÓS TAMBÉM PODEMOS ___FAZER TAREFAS BEM MAIS COMPLEXAS___, 
+
+
+
+como LOOPAR por uma LISTA DE DADOS, ou renderizar CONTEÚDO __CONDICIONALMENTE__ (vincular o ato de renderização a hipóteses/condições...)..
+
+
+
+
+
+---> O PROFESSOR MOSTRA TUDO ISSO NO CURSO DE NODE.JS... 
+
+
+
+
+
+---> os docs DO EJS também nos mostram isso...
+
+
+
+
+
+------> UMA COISA IMPORTANTE DE RESSALTAR:
+
+
+
+SE VOCÊ 
+
+
+INSPECIONAR ESSES ELEMENTOS, ESSA __PÁGINA__ NO BROWSER, 
+
+
+você, é claro, RECEBERÁ ____CÓDIGO HTML COMUM___... ( e código html normal é renderizado aqui, de fato...)
+
+
+
+
+
+TAMBÉM, na aba network, em 'localhost', SE VOCÊ DER UMA OLHADA ALI, na aba 
+
+
+'RESPONSE',
+
+VOCÊ VERÁ ___QUE VOCÊ ___ RECEBE ___ CÓDIGO HTML 'NORMAL' __....
+
+
+Ou seja, não vemos NENHUMA PARTE 'DINÂMICA' aqui... não vemos nenhuma parte dinâmica 
+
+PQ ESSE SEGMENTO DINÂMICO ____É PREENCHIDO____ LÁÁÁ NO SERVIDOR____...
+
+
+ISSO SIGNIFICA QUE O SERVIDOR, NA HORa ('on the fly'), 
+
+NÓS GERAMOS UM DOCUMENTO HTML QUE É ENTÃO APENSO ('appended'
+) À '''OUTGOING RESPONSe'''.... -------> É ISSO QUE 
+
+A 'view engine' FAZ, AQUI, NO NOSSO CÓDIGO, QUANDO É COLOCADA NELE... (quando optamos por ela).
+
+
+
+
+
+https://ejs.co/
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+

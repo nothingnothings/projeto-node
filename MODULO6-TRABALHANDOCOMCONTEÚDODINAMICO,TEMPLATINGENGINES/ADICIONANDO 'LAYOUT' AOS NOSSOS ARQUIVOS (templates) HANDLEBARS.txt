@@ -1,0 +1,1578 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O HANDLEBARS TBM SUPORTA 'LAYOUTS',
+
+mas 
+
+ELE FUNCIONA DE MANEIRA UM POUCO DIFERENTE DAQUELA VISTA 
+
+
+
+
+COM O 'PUG'...
+
+
+
+
+
+
+
+
+----> ANTES DE MAIS NADA,
+
+PRECISAMOS 
+
+
+CONFIGURAR UMA COISINHA...
+
+
+
+
+
+
+
+
+
+--> É AQUELE OBJETO CONFIG LÁ 
+
+
+
+em 
+
+
+'app.engine('hbs', expressHbs({}))'..
+
+
+
+
+---> DEVEMOS PASSAR 
+
+UMAS 
+
+OPTIONS
+
+NESSE OBJETO...
+
+
+
+
+------> há várias opções,
+
+mas 
+
+a importante 
+
+É 
+
+SETTAR O FOLDER EM QUE MEUS LAYOUTS 
+
+VIVEM... ---> 
+
+
+PROFESSOR 
+
+COLOCA 
+
+
+
+
+
+
+a string de 
+
+'views/layouts' (que é o NOSSO DEFAULT, mas é bom saber como definir isso)....
+
+
+
+
+ex:
+
+
+
+
+
+
+app.engine('hbs', expressHbs({layoutsDir: 'views/layouts/'}))
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+OK.... 
+
+
+
+
+
+
+
+
+
+TAMBÉM TEMOS OUTRA OPTION,
+
+'defaultLayout',
+
+QUE DEFINE 
+
+O LAYOUT DEFAULT QUE DEVE SER USADO PARA TODOS OS ARQUIVOS/TEMPLATES DO SEU PROJETO...
+
+
+
+
+--> AQUI, NO CASO, VAMOS COLOCAR 
+
+'main-layout' (isso significa que 
+
+VAMOS
+
+
+TER QUE 
+
+POSSUIR UM 
+ARQUIVO 
+'main-layout.hbs' 
+
+
+DENTRO DO FOLDER 'layouts', no folder 'views'...
+
+)
+
+
+
+
+
+
+
+
+---> CRÍAMOS UM ARQUIVO DESSES, 
+
+E 
+
+AÍ 
+
+
+
+USAMOS UM MODELO PARECIDO COM AQUELE DO PUG...
+
+
+
+
+
+
+
+
+--> copíamos o código da página 404.html
+
+
+PARA CRIAR 
+
+
+
+NOSSO LAYOUT...
+
+
+
+
+
+
+
+
+
+-> COMEÇAMOS COM ISTO:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{pageTitle}}</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+------> CERTO.... QUANTO AO STYLING,
+
+
+os 
+
+
+
+''
+    <link rel="stylesheet" href="/css/main.css"></link>'''',
+
+
+
+
+
+
+    LÁ NOS ARQUIVOS PUG 
+
+
+    NÓS 
+
+
+
+    DEFINÍAMOS UM BLOCk 
+
+
+
+
+    em que 
+
+
+podíamos adicionar dinamicamente o conteúdo que deveria ser renderizado de dentro daquele view.... 
+
+(
+
+
+    ex:
+
+        title #{pageTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+
+)
+
+
+
+
+
+
+(ESSE 'styles' aí é  onde ERAM INSERIDOS NOSSOS 'STYLES ESPECÍFICOS A CADA PÁGINA',
+
+
+que 
+
+
+ERAM 
+
+
+incorporados/adicionados aos styles do layout por meio
+ 
+ 
+
+ como 
+
+ 'block styles xxxxx' naquele arquivo/template/page específica...
+
+
+)
+
+
+
+
+
+
+
+
+---------> ok..... MAS NO CASO  DO 
+
+
+
+
+
+HBS, do HANDLEBARS,
+
+
+
+NÓS __ NÃO TEMOS UMA FEATURE COMO ESSA.... -----> 
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+__NÃO CONSEGUIMOS, SOMOS INCAPAZES 
+
+DE 
+
+DEFINIR 
+
+'BLOCKS' (como 'styles' e 'content', naquele nosso arquivo pug...)
+
+
+
+NO NOSSO LAYOUT reutilizável...
+
+
+
+
+
+
+
+---->  EM VEZ DISSO,
+
+
+A ÚNICA COISA QUE __PODEMOS FAZER__ 
+
+
+NO NOSSO TEMPLATE/ARQUIVO LAYOUT 
+
+
+É 
+
+
+DEFINIR 
+
+UM 
+
+
+'''PLACEHOLDER''',
+
+
+
+POR MEIO 
+
+DA 
+
+SINTAXE 
+
+
+
+'{{{}}}'  (3 CURLY BRACES...)
+
+
+
+
+
+
+------->>>>>>>> 3 CURLY BRACES.... --------> ISSO É UM PLACEHOLDER... 
+
+
+
+
+
+
+
+
+
+
+
+--> E AÍ, DENTRO DESSE PLACEHOLDER,
+
+
+ESCREVEMOS 
+
+'body'...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{pageTitle}}</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+        {{{body}}}
+</body>
+</html>
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+E VOCê DEVE OBRIGATORIAMENTE USAR 
+
+ESSE 
+
+PLACEHOLDER AÍ... ------> ESSE CÓDIGO 
+
+
+ ESPECÍFICO É __ ENTENDIDO__ PELO HANDLEBARS,
+
+
+
+ E AÍ 
+
+
+ VOCê SERÁ 
+
+ CAPAZ 
+
+ DE 
+
+ FAZER 
+
+ 'TARGET' 
+
+ DESSE SLOT/PLACEHOLDER NA SUA VIEW.... ------> 
+
+
+
+
+ E AÍ, FEITO ISSO,
+
+
+ VOCÊ SERÁ 
+
+ CAPAZ 
+
+
+
+ DE __ USAR __ 
+
+
+
+
+ESSE LAYOUT...
+
+
+
+
+O HBS VAI BASICAMENTE ENFIAR O CONTEÚDO DO ARQUIVO 
+
+'.hbs' 
+
+EM QUE VOCÊ 
+
+
+
+
+__FEZ 'EXTEND' DESSE 'layout',
+
+
+DENTRO 
+
+DESSE ESPAÇO 
+
+DE 
+
+'{{{body}}}'....
+
+
+
+
+
+
+
+--------> ENTRETANTO, ISSO __SÓ FUNCIONA PARA O __ CONTEÚDO__ DE 
+
+SEUS 
+
+
+
+ARQUIVOS/TEMPLATES.... --> só o conteúdo pode ser enfiado em algum local DE SEU LAYOUT...
+
+
+
+
+
+
+
+
+
+--> ISSO QUER DIZER QUE SE VOCÊ QUER TER UMA PARTE 
+
+
+EM QUE 
+
+VOCÊ 
+
+
+VAI QUERER 'COMPLEMENTAR' 
+
+OS ESTILOS 
+
+QUE 
+
+
+VOCÊ TEM NO LAYOUT,
+
+
+
+
+situação análoga Àquela vista com o pug (em que tínhamos os estilos DEFAULT do LAYOUT, que eram então COMPLEMENTADOS pelos styles de cada arquivo...),
+
+
+SE VOCê TEM UM CASO COMO ESSE,
+
+
+
+
+
+___ VOCÊ _ 
+
+VAI TER DE RESOLVER ISSO DE ALGUMA FORMA DIFERENTE... procurar um workaround...
+
+
+
+
+
+
+
+
+---> COMO RESOLVEMOS ISSO? 
+
+
+
+---> teremos de fazer algo PARECIDO __ COM AQUILO QUE FIZEMOS 
+
+PARA 
+
+ADICIONAR 
+
+A 
+
+
+CLASS 
+
+'active '
+
+
+NOS NOSSOS LINKS, LÁ NO PUG... ----> ISSO QUER DIZER QUE 
+
+
+VOCÊ 
+
+SERÁ 
+
+OBRIGADO 
+
+
+A 
+
+DEFINIR UM __ IF STATEMENT 
+
+
+__ LÁ NO SEU LAYOUT, 
+
+NA 
+
+PARTE 
+
+DOS 
+
+'STYLES'.... ----> E É CLARO QUE 
+
+ESSA 
+
+
+É 
+UMA 
+
+MANEIRA MAIS COMPLEXA/CUMBERSOME,
+
+
+
+mas é possível.... ----------> PROFESSOR ADMITE QUE HÁ MANEIRAS 
+
+MAIS ELEGANTES 
+
+DE 
+
+FAZER ISSO; 
+
+VOCÊ PODERIA DEFINIR HELPER FUNCTIONS QUE 
+
+
+O AJUDARIAM A FAZER ESSA IMPLEMENTAÇÃO DE 'STYLES ESPECÍFICOS',
+
+
+
+MAS 
+
+ISSO 
+
+AÍ É COISA MAIS AVANÇADA...
+
+
+
+
+
+
+
+
+
+-----> É POR ISSO QUE O PROFESSOR SÓ VAI NOS MOSTRAR __ A MANEIRA 
+
+'
+FÁCIL',
+
+
+MAIS FÁCIL,
+
+
+
+
+DE __ RESOLVER ESSE PROBLEMA 
+DOS 
+
+'CUSTOM STYLING FOR EACH PAGE'..
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+
+
+professor 
+
+
+escreve assim:
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+{{#if productCSS}}
+<link rel="stylesheet" href="/css/product.css">
+{{/if }}
+
+
+
+
+
+
+
+
+--------->  CERTO.... ou seja,
+
+
+
+SE 
+
+
+'productCSS' for TRUTHY (estiver presente),
+
+
+
+VAMOS QUERER 
+
+QUE 
+EXISTA 
+
+ESSE ARQUIVO CSS 
+
+DE 
+
+'product.css'  NO TEMPLATE RENDERIZADO...
+
+
+
+
+
+
+
+
+---> fazemos O MESMO PARA O 'formCSS', tipo assim:
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+{{#if productCSS}}
+<link rel="stylesheet" href="/css/product.css">
+{{/if }}
+{{#if formsCSS}}
+    <link rel="stylesheet" href="/css/forms.css">
+{{/if}}
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE É CLARO QUE 
+
+ESSA 
+
+É 
+
+A 
+
+'EASY SOLUTION',
+
+mas ela 
+
+
+vai 
+
+
+bastar por enquanto...
+
+
+
+EX:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{pageTitle}}</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+    {{#if productCSS}}
+    <link rel="stylesheet" href="/css/product.css">
+    {{/if }}
+    {{#if formsCSS}}
+    <link rel="stylesheet" href="/css/forms.css">
+    {{/if}}
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+        {{{body}}}
+</body>
+</html>
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+É CLARO QUE AINDA PRECISAMOS SETTAR A PARTE DO 'EXPRESSJS'
+
+
+
+que faz isso funcionar (aquele método de 'res.render('shop', {}) ')
+
+
+
+
+
+
+
+
+
+
+
+OK.... ISSO ERA A PARTE 
+
+
+DOS STYLES...
+
+
+
+
+--> MAS E QUANTO 
+
+
+À CLASSE 'active',
+
+QUE DEVE SER SETTADA DINAMICAMENTE?
+
+
+
+
+
+
+
+
+
+------------> BEM, PROFESSOR DIZ QUE PODEMOS 
+
+SIMPLESMENTE 
+
+ADICIONAR 
+
+
+
+a class lá no '<a>'
+
+
+E ENTÃO COLOCAR 
+
+
+
+O SEU VALOR 
+
+
+
+
+COMO 
+
+'{{}}'... --->  
+
+
+
+
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+ <li class="main-header__item"><a href="/"  class={{}}>Shop</a></li>
+
+
+
+
+ --------------------------------------
+
+
+
+ AÍ, DENTRO DO SLOT DO VALOR DESSA CLASS,
+
+
+ vamos 
+
+ definir 
+
+
+ 'SE 'activeShop' estiver como TRUE (activeShop será uma VARIÁVEL CUJO 
+ 
+ VALOR TRUE/FALSE DEFINIREMOS LÁ NAS NOSSAS ROUTES/RENDERS DE NOSSOS TEMPLATES, NO EXPRESSJS),
+
+
+
+
+
+ VAMOS QUERER __ QUE 
+
+
+
+A CLASS SEJA 'active'.... caso contrário, vamos querer '' (empty string)...
+
+
+
+ex:
+
+
+
+
+
+
+ <li class="main-header__item"><a href="/"  class={{#if activeShop ? 'active' : ''}}>Shop</a></li>
+
+
+
+
+
+
+
+
+
+ ----> OK... MAS ISS AÍ ESTÁ ESCRITO ERRADO...
+
+
+
+
+
+ PROFESSOR ESCREVEU __INLINE__ (e SEM TERNARY EXPRESSION, PQ ISSO NÃO FUNCIONA, É LÓGICA...),
+
+ ESCREVEU ASSIM:
+
+
+
+
+ a class="{{#if activeShop}}active{{/if}}"
+
+
+
+
+
+
+
+
+ ----------------------------------
+
+
+
+
+
+E O PROFESSOR FAZ A MESMA COISA COM 
+
+
+O LINK DE 
+
+'addProduct',
+
+MAS DESSA VEZ COm 
+
+uma VARIÁVEL 
+de 
+
+
+'activeAddProduct'...
+
+
+
+
+ex:
+
+
+
+
+  
+
+
+
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{pageTitle}}</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+    {{#if productCSS}}
+    <link rel="stylesheet" href="/css/product.css">
+    {{/if }}
+    {{#if formsCSS}}
+    <link rel="stylesheet" href="/css/forms.css">
+    {{/if}}
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" class="{{#if activeShop}}">Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product" class="{{#if activeAddProduct}}">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+        {{{body}}}
+</body>
+</html>
+
+
+
+
+
+-------------------------------
+
+
+
+CERTO....
+
+
+
+
+AGORA SÓ PRECISAMOS DEFINIR ISSO NA PARTE DO 
+
+EXPRESSJS...
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+AGORA SÓ PRECISAMOS 'MAKE SURE THAT THESE VARIABLES ARE ALSO PASSED INTO __THE VIEW____' (lá no expressJS...)
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+router.get('/add-product', (req, res, next) => {
+
+  res.render('add-product', {pageTitle: 'Add Product',  //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'....
+  
+  path: '/admin/add-product',
+  productCSS: true,
+  activeAddProduct: true,
+  formsCSS: true
+
+}); 
+});
+
+
+
+
+
+
+---------------------------
+
+
+
+
+PERCEBEMOS QUE COM O 'HANDLEBARS' ACABAMOS CONFIGURANDO MT MAIS COISAS 
+
+DE DENTRO DO EXPRESS,
+
+e não 
+
+no 
+
+
+
+TEMPLATE EM SI.... (esvaziamento de lógica dos templates...)
+
+
+
+ok..... QUAL O PRÓXIMO PASSO?
+
+
+
+
+
+
+
+
+--> COM TUDO ISSO SETTADO,
+
+PODEMOS 
+
+
+
+IR 
+
+
+ATÉ 
+
+
+
+NOSSO ARQUIVO 'shop.hbs'... ----> ___NÓS EVIDENTEMENTE 
+
+
+
+
+VAMOS QUERER __ 
+
+
+
+
+
+
+
+
+USAR O LAYOUT, POR DEFAULT...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE O 'LAYOUT', layouts LÁ NO HANDLEBARS,
+
+
+
+__SÃO SEMPRE HABILITADOS __ POR DEFAULT_... ------> PARA DESABILITAR 
+
+
+O USO DE LAYOUTS,
+
+você deve passar uma propriedade 
+
+específica 
+
+lá 
+
+
+NO SEU OBJETO CONFIG,
+
+
+
+
+
+
+QUE É ALGUMA DESTAS:
+
+
+  {
+    extname: "hbs",
+    defaultLayout: "",
+    layoutsDir: "",
+  }
+
+
+
+
+-------------------------------
+
+
+
+ACHO QUE É ESSE 'defaultLayout'....
+
+
+
+
+
+
+
+
+---> OBS:::: SE VOCÊ QUER DESABILITAR/NÃO USAR UM LAYOUT __ PARA 
+
+
+
+O RENDER __ DE 
+
+1 
+
+ARQUIVO/TEMPLATE 'hbs'
+
+
+EM ESPECÍFICO,
+
+
+
+você 
+
+
+deve 
+
+ESCREVER 
+
+
+UMA KEY DE 
+
+'layout: false'
+
+DENTRO DO OBJETO 'DATA' DE SEU RENDER...
+
+
+eX:
+
+
+
+
+
+res.render('shop', {
+
+
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/',
+        hasProducts: products.length > 0,
+        activeShop: true,
+        productCSS: true,
+        layout: false /////EIS O CÓDIGO EM QUESTÃO....
+
+
+})
+
+
+
+
+
+
+
+
+------> OK... COMO O 
+
+
+
+
+HBS VAI __ USAR LAYOUTS POR DEFAULT,
+
+
+LÁ 
+
+EM 
+
+'shop.hbs'
+
+
+PODEMOS 
+
+NOS LIVRAR DAQUELE 
+
+PEDAÇÃO ENORME 
+DE 
+
+CÓDIGO DE 
+
+
+
+''
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>{{pageTitle}}</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        
+
+
+
+'''
+
+
+
+
+
+--------------------
+
+
+OK... MAS MESMO COM ISTO:
+
+app.engine('hbs', expressHbs(
+  {
+    extname: "hbs",
+    defaultLayout: "main-layout", ///USE ISTO PARA __ DESABILITAR__ O USO DE 'LAYOUTS' NO HANDLEBARS... (se você quiser, é claro)...
+    layoutsDir: "/views/layouts",
+  }
+));
+
+
+
+
+
+EU AINDA RECEBO UM ERRO 
+
+
+DE 
+
+
+
+'''
+
+Error: ENOENT: no such file or directory, open 'A:\views\layouts\main-layout.hbs'
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+OBS::::
+
+
+app.engine('hbs', expressHbs(
+  {
+    extname: "hbs",
+    defaultLayout: "main-layout" ///USE ISTO PARA __ DESABILITAR__ O USO DE 'LAYOUTS' NO HANDLEBARS... (se você quiser, é claro)...
+    // layoutsDir: "/views/layouts",
+  }
+));
+
+
+
+
+
+
+
+
+
+----> PROFESSOR NOS EXPLICA QUE 
+
+
+'extname'
+É ALGO QUE SE APLICA 
+
+
+
+__aPENAS __ AO LAYOUT,
+E A NENHUM OUTRO ARQUIVO.... (vai definir qual é a extensão 
+
+
+
+QUE DEVERÁ SER USADA _ POR __ ESSE ARQUIVO 'layout' ESPECÍFICO,
+
+QUE NO CASO 
+
+É 
+
+'main-layout.hbs'...)
+
+
+
+----------------------
+
+já o 'app.engine('hbs')', ESSE PRIMEIRO PARÂMETRO AÍ, 
+
+
+
+REFERE-SE __ A TODA E QUALQUER FILE QUE NÃO SEJA NOSSO LAYOUT...
+
+
+
+
+
+
+
+------------------
+
+
+
+O PROBLEMA É QUE AINDA ESTOU RECEBENDO ESTE ERRO:
+
+
+
+
+
+Error: Parse error on line 27:
+...}}
+</body>
+</html>
+---------------------^
+Expecting 'OPEN_INVERSE_CHAIN', 'INVERSE', 'OPEN_ENDBLOCK', got 'EOF'
+    at Parser.parseError (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\handlebars\dist\cjs\handlebars\compiler\parser.js:267:19)
+    at Parser.parse (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\handlebars\dist\cjs\handlebars\compiler\parser.js:336:30)
+    at parseWithoutProcessing (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\handlebars\dist\cjs\handlebars\compiler\base.js:46:33)
+    at HandlebarsEnvironment.parse (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\handlebars\dist\cjs\handlebars\compiler\base.js:52:13)
+    at compileInput (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:508:19)
+    at ret (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:517:18)
+    at ExpressHandlebars._renderTemplate (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\express-handlebars\lib\express-handlebars.js:261:10)
+    at ExpressHandlebars.render (A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\node_modules\express-handlebars\lib\express-handlebars.js:173:21)
+    at async ExpressHandlebars.renderView (A:\projeto4 -
+
+
+
+
+
+
+
+
+
+
+
+
+    --> CERTO... O PROBLEMA ERA CAUSADO POR EU TER ESQUECIDO DE FECHAR o
+
+
+
+    STATEMENT DINÂMICO DE 
+
+
+
+    '{{#if xxxx}}' 
+
+    {{/if}}
+
+
+
+
+
+    --------------------------------
+
+
+    (FALTOU O {{/if}} para fechar o statement....)
+
+
+
+
+
+
+
+
+    ->ok... mas o styling de um pedaço de minha page ainda está fodido, o styling de '/admin/add-product'...
+
+
+
+
+
+
+
+
+
+
+
+    CONSERTEI... PROBLEMA ERA ESTA KEY:
+
+
+
+
+
+      productCSS: true,
+
+
+
+    
+    ----------------
+
+
+
+    CERTO... SALVAMOS TODOS OS ARQUIVOS,
+
+
+    E 
+
+    AGORA TUDO ESTÁ FUNCIONANDO __ COM O HANDLEBARS... 
+
+
+
+
+
+
+
+    --> COM O HANDLEBARS TEMOS 
+
+    UMA PHILOSOPHY DIFERENTE,
+
+
+
+
+
+    E NÃO HÁ 
+
+
+
+
+    UMA OPÇÃO MELHOR DO QUE A OUTRA,
+
+
+
+
+    MAS O HANDLEBARS DEIXA NOSSOS 
+
+
+
+
+    TEMPLATES BEM MAIS 'LEAN' do que o pug...
+
+
+
+
+
+
+
+
+
+
+AGORA VEREMOS A TERCEIRA OPÇÃO,
+O 
+
+'EJS',
+
+
+QUE É 
+
+O 
+
+FAVORITO PESSOAL DO PROFESSOR...

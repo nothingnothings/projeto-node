@@ -1,0 +1,1855 @@
+
+
+
+
+
+
+
+
+
+
+--> EU JÁ HAVIA CONSEGUIDO IMPLEMENTAR 
+
+A PAGE 
+
+DE 
+
+
+'ORDERS',
+ 
+
+
+
+ com as seguintes features:
+
+
+
+
+
+
+
+
+
+ --> show de CADA PRODUCT envolvido na 'order',
+
+
+ com o show dA QUANTITY, TITLE E PRICE DE CADA UM....
+
+
+
+
+
+
+
+
+
+ --> UM FIELD DE 'total Price'
+
+ EM CADA 
+
+
+ ORDER,
+
+ que 
+
+ nos mostra o PREÇO CONJUNTO 
+
+ DA ORDER,
+
+ TODOS OS 'PRICE'
+
+ dos 
+
+ product em 
+ 1 order, somados....
+
+
+
+ -------------------------------------
+
+
+
+
+
+
+
+OK.... PROFESSOR CONTINUA SUA AULA...
+
+
+
+
+
+
+
+--> AGORA QUE SABEMOS COMO  
+
+
+
+__ARMAZENAR__ ORDERS___ 
+
+
+
+
+
+PARA 
+
+1 DETERMINADO 
+
+
+
+
+USER,
+
+
+
+devemos 
+
+
+_ADICIONAR 
+
+
+1 NOVO 
+
+
+METHOD 
+
+NO MODEL 
+DE 
+
+'USER'
+
+PARA 
+
+
+
+QUE TMABÉM CONSIGAMOS FAZER 'GET' 
+
+das 
+
+
+ORDERS...
+
+
+
+
+
+
+
+
+
+
+-------> E NÓS PRECISAMOS DESSE METHOD PARA FAZER NOSSA PAGE DE 
+
+
+'orders'
+
+FUNCIONAR...
+
+
+
+
+
+
+----> PARA CONSEGUIR FAZER 'GET' 
+
+DE 
+ORDERS,
+
+
+O PROCESSO É BEM SIMPLES, DIZ O PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+ele escreve isto:
+
+
+
+
+
+
+
+
+
+getOrders() {
+
+
+    const db = getDb();
+
+
+    return db.collection('orders');
+}
+
+
+
+
+
+
+
+
+
+--> ISSO PQ VAMOS PRECISAR __ DE 'ALL ORDERS FOR A GIVEN USER'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO.... -------> 
+
+
+
+
+
+
+
+
+MAS PROFESSOR DIZ QUE 
+
+
+
+HÁ 
+
+1 COISA QUE ESQUECEMOS,
+
+
+quando adicionamos nossas orders(mas EU NÃO ESQUECI)... ->
+
+
+
+isso 
+
+é 
+
+o fato 
+
+
+de que 
+
+
+NOSSAS ORDERS AGORA 
+
+
+POSSUEM POUCO MAIS DO QUE 
+
+
+
+'productId'
+
+e 
+
+A 
+'quantity' 
+
+de 
+
+
+cada product,
+
+e NADA MAIS DO QUE ISSO....
+
+
+
+
+
+(
+
+
+
+
+
+
+entretanto, no meu código,
+
+
+
+consegui fazer o fetch da info necessária,
+
+
+PQ  ADICIONEI essa lógica LÁ EM 
+
+
+'addOrder':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+addOrder() {
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.products.find((prod) => {
+              return prod.productId.toString() === p._id.toString();
+            }).quantity,
+          };
+        });
+      })
+      .then((products) => {
+        const prices = products.map((product) => {
+          return product.price * product.quantity;
+        });
+
+        const totalPrice = prices.reduce(
+          (total, currentValue) => {
+            return total + currentValue;
+          },
+
+          0
+        );
+
+        const formattedOrder = {
+          ...this.cart,
+          totalPrice: totalPrice,
+        };
+
+        formattedOrder.products = products;
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+
+            this.cart = { products: [] };
+
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) },
+                { $set: { cart: { products: [] } } }
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... ---> PROFESSOR DIZ QUE DEVEMOS MUDAR ISSO... -----> 
+
+
+
+PROFESSOR VAI FAZER __EXATAMENTE O QUE EU FIZ... ----> 
+
+
+
+ELE VAI TWEAKAR 
+
+A FUNÇAÕ DE 
+'addOrder':
+
+
+
+
+
+
+
+
+
+
+
+----> ELE NOS EXPLICA QUE ATÉ AGORA 
+
+
+nós 
+
+só 
+
+
+fizemos o insert de um objeto assim:
+
+
+
+
+
+'db.collection('orders').insertOne(this.cart)',
+
+
+
+
+
+
+
+
+E QUE ISSO AÍ ESTÁ MT SIMPLES... ---> ESSA NÃO É A 'ENTIRE TRUTH'... ---> ISSO 
+
+PQ 
+
+NÓS __TAMBÉM PRECISAMOS _ 
+
+
+DE INFORMATION ACERCA DO USER/products... ----> 
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE 
+
+
+
+O PROFESSOR 
+
+CRIA UMA 
+
+CONSTANTE 
+
+CHAMADA 
+
+DE 
+
+
+
+
+'const order'...
+
+
+
+
+
+
+
+
+--> ESSA CONSTANTE 
+
+
+
+vai começar assim:
+
+
+
+
+
+
+
+const order = {
+
+    this.cart.products
+}
+
+,
+
+
+
+
+
+
+
+
+ISSO PQ __É CLARO___ QUE VAMOS QUERER 
+
+que 
+
+
+
+esse objeto/order TENHA __INFORMATION __ ACERCA 
+
+
+DE NOSSOS ___ PRODUCTS, os products que 
+
+queremos 
+
+ADICIONAR/COMPRAR NESSA ORDER...
+
+
+
+
+
+
+
+
+--> MAS UMA COISA QUE O PROFESSOR VAI FAZER, E QUE EU __ NÃO FIZ__,
+
+É ADICIONAR 
+
+
+
+'INFORMATION ABOUT THE USER'... ----->>>
+
+
+
+
+
+
+
+HM.... NA VERDADE,
+
+
+EU ESTOU COM ALGUMA INFO SOBRE O USEr, nessa 'order'... --> 
+
+
+
+
+
+''ESTOU'' com information sobre o user,
+
+mas somente 
+
+
+NOS PRODUCTS__ INSERIDOS__ 
+
+DENTRO 
+
+
+DO 'products' 
+
+
+em cada 1 de minhas 'order'....
+
+
+
+
+
+
+-------> 
+
+AQUI, NO CASO, O PROFESSOR VAI QUERER 
+
+ADICIONAR 
+
+1 
+FIELD 
+
+DE 
+'user'
+
+
+
+DENTRO _ DE CADA __ ORDER MSM...
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+ELE VAI ESCREVER ASSIM:
+
+
+
+
+
+
+addOrder() {
+
+
+
+    const db = getDb();
+    const order = {
+
+        products: this.cart.products,
+
+        user: { ///////EIS O CÓDIGO EM QUESTÃO.
+
+        }
+    }
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+ELE VAI 
+
+ADICIONAR UM 
+
+'EMBEDDED DOCUMENT'
+
+
+dentro 
+
+
+dessa nossa order,
+
+
+
+EM QUE 
+
+
+ELE 
+
+VAI QUERER 
+
+
+adicionar 
+
+
+
+
+
+um field de '_id',
+
+que 
+
+
+professor definirá como sendo 
+
+
+
+
+'ObjectId(this._id)',
+
+
+
+
+O ID DESSE NOSSO 'req.user'...
+
+
+
+
+
+
+-----------------------------------
+
+
+OK...
+
+
+
+
+
+
+VAI FICANDO TIPO ASSIM:
+
+
+
+
+
+
+
+addOrder() {
+
+
+
+    const db = getDb();
+    const order = {
+
+        products: this.cart.products,
+
+        user: {
+
+            _id: ObjectId(this._id);
+
+        }
+    }
+
+
+
+
+
+
+}
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+OK.... MAS O PROFESSOR 
+
+
+TAMBÉM VAI QUERER ARMAZENAR OUTRAS INFOS,
+
+como 
+
+o 
+
+
+'name' 
+
+e 
+
+o 
+
+'email' 
+
+de nosso user,
+
+que também podem 
+
+ser 
+
+acessados 
+
+por 
+
+'this.name',
+
+
+'this.email'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+addOrder() {
+
+
+
+    const db = getDb();
+    const order = {
+
+        products: this.cart.products,
+
+        user: {
+
+            _id: ObjectId(this._id),
+            name: this.name,
+            email: this.email
+
+        }
+    }
+
+
+
+
+
+
+}
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+--> AQUI, NO CASO, O PROFESSOR ESTARÁ ''DUPLICATING DATA''',
+
+
+pq 
+
+
+isso 
+
+
+aqui 
+
+
+
+
+
+VAI ACABAR 
+
+
+
+'ENDING UP' 
+
+
+
+nA COLLECTION DE 
+
+'orders',
+
+
+
+
+e é uma DUPLICATA da data que temos lá na collection de 'users'....
+
+
+
+
+
+
+
+
+OK... FUNCIONOU....
+
+
+
+
+
+
+
+meu objeto 'order'
+
+agora está com as informations 
+
+de 
+
+
+
+
+'_id' (relativo a order em si)
+
+
+
+
+'products' (contém info DETALHADA a respeito de CADA PRODUCT, como seu title, price, quantity, etc etc... também 'imageUrl')...
+
+
+'totalPrice' --> preço somado de todos os items nesse array de 'products'....
+
+
+
+'user' --> EM QUE TEMOS O ID DO USER vinculado a essa order,
+
+e também seu NOME E EMAIL...
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK....
+
+
+
+
+MAS NÃO É UM PROBLEMA 
+
+
+
+ESSA 'DUPLICATE' DE DATA?
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE NÃO,
+
+
+PQ NÃO VAMOS NOS IMPORTAR TANTO ASSIM COM ISSO... -> ISSO 
+
+PQ 
+
+
+A 
+
+USER 
+
+DATA 
+
+
+QUE 
+
+TEMOS 
+
+DENTRO 
+
+
+
+dessa propriedade 'user' 
+
+
+
+
+em 
+
+'order'
+
+
+
+É 
+
+
+
+__ ALGO QUE __ TALVEZ MUDE, É CLARO,
+
+
+
+
+__MAS ISSO NÃO É ALGO QUE 
+
+
+
+VAI PRECISAR SER ALTERADO __ EM TODAS AS ORDERS...__.... ->  isso pq 
+
+
+
+todas as orders são de coisas que JÁ FORAM PROCESSADAS,
+
+
+você 
+
+provavelmente 
+
+não terá 
+
+de mexer em coisas que 'JÁ FORAM'...
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+OK.... E O PROFESSOR VAI QUERER ARMAZENAR MAIS INFO 
+
+A RESPEITO DE NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+--> ISSO PQ 
+
+ATÉ AGORA OS ITEMS SÃO SÓ OS 'PRODUCT IDs'...
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER MAIS INFO SOBRE NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+
+--> OK... MAS 
+
+COMO O PROFESSOR 
+
+VAI QUERER 
+
+
+ARMAZENAR ESSA INFO?
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+DIZ QUE 
+
+
+
+
+VAMOS TER DE FETCHEAR ALGUMA DATA 
+LÁ 
+
+DA DATABASE DE 
+
+'products'... (exatamente como eu fiz, no meu código....)
+
+
+
+
+
+
+
+
+--> OU SEJA, VAMOS TER QUE TWEAKAR NOSSO METHOD DE 
+
+'addOrder'
+
+
+um pouco mais...
+
+
+
+
+
+
+
+
+
+---> PROFESSOR NOS EXPLICA QUE __APRENDEMOS SOBRE _ COMO PEGAR 
+
+
+
+'INFO MAIS DETALHADA'/vincular tables
+
+
+
+__ _ LÁ NAQUELE 
+
+
+MÉTODO DE 
+
+'getCart()',
+
+que possui este código:
+
+
+
+
+
+
+
+
+
+
+ getCart() {
+    /////usado com o código DO PROFESSOR de 'getCart', é mais optimizado e bonito; tbm melhor pq EXECUTA ESSA LÓGICA DE _TRANSFORMAÇÃO DE NOSSA 'PRODUCT DATA' aqui nesse model, e NÃO NO NOSSO CONTROLLER DE 'shop.js', como fazia meu código...
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.products.find((prod) => {
+              return prod.productId.toString() === p._id.toString();
+            }).quantity,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  deleteProductFromCart(productId) {
+    const db = getDb();
+
+    console.log(this.cart);
+
+    const updatedCartItems = this.cart.products.filter((prod) => {
+      return prod.productId.toString() !== productId.toString();
+    });
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        { $set: { cart: { products: updatedCartItems } } }
+      )
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(result);
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE LUGAR AÍ,
+
+
+
+
+nós actually 
+
+
+
+
+
+CONSEGUIAMOS UM 
+
+'ENRICHED CART',
+
+
+
+
+COM 
+
+INFORMATION SOBRE TODOS OS PRODUCTS ENVOLVIDOS 
+
+
+NESSE CART ESPECÍFICO....
+
+
+
+
+
+
+
+
+
+
+-----> POR ISSO, O QUE O PROFESSOR DIZ QUE PODEMOS 
+
+
+FAZER 
+
+EM 
+
+
+'addOrder'
+
+
+É JUSTAMENTE 
+
+CHAMAR 
+
+'this.getCart()',
+
+
+PARA 
+
+ENTÃO 
+
+
+CONSEGUIR, INICIALMENTE,
+
+
+1 CART 
+
+
+
+
+
+
+DETALHADO...
+
+
+
+
+
+--> AÍ, VAMOS CHAINAR UM '.then()'
+
+
+em cima desse call 
+
+de 
+
+'getCart',
+
+PARA 
+
+ENTÃO TRABALHARMOS COM A DATA 
+
+QUE 
+
+
+'getCart'
+
+
+VAI NOS DAR....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+ getCart() {
+    /////usado com o código DO PROFESSOR de 'getCart', é mais optimizado e bonito; tbm melhor pq EXECUTA ESSA LÓGICA DE _TRANSFORMAÇÃO DE NOSSA 'PRODUCT DATA' aqui nesse model, e NÃO NO NOSSO CONTROLLER DE 'shop.js', como fazia meu código...
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.products.find((prod) => {
+              return prod.productId.toString() === p._id.toString();
+            }).quantity,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  deleteProductFromCart(productId) {
+    const db = getDb();
+
+    console.log(this.cart);
+
+    const updatedCartItems = this.cart.products.filter((prod) => {
+      return prod.productId.toString() !== productId.toString();
+    });
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        { $set: { cart: { products: updatedCartItems } } }
+      )
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(result);
+      });
+
+
+
+
+
+
+
+
+
+
+
+addOrder() {
+
+
+    const db = getDb();
+
+    this.getCart().then() /////EIS O CÓDIGO EM QUESTÃO...
+    
+    const order = {
+
+
+        products: this.cart.products,
+
+        user: {
+            _id: ObjectId(this._id),
+            name: this.name,
+            email: this.email
+        }
+    }
+}
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+OK... COM ISSO, ELE ESTÁ _REUTILIZANDO __ O CÓDIGO DE 
+
+'getCart()'...
+
+
+(eu não fiz isso, mas é pq eu queria mais info do que essa que foi fornecida pelo call seco de 'getCart()'....)
+
+
+
+
+
+
+
+
+
+
+MEU CÓDIGO EDITADO, POR ENQUANTO, FICA ASSIM:
+
+
+
+
+
+
+
+
+
+ this.getCart() ///é o mesmo código usado logo acima, mas BEM MAIS ENXUTO, POIS REUTILIZA A LÓGICA DE 'getCart()'...
+      .then((products) => {
+        const prices = products.map((product) => {
+          return product.price * product.quantity;
+        });
+
+        const totalPrice = prices.reduce(
+          (total, currentValue) => {
+            return total + currentValue;
+          },
+
+          0
+        );
+
+        const formattedOrder = {
+          ...this.cart,
+          totalPrice: totalPrice,
+          user: {
+            _id: ObjectId(this._id),
+            name: this.name,
+            email: this.email
+          }
+        };
+
+        formattedOrder.products = products;
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+
+            this.cart = { products: [] }; ///limpa o cart LOCALMENTE (no objeto 'req.user')
+
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) }, 
+                { $set: { cart: { products: [] } } }  ///limpa o cart NA NOSSA DATABASE, na propriedade/array de 'products', na database de 'carts'....
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--> os products naquele '(products) => {}'
+
+
+VAO TER TODA A INFO NECESSÁRIA 
+
+ACERCA DOS PRODUCTS...
+
+
+
+
+
+
+
+O CÓDIGO, REFORMATADO, FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ this.getCart() ///é o mesmo código usado logo acima, mas BEM MAIS ENXUTO, POIS REUTILIZA A LÓGICA DE 'getCart()'...
+      .then((products) => {
+        const prices = products.map((product) => {
+          return product.price * product.quantity;
+        });
+
+        const totalPrice = prices.reduce(
+          (total, currentValue) => {
+            return total + currentValue;
+          },
+
+          0
+        );
+
+        const formattedOrder = {
+          products: products
+          totalPrice: totalPrice,
+          user: {
+            _id: ObjectId(this._id),
+            name: this.name,
+            email: this.email
+          }
+        };
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+
+            this.cart = { products: [] }; ///limpa o cart LOCALMENTE (no objeto 'req.user')
+
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) }, 
+                { $set: { cart: { products: [] } } }  ///limpa o cart NA NOSSA DATABASE, na propriedade/array de 'products', na database de 'carts'....
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE MUDANÇAS EM DATA COMO 'price'
+
+
+aqui, em 'orders',
+
+NÃO NOS INTERESSAM,
+PQ 
+
+
+A LÓGICA 
+
+DITA 
+
+
+que 
+VAMOS QUERER 
+
+TER 
+1 
+
+
+'SNAPSHOT' 
+
+daquilo que ocorreu quando o pedido foi concluído (ordered),
+
+
+
+
+
+E ISSO SIGNIFICA QUE 
+
+
+NÃO VAMOS QUERER 
+UPDATAR 
+O 
+
+'PRICe'
+
+
+exposto 
+
+
+
+
+
+nos products dessa 'order',
+
+
+
+MESMO __ SE OS PRICES DOS PRODUCTS 
+
+
+
+envolvidos nessa order REALMENTE FOREM ALTERADOS EM SUA COLLECTION ''de verdade'',
+
+a collection de 
+
+'products',
+
+que contém seus preços e detalhes ORIGINÁRIOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE 
+
+PARA 
+
+
+'ORDERs',
+
+esse tipo de coisa,
+
+
+
+
+
+'SNAPSHOTS' e 
+
+'embedded documents'
+
+
+SÃO 
+
+
+_gRANDES__ MANEIRAS__
+
+
+
+
+
+DE 
+
+'RELATING THE ORDER AND THE PRODUCT',
+
+
+
+
+ISSO PQ ___ A 
+
+
+PRODUCT DATA ___ TALVEZ SEJA DUPLICADA EM RELAÇÃO AO 'PRODUCT' EM SI,
+
+
+
+
+MAS ISSO NÃO VAI INTERESSAR NEM UM POUCO, pq 
+
+ela 
+
+não vai ter que ser alterada no futuro, mesmo... (vamos querer essa snapshot mesmo, vamos querer que ela não seja updatada....)
+
+
+
+
+
+
+
+
+
+
+--> OK...
+ 
+
+
+
+ --> O PROFESSOR DEPOIS 
+
+
+
+ ESCREVE O CÓDIGO DE INSERÇÃO 
+ DESSA 
+
+
+ 'order'
+
+
+ na collection de 'orders'...
+
+
+
+
+
+
+ POR FIM, QUANDO SABEMOS QUE FOMOS 'SUCESSFUL' 
+
+
+ NO insert desse negócio, FAZEMOS CLEANUP DO EXISTING CART 
+
+
+ LOCALMENTE E NA DATABASE....
+
+
+
+
+
+
+
+
+
+
+ ----> CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+    return this.getCart() ///é o mesmo código usado logo acima, mas BEM MAIS ENXUTO, POIS REUTILIZA A LÓGICA DE 'getCart()'...
+      .then((products) => {
+        const prices = products.map((product) => {
+          return product.price * product.quantity;
+        });
+
+        const totalPrice = prices.reduce(
+          (total, currentValue) => {
+            return total + currentValue;
+          },
+
+          0
+        );
+
+        const formattedOrder = {
+          products: products,
+          totalPrice: totalPrice,
+          user: {
+            _id: ObjectId(this._id),
+            name: this.name,
+            email: this.email
+          }
+        };
+
+        // formattedOrder.products = products;
+
+        return db
+          .collection('orders')
+          .insertOne(formattedOrder) ///criará 1 order na nossa collection de 'orders' na database NOSQL...
+          .then((result) => {
+            console.log(result);
+
+            this.cart = { products: [] }; ///limpa o cart LOCALMENTE (no objeto 'req.user')
+
+            return db
+              .collection('users')
+              .updateOne(
+                { _id: ObjectId(this._id) }, 
+                { $set: { cart: { products: [] } } }  ///limpa o cart NA NOSSA DATABASE, na propriedade/array de 'products', na database de 'carts'....
+              )
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
+
+    
+    ---------------------
+
+
+
+
+
+
+
+COM ISSO, VOLTAMOS AO NOSSO APP E TESTAMOS ISSO....
+
+
+
+
+
+
+
+
+
+
+
+------> OK, TUDO FUNCIONA... 
+
+
+
+
+
+
+CERTO... VAMOS PARA A PRÓXIMA AULA...
+
+
+
+
+
+
+
+
+-> PROFESSOR DIZ QUE DEVEMOS VER A QUESTÃO DA 'ORDER PAGE',
+
+
+
+ver como FAZER GET DA INFORMATION DAS ORDERS....

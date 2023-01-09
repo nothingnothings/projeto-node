@@ -1,0 +1,968 @@
+ 
+
+
+
+
+
+
+
+
+
+
+
+ ---> OK.... 
+
+
+
+
+
+
+ VEJAMOS NOSSO CÓDIGO DE NOVO:
+
+
+
+
+
+
+
+
+
+      if (url === '/message' && req.method === 'POST') { 
+               
+
+                const body = [];
+                req.on( 
+                        'data',     
+                        (chunk) => {        
+                           console.log(chunk);          
+                                body.push(chunk);       
+                        }
+                )      
+               return req.on( 
+                        'end',      
+                        () => { const parsedBody = Buffer.concat(body).toString().split('=')[1];     
+                                console.log(parsedBody);    
+                                fs.writeFileSync('message.txt', parsedBody); }  
+                                              res.writeHead(302 ,   
+                        {               
+                         'Location': '/'           
+                        })                 
+                return res.end();      
+                                
+                                )
+  
+      res.setHeader('Content-Type', 'text/html');
+        res.write('<html>'); 
+        res.write('<head><title>My first page</title></head>');  
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>'); 
+        res.write('</html>'); 
+        res.end(); 
+
+        }
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... PROFESSOR DIZ QUE 
+
+HÁ UM PROBLEMA 
+
+
+COM 
+
+
+'fs.writeFileSync('message.txt', message);' ------> 
+
+
+
+
+
+MAS QUAL É O PROBLEMA COM ISSO? 
+
+
+
+
+
+
+
+
+
+
+---> BEM, O PROBLEMA É JUSTAMENTE 
+
+
+
+A 
+
+
+
+KEYWORD DE 'sync'... ---------> O PROFESSOR MENCIONOU ANTERIORMENTE
+
+QUE 
+
+
+HÁ 
+
+
+também um 
+
+
+MÉtodo 
+
+
+
+'writeFile()',
+
+
+ 
+
+ QUE É ASSÍNCRONO....
+
+
+
+
+
+
+
+
+ -----> professor explica que o 
+
+ 'sync' aqui é de 'synchronous'...
+
+
+
+
+
+ --> E ESSE É UM MÉTODO ESPECIAL QUE 
+
+
+
+ VAI ACTUALLY 
+
+ 'BLOCK 
+
+ CODE EXECUTION'
+
+
+ ______aTÉ QUE ___ 
+
+
+
+ A FILE 
+
+
+ DE 
+
+ 'message.txt'
+
+ com a data 
+
+ de 
+ 'message'
+
+ SEJA REALMENTE__ CRIADA__...
+
+
+
+
+
+
+
+
+
+ ------> BEM... O WORK COM FILES
+
+
+
+
+ NO NODEJS 
+
+ é 
+ PERMITIDO 
+
+
+
+ POR 
+
+ 2
+  MODOS:
+
+
+
+
+
+  1) modo SÍNCRONO ----> NESSE MODO,
+
+  NÓS BLOQUEAMOS A EXECUÇAÕ DA PRÓXIMA LINHA DE CÓDIOG 
+
+  ATÉ
+
+  QUE 
+
+
+  ESSA FILE ESTEJA 'DONE'... -----> CERTO... E PARA 
+
+
+
+  TEXTOS SUPER CURTOS, COMO ESSA 'MESSAGE' QUE NÓS 
+
+  'ENTERED' 
+
+  NO ARQUIVO 'message.txt',
+
+  ISSO É 
+
+  __SUPER RÁPIDO__ E NEM SERÁ PERCEBIDO POR NÓS...
+
+
+
+
+
+
+
+
+--------> MAS PENSE SOBRE UM ARQUIVO IMENSO,
+
+
+100MB , 
+
+
+ou até mais do que isso.... -------> 
+
+
+
+
+SE VOCÊ FIZER ALGO COM ISSO,
+
+'READ'/COPY,
+
+ETC,
+
+
+
+
+
+E AÍ VOCÊ 
+
+'BLOCK'
+
+
+
+
+A CODE EXECUTION,
+
+
+
+AÍ A PRÓXIMA LINHA 
+
+E TODO O RESTO 
+
+
+DO CÓDIGO 
+
+
+
+__ VAI DEIXAR __ DE RODAR/VAI PARAR DE RODAR __ 
+
+ATÉ QUE 
+
+ESSA 
+
+
+
+'FILE OPERATION'
+
+
+tenha acabado... ----> E ATÉ MESMO NOVOS 'INCOMING REQUESTS',
+
+
+de outros users,
+
+
+NÃO PODERIAM/NÃO PODERÃO 
+
+
+SER 
+
+'HANDLED'
+
+até que 
+
+
+
+
+ESSA FILE OPERATION 
+
+
+___ TENHA ACABADO__... ------>E  VOCÊ NÃO VAI QUERER ISSO..... -----> 
+
+
+
+
+
+
+
+
+POR ISSO VOCÊ NÃO DEVE USAR ESSA SINTAXE AÍ, ELA NÃO É MT BOA PARA ISSO... -----> 
+
+
+
+VOCÊ 
+
+
+
+__SÓ PODE USAR __ ESSA SINTAXE__ (writeFileSync) 
+
+
+SE VOCê 
+
+
+
+
+TIVER CERTEZA 
+D
+E QUE 
+
+VOCÊ 
+
+
+
+TERÁ UMA FILE OPERATION SUPER CURTA...  -----> MAS MESMOS NESSES CASOS,
+
+AINDA É MELHOR 
+
+USAR 
+
+
+ESSA VERSÃO 
+
+DE 
+
+'writeFile()',
+
+
+
+
+
+
+QUE 
+É UMA 
+
+VERSÃO 
+
+DAQUELA FUNÇÃO 
+
+
+
+
+QUE ACEITA MAIS DO QUE 3 PARÂMETROS...
+
+
+
+
+
+além de aceitar:
+
+
+
+1) O PATH 
+
+
+
+2) A DATA EM SI, a ser escrita no arquivo,
+
+
+
+
+
+ELA ACEITA UM TERCEIRO ARGUMENTO,
+
+que é:
+
+
+
+
+3) É UM CALLBACK... --> É UMA FUNÇÃO QUE 
+
+__DEVERÁ ___ SER EXECUTADA___ QUANDO 
+
+
+O PROCESSO 
+
+DE WRITE ESTIVER 
+
+'done'...
+
+
+
+
+
+
+----------------
+
+
+
+
+PARA MOSTRAR A DIFERENÇA ENTRE OS 2 MÉTODOS,
+
+CRIEI UM NOVO ARQUIVO 'app.js',
+
+
+e agora temos 2, um com todas as anotações prévias,
+
+e um 
+
+'limpo',
+
+que só contém observações 
+
+sobre 
+
+
+o 'writeFile'...
+
+
+
+-----------------------
+
+
+
+
+
+ok... 
+
+
+
+
+QUANDO ESCREVEMOS 
+
+
+
+esse TERCEIRO PARÂMETRO, portanto,
+
+
+
+
+O ___ NODEJS _ IMPLICITAMENTE 
+
+CRIA/REGISTRA 
+
+
+
+
+UM 'EVENT LISTENER' PARA NÓS,
+
+
+
+da mesma maneira que o fez quando CRÍAMOS NOSSO SERVER COM 
+
+
+'http.createServer()'...
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+ok...
+
+
+
+PROFESSOR ESCREVE:
+
+
+
+
+
+fs.writeFile('message.txt', message, () => {
+
+})
+
+
+
+
+---------------------------------
+
+
+
+
+
+----> ok.... --> professor vai passar 
+
+
+
+
+
+ESSE CALLBACK AÍ... ---->
+
+
+E 
+
+ESSE 
+
+
+CALLBACK 
+
+
+
+NA VERDADE VAI RECEBER UM OBJETO 'error' (err),
+
+
+
+que 
+
+
+SERÁ 
+
+'NULL'
+
+se nenhum erro acontecer... -----> MAS SE UM ERRO ACONTECER (como 
+
+
+    a FALTA DE PERMISSION,
+
+
+    ou algo assim....
+
+) ---> SE UM ERRO ACONTECER,
+
+
+
+
+
+VOCÊ 
+PODE 
+
+'HANDLE IT GRACEFULLY'
+
+
+nesse 
+
+body 
+
+
+dessa callback function,
+
+talvez 
+
+
+por meio de um console.log,
+
+ou então 
+
+
+
+ o show de uma page especial ao user... -----> 
+
+
+ VOCÊ 
+
+
+
+ PODERIA 
+
+ FAZER 
+
+
+ RETURN 
+
+ DE UMA 
+
+
+ ERROR RESPONSE AO USER...
+
+
+
+
+
+
+
+
+ ----> caso contrário,
+
+
+
+
+ CASO NÃO ACONTEÇA ESSE 'error',
+
+
+ VOCÊ 
+
+
+
+ EXECUTA O SEU CÓDIGO NORMALMENTE... -----> 
+
+
+
+
+
+
+
+
+É POR ISSO QUE O PROFESSOR VAI 
+
+MOVER 
+
+AS LINHAS 
+
+DO 
+
+
+'RESPONSE CODE NORMAL'
+
+
+
+para dentro 
+
+dessa 
+
+
+CALLBACK FUNCTION
+desse 
+
+
+'writeFile',
+
+PARA QUE 
+
+SEJA
+ENVIADA 
+
+UMA 
+
+RESPONSE 
+
+de 
+
+
+'redirect'( código 302) 
+
+
+COM 
+
+
+UM HEADER 
+
+de 
+
+'Location: '/' ' 
+
+
+AO 
+
+
+
+USER,
+
+ASSIM QUE 
+
+
+
+O WRITEFILE TIVER ACABADO...
+
+
+
+ex(antes):
+
+
+
+
+ 
+      if (url === '/message' && req.method === 'POST') { 
+               
+
+                const body = [];
+                req.on( 
+                        'data',     
+                        (chunk) => {        
+                           console.log(chunk);          
+                                body.push(chunk);       
+                        }
+                )      
+               return req.on( 
+                        'end',      
+                        () => { const parsedBody = Buffer.concat(body).toString().split('=')[1];     
+                                console.log(parsedBody);    
+                                fs.writeFileSync('message.txt', parsedBody); }  
+                                              res.writeHead(302 ,   
+                        {               
+                         'Location': '/'           
+                        })                 
+                return res.end();      
+                                
+                                )
+  
+      res.setHeader('Content-Type', 'text/html');
+        res.write('<html>'); 
+        res.write('<head><title>My first page</title></head>');  
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>'); 
+        res.write('</html>'); 
+        res.end(); 
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+EX(depois):
+
+
+
+
+
+
+
+
+
+
+
+      if (url === '/message' && req.method === 'POST') { 
+               
+
+                const body = [];
+                req.on( 
+                        'data',     
+                        (chunk) => {        
+                           console.log(chunk);          
+                                body.push(chunk);       
+                        }
+                )      
+               return req.on( 
+                        'end',      
+                        () => { const parsedBody = Buffer.concat(body).toString().split('=')[1];     
+                                console.log(parsedBody);    
+                                fs.writeFile('message.txt', parsedBody, () => {
+
+                  res.writeHead(302 ,    ///EIS O CÓDIGO EM QUESTÃO.
+                        {               
+                         'Location': '/'           
+                        })                 
+                return res.end();    ////EIS O CÓDIGO EM QUESTÃO.
+
+                                }); }  
+     
+                                
+                                )
+  
+      res.setHeader('Content-Type', 'text/html');
+        res.write('<html>'); 
+        res.write('<head><title>My first page</title></head>');  
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>'); 
+        res.write('</html>'); 
+        res.end(); 
+
+        }
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+EX:
+
+
+
+const server = http.createServer((req, res) => {
+  const url = req.url;
+
+  if (url === '/') {
+    res.write('<html>');
+    res.write('<head><title>My first page</title></head>');
+    res.write('<body>');
+    res.write('<div>');
+    res.write('<form action="/message" method="POST"');
+    res.write('<label htmlFor="message">Enter a Message!</label>');
+    res.write('<input type="text" name="message"></input>');
+    res.write('<button type="submit">SEND</button>');
+    res.write('</form>');
+    res.write('</div>');
+    res.write('</body>');
+    res.write('</html>');
+    return res.end();
+  }
+
+  if (url === '/message' && req.method === 'POST') {
+    const body = [];
+
+    req.on('data', (chunk) => {
+      console.log(chunk);
+      body.push(chunk);
+    });
+    // req.on( ////esta linha precisa ter um 'RETURN' no seu início, para IMPEDIR a execução daquelas linhas síncronas de 'res.setHeader()', mais abaixo...
+    return req.on('end', () => {
+      const parsedBody = Buffer.concat(body).toString().split('=')[1];
+      console.log(parsedBody);
+    //   fs.writeFileSync('message.txt', parsedBody); ///versão síncrona. meio ruim.
+    fs.writeFile('message.txt', parsedBody, () => { ///versão assíncrona, que aceita 3 PARÂMETROS, SENDO O ÚLTIMO DELES __ UMA CALLBACK FUNCTION A SER EXECUTADA QUANDO TIVER ACABADO O 'WRITE' DO ARQUIVO (evento 'end do write')....
+        res.writeHead(302, {
+            Location: '/',
+          });
+          return res.end();
+        
+    });
+    //   res.writeHead(302, {
+    //     Location: '/',
+    //   });
+    //   return res.end();
+    });
+  }
+
+  res.setHeader('Content-Type', 'text/html');
+  res.write('<html>');
+  res.write('<head><title>My first page</title></head>');
+  res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+  res.write('</html>');
+  res.end();
+});
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+OK....
+
+
+
+AGORA NOSSA RESPONSE SÓ 
+
+SERÁ 
+
+ENVIADA QUANDO 
+
+ESTIVERMOS 
+
+'DONE WORKING WITH THE FILE',
+
+
+pq 
+
+isso 
+
+
+É, NO FINAL DAS CONTAS,
+
+A ACTION QUE QUEREMOS FAZER 
+
+A PARTIR 
+
+DO REQUEST,
+
+certo?
+
+
+
+
+
+
+
+
+------>  ---> OK....
+
+
+AGORA 
+
+
+NÓS 
+
+TEMOS 
+
+NOSSO 
+
+EVENTLISTENER 
+
+
+
+
+de 
+
+'req.on()',
+
+
+COM NOSSA FUNCTION 
+
+QUE 
+
+
+
+DEVERÁ SER EXECUTADA QUANDO ESTIVERMOS 'DONE PARSING THE REQUEST'... ----> 
+
+
+
+
+E DENTRO 
+
+DESSA FUNÇÃO,
+
+
+
+
+desse callback,
+
+
+
+temos __aINDA OUTRO 'EVENT LISTENER',
+
+
+QUE 
+
+É 
+
+AQUELA 
+
+'NESTED FUNCTION' 
+
+
+
+de 
+
+
+'err => {
+    res.statusCode = 302;
+    res.setHeader('Location', '/');
+    return res.end();
+}
+'

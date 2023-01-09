@@ -1,0 +1,1095 @@
+
+
+
+
+
+
+
+
+
+
+
+----> COM A PAGINATION ADICIONADA À PAGE DE 'products',
+
+
+DEVEMOS ADICIONAR ESSA MESMA LÓGICA 
+
+
+
+NA PAGE DE 
+
+'ADMIN PRODUCTS'...
+
+
+
+
+
+
+
+--. PARA FAZÊ-LO, DEVEMOS PEGAR TODA A PARTE PERTINENTE DA VIEW DE 'product-list.ejs':
+
+
+
+
+
+
+
+esta PARTE AQUI:
+
+
+
+
+
+
+
+       <section class="pagination">
+            <% if ((currentPage !== 1) && (previousPageNumber !== 1)) { %>
+            <a href="/products/?page=1" ex>1</a>
+            <% } %>
+            <% if (currentPage > 3) { %>
+                <a href="" class="disabled">...</a>
+                <% } %>
+            <% if (hasPreviousPage) {  %>
+                <a href="/products/?page=<%= previousPageNumber %>" ><%=  previousPageNumber %></a>
+              <% } %>        
+            <a href="/products/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+  
+ <% if (hasNextPage) { %>
+    <a href="/products/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+    <%  }  %>
+    <% if (currentPage <= 3) { %>
+        <a href="" class="disabled">...</a>
+        <% } %>
+    <% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+        <a href="/products/?page=<%= lastPage %>" ><%= lastPage %></a>
+      <% } %>
+
+
+          </section>
+
+
+
+
+
+
+
+
+-------> COLAR ISSO LÁ 
+
+
+
+
+
+NO  'product-list-admin.ejs'...
+
+
+
+
+
+
+
+
+
+ERA ASSIM, ANTES:
+
+
+
+
+<section class="pagination">
+    <a href="/admin/product-list-admin/?page=1">1</a>
+      <a href="/admin/product-list-admin/?page=2">2</a>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product._id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+        </div>
+          </article>
+      
+    <% } %>
+</div>
+<section class="pagination">
+    <% if ((currentPage !== 1) && (previousPageNumber !== 1)) { %>
+    <a href="/admin/product-list-admin/?page=1" ex>1</a>
+    <% } %>
+    <% if (currentPage > 3) { %>
+        <a href="" class="disabled">...</a>
+        <% } %>
+    <% if (hasPreviousPage) {  %>
+        <a href="/admin/product-list-admin/?page=<%= previousPageNumber %>" ><%=  previousPageNumber %></a>
+      <% } %>        
+    <a href="/admin/product-list-admin/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+
+<% if (hasNextPage) { %>
+<a href="/admin/product-list-admin/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+<%  }  %>
+<% if (currentPage <= 3) { %>
+<a href="" class="disabled">...</a>
+<% } %>
+<% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+<a href="/admin/product-list-admin/?page=<%= lastPage %>" ><%= lastPage %></a>
+<% } %>
+
+
+  </section>
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK, MAS AGORA NOS DEPARAMOS COM UM PROBLMEA....
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO DE 'product-list-admin',
+
+
+
+no controller de 'getAdminProducts',
+
+
+
+
+
+É ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+  console.log(req.session.user);
+
+  const userId = req.session.user._id;
+  const userId2 = req.user._id;
+
+
+  const pageNumber = req.query.page || 1; ///se user NÃO INPUTTAR NADA no espaço dos 'query params' (parte de '/?page=xxx'), SERÁ ADOTADO O VALOR BASE DE '1', para pegar a primeira página, e evitar o erro 500 de nosso app...
+
+  let totalItems;
+  
+
+
+  const errors = validationResult(req);
+
+  validationErrors = errors.array();
+
+  console.log(userId2);
+
+  Product.find({ userId: userId }) /////forma de fazer 'AUTHORIZE', essencialmente.... (só vamos poder VER o PRODUCT QUE FOI EFETIVMAENTE CRIADO PELO PRÓPRIO USER/ADMIN que o CRIOU)...
+    // .populate('userId') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ...
+    
+    .skip((pageNumber - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+    .then((products) => {
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      if (!products) {
+        res.render('admin/product-list-admin/?page=1', {
+          path: '/admin/products-list',
+          pageTitle: 'Admin Products Page',
+
+          prods: [],
+        });
+      }
+
+      res.render('admin/product-list-admin/?page=1', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products,
+        // errorMessage: errors.array()[0].msg,
+        errorMessage: null,
+        validationErrors: validationErrors,
+        // isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+
+
+
+
+
+
+--------------
+
+
+
+
+COMO VOCÊ PODE PERCEBER,
+
+AQUI 
+
+O 
+
+
+'find()'
+
+É EXECUTADO _ LOGO NO INÍCIO,
+
+PARA 
+
+
+DETERMINAR/VERIFICAR __ QUAIS PRODUCTS__ PERTENCEM/FORAM CRIADOS POR ESSE ADMIN/USER... --> 
+
+
+
+SÓ OS PRODUCTS QUE 
+
+REALMENTE FORAM CRIADOS POR ELE DEVERÃO SER OUPUTTADOS 
+
+NESSE VIEW...
+
+
+
+
+
+
+
+
+-------> NÓS , NO CASO, VAMOS QUERER FAZRE 'COUNT' 
+
+APENAS ___ DOS 
+
+
+DOCUMENTS 
+
+RETORNADOS POR ESSE 'find', e não DE TODOS OS PRODUCTS EXISTENTES NA NOSSA DATABASE (products de OUTROS ADMINS)...
+
+
+
+
+
+
+
+--> para isso, SUPONHO QUE POSSO CHAMAR 
+
+
+'find().then(
+
+    (resultado) => {
+
+
+        resultado.countDocuments()
+    }
+)
+',
+
+
+
+
+MAS NÃO TENHO CERTEZA SE ESSA É UMA SINTAXE VÁLIDA...
+
+
+
+
+
+
+
+
+
+--> VOU TESTAR....
+
+
+
+
+
+
+
+
+
+--> ganhei 1 erro:
+
+
+
+
+
+
+
+Error: Failed to lookup view "admin/product-list-admin/?page=1" in views directory "views"
+
+
+
+
+
+
+
+
+
+
+-----> MEU CÓDIGO FICOU UM POUCO MODIFICADO, FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+Product.countDocuments({ userId: userId})
+.then(
+  (numProducts) => {
+
+        totalItems = numProducts;
+
+
+    return Product.find({userId: userId})
+    .skip((pageNumber - 1) * ITEMS_PER_PAGE)
+.limit(ITEMS_PER_PAGE)
+.then((products) => {
+  // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  if (!products) {
+    res.render('admin/product-list-admin/?page=1', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: [],
+      currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+      hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+      hasPreviousPage: +pageNumber > 1,
+      nextPageNumber: +pageNumber + 1,
+      previousPageNumber: pageNumber - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+
+
+
+    });
+  }
+
+  res.render('admin/product-list-admin/?page=1', {
+    path: '/admin/products-list',
+    pageTitle: 'Admin Products Page',
+    prods: products,
+    // errorMessage: errors.array()[0].msg,
+    errorMessage: null,
+    validationErrors: validationErrors,
+    currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+    hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+    hasPreviousPage: +pageNumber > 1,
+    nextPageNumber: +pageNumber + 1,
+    previousPageNumber: pageNumber - 1,
+    lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+    // isLoggedIn: req.session.isLoggedIn
+    // isLoggedIn: isLoggedIn
+  });
+})
+  }
+)
+.catch(err => {
+  const error = new Error(err);
+  error.httpStatusCode = 500;
+  return next(error);
+}) 
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+OK... FUNCIONOU. CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+Product.countDocuments({ userId: userId})
+.then(
+  (numProducts) => {
+
+        totalItems = numProducts;
+
+
+    return Product.find({userId: userId})
+    .skip((pageNumber - 1) * ITEMS_PER_PAGE)
+.limit(ITEMS_PER_PAGE)
+.then((products) => {
+  // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+  if (!products) {
+    res.render('admin/product-list-admin', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: [],
+      currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+      hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+      hasPreviousPage: +pageNumber > 1,
+      nextPageNumber: +pageNumber + 1,
+      previousPageNumber: pageNumber - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+
+
+
+    });
+  }
+
+  res.render('admin/product-list-admin', {
+    path: '/admin/products-list',
+    pageTitle: 'Admin Products Page',
+    prods: products,
+    // errorMessage: errors.array()[0].msg,
+    errorMessage: null,
+    validationErrors: validationErrors,
+    currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+    hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+    hasPreviousPage: +pageNumber > 1,
+    nextPageNumber: +pageNumber + 1,
+    previousPageNumber: pageNumber - 1,
+    lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+    // isLoggedIn: req.session.isLoggedIn
+    // isLoggedIn: isLoggedIn
+  });
+})
+  }
+)
+.catch(err => {
+  const error = new Error(err);
+  error.httpStatusCode = 500;
+  return next(error);
+}) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+MAS O PROFESSOR VAI UM PASSO ALÉM... 
+
+
+
+
+
+
+
+
+--> ELE CRIA UM NOVO 'include'
+
+
+PARA 
+
+
+NOSSO PAGINATION,
+
+
+
+que coloca dentro da pasta 'includes',
+
+
+com onome 
+
+'pagination.ejs'...
+
+
+
+
+
+
+
+
+
+-----> DENTRO DALI,
+ 
+
+ ELE COLOCA 
+
+
+ A 'section' de pagination,
+
+
+
+
+
+
+ E AÍ 
+
+
+
+
+ __ ELE SÓ INCLUÍ ESSE include 
+
+
+ em 
+
+
+
+ 'product.list.ejs'...
+
+
+
+
+
+
+
+
+
+
+ --------------> mas se quisermos fazer a mesma coisa, USAR ESSE INCLUDE de 'pagination' 
+
+
+ COM 
+
+ o 
+
+
+
+ 'product-list-admin',
+
+
+
+ PRECISAMOS FAZER ALGUMAS ALTERAÇÕES....
+
+
+
+
+
+
+
+
+ ---> professor NÃO DIZ COMO FAZER ISSO...
+
+
+
+
+ (como 
+ 
+ posso alternar entre os dois?)
+
+
+
+
+
+
+
+
+
+
+
+
+ --> AH, ACHO QUE SEI COMO FAZER ISSO.... 
+
+
+
+
+
+
+
+
+ --> basta passar 'a piece of data' 
+
+
+ em 
+
+ cada 
+
+
+ 'RES.RENDER',
+
+
+
+
+
+ uma piece of data COM OU 
+
+
+ '/admin/product-list-admin',
+
+
+
+
+ OU COM 
+
+
+
+ '/products/',
+
+
+
+
+
+
+ TUDO ISSO 
+
+ PARA DENTRO 
+
+
+
+
+ DE 
+
+ UMA EXPRESSÃO DINÂMICA NO NOSSO INCLUDE DE 'pagination.ejs'...
+
+
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+ <% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+<a href="<%= paginationPath %>/?page=<%= lastPage %>" ><%= lastPage %></a>
+<% } %>
+
+
+
+
+
+
+
+
+
+
+--> É TIPO ESSE 'paginationPath' aí...
+
+
+
+
+
+
+
+
+
+
+
+--------> AGORA SÓ PRECISAMOS 
+
+
+ESCREVER ALGO COMO:
+
+
+
+
+
+
+
+
+
+     res.render('shop/product-list', {
+       prods: products,
+       pageTitle: 'Shop',
+       path: '/products',
+       productCSS: true,
+       activeShop: true,
+       hasProducts: products.length > 0,
+      //  totalPages: totalItems, ////eis o código em questão.
+      currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+       hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+       hasPreviousPage: +pageNumber > 1,
+       nextPageNumber: +pageNumber + 1,
+       previousPageNumber: pageNumber - 1,
+       lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+
+       paginationPath: '/products'
+     });
+   })
+
+
+
+
+
+
+
+
+
+
+oK... continuando,
+
+fazemos a mesma coisa com 
+
+
+
+
+o controller de 'admin-products':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  res.render('admin/product-list-admin', {
+    path: '/admin/products-list',
+    pageTitle: 'Admin Products Page',
+    prods: products,
+    // errorMessage: errors.array()[0].msg,
+    errorMessage: null,
+    validationErrors: validationErrors,
+    currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+    hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+    hasPreviousPage: +pageNumber > 1,
+    nextPageNumber: +pageNumber + 1,
+    previousPageNumber: pageNumber - 1,
+    lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+    paginationPath: '/admin/product-list-admin'
+    // isLoggedIn: req.session.isLoggedIn
+    // isLoggedIn: isLoggedIn
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+  --> AGORA BASTA COLOCAR ESSE 'include'
+
+
+
+
+
+
+NAS NOSSAS 2 VIEWS, 
+
+
+
+
+view de 
+
+'product-list'
+
+
+e 
+
+'product-list-admin'...
+
+
+
+
+
+
+
+
+OK... FUNCIONOU PERFEITAMENTE.
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+<section class="pagination">
+    <% if ((currentPage !== 1) && (previousPageNumber !== 1)) { %>
+    <a href="<%= paginationPath %>/?page=1" ex>1</a>
+    <% } %>
+    <% if (currentPage > 3) { %>
+        <a href="" class="disabled">...</a>
+        <% } %>
+    <% if (hasPreviousPage) {  %>
+        <a href="<%= paginationPath %>/?page=<%= previousPageNumber %>" ><%=  previousPageNumber %></a>
+      <% } %>        
+    <a href="<%= paginationPath %>/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+
+<% if (hasNextPage) { %>
+<a href="<%= paginationPath %>/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+<%  }  %>
+<% if (currentPage <= 3) { %>
+<a href="" class="disabled">...</a>
+<% } %>
+<% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+<a href="<%= paginationPath %>/?page=<%= lastPage %>" ><%= lastPage %></a>
+<% } %>
+  </section>
+
+
+
+
+
+
+
+
+
+
+  E ASSIM:
+
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+    <% } %>
+        </div>
+<%- include ('../includes/pagination.ejs'); %>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product._id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+        </div>
+          </article>
+      
+    <% } %>
+</div>
+
+<%- include ('../includes/pagination.ejs'); %>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+OK, AGORA PARA O WRAPUP...

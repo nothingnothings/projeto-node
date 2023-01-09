@@ -1,0 +1,1723 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADICIONAMOS __AUTHORIZATION__ (ou seja, só o user responsável por uma order 
+
+PODE VISUALIZAR/SALVAR a fatura/invoice DESSA ORDER...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> CERTO... ADICIONAMOS AUTHORIZATION,
+
+MAS 
+
+ISSO 
+
+NÃO É A ÚNICA COISA QUE 
+
+
+PODEMOS 
+
+
+__MELHORAR__ ACERCA__ DO SERVE 
+
+DESSA 
+
+FILE...
+
+
+
+
+
+
+
+----> NÓS PODEMOS MELHORAR A MANEIRA PELA QUAL SERVIMOS 
+
+ESSE ARQUIVO...
+
+
+
+
+
+
+
+
+---> ISSO PQ, ATÉ AGORA
+
+
+
+
+NOSSO CÓDIGO ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            // res.setHeader('Content-Disposition', 'attachment' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+//inline vs attachment; decida qual é o melhor para seu aplicativo, dependendo do caso concreto (queremos que o user baixe o arquivo sem qualquer conversinha? ou queremos que ele VISUALIZE O ARQUIVO no 'pdf viewer'/mp3 viewer do browser antes de o baixar? se quisermos essa lenga-lenga, devemos escrever 'inline')
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+---------> NÓS ESTAMOS SIMPLESMENTE FAZENDO O 'SERVE' DESSE FILE,
+
+
+TUDO POR MEIO DO CÓDIGO DE 
+
+
+
+'''            return res.send(data);  '''''
+
+
+
+
+
+
+------->
+
+
+
+
+ESTAMOS FAZENDO O SIMPLES 'READ' DESSA FILE,
+
+E DEPOIS DISSO O SEU __ RETURN__...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+  return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+            return res.send(data); 
+          }
+        });
+
+
+---------------------------
+
+
+
+
+
+
+
+
+E, PARA __ ARQUIVOS __ PEQUENOS__, 
+
+
+
+ISSO (esse upload simples por meio de 'read -> send' ) 
+
+
+
+
+
+
+É __ GERALMENTE 
+
+
+'FINE',
+
+é totalmente OK........ -------> MAS 
+
+VOCê 
+
+
+DEVE 
+
+TER 
+
+EM MENTE 
+
+
+
+1 IMPORTANTE FATO:
+
+
+
+
+
+
+-------------> SE VOCÊ LER UM ARQUIVO 
+
+
+
+COMO ESSE, 
+
+
+1 ARQUIVO 
+
+
+COMO SEU __ PDF___,
+
+
+
+O NODE___ VAI ___, PRIMEIRAMENTE, 
+
+
+
+ACESSAR ESSE ARQUIVO ___ E ENTÃO __ VAI 
+
+
+
+
+LER _______O CONTEÚDO INTEIRO DESSE ARQUIVO _____, VAI ENFIAR 
+
+
+
+O CONTEÚDO INTEIRO DESSE ARQUIVO ___ NA SUA MEMORY__,  
+
+
+
+
+PARA SÓ ENTÃO, DEPOIS DISSO, RETORNAR ESSE ARQUIVO/SEU CONTEÚDO COM A RESPONSE...
+
+
+
+
+
+
+
+
+
+ok...
+
+
+
+
+1) NODE LÊ 
+
+
+
+2) NODE COLOCA NA MEMÓRIA 
+
+
+
+3) NODE RETORNA UMA RESPONSE COM ESSE CONTEÚDO (da file) AO USER...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ISSO SIGNIFICA, EM OUTRAS PALAVRAS,
+
+
+QUE 
+
+
+
+__ COM ARQUIVOS GRANDÕES/PESADOS, 
+
+
+ESSE PROCEDIMENTO DE 'READ' VAI __ DEMORAR UM MONTE_, 
+
+
+VAI DEMORAR ___ MUUUUITO TEMPO ATÉ QUE 
+
+UMA RESPONSE 
+
+
+SEJA 
+
+ENVIADA............. ALÉM DISSO, HÁ O PROBLEMA SECUNDÁRIO DE QUE 
+
+
+_SUA MEMORy__ PODE/PODERÁ  
+
+
+
+'ACTUALLY OVERFLOW' 
+
+
+em um determinado ponto.... ---------> VAI OVERFLOW SE 
+
+VOCÊ TIVER 
+
+
+
+MTOS DIFERENTES 'INCOMING REQUESTS', 
+
+
+
+
+ISSO PQ __ ELE VAI _ TER QUE 
+
+
+
+
+'READ ALL THE DATA INTO MEMORY',
+
+
+
+
+MEMÓRIA QUE, É CLARO, 
+
+
+__ É __ LIMITADA__...
+
+
+
+
+
+
+
+
+-------> ISSO SIGNIFICA, EM OUTRAS PALAVRAS,
+
+QUE 
+
+
+__FAZER O 
+
+
+'READFILE'
+
+
+
+de 
+
+dados (armazenados dentro do STORAGE da máquina de seu app nodeJS)
+
+
+PARA DENTRO 
+
+DA 
+
+MEMÓRIA (memória temporária)
+
+
+DE SEU 
+
+
+APLICATIVO
+
+
+
+PARA ENTÃO FAZER SERVE __ É UMA PRACTICE _ HORRÍVEL... -------> 
+
+
+
+
+PARA ARQUIVOS MENORES, PEQUENINOS, É OK,
+
+
+MAS 
+
+PARA 
+
+
+__ARQUIVOS MAIORES __ ESSE ___ APPROACH É UMA PORCARIA...
+
+
+
+
+
+
+
+
+
+é por isso que 
+
+
+
+
+a sintxe 
+
+
+
+''' '''''''
+
+
+
+
+
+
+
+
+
+  return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+            return res.send(data); 
+          }
+        });
+
+
+
+
+
+''''''''''''''''
+
+
+
+
+1) fs.readFile 
+
+
+
+
+2) res.send(data)
+
+
+
+
+
+
+
+
+
+
+
+-------> DEVE _ SER EVITADA...
+
+
+
+
+
+
+
+
+--> EM VEZ de seguir esse APPROACH,
+
+
+
+
+A MELHOR COISA QUE VOCÊ PODE FAZER 
+
+É 
+
+
+'STREAM THE RESPONSE DATA'...
+
+
+
+
+
+
+
+
+
+
+---> ''''YOU SHOULD __ STREAM__ THE RESPONSE DATA'''' 
+
+
+
+
+
+
+
+
+
+
+
+
+----> e é isso que faremos agora, faremos O __STREAM__ 
+
+da 'response data'
+
+AO USER...
+
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+AGORA, EM VEZ DE USAR AQUELE CÓDIGO,
+
+
+
+
+PROFESSOR VAI QUERER _ COMEÇAR__ A 'STREAM' A DATA DO FILE....
+
+
+
+
+
+
+
+
+
+-----> para isso,
+
+ele cria uma nova const 
+
+de 
+
+nome 
+
+
+'file'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = ////////////EIS O CÓDIGO EM QUESTÃo.
+      }
+    }
+  });
+};
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+DENTRO DESSA CONST, PROFESSOR VAI USAR O 'fileSystem', vai usar o FS, e 
+
+aí 
+
+
+
+
+VAI UTILIZAR O MÉTODO 
+
+
+'createReadStream()"...
+
+
+
+
+
+
+
+
+ELE VAI USAR ESSE MÉTODO PQ ELE VAI QUERER 
+
+
+'READ SOME DATA IN'....
+
+
+
+
+
+
+
+------>  CERTo.... ------> ESSE MÉTOOD __ EXIGE__ 1 
+
+
+
+ARGUMENTO QUE É O 'SPECIFIC PATH' 
+
+EM QUE 
+
+SEU FILE ESTÁ ARMAZENADO...
+
+
+
+
+
+
+
+--> NO CASO, VAMOS USAR O MESMO PATH DE ANTES, REPRESENTADO POR 'invoicePath'.. (
+
+    QUE SERÁ O mesmo path de antes, aquele path de 
+
+
+    ''
+
+    `${pdfPath}/${invoiceName}`
+
+
+
+    '''
+)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+      }
+    }
+  });
+};
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+----------> ok........ AGORA, POR MEIO DESSE 
+
+
+
+'fs.createReadStream()',
+
+VAMOS TER ESSE 
+
+
+'READ STREAM'.... ------> 
+
+
+
+
+
+
+
+
+___ E O NODE __ VAI SER CAPAZ/É CAPAZ DE 
+
+
+USAR ESSA READ STREAM PARA 
+
+
+
+'READ IN 
+
+
+
+THE FILE, STEP-BY-STEP, IN DIFFERENT CHUNKS'...
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+      }
+    }
+  });
+};
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+depois do 'createReadStream',
+
+
+
+
+o professor vai COLOCAR AQUELES MESMOS 
+
+
+
+
+HEADERS, settados por meio de 'res.setHeader()'...
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+CERTO...
+
+
+
+DEPOIS __ DE 
+
+
+CHAMAR O MÉTODO 'createReadStream'
+
+
+
+
+
+
+E ANEXAR/EMBUTIR AQUELES 
+HEADERS 
+
+
+NA SUA RESPONSE (dizendo que: 1) VAMOS QUERER RETORNAR 1 PDF; 2)VAMOS QUERER QUE O PDF SEJA MANDADO/RECEBIDO DE FORMA INLINE/exibido diretamente ao user no pdf viewer do browser),
+
+
+
+
+
+
+
+
+O PROFESSOR VAI USAR 
+
+'file', essa CONST AÍ QUE 
+
+
+
+SEGURA/ESTÁ SEGURANDO O VALOR DE 
+
+
+
+'fs.createReadStream(invoicePath)',
+
+
+
+
+OU SEJA, VAI USAR A 'READ STREAM' que foi criada 
+
+
+
+
+
+
+PARA ENTÃO CHAMAR 
+
+O MÉTODO 
+
+
+
+'.pipe()' -------> 
+
+
+
+
+
+
+
+
+
+
+
+.pipe()  ------> ESSE MÉTODO VAI 
+
+'FORWARD THE DATA __ THAT _ 
+
+IS READ-IN', 
+
+
+A DATA QUE É __ LIDA__ NESSA STREAM,
+ 
+ 
+ VAI 
+ 
+ FORWARDAR ESSA DATA à RESPONSE, ao objeto response ----> ISSO PQ 
+
+
+O 
+
+
+OBJETO 'response' 
+
+É, ACTUALLY,
+
+
+
+UMA ______ 'WRITABLE STREAM'... (nunca tinha ouvido falar disso 
+
+antes)...
+
+
+
+
+
+
+
+
+
+----> COMO NOSSAS RESPONSES SÃO SEMPRE 'WRITABLE STREAMS',
+
+
+
+podemos nos UTILIZAR DO MÉTODO 'file.pipe(res)'
+
+
+
+
+PARA 
+
+
+
+
+'CANALIZAR' A STREAM ARMAZENADA NA CONST DE 'file'
+
+
+
+à STREAM __ DE 'RESPONSE' que temos em geral, no nosso app....
+
+
+
+
+
+--> O CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+                file.pipe(res);
+      }
+    }
+  });
+};
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+OK... MAS PQ ISSO FUNCIONA?
+
+
+
+--> FUNCIONA, EXPLICA O PROFESSOR,
+
+
+JUSTAMENTE 
+
+PQ 
+
+'YOU CAN USE 
+
+READABLE STREAMS (como as criadas por 'fs.createReadStream') 
+
+
+
+
+__ PARA __FAZER 'PIPE'
+
+
+
+DESSE SEU OUTPUT 
+
+EM 
+
+
+
+uma 'WRITABLE STEAM'... (Que é o OBJETO RES/response.... objeto res é UMA STREAM OF DATA...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> VOCÊ PODE (e deve) 
+
+
+USAR 
+
+
+'READABLE STREAMS'
+
+
+PARA __ PIPEAr___ O VALOR DE ARQUIVOS_ _ 
+
+
+PARA 
+
+'WRITABLE STREAMS' (como A RESPONSE, QUE É UMA 'WRITABLE STREAM'...) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR EXPLICA QUE __ NEM ___TODOS OSJETOS SÃO 
+
+
+'WRTABLE STREAMS',,
+
+
+
+
+
+
+MAS A REPONSE SEMPRE É DESSE TIPO...
+
+
+
+
+
+
+
+
+
+
+
+--------> ok...código  vai ficando assim:
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+                file.pipe(res); ////EIS O CÓDIGO EM QUESTÃO.
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+OK... --> PODEMOS 'PIPEAR' nossa 'readable stream',
+
+
+NOSSA 
+
+
+'filestream', representada por 'file' (const) 
+
+
+
+
+para __ DENTRO  ___ DA RESPONSE, EM OUTRAS PALAVRAS... ( pq é ISSO QUE FAZ/FARÁ 'file.pipe(res)'...)
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE _ A RESPONSE VAI SER STREAMADA __ AO BROWSER,
+
+
+ E QUE 
+
+ __ VAI CONTER__ DATA ,
+
+
+
+
+
+
+
+
+
+ E __ QUE_ _ A DATA DA 'RESPONSE',
+
+ que vai conter essa tal de 'READABLE FILESTREAM' (relativo ao pdf) 
+ 
+  VAI BASICAMENTE 
+
+
+ 'SER BAIXADA'
+
+
+ PELO BROWSER, ETAPA-POR-ETAPA....
+
+
+
+
+
+
+
+
+
+
+-- CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+          const file = fs.createReadStream(invoicePath); //////eis o código em questão.
+             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+                file.pipe(res);
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR EXPLICA QUE A VANTAGEM DESSE CÓDIGO É VISTA 
+
+
+
+NO RETURN DE ARQUIVOS GIGANTES.... ------> É UMA VANTAGEM IMENSA,
+
+PQ 
+
+
+
+
+
+
+__ O NODE NUNCA VAI TER QUE 
+
+FAZER 
+
+'PRE-LOAD' DE TODA A DATA _ PARA DENTRO DA MEMÓRIA,
+
+ 
+
+ E SIM 
+
+
+ APENAS __ TEM DE __ 'STREAM' ESSA DATA DESSA FILE, AO CLIENT,
+
+
+
+
+
+
+ 'ON THE FLY'...
+
+
+
+
+
+
+
+a ordem fica assim:
+
+
+
+
+
+
+1) cara clica em botão 
+
+
+
+2 ) createReadStream VAI LER SEUS ARQUIVO E VAI O CONVERTER EM UMA 
+
+'READABLE STRING'...
+
+
+
+
+
+3) POR MEIO DE 'file.pipe(res)', 
+
+
+ESSA rEADsTREAM que foi CRIADA POR 'createReadStream' E 
+
+
+ARMAZENADA NA CONST DE NOME 
+'file'
+
+
+___SERÁ__ STREAMADA__ PARA 
+
+
+DENTRO DO OBJETO 'response' do node (que, por sua vez, TAMBÉM É UMA 'READABLE FILE STRING')
+
+
+
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR EXPLICA QUE A VANTAGEM DESSE CÓDIGO É VISTA 
+
+
+
+NO RETURN DE ARQUIVOS GIGANTES.... ------> É UMA VANTAGEM IMENSA,
+
+PQ 
+
+
+
+
+
+
+__ O NODE NUNCA VAI TER QUE 
+
+FAZER 
+
+'PRE-LOAD' DE TODA A DATA _ PARA DENTRO DA MEMÓRIA,
+
+ 
+
+ E SIM 
+
+
+ APENAS __ TEM DE __ 'STREAM' ESSA DATA DESSA FILE, AO CLIENT,
+
+
+
+
+
+
+ 'ON THE FLY'...
+
+
+
+
+
+
+
+
+
+
+
+
+ ---------->  QUANDO FAZEMOS O 'STREAMING OF DATA',
+
+
+
+
+
+ O MÁXIMO QUE __ O 
+
+
+
+ SERVER TEM QUE ARMAZENAR, 'AT A GIVEN TIME',
+
+NA MEMÓRIA, 
+
+
+ é 
+
+
+
+ apenas __UM PEDACINHO, APENAS 1 
+
+ DAQUELES VÁRIOS CHUNKS OF DATA... (
+      
+      ao contrário do PRELOAD, que exige que 
+
+      TODOS OS CHUNKS SEJAM CARREGADOS ANTES DE SEREM ENVIADOS 
+
+      ao user..
+ )
+
+
+
+
+
+
+
+
+
+
+
+ -> DE NOVO, ESTAMOS DE VOLTA COM OS 'STREAMS E BUFFERS'...
+
+
+
+
+
+ ----> CHUNKS --> SÃO AS COISAS COM AS QUAIS TRABALHAMOS, OS PEDAÇOS 
+
+ DOS ARQUIVOS...
+
+
+
+
+ ---> BUFFERS SÃO as coisas que BASICAMENTE NOS DÃO ACESSO A ESSES 
+
+ CHUNKS...
+
+
+
+
+
+
+
+
+ --> COM O 'streaming of data',
+
+
+ NÃO TEMOS QUE 
+
+
+
+ 'ESPERAR PARA TODOS OS CHUNKS SE JUNTAREM E SEREM CONCATENADOS',
+
+
+
+
+
+
+ ____ __ EM VEZ DISSO__ OS __ FORWARDAMOS __ AO BROWSER,
+
+ QUE 
+
+
+ ENTÃO 
+
+ É 
+
+
+ CAPAZ __ 
+
+
+ DE 
+
+
+ __CONCATENAR 
+
+ AS 
+
+ 'INCOMING DATA PIECES'
+
+
+
+NA FILE FINAl...
+
+
+
+
+
+
+
+
+
+--> SE RECARREGARMOS O CÓDIGO E CLICARMOS NA FATURA + UMA VEZ,
+
+
+
+
+
+VAMOS VER O __ MESMO RESULTADO DE ANTES.... ENTRETANTO, 
+
+
+AGORA 
+
+ESTAMOS 
+
+SERVINDO NOSSAS FILES POR MEIO DE 
+
+'STREAMED DATA',
+
+
+
+
+
+
+STREAMED DATA CRIADA __ A PARTIR __ 
+
+
+DAQUELE 
+
+
+
+'fs.createReadStream()',
+
+
+
+
+
+E FORWARDADA por meio daquele 
+
+
+
+
+
+'file.pipe(res)'...
+
+
+
+
+
+
+
+
+
+
+
+
+OK... ESSA É A MANEIRA RECOMENDADA DE 'GET YOUR FILE DATA' (send de file data ao user, files....),
+
+
+especialmente 
+
+quando falamos de ARQUIVOS MAIORES...
+
+
+
+
+
+
+
+Streams make for quite a handy abstraction, 
+and there's a lot you can do with them - as an example, let's take 
+a look at stream.pipe(), the method used to take a readable stream and
+ connect it to a writeable stream. Suppose we want to spawn a node child
+  process and pipe our stdout and stdin to its corresponding stdout and stdin.
+
+
+
+
+
+
+
+
+
+---------> 
+
+
+createReadStream() is an asynchronous operation that has
+ completion events. But, because of the way it's been combined with
+  reading from the file, you don't generally have to use it like it's
+   asynchronous because it's asynchronous behavior is combined with the 
+   async reading from the file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> VOCÊ PODE (e deve) 
+
+
+USAR 
+
+
+'READABLE STREAMS'
+
+
+PARA __ PIPEAr___ O VALOR DE ARQUIVOS_ _ 
+
+
+PARA 
+
+'WRITABLE STREAMS' (como A RESPONSE, QUE É UMA 'WRITABLE STREAM'...)
+
+
+
+
+
+
+
+
+
+
+COMO A RESPONSE VAI SER STREAMADA AO BROWSER (como sempre o é),
+
+
+
+
+ELA VAI CONTER A DATA DE 'file' (a const)...
+
+
+
+
+
+
+
+
+
+
+
+
+ok... podemos prosseguir...

@@ -1,0 +1,1151 @@
+
+
+
+
+
+
+
+
+
+
+O QUE É ESSE CONCEITO? 
+
+
+
+
+
+
+
+
+
+
+
+
+---> ASYNC/AWAIT --> SÃO 2 KEYWORDS 
+
+
+
+
+QUE 
+
+SÃO 
+PARTE 
+
+DO 
+
+
+'CORE JAVASCRIPT LANGUAGE'...  ------> NÃO SÃO UMA PARTE EXCLUSIVA DO RUNTIME 
+
+
+
+NODEJS,
+
+
+
+
+
+__ PQ TAMBÉM FICAM DISPONÍVEIS EM 
+
+PROJETOS FRONTEND/JAVASCRIPT..----------> ELES NÃO SÃO PARTE INTEGRAL 
+
+
+
+DO 
+
+NODEJS,
+
+
+MAS 
+
+VOCÊ PODE OS UTILIZAR EM 
+
+
+PROJETOS 
+
+
+NODEJS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS O QUE ESSAS KEYWORDS FAZEM ? --- -> ELAS TE DEIXAM ESCREVER 
+
+
+
+'
+ASYNC REQUESTS' ( 
+
+    ou seja,
+
+
+    REQUESTS 
+
+    EM QUE 
+
+
+    VOCÊ 
+
+    TEM UMA OPERAÇÃO QUE DEMORA UM POUCO MAIS, E QUE 
+
+    'RETURNS BACK LATER'...
+) 
+
+
+
+
+
+__ ESCREVER ESSES 'ASYNC REQUEST' 
+
+
+
+DE UMA __ '''MANEIRA SÍNCRONA''''****
+
+
+
+
+
+
+
+**** -> NA VERDADE,
+
+
+
+ISSO NÃÕ TE DEIXA RODAR CÓDIGO ASSÍNCRONO SINCRONAMENTE,
+
+
+E 
+
+SIM 
+TE 
+
+
+DEIXA 
+
+ESCREVER 
+
+
+DE UMA 
+
+FORMA __ MENOS POLUÍDA... (que parece ser síncrona, mas não é )....
+
+
+
+
+
+
+
+
+-----------> PARECE SÍNCRONO,
+
+MAS 
+
+
+AINDA É ASSÍNCRONO,
+
+
+
+ESSE RUN...
+
+
+
+
+
+
+
+
+
+--> ISSO TUDO É MUITO ABSTRATO,
+
+
+POR ISSO 
+
+
+DEVEMOS 
+
+
+
+MERGULHAR NO NOSSO CÓDIGO 
+
+JÁ 
+
+
+EXISTENTE 
+
+
+
+
+NODEJS 
+
+
+para 
+
+
+
+
+TENTAR IMPLEMENTAR 
+
+ISSO POR CONTA PRÓPRIA...  ----> aí O PROFESSOR NOS DIRÁ QUAIS PARTES DO CÓDIGO PODEMOS MUDAR,
+
+
+
+FAZER COM QUE 
+
+USE 
+
+ASYNC/AWAIT,
+
+para exemplificar 
+
+
+
+
+o que ele está dizendo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DE VOLTA 
+
+
+
+AO 
+
+
+
+
+BACKEND 
+
+
+
+
+
+DO 
+
+
+NOSSO PROJETO 
+
+
+
+dos 
+
+
+'post' (2o projeto do curso),
+
+
+
+
+
+
+TEMOS O CÓDIGO aqui...
+
+
+
+
+
+
+
+
+
+---> O PROFESSOR APONTA QUE
+
+
+
+
+_ VOCê TAMBÉM PODE __ USAR __ 
+
+
+
+
+'ASYNC/AWAIT'
+
+
+
+NO SEU APP 
+
+
+
+REACT...
+
+
+
+
+
+
+
+
+
+-----> ENTRETANTO,
+
+
+ESTE É UM CURSO DE NODEJS,
+
+
+POR ISSO 
+
+O PROFESSOR 
+
+
+NÃO VAI SE ATER A ISSO....
+
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR VAI MANTER O CÓDIGO DO REACT INTACTO,
+
+
+
+VAI FOCAR NO NOSSO CÓDIGO 
+
+
+
+DO 
+
+
+
+NODE... 
+
+
+
+
+
+
+
+
+--> OK, MAS COMO PODEMOS USAR 'ASYNC/AWAIT'?
+
+
+
+
+
+
+--> BEM, SE VOCÊ IR ATÉ O CONTROLLER DE 
+
+
+
+
+'feed.js',
+
+
+
+VOCÊ 
+
+
+
+VERÁ 
+
+QUE 
+
+LÁ 
+
+
+NÓS TEMOS UM 
+
+
+CÓDIGO ASYNC LOGO DE CARA,
+
+
+
+naquele 
+
+
+controller de 
+
+'getPosts'...
+
+
+
+
+
+
+
+
+
+--> LÁ, NÓS TEOMS 
+
+
+'Post.find()',
+
+QUE 
+É __, DE FATO,
+ 
+ UM CÓDIGO 
+
+
+
+
+ ASYNC...
+
+
+
+
+
+
+
+ ---> NÓS PODEMOS, NA VERDADE,
+
+
+ USAR ASYNC AWAIT COM ESSA FUNÇÃO..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -> DEVO TENTAR FAZER ISSO SOZINHO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ TALVEZ ASSIM SEJA O FORMATO.... :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+exports.getPosts = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT.... 
+  //código com pagination...
+  const pageNumber = req.query.page || 1;
+
+  const userId = ObjectId(req.userId); ///userId extraído de nossa token e armazenado no objeto request do user... tudo graças ao middleware de 'isAuth', lá no folder de 'middlewareHelpers'...
+
+  console.log(userId);
+  console.log(pageNumber);
+      
+    try {
+    const countedDocuments = await Post.countDocuments({creator: {userId: userId}});
+
+    const allUserDocuments = await Post.find({creator: {userId: userId}});
+
+  
+    const selectedUserDocuments = await allUserDocuments.skip((pageNumber - 1) * ITEMS_PER_PAGE);
+
+
+    const posts = await selectedUserDocuments.limit(ITEMS_PER_PAGE);
+
+    if(!posts) {
+      res.status(404).json(
+        {
+          message: 'No posts encountered on database, please try again later.'
+        }
+      )
+    } else {
+
+      res.status(200).json(
+        {
+          posts: posts,
+          currentPage: +pageNumber,
+          totalItems: countedDocuments
+        }
+      )
+
+    }
+
+  } catch (err) {
+    if (!err.statusCode) {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+------------------
+
+
+
+
+JÁ ADICIONEI O 'TRY-CATCH',
+
+
+
+para ver se funciona esse error handling... só não sei se esse formato está correto...
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> bem, eu ganhei um ERROR....
+
+
+
+
+
+
+
+
+
+
+---> o error foi este:
+
+
+Error: TypeError: allUserDocuments.skip is not a function
+    at exports.getPosts (A:\projeto4 - NODEJS\MODULO26-ENTENDENDOASYNCAWAITEMAPLICATIVOSNODEJS\NOVONOVOPROJETO22-BACKEND,VERSAODOPROFESSOR\controllers\feed.js:120:21)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  httpStatusCode: 500
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+É POR CAUSA DESTA LINHA:
+
+
+
+
+
+
+
+ const selectedUserDocuments = await allUserDocuments.skip((pageNumber - 1) * ITEMS_PER_PAGE);
+
+
+
+
+
+
+
+
+ PELO VISTO, O FORMATO DO CONTROLLER TEM QUE SER ASSIM:
+
+
+
+
+
+
+
+
+
+
+ exports.findById = async (req, res, next) => {
+    const something = await Something.findById(req.params.id).exec();
+    res.send(something);
+};
+
+
+
+
+
+
+You should wrap you async calls in a try/catch block.
+
+
+
+
+
+
+
+
+
+
+
+
+-_> O PROBLEMA, AQUI, É CLAro,
+
+
+
+
+é que 
+
+ESTAMOS __ COMBANDO_ _ MÉTODOS MONGOOSE, 1 atrás do outro... (find, com skip e limit..) aí eu não sei como 
+
+
+fazer esse combo...
+
+
+
+
+
+
+
+
+
+
+--> LI UMA RESPOSTA INTERESSANTE:
+
+
+
+
+
+So, 1. Remember when you use await you're waiting for the result of a promise. 2. It's asynchronous when you declared with async and await the response of a promise, and to make the query a fully-fledge promise you use the the .exec() – 
+O'Dane Brissett
+ Oct 3 '19 at 14:17 
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> ou seja, talvez seja necessário chamar '.exec()' 
+
+ para transformar
+  
+
+  essa nossa query em uma 'full-fledge promise'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---> TALVEZ A SOLUÇÃO SEJA ESTA:
+
+
+
+  The 3rd argument to Model.find() is the general query options.
+  
+   Here's a full list of options. For example, you can set limit and skip in the 3rd argument.
+
+
+
+
+
+
+
+-> talvez a solução seja usar esse terceiro parÂmetro de 'find' 
+
+
+
+para 
+
+
+
+CONSEGUIR PEGAR O QUE DESEJAMOS, com esses filters de 'skip' e 'limit'...
+
+
+
+
+
+
+
+
+
+
+
+--> CONSEGUI...
+
+
+
+
+
+
+
+
+O CÓDIGO FICOU BEM BIZARRO...
+
+
+
+tive de usar 
+
+
+
+aquele terceiro parâmetro do 'find()' (que aceita 3 parâmetros, aparentemente...)
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT.... 
+  const pageNumber = req.query.page || 1;
+
+  const userId = ObjectId(req.userId); ///userId extraído de nossa token e armazenado no objeto request do user... tudo graças ao middleware de 'isAuth', lá no folder de 'middlewareHelpers'...
+
+    try {
+    const countedDocuments = await Post.countDocuments({creator: {userId: userId}});
+
+
+    const neededUserDocuments = await Post.find({creator: {userId: userId}}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE} ///////////EIS O CÓDIGO EM QUESTÃO.
+    )
+    
+    console.log(neededUserDocuments);
+
+
+    if(!neededUserDocuments) {
+      res.status(404).json(
+        {
+          message: 'No posts encountered on database, please try again later.'
+        }
+      )
+    } else {
+
+      res.status(200).json(
+        {
+          posts: neededUserDocuments,
+          currentPage: +pageNumber,
+          totalItems: countedDocuments
+        }
+      )
+
+    }
+
+  } catch (err) {
+    if (!err.statusCode) {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+O CÓDIGO QUE INTERESSA É ESTE:
+
+
+
+    const neededUserDocuments = await Post.find(
+        
+        
+        
+        {creator: {userId: userId}}, 
+        
+        null,
+
+
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE} ///////////EIS O CÓDIGO EM QUESTÃO.
+    )
+
+
+
+
+---------------------------------
+
+
+
+
+
+AGORA É HORA DE VER A AULA DO PROFESSOR, SUPONHO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, 
+
+
+
+
+
+ELE ESTÁ COM A VERSÃO 
+
+
+
+NORMAL DO CÓDIGO...
+
+
+
+
+
+
+
+--> ELE FALA SOBRE COMO PODEMOS IDENTIFICAR OPERAÇÕES ASYNC...- --> BEM ,
+
+
+
+
+
+
+NÓS PODEMOS 
+
+IDENTIFICAR 
+
+ESSE TIPO DE COISA QUANDO 
+
+LIDAMOS COM PROMISES... (
+
+
+
+    'then' e 'catch' ...
+)
+
+
+
+
+
+
+
+
+
+--------> Post.find(),
+
+
+
+'.countDocuments()',
+
+
+
+
+
+
+
+
+também 
+
+
+'Post.find()' 
+
+
+de novo,
+
+
+
+aí 
+
+
+
+'.skip()',
+
+
+
+'.limit()',
+
+
+
+etc etc...
+
+
+
+
+
+
+
+
+----> OK... ESSES CÓDIGOS SÃO ASSÍNCRONOS...
+
+
+
+
+
+
+-----> professor fala um pouco dos códigos normais javascript, que 
+
+vão 
+
+descendo normalmente...
+
+
+
+
+
+console.logs são instantâneos,
+
+etc etc..
+
+
+
+
+
+.then() -> NÓS DEFINIMOS 
+
+
+CODE SNIPPETS 
+
+QUE 
+
+SÃO 
+
+EXECUTADOS __ NO FUTURO__, 
+
+QUANDO 
+
+
+
+A OPERAÇÃO ANTERIOR TIVER ACABADO... 
+
+
+
+
+
+
+
+--> CALLBACKS, OS QUAIS USAMOS ANTERIORMENTE NO CURSO,
+
+
+
+SÃO __ OUTRA MANEIRA _ DE LIDAR COM ASYNC CODE.... ---> 
+
+
+
+
+
+
+
+NO EXEMPLO DO 'countDocuments',
+
+
+
+
+VOCÊ PODERIA,
+
+ACTUALLY,
+
+
+
+__ DEFINIR UMA CALLBACK FUNCTION...
+
+
+ex:
+
+
+
+
+.countDocuments(
+    count => {
+
+    }
+)
+.then(
+    (count) => {
+        totalItems = count;
+        ....
+    }
+)
+
+
+
+
+
+
+
+
+--> NESSE TRECHO AÍ DE CIMA,
+
+O CALLBACK DE 
+
+'countDocuments'
+
+
+
+
+É ___ EXECUTADO__ ANTES__ DO CÓDIGO NAQUELE 'then block'
+
+
+ali de baixo...
+
+
+
+
+
+
+
+
+-_> MAS NÓS NÃO USAMOS UM CALLBACK 
+
+
+NESSE NOSSO CÓDIGO, 
+
+
+
+DIZ O PROFESSOR,
+
+
+PQ ISSO LEVARIA A UM PESADO NESTING,
+
+
+E AÍ 
+
+
+NOSSA FUNÇÃO FICARIA MT 
+
+DIFÍCIL DE LER,
+
+MTO CALLBACK NESTING...
+
+
+
+
+
+
+
+
+---------> ok... -----> É POR ISSO QUE 
+
+
+
+
+VOCÊ GERALMENTE PREFERE PROMISES (then e catch),
+
+
+
+AINDA QUE 
+
+
+
+
+SEJA POSSÍVEL USAR 
+
+
+CALLBACKS...
+
+(
+
+    PQ
+     
+     THEN BLOCKS
+      
+
+      SÃO BEM MAIS LEGÍVEIS...
+) 
+
+
+
+
+
+
+
+
+
+--> MAS O NEGÓCIO PODE FICAR AINDA MAIS LEGÍVEL, 
+
+
+POR MEIO DE 'async/await',
+
+
+E É ISSO QUE 
+
+O PROFESSOR NOS MOSTRARÁ 
+
+NA PRÓXIMA AULA....

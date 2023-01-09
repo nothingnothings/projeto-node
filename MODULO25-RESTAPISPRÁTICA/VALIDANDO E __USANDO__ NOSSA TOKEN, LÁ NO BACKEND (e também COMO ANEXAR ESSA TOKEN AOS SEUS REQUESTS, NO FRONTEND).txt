@@ -1,0 +1,5613 @@
+
+
+
+
+
+
+
+
+--> nosso código DE 
+
+
+
+'SET A TOKEN NO BROWSER DO USER'
+
+é 
+
+este (backend):
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+      loadedUser = user; ///aqui armazenamos a data de nosso user naquela variável inicial... vamos o utilizar mais para baixo, em execuções dentro dessa promise chain...
+      return compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error('Invalid Password. Please try again.');
+        error.statusCode = 401; //'unauthenticated'...
+        throw error;
+      } else {
+        const token = jwt.sign(
+          ///// PRIMEIRO ARGUMENTO = DATA QUE VOCê QUER QUE SEJA RETORNADA, NA SUA JSON WEB TOKEN, AO USER (nunca coloque o hashedPassword, essa é a única regra... common practice é retornar o email...)
+          //////SEGUNDO ARGUMENTO = 'SECRET', OU A 'PRIVATE KEY' usada no GENERATE DA ASSINATURA (signature) dessa JSON WEB TOKEN --> É BOM USAR STRINGS ALEATÓRIAS E BEM LONGAS, para deixar seguro.... use o site mkjwk.org....
+          {
+            //////TERCEIRO ARGUMENTO = 'OBJETO CONFIG' --> você define CARACTERÍSTICAS DESSA WEBTOKEN: quando ela deve expirar,
+            email: loadedUser.email,
+            userId: loadedUser._id,
+          },
+          'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+          {
+            ////TERCEIRO ARGUMENTO, ARGUMENTO DE OPTIONS...
+
+            expiresIn: '1h', ///JSON WEB TOKEN VAI EXPIRAR EM 1 HORA... (no browser do user...) --> boa medida de segurança, pq aí se o token do user, no browser do user, for roubado por um user malicioso, essa token logo expirará, em 1 hora....
+          }
+        );
+
+        res.status(200).json({
+          token: token, //vamos querer enviar isso ao nosso frontend, para que seja armazenada...
+          userId: loadedUser._id.toString(), ///também vamos querer enviar isso ao nosso frontend, para que seja armazenado.... (e então utilizado no frontend/app react)....
+        });
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ESTE (frontend):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        ///EIS O CÓDIGO EM QUESTÃO.
+      }
+    )
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---------- OK...  ESTAMOS FAZENDO GENERATE 
+
+
+
+
+
+  DE 
+
+  1 TOKEN,
+
+  E ESTAMOS O REPASSANDO AO 
+
+  CLIENT... --> 
+
+
+
+
+  ESSE TOKEN ESTÁ FICANDO ARMZENADO EM 
+
+
+  'localStorage'....
+
+
+
+
+
+
+
+
+  --------> PRECISAMOS ASSEGURAR QUE 
+
+  ESSE CLIENT CONSEGUE 
+
+  ENVIAR 
+
+  ESSE 
+
+  TOKEN 
+
+
+  __ EM TODOS OS REQUESTS _ QUE 
+
+  SAEM/SAIRÃO 
+
+  DESSE FRONTEND...
+
+
+
+
+
+
+
+
+
+
+  --------> ENFIADA ESSA TOKEN NO REQUEST QUE 
+
+  VAI SER ENVIADO À REST API,
+
+
+
+
+
+  VAMOS 
+
+
+  ENTÃO TER QUE CHECAR, LÁ NA REST API/SERVIDOR NODEEXPRESS,
+
+
+
+  POR:
+  
+  
+  ---------------------------------
+
+
+
+  1) EXISTÊNCIA DA TOKEN,
+
+  
+  
+  
+   2) 'VALIDITY' 
+
+  DESSA TOKEN,
+
+
+--------------------------------
+
+
+
+
+
+  ANTES __ 
+
+
+  DE DEIXARMOS UM 
+
+  REQUEST 
+  PROSSEGUIR 
+
+  SUAS OPERAÇÕES 
+
+  NO NOSSO BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> POR EXEMPLO,
+
+
+  LÁ NO ARQUIVO 
+
+  'feed.js',
+
+
+  NAS NOSSAS FEED ROUTES,
+
+  NENHUMA 
+  DELAS 
+
+
+  TEM 
+
+  'AUTHENTICATION' NO LUGAR,
+
+
+
+  por isso qualquer user pé rapado 
+
+
+  pode 
+
+
+
+  acessar 
+
+  e 
+
+
+
+  enviar requests a elas...
+  
+
+
+
+
+
+
+
+
+
+
+
+  --> E NESSAS ROUTES DO ARQUIVO 'feed.js',
+
+  UM MONTE 
+
+
+
+  DE ESSAS ROUTES 
+
+
+
+  DEVE _ POSSUIR __ 
+
+
+
+
+  'BLOCKS/GUARDS',
+
+
+
+  deve BLOQUEAR ACESSO 
+
+
+  SE 
+
+
+  A 
+
+  TOKEN NÃO ESTIVER DEFINIDA NO REQUEST... 
+
+
+
+
+
+
+
+
+
+
+
+  -----> PARA ISSO, 
+
+
+
+  PROVAVELMENTE
+
+
+
+
+
+
+
+
+  vamos 
+
+
+
+
+
+  USAR UMA FUNCTION/MIDDLEWARE 
+
+  DEFINIDO 
+
+
+
+  EM OUTRO ARQUIVO,
+
+  em uma pasta como 
+
+  'helpers'/'util',
+
+
+
+
+  E QUE 
+  FARÁ 
+
+  O 
+  CHECK 
+
+  POR 
+
+  ESSA 
+
+  TOKEN,
+
+
+  E REDIRECIONARÁ 
+  O 
+
+
+  USER 
+
+
+À HOME PAGE,
+
+
+caso 
+
+constate 
+
+que 
+
+
+o user não tem a token no seu request...
+
+
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+ 
+
+
+ PARA ADICIONAR ESSE BLOCK AÍ,
+
+
+
+
+ __ O PROFESSOR DECIDE __ ADICIONAR UM NOVO MIDDLEWARE, SIM,
+
+
+
+
+
+
+EXATAMENTE COMO EU PENSEI...
+
+
+
+
+
+
+
+
+
+
+
+--> ELE CRIA UM FOLDER DE 'middlewareHelpers',
+
+
+
+
+
+
+E AÍ
+
+
+
+
+
+
+
+COLOCA UM ARQUIVO de 
+
+'is-auth.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ DENTRO,
+
+
+
+PROFESSOR VAI COMEÇAR PELO IMPORT DA PACKAGE 
+
+DE 
+
+
+'jsonwebtoken'... 
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE DIZ QUE VAMOS PRECISAR DESSA PACKAGE,
+
+PQ 
+
+É 
+
+ELA QUE VAI 
+
+
+'VALIDATE INCOMING TOKENS',
+
+tokens que chegam ao nosso backend...
+
+
+
+
+
+
+
+
+
+
+
+--> isso feito,
+
+
+
+
+PROFESSOR VAI EXPORTAR 
+APENAS 
+
+
+UMA ÚNICA FUNÇÃO,
+
+por meio da SINTAXE
+
+
+
+
+
+
+
+
+ 
+'module.exports = ... ' 
+
+
+
+
+
+
+
+
+
+
+
+
+----> PARA EXPORTAR APENAS 1 ÚNICA FUNÇÃO,
+
+
+
+ele 
+
+
+recorre À sintaxe 
+
+comum 
+
+de middlewares,
+
+
+
+
+
+com 
+
+
+
+
+'
+
+
+module.exports = (req, res, next) => {
+
+    ...
+}
+
+
+'
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+  ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+};
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+OK... AGORA PODEMOS USAR 
+
+ESSA FUNÇÃO COMO MIDDLEWARE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PRIMEIRAMENTE,
+
+
+
+
+
+
+
+PROFESSOR VAI 'EXTRACT THE TOKEn'
+
+
+
+LÁ DE UM INCOMING REQUEST...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+EU __ IMAGINO__ QUE 
+
+ELE VAI 
+
+ESCREVER 
+
+
+'req.body.token',
+
+ou algo assim...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ENTRETANTO,
+
+
+ATUALMENTE __ NÓS NÃO ESTAMOS 'ATTACHING THE TOKEN' ao nosso request 
+
+
+
+em lugar algum de 
+
+nosso 
+
+frontend.... --------->  MAS COMO 
+
+
+
+
+PODEMOS 
+
+ANEXAR ESSE TOKEN,
+
+NO CASO? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> BEM, SE VOLTARMOS AO NOSSO FRONTEND,
+
+
+LÁ 
+
+EM 
+
+
+'loginHandler',
+
+
+
+temos 
+
+
+
+um código como este:
+
+
+
+
+
+
+
+
+
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        ///EIS O CÓDIGO EM QUESTÃO.
+      }
+    )
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+  ----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK... MAS DIGAMOS QUE QUEREMOS ADICIONAR/ANEXAR 
+
+
+ESSA TOKEN __ APENAS 1 UM REQUEST ESPECÍFICO... ----> VAMOS QUERER 
+
+
+ADICIONAR/ANEXAR 
+
+ESSE NEGÓCIO 
+
+LÁ 
+
+
+EM 
+
+'Feed.js',
+
+
+
+
+
+
+NO MÉTODO DE 'loadPosts',
+
+
+PARA 
+
+
+
+CARREGAR 
+
+
+
+__ APENAS_ 
+
+
+
+POSTS 
+
+
+VINCULADOS A ESSE NOSSO USER...
+
+
+
+
+
+
+
+
+
+
+
+BEM, TEMOS O CÓDIGO FRONTEND:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+    console.log(page);
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${page}`) //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+  ---------------------------------------
+
+
+
+
+
+
+   
+   BEM, MAS COMO PODEMOS/PODERÍAMOS ANEXAR ESSA 'JSON WEB TOKEN'? 
+
+
+
+
+
+
+
+
+
+
+
+   ----> PROFESSOR EXPLICA QUE 
+
+   EXISTE UM PUNHADO DE OPTIONS,
+
+   LÁ 
+
+
+   NOS SEUS FRONTENDS... ------------> 
+
+
+
+
+
+
+
+   VOCÊ PODERIA/PODE,
+
+   POR EXEMPLO,
+
+
+
+
+
+   ADICIONAR UM 
+
+
+
+   __ QUERY PARAMETER NA SUA 
+
+   URL no 'fetch'...
+
+
+
+
+
+
+
+
+
+
+   --> algo como 
+
+
+
+
+const token = localStorage.getItem('token');
+
+
+
+
+fetch(`http://localhost:8080/feed/posts?token=${token}&page=`)' 
+
+
+
+
+
+
+
+
+
+
+
+
+--> CHUTO QUE PODERIA SER ALGO ASSIM...
+
+
+
+
+
+
+
+
+
+
+
+--> e o professor vai fazer 
+
+
+nosso 
+
+extract dessa token assim mesmo, por meio de query params...
+
+
+
+
+
+
+
+PARA FAZER APPEND 
+
+DOS QUERY PARAMS 
+
+NA NOSSA URL,
+
+
+
+temos de usar 
+
+
+'?  = ' 
+
+
+e 
+
+'&' (para adicionar múltiplos query params...)
+
+
+
+
+
+
+
+CERTO....
+
+
+
+ISSO QUER DIZER QUE NOSSO CÓDIGO PROVAVELMENTE VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+    console.log(page);
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${page}&token={``}) ///não vamos fazer assim...
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> VOCÊ PODERIA, MENCIONA O PROFESSOR,
+
+
+COLOCAR ESSA TOKEN __ NO REQUEST__ BODY__ EM SI,
+
+
+
+MAS QUE ISSO 
+
+__ NÃO É IDEAL... NÃO É IDEAL PQ 
+
+
+
+OS GET REQUESTS, POR EXEMPLO,
+
+
+__NÃO POSSUEM BODY ALGUM__.... -------> E É EXATAMENTE POR ISSO 
+
+QUE 
+
+INCLUIR 
+O 
+
+TOKEN 
+
+
+NA URL 
+
+
+É IDEAL... ---------->  (só é uma solução colocar o token DENTRO DO BODY dos seus requests 
+
+se vocÊ 
+
+TIVER CERTEZA ABSOLUTA DE QUE __ NAQUELE __ APP VOCÊ NÃO FARÁ/ESCREVERÁ __ NENHUM ENDPOINT 
+
+DE 
+
+'GET', 
+
+
+pq 
+
+
+get requests são incompatíveis/não possuem body,
+
+portanto é impossível 
+
+
+anexar tokens a seus bodies....
+
+)
+
+
+
+
+
+
+
+
+
+
+--------> UMA GRANDE SOLUÇÃO PARA ESSE PROBLEMA,
+
+
+
+EXPLICA O PROFESSOR,
+
+
+
+
+__ PARA__ EVITAr__ DEIXAR SUAS URLS UM NOJO (com múltiplos '?page=' '&token=', etc etc)
+
+
+
+
+É _________ USAR _________ 
+
+
+
+_____ HEADERS___ NESSE SEU REQUEST... ------> POR MEIO DOS HEADERS,
+
+
+
+
+
+CONSEGUIMOS 
+
+'KEEP OUR URL BEAUTIFUL',
+
+
+
+
+
+
+
+
+
+
+ALÉM DO FATO DE QUE O HEADER
+
+
+'MAKES A LOT OF SENSE FOR __ META INFORMATION ___ LIKE, for example, 
+
+THE TOKEN, which IT IS, IN THE END' (
+
+
+  como a token é META INFORMATION/METADATA, FAZ TOTAL SENTIDO 
+
+
+  A ARMAZENAR 
+
+  EM 1 HEADER...
+)
+
+
+
+
+
+
+
+
+
+-----> É POR ISSO QUE 
+
+
+NÃO VAMOS 
+
+
+ESCREVER 
+
+ALGO COMO 
+
+
+''
+
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+    console.log(page);
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${page}&token={``}) ///não vamos fazer assim...
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+'''',
+
+
+
+
+
+
+ALGO COMO 
+
+
+
+
+
+''
+
+    fetch(`http://localhost:8080/feed/posts?page=${page}&token={``})
+
+
+
+
+'''',
+
+
+
+
+
+
+E SIM 
+
+
+
+
+
+
+VAMOS 
+
+
+
+USAR AQUELE 
+
+
+SEGUNDO PARÂMETRO DA FETCH API,
+
+
+parâmetro em que 
+
+vamos 
+
+usar 
+
+
+
+'headers: {
+  ....
+}
+
+',
+
+
+
+
+PARA 
+
+ENTÃO 
+
+
+
+
+
+__PROVAVELMENTE__ settar 1 header de 
+
+'Authorization'... (pq 
+
+
+é 
+
+
+isso 
+
+
+que 
+
+O 
+
+professor 
+
+
+havia 
+
+escrito 
+
+naquele middleware de permissões,
+
+lá 
+
+
+no 
+
+app.js:
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... PARA ISSO,
+
+ESCREVEMOS:
+
+
+
+
+
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    fetch(`http://localhost:8080/feed/posts?page=${page}`,  ///VAMOS FAZER ASSIM....
+      {
+
+        headers: {
+          'Authorization':  //////ACHO QUE SERÁ ASSIM.... 
+        }
+      }
+    
+    
+    
+    )
+
+
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+EU CHUTO UM CÓDIGO ASSIM:
+
+
+
+
+loadPosts = (direction) => {
+
+
+
+      const token = localStorage.getItem('token');
+
+
+
+
+
+
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+    console.log(page);
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+      {
+          headers: {
+            'Authorization': `${token}`
+          }
+      }
+    )
+    
+    // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+  -------------------------------------------------
+
+
+
+
+
+
+
+PROFESSOR __ NOS EXPLICA QUE ___ ELE 
+
+
+
+__ NÃO VAI __ DEFINIR 
+
+'Content-Type: application/json',
+ 
+
+
+
+
+
+
+__ JUSTAMENTE __ PQ 
+
+
+ELE __ NÃO ESTÁ 'SENDING ANY DATA'
+
+
+nesse lugar..
+
+
+
+
+
+
+-----> O professor ADICIONA O HEADER DE 'Authorization'.... ------> ELE 
+
+
+
+EXPLICA UQE 
+
+
+
+
+__ TEORICAMENTE__ VOCÊ PODE 
+
+ADICIONAR QUALQUER HEADER 
+QUE 
+
+VOCÊ QUISER,
+
+
+
+MAS 
+
+
+
+'Authorization' 
+
+É UM 
+
+
+'HEADER OFICIAL',
+
+
+HEADER TIPICAMENTE 
+
+UTILIZADO 
+
+PARA 
+
+
+'PASSING AUTHENTICATION INFORMATION TO THE BACKEND'...
+
+
+
+
+
+
+
+
+
+---------------------> PROFESSOR RESSALTA QUE DEVEMOS NOS LEMBRAR DAQUELE CÓDIGO/MIDDLEWARE, em 'app.js',
+
+
+DE:
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+---------> NAQUELA LINHA 
+
+de 
+
+
+''
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+
+  '',
+
+
+  DEFINIMOS QUE 
+
+  ESSE É UM 
+
+  DOS HEADERS 
+
+  PERMITIDOS,
+
+
+  QUE PODEM SER 
+
+  SETTADOS 
+
+
+
+  NOS NOSSOS REQUESTS... 
+
+  ( 
+
+
+    server vai realmente parsear/considerar os requests 
+
+    que 
+
+
+  possuem esse header aí.... se tiver outro header, não vai considerar...
+  )
+
+
+
+
+
+
+
+  ------> ISSO AÍ, ESSE CÓDIGO AÍ,
+
+  SERVE PARA _ AFASTAR__ OS ERROS/BLOCKS DE 
+
+  'CORS' 
+
+  (cross origin RESOURCE SHARING)
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> ok... -------> MAS 
+
+
+
+  NÃO TERMINAMOS POR AQUI.... -----> O VALOR 
+
+
+
+  DE 
+
+  'Authorization'
+
+  QUE 
+
+  VAMOS 
+
+  PASSAR 
+
+
+
+  NÃO VAI 
+
+  SER 
+
+  APENAS 
+  A 
+  TOKEN 
+
+  'SOLTA',
+
+  como eu havia escrito ali:
+
+
+
+
+
+      fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+      {
+          headers: {
+            'Authorization': `${token}`
+          }
+      }
+    )
+
+
+
+
+
+
+
+
+
+----------> NÃO,
+
+
+EM VEZ DISSO,
+
+
+PROFESSOR 
+
+VAI 
+
+ESCREVER 
+
+
+
+
+
+
+'Bearer '  (BEARER + UM ESPAÇO),
+
+
+
+
+
+e aí 
+
+depois 
+
+disso 
+
+
+vamos querer 
+
+
+
+
+__ NÃO 'token' solto assim,
+
+
+
+
+E SIM 
+
+
+
+'this.props.token',
+
+
+AQUELE __ STATE__ DE NOSSO 
+
+APP REACT__ QUE 
+
+ESTÁ SEGURANDO NOSSA TOKEN (
+
+  que por sua vez, 
+
+  realmente foi obtida por meio de 
+
+
+  'localStorage.getItem('token')...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+----------> O CÓDIGO FRONTEND FICOU 
+
++ OU - ASSIM:
+
+
+
+
+
+
+
+
+
+('App.js'):
+
+
+
+
+import React, { Component, Fragment } from 'react';
+
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+
+import Layout from './components/Layout/Layout';
+
+import Backdrop from './components/Backdrop/Backdrop';
+
+import Toolbar from './components/Toolbar/Toolbar';
+
+import MainNavigation from './components/Navigation/MainNavigation/MainNavigation';
+
+import MobileNavigation from './components/Navigation/MobileNavigation/MobileNavigation';
+
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
+
+import FeedPage from './pages/Feed/Feed'; ////page component....
+
+import SinglePostPage from './pages/Feed/SinglePost/SinglePost'; //page component (props repassados a ela, como METHODS...)
+
+import LoginPage from './pages/Auth/Login'; ///page component
+
+import SignupPage from './pages/Auth/Signup'; //page component
+
+import './App.css';
+
+class App extends Component {
+  state = {
+    ////state INICIAL de nosso app...
+    showBackdrop: false,
+    showMobileNav: false,
+    // isAuth: true,
+    isAuth: false,
+    token: null, ///vamos armazenar a token OBTIDA LÁ NO BACKEND, aqui, no BROWSERSIDE, para ser anexada aos nossos requests QUE VÃO PRECISAR DESSA TOKEN PARA SEREM 'authorized'...
+    userId: null,
+    authLoading: false,
+    error: null,
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem('token'); //vai fazer o get de nossa token ao ser montado nosso app ( app geral) 
+    const expiryDate = localStorage.getItem('expiryDate');
+
+    if (!token || !expiryDate) { ///if checks preventivos de login (se o user não tiver a token/token tiver expirado, não vamos renderizar o resto do nosso app)...
+      return;
+    }
+
+    if (new Date(expiryDate) <= new Date()) {
+      this.logoutHandler();
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    const remainingMilliseconds =
+      new Date(expiryDate).getTime() - new Date().getTime();
+    this.setState({ isAuth: true, 
+      token: token, ///vai fazer o set de nossa token no STATE de nosso frontend, se passarmos por aqueles if checks preventivos....
+      
+      
+      userId: userId }); 
+    this.setAutoLogout(remainingMilliseconds);
+  }
+
+  mobileNavHandler = (isOpen) => {
+    this.setState({ showMobileNav: isOpen, showBackdrop: isOpen });
+  };
+
+  backdropClickHandler = () => {
+    this.setState({ showMobileNav: false, showBackdrop: false, error: null });
+  };
+
+  logoutHandler = () => {
+    this.setState({ isAuth: false, token: null });
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiryDate');
+    localStorage.removeItem('userId');
+  };
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        ///EIS O CÓDIGO EM QUESTÃO.
+      }
+    )
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  setAutoLogout = (milliseconds) => {
+    setTimeout(() => {
+      this.logoutHandler();
+    }, milliseconds);
+  };
+
+  errorHandler = () => {
+    this.setState({ error: null });
+  };
+
+  render() {
+    let routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={(props) => (
+            <LoginPage
+              {...props} //usado para OBTER OS 'ROUTING-RELATED PROPS'... (para fzer coisas como REDIRECTS...)
+              onLogin={this.loginHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          exact
+          render={(props) => (
+            <SignupPage
+              {...props}
+              onLogin={this.signupHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+    if (this.state.isAuth) {
+      routes = (
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <FeedPage userId={this.state.userId} 
+              
+              token={this.state.token} //prop extremamente importante, usado no método de 'loadPosts()'...
+               />
+            )}
+          />
+          <Route
+            path="/:postId"
+            render={(props) => (
+              <SinglePostPage
+                {...props}
+                userId={this.state.userId}
+                token={this.state.token}
+              />
+            )}
+          />
+          <Redirect to="/" />
+        </Switch>
+      );
+    }
+
+    return (
+      <Fragment>
+        {this.state.showBackdrop && (
+          <Backdrop onClick={this.backdropClickHandler} />
+        )}
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <Layout
+          header={
+            <Toolbar>
+              <MainNavigation
+                onOpenMobileNav={this.mobileNavHandler.bind(this, true)}
+                onLogout={this.logoutHandler}
+                isAuth={this.state.isAuth}
+              />
+            </Toolbar>
+          }
+          mobileNav={
+            <MobileNavigation
+              open={this.state.showMobileNav}
+              mobile
+              onChooseItem={this.mobileNavHandler.bind(this, false)}
+              onLogout={this.logoutHandler}
+              isAuth={this.state.isAuth}
+            />
+          }
+        />
+        {routes}
+      </Fragment>
+    );
+  }
+}
+
+export default withRouter(App);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(Feed.js):
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component, Fragment } from 'react';
+
+import Post from '../../components/Feed/Post/Post';
+
+import Button from '../../components/Button/Button';
+
+import FeedEdit from '../../components/Feed/FeedEdit/FeedEdit';
+
+import Input from '../../components/Form/Input/Input';
+
+import Paginator from '../../components/Paginator/Paginator';
+
+import Loader from '../../components/Loader/Loader';
+
+import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
+
+import './Feed.css';
+
+class Feed extends Component {
+  state = {
+    isEditing: false,
+    posts: [],
+    totalPosts: 0,
+    editPost: null,
+    status: '',
+    postPage: 1,
+    postsLoading: true,
+    editLoading: false,
+  };
+
+  componentDidMount() {
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  }
+
+  loadPosts = (direction) => {
+
+
+
+      // const token = localStorage.getItem('token');  // já vamos obter isso por meio dos PROPS repassados pelo 'App.js'..
+
+
+
+
+
+
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+    console.log(page);
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+      {
+          headers: {
+            'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+          }
+      }
+    )
+    
+    // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+  statusUpdateHandler = (event) => {
+    event.preventDefault();
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Can't update status!");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(this.catchError);
+  };
+
+  newPostHandler = () => {
+    this.setState({ isEditing: true });
+  };
+
+  startEditPostHandler = (postId) => {
+    console.log(postId);
+
+    this.setState((prevState) => {
+      const loadedPost = {
+        ...prevState.posts.find((post) => post._id === postId),
+      };
+      console.log(loadedPost);
+      return {
+        isEditing: true,
+        editPost: loadedPost,
+      };
+    });
+
+    console.log(this.state.editPost);
+  };
+
+  cancelEditHandler = () => {
+    this.setState({ isEditing: false, editPost: null });
+  };
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST';
+
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      // url = 'http://localhost:8080/feed/post-edit';  ////approach do method 'PATCH', com o POSTID enviado no BODY do request (send no body do request, em vez de o extrair de um SEGMENTO DINÂMICO NA URL)....
+      // method = 'PATCH';
+      url = `http://localhost:8080/feed/post/${postData.id}`;
+      method = 'PUT';
+      console.log(postData);
+      // formData = new FormData(); /// approach antiga, do 'formData'.... --> essa approach é usada com o 'createPost', mas não com o EDIT POST...
+      // formData.append('postId', postData.id); //ver anotação logo acima... approach do método 'patch', antiga, minha, obsoleta.
+      // formData.append('title', postData.title);
+      // formData.append('content', postData.content);
+      // formData.append('image', postData.image);
+
+    } 
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+          console.log(res.status);
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data.post);
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  statusInputChangedHandler = (input, value) => {
+    this.setState({ status: value });
+  };
+
+  deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch(`http://localhost:8080/feed/delete-post/${postId}`, {
+      // method: 'POST',
+      method: 'DELETE',
+      // headers: {  
+      //   'Content-Type': 'application/json',
+      // },
+      // body: JSON.stringify({ ///Não é mais necessário, pois não vamos mais querer extrair o 'postId' de dentro do BODY DO REQUEST de tipo 'POST', e sim vamos extrair LÁ DA URL DESSE REQUEST de method de tipo 'DELETE' (que nunca aceitam BODIES, deve-se relembrar...)
+      //   postId: postId,
+      // }),
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+  errorHandler = () => {
+    this.setState({ error: null });
+  };
+
+  catchError = (error) => {
+    this.setState({ error: error });
+  };
+
+  render() {
+    return (
+      <Fragment>
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <FeedEdit
+          editing={this.state.isEditing}
+          selectedPost={this.state.editPost}
+          loading={this.state.editLoading}
+          onCancelEdit={this.cancelEditHandler}
+          onFinishEdit={this.finishEditHandler}
+        />
+        <section className="feed__status">
+          <form onSubmit={this.statusUpdateHandler}>
+            <Input
+              type="text"
+              placeholder="Your status"
+              control="input"
+              onChange={this.statusInputChangedHandler}
+              value={this.state.status}
+            />
+            <Button mode="flat" type="submit">
+              Update
+            </Button>
+          </form>
+        </section>
+        <section className="feed__control">
+          <Button mode="raised" design="accent" onClick={this.newPostHandler}>
+            New Post
+          </Button>
+        </section>
+        <section className="feed">
+          {this.state.postsLoading && (
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <Loader />
+            </div>
+          )}
+          {this.state.posts.length <= 0 && !this.state.postsLoading ? (
+            <p style={{ textAlign: 'center' }}>No posts found.</p>
+          ) : null}
+          {!this.state.postsLoading && (
+            <Paginator
+              onPrevious={this.loadPosts.bind(this, 'previous')}
+              onNext={this.loadPosts.bind(this, 'next')}
+              lastPage={Math.ceil(this.state.totalPosts / 5)}
+              currentPage={this.state.postPage}
+            >
+              {this.state.posts.map((post) => (
+                <Post
+                  key={post._id}
+                  id={post._id}
+                  author={post.creator.name}
+                  date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                  title={post.title}
+                  image={post.imageUrl}
+                  content={post.content}
+                  onStartEdit={this.startEditPostHandler.bind(this, post._id)}
+                  onDelete={this.deletePostHandler.bind(this, post._id)}
+                />
+              ))}
+            </Paginator>
+          )}
+        </section>
+      </Fragment>
+    );
+  }
+}
+
+export default Feed;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARTE IMPORTANTE:
+
+
+
+
+
+
+    fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+      {
+          headers: {
+            'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+          }
+      }
+    )
+
+
+
+
+
+
+
+
+
+
+  -------------------------
+
+
+
+
+
+  CERTO... SÓ NÃO ENTENDI A NECESSIDADE DESSE 'Bearer'...
+
+
+
+
+
+
+
+
+
+
+
+
+  BEARER --> PROFESSOR EXPLICA QUE ISSO É APENAS UMA CONVENÇÃO,
+
+
+
+
+
+  SERVE PARA 
+
+  ESSENCIALMENTE 
+
+
+  'IDENTIFY THE TYPE OF TOKEN YOU HAVE',
+
+
+
+
+
+  E UMA 
+
+  BEARER 
+
+  TOKEN 
+
+  É 
+
+
+
+
+  __SIMPLESMENTE __ UMA AUTH TOKEN....
+
+
+
+
+
+
+VOCÊ TIPICAMENTE USA BEARER PARA JSON WEB TOKENS (JWT)... ----------> 
+
+
+
+
+
+
+
+
+NÃO É OBRIGATÓRIO, MAS É UMA CONVENÇÃO 
+
+
+COMUM... ------> professor quer manter essa convenção..
+
+
+
+
+
+
+
+
+
+
+--> É ASSIM QUE PODEMOS 'ADD OUR TOKEN' 
+
+A ESSE 
+
+REQUEST 
+
+
+DE TIPO 
+
+
+'POST' (getPosts)
+
+
+LÁ 
+
+NO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> BEM, 
+LÁ 
+
+NO BACKEND,
+
+
+
+
+
+
+
+PARA EXTRAIR ESSA TOKEN,
+
+LÁ NO MIDDLEWARE 
+
+DE 
+
+'is-auth.js',
+
+
+
+
+
+
+O PROFESSOR AINDA ESTÁ COM AQUELE ´CODIGO SIMPLES:
+
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+  ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+};
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+----> NESSE MIDDLEWARE,
+
+
+VAMOS EXTRAIR 
+
+
+
+A TOKEN POR MEIO DO CÓDIGO 
+
+
+
+'
+
+
+const token = ...'
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS _ COMO PODEMOS__ PEGAR 
+
+
+AQUELE 
+
+HEADER QUE 
+
+EMBUTIMOS 
+
+NO REQUEST DE TIPO 'GET'? --------> PROFESSOR 
+
+
+
+
+EXPLICA QUE 
+
+DEVEMOS 
+
+
+
+USAR O 
+
+MÉTODO 
+
+'.get()'
+
+em 
+'req'...
+
+
+
+
+
+
+
+
+
+
+
+
+-> 
+
+
+
+'.get()' -------> nos deixa fazer _____ GET___ DE UM _ DOS MEUS 
+
+HEADERS,
+
+DO VALOR DE UM DOS HEADERS... ------> BASTA PASSAR O ___ NOME __ DO HEADER QUE 
+
+VOCÊ QUER 
+
+FAZER 
+
+'GET'...
+
+
+
+
+
+
+
+
+--> NO CASO, QUEREMOS 'Authorization' (que é o header em que armazenamos a token),
+
+
+
+PORTANTO ESCREVEMOS ISTO:
+
+
+
+
+
+''''
+
+
+
+const token = req.get('Authorization');
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+
+
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+};
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+OK, AGORA EM 'actualToken'
+
+
+
+TEMOS 
+
+A 
+
+PARTE DO VALOR DO header 'Authentication' QUE REALMENTE IMPORTA,
+
+QUE É A TOKEN...
+
+
+
+
+
+
+
+
+
+
+------> AGORA, PASSAMOS AO PRÓXIMO PASSO,
+
+
+
+QUE 
+É _ _ DECODIFICAR__ ESSA TOKEN... -------> 
+
+
+
+
+
+
+
+
+PARA ISSO,
+
+
+PROFESSOR EXPLICA QUE 
+ELE 
+VAI 
+USAR 
+
+
+UM 
+
+'TRY CATCH BLOCK' .... ------->  ELE VAI USAR 
+
+UM 
+
+TRY-CATCH 
+
+
+
+__ PQ _ ESSA 
+
+OPERAÇÃO 
+
+DE 
+
+
+'DECODE' 
+
+
+
+pode ___ OBVIAMENTE _ FALHAR_ (error/fail cases)..
+
+
+
+
+
+
+
+
+
+-------> E AÍ,
+
+
+
+
+PARA 
+
+
+
+
+REALIZAR OPERAÇÕES 
+
+
+
+NA NOSSA TOKEN,
+
+
+
+professor CRIA UMA NOVA VARIÁVEL LOCAL,
+
+a variável 
+
+
+'decodedToken'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+
+
+
+
+
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); 
+
+    const actualToken = token.split(' ')[1]; 
+
+
+    let decodedToken; ///EIS O CÓDIGO EM QUESTÃO.
+
+
+
+  try {
+
+
+  } catch(err) {
+
+
+
+
+  }
+
+};
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); 
+  const actualToken = token.split(' ')[1]; 
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE' DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+      } catch() {
+
+      }
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO... 
+
+
+aí, nesse caso,
+
+
+
+o 
+
+
+'decodedToken'
+
+
+
+
+vai ser ___ IGUAL A UM VALOR DE 
+
+
+
+'jwt.verify()'  
+
+
+
+
+
+
+
+
+
+
+-----> OU SEJA,
+
+
+__ VAMOS USAR ESSA PACKAGE DO 
+
+'jsonwebtoken'
+
+
+
+
+PARA __ CONSEGUIR ESSE MÉTODO DE VERIFICAÇÃO,
+
+
+PARA 
+
+
+
+
+
+AVERIGUAR SE 
+
+NOSSA 
+
+TOKEN REALMENTE É VÁLIDA OU NÃO...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); 
+  const actualToken = token.split(' ')[1]; 
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE' DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+      } catch() {
+
+      }
+
+
+
+
+};
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+--> ESSE MÉTODO '.verify()'
+
+
+
+VAI __ AO MESMO __ TEMPO 'DECODE' 
+
+
+E 
+
+'VERIFY' 
+
+
+
+O 
+
+
+
+TOKEN QUE VOCÊ RECEBE NESSE MIDDLEWARE...
+
+
+
+
+
+
+
+-----> professor nos explica que 
+
+
+
+TAMBÉM HÁ UM MÉTODO 
+
+'.decode()',
+
+
+
+
+
+
+
+
+MAS ISSO __ SÓ VAI __ DECODIFICAR A TOKEN,
+
+
+sem 
+
+
+fazer a função de 'VERIFY IF IT IS VALID'... ( ou seja, é BEM SITUACIONAL)...
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK... AÍ VOCÊ PASSA A TOKEN QUE 
+
+VOCÊ OBTEU DO HEADER...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); 
+  const actualToken = token.split(' ')[1]; 
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE' DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+      decodedToken = jwt.verify(actualToken) 
+
+      } catch() {
+
+      }
+
+
+
+
+};
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+MAS É CLARO QUE SÓ ISSO NÃO BASTA... É NECESSÁRIO PASSAR UM SEGUNDO PARÂMETRO 
+
+A 
+
+
+
+ESSE 'verify',
+
+QUE 
+
+É 
+
+
+JUSTAMENTE __ 
+
+O ___ SECRET_ _ 
+
+
+QUE VOCÊ ESCREVEU/ASSIGNOU 
+
+
+
+
+
+
+
+NO SEU BACKEND,
+
+
+
+NO CONTROLLER DE 'LOGIN':
+
+
+
+
+(
+
+  NO CASO, 
+
+
+
+  FOI NESTE CÓDIGO AQUI QUE VOCÊ DEFINIU O SECRET:
+):
+
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+      loadedUser = user; ///aqui armazenamos a data de nosso user naquela variável inicial... vamos o utilizar mais para baixo, em execuções dentro dessa promise chain...
+      return compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error('Invalid Password. Please try again.');
+        error.statusCode = 401; //'unauthenticated'...
+        throw error;
+      } else {
+        const token = jwt.sign(
+          ///// PRIMEIRO ARGUMENTO = DATA QUE VOCê QUER QUE SEJA RETORNADA, NA SUA JSON WEB TOKEN, AO USER (nunca coloque o hashedPassword, essa é a única regra... common practice é retornar o email...)
+          //////SEGUNDO ARGUMENTO = 'SECRET', OU A 'PRIVATE KEY' usada no GENERATE DA ASSINATURA (signature) dessa JSON WEB TOKEN --> É BOM USAR STRINGS ALEATÓRIAS E BEM LONGAS, para deixar seguro.... use o site mkjwk.org....
+          {
+            //////TERCEIRO ARGUMENTO = 'OBJETO CONFIG' --> você define CARACTERÍSTICAS DESSA WEBTOKEN: quando ela deve expirar,
+            email: loadedUser.email,
+            userId: loadedUser._id,
+          },
+          'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+          {
+            ////TERCEIRO ARGUMENTO, ARGUMENTO DE OPTIONS...
+
+            expiresIn: '1h', ///JSON WEB TOKEN VAI EXPIRAR EM 1 HORA... (no browser do user...) --> boa medida de segurança, pq aí se o token do user, no browser do user, for roubado por um user malicioso, essa token logo expirará, em 1 hora....
+          }
+        );
+
+        res.status(200).json({
+          token: token, //vamos querer enviar isso ao nosso frontend, para que seja armazenada...
+          userId: loadedUser._id.toString(), ///também vamos querer enviar isso ao nosso frontend, para que seja armazenado.... (e então utilizado no frontend/app react)....
+        });
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+OU SEJA,
+
+
+É 
+
+A MESMA STRING QUE VOCê ESCREVEU AQUI:
+
+
+
+
+
+  const token = jwt.sign(
+          ///// PRIMEIRO ARGUMENTO = DATA QUE VOCê QUER QUE SEJA RETORNADA, NA SUA JSON WEB TOKEN, AO USER (nunca coloque o hashedPassword, essa é a única regra... common practice é retornar o email...)
+          //////SEGUNDO ARGUMENTO = 'SECRET', OU A 'PRIVATE KEY' usada no GENERATE DA ASSINATURA (signature) dessa JSON WEB TOKEN --> É BOM USAR STRINGS ALEATÓRIAS E BEM LONGAS, para deixar seguro.... use o site mkjwk.org....
+          {
+            //////TERCEIRO ARGUMENTO = 'OBJETO CONFIG' --> você define CARACTERÍSTICAS DESSA WEBTOKEN: quando ela deve expirar,
+            email: loadedUser.email,
+            userId: loadedUser._id,
+          },
+          'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+          {
+            ////TERCEIRO ARGUMENTO, ARGUMENTO DE OPTIONS...
+
+            expiresIn: '1h', ///JSON WEB TOKEN VAI EXPIRAR EM 1 HORA... (no browser do user...) --> boa medida de segurança, pq aí se o token do user, no browser do user, for roubado por um user malicioso, essa token logo expirará, em 1 hora....
+          }
+        );
+
+
+
+
+
+
+
+
+
+
+
+        --> ESTA STRING:
+
+
+
+
+           'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+
+PORTANTO, FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+        decodedToken = jwt.verify(actualToken,  ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+                       /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+                       'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+                       )
+                      } catch() {
+
+      }
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK, ISSO SIGNIFICA QUE 
+
+
+
+'IT MUST BE THE SAME SECRET YOU USED FOR SIGNING THE TOKEN, in your backend...'
+
+
+
+
+
+
+
+
+
+
+
+----------> ok.... - --> CASO CONTRÁRIO,
+
+
+
+NÃO VAMOS 'GET A MATCHING RESULT'...
+
+
+
+
+
+
+
+
+
+--> PASSADO O SECRET COMO SEGUNDO PARÂMETRO DESSA FUNCTION,
+
+tipo assim:
+
+
+
+decodedToken = jwt.verify(token, 'SEUSUPERSEGREDO')
+
+
+
+
+
+
+
+
+
+
+
+
+__ NÓS 
+
+
+
+
+
+
+CONTINUAMOS COM O CODE.... ----------> 
+
+
+
+
+
+EVIDENTEMENTE,
+
+
+
+O 
+
+
+
+
+
+CHECK/VERIFY DESSA TOKEN __ PODE _ FALHAR... --> É POR ISSO QUE 
+
+VAMOS 
+
+USAR AQUELE 
+
+
+
+CATCH BLOCK,
+
+
+a que passamos um parâmetro 'err' --> ELE  VAI CAPTURAR QUAISQUER ERRORS QUE CHEGAM ALI...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+        decodedToken = jwt.verify(actualToken,  ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+                       /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+                       'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+                       )
+                      } catch(err) {
+
+      }
+
+
+
+
+};
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+ 
+
+ --> NESSE BLOCK DE 'catch()',
+
+
+
+ PROFESSOR 
+
+
+ VAI QUERER 
+
+ ADICIONAR UM STATUSCODE DE 
+
+ 500
+  
+
+
+
+  AO parâmetro/objeto
+
+  'err',
+
+
+
+  E AÍ VAI QUERER __fAZER __ THROW DESSE ERROR...
+
+(como estamos em um MIDDLEWARE, 
+
+__ ESSE THROW DESSE ERRO __ VAI FAZER COM QUE __ O 
+
+EXPRESS ERROR HANDLER MIDDLEWARE 
+
+ASSUMA O COMANDO...
+
+
+
+)
+
+
+
+
+
+  ex:
+
+                     } catch(err) {
+
+                          err.statusCode = 500;
+                          throw err;
+      }
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+OK, MAS NÃO ACABAMOS...
+
+
+
+
+
+
+
+
+
+--> SE PASSARMOS POR ESSE 
+
+TRY-CATCH BLOCK INTEIRO,
+
+
+
+
+__ SABEMOS__ QUE 
+
+O 
+
+
+'DECODING FUNCIONOU',
+
+
+
+
+
+por isso 
+
+
+
+VAMOS QUERER __ CHECAR __ 
+
+
+SE 
+
+O 
+
+
+'decodedToken' 
+
+
+(que escapou do TRY-CATCH BLOCK,
+
+sendo definido seu valor 
+
+como 
+
+
+sendo o resultado daquele 
+
+
+'jwt.verify()' 
+
+) 
+
+
+
+
+
+
+
+ESTÁ COMO 
+
+
+'undefined'( ou seja, '!decodedToken').... ---------> O 'decodedToken',
+
+
+
+
+resultado de 'jwt.verify()',
+
+
+SÓ VAI 
+
+ESTAR 
+
+COMO 
+
+
+'UNDEFINED'
+
+
+
+
+___ SE __ ESSE MÉTODO __ NÃO FALHOU __ TECNICAMENTE__,
+
+
+
+
+MAS __ NÃO FOI CAPAZ DE VERIFICAR O TOKEN....   ----> NESSA HIPÓTESE ESPECÍFICA,
+
+
+PROFESSOR 
+
+
+VAI QUERRE 
+
+
+
+CRIAR UM NOVO ERROR,
+
+
+
+
+
+
+
+
+com 
+
+'const error = new Error('Not authenticated')',
+
+
+
+
+AÍ __COLOCAR UM STATUS CODE DE '401',
+
+
+
+E AÍ DAR O THROW DO ERROR,
+
+
+
+
+para engatilhar o 
+
+
+
+special express error handler middleware...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+        decodedToken = jwt.verify(actualToken,  ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+                       /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+                       'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+                       )
+                      } catch(err) {
+
+                                   err.statusCode = 500;
+                          throw err;
+      } 
+
+
+
+      if(!decodedToken) { ///EIS O CÓDIGO EM QUESTÃO.
+        const error = new Error('Not authenticated!');
+        error.statusCode = 401;
+        throw error;
+      }
+
+
+
+};
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+        decodedToken = jwt.verify(actualToken,  ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+                       /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+                       'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+                       )
+                      } catch(err) {
+
+                        err.statusCode = 500;
+                        throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+      }
+
+        if (!decodedToken) {
+          const error = new Error('Not authenticated'); 
+          error.statusCode = 401;
+          throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+        }
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+SE PASSAMOS POR ESSE IF CHECk,
+
+
+
+
+SABEMOS QUE TEMOS UM 'VALID TOKEN',
+
+
+e que 
+
+
+FOMOS CAPAZES DE 
+
+'DECODE E VERIFY' 
+
+
+esse token... ------->  
+
+
+
+SE ESSE FOR O CASE,
+
+
+
+VAMOS QUERER ___ 
+
+
+
+ARMAZENAR __ 
+
+
+
+INFOS CONTIDAS NESSE TOKEN,
+
+LÁ _ NO OBJETO 'REQUEST'
+
+
+DESSE NOSSO USER.... --> PARA ISSO,
+
+
+PROFESSOR 
+
+
+VAI USAR 
+
+
+SINTAXES COMO 
+
+
+
+
+'req.userId = ... '------>  PARA ARMAZENAR ESSA PROPRIEDADE 
+
+
+
+
+
+DENTRO DO NOSSO REQUEST,
+
+
+PARA QUE 
+
+
+CONSIGAMOS A UTILIZAR EM OUTROS LUGARES DE NOSSO APP,
+
+
+OUTRAS ROUTES... ------> 
+
+
+
+
+
+
+
+
+
+
+PARA ISSO, PARA ACESSAR A __ TOKEN EM SI (os valores contidos nela),
+
+
+
+PROFESSOR 
+
+
+VAI SIMPLESMNETE 
+
+ESCREVER 
+
+
+
+'decodedToken' (pq já estará decodada) +  '.userId' 
+
+
+
+
+
+(
+
+
+  SIM, PODEMOS SIMPLESMENTE ACESSAR OS FIELDS CONTIDOS NO NOSSO TOKEN DIRETAMENTE,
+
+  QUANDO 
+
+  __ ELE JÁ ESTIVER DECODIFICADO E VERIFICADO POR 'jwt.verify()'...
+)
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+        decodedToken = jwt.verify(actualToken,  ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+                       /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+                       'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+                       )
+                      } catch(err) {
+
+                        err.statusCode = 500;
+                        throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+      }
+
+        if (!decodedToken) {
+          const error = new Error('Not authenticated'); 
+          error.statusCode = 401;
+          throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+        }
+
+
+
+          req.userId = decodedToken.userId; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR EXPLICA QUE 
+
+
+ESSE 
+
+store 
+
+de propriedades como 'userId' (extraídas de nossa token) 
+
+
+
+
+__ DENTRO DO OBJETO REQUEST DO USER 
+
+
+
+SERÁ IMPORTANTE PARA, MAIS TARDE,
+
+FAZER COISAS COMO 
+
+'DELETING POSTS' (
+
+  pq vamos querer saber 
+
+
+  O USERID 
+
+  do user,
+
+   para saber se ele pode deletar aqueles products... --> e isso estará contido no objeto request,
+
+
+   tudo graças a essa data que extraímos da token...
+)
+
+
+
+
+
+
+
+
+
+
+LEMBRE-SE, A DATA QUE ARMAZENAMOS NA TOKEN É ESTA:
+
+
+
+
+
+       {
+            
+            email: loadedUser.email,
+            userId: loadedUser._id,
+          },
+
+
+
+
+
+    -----------------
+
+     
+
+
+
+
+
+  POR FIM, 
+
+
+
+  DEPOIS DE __ ARMAZENAR__ 
+
+  ESSE 
+
+
+
+  'userId'
+
+
+  no request object 
+
+
+  do nosso user,
+
+
+  FAZEMOS FORWARD 
+
+
+
+  DO __ REQUEST,
+
+  POR MEIO __ DO CALL DE 
+
+  'next()' ...
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+  const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {   ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+
+
+
+    const token = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+          ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+            ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a token)...
+  const actualToken = token.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+
+  let decodedToken; 
+
+      try { ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+
+        decodedToken = jwt.verify(actualToken,  ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+                       /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+                       'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+                       )
+                      } catch(err) {
+
+                        err.statusCode = 500;
+                        throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+      }
+
+        if (!decodedToken) {
+          const error = new Error('Not authenticated'); 
+          error.statusCode = 401;
+          throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+        }
+
+
+
+          req.userId = decodedToken.userId; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+
+
+          next(); ///após armazenar o userId no request, fazemos forward do request, para que continue com o flow do runtime, para que alcance os controllers como o de 'getPosts'...
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK .... -----> NÓS OU _ _TEREMOS 1 ERROR 
+
+
+SE NENHUMA TOKEN ESTIVER ATTACHED AO NOSSO REQUEST,
+
+
+
+OU ENTÃO TUDO ESTARÁ 'FINE',
+
+
+e prosseguimos 
+
+
+
+
+
+com o flow 
+
+
+de nosso 
+
+
+
+
+runtime...
+
+
+(
+
+
+
+  pq o flow é assim:
+
+
+
+  1) request é enviado, é capturado na route de 'router.get('/posts')'
+
+
+
+  2) request segue e ENTRA NESSE MIDDLEWARE DE 'isAuth' 
+
+
+
+  3) request passa por esse middleware de isAuth, 
+  para então 
+
+  alcançar 
+
+
+  o controller de 'getPosts'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> NO CASO, 
+
+
+
+
+
+
+VAMOS QUERER ADICIONAR ESSE MIDDLEWARE DE AUTHORIZATION/AUTHENTICATION 
+
+
+de nossa token 
+
+__ LÁ __ 
+
+
+em 'feed.js' (arquivo route)...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+const isAuth = require('../middlewareHelpers/is-auth');
+
+
+router.get(
+  '/posts',
+
+  isAuth,  ////vamos usar isso para fazer   'GUARD' dessa route... --> user só poderá ver POSTS se estiver AUTHENTICATED ( ou seja, se estiver com uma TOKEN no seu browser...) ------> essa token é então verificada nesse middleware de 'isAuth', tudo coisa padrão...
+          ///esse middleware de 'isAuth' então faz o STORE do valor de 'userId' contido nessa token em uma PROPRIEDADE DE NOME 'userId' no request object do usuário... (se tudo der certo, validation for bem sucedida).... 
+  feedController.getPosts
+);
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... AGORA SÓ VAMOS CONSEGUIR 'GET POSTS'
+
+se 
+
+
+de fato tivermos uma token 
+
+
+no nosso request,
+
+
+DENTRO DOS  ___ HEADERS___ (header de 'Authentication')...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> CERTO... ISSO FUNCIONOU.
+
+MUITO LEGAL...
+
+
+
+
+
+
+
+
+
+---> agora quando nós entramos diretamente no nosso app,
+
+
+
+NÃO 
+
+
+CONSEGUIMOS CHEGAR À PAGE DE 'posts',
+
+
+E SIM 
+
+ENTRAMOS 
+
+NA 
+
+PAGE 
+
+DE 
+
+
+
+'LOGIN'.... ------> SINAL DE QUE NOSSO 'GUARD'
+
+
+das routes 
+
+FUNCIONOU... (
+
+  e esse middleware que checa 
+
+  pela token 
+
+  TAMBÉM FUNCIONOU...
+)
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR ENTÃO 
+
+
+
+FAZ LOGIN 
+
+
+NO NOSSO 
+
+
+
+PROJETO,
+
+
+e aí 
+
+
+
+
+
+ele 
+
+
+
+
+
+
+DESCOBRE UM IF CHECK 
+
+que podemos adicionar, para 
+
+FAZER 
+
+HANDLE 
+
+DE CASES EM QUE 
+
+
+
+O 
+
+
+
+HEADER __ NÃO FICA __ ADICIONADO __ AO 
+
+
+NOSSO 
+
+
+__ REQUEST...
+
+
+
+
+
+
+
+--> para cases como esses,
+
+
+ele 
+
+adiciona o if check 
+
+
+de 
+
+
+
+'if (!token) {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+module.exports = (req, res, next) => {
+  ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+  const header = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+  ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+  ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a __TOKEN EM SI___)...
+
+  if (!header) {
+    const error = new Error('Not authenticated.');
+    error.statusCode = 401;
+    throw error;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  --------------------------------------------------------------
+
+
+
+
+
+
+  ok... recarregamos no frontend.... ---> agora QUANDO 
+
+
+  RECARREGARMOS NOSSO CÓDIGO,
+
+
+
+  ainda vamos receber 
+
+  'failed to fetch posts',
+
+  mas 
+
+  agora 
+
+  receberemos um erro 
+  '401'... (o que é melhor)...
+
+
+
+
+
+
+
+
+  ----------------------
+
+
+
+
+
+
+  OK... É ASSIM QUE PODEMOS 'VALIDATE THE TOKEN'  no serverside,
+
+  COMO PODEMOS 
+
+  CHECAR SE ESSA TOKEN É VÁLIDA,
+
+
+  PARA 
+
+  ENTÃO 
+
+  'GRANT ACCESS'...
+
+
+
+
+
+
+
+  -------------------------------
+
+
+
+
+
+
+
+
+  ----> AGORA NÓS SÓ PRECISAMOS _ FAZER__ ISSO __ PARA ___ TODAS AS NOSSAS ROUTES,
+
+
+  PARA 
+
+
+
+
+
+  ENTÃO, MAIS TARDE,
+
+  ASSEGURAR QUE _ APENAS __ USERS__ QUE DE FATO CRIARAM 1 DETERMINADO POST CONSIGAM O APAGAR...
+
+
+
+
+
+
+
+
+  ---------------------------------
+
+
+
+
+
+
+
+
+
+
+  (vou ter que adicionar esse auth em (quase) todas minhas routes, 
+  
+  
+
+
+
+  exceto as de auth...
+  
+  
+  
+  )
+
+
+
+
+
+
+
+  MEU CÓDIGO, NO MOMENTO, ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+  const express = require('express');
+
+const Post = require('../models/post');
+
+const router = express.Router();
+
+const { body, check } = require('express-validator');
+
+const isAuth = require('../middlewareHelpers/is-auth'); ///nossa validation é feita a partir DE TOKENS... --> e esse middleware é responsável pelo store da propriedade 'userId' no NOSSO REQUEST, a partir dessas tokens __ ENVIADAS__ por nosso client (mas tokens são PRODUZIDAS NO BACKEND, quando é realizado o login... esse é o flow)...
+//vamos colocar esse 'guard de auth' EM TODAS NOSSAS ROUTES, EXCETO AS DE 'auth', pq o user não precisará estar authenticated para as acessar... (ao contrário das outras, que precisam disso)...
+
+
+
+const feedController = require('../controllers/feed');
+
+//GET /feed/posts
+router.get(
+  '/posts',
+
+  isAuth,  ////vamos usar isso para fazer   'GUARD' dessa route... --> user só poderá ver POSTS se estiver AUTHENTICATED ( ou seja, se estiver com uma TOKEN no seu browser...) ------> essa token é então verificada nesse middleware de 'isAuth', tudo coisa padrão...
+          ///esse middleware de 'isAuth' então faz o STORE do valor de 'userId' contido nessa token em uma PROPRIEDADE DE NOME 'userId' no request object do usuário... (se tudo der certo, validation for bem sucedida).... 
+  feedController.getPosts
+);
+
+//POST /feed/post
+router.post(
+  '/post',
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.')
+
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return Post.findOne({ title: value }).then((post) => {
+          console.log(post);
+          if (post) {
+            console.log(post, 'LINE');
+            return Promise.reject(
+              'A post with the chosen title already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      }),
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ],
+
+    isAuth, //route guard. Authentication/authorization
+
+  feedController.createPost
+);
+
+// router.patch('/edit-post/:postId', feedController.editPost); //minha antiga versão do código
+
+// router.patch('/post-edit', feedController.editPost); /////minha versão do código....
+
+router.put(
+  '/post/:postId',
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.'),
+
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ], 
+  isAuth, ///route guard. Authentication/authorization
+
+  feedController.editPost
+); ///versão do professor... ele encoda o postId na url, e também usa esse method de 'put' em vez de 'patch' (pq PUT VAI SUBSTITUIR RESOURCES NO NOSSO DATABASE, no caso as INFORMAÇÕES CONTIDAS EM 1 'POST'... isso é uma substituição, no caso, pq A OLD DATA desse post é PERDIDA, exceto o _Id....)
+
+// router.post('/delete-post/:postId', feedController.deletePost);
+
+// router.post('/delete-post', feedController.deletePost);
+
+router.delete('/delete-post/:postId', 
+
+isAuth, ///route guard. Authentication/authorization
+
+feedController.deletePost); ////route com o METHOD/verbo http mais correcto... (em REST APIS...)
+////DELETE __ ROUTES_ NÃO __ ACEITAM/PERMITEM O SEND DE 'bodies' com o REQUEST... (ao contrário de POST requests, que permitem esse send....)
+////e é exatamente por isso que aqui (e na grande maioria dos casos de DELETE ALGUMA COISA, EM REST APIs) VAMOS PREFERIR __ O APPROACH DO 'extract postId lá da url' em vez de 'extract postId lá do request body'...
+
+//PATCH /feed/post
+
+// router.patch('/post', feedController.editPost);
+
+// GET  /feed/post/:postId
+
+router.get('/post/:postId', 
+isAuth, ///route guard. Authentication/authorization
+
+feedController.getSinglePost);
+
+//DELETE /feed/post/:postId
+
+// router.delete('/post', feedController.deletePost);
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+eu também vou querer proteger as routes de 
+
+
+'login' 
+
+
+e 
+
+
+
+'signup',
+
+
+PQ 
+
+
+ELAS NÃO PODERÃO SER ACESSADAS 
+
+
+
+
+ENQUANTO 
+
+
+O 
+
+USER TIVER UMA TOKEN NO SEU 
+
+
+
+BROWSER... (token válida)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ah... estamos com um react app... a proteção é um pouco diferente( não há o render de views... por isso não 
+
+há 
+
+como proteger essas routes de maneira porca...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUE INTERESSA, NO CASO, É O CÓDIGO DE RENDER DE 'App.js' (frontend):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+render() {
+    let routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={(props) => (
+            <LoginPage
+              {...props} //usado para OBTER OS 'ROUTING-RELATED PROPS'... (para fzer coisas como REDIRECTS...)
+              onLogin={this.loginHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          exact
+          render={(props) => (
+            <SignupPage
+              {...props}
+              onLogin={this.signupHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+    if (this.state.isAuth) {
+      routes = (
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <FeedPage userId={this.state.userId} 
+              
+              token={this.state.token} //prop extremamente importante, usado no método de 'loadPosts()'...
+               />
+            )}
+          />
+          <Route
+            path="/:postId"
+            render={(props) => (
+              <SinglePostPage
+                {...props}
+                userId={this.state.userId}
+                token={this.state.token}
+              />
+            )}
+          />
+          <Redirect to="/" />
+        </Switch>
+      );
+    }
+
+    return (
+      <Fragment>
+        {this.state.showBackdrop && (
+          <Backdrop onClick={this.backdropClickHandler} />
+        )}
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <Layout
+          header={
+            <Toolbar>
+              <MainNavigation
+                onOpenMobileNav={this.mobileNavHandler.bind(this, true)}
+                onLogout={this.logoutHandler}
+                isAuth={this.state.isAuth}
+              />
+            </Toolbar>
+          }
+          mobileNav={
+            <MobileNavigation
+              open={this.state.showMobileNav}
+              mobile
+              onChooseItem={this.mobileNavHandler.bind(this, false)}
+              onLogout={this.logoutHandler}
+              isAuth={this.state.isAuth}
+            />
+          }
+        />
+        {routes}
+      </Fragment>
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> como você deve ter percebido agora,
+
+há 
+
+VÁRIOS LOCAIS EM QUE 
+
+CHECAMOS PELO AUTH DO USER PARA 
+
+FAZER O RENDER/NÃO RENDER DO CONTEÚDO...
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+    if (this.state.isAuth) { ///ISSO É O QUE INTERESSA...
+      routes = ( 
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <FeedPage userId={this.state.userId} 
+              
+              token={this.state.token} //prop extremamente importante, usado no método de 'loadPosts()'...
+               />
+            )}
+          />
+
+
+
+
+
+
+
+  -->
+
+
+quando o 'auth' 
+
+NÃO ESTÁ SETTADO (NO STATE LOCAL),
+
+
+
+
+o 
+
+
+código que é renderizado é apenas este:
+
+
+
+
+
+
+
+
+
+
+
+
+let routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={(props) => (
+            <LoginPage
+              {...props} //usado para OBTER OS 'ROUTING-RELATED PROPS'... (para fzer coisas como REDIRECTS...)
+              onLogin={this.loginHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          exact
+          render={(props) => (
+            <SignupPage
+              {...props}
+              onLogin={this.signupHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OU SEJA,
+
+APENAS ESSAS 2 ROUTES SÃO DISPONIBILIZADAAS (a route de LOGIN, e a route de SIGNUP)...
+
+
+
+
+
+
+
+
+
+
+
+
+certo...
+
+
+
+
+
+
+
+acho que entendi, tudo agora faz sentido...
+
+
+
+
+
+
+
+
+
+(
+
+
+
+  isso significa que 
+  NO REACT/APPS RESTFUL,
+
+
+  vocÊ 
+
+
+  vai fazer PARTE DA PROTEÇÃO/GUARD 
+
+
+  DAS ROUTES 
+
+
+
+  __ NO PRÓPRIO FRONTEND,
+
+
+
+
+  a partir 
+
+  de checks como esses... --> pq as outras routes DEPENDEM DE 'token' e 'userId', que 
+
+
+  só 
+
+
+  serão extraídos de tokens armazenadas nos nossos requests,
+
+  algo que só acontece se a authentication foi bem sucedida....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK.... 
+
+
+
+
+
+
+MAS E QUANTO à ROUTE DE 'delete'? -----> vamos precisar CODAR ALGUMA 
+
+
+COISA 
+
+
+
+NESSA ROUTE QUE __ IMPEÇA __ O USER __ DE PROSSEGUIR __ 
+
+SE 
+
+
+ELE NÃO TIVER aquele 
+
+
+'userId'
+
+
+armazenado no objeto 'request' (e esse userId é obtido, nesse local, apenas por meio daquele código do middleware 'isAuth', que o extrai lá de nossa TOKEN, do payload da token...)

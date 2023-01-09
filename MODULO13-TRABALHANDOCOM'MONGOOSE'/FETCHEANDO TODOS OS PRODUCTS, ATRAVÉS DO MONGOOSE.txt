@@ -1,0 +1,641 @@
+
+
+
+
+
+
+
+
+
+
+
+----> AGORA QUE SOMOS CAPAZES DE FAZER SAVE DE PRODUCTS,
+
+
+
+OBVIAMENTE VAMOS QUERER 
+
+SER CAPAZES DE OS FETCHEAR... ----> PARA ISSO,
+
+VAMOS 
+
+ATÉ 
+
+O 
+
+
+'shop.js',
+
+
+
+
+LÁ NOS CONTROLLERS,
+
+
+
+
+E AÍ VAMOS 
+
+COMEÇAR 
+
+
+
+A 
+
+TRABLAHAR 
+
+
+
+NO 
+
+'getProducts',
+
+
+
+
+
+
+
+
+vamos ver como conseguir 'get products'
+
+POR MEIO DO MONGOOSE...
+
+
+
+
+
+
+
+
+
+--> PROVAVELMENTE O MONGOOSE JÁ NOS OFERECE UM MÉTODO 
+
+'FETCHALL',
+
+algo que 
+
+
+
+realmente faça get de 
+
+
+
+
+
+TODOS OS DOCUMENTS EM 1 COLLECTION...  ------> ESSE MÉTODO __ PROVAVELMENTE DEVE EXISTIR 
+
+
+
+DENTRO 
+
+
+
+DOS 'MODEL MONGOOSE', como o 'Product'
+
+
+que recém criamos... 
+
+
+
+
+
+
+
+
+
+--> TEMOS AQUELE CONTROLLER 
+
+DE 
+
+
+''
+
+exports.getProductsPage = (req, res, next) => {
+
+ 
+
+Product.getProducts() 
+  .then(
+
+
+
+    (products) => {
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    }
+        
+
+
+  )
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+--------> NÓS ESTÁVAMOS DEPENDENDO DAQUELE MÉTODO 
+
+
+de 
+
+'.getProducts()',
+
+em 
+
+'Product' (model do DRIVER COMUM DO MONGODB) 
+
+para 
+
+
+
+fazer 
+
+FETCH 
+
+DE TODOS NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+
+--> AGORA ,
+
+NO MONGOOSE,
+
+
+
+
+___NÓS NÃO TEMOS NENHUM MÉTODO 
+
+DE 
+
+'fetchAll()'.... --> 
+
+
+
+
+
+
+ESSA É UMA FALHA NO MONGOOSE, CREIO EU... -----------------> 
+
+
+
+
+
+
+
+
+
+NÓS REALMENTE NÃO TEMOS 1 MÉTODO PRÓPRIO DE 'fetchAll()' no mongoose,
+
+MAS 
+
+
+AINDA ASSIM PODEMOS 
+
+
+
+USAR 
+
+
+
+ALGUMA COISA NO MODEL 
+
+
+DE 
+
+'Product'
+
+QUE 
+
+
+
+
+IMPORTAMOS 
+
+
+DO 
+
+
+FOLDER de 
+
+'models',
+
+do arquivo de 
+'product.js' em que DEFINIMOS 
+
+NOSSO 
+
+
+MODEL MONGOOSE...
+
+
+
+
+
+
+
+
+
+--> E O MONGOOSE __ TEM UM MONTE DE STATIC METHODS,
+
+
+é claro.. ----> SÃO ENCONTRADOS 
+
+
+
+
+NOS DOCS DO MONGOOSE..
+
+
+
+
+
+
+
+
+
+
+
+-----> UM DOS MÉTODOS MAIS UTILIZADOS, NO MONGOOSE,
+
+É 
+
+O MÉTODO 
+
+
+'.find()'...-------> ESSE MÉTODO '.find()' __NÓS JÁ CONHECEMOS LÁ 
+
+
+DO 
+
+'MONGO DB DRIVER' PADRÃO... ---------> 
+
+
+
+
+
+
+CERTO... MAS 
+
+
+O 
+
+
+'find()'
+
+
+
+FUNCIONA DE UM JEITO UM POUQUINHO DIFERENTE 
+
+QUANDO 
+
+É 
+
+USADO COM O 
+
+
+'mongoose'...
+
+
+
+
+
+-------> EM VEZ DE NOS DAR/RETORNAR 1 'CURSOR',
+
+
+
+O QUE O 
+
+'.find()"
+
+DO MONGOOSE 
+
+NOS __ DÁ ___ É 
+
+
+
+'ALL THE DOCUMENTS IN AN ARRAY'.... (ou seja, é o COMPORTAMENTO __ '''NORMAL''' QUE VOCÊ ESPERA DE UM MÉTODO DESSES, que infelizmente não ocorre no mongodb driver comum...)
+
+
+
+---------> PROFESSOR 
+
+
+EXPLICA, AINDA, QUE 
+
+
+
+__EXISTE A POSSIBILIDADE 
+
+DE 
+
+
+ESCREVEr 
+
+
+
+'.find().cursor()' 
+
+
+PARA __ 
+
+
+AINDA CONSEGUIR 
+
+ESSE 
+
+
+'cursor' (que é usado quando você está trabalhando com o get de MILHARES E MILHARES DE DOCUMENTS, e não com alguns poucos.... nesses casos, você nunca vai querer fazer get de TODOS os documents, pq aí isso 
+demoraria muito... é nessa ocasião que o cursor vem a calhar...)
+
+
+
+
+
+
+
+
+
+------> OK ..... SE QUISÉSSEMOS O CURSOSR,
+
+
+poderíamos  
+
+
+escrever isso aí,
+
+
+
+
+'Product.find().cursor().xxxx' ------> 
+
+
+
+
+SE FIZÉSSEMOS ISSO,
+
+
+PROFESSOSR EXPLICA QUE 
+
+
+
+
+PODERÍAMOS/DEVERÍAMOS AINDA 
+
+CHAINAR 
+
+
+
+
+'.eachAsync()' (PARA LOOPAR POR DENTRO DOS ELEMENTOS NESSE 'CURSOR') ou então 
+
+
+
+'next()',
+
+PARA 
+
+CONSEGUIR O 
+
+PRÓXIMO ELEMENTO.... ------> 
+
+
+
+
+tipo assim:
+
+
+
+
+
+Product.find().cursor.eachAsync() 
+
+Product.find().cursor.next() 
+
+
+
+
+
+
+
+--------> MAS PROFESSOR DENOTA QUE 
+
+AQUI ELE ´SO VAI USAR 
+
+'.find()',
+
+
+PQ 
+
+
+ELE 
+
+VAI APENAS QUERER 
+
+
+TODOS OS PRODUCTS EM 
+
+
+1 ARRAY, DE FORMA AUTOMÁTICA...
+
+
+
+
+
+
+
+CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+ 
+
+Product.find()  //EIS O CÓDIGO EM QUESTÃO.
+  .then(
+
+
+
+    (products) => {
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    }
+        
+
+
+  )
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+-----> OK.... O FIND VAI ESSENCIALMENTE NOS DAR TODOS OS PRODUCTS 
+
+NESSA NOSSA COLLECTION,
+
+automaticamente...
+
+
+
+
+
+
+
+
+
+
+--> OK... FUNCIONOU PERFEITAMENTE...
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+CONSEGUIMOS FETCHEAR TODOS NOSSOS PRODUCTS, SEM PROBLEMAS...
+
+
+
+
+
+
+
+
+--> FAZEMOS A MESMA COISA TANTO NA ROUTE DE 
+
+'ADMIN PRODUCTS'
+
+COMO 
+
+DE 
+
+
+'PRODUCTS' comum....
+
+
+
+
+
+
+
+
+
+
+
+---> É CLARO QUE SE VOCÊ SABE QUE VOCÊ FARÁ QUERY DE LARGAAS QUANTIDADES 
+DE DATA,
+
+
+VOCÊ ___DEVERÁ __ USAR O 'CURSOR',
+
+
+OU ENTÃO 
+
+USAR CRITÉRIOS PARA __LIMITAR__ 
+
+
+A QUANTIDADE __ 
+
+DE 
+
+DATA QUE 
+
+SERÁ RETRIEVADA POR ESSA FUNÇAÕ... ----> ISSO É ALGO QUE 
+
+
+VEREMOS NO MÓDULO DE 'PAGINATION',
+
+mais para frente no curso...
+
+
+
+
+
+
+
+
+
+
+--> OK, AQUI AGORA TEMOS 
+
+
+
+
+
+NOSSAS ROUTES DE 
+
+'GET 
+
+ALL PRODUCTS'...
+
+
+
+
+
+
+
+
+--> PRÓXIMO PASSO É O WORK NA ROUTE DE 
+
+
+'GET A SINGLE PRODUCT',
+
+
+conseguir os  details de um SINGLE PRODUCT...

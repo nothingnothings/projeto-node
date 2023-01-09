@@ -1,0 +1,658 @@
+
+
+
+
+
+
+
+(EU JÁ FIZ ISSO, O CÓDIGO FICOU ASSIM):
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+  req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: product.productId,
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save().then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    });
+  });
+
+
+}
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+PROFESSOR VAI USAR O 'POPULATE', obviamente ... -------> 
+
+
+
+
+
+ERREI... o professor vai usar OUTRA SINTAXE,
+
+
+OUTRA FEATURE DO 
+
+
+
+
+MONGOOSe....
+
+
+
+
+
+
+
+
+ELE VAI ESCREVENDO O CÓDIGO ASSIM (inicialmente):
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+  req.user.populate('cart.products.productId').then(
+    
+    
+    
+    (user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: product.productId,
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save();
+
+
+
+  });
+
+
+
+
+
+
+
+
+  AÍ, DO NADA,
+
+
+
+ELE VAI ATÉ 
+
+o 
+
+
+'product: productId' 
+
+
+
+
+
+
+
+
+
+
+E ENTÃO USA UMA SINTAXE ESPECÍFICA DO MONGOOSE... --> 
+
+
+
+ele 
+
+
+primeiramente 
+
+WRAPPA
+
+
+esse 
+
+'product.productId' 
+
+
+
+
+EM 
+
+
+
+CURLY BRACES,
+
+
+
+PARA CRIAR UM NOVO OBJETO JAVASCRIPT....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+ 
+  req.user.populate('cart.products.productId').then(
+    
+    
+    
+    (user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: { product.productId } //////EIS O CÓDIGO EM QUESTÃO.
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save();
+
+
+
+  });
+
+
+
+
+
+
+
+
+
+
+
+-------> AÍ, ISSO FEITO,
+
+
+professor explica que 
+
+
+VAI USAR 
+
+
+o SPREAD OPERATOR nesse 
+
+'product.productId',
+
+
+MAS QUE 
+
+NÃO VAI USAR 
+
+ISSO 
+
+
+NESSE 
+
+'id' aí,
+
+
+
+
+e SIM __ EM 
+
+
+__UM __ FIELD ESPECIAL__ 
+
+QUE O 
+
+
+MONGOOSE NOS DÁ,
+
+
+
+
+QUE É 
+
+O 
+
+FIELD DE 
+
+
+
+
+'._doc'... --------------> 
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+ 
+  req.user.populate('cart.products.productId').then(
+    
+    
+    
+    (user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: { ...product.productId._doc } //////EIS O CÓDIGO EM QUESTÃO.
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save();
+
+
+
+  });
+
+
+
+
+
+
+
+
+
+  -------> PROFESSOR NOS EXPLICA QUE 
+
+
+  PODEMOS CHAMAR 
+
+
+
+  '... xxxx._doc' 
+
+
+
+  NESSE 
+
+
+
+  'productId'
+
+  aÍ 
+
+
+
+  _JUSTAMENTE__/APENAS 
+
+  PQ 
+
+
+
+
+
+  
+  O 'productId'
+
+
+
+
+__SERÁ ACTUALLY___ UM 
+
+
+
+
+
+
+OBJETO 
+
+
+COM __ UM MONTE___ DE METADATA 
+
+ANEXADA A ELE... (
+
+
+
+  ainda que 
+
+  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs...
+)
+
+
+
+
+
+
+
+--> MAS COM '._doc',
+
+
+O QUE 
+
+
+CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__ 
+
+'just the data thats in there'.... ------> 
+
+
+
+
+
+____ OU SEJA___,
+
+
+VAMOS ___ CONSEGUIR __ SÓ A DATA 
+
+
+
+DO 'PRODUCT' VINCULADO a 
+
+esse 
+
+
+'productId',
+
+
+E NÃO _O 'productId'
+
+em si... o que é conveniente... --------> E É CLARO QUE 
+
+
+USAMOS 
+
+o 
+
+
+'spread operator' chainado ali 
+
+
+
+PARA _ 'PULL OUT ALL THE DATA' 
+
+
+
+
+
+
+desse document que retrievamos ,
+
+
+
+
+PARA QUE ENTÃO 
+
+CONSIGAMOS __ SALVAR__ 
+
+
+essa 
+
+data 
+
+
+nesse 
+
+object que 
+
+então salvamos como um 'product' (
+
+
+  'product: {...product.productId._doc}'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COM ISSO, SALVAMOS TUDO 
+
+
+
+
+E TESTAMOS... funcionou da mesma forma....
+
+
+
+
+
+
+
+
+
+
+
+-------> AGORA O QUE ESTÁ FALTANDO É O 'CLEAR DO CART' 
+
+
+
+
+ a cada order que é feita...
+
+
+ (
+
+
+   já fizemos isso,
+
+
+   está 
+
+   NO FINAL DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        // product: product.productId,
+        product: { ...product.productId._doc } /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save().then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ----> CRÍAMOS UM METHOD LÁ NO NOSSO MODEL DE 'user':
+
+
+
+
+
+
+userSchema.methods.clearCart = function() {
+
+ this.cart = {
+      products: []
+  }
+
+  return this.save();
+
+}
+
+
+
+ )

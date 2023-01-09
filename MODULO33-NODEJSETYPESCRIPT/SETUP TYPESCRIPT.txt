@@ -1,0 +1,967 @@
+
+
+
+
+AGORA VAMOS COMEÇAR COM O SETUP DE UM PROJETO EM QUE USAREMOS TYPESCRIPT...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> TYPESCRIPT....
+
+
+
+
+
+
+
+
+
+
+-> PARA ISSO, O PROFESSOR CRIA UM 
+
+ARQUIVO HTML,
+
+
+COM UM ESQUELETO BÁSICO HTML5...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> 2 INPUTS, E 1 BUTTON... -> 
+
+
+
+ex:
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typescript</title>
+</head>
+<body>
+    <input type="number">
+    <input type="number">
+    <button>Add</button>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUANDO CLICAMOS NESSE BUTTON,
+
+
+OS 2 VALORES INPUTTADOS NESSES 
+
+INPUTS 
+
+DEVERÃO 
+
+
+SER ADICIONADOS 1 ao outro... (função de 'sum')...
+
+
+
+
+
+
+
+
+-->COLOCAMOS UM 'p'
+
+LOGO ABAIXO,
+
+local em que 
+
+SERÁ OUTPUTTADO 
+
+A SOMA ENTRE ESSES 2 ARGUMENTOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> SERÁ UMA PÁGINA BEM SIMPLES, É CLARO....
+
+
+
+
+
+
+
+
+
+
+--> aí críamos um arquivo 'app.ts'... -----> 
+
+
+
+
+
+
+
+
+
+'.TS'
+
+
+SÃO ARQUIVOS 
+
+
+
+TYPESCRIPT, USADOS 
+
+PARA 
+
+FAZER 
+
+PROJETOS TYPESCRIPT....
+
+
+
+
+
+
+
+
+
+
+--------> ok... 
+
+
+
+
+
+'app.ts'...
+
+
+
+
+
+
+
+
+
+
+--> MAS ANTES DE COMEÇARMOS A TRABALHAR COM TYPESCRIPT,
+
+
+
+PRECISAMOS INSTALAR O CHAMADO 
+
+
+
+'COMPILER TYPESCRIPT'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> professor fala:'
+
+
+
+COM 'DENO', 
+
+NÃO PRECISAMOS INSTALAR, NO PASSADO,
+
+
+
+__ MAS AGORA PRECISAMOS INSTALAR.. ----> PRECISAMOS INSTALAR __ JUSTAMENTE PQ 
+
+__ NÃO VAMOS EXECUTAR ESSE CÓDIGO 
+
+
+'ts' 
+
+
+COM O DENO.... EM VEZ DE QUERER EXECUTAR COM O 'deno',
+
+
+VAMOS QUERER 
+
+EXECUTAR ESSE 'ts'
+
+
+
+
+
+
+__ NO BROWSER... --> E O BROWSER, COMO O PROFESSOR HAVIA MENCIONADO ANTERIORMENTE,
+
+
+
+
+___ NÃO RODA _ TYPESCRIPT NATIVAMENTE...... ------> É POR ISSO QUE 
+
+PRECISAMOS 
+
+
+
+CONVERTER 
+
+TYPESCRIPT EM 
+
+JAVASCRIPT.... -----------> PARA CONSEGUIR REALIZAR ESSA CONVERSAÕ,
+
+
+PRECISAMOS 
+
+DO 
+
+
+
+__ COMPILER__ TYPESCRIPT....
+
+
+
+
+
+
+
+
+
+
+
+OBS::: O DENO TAMBÉM PRECISA COMPILAR O TYPESCRIPT PARA CONSEGUIR PRODUZIR JAVASCRIT,
+
+
+MAS COM O  _ DENO_ O COMPILER TYPESCRIPT JÁ É 'BUILTIN'...
+
+
+
+
+
+
+
+
+EX:
+
+https://www.typescriptlang.org/
+
+
+
+
+
+
+
+
+
+--> SÓ SEGUIR AS INSTRUÇÕES...
+
+
+
+
+
+
+
+
+
+
+--> PARA INSTALAR ESSE NEGÓCIO,
+
+
+DEVEMOS RODAR 
+
+'npm install -g typescript'
+
+
+
+
+NO TERMINAL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO VAI INSTALAR O TYPESCRIPT....
+
+
+
+
+
+
+
+
+
+--------> certo.... 
+
+
+
+
+
+
+
+
+
+INSTALADO O TYPESCRIPT....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(ESSE COMANDO SÓ VAI FUNCIONAR SE VOCÊ JÁ TIVER O NODEJS INSTALADO)...
+
+
+
+
+
+
+
+
+--> ASSIM QUE 
+
+
+
+
+
+TIVERMOS INSTALADO ESSE NEGÓCIO,
+
+
+
+
+
+
+
+
+TEREMOS O COMPILER TYPESCRIPT INSTALADO GLOBALMENTE NO NOSSO PC..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> INSTALADO,
+
+VOCê 
+
+PODE SIMPLESMENTE 
+ESCREVER 
+O 
+
+COMANDO 
+
+
+'tsc + FILENAME DO ARQUIVO QUE VOCÊ QUER COMPILE, com terminação .ts'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+tsc app.ts 
+
+
+
+
+
+
+--> ISSO VAI COMPILAR NOSSO ARQUIVO 
+
+'.ts'
+
+
+EM UM ARQUIVO JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+
+--> DE FATO,
+ 
+ FOI ISSO QUE ACONTECEU, 
+ PQ 
+
+
+
+ FOI CRIADO UM 'app.JS'
+
+
+
+ A PARTIR DO MEU APP.TS....
+
+
+
+
+
+
+
+
+
+
+
+
+ ------------------> CERTO... ---> E É O ARQUIVO JAVASCRIPT QUE 
+
+
+ VAMOS QUERER IMPORTAR NO NOSSO ARQUIVO HTML....
+
+
+
+ ex:
+
+
+
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typescript</title>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <input type="number">
+    <input type="number">
+    <button>Add</button>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------
+
+
+
+
+
+
+
+MAS AGORA, INTEGRADO ESSE SCRIPT NO NOSSO HTML,
+
+NÃO VAMOS 
+
+TRABALAHR 
+COM 
+
+
+'app.js',
+
+
+E SIM 
+
+VAMOS TRABALHAR COM 'app.ts'...
+
+
+
+
+
+
+
+
+
+
+
+
+---> BEM... QUANDO TRABALHAMOS COM 'DENO',
+
+
+NÓS __ NÃO VEMOS ESSES ARQUIVOS 'app.js',
+
+
+ISSO PQ _ ELES SÃO GENERATED E STORED __ 'BEHIND THE SCENES'... -------> NÓS SÓ ESTAMOS 
+
+
+VENDO 
+
+ESSES
+ARQUIVOS 
+
+'app.js/app.ts'
+
+
+AQUI,
+
+NO NOSSO PROEJTO,
+
+
+
+PQ ELE É UM PROJETO 
+
+
+BEM ISMPLES,
+
+
+EM QUE CONTROLAMOS TUDO.... ------> CONTROLAMOS TUDO, COM A AJUDA DO COMPILER....
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA, EM 'app.ts',
+
+
+
+DEVEMOS 
+
+ADICIONAR 
+
+
+UMA 
+
+FUNCTION 
+
+PARA 
+
+ADICIONAR 
+
+AQUELES
+
+
+
+2 'num'....
+
+
+
+
+
+
+
+
+
+
+
+
+-_> TENTO ESCREVER ALGO ASSIM:
+
+
+
+const addButton = document.querySelector('button');
+
+
+const input1 = document.getElementById('input1');
+
+
+const input2= document.getElementById('input2');
+
+
+
+
+
+
+const add = (num1, num2) => {
+
+
+
+    const paragraphNumber = document.querySelector('p');
+    paragraphNumber.textContent = num1 + num2;
+}
+
+
+
+addButton.addEventListener('click', add(input1, input2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ASSIM:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typescript</title>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <input type="number" id="input1">
+    <input type="number" id="input2">
+    <p></p>
+    <button>Add</button>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO ME DÁ VÁRIOS ERROS....
+
+
+
+
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+
+
+
+
+
+
+
+o código do professor fica diferente...
+
+
+
+
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+
+const add = (num1, num2) => {
+
+return num1 + num2;
+}
+
+
+
+
+add(1, 6);
+
+
+add('1', '6');
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> 
+
+
+function add (num1, num2) {
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+    add(1, 6);
+    
+    
+    add('1', '6');
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... MAS ISSO FEITO,
+
+ABRIMOS ESSE INDEX.HTML 
+
+E 
+
+
+FAZEMOS CONSOLE.LOG DOS NOSSOS RESULTS,
+tipo assim:
+
+
+
+
+
+
+
+
+function add (num1, num2) {
+
+    return num1 + num2;
+    }
+    
+    
+    
+    
+   console.log(add(1, 6));
+    
+    
+    console.log(add('1', '6'));
+
+
+
+
+
+
+OBS:: O CÓDIGO DO PROFESSOR __ TAMBÉM ESTÁ MARCANDO ERRORS (não sei porque)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ELE RECOMPILOU O CÓDIGO DELE, NO ENTANTO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O NOSSO CÓDIGO TAMBÉM CONSEGUIU SER COMPILADO...
+
+
+
+(
+
+    SÓ recebi um aviso estranho, aviso de 
+
+
+
+    ''
+
+    Duplicate function implementation.
+
+
+    ''
+)
+
+
+
+
+
+
+
+
+
+
+
+----> COMPILADO ESSE CÓDIGO E ABERTA NOSSA PÁGINA,
+
+
+
+VEMOS O MESMO COMPORTAMENTO DE ANTES 
+
+
+(
+
+
+
+output de 
+
+
+'7' (NÚMERO)
+
+
+
+e 
+
+
+
+16 (STRING),
+
+
+
+EXATAMENTE 
+
+O MESMO COMPORTAMENTO QUE TÍNHAMOS ANTES...
+)
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS EM QUE LUGAR EXATAMENTE O TYPESCRIPT NOS AJUDA,
+
+
+
+nesse 
+
+desenvolvimento de código?
+
+
+
+
+
+
+
+
+
+--------> PARA ENTENDER MAIS SOBRE SUAS VANTAGENS,
+
+VEREMOS 
+
+'TYPE DEFINITIONS'
+
+
+nA PRÓXIMA AULA...

@@ -1,0 +1,2191 @@
+
+
+
+
+
+
+
+--> TENTEI DEPLOYAR MEU CÓDIGO COM O HEROKU,
+
+mas recebi uns errors:
+
+
+2021-12-27T21:23:30.706950+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=novoprojeto29.herokuapp.com request_id=dd2478e1-f20f-452e-aa36-21262d33732b fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https2021-12-27T21:23:31.275325+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=novoprojeto29.herokuapp.com request_id=efa78304-9e39-4a9c-81fc-42de6038bc10 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+2021-12-27T21:24:57.152889+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=novoprojeto29.herokuapp.com request_id=4da99812-6bec-4a16-87ef-6086fc1503a7 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https2021-12-27T21:24:57.712185+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=novoprojeto29.herokuapp.com request_id=e28f18c3-9912-4d41-aa0b-475112de1e78 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+2021-12-27T21:25:01.518898+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=novoprojeto29.herokuapp.com request_id=307a1efb-8f45-46ca-b944-5ea88b3af9a0 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https2021-12-27T21:25:02.239343+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=novoprojeto29.herokuapp.com request_id=8729cd48-68db-4a59-b2e9-bd5b6088aca5 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+
+
+
+
+
+
+232
+
+Found solution for me here: Heroku + node.js error (Web process failed to bind to $PORT within 60 seconds of launch)
+
+In my case my app crashed because I was hard setting the PORT, instead of using the port that heroku dinamicaly sets, which can be accessed with process.env.PORT
+
+app.listen(process.env.PORT || 3000, function(){
+  console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+});
+
+
+
+
+
+
+
+O ERRO TALVEZ SEJA ESTE:
+
+Missing Required Scripts
+This error is thrown in a Node.js environment if you forget to 
+
+set a start script. Heroku uses this script to start your app so if
+
+ it is missing, it would throw an H10-App crashed error code message.
+
+
+
+
+
+
+
+-_> mas eu TENHO UM START SCRIPT... --> só talvez 
+
+o 
+
+fato de 
+
+TER ENVIRONMENT VARIABLES É O QUE ESTÁ CAUSANDO ESSE ERRO.... (
+
+
+    talvez eu tenha que REMOVER ESSAS ENV VARIABLES E AS ADICIONAR POR MEIO DO HEROKU EMSI, dashboard..
+)
+
+
+
+
+
+--> provavelmente é esse o problema...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> no código do professor,
+
+
+ele começa assim:
+
+
+
+
+
+
+
+
+
+
+
+ELE MENCIONA QUE 
+
+
+O DASHBOARD DO HEROKU NÃO É __ TÃAAO INTERATIVO... -> NÓS NÃO VAMOS 
+
+
+
+FAZER 'DRAG-AND-DROP'
+
+DOS NOSSOS ARQUIVOS 
+
+
+NO HEROKU,
+
+
+E SIM VAMOS USAR AQUELA 
+
+CLI,
+
+COMMAND LINE INTERFACE...
+
+
+
+
+
+
+
+
+
+--> BAIXAMOS O CLI HEROKU...
+
+
+
+
+(já tenho isso)...
+
+
+
+
+
+
+
+
+
+
+FAZEMOS LOGIN NO NOSSO PC/MÁQUINA,
+
+
+no terminal...
+
+
+
+
+
+
+'login heroku' ....
+
+
+
+
+
+
+
+
+
+-> OK... -_> AÍ VAMOS USAR 
+
+NOSSA 
+
+CONTA 
+
+HEROKU 
+
+COMO UM 
+
+'GIT REPOSITORY'...
+
+
+
+
+
+
+
+
+
+-------> heroku git:remote -a novoprojeto29
+
+
+
+
+
+
+
+
+-------- ISSO VAI ESSENCIALMENTE 
+
+
+
+ADICIONAR NOSSO CÓDIGO COMO 
+
+'REMOTE PROJECT',
+
+
+
+
+
+E TAMBÉM SETTAR MEU 'REMOTE PROJECT URL' COMO UM 
+
+
+
+REMOTE REPOSITORY NESSA
+
+
+
+COMMAND BASE...
+
+
+
+
+
+
+
+
+
+
+
+----> ok...
+
+
+
+
+
+
+
+
+
+--> rodamos aqueles 3 comandos,
+
+
+
+
+'git add .
+git commit -am "Make it better"
+git push heroku master'
+
+
+
+
+
+
+
+
+
+
+--------> FAZEMOS PUSH DE NOSSO CÓDIGO AO HEROKU...
+
+
+
+
+
+
+
+
+
+
+
+--> OK... AÍ 
+
+O PROFESSOR FAZ ALGO QUE __ EU NÃO __ FIZ NO MEU PROJETO.... -. 
+
+
+
+
+
+ELE VAI ATÉ O 'package.json'
+
+
+E ADICONA 
+
+
+
+ 
+
+ UMA NOVA ENTRY,
+
+
+ entry 
+
+ de
+
+
+
+"engines",
+
+
+
+E LÁ O PROFESSOR 
+
+
+VAI ESCREVER 
+
+
+"node"
+
+
+E AÍ __ VAI ESCREVER__ A VERSÃO DO NODE.JS QUE VOCÊ ESTÁ USANDo com o seu projeto...
+
+
+
+
+
+
+
+
+PARA DETECTAR A VERSÃO DO NODE QUE VOCê ESTÁ USANDO,
+
+
+você deve rodar 
+
+'node -v' 
+
+
+
+NO SEU PROJECT FOLDER,
+
+
+
+
+NO SEU TERMINAl...
+
+
+
+
+
+
+
+
+NOSSA VERSÃO É 
+
+'16.13.1'...
+
+
+
+
+
+
+
+VAMOS INCLUIR ISSO NO PACKAGE.JSON:
+
+
+
+
+{
+  "name": "novonovoprojeto4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "cross-env NODE_ENV=production DEBUG=app,admin,auth,error,shop MONGO_USER=madblorga MONGO_PASSWORD=T5lws5TGxtclEbKI MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js",
+    "start:dev": "cross-env DEBUG=meuProjeto nodemon app.js"
+  },
+  "engines": {
+    "node": "16.13.1"
+  }
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.14"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "connect-flash": "^0.1.1",
+    "connect-mongodb-session": "^3.1.1",
+    "csurf": "^1.11.0",
+    "debug": "^4.3.3",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.4",
+    "express-session": "^1.17.2",
+    "express-validator": "^6.13.0",
+    "helmet": "^4.6.0",
+    "mongodb": "^4.1.3",
+    "mongoose": "^6.0.12",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.3",
+    "mysql2": "^2.3.0",
+    "nodemailer": "^6.7.0",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "pdfkit": "^0.13.0",
+    "pug": "^3.0.2",
+    "sequelize": "^6.7.0",
+    "stripe": "^8.191.0"
+  }
+}
+
+
+-----------------------------
+
+
+
+
+OK... FIZ ESSE AJUSTE E 
+
+EXECUTEI OS 3 COMANDOS,
+
+
+
+git add .
+
+
+
+
+git commit -am 'SUA MENSAGEM' 
+
+
+
+git push heroku master
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+ADICIONALMENTE,
+
+LÁ NO 'app.js',
+
+
+
+
+
+__ É BOM QUE VOCê ESTEJA USANDO O MIDDLEWARE DE __ COMPRESSION_.... --> ISSO 
+
+
+PQ 
+
+O
+ 
+
+
+
+ HEROKU __ NÃO TE OFERECE COMPRESSION OUT OF THE BOX....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OUTROS HOSTING PROVIDERS TE PROVIDENCIAM FILE COMPRESSION, MAS O HEROKU NÃO FAZ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OUTROS DETALHES: o HEROKU __ NÃO FUNCIONA/NÃO PRECISA __ DAQUELA 
+
+ 'PRIVATE KEY' 
+
+ e 
+
+ daquele 'CERTIFICATE' (
+
+
+   constantes de 
+
+
+
+
+const privateKey = fs.readFileSync('server.key'); ///////COMO VAMOS QUERER GERAR ESSA KEY __ ANTES__ DE NOSSO SERVER EFETIVAMENTE SER INICIADO, NÃO HÁ PROBLEMA EM USAR ESSA MODALIDADE 'sync' de 'readFile'...
+
+const certificate = fs.readFileSync('server.cert'); ///AMBAS CONSTANTES/ARQUIVOS _ SERÃO UTILIZADOS PARA _ PODERMOS __ EXECUTAR/UTILIZAR O PROTOCOLO 'HTTPS' no lugar do 'http' , no nosso projeto.... (ssl ENCRYPTION)...
+
+
+
+
+
+
+
+ ),
+
+
+
+ POR ISSO COMENTE ESSES NEGÓCIOS PARA FORA DO SEU CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -_> OK... COMO NÓS __ NÃO VAMOS USAR/SETTAR 
+ SSL 
+
+ POR CONTA PRÓPRIA AQUI NO NOSSO PROJETO, QUANDO USAMOS/USARMOS HEROKU,
+
+
+
+
+ DEVEMOS 
+
+
+ NOVAMENTE TROCAR 
+
+
+ O CÓDIGO DE SERVE DO NOSSO PROJETO,
+
+
+ trocar aquele 
+
+ uso 
+
+ 
+
+
+ do package de 'https' 
+
+
+
+ PELO__ USO NORMAL DE 'app.listen()" (para conseguirmos criar um HTTP SERVER COMUM, SEM SSL ENCRYPTION)... 
+
+
+
+
+
+
+
+
+
+
+
+ --------> O 'SSL ENCRYPTION' SERÁ FEITO, NESSE NOSSO PROEJOT,
+
+
+
+ POR MEIO DO 
+
+
+
+ 'PRÓPRIO HEROKU',
+
+
+
+
+
+
+ POR MEIO DO 'HEROKU MANAGED SERVER' (isso se você tiver dinheiro, é claro... -> se você tiver dinheiro, você pode pedir um SSL certificate com o heroku )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ok... sette seu http server comum....
+
+
+
+
+
+
+
+
+
+ ---------> POR FIM, PARA CONSEGUIR SETTAR SEU PROJETO/BACKEND CERTINHO,
+
+ VOCÊ 
+
+ DEVE 
+
+ SETTAR/CRIAR UM ÚLTIMO ARQUIVO NO ROOT DO 
+ SEU PROJETO,
+
+
+
+ QUE É O ARQUIVO 
+
+ 'procFile'...
+
+
+
+
+
+(
+  sem file extension alguma, só o arquivo SECO.
+)
+
+
+
+
+
+ -----> NESSE ARQUIVO, 
+
+
+ VAMOS SIMPLESMENTE ESCREVER 
+
+
+
+
+
+ ___ 
+
+
+ 'web: node app.js' --------->  É _____ ESSE O NEGÓCIO __ QUE ESTAVA FALTANDO PARA NÓS __>.... --> 
+
+
+ É 
+
+ ESSE 
+
+
+ O 
+
+ COMANDO QUE VAI INSTRUIR/ORDENAR O HEROKU A 
+
+
+
+ ___ EXECUTAR___ SEU ARQUIVO 
+
+ 'app.js'
+
+ QUANDO ELE ___ COMEÇAR A TENTAR RODAR O CONJUNTO DE ARQUIVOS DO SEU CÓDIGO.... 
+
+
+
+ 
+
+ ------------------------------------
+
+
+
+
+ É CLARO QUE PARA DIFERENTES HOSTING PROVIDERS,
+
+
+ ESSE NOSSO SETUP PODE VARIAR....
+
+
+
+
+
+
+
+
+ SIM... ERA ISSO QUE ESTAVA FALTANDO...
+
+
+
+
+
+
+
+
+
+
+
+ --> OK.... EXECUTAMOS OS 3 COMANDOS MÁGICOS DE NOVO...
+
+
+
+
+
+
+
+
+
+
+ -------> PROFESSOR FALA QUE 
+
+
+
+
+
+
+ DEVEMOS LER OS DOCS SE QUEREMOS SABER QUAIS SCRIPTS/COMANDOS DETERMINAM QUAL 
+
+
+ ARQUIVO 
+
+
+
+ DEVE SER LIDO/EXECUTADO PRIMEIRO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> COM TUDO ISSO SETTADO,
+
+
+
+PROFESSOR __ EXPLICA __ QUE VOCê _ DEVE CERTAMENTE 
+
+
+ADICIONAR UM ARQUIVO 
+
+'.gitignore' 
+
+
+
+
+
+NO ROOT DO SEU PROJETO... -> 
+
+
+ISSO PQ 
+
+
+
+ESSE ARQUIVO 
+
+
+__ VAI DIZER__ QUAIS FOLDERS__ O 
+
+HEROKU __ NÃO DEVE __ INCLUIR NOS SEUS 'SNAPSHOTS' DO GIT,
+
+
+enviados ao seu server... --------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS COMO ESCREVEMOS 'EXCEÇÕES' NO '.gitignore'? 
+
+
+
+
+
+
+-> ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+node_modules 
+server.cert 
+server.key 
+
+
+
+
+
+
+
+
+(
+
+
+  AQUI, NO CASO, VAMOS EXCLUIR TANTO O NODE_MODULES,
+
+  FOLDER INÚTIL, quanto 
+
+
+  OS ARQUIVOS 
+
+
+  DA PRIVATEKEY E 
+
+
+
+  DO CERTIFICATE/PUBLICKEY...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DESCOBRI COMO EXECUTAR COMANDOS 
+
+PARA APAGAR COISAS NO 'REPOSITORY/file system' do heroku __ DIRETAMENTE....
+
+
+
+
+
+
+
+
+--> para isso,
+
+devo 
+
+
+
+
+
+
+executar 'heroku run bash' ------> 
+
+
+
+
+ISSO VAI ME DEIXAR ENTRAR EM UMA EXECUÇÃO DE CÓDIGO EM TEMPO REAL...
+
+
+
+
+
+
+
+
+--> AÍ EU EXECUTEI ISTO:
+
+
+
+~ $ 
+~ $ cd
+~ $ cd ..
+/ $ list
+bash: list: command not found
+/ $ ls
+app  bin  dev  etc  lib  lib64  lost+found  proc  sbin  sys  tmp  usr  var
+/ $ cd app
+~ $ ls
+Procfile    app3.js      error-playground.js  middleware    nodemon.json       public       server.key
+access.log  controllers  faturas              models        package-lock.json  routes       util
+app.js      data         images               node_modules  package.json       server.cert  views
+~ $ cd ..
+/ $ rm app/*
+rm: cannot remove 'app/controllers': Is a directory
+rm: cannot remove 'app/data': Is a directory
+rm: cannot remove 'app/faturas': Is a directory
+rm: cannot remove 'app/images': Is a directory
+rm: cannot remove 'app/middleware': Is a directory
+rm: cannot remove 'app/models': Is a directory
+rm: cannot remove 'app/node_modules': Is a directory
+rm: cannot remove 'app/public': Is a directory
+rm: cannot remove 'app/routes': Is a directory
+rm: cannot remove 'app/util': Is a directory
+rm: cannot remove 'app/views': Is a directory
+/ $ rm -r app/*
+/ $ ls
+app  bin  dev  etc  lib  lib64  lost+found  proc  sbin  sys  tmp  usr  var
+/ $ cd app
+~ $ ls
+~ $ ls
+~ $ 
+
+
+
+
+
+
+
+
+
+
+
+
+----> bem legal....
+
+
+
+
+
+
+
+
+--> para sair, escreva 'exit'...
+
+
+
+
+
+
+
+
+
+
+--> ok... assim que deletei tudo da minha pasta 'app' do heroku, lá no REMOTE REPOSITORY, POR MEIO DO 'BASH',
+
+
+consegui 
+
+
+READICIONAR TUDO,
+
+
+DESSA VEZ 
+
+
+SEM 
+
+OS 
+
+'
+node_modules',
+
+
+
+E SEM  O CERTIFICATE E A PRIVATE KEY, inúteis... 
+
+
+(
+
+
+  com isso, ECONOMIZAMOS BASTANTE ESPAÇO NO REPOSITORY HEROKU...
+)
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> TIREI O 'NODE_MODULES'
+ 
+
+ pq 
+
+
+
+
+ NÃO VAMOS DEPLOYAR/USAR NOSSOS THIRD PARTY PACKAGES 
+
+
+
+ NO DEPLOYMENT.... --> NÃO VAMOS QUERER SERVIR ISSO AO USER, É DATA INÚTIL...
+ ]
+
+
+
+
+
+
+
+
+
+
+
+
+ --> EM VEZ DISSO,
+
+
+ COLOQUE ESSE 'GITIGNORE',
+
+
+ PQ 
+
+ O 
+
+ HEROKU 
+
+
+ VAI AUTOMATICAMENTE RECRIAR/REPRODUZIR __ SUAS ___ DEPENDENCIES __ NO PRÓPRIO SERVER HEROKU,
+
+
+ DEPOIS QUE VOCÊ DEPLOYAR SEU CÓDIGO....
+
+
+
+
+
+(
+
+
+  VAI LER O 'package.json',
+
+  ESSENCIALMENTE...
+)
+
+
+
+ ------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------> ok... --> E É EXATAMENTE POR ISSO QUE 
+
+
+SEMPRE USAMOS 
+
+
+'npm install --save';
+
+
+É 
+
+PQ 
+
+
+
+VAMOS QUERER __ QUE NOSSOS HOSTING PROVIDERS 
+
+__CONSIGAM___ 
+LER/ENTENDER QUE 
+
+
+SEU 
+
+PROJETO ESTÁ COM ESSA PACKAGE INSTALADA/VINCULADA,
+
+
+para que 
+
+então 
+
+
+
+
+
+
+ELES 
+CONSIGAM INSTALAR ESSAS PACKAGES __ NOS SEUS PRÓPRIOS 'MANAGED SERVERS', que hostearam
+ 
+
+ nossos apps SEM ESSE 'node_modules'.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> COM TUDO ISSO ADICIONADO,
+
+
+
+
+ escrevemos:
+
+
+
+
+ git add . 
+
+
+ git commit -am "no node_modules" 
+
+
+
+ git push heroku master 
+
+
+
+
+
+
+
+
+
+ --> ISSO VAI UPLOADAR TODO NOSSO CÓDIGO AO HEROKU, E TAMBÉM VAI INSTALAR TODAS NOSSAS DEPENDENCIES...
+
+
+
+
+
+
+
+
+
+
+
+ -> ELE TBM DEVE AUTOMATICAMENTE DETECTAR QUE SE TRATA DE UM APP NDOE, pq temos aquele 'package.json'....
+
+
+
+
+
+
+
+
+
+
+
+ --> ETAPA POR ETAPA,
+  
+
+  ELE VAI SPIN YOUR SERVER E INSTALAR SUAS DEPENDENCIES...
+
+
+
+
+
+
+
+
+
+  --> PODEMOS CLICAR EM 'open app' -----> PROFESSOR EXPLICA QUE __ PROVAVELMENTE__ ISSO 
+
+
+
+
+  NÃO FUNCIONARÁ...
+
+
+
+
+
+
+
+  E, DE FATO,
+
+  ISSO __ FRACASSOU:
+
+
+
+
+
+  2021-12-28T04:06:27.425935+00:00 heroku[web.1]:2021-12-28T04:06:57.700560+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=novoprojeto29.herokuapp.com request_id=110dbaca-73a7-484f-8845-6c511a2d5906 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+2021-12-28T04:06:57.946432+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=novoprojeto29.herokuapp.com request_id=f30a7208-4f9c-44fa-99b1-05877278bae1 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https 
+2021-12-28T04:07:02.087334+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=novoprojeto29.herokuapp.com request_id=5da3794c-feaf-4999-82fd-9766740c0235 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+2021-12-28T04:07:02.392665+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=novoprojeto29.herokuapp.com request_id=3a0b4962-8b1b-4f33-a8cd-499c76a91c1a fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https 
+PS A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY> 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> A RAZÃO PARA ISSO É __ QUE NÓS CERTAMENTE DEPLOYAMOS NOSSO APP,
+
+SIM ,
+
+MAS 
+
+
+
+SE NÓS DIGITARMOS 'heroku logs',
+
+
+
+
+
+
+
+
+LÁ NO SEU TERMINAL,
+
+VOCê 
+
+VERÁ 
+
+
+
+
+
+__ QUE 
+
+
+
+ALGO DEU ERRADO....
+
+
+
+
+
+
+
+
+--> NA ERROR MESSAGE, 
+
+VEMOS 
+
+
+
+''
+
+2021-12-28T04:06:27.244473+00:00 app[web.1]: throw error;
+2021-12-28T04:06:27.244474+00:00 app[web.1]: ^
+2021-12-28T04:06:27.244475+00:00 app[web.1]:
+2021-12-28T04:06:27.244476+00:00 app[web.1]: Error: Error connecting to db: connection <monitor> to 50.19.188.17:27017 closed
+
+
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+
+O NOSSO SERVER __ FALHOU_ EM SE CONECTAR ___ A NOSSA DATABASE 'mongodb' ...
+
+
+
+
+
+
+
+
+
+
+-> PQ ISSO ACONTECEU? 
+
+É PQ 
+
+NÃO FIZEMOS __ WHITELIST__ DO HEROKU/NOSSO APP, LÁ 
+
+
+
+no 
+
+
+MONGODB ATLAS....
+
+
+
+
+
+
+
+
+
+--------> ISSO TBM ACONTECEU, É CLARO, 
+
+
+PQ ___ tODAS __ AS '
+
+ENVIRONMENT VARIABLES'
+
+
+
+
+
+que 
+
+
+HAVÍAMOS 
+
+DEFINIDO 
+
+
+LÁ 
+
+
+em app.js/package.json 
+
+
+__ NÃO ESTÃO MAIS SETTADAS... -> 
+
+e isso 
+
+
+INVALIDOU VÁRIAS PARTES DE NOSSO CÓDIGO,
+
+
+
+
+
+INCLUSIVE ESSA DE 'CONNECT à DATABASE':
+
+
+
+
+
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.nhtjo.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`; ///VERSÃO __ COM USO __ DE ENVIRONMENT VARIABLES __ NODE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK, MAS COMO PODEMOS CONSERTAR ISSO?
+
+
+
+
+
+
+
+
+--> BEM, LÁ NO 'Procfile', esse arquivo aí,
+
+
+__ NÓS __ APENAS INSTRUÍMOS O HEROKU 
+
+A 
+
+
+'EXECUTE ESSE APP NODE  CHAMADO app.js'....
+
+
+
+
+
+
+
+
+
+
+
+--> POR SI SÓ,
+
+
+ESSE 
+
+ARQUIVO NÃO VAI 
+
+
+'pass the environment variables' 
+
+
+
+
+
+
+
+
+
+
+--> A ÚNICA ENVIRONMENT VARIABLE QUE SERÁ PASSADA, POR DEFAULT,
+AO NOSSO APP 
+
+
+SERVIDO NO HOSTING PROVIDER DE HEROKU É 
+
+
+justamente aquela 
+
+
+
+'process.env.NODE_ENV' 
+
+
+
+
+
+
+
+
+
+
+
+----------> O NODE_ENV VAI SER SETTADO COMO PRODUCTION,
+
+
+ISSO É ALGO __ QUE O HEROKU  FAZ PARA NÓS;
+
+
+ENTRETANTO,
+
+
+__TODAS AS OUTRAS__ 'ENVIRONMENT VARIABLES' 
+
+
+
+__ NÃO FICARÃO 
+
+'SET' PARA NÓS....
+
+
+
+
+
+
+
+
+
+
+
+-------> OK..... ----> ISSO SIGNIFICA QUE PRECISAMOS __ SETTAR ESSAS VARIABLES __ AÍ POR CONTA PRÓPRIA...----> 
+
+
+
+
+PARA ISOS,
+
+
+
+
+
+
+DEVEMOS PEGAR TODOS ESSES NOMES/KEY-VALUE PAIRS 
+
+
+
+e 
+
+seguir 
+
+ATÉ 
+O 
+
+DASHBOARD DO HEROKU,
+
+
+ 
+
+
+ LÁ 
+
+
+
+
+
+ NA OPÇÃO DE 'settings' ---> 
+
+
+ LÁ 
+
+
+
+
+
+ VAMOS EM 'CONFIG VARS '(são as environment variables, na verdade)...
+
+
+
+
+
+
+
+
+
+
+
+ --> AÍ VOCÊ VAI SETTAR CADA UMA DE SUAS VARIABLES DE ENVIRONMENT...
+
+
+
+
+
+
+
+
+
+ --> ISSO FEITO,
+
+
+ SEU APP HEROKU REALMENTE VAI PASSAR A UTILIZÁ-LAS 
+
+
+
+
+ NO SEU 
+
+
+ BACKEND DE PRODUCTION...
+
+
+
+
+
+
+
+
+
+ --> OK... FIZ ISSO....
+
+
+
+
+
+
+
+ --> MAS SÓ ISSO NÃO VAI ADIANTAR, É CLARO... -> PRECISAMOS MUDAR ALGO LÁ NO NOSSO SETUP DO MONGODB ATLAS,
+
+
+ que é o 
+
+
+ WHITELIST  dos 
+
+ addresses 
+ permitidos a acessar nossa database...
+
+
+
+
+
+ --> no caso, vamos colocar o ip desse nosso APP HEROKU...
+
+
+
+
+
+
+ O LINK É ESTE:
+  https://novoprojeto29.herokuapp.com/
+
+
+
+
+  MAS QUAL O IP?
+
+
+
+
+
+
+  💡 Note: You probably don't want to allow this type of access in a production environment. Instead, you'll want to identify the exact IP addresses you know your application will be hosted on and explicitly set which IP addresses, or IP ranges, should have access to your cluster. After setting up your Heroku app, follow the steps in the "Configuring Heroku IP Addresses in Atlas" section below to see how to add the proper IP addresses for your Heroku app.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ISSO É MAIS TRICKY:
+
+
+
+
+  Configuring Heroku IP Addresses in MongoDB Atlas
+
+
+We have our cluster up and running and our app is deployed to Heroku!
+
+To get us through the tutorial, we initially configured our cluster to accept connections from any IP address. Ideally you would like to restrict access to only your application, and there are a few ways to do this on Heroku.
+
+The first way is to use an add-on to provide a static outbound IP address for your application that you can use to restrict access in Atlas. You can find some listed here:
+
+https://elements.heroku.com/addons/categories/network
+
+Another way would be to use Heroku Private Spaces and use the static outbound IPs for your space. This is a more expensive option, but does not require a separate add-on.
+
+There are some documents and articles out there that suggest you can use IP ranges published by either AWS or Heroku to allow access to IPs originating in your AWS region or Heroku Dynos located in those regions. While this is possible, it is not recommended as those ranges are subject to change over time. Instead we recommend one of the two methods above.
+
+Once you have the IP address(es) for your application, you can use them to configure your firewall in Atlas.
+
+Head to your Atlas cluster, delete any existing IP ranges, then add them to your allow list:
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> A COISA SOBRE O HEROKU BÁSICO, versão básica,
+
+É QUE 
+
+
+_NÃO EXISTE 'IP ESTÁTICO' ASSIGNADO AO NOSSO PROJETO.... -_> EM VEZ DISSO, É UMA 
+
+'DYNAMIC RANGE'...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR COLOCOU UM RESOURCE QUE FALA SOBRE OPÇÕES PARA 
+
+VOCÊ 
+
+SETTAR UM 
+
+
+IP ESTÁTICO/range de ip dinâmicos, para resolver esse problema do whitelist.... 
+
+
+
+
+
+
+
+
+-> não é bom settar 'allow access from anywhere'...
+
+
+
+
+
+--> PARA UM SETUP REALMENTE SEGURO,
+
+ASSEGURE UM 'STATIC IP',
+
+
+
+
+por meio dos resources que o professor colocou nessa aula...
+
+
+
+
+EX:
+
+
+https://help.heroku.com/JS13Y78I/i-need-to-whitelist-heroku-dynos-what-are-ip-address-ranges-in-use-at-heroku
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+OU, DEPENDENDO DO SEU HOSTING PROVIDER (Que não seja heroku),
+
+
+VOCÊ PODE ACABAR USANDO UM PROVIDER QUE 
+
+
+
+
+
+__ USA/POSSUI UM STATIC IP ADDRESS DE QUALQUER FORMA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ASSIM QUE VOCÊ SETTAR ESSAS ENVIRONMENT VARIABLES AÍ,
+
+
+
+
+
+CLIQUE EM 'more' no seu HEROKU DASHBOARD 
+
+e aí 
+
+
+
+
+CLIQUE EM 'reset all DYNOS'
+
+PARA __ RESETTAR__ SEU SERVER HEROKu.... 
+
+
+
+
+
+
+
+
+DYNO === É ESSENCIALMENTE UM __VIRTUAL SERVER....
+
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO, DEVEMOS RECARREGAR NOSSO APp --> 
+
+
+vamos ver que PODEMOS ENTRAR NO NOSSO APP,
+
+
+E FAZER TODAS AS COISAS QUE FAZÍAMOS 
+
+
+
+ANTERIORMENTE 
+
+COM O LOCALHOST,
+
+mas agora tudo issoo vai estar rodando REMOTAMENTE,
+
+
+
+E TUDO __ COM HTTPS JÁ ATIVADO (serve-se com https, os hosting providers)....
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... E NO HEROKU,
+
+
+
+
+CASO VOCÊ QUEIRA FICAR COM ESSE HOSTING PROVIDER,
+
+
+VOCê PODE MUDAR AS COISAS:
+
+
+
+PODE USAR SEU PRÓPRIO DOMÍNIO,
+
+PRÓPRIO 
+
+
+
+SSL CERTIFICATE, ETC ETC....
+
+
+
+
+
+
+
+
+--> mas era isso que o professor queria nos mostrar, essencialmente...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> 2 opções:
+
+
+
+
+1) USAR UMA 'EXTENSÃO HEROKU' (coisa estranha, não sei se é uma boa ideia)....
+
+
+
+
+
+
+
+
+
+
+
+2) ESTE ARTIGO: https://help.heroku.com/JS13Y78I/i-need-to-add-heroku-dynos-to-our-allowlist-what-are-ip-address-ranges-in-use-at-heroku
+
+
+
+
+
+-----> BASICAMENTE, EXECUTE 'heroku regions --json'..
+
+
+
+
+
+
+--> cheque o ' provider- region' -->
+
+
+
+
+
+
+NESTE OBJETO AQUI:
+
+
+  {
+    "country": "United States",
+    "created_at": "2015-08-20T01:37:59Z",
+    "description": "Virginia, United States",
+    "id": "3544427c-5b3b-4e1e-b01a-b66362573b26",
+    "locale": "Virginia",
+    "name": "virginia",
+    "private_capable": true,
+    "provider": {
+      "name": "amazon-web-services",
+      "region": "us-east-1"
+    },
+    "updated_at": "2015-08-20T01:37:59Z"
+  }
+
+
+
+
+
+
+
+
+
+
+
+  ------> ok.... a region é 'us-east-1' --> 
+
+
+ESSE ARTIGO DO HEROKU TAMBÉM 
+
+
+MENCIONA QUE MESMO _ USANDO SÓ OS IP 
+
+
+ADDRESSES DE UMA REGION ESPECÍFICA, AINDA 
+
+
+DEIXAMOS 
+
+FALHAS DE SEGURANÇA 
+
+
+
+
+NO NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+
+aí ele propõe a opção 1:
+
+
+
+
+or apps in the Common Runtime a better approach would be to use an
+
+ add-on to provide a static outbound IP address https://elements.heroku.com/addons/categories/network or to
+ 
+  rely on secure communication via TLS.
+
+
+
+
+
+
+
+
+
+
+--> vou tentar o 'fixie socks'...
+
+
+
+
+
+
+
+
+
+
+--> bem.... não funcionou. para conseguirmos 
+
+
+
+usar esse ADDON, prECISAMOS ___ ATIVAR NOSSA CONTA HEROKU, POR MEIO DA DEFINIÇÃO DE UM CARTÃO DE CRÉDITO...
+
+
+
+
+
+
+
+--> é claro que isso funcionaria normalmente (até existem VÁRIAS POSSIBILIDADES DE PLANOS PARA ESSES ADDONS;),
+
+
+
+
+MAS 
+
+EU QUERO 
+
+
+CONSEGUIR 
+
+ __DE GRAÇA sem colocar o cartão de crédito (opção 2)...
+
+
+
+
+
+
+
+
+
+
+ -----> consegui um arquivo chamado de ip-ranges.json. https://ip-ranges.amazonaws.com/ip-ranges.json
+
+
+
+
+
+
+
+
+
+
+
+
+ --> nesse arquivo, temos todos os ips 
+
+
+
+ da region 'us-east-1',
+
+
+ MAS O PROBLEMA É QUE 
+
+
+ ELES SÃO _ MILHARES.... (3200+) 
+
+
+
+
+
+ --> É INVIÁVEL ADICIONÁ-LOS LÁ NO MONGODB ATLAAS..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> é claro que POSSO USAR 'ALLOW access from anywhere',
+
+
+
+ __ PQ 
+
+ EU AINDA TENHO A PROTEÇÃO _ DO USERNAME E SENHA PARA ACESSAR MINHA DATABASE,
+
+ mas é claro que 
+
+ isso vai 
+
+ deixar 
+
+ nosso app bem mais fraco em questão de segurança....
+
+
+ (
+
+
+
+
+   farei isso por enquanto, provisoriamente...
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> ok... coloquei o '0.0.0.0/0' (allow access from anywhere) LÁ 
+
+
+ NO MONGODB ATLAS...
+
+
+
+
+
+
+
+
+ --> reiniciei meu BACKEND SERVIDO PELO HEROKU..
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK... AGORA FUNCIONOU....
+
+
+
+
+
+
+
+
+
+ ---> ESTOU REALMENTE CONSEGUINDO ACESSAR MEU SITE,
+
+
+
+ que está sendo hospedado pelo heroku...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

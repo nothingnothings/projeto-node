@@ -1,0 +1,424 @@
+
+
+
+
+
+
+
+
+
+
+
+
+O QUE É UM COOKIE? 
+
+
+
+
+
+
+
+
+--> BEM,
+
+
+
+DIGAMOS QUE ESSE É O NOSSO SETUP:
+
+
+
+
+
+
+
+
+
+
+| USER browser| 
+
+
+
+
+
+
+
+
+| Server (node app) | 
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+CERTO... O USER INTERAGE COM O FRONTEND, com as views,
+
+
+
+
+
+
+COM AS VIEWS RENDERIZADAS COM A EJS TEMPLATING ENGINES (nesse curso),
+
+
+
+MAS É CLARO QUE 
+
+
+
+O PROFESSOR AQUI FALA DE QUALQUER 
+
+
+
+TEMPLATING ENGINE, de qualquer tipo....
+
+
+
+
+
+
+
+---. OK.... DE DENTRO DESSE VIEW, digamos 
+
+QUE TEMOS 
+
+
+
+1 
+
+FORM, 1 form de 'add a new product'... --> POR MEIO DESSA FORM,
+
+enviamos 
+
+
+UM REQUEST /submittamos um REQUEST 
+
+
+ao 
+
+
+NOSSO NODE SERVER...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+| USER browser| 
+
+        |
+        V
+
+| Frontend (Views) | 
+
+        | request
+        V 
+
+| Server (node app) | 
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+CERTO... MAS DIGAMOS QUE ESSE REQUEST __ REQUER____ QUE 
+
+
+
+
+
+NÓS __ARMAZENEMOS__ ALGUM TIPO DE 'DATA' no browser.... -----> DIGAMOS QUE 
+
+NÃO ESTAMOS TRABALHANDO COM A PÁGINA DE 
+
+'ADD PRODUCT',
+
+
+e sim que 
+
+
+TEMOS UMA PAGE 
+
+DE 
+
+LOGIN,
+
+
+
+
+
+
+E QUE 
+
+QUANDO O USER FAZ 'LOGIN',
+
+QUEREMOS ___ ARMAZENAR__ 
+
+
+A INFO 
+
+
+
+
+dizendo 'O USER ESTÁ LOGGADO'
+
+
+
+
+________EM ALGUM LUGAr__.... -------> QUEREMOS FAZER ISSO 
+
+
+PARA __ QUE 
+
+
+QUANDO/SE __ O USER ___rECARREGAR ___ A PAGE,
+
+
+
+
+
+
+SE ELE ___ REALMENTE RECARREGAR A PÁGINA, O QUE TECNICAMENTE 
+
+
+
+__ENVIA UM NOVO REQUEST__,
+
+
+
+
+
+__ NÓS AINDA __ TEREMOS __ ESSA INFO 
+
+
+
+'ZANZANDO POR AÍ',
+
+
+
+ainda teremos 
+
+
+ESSA INFO de que o user está loggado VIVA em algum lugar...
+
+
+
+
+
+
+
+
+
+--> E, PARA ISSO,
+
+
+PARA ESSE EFEITO,
+
+
+
+
+
+podemos, no SERVIDOR NODEJS (e qualquer outro sv) 
+
+
+
+___ENVIAR__ DE VOLTA ___ 
+
+
+UM __________COOKIE___......... -------->
+
+
+
+
+VAMOS ENVIAR ESSE COOKIE __ NA RESPONSE__ EM SI ('Sent via response header'),
+
+
+
+
+
+
+
+
+VAMOS ENVIAR ESSE COOKIE NA RESPONSE QUE É ENVIADA A PARTIR DE 1 REQUEST... -----> 
+
+
+
+
+
+ISSO SIGNIFICA QUE:
+
+
+
+
+
+
+
+1) O USER VAI SUBMITTAR A LOGIN DATA por meio da form 
+
+
+
+
+
+2) NÓS VAMOS RETORNAR UMA RESPONSE, 
+
+
+
+QUE PODERÁ SER 1 NOVO 'VIEW' A QUE REDIRECIONAMOS O USER,
+
+MAS 1 VIEW __ACOMPANHADO_ DE 1 COOKIE DIZENDO 'este user está logged in'...
+
+
+
+
+
+
+
+
+
+
+--> ESSE 'COOKIE' que enviamos ao user SIMPLESMENTE É IMPORTANTE 
+
+
+PARA _DIZEr__ AO USER/armazenar 
+
+
+
+A INFO DE QUE __ O USER 
+
+ ___ESTÁ 'AUTHENTICATED'.... -----> E NÓS PODEMOS 
+
+
+
+
+ __aRMAZENAR _ ESSA INFO NO BROWSER, no FRONTEND,
+
+ no ENVIRONMENT COM QUE O USER INTERAGE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ARMAZENADA ESSA INFO/COOKIE NO BROWSER,
+
+PODEMOS 
+
+
+__NOS UTILIZAR__ DELE 
+
+
+
+NOS PRÓXIMOS REQUESTS,
+
+
+
+embutí-lo nos próximos requests,
+
+
+
+que 
+
+
+então ficarão 'carimbados' com ele.... -----> 
+
+
+
+
+
+
+AÍ OS 'SUBSEQUENT REQUESTS'
+
+
+terão 
+
+
+
+essa info de 'we are logged in to the server' 
+
+embutida 
+
+neles...........
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> RESUMINDO: 
+
+OS 
+
+
+COOKIES SÃO ___ARMAZENADOS __ NO BROWSER, NO CLIENTSIDE... ISSO É UMA MÁXIMA...
+
+
+
+
+
+
+
+
+
+
+
+---> MAS ISSO É MT ABSTRATO, DEVEMOS TESTAR ISSO NO NOSSO APLICATIVO...
+

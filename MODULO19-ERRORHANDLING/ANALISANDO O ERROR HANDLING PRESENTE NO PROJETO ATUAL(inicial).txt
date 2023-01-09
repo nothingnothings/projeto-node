@@ -1,0 +1,1009 @@
+
+
+
+
+
+
+
+
+
+
+---> NO NOSSO APP,
+
+
+
+PROFESSOR EXPLICA QUE __ JÁ TEMOS UM MONTE DE 
+
+'ERROR HANDLING'
+
+
+colocado 
+
+
+no lugar.... ----> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BASTA VERMOS 
+
+O 
+
+
+ARQUIVO DE 
+
+'app.js':
+
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  
+
+
+  if(!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+-----------------------
+
+
+
+
+ALI EMBAIXO,
+
+
+
+depois daquele 
+
+'User.findById()',
+
+
+
+NÓS __ OBVIAMENTE__ TEMOS UM 
+
+
+CATCH BLOCK 
+
+
+em cima d O
+
+nosso 
+'then'.. 
+
+
+
+
+
+
+---> NESSE CATCH BLOCK,
+
+
+
+
+FAZEMOS HANDLE DOS CASES EM QUE O 'FETCH DE 1 USER __ LÁ NO INÍCIO DO REQUEST'
+
+
+
+falha... (código de 'User.findById(req.session.user._id)'...)
+
+
+
+
+
+
+
+
+
+
+
+------> AINDA ASSIM, PROFESSOR EXPLICA QUE __ PDOEMOS ____ MELHORAR __ ESSE 
+
+CÓDIGO DE ERROR HANDLING FAJUTO,
+ 
+
+ CAPENGA....
+
+
+
+
+
+
+
+
+
+ --> PDOEMOS INCREMENTAR ESSe 
+
+
+ '.catch((err) => {})',
+
+
+ QUE 
+
+
+ATÉ AGORA SÓ FAZ UM 
+
+
+
+CONSOLE.LOG INCONSEQUENTE...
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+MAS LÁ NOS 
+
+NOSSOS CONTROLLERS,
+
+N´SO _ TAMBÉM TEMOS 1 ERROR HANDLING SETTADO...
+
+
+
+
+
+
+
+
+
+
+
+--> em auth.js,
+por exemplo,
+
+
+
+
+
+
+
+
+
+
+LÁ TEMOS QUE 
+
+
+
+O 
+
+USER 
+
+
+
+__CHECA__,
+ 
+
+
+ em 
+
+
+ 'postLogin',
+
+
+
+ SE 
+
+
+O EMAIL QUE 
+
+
+
+O USER INPUTTOU __ EXISTE _ DE VERDADE _ NO NOSSO DATABASE/SERVIDOR....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+  User.findOne({ email: email }).then((user) => { 
+    console.log(user, 'XX');
+
+      if(user === null) {
+        console.log('TEST');
+
+
+
+
+        if(!errors.isEmpty()) { 
+              return res.status(422).render(
+                        
+          
+                          'auth/login', { 
+                            pageTitle: 'Login',
+                            path: 'auth/login',
+                            errorMessage: errors.array()[0].msg,////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                    
+                            oldInput: {   ///usado para MANTER OS VALORES/INPUTS que o user enfiou nos input fields antes de tomar uma message de error na cara e ser redirecionado...
+                                
+                              email: email, 
+                              password: password,
+                            } ,
+                   
+                            validationErrors: validationErrors ///USADO PARA RENDERIZAR CONDICIONALMENTE BORDAS VERMELHAS NOS NOSSOS INPUT FIELDS, quando for constatado algum PROBLEMA NO INPUT DIGITADO PELO USER...           
+                          
+                          
+                          }
+          
+              ); 
+          
+            }
+          
+
+
+      } 
+
+
+
+
+-------------------------------------
+
+
+
+
+
+--> OU SEJA,
+
+
+
+SE TEMOS QUE 
+
+
+HÁ ALGUM ERRO NAQUELE ARRAY DE 
+
+'errors',
+
+
+
+
+
+NÓS  ESTAMOS FAZENDO O RETURN 'OF THE SAME PAGE',
+
+
+
+
+
+
+COM _ UM ERROR CODE ('.status()')
+
+
+DE 
+
+
+
+
+422,
+
+
+EM QUE _ O PROFESSOR ACTUALLY 
+
+
+
+
+
+
+__ PASSA __ A INFO DE QUE 
+
+
+
+
+
+O INPUT FOI INVÁLIDO,
+
+
+
+
+
+
+
+informação transmitida por ele por mei oda string 
+
+
+
+
+
+'errorMessage: 'Invalid Email or Password'',
+
+
+
+
+
+E, POR NÓS,
+
+
+POR 
+
+
+
+''
+
+errorMessage: errors.array()[0].msg
+
+
+
+
+
+
+''' 
+
+
+
+
+
+
+
+
+
+--------> NAS 
+
+
+ROUTES,
+
+
+NÓS TÍNHAMOS COLOCADO 1 LO´GICA __BEM PARECIDA__....
+
+
+
+
+
+
+------> NÓS HAVÍAMOS USADO O PACKAGE DE 'express-validator'
+
+PARA USAR 
+
+ALGUMAS 
+
+'BUILTIN VALIDATOR FUNCTIONS',
+
+
+como 
+
+as 
+
+vistas 
+
+aqui:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/login',
+
+  [
+    check('email')
+      .isEmail()
+      .withMessage('Please enter a valid email')
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        return User.findOne({ email: value }) ///////EIS O CÓDIGO EM QUESTÃO.
+          .then((user) => {
+            if (!user) {
+              return Promise.reject(
+                'No account assigned to that email, please try another one.'
+              );
+            }
+          });
+      })
+      .normalizeEmail(), ////vai converter todos os caracteres do email em LOWERCASE... pq é isso que queremos, com emails, queremos que sejam STORADOS ASSIM, na nossa database... (E que sejam verificados assim, quando fazemos login....)
+    check('password')
+      .isAlphanumeric()
+      .withMessage('Password must be made of only letters and numbers.')
+      .custom((value, { req }) => {
+        console.log(req.body.email, 'EMAIL');
+
+        return User.findOne({ email: req.body.email }).then((user) => {
+          return bcrypt
+            .compare(user.password.toString(), value.toString())
+            .then((result) => {
+              if (result) {
+                return value;
+              } else {
+                if (value.length < 6) {
+                  return Promise.reject(
+                    'Your Password must contain 6 or more characters.'
+                  );
+                } else {
+                  return Promise.reject('Invalid Password');
+                }
+              }
+            });
+        });
+      })
+      .trim(), ////VAI REMOVER TODOS OS WHITE SPACES DO PASSWORD inputtado...
+  ],
+
+  authController.postLogin
+);
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR NOS EXPLICA, AGORA,
+
+QUE 
+
+
+
+
+'BEHIND THE SCENES'
+
+ESSA 
+
+PACKAGE DE 
+
+
+'express-validator'
+
+
+_________TAMBÉM __
+
+
+
+FAZ 
+
+THROW 
+
+
+E HANDLA 
+
+
+ERRORS PARA NÓS... -----> A PARTE VANTAJOSA DESSA PACKAGE É 
+
+QUE 
+
+
+'
+IT LETS US SIMPLY COLLECT ALL THESE ERRORS',
+
+
+
+
+ERROS QUE 
+
+
+
+_NÃO SÃO __ TECHNICAL ERROR OBJECTS,
+
+
+
+
+
+E SIM QUE SÃO 
+
+
+
+'JUST DATA MANAGED BY THAT PACKAGE'...
+
+
+
+
+
+
+-------->  OK... --> AÍ, LÁ NOS MEUS CONTROLLERS,
+
+
+
+
+NÓS 
+
+
+
+
+COLETÁVAMOS 
+
+ESSES 
+
+erros de input, por parte do user,
+
+
+
+
+__E AÍ ___ 
+
+
+
+OS ARMAZENÁVAMOS EM CONSTANTES COMO 
+
+
+
+
+'const errors = validationResults(req);' ------> AÍ,
+
+
+A 
+
+partir 
+DO 
+
+
+
+'STORE' 
+
+DESSES ERRORS NESSA CONSTANTE,
+
+
+
+
+
+NÓS 
+
+
+FIZEMOS 
+
+'HANDLE THEM MANUALLY'.... ---------> NÓS 
+
+
+
+
+
+HANDLAMOS ELES __MANUALMENTE__ 
+
+
+
+
+
+JUSTAMENTE__ PQ 
+
+
+
+__NÓS 
+
+
+
+
+_HANDLAMOS __ ERROS MANUALMENTE,
+
+
+fomos 
+
+NÓS 
+
+
+QUE 
+
+ESCREVEMOS 
+
+O 
+
+CÓDIGO QUE 
+
+EXECUTA __ QUADO ESSE 'ERRO' OCORRE.... 
+
+
+(
+
+    ISSO PQ _ NENHUM ERRO FOI 'ERROR IS THROWN',
+
+
+
+
+    E SIM 
+
+    SÓ 
+
+
+    UMA MERDINHA ACONTECEU..... -----> NESSES CASOS, CASOS 
+
+    EM QUE 
+
+
+
+
+    NÃO QUEREMOS FAZER O 'THROW' DE UM ERROR,
+
+
+
+
+
+    ___ NÓS PODEMOS RECORRER A IF CHECKS COMUNS,
+
+
+
+
+CHECKS EM QUE 'WE CHECK IF THE DATA WE GOT IS ENOUGH TO CONTINUE OR NOT...'....
+) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE __ NÃO TÍNHAMOS NENHUM 'TECHNICAL ERROR'
+
+sendo 'THROWN' nesses trchos do nosso código.......
+
+
+
+
+
+
+
+
+
+
+---> O PROFESSOR NOS EXPLICA, AGORA,
+ 
+ QUE 
+
+ ESSES 
+
+ 'TECHNICAL ERRORS', btw, 
+
+  
+
+  __SEMPRE__  PODEM __ SER VISTOS (sempre mesmo )
+
+  SE 
+
+
+  VOCÊ TIVER 
+
+
+
+
+
+
+
+  ***UMA MENSAGEM DE ERRO**** LÁ NO TERMINAL DE SEU IDE....  
+
+
+
+
+
+
+
+
+
+  -------> OK... MAS CMO NÃO TÍVEMOS NENHUM ERRO DESSE TIPO (lógico) (E NÃO TEREMOS),
+
+
+
+
+
+
+E __ SABEMOS QUE AINDA TEMOS/TEREMOS INPUTS _ INVÁLIDOS__,
+
+
+
+
+
+
+
+NÓS AINDA  CHECAMOS ESSES VALORES __ MANUALMENTE,
+
+
+
+TUDO MANUALMENTE, PARA QUE ENTÃO CONSIGAMOS 
+
+PROSSEGUIR por conta própria...
+'
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+---------> JÁ 
+
+
+
+ QUANTO AOS NOSSOS 'CUSTOM VALIDATORS',
+
+
+ cOMO 
+
+
+ ESTE AQIUI:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+,
+
+
+
+
+
+router.post(
+  '/signup',
+
+  [
+    ///E SIM, podemos TER MULTIPLOS 'VALIDATORS' atribuídos/vinculados a 1 MESMO FIELD...
+    check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+      .isEmail() ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+      .withMessage('Please enter a valid email.')
+      .custom(
+        ///usado para CHECAR__ SE 1 EMAIL DESSES JÁ EXISTE EM 1 USER NA NOSSA DATABASE/APP... (uma validation SERVERSIDE, no caso, ao contrário da validation que fizemos com 'req.flash()' lá nos nossos controllers, com um código BEM PARECIDO de 'User.findOne()')
+        (value, { req }) => {
+          ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+          return User.findOne({ email: value }) ///////EIS O CÓDIGO EM QUESTÃO.
+            .then((user) => {
+              if (user) {
+                return Promise.reject(
+                  'Email already exists, please pick a different one'
+                );
+              }
+            });
+        }
+      )
+      .normalizeEmail(), ////vai converter todos os caracteres do email em LOWERCASE... pq é isso que queremos, com emails, queremos que sejam STORADOS ASSIM, na nossa database... (E que sejam verificados assim, quando fazemos login....)
+    body(
+      'password',
+      'Your password has to be made of only letters and numbers, and of 6 or more characters.'
+    ) ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS...
+      .isLength({ min: 6 })
+      .isAlphanumeric()
+      .trim(), ////VAI REMOVER TODOS OS WHITE SPACES DO PASSWORD inputtado...
+    // body('confirmPassword').equals(req.body.password).withMessage('Passwords do not match.') /////APPROACH QUE NÃO FUNCIONA/NÃO FUNCIONARÁ. --> DEVEMOS USAR O APPROACH DO 'cusotm validator' visto logo abaixo...
+
+    body('confirmPassword')
+      .custom(
+        ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, { req, loc, path }) => {
+          if (value !== req.body.password) {
+            console.log('ENTERED');
+            throw new Error('Passwords do not match.');
+          } else {
+            console.log(value, req.body.confirmPassword);
+            console.log('TEST');
+            return true;
+          }
+        }
+      )
+      .trim(),
+  ],
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SE OLHARMOS ISSO BEM DE PERTO,
+
+
+
+VAMOS PERCEBER 
+
+ 
+
+
+
+
+
+ QUE NÓS HAVÍAMOS ESCRITO um  'technical error',
+
+ 
+
+TUDO POR MEIO DAQUELA 
+
+
+
+ 'thrown new Error();'
+
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR ENTÃO NOS EXPLICA QUE 
+
+ESSE CÓDIGO AQUI:
+
+
+
+
+      .custom(
+        (value, { req, loc, path }) => {
+          if (value !== req.body.password) {
+            console.log('ENTERED');
+            throw new Error('Passwords do not match.');
+
+
+
+
+
+
+
+
+
+
+
+
+            --> NESSE CÓDIGO AÍ,
+             
+             GERALMENTE 
+
+             É o  PRÓPRIO 'EXPRESS' 
+
+             QUE FAZ 
+             O 
+
+             HANDLE 
+             DESSE 
+
+
+             'throw new Error()'... -------->
+
+
+
+
+
+
+             CERTO... MAS A QUESTÃO, AQUI, É QUE 
+
+             ESSA 
+
+             PACKAGE 
+
+             DE 
+
+             'express-validator'
+
+
+
+             __tAMBÉM __ 
+             FAZ 
+
+             HANDLE 
+             DESSES INPUTS... --------> E É EXATAMENTE __  ESSE 
+
+
+
+             ERORR 
+
+             HANDLING _ QUE 
+
+             o 
+
+             PROFESSOR 
+
+             VAI QUERER 
+
+             NOS MOSTRAR NAS PRÓXIMAS AULAS,
+
+
+
+             ANTES DE COMEÇARMOS 
+             A 
+
+             IMPLEMENTAR  ______ 'PROPER SOLUTIONS' PARA __ OS DIFERENTES TIPOS DE 
+
+
+
+             ERROR QUE PODEMOS/PODERÍAMOS TER...

@@ -1,0 +1,819 @@
+
+Agora devemos fazer com a outra 'ROUTE' também funcionar...
+
+
+
+(a rota de 
+
+
+
+
+'router.get('/location', (req, resp, next) => {
+    ...
+}')
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+Certo.... fazer esse negócio funcionar....
+
+
+
+
+Código completo de 'location.js':
+
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location', (req, resp, next) => {});
+
+
+module.exports = router;
+
+
+
+-----------------------------
+
+
+O objetivo do professor, aqui, é que agora os usuários de fato consigam um LINK 
+
+
+logo acima do botão 
+
+
+
+'Share Place' QUE 
+
+NÃO INCLUA TODA AQUELA URL GIGANTE (com as informações da localização do usuário), 
+
+mas sim  QUE 
+
+
+__INCLUA  ___ AQUELE ___ID___ QUE NÓS GERAREMOS/É GERADO no servidor....
+
+
+
+
+esse link será outputtado/gerado 
+
+
+lá naquele trecho de 'SharePlace' que 
+
+está escrito assim:
+
+
+
+
+
+.then(response => {
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+      });
+    this.shareBtn.disabled = false;
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${ /////////ESTE LOCAL AQUI, BASICAMENTE; QUEREMOS QUE ESSE URL COM O VALOR 'EXPLÍCITO' DO ENDEREÇO/LOCALIZAÇÃO DO USUÁRIO ___SEJA SUBSTITUÍDO____ PELO ID __ CRIADO E ARMAZENADO NO NOSSO SERVIDOR PARA AQUELE USUÁRIO....___
+      coordinates.lng
+    }`;
+  }
+
+
+
+------------------------------------------------
+
+
+
+
+Queremos, ademais, que quando esse link for CLICADO, nossa outra '___ROUTE___', A ROUTE 
+
+
+DE 'get' (
+'router.get('/location, (req, resp, next) => {});'
+
+
+
+
+
+
+), SEJA __ALCANÇADA COM SUCESSO___ PELO USUÁRio___.....
+
+
+
+
+ESSA ROTA DE 
+
+
+'GET' de 'location.js' 
+
+
+
+VAI ___FAZER LOAD__ DOS DADOS ___ DAQUELE ID ESPECÍFICO___...
+
+
+
+--------------------------------------
+
+
+
+BEM, DUAS COISAS QUE DEVEMOS FAZER PARA QUE ISSO FUNCIONE/ACONTEÇA:
+
+
+
+
+
+1) devemos mandar de volta (send back)  O ID 
+
+
+AO USUÁRIO/CLIENT... precisamos fazer isso para que 
+
+NO CLIENT NÓS CONSIGAMOS 
+
+___ENCODAR____ esse ID ___ EM UMA ____URL_____ (isso é necessário)...
+
+
+
+
+
+
+Para isso, o professor vai até 
+
+
+'location.js'
+
+
+
+e então edita o código 
+
+
+
+de 
+
+'router.post'....
+
+
+
+
+ex(código inicial):
+
+
+
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+Dentro desse lugar, o professor vai GERAR 
+
+
+O __iD ____ DO USUÁRIO ____ POR MEIO DA FUNÇÃO/MÉTODO 
+
+
+'Math.random()'....
+
+
+
+ELE VAI ARMAZENAR O VALOR DESSE 'Math.random()' DENTRO 
+
+
+DE UMA CONSTANTE DE NOME 'id'...
+
+
+
+
+ex:
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+Isso feito, o professor vai usar essa constante de 'id' mais abaixo, na propriedade 
+
+daquele objeto 'location' que está sendo pushado  para dentro de 'locationStorage' por meio 
+
+do código 
+
+
+'locationStorage.locations.push({})'...
+
+
+
+
+ex:
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+    locationStorage.locations.push({
+        id: id, ///////VALOR DA CONSTANTE 'id' foi forwardado aqui....
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+----------------------------------------------
+
+
+
+POR FIM, PROFESSOR DIZ QUE TAMBÉM VAMOS QUERER ENVIAR DE VOLTA ESSE ID 
+
+na 'response' ('resp')  NA FORMA DE DADOS JSON...
+
+
+
+O professor diz que tvz seria bom criar uma propriedade 
+
+de nome 
+
+'locId' (locationId) COM ESSE 
+
+
+VALOR DA CONSTANTE 'id' armazenado em seu interior...
+
+
+
+
+Professor diz que esse envio do ID na response É ___iMPORTANTE___, pq caso contrário 
+
+
+NÓS NÃO SEREMOS CAPAZES DE, no client, __gERAR UM LINK ____ COM O ID __ DO USUÁRIO 
+METIDO EM SEU MEIO...
+
+
+
+
+ex:
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+    locationStorage.locations.push({
+        id: id, ///////VALOR DA CONSTANTE 'id' foi forwardado aqui....
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+----------------------------------------------------------------------------
+
+
+
+
+AÍ, DE VOLTA AO 'CLIENT' (no código de 'SharePlace.js'), NÓS DEVEMOS/VAMOS TER QUE PEGAR 
+
+
+TODO AQUELE CÓDIGO 
+
+
+
+
+'    this.shareBtn.disabled = false;
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${
+      coordinates.lng
+    }`;
+  }
+
+  ',
+   
+
+   ESSE CÓDIGO QUE FAZ O ___DISABLE_____ DO BOTÃO e assim por diante, 
+
+   E ENTÃO 
+
+
+   INSERÍ-LO DENTRO DAQUELE 
+
+
+__ÚLTIMO '.THEN() BLOCK' da promise chain do FETCH.....
+
+
+
+
+
+ex (ISSO):
+
+
+
+
+
+
+
+
+  selectPlace(coordinates, address) {
+    if (this.map) {
+      this.map.render(coordinates);
+    } else {
+      this.map = new Map(coordinates);
+    }
+    fetch('http://localhost:3000/add-location', {
+      method: 'POST',
+      body: JSON.stringify({
+        address: address,
+        lat: coordinates.lat,
+        lng: coordinates.lng
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+      });
+    this.shareBtn.disabled = false;
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${
+      coordinates.lng
+    }`;
+  }
+
+
+
+
+
+
+
+
+
+
+VIRA ISSO:
+
+
+
+
+
+
+
+  selectPlace(coordinates, address) {
+    if (this.map) {
+      this.map.render(coordinates);
+    } else {
+      this.map = new Map(coordinates);
+    }
+    fetch('http://localhost:3000/add-location', {
+      method: 'POST',
+      body: JSON.stringify({
+        address: address,
+        lat: coordinates.lat,
+        lng: coordinates.lng
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+            this.shareBtn.disabled = false; //////código que desabilita o botão...
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${
+      coordinates.lng
+    }`;
+      });
+
+  }
+
+
+  -------------------------------------------
+
+
+
+
+
+FAZEMOS ESSE TRANSPLANTE PARA DENTRO DO '.THEN() BLOCK' simplesmente 
+
+para que 
+
+ESSE DISABLE DO BOTÃO 
+
+
+__aPENAS ACONTEÇA ___ UMA VEZ QUE 
+
+A 'data' FOR/TENHA SIDO 
+
+MANDADA COM SUCESSO AO SERVIDOR E QUE ENTÃO 
+
+
+JÁ TENHAMOS CONSEGUIDO UMA RESPONSe do serverside...
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+certo....
+
+
+
+aí, daquela 'data' obtida por meio 
+
+da promise chain, vamos querer pegar A ___LOCATION ___ID ___ ENVIADA PELA 
+
+RESPONSE, A LOCATION ID EMBALADA DENTRO DA RESPONSE ENVIADA PELO SERVERSIDE...
+
+
+
+
+Professor diz que é possível obter isso por meio da referência/escrita de 'data.locId' (pq 'data' é o objeto RESPONSE, e o 'locId' é a propriedade em seu interior que TERÁ O VALOR de 'id'... )
+
+
+
+
+
+EX:
+
+
+
+
+
+selectPlace(coordinates, address) {
+    if (this.map) {
+      this.map.render(coordinates);
+    } else {
+      this.map = new Map(coordinates);
+    }
+    fetch('http://localhost:3000/add-location', {
+      method: 'POST',
+      body: JSON.stringify({
+        address: address,
+        lat: coordinates.lat,
+        lng: coordinates.lng
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+          const locationId = data.locId;
+            this.shareBtn.disabled = false; //////código que desabilita o botão...
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${
+      coordinates.lng
+    }`;
+      });
+
+  }
+
+
+
+
+
+  --------------------------------------------------------
+
+
+
+  COMO 
+
+
+  'locId' faz parte da nossa 'JSON RESPONSE', ela naturalmente será 
+
+
+  RECEBIDA PELO 
+
+  NOSSO CLIENTSIDE...
+
+
+
+  e, de fato, no clientside 
+
+  essa resposta é 
+
+  RECEBIDA E ENTÃO PARSEAADA POR MEIO DO 
+
+
+  CÓDIGO DA 'FETCH API' 
+
+
+
+  e do 
+
+
+
+  '.then(response => {
+      return response.sjon();
+  })' 
+
+
+  E OS '.THEN()' blocks subsequentes....
+
+
+
+  E como nós vamos CERTAMENTE receber um objeto com esse field 
+
+
+  de 'locId', podemos 
+
+  UTILIZÁ-LO COM SUCESSO 
+
+  no código 
+
+
+
+  'const locationId = data.locId;'...
+
+
+
+
+  E AGORA A LOCATION ID DEVERÁ SER PARTE DA NOSSA URL, EFETIVAMENTE...
+
+
+
+  lembre-se:
+
+
+
+
+  a url originariamente/normal/do módulo anterior era:
+
+
+
+
+'
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${
+      coordinates.lng
+    }`;
+
+'
+
+
+
+vamos alterar o espaço LOGO APÓS O '?' (queryParam...).
+
+
+
+ficará assim:
+
+
+
+
+'
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?location=${locationId}`;
+    });
+
+'
+
+
+
+
+COM ISSO, A LOCATION ID criada/armazenada no nosso servidor AGORA 
+
+
+SERÁ INJETADA NESSE LOCAL..., nessa url que será disponibilizada ao usuário...
+
+
+
+
+
+Agora a url conterá o ID/LOCATION ID criado/armazenado no nosso servidor, em vez 
+
+DO 'FULL ADDRESS DATA' que tínhamos antes...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+selectPlace(coordinates, address) {
+    if (this.map) {
+      this.map.render(coordinates);
+    } else {
+      this.map = new Map(coordinates);
+    }
+    fetch('http://localhost:3000/add-location', {
+      method: 'POST',
+      body: JSON.stringify({
+        address: address,
+        lat: coordinates.lat,
+        lng: coordinates.lng
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+          const locationId = data.locId;
+            this.shareBtn.disabled = false; //////código que desabilita o botão...
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${
+      location.origin
+    }/my-place?${locationId}`;
+      });
+
+  }
+
+
+
+
+----------------------------
+
+
+
+CERTO.
+
+
+
+ISSO FEITO, DEVEMOS RESETTAR NOSSO SERVIDOR....
+
+
+
+
+
+
+
+CERTO.
+
+
+
+
+RECARREGAMOS O SERVERSIDE e 
+
+
+vamos até o frontend..
+
+
+
+VAMOS até os botões...
+
+
+
+agora quando clicamos nos botões,
+
+
+
+
+recebemos 
+
+
+links 
+
+
+
+como 
+
+
+
+'http://localhost:8080/my-place?location=0.010574207836536731'....
+
+
+
+( e esses códigos/url REALMENTE FUNCIONAM, mostram coisas em um mapa, em uma nova 
+página, se tivermos uma google maps API key....)
+
+
+
+------------------------------------------
+
+
+
+AGORA TAMBÉM DEVEMOS NOS ASSEGURAR QUE CONSIGAMOS FAZER 'FETCH' daquela LOCATION por meio 
+
+daquele id.......
+
+
+
+Vamos fazer isso por meio daquela 
+
+
+
+URL/PATH 
+
+
+expresso 
+
+
+
+em 
+
+'router.get('/location', (req, resp, next) => {})'   (NESSA URL, COM O REQUEST DE TIPO 'GET', SERÁ CONSEGUIDO O 'FETCH' DA location do usuário...)

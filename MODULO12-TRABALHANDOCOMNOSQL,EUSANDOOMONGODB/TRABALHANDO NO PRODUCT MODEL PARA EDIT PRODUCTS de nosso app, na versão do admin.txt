@@ -1,0 +1,1271 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> AGORA É HORA DE EDITAR PRODUCTS... 
+
+
+
+
+
+
+--> NOSSO CÓDIGO DE 'EDIT A PRODUCT',
+
+lá 
+
+
+em 
+
+'Product.js', nosso model, ficou assim:
+
+
+
+
+
+
+
+
+
+
+static editProduct(productId, title, price, imageUrl, description) {
+
+
+
+  const db = getDb();
+
+
+
+  const updateDocument = {
+
+    $set: {
+      title: title,
+      price: price,
+      imageUrl: imageUrl, 
+      description: description
+    }
+
+  }
+
+
+
+ return db.collection('products').updateOne({_id: ObjectId(productId)}, updateDocument)
+ .then(
+   (result) => {
+
+    console.log(result);
+   }
+ )
+ .catch(
+   (err) => {
+        console.log(err);
+   }
+ )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------> OK.... 
+
+
+
+
+
+
+
+
+o professor diz que primeiramente 
+
+
+
+quer 
+
+
+editar 
+
+o 
+
+
+controller 
+
+de 
+
+
+'exports.getEditProductPage = (req, res, next) => {
+
+
+
+
+}'
+
+
+
+
+
+
+
+--> NESSE NEGÓCIO,
+
+
+
+NOSSO CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+  if (!editMode) {
+    return res.redirect('/'); 
+  }
+
+  const productId = req.params.productId;
+
+
+
+
+  Product.getSingleProduct(productId)
+  .then(
+    (product) => {
+
+
+      if(!product) {
+
+        return;
+      }
+
+            res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                prod: product,
+      })
+
+    }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+};
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+ok... usamos o 
+
+
+
+
+'getSingleProduct'.... ------->
+
+
+
+
+
+e aí renderizamos nossa page com essa data aí....
+
+
+
+
+
+
+
+
+
+
+
+ok... --> professor substitui todos os fields de 
+
+
+'product.id' 
+
+
+por 
+
+
+product._id,
+
+
+
+lá no 
+
+'edit-product.ejs'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ok.. tudo certo...
+
+
+
+
+
+
+
+
+------> agora estamos 'VENDO A DATA'
+
+
+do product que queremos 
+
+
+edit...
+
+
+
+
+
+
+
+---> AGORA PARA CONSEGUIR EDIT,
+
+
+o CÓDIGO É OUTRO É O CÓDIGO 
+
+DESTE CONTROLLER AQUI:
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+  Product.editProduct(productId, title, price, imageUrl, description)
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+};
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+ok... PROFESSOR EXPLICA QUE 
+
+ELE REALMENTE VAI QUERER USAR 
+
+
+
+esse 'id' aí, o id de 'productId',
+
+
+por isso 
+
+ele 
+ajusta 
+
+o 
+
+'productId'
+
+
+lá em 
+
+
+'models'...
+
+
+
+
+
+
+E REALMENTE, O CÓDIGO DELE FICOU UM POUCO DIFERENTE DO NOSSO....
+
+
+PQ ELE 
+
+INSERIU 
+
+
+ESSE 
+
+'id'
+
+
+
+LÁ NO CONSTRUCTOR MESMO, E NÃO QUIS 
+
+USAR 
+
+O MÉTODO 
+
+
+'getSingleProduct()' para fazer isso...
+
+
+
+
+
+
+
+------> ELE NOS EXPLICA QUE 
+
+ESSE 
+
+
+
+'id' vai ser OPCIONAL no call do constructor de 'Product',
+
+e será 
+usado 
+
+para 
+
+
+
+
+DIFERENCIAR ENTRE 
+
+OPERAÇÕES 
+
+DE 
+
+'EDIT' 
+
+E 
+'ADD', no caso...
+
+---------------------------
+
+
+
+OK... 
+
+
+
+
+
+
+E AÍ NO PRODUCT ELE VAI QUERER FAZER __ AQUELA GAMBIARRA LÁ,
+
+ELE 
+
+
+
+VAI QUERER,
+
+
+
+DENTRO 
+
+
+
+DO MÉTODO 
+
+'save(){}',
+
+
+
+
+
+QUE TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+class Product {
+  constructor(title, price, imageUrl, description, id) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this._id = id;
+  }
+
+
+
+
+
+  save() {
+   const db = getDb();
+
+
+ return db.collection('products')
+ 
+
+.insertOne(this) //vai se referir a PRODUCT... este mesmo product do constructor 'Product'....
+   .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   )
+  }
+
+
+
+
+
+
+
+
+
+
+---> dentro desse código, professor vai querer 
+
+
+
+colocar um if check
+ 
+
+ CHECANDO POR 
+
+
+
+ '(this._id)'.... ------------>
+
+
+
+
+  
+
+  SE ISSO ESTIVER 'SET',
+
+  PROFESSOR 
+  VAI QUERER 
+
+
+  RODAR 
+
+  O CONJUNTO DE CÓDIGO QUE VAI 'UPDATE THE PRODUCT'
+
+  em vez 
+
+  de adicionar um novo product....
+
+
+
+
+
+
+
+
+
+  O CÓDIGO EM QUESTÃO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  save() {
+   const db = getDb();
+
+
+
+
+if(this._id) {
+
+    ////Update the product 
+
+} else {
+
+
+ return db.collection('products')
+.insertOne(this) 
+   .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   )
+  }
+}
+
+
+
+
+  ----------------------------------------------------------
+
+
+
+
+
+
+
+
+  -----> ok.... AÍ, DEPOIS DISSO, ELE VAI 
+  QUERER 
+
+  DECLARAR UMA VARIABLE
+   
+   DE 
+
+
+   'dbOp',
+
+   inicialmente UNDEFINED...
+
+
+
+
+
+
+
+   -_> NO CASE DE 'this._id' = true,
+
+
+
+
+   PROFESSOR VAI QUERER 
+
+   que 
+
+
+   'dbOp' 
+
+
+   SEJA EQUIVALENTE AO 
+
+
+   CÓDIGO QUE 
+
+   VAI 
+
+
+   RETORNAR UMA PROMISE QUE __ VAI __ EDIT__ O PRODUCT....
+
+
+
+
+
+
+   ----> JÁ NO CASE DE 'if (!this._id)',
+
+
+   O _ELSE__ CASE_,
+
+
+   professor vai querer 
+
+   que 
+
+
+   'dbOp'
+
+
+   SEJA 
+
+    UMA PROMIES QUE VAI -___aDD UM NOVO PRODUCT___....
+
+
+
+
+
+
+    ex:
+
+
+
+
+
+
+
+
+
+
+
+  save() {
+   const db = getDb();
+    let dbOp;
+
+
+
+if(this._id) {
+
+    ////Update the product 
+
+
+    dbOp = ....;
+
+} else {
+   
+
+dbOp = db.collection('products').insertOne(this); //EIS O CÓDIGO EM QUESTÃO.
+
+  }
+
+
+    return dbOp ///////EIS O CÓDIGO EM QUESTÃO.
+   .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   )
+
+
+}
+
+
+
+
+
+
+-----------------
+
+
+
+
+ok...
+
+
+
+COM ISSO,
+
+
+SALVAMOS UM 
+
+
+GRANDE BOCADO DE CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+class Product {
+  constructor(title, price, imageUrl, description, id) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this._id = id;
+  }
+
+  save() { 
+   const db = getDb();
+
+   let dbOp;
+
+
+
+
+
+
+if (this._id) {
+        ///runs the code that UPDATES a product that ALREADY EXISTS on the database...
+
+        dbOp = db.collection('products').updateOne({_id: ObjectId(this._id)}, updateDocument);
+
+} else { 
+
+  dbOp =  db.collection('products').insertOne(this) //vai se referir a PRODUCT... este mesmo product do constructor 'Product'....
+
+
+
+}
+
+
+return dbOp  ///será executado DE QUALQUER JEITO, basicamente...
+      .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  OK, AGORA SÓ PRECISAMOS 
+
+
+
+
+  ALTERAR 
+
+
+  A FORMA 
+
+  DE INSTANCIAÇÃO DE 
+
+
+
+  'Product'
+   
+
+
+
+   NÓS NOSSOS CONTROLLERS, PARA DIFERENCIAR 
+   ENTRE 
+
+   O 
+
+
+
+
+   CALL DE SAVE PARA 'edit' e 'add'
+
+   um product...
+
+
+
+
+
+
+
+
+
+
+
+   --> OK... NOVAMENTE,
+
+
+   PROFESSOR 
+
+   VAI QUERER 
+
+   USAR 
+
+
+   ''' dbOp = db.collection('products').updateOne({_id: ObjectId(this._id)}, updateDocument);'''
+
+
+
+
+
+
+
+
+
+
+   --> ELE EXPLICA QUE 
+
+   'updateOne',
+
+
+   QUE UPDATA 
+
+   SÓ 1 DOCUMENT (duh)....
+
+
+
+
+
+   ---> OK...
+
+
+
+
+   O 'updateOne'
+
+
+   ACEITA/EXIGE 2 PARÂMETROS...
+
+
+
+
+
+   --> O PRIMEIRO PARÂMETRO É 
+
+   O 
+
+   'FILTER' QUE 
+   DEFINE QUAL DOCUMENT VAMOS QUERER UPDATAR... --> no caso,
+
+   vamos passar um 
+
+
+
+
+JAVASCRIPT OBJECT... --> professor explica que 
+
+
+
+PODEMOS FILTRAR POR UMA 
+
+'QUALITY',
+
+
+OU ENTÃO FILTRAR POR QUERIES MAIS COMPLEXAS (explicadas no curso mongodb do professor)....
+
+
+
+
+
+------> AQUI, NO CASO, PROFESSOR SÓ VAI QUERER ACHAR UM DOCUMENT 
+
+EM QUE 
+
+
+'_id' seja equivalente 
+
+a 'ObjectId(this._id)'...
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok....... tudo certo.... 
+
+
+MAS VAMOS PRECISAR 
+
+
+
+DO 
+
+SEGUNDO PARÂMETRO,
+
+
+QUE É O PARÂMETRO 'object' QUE 
+
+DIZ __ QUAIS FIELDS/PROPERTIES
+
+DENTRO 
+
+
+DESSE 
+
+
+DOCUMENT DEVEM SER 
+
+
+UPDATADOS....
+
+
+
+
+
+--> VAMOS PASSAR ESTE VALOR AQUI:
+
+
+
+
+
+
+
+
+
+
+   const updateDocument = {
+
+    $set: {
+      title: title,
+      price: price,
+      imageUrl: imageUrl, 
+      description: description
+     }
+
+  }
+
+
+
+
+
+
+
+  ------------------------------
+
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR DIZ QUE 
+
+  DEVEMOS 
+
+  ESCREVER 1 OBJECT EM QUE
+
+
+  'we describe the operation, the update operation we want'...
+
+
+
+
+
+
+
+
+  --> E FAZEMOS ISSO 
+
+
+  POR MEIO 
+
+
+  __DE UM PROPERTY NAME ESPECIAL,
+
+
+
+  QUASE COMO UM 'RESERVED NAME',
+
+  em outras palavras,
+
+
+
+
+
+que escrevemos 
+
+
+assim:
+
+
+
+
+
+
+
+'{
+
+
+    $set: {}
+}
+
+'
+
+
+
+
+NOVAMENTE,
+
+
+'$set: {}'
+
+
+
+ACEITA __ UM OBJECT COMO VALUE,
+
+E AQUI 
+
+NÓS __DESCREVEMOS __ AS MUDANÇAS 
+
+
+QUE 
+
+QUEREMOS 
+
+APLICAR 
+
+
+
+
+
+NO DOCUMENT EXISTENTE QUE ENCONTRAMOS 
+
+
+com aquele critério...
+
+
+
+
+
+EU ESCREVI ISTO:
+
+
+
+
+
+ const updateDocument = {
+
+    $set: {
+      title: title,
+      price: price,
+      imageUrl: imageUrl, 
+      description: description
+     }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+MAS PROFESSOR NOS EXPLICA QUE PODERÍAMOS 
+
+
+USAR ESTA SINTAXE, EM VEZ DISSO:
+
+
+
+
+
+ const updateDocument = {
+
+    $set: {
+                this
+     }
+
+  }
+
+
+
+
+
+
+
+
+
+
+(ISSO PQ O 'this' já vai representar nosso 
+
+
+objeto/model de 'Product', com todos seus fields certinhos....) -------> 
+
+
+
+
+
+
+BTW::: O FIELD DE '_id' __ NÃO 
+
+É OVERWRITTADO __ 
+
+POR MEIO DESSA OPERAÇÃO,
+
+MESMO QUE 
+VOCÊ 
+ESCREVA 
+
+
+''
+ const updateDocument = {
+
+    $set: {
+                this
+     }
+
+  }
+
+''',
+
+
+
+
+SÓ OS OUTROS FIELDS SERÃO OVERWRITTADOS... -> essa é uma feature do MONGODB, o field '_id' é tecniamente PERMANENTE...
+
+
+
+
+
+
+
+
+
+------> ok.......... com isso, 
+
+
+
+
+devemos 
+
+
+
+
+terminar nosso controller, que 
+
+
+por enquanto está assim (eu acho que já está pronto, mas oh well):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+console.log(productId);
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+
+
+
+
+  Product.save( title, price, imageUrl, description, productId) ///CÓDIGO DO PROFESSOR... UM POUCO MAIS OPTIMIZADO DO QUE O MEU, POIS USA UM MESMO MÉTODO, 'save()', para RODAR 2 OPERAÇÕES DIFERENTES, 1 OPERAÇÃO DE EDIT E OUTRA DE ADD....
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+
+
+-------------------------------
+
+

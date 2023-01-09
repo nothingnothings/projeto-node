@@ -1,0 +1,2913 @@
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS 
+
+
+NOS CERTIFICAR DE QUE SOMOS CAPAZES 
+
+DE 
+
+'SAVE OUR PRODUCT TO A FILE'... -------------> OU SEJA,
+
+
+
+DEIXAREMOS 
+
+
+
+
+DE 
+
+
+
+
+ARMAZENAR NOSSOS PRODUCTS NAQUELE 
+
+array 
+
+
+
+em 'product.js',
+
+
+aquele 
+
+
+
+array 
+visto em 
+
+
+
+
+'''''''''''''''''''''
+
+const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    // return this.products;
+    return products;
+  }
+};
+
+
+'''''''''''''''
+
+
+
+
+
+
+
+
+
+
+----> ____ PARA ISSO,
+
+QUANDO CHAMAMOS 
+
+
+'SAVE',
+
+esse MÉTODO 
+
+
+nessa class aí,
+
+
+VAMOS QUERER __ SALVAR NOSSO PRODUCT EM UM ARQUIVO,
+
+E NÃO NESSE ARRAY (que está sendo alterado por 'push'....)
+
+
+
+
+
+
+
+
+
+
+--------> E É CLARO QUE NESSE ARQUIVO VAMOS QUERER TER __tODOS OS PRODUCTS__,
+
+
+TANTO 
+
+
+OS 
+
+VELHOS __ COMO OS NOVOS... -----------> PORTANTO, 
+
+
+
+ANTES 
+
+
+DE 
+
+MAIS NADA,
+
+
+
+__ NÓS PRECISAMOS NOS TORNAR CAPAZES DE 
+
+
+
+TRABALHAR COM O FILE SYSTEM DE NOSSO SERVER....
+
+
+
+
+
+
+
+
+
+--> para isso, 
+
+
+professor 
+
+vai 
+
+
+importar 
+
+o 
+
+clássico 
+
+
+
+'const fs = require('fs');'
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+////const products = [];
+
+
+const fs = require('fs');
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    // return this.products;
+    return products;
+  }
+};
+
+
+
+----------------------------------
+
+
+
+---> CERTO....
+
+
+
+
+TAMBÉM VAMOS PRECISAR DE UM 'PATH' especial,
+
+
+OBTIDO 
+
+
+POR MEIO 
+
+
+
+DO MODULE 'path'....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    return products;
+  }
+};
+
+------------------------------
+
+
+
+
+
+
+
+
+OK, MAS COMO ESCREVEMOS ISTO?
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const fs = require('fs');
+
+
+const path = require('path');
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    products.push(this);
+  }
+
+  static fetchAll() {
+    return products;
+  }
+};
+
+
+---------------------------------
+
+
+
+
+
+
+--> VAMOS QUERER 
+
+
+
+
+USAR 
+
+
+UMA PASTA, PROVAVELMENTE... ---> pasta chamada de 
+
+'data',
+
+
+
+penso eu...
+
+
+
+
+
+
+
+
+
+--> primeiramente,
+
+
+dentro de 'save() {}',
+
+
+
+
+PROFESSOR 
+
+
+
+CRIA O PATH...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+save() {
+    const path = path.join()
+}
+
+
+
+
+-------
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+OK.. ACHO QUE ESTOU CONSEGUINDO....
+
+
+
+
+
+
+
+
+
+
+
+CÓDIGO ESTÁ FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+  save() {
+    // products.push(this);
+    const filePath = path.join(__dirname, '..', 'data' );
+
+    console.log(filePath);
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+  --> aquele 'filePath' 
+
+
+  REALMENTE É 
+
+  '''A:\projeto4 - NODEJS\MODULO7-OMODELVIEWCONTROLLER-THEPATTERN\novonovoprojeto5-templatingengines\data''''
+
+
+
+
+
+
+
+
+
+  -----> O PRÓXIMO PASSO É _ EFETIVAMENTE SALVAR ALGUMA COISA DENTRO 
+
+
+
+  DESSE ARQUIVO, provavelmente um ARQUIVO .TXT...
+
+
+
+
+
+
+
+
+  ------------------------------
+
+
+
+
+  OK.... MEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+  
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    // products.push(this);
+    const filePath = path.join(__dirname, '..', 'data' );
+
+    console.log(filePath);
+
+
+    console.log(JSON.stringify(this));
+
+    fs.writeFile(filePath + '/' + 'ProductList', JSON.stringify(this), (err) => {
+      console.log(err);
+    })
+
+
+
+  }
+
+  static fetchAll() {
+
+    //return this.products;
+    return products;
+  }
+};
+
+
+
+
+
+
+
+------> E ESSE CÓDIGO DE 'save()"
+
+
+REALMENTE 
+
+
+ESTÁ 
+
+
+SALVANDO 
+
+
+
+
+AQUELA DATA NO MEU FILESYSTEM,
+
+mas o problema 
+
+É 
+
+QUE 
+
+
+
+O ÚLTIMO 'PRODUCT' QUE 
+
+ADICIONAMOS SEMPRE ACABA 'OVERWRITTANDo' 
+
+
+
+
+O arquivo anterior.... (assim, nosso arquivo sempre fica COM O 
+
+
+ÚLTIMO 
+
+'product',
+
+
+
+E  NUNCA COM MAIS DO Q ESSE ÚLTIMO PRODUCT...)
+
+
+
+
+
+
+
+--> OK, MAS EU QUERO QUE 
+
+PRODUCTS VÃO SENDO ADICIONADOS EM UMA lista.... e não que só 
+1
+ product exista nesse arquivo...
+
+
+
+
+
+
+
+
+
+
+ --> PARA QUE CONSIGA FAZER ISSO, PROVAVELMENTE TEREI DE USAR OUTRO MÉTODO,
+
+
+
+ e não 
+
+ 'writeFile'.... 
+
+
+
+
+
+ --> UM USUÁRIO FALA DE UM 
+
+ 'appendFile',
+
+ QUE PODERIA SER USADo...
+
+
+
+
+
+
+ EX:
+
+
+ fs.appendFile("file.txt", 'Text',function(err){
+if(err) throw err;
+console.log('IS WRITTEN')
+});
+
+
+
+
+
+
+------------------------
+
+
+
+
+OK... ESSE CÓDIGO REALMENTE FUNCIONOU...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  save() {
+    // products.push(this);
+    const filePath = path.join(__dirname, '..', 'data' );
+
+    console.log(filePath);
+
+
+    console.log(JSON.stringify(this));
+
+    // fs.writeFile(filePath + '/' + 'ProductList', JSON.stringify(this), (err) => {
+    //   console.log(err);
+    // })
+
+
+    fs.appendFile(filePath + '/' + 'ProductList', JSON.stringify(this), (err) => {
+      console.log(err);
+    })
+
+  }
+
+  static fetchAll() {
+
+    //return this.products;
+    return products;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> O ÚNICO PROBLEMA, AGORA,
+
+
+É 
+
+que 
+
+eu ACHO QUE 
+
+
+ESSE 
+
+
+
+'fs.writeFile()'
+
+É 
+
+UMA ASYNC FUNCTION, E POR ISSO TVZ 
+
+FOSSE MELHOR USAR ASYNC/AWAIT COM ELE....
+
+
+
+
+
+
+
+
+
+-> tipo assim:
+
+
+
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  async save() {
+    // products.push(this);
+    const filePath = path.join(__dirname, '..', 'data' );
+
+    console.log(filePath);
+
+
+    console.log(JSON.stringify(this));
+
+    // fs.writeFile(filePath + '/' + 'ProductList', JSON.stringify(this), (err) => {
+    //   console.log(err);
+    // })
+
+
+    const result = await fs.appendFile(filePath + '/' + 'ProductList', JSON.stringify(this), (err) => {
+      console.log(err);
+    })
+
+  }
+
+  static fetchAll() {
+
+    //return this.products;
+    return products;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> NÃO SEI SE 
+
+ESSE 
+
+'' 'async/await'
+
+
+FAZ ALGUMA DIFERENÇA,
+
+MAS É BOM O TER...
+
+
+
+
+
+
+
+
+-----> meu arquivo 'ProductList',
+
+LÁ EM 
+
+'data',
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+{"title":"ASC"}{"title":"acasscasc"}{"title":"asasaas"}{"title":"caca"}
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS PROFESSOR DIZ QUE PODEMOS, EM VEZ DE 
+
+USAR 
+
+AQUELA DEFINIÇÃO 
+
+DE 
+
+'path'
+
+
+
+ANTIQUADA,
+
+
+
+
+USAR AQUELA UTILITY FUNCTION 
+
+
+
+de 'path.js'
+
+
+LÁ 
+
+
+
+NO FOLDER 'util'..
+
+
+
+
+
+
+
+--> bASTA ESCREVER ASSIM:
+
+
+
+
+
+
+
+
+const pathHelper = require('../util/path'),
+
+
+
+
+
+
+
+TIPO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+  async save() {
+    const filePath = path.join(pathHelper, 'data', 'ProductList.txt');
+
+    console.log(filePath);
+
+
+    console.log(JSON.stringify(this));
+
+
+
+
+    const result = await fs.appendFile(filePath, JSON.stringify(this), (err) => {
+      console.log(err);
+    })
+  }
+
+  static fetchAll() {
+
+    return products;
+  }
+};
+
+
+
+----------------------
+
+
+
+
+CERTO, ISSO FUNCIONOU...
+
+
+
+
+
+
+
+--> MAS PROFESSOR DÁ UMA EXTENSÃO DE '.json' ao NOSSO ARQUIVO,
+
+PQ ELE VAI QUERER 
+
+ARMAZENAR NOSSOS DADOS EM UM FORMATO JSON...
+
+
+
+
+
+
+
+
+-----> CERTO... ISSO FUNCIONOU....
+
+
+
+
+
+---------> NÓS ARMAZENAMOS 
+
+
+NOSSO PRODUCT ALI...
+
+
+
+
+
+
+
+
+
+
+---> MAS O PROBLEMA, AQUI, É QUE O PROFESSOR 
+
+
+FEZ 
+
+UM 
+
+APPROACH DIFERENTE...
+
+
+
+
+
+
+
+
+
+
+-----> ELE DIZ QUE __ ANTES___ DE 
+
+
+
+
+ARAMZENARMOS NOSSO PRODUCT ALI DENTRO,
+
+
+NÓS PRECISAMOS 
+
+FAZER 
+
+'READ'
+
+DESSA 
+
+FILE 
+
+de 
+
+'ProductList'...
+
+
+
+
+
+
+-> POR ISSO O PROFESSOR VAI ESCREVEr 
+
+
+
+'fs.readFile()',
+
+
+
+
+O QUE VAI 
+
+
+__LER TODO O CONTEÚDO DE UM ARQUIVO...
+
+
+
+
+
+
+
+
+
+--> E AÍ, BTW,
+
+
+
+
+_ PROFESSOR RESSALTA QUE PARA 
+
+
+ARQUIVOS MT GRANDES 
+
+HÁ 
+
+MANEIRAS MAIS EFICIENTES 
+
+
+DE 
+
+
+FAZER 'READ' 
+
+DE 
+
+ARQUIVOS 
+
+
+
+DO NOSSO SERVIDOR,
+
+
+
+PQ OBVIAMENTE VOCÊ NÃO VAI QUERER 
+
+FAZER 
+
+'READ' DELES 
+
+
+__'all into memory'
+
+ANTES DE TRABALHAR COM ELEs... (você pode LÊ-LOS COMO UMA ___ STREAM,
+
+como vimos 
+
+
+em aulas anteriores...) -----> VOCÊ PODE CRIAR UMA 
+
+
+
+'READ STREAM'
+
+por meio 
+
+da funçaõ
+ 
+
+
+ 'fs.createReadStream()'.....
+
+
+
+
+
+
+
+
+--> CERTO, MAS NÓS PODEMOS FAZER READ DE NOSSO ARQUIVO,
+
+NÃO HÁ NADA DE ERRADO COM ISSO...
+
+
+
+
+
+
+
+professor vai escrever 
+
+
+
+
+'fs.readFile(filePath, (err, fileContent) => {
+
+
+
+
+
+}
+)
+
+
+
+
+
+
+
+
+NESSE SEGUNDO PARÂMETRO,
+
+
+'CALLBACK FUNCTION,'
+
+
+
+__VAMOS RECEBER:
+
+1) objeto erro 
+
+
+2) UM BUFFER,
+
+QUE 
+
+TERÁ NOSSA DATA DESEJADA.. ------> 
+
+
+
+
+
+
+PROFESSOR 
+
+
+DECIDE LOGGAR O 'FILE CONTENT',
+
+
+
+
+
+
+
+tipo assim:
+
+
+fs.readFile(filePath, (err, fileContent) => {
+
+
+    console.log(fileContent);
+
+
+})
+
+
+
+
+
+
+
+
+
+--> APERTAMOS 
+
+'ADD A PRODUCT',
+
+
+para ver o resultado disso no nosso código...
+
+
+
+
+
+
+
+
+
+
+OK.... CONSEGUIMOS AQUELE BUFFER:
+
+
+
+<Buffer 7b 22 74 69 74 6c 65 22 3a 22 61 63 61 63 61 73 61 73 65 71 65 71 77 65 22 7d>
+
+
+
+
+
+
+
+
+
+
+-----> TEMOS QUE DECRIPTÁ-LO...
+
+
+
+
+
+
+
+--> devemos ver as aulas anteriores sobre FILE SYSTEM....
+
+
+
+
+
+
+
+
+
+-> TÍNHAMOS AQUELES MÉTODOS/listeners clunky 
+
+
+de 
+
+'req.on()'... --> mas isso é mt clunky, n vale a pena...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+o 
+
+'console.log(fileContent)'
+
+
+
+
+
+DEU 
+
+''''UNDEFINED''' 
+
+JUSTAMENTE 
+
+
+PQ 
+
+AINDA NÃO TEMOS ESSE ARQUIVO, ELE AINDA NÃO EXISTE... -----> 
+
+
+
+
+
+MAS EU RECEBI, PQ ESSE ARQUIVO JÁ EXISTIA NO MEU FILESYSTEM....
+
+
+
+
+
+
+
+
+
+--------> professor console.logga o 'err',
+
+
+que 
+
+diz 
+
+
+'''NÃO EXISTE UMA PASTA/FILE COM ESSE NOME AÍ'...  ------> 
+
+
+
+
+
+
+
+NESSE CASO,
+
+PROFESSOR ESCREVE UM IF CHECK 
+
+___PARA CONTINUAR _ EXECUTANDO O __
+'readFile'
+
+
+
+
+
+MESMO EM 
+
+CASES EM QUE 
+
+
+
+______ NÃO ENCONTRAMOS/NÃO É POSSÍVEL ENCONTRAR ESSE ARQUIVO...
+
+
+
+
+
+
+--. para isso,
+
+ele 
+
+escreve:
+
+
+
+fs.readFile(filePath (err, fileContent) => {
+
+        if (err) {
+
+
+        }
+
+})
+
+
+
+
+
+
+
+-----> VAMOS CHECAR SE TEMOS UM 'ERROR'... --> SE TIVERMOS UM ERROR,
+
+
+
+PROFESSOR  __ VAI QUERER 
+
+
+'CREATE A NEW EMPTY ARRAY' (isso pq ainda não temos/não teremos esse arquivo 
+
+'ProductList'...
+)
+
+
+
+
+
+
+-------> PARA ISSO,
+
+
+
+PROFESSOR ESCREVE:
+
+
+
+
+
+
+
+
+
+
+fs.readFile(filePath (err, fileContent) => {
+        let products = [];
+        if (err) {
+
+
+        }
+
+})
+
+
+
+
+----> ISSO VAI CRIAR UM ARRAY DE 'products'
+
+VAZIO...
+
+
+
+
+
+
+
+
+--> E SE NÓS __ NÃO CONSEGUIRMOS __aLGUM ERROR (como 'esse arquivo não existe'),
+
+
+
+
+O __ PROFESSOR __ VAI QUERER __
+
+
+
+
+'READ THE PRODUCTS FROM THE FILE I EXTRACTED'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+save() {
+
+    const filePath = path.join(xxx);
+
+
+
+
+
+    fs.readFile(
+        (filePath, fileContent) => {
+
+
+            let products = [];
+
+
+            if (!err) {
+
+
+            }
+        }
+    )
+}
+
+
+
+
+-------------------------------
+
+
+
+
+SE EU NÃO TENHO UM 'ERROR', 
+
+
+EU TENHO CERTEZA 
+
+
+
+
+
+
+
+DE QUE 
+
+
+'fileContent'
+
+VAI SER ALGUMA COISA,
+
+VAI 
+
+SER __ O CONTEÚDO __ DE MEU ARQUIVO 
+
+
+'productList.json'...
+
+
+
+
+
+
+-------> E COMO ESSE ARQUIVO 
+
+ESTÁ EM UM FORMATO 'JSON',
+
+
+
+
+é claro que vou querer 
+
+
+
+
+TRANSFORMAR O CONTEÚDO QUE LEMOS 
+
+
+
+DESSE ARQUIVO,
+
+
+
+transformar em JAVASCRIPT,
+
+para então 
+
+ARMAZENAR 
+
+
+ESSE 
+
+CONTEÚDO DENTRO 
+
+
+DE UM __ ARRAY__ NO NOSSO CÓDIGO... (para, depois,
+
+usar 
+
+esse 
+array 
+
+
+__ PARA DAR 'OVERWRITE' no array antigo que 
+
+existia 
+
+lá 
+
+
+no 'products.json',
+
+TUDO POR MEIO 
+
+do comportamento de overwrite de 'writeFile'...)
+
+
+
+
+
+
+
+-----> EX:
+
+
+
+
+
+
+
+
+
+
+
+save() {
+
+    const filePath = path.join(xxx);
+
+
+
+
+
+    fs.readFile(
+        (filePath, fileContent) => {
+
+
+            let products = [];
+
+
+            if (!err) {
+                    products = JSON.parse(fileContent);
+
+            }
+        }
+    )
+}
+
+
+
+----------------------------------
+
+O QUE 
+
+
+
+'JSON.parse()'
+
+
+VAI FAZER 
+
+É __ 
+
+
+
+_CONVERTER__ TODO O CONTEÚDO 'JSON'
+
+DENTRO 
+
+
+DAQUELE 
+
+arquivo 
+
+'products.json'
+
+
+EM __ PRODUCT(s) 
+
+EM UM ARRAY JAVASCRPIT...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... ISSO SIGNIFICA QUE AGORA 
+
+SABEMOS/SABEREMOS COM CERTEZA QUE 
+
+a const 
+
+
+'products'
+
+dentro 
+
+de 
+
+
+'save(){}'
+
+
+
+SERÁ 
+
+
+OU:
+
+
+
+1) UM EMPTY ARRAY (caso de erro)
+
+
+
+
+
+2) UM ARRAY QUE LEMOS/EXTRAÍMOS DA JSON DATA __DE 'productList.js'...
+
+
+
+
+
+
+---------> no caso do ERROR (ou seja, fora de 'if(!err)'),
+
+
+
+
+
+PROFESSOR 
+
+VAI QUERER 
+
+
+FAZER 
+
+
+'PUSH'
+
+
+DO 
+
+
+
+OBJETO 'product' que críamos por meio da função 'new Product' (QUE SERÁ REPRESENTADO PELA KEYWORD 'this'...)
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+save() {
+
+    const filePath = path.join(xxx);
+
+
+
+
+
+    fs.readFile(
+        (filePath, fileContent) => {
+
+
+            let products = [];
+
+
+            if (!err) {
+                    products = JSON.parse(fileContent);
+
+            }
+
+            products.push(this); ///////EIS O CÓDIGO EM QUESTAÕ.
+        }
+    )
+}
+--------------------------
+
+
+
+OK.. 
+
+
+
+ESSE CÓDIGO DE
+
+
+'PUSH',
+
+JUNTO COM O  TRUQUE 
+
+
+DO 
+
+ARRAY 
+
+
+VAZIO,
+
+
+VÃO NOS AJUDAR NOS CASOS:
+
+
+
+
+1) ARQUIVO LIST NUNCA HAVIA SIDO CRIADO 
+
+
+
+
+2) ALGUM ERRO NO FLOW DE NOSSO APP...
+
+
+
+
+
+---------------------------------
+
+
+
+ex:
+
+
+
+save() {
+
+    const filePath = path.join(xxx);
+
+
+
+
+
+    fs.readFile(
+        (filePath, fileContent) => {
+
+
+            let products = [];
+
+
+            if (!err) {
+                    products = JSON.parse(fileContent);
+
+            }
+
+            products.push(this); ///////EIS O CÓDIGO EM QUESTAÕ.
+        }
+    )
+} 
+
+
+
+
+
+
+
+
+
+
+
+--> IMPORTANTE: 
+
+PARA 
+
+FAZER COM QUE 
+O 
+
+'this' dentr ode 
+
+
+'products.push'
+
+
+SE REFIRIRÁ
+
+à CLASSE EM SI;
+
+
+
+_ você deve obrigatoriamente usar uma ARROW FNUCTION,
+
+
+ISSO PQ 
+
+
+O 'this'
+
+VAI PERDER O SEU CONTEXT,
+
+
+
+
+_DEIXANDO DE SE REFERIR 
+
+À CLASS...
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+----> COMO ESTOU USANDO ARROW FUNCTIONS,
+
+o 'this' VAI SE REFERIR 
+
+à CLASS EM SI, ao objeto, e por isso posso o utilizar...
+
+
+
+
+
+--> POSSO O UTILIZAR NO ARRAY,
+
+
+
+tanto O 
+
+
+ARRAY __ VAZIO__ (caso de ERRO/INEXISTÊNCIA DE ARQUIVO 'ProductList.json'),
+
+
+
+
+OU 
+
+
+AO 
+
+ARRAY QUE 
+
+
+EU ACABEI 
+
+DE 
+
+LER 
+
+DO 
+
+ARQUIVO 'ProductList.json' (caso de EXISTÊNCIA PRÉVIA DE ARQUIVO 'ProductList.json')...
+
+
+
+
+
+
+
+-------> O RESTO DO TRABALHO, AGORA, É QUE 
+
+
+____PRECISO_ __ SALVAR __ 
+
+
+
+ESSE CONTEÚDO DO ARRAY (o array em si)
+
+
+
+DE VOLTA 
+
+
+
+AO ARQUIVO... 
+
+
+
+
+
+
+
+--> PARA ISSO, 
+
+EU PENSAVA QUE USARÍAMOS 
+
+
+
+
+'fs.appendFile()',
+
+
+
+
+
+MAS NA VERDADE PROFESSOR APONTA QUE 
+
+USAREMOS/DEVEMOS USAR 
+
+
+
+'writeFile' (isso pq já ''''CRÍAMOS''' um sistema de APPEND por meio dessa lógica que o professor 
+
+recém nos mostrou...)
+
+
+
+
+
+
+
+
+
+-> OK.. PROFESSOR VAI ESCREVER 
+
+
+
+'fs.writeFile(filePath, xxxx )'''
+
+
+
+
+
+
+
+
+-> NESSE WRITEFILE,
+
+é claro que 
+
+A DATA QUE VAMOS QUERER 
+
+
+ARMAZENAR 
+
+NO 
+
+
+NOSSO 
+
+ARQUIVO 
+
+
+'ProductList.json'
+
+
+
+
+SERÁ NO FORMATO JSON,
+
+por isso 
+
+
+o profesor 
+
+
+
+escreverá 
+
+
+
+'JSON.stringify(products);'...
+
+
+
+
+
+
+---> ISSO VAI REALMENTE 
+
+TRANSFORMAR 
+
+
+
+EM UM FORMATO DATA 
+
+DE 
+
+
+
+__JSON__.... 
+
+
+
+(bom de ser armazenado....)
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+    fs.readFile(
+        (filePath, fileContent) => {
+
+
+            let products = [];
+
+
+            if (!err) {
+                    products = JSON.parse(fileContent);
+
+            }
+
+            products.push(this); ///////EIS O CÓDIGO EM QUESTAÕ.
+            fs.writeFile(filePath, JSON.stringify(products), (err) => {
+                        console.log(err);
+
+            })
+        }
+    )
+} 
+
+
+
+
+
+
+
+
+
+
+--> O TERCEIRO ARGUMENTO É UMA CALLBACK FUNCTION,
+CHAAMDA
+
+
+
+QUANDO RECEBEMOS ALGUM ERROr... --> professor vai querer console.loggar esse erro,
+
+se ele acontecer...
+
+
+
+
+
+------------------------
+
+
+SALVAMOS TUDO ISSO E TESTAMOS...
+
+
+
+
+
+RECEBI UM ERRO...
+
+A:\projeto4 - NODEJS\MODULO7-OMODELVIEWCONTROLLER-THEPATTERN\novonovoprojeto5-templatingengines\models\product.js:42
+      products.push(this);
+               ^
+
+TypeError: products.push is not a function
+    at A:\projeto4 - NODEJS\MODULO7-OMODELVIEWCONTROLLER-THEPATTERN\novonovoprojeto5-templatingengines\models\product.js:42:16    
+    at FSReqCallback.readFileAfterClose [as oncomplete] (node:internal/fs/read_file_context:68:3)
+[nodemon] app crashed - waiting for file changes before starting...
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+CÓDIGO DO PROFESSOR ESTAVA UMA MERDA...
+
+
+
+
+
+O MEU FICOU MELHOR....
+
+
+
+
+
+
+
+--> CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+// const products = [];
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+   save() {
+    const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+     fs.readFile(filePath, (err, fileContent) => {
+      let products = [];
+
+      if (!err) {
+        products = [JSON.parse(fileContent)];
+      }
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+    });
+  }
+
+  // static fetchAll() {
+  //   //return this.products;
+  //   return products;
+  // }
+};
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+OU SEJA,
+
+
+PRECISEI 
+
+USAR ESTE CÓDIGO 
+
+AQUI:
+
+     products = [JSON.parse(fileContent)];
+
+
+
+
+
+
+     (COLOCAR o conteúdo traduzido 'fileContent', de nosso arquivo, 
+     
+     DENTRO 
+     
+     DESSE ARRAY AÍ,
+     
+     PARA QUE 
+     
+     PUDESSE 
+     
+     MAIS TARDE 
+     
+     USAR 
+     
+     
+     'products.push(this)',
+     
+     
+     
+     PUDESSE EXECUTAR 
+     '.push'
+     
+     sobre ele,
+     
+     PQ 
+     
+     
+     
+     
+     'products' DEVE SER 1 ARRAY, E NÃO UM OBJETO...)
+
+
+
+
+
+
+
+
+
+     ------->
+
+
+
+
+
+     ok... o código que interessa é este:
+
+
+
+
+
+
+     
+   save() {
+    const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+     fs.readFile(filePath, (err, fileContent) => {
+      let products = [];
+
+      if (!err) {
+        products = [JSON.parse(fileContent)]; ///isto interessa...
+      }
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => { ///isto TAMBÉM INTERESSA...
+        console.log(err);
+      });
+    });
+  }
+
+
+
+
+
+
+------------------------
+
+
+
+
+MEU CÓDIGO LÁ EM 
+
+'ProductList.json'
+
+
+FICOU ASSIM:
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+ESQUEÇA,
+
+ESSE MEU CÓDIGO AÍ 
+
+TINHA FICADO MT BUGADO...
+
+
+
+
+
+
+
+
+--> o do professor ainda funciona melhor,
+o código 
+
+
+é 
+
+este:
+
+
+
+
+
+
+
+
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+   save() {
+    const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+     fs.readFile(filePath, (err, fileContent) => {
+      let products = [];
+
+      if (!err) {
+
+        products = JSON.parse(fileContent);
+      }
+ 
+      
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+    });
+  }
+
+  // static fetchAll() {
+  //   //return this.products;
+  //   return products;
+  // }
+};
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+--> ESTE TRECHO AQUI:
+
+
+
+     fs.readFile(filePath, (err, fileContent) => {
+      let products = [];
+
+      if (!err) {
+
+        products = JSON.parse(fileContent);
+      }
+ 
+      
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+    });
+
+
+
+
+
+
+
+
+-----> ELE VAI 
+
+DIFERENCIAR E FAZER FUNCIONAR NOSSO CÓDIGO EM 2 CASOS DIFERENTS:
+
+
+
+
+1) CASO EM QUE NÃO TEMOS 1 ARQUIVO 'ProductList.json' ---> nesse caso,
+
+ELE VAi __ CRIAR UM __ NOVO ARQUIVO 'ProductList.json' COM 
+
+O OBJETO 'product' QUE RECEM INPUTTAMOS/usuário recém inputtou....
+
+
+
+
+
+
+2) CASO EM QUE __JÁ TEMOS 1 ARQUIVO 'ProductList.json' --> nesse caso,
+
+EXPRESS VAI SIMPLESMENTE ADICIONAR NOSSO OBJETO 'product'
+
+COMO JSON DATA ao conteúdo desse arquivo .json....
+
+
+
+
+
+
+(OBS::: NOSSO CÓDIGO __ PARA __ DE FUNCIONAR SE 
+
+TIVERMOS 1 ARQUIVO 'ProductList.json' vazio... é um problema de LÓGICA...)
+
+
+
+
+
+
+
+
+
+-----------
+
+
+
+(
+''OK, WE ARE ABLE TO READ FILE, APPEND DATA TO THE EXISTING DATA OR CREATE THAT FILE 
+
+IF 
+
+
+IT DIDNT EXIST YET''..
+
+
+
+
+   
+)
+
+
+
+----> PORTANTO, NOSSO 'DATA STORAGE' NA FILE/file system 
+
+
+
+__ É BEM BÁSICO, MAS É MELHOR DO QUE NADA...
+
+
+
+
+
+
+--------> OK.... AGORA SÓ FALTA 
+
+A FUNÇÃO 
+
+DE 
+
+
+'Product.fetchAll',
+
+QUE AINDA ESTÁ BUGGADA....
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+  // static fetchAll() {
+  //   //return this.products;
+  //   return products;
+  // }
+
+
+
+
+
+
+
+
+
+
+  -----> ISSO AÍ __ NÃO VAI MAIS FUNCIONAR,
+
+
+  NEM 
+  COM 
+
+
+  'this.products',
+
+
+  NEM 
+
+  COM 
+
+  'return products',
+
+
+
+
+  JUSTAMENTE PQ 
+
+
+  O ARRAY 'products'
+
+  NÃO ESTÁ EM NENHUM DESSES LUGARES...
+
+
+
+
+
+
+
+
+
+
+
+
+  ----------> LÁ EM 
+
+
+  'fetchAll',
+
+
+  NÓS TAMBÉM 
+
+  VAMOS QUERER 
+
+
+
+
+  usar 
+
+
+
+  'readFile'
+
+  PARA ___LER __ O CONTEÚDO 
+
+
+
+
+  DO 
+
+
+
+  ARQUIVO 
+
+
+
+
+  'ProductList.json'...
+
+
+
+
+
+
+
+
+  -> PARA ISSO, PROFESSOR ESCREVE:
+
+
+
+
+
+  fs.readFile(filePath, (err, fileContent) => {
+
+
+
+
+  })
+
+
+
+
+
+
+
+
+  --> 'fileContent'
+
+  VAI CONTER 
+
+  A DATA 
+  QUE 
+
+  VAMOS QUERER USAR....
+
+
+
+
+
+
+
+  --> E SE NÓS RECEBEMOS UM ERROR AQUI,
+
+  VAMOS __ QUERER __ RETORNAR UM EMPTY ARRAY... (isso pq AÍ NÃO TEREMOS RECEBIDO/EXTRAÍDO NENHUM 
+  CÓDIGO LA´
+  
+  DE 
+  
+  'ProductList.json'...  ------> E AÍ, 
+  
+
+  PODERÍAMOS 
+
+  FAZER SHOW DE UMA MENSAGEM DE ERRO NA UI,
+
+  ALGO ASSIM..
+  
+  
+  
+  )
+
+
+
+
+
+
+
+  ex:
+
+
+
+
+
+
+  static fetchAll() {
+
+
+    fs.readFile(filePath, (err, fileContent) => {
+
+        if (err) {
+
+          alert('Whoops, something went wrong. No products are displayed...');
+          return [];
+        }
+
+
+
+    })
+  }
+
+
+
+
+
+  --------------------------
+
+
+
+
+
+
+
+
+
+  --> DEPOIS DESSE IF BLOCK DE ERRO,
+
+
+
+
+  VAMOS QUERER (success case)
+
+
+
+  
+
+  __RETORNAR __ 
+
+
+  'JSON.parse()',
+
+
+
+
+
+  PARA PARSEAR O FILECONTENT... (caso contrário, essa DATA 
+  
+  EXTRAÍDA DO ARQUIVO 
+  
+  'ProductList.json'
+  
+  VAI 
+  
+  SER 
+  
+  
+  APENAS UMA __STRING/DATA JSON, e não queremos isso,
+  
+  
+  
+  PQ VAMOS QUERER 'WORK WITH THAT DATA IN A JAVASCRIPT OBJECT FORMAT'....)
+
+
+
+
+
+
+
+
+  ------> OK...
+
+
+
+
+
+
+  return JSON.parse(fileContent);
+
+
+
+
+
+
+  --------------------------------------
+
+
+
+
+
+
+
+
+  ----> CERTO... FICARÁ ASSIM:
+
+
+
+
+
+
+
+  
+  static fetchAll() {
+
+
+    fs.readFile(filePath, (err, fileContent) => {
+
+        if (err) {
+
+          alert('Whoops, something went wrong. No products are displayed...');
+          return [];
+        }
+
+      return JSON.parse(fileContent); ///////EIS O CÓDIGO EM QUESTÃO.
+
+    })
+  }
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+  static fetchAll() {
+
+      fs.readFile(filePath, (err, fileContent) => {
+
+        if(err) {
+          alert('Whoops, something went wrong. No products are displayed...');
+          return [];
+        }
+        console.log(JSON.parse(fileContent));
+
+        return JSON.parse(fileContent);
+      })
+  }
+};
+
+
+
+
+
+
+
+------> É CLARO QUE ESSE 
+
+'return JSON.parse(fileContent)'
+
+
+VAI 
+
+RETORNAR UM 
+
+
+ARRAY TIPO ASSIM:
+
+
+
+
+
+[ { title: 'caca' }, { title: 'caca' } ]
+
+
+
+
+
+(que terá sido CONVERTIDO/EXTRAÍDO DA DATA de 'ProductList.json', que originalmente fica 
+
+assim:
+
+
+'' [{"title":"caca"},{"title":"caca"}] '''
+)
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+O ERRO QUE ESTOU RECEBENDO, AGORA, É ESTE:
+
+
+
+TypeError: Cannot read property 'length' of undefined
+    at exports.getProducts (A:\projeto4 - 
+    NODEJS\MODULO7-OMODELVIEWCONTROLLER-THEPATTERN\novonovoprojeto5-
+    templatingengines\controllers\products.js:35:27)
+
+
+
+
+
+
+
+--> NESTE CÓDIGO AQUI:
+
+
+
+
+
+exports.getProducts = (req, res, next) => {
+  // const products = adminData.products; ////código obsoleto, só fazia sentido em 'shop.js', arquivo route...
+ 
+  const products = Product.fetchAll();
+  console.log(products, 'LINE');
+  res.render('shop', {
+    prods: products,
+    pageTitle: 'Shop',
+    path: '/',
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0,
+  });
+};
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+--> o 'products' está surgindo como UNDEFINED nesse arquivo aí...
+
+(não sei porque.....)
+
+
+
+
+
+
+
+
+
+-----> TypeError: Cannot read property 'length' of undefined
+
+
+
+
+
+
+
+
+------> PROFESSOR NOS EXPLICA QUE ISSO AÍ __ PDOE SER ______ BEM DIFÍCIL DE DEBUGGAR/ENTENDER...
+
+
+
+---------------> VOCÊ SABE O QUE ESTÁ ERRADO, AQUI?
+
+
+
+
+-> VEREMOS ISSO NA PRÓXIMA AULA...

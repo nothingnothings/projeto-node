@@ -1,0 +1,679 @@
+  Às vezes o 
+
+
+ a session acaba sendo aplicada na page a que 
+
+ fomos redirecionados,
+
+ às vezes não...
+)
+
+
+
+
+
+
+
+--> PROFESSOR, NA AULA 'TWO TINY IMPROVEMENTS',
+
+
+
+__FALA ESPECIFICAMENTE DISSO.. 
+
+
+
+(
+
+
+  'YOU MIGHT END UP 
+
+  IN A SCENARIO WHERE AFTER LOGGING IN __ THE __ VIEW 
+
+  WONT UPDATE ACCORDINGLY'...
+) -------> 
+
+
+
+A RAZÃO 
+
+PARA ISSO,
+
+
+EXPLICA O PROFESSOR,
+
+
+É QUE 
+
+
+
+
+NO 'auth.js',
+
+
+
+QUANDO 
+
+
+TEMOS AQUELE CÓDIGO DE 
+
+
+
+
+''
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  User.findById('asaisaaishaishai')
+  .then(
+    (user) => {
+
+
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      res.redirect('/');
+    }
+  )
+}
+
+''
+,
+
+
+
+NESSE CÓDIGO AÍ,
+
+
+
+EM QUE __ SETTAMOS NOSSA SESSION LÁ NO SERVER E O SESSION COOKIE NO BROWSER DO USER,
+
+
+
+
+
+
+NESSE CÓDIGO, QUANDO OCORRE O 'REDIRECT',
+
+
+ESSE 
+
+'res.redirect('/')',
+
+esse 
+
+
+SEND DESSA RESPONSE,
+
+
+
+
+
+__ ISSO FAZ COM QUE O MIDDLEWARE DE 'session'
+
+
+
+
+VÁ EM FRENTE E ENTÃO 
+
+
+'CREATE THAT SESSION', lá no mongodb,
+O  
+
+
+QUE SIGNIFICA QUE 
+
+
+__ELE __ VAI __wRITAR__ ESSA SESSION LÁ NO MONGODB.... (pq 
+
+estamos usando o MONGODB PARA 
+
+ARMAZENAR NOSSAS SESSIONS, É O NOSSO 'SESSION STORE'...) --------> 
+
+
+E AÍ ELE 
+
+SETTA 
+
+O 
+
+COOKIE 
+
+
+NO BROWSER DO USER... ---------> E O PROBLEMA QUE ENFRENTAMOS, AQUI,
+
+É UQE 
+
+O 
+
+
+__WRITE__ DE DATA COMO 'sessions' EM 
+
+
+1 DATABASE COMO O 'MONGODB'
+
+
+___ PODE__ LEVAR__ ALGUNS 
+
+
+MILISSEGUNDOS,
+
+
+ou até MESMO __MAIS TEMPO,
+
+
+DEPENDENDO DA VELOCIDADE DE SUA CONEXÃO... ------> 
+
+
+
+
+O REDIRECT, ENTRETANTO,
+
+
+É _ DISPARADO___ DE FORMA ___ INDEPENDENTE__ 
+
+DO 
+
+STORE 
+
+DESSA 
+
+SESSION NO DATABASE,
+
+
+E É __eXATAMENTE___ POR ISSO QUE 
+
+
+
+
+PODEM OCORRER CASOS EM QUE 
+
+
+'YOU REDIRECT TOO EARLY'... -------> PARA CONSERTAR ISSO,
+
+DIZ O PROFESSOR,
+
+
+PARA 
+
+
+
+'MAKE SURE THAT YOUR SESSION HAS BEEN SET',
+
+
+
+
+
+
+
+
+__VOCÊ __ PODE ___ 
+
+
+
+
+USAR___ O 'req.session.save()'
+
+
+E ENTÃO ___ 
+
+
+
+EXECUTAR 
+
+
+'res.redirect('/')' 
+
+
+
+
+
+SÓ 
+
+
+
+NA SUA 
+
+CALLBACK FUNCTION INTERNA... (Que é executada ___ APÓS O 'save()' dessa session na database)...
+
+
+
+
+
+
+
+
+
+--> (OK.. EU HAVIA FEITO ISSO ANTES, MAS NÃO TINHA FUNCIONADO... será que foi só algo que fiz de errado?)
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ___________NORMALMENTE__ VOCÊ NÃO PRECISA CHAMAR 
+
+
+'.save()'
+
+
+PARA 
+
+__SALVAR__ 
+
+
+
+
+sessions COM o 'express-session',
+
+
+
+MAS QUE 
+
+
+__ÀS VEZES EXISTIRÃO 
+
+CENÁRIOS EM QUE 
+
+
+
+VOCÊ 
+
+
+___ PRECISA __ DA __CERTEZa___ DE QUE __ 
+
+SUA 
+
+SESSION FOI 'CREATED'
+
+
+
+__ANTES___ DE CONTINUAR COM ALGUM OUTRO PROCESSO (como um REDIRECT, nesse caso)... --------> 
+
+
+
+ISSo 
+
+
+
+PQ 
+
+
+
+
+VAMOS 
+
+PASSAR 
+
+
+'() => {
+
+  res.redirect('/')
+}
+
+
+
+
+
+
+OK........ 
+
+
+AÍ O PROFESSOR NOS ASSEGURA QUE NOSSA SESSION SERÁ 'CREATED ON TIME'
+
+
+
+
+para __ esse redirect aí...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  User.findById('asaisaaishaishai')
+  .then(
+    (user) => {
+
+
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      req.session.save(
+        () => {
+                   res.redirect('/');
+        } 
+      )
+ 
+    }
+  )
+}
+
+----------------------------
+
+
+
+
+
+ok... O PROFESSOR DIZ QUE _ FUNCIONA__,
+
+
+
+
+
+ENTÃO __ VOU CONFIAR....
+
+
+
+ 
+
+
+
+
+ ----> PROFESSOR APONTA QUE __ NORMALMENTE NÃO PRECISAMOS CHAMAR ESSE 'req.session.save()',
+
+
+
+ ___ MAS QUE ___ VAMOS TER QUE CHAMAR SE PRECISARMOS DESSA 'GUARANTEE',
+
+QUE TIPICAMENTE É 
+
+NECESSÁRIO NAS HIPÓTESES EM QUE VOCÊ QUER 
+
+
+'REDIRECT',
+
+pq 
+
+nesses 
+
+cenários o 
+
+REDIRECT VAI DISPARAR 
+
+
+__DE FORMA __ INDEPENDENTE__ EM RELAÇÃO AO SAVE DA SESSION, o que pode acarretar
+
+
+
+
+
+EM __ CASOS EM QUE __ SUA PAGE ACABA SENDO RENDERIZADA __ ANTES __ DA SESSION SER EFETIVAEMNTE 
+
+
+
+UPDATADA 
+
+NO SERVER E SALVA
+
+NA DATABASE....
+
+(isso 
+é algo que 
+
+
+
+devemos ter em mente, e é por isso que o professor nos mostrou esse method.....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... MAS QUAL É O OUTRO 'TINY IMPROVEMENT'?
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+
+APRENEDMOS MT 
+
+SOBRE 
+
+
+COMO PODEMOS TRABALHAR COM SESSIONS E COOKIES,
+
+COMO PODEMOS 
+OS UTILIZAR 
+ 
+
+
+
+
+ PARA SALVAR DATA......
+
+
+
+
+
+
+
+
+
+
+
+ TBM VIMOS QUAIS 'POTENCIAL ISSUES' PODEM EXISTIR, 
+
+ NOS CASOS EM QUE 
+
+ ___SALVAMOS 'MONGOOSE MODEL DATA' 
+
+ dentro da collection 'sessions' na nossa database,
+
+ isso 
+ PQ 
+
+
+ __NÃO VAMOS 'STORE THE FULL MONGOOSE MODEL',
+
+ E SIM 
+
+ __ SÓ __ A DATA SIMPLES, SEM OS 'MAGIC METHODS'... ( o que é um lixo)...
+
+
+
+
+
+
+
+ -------------------------------------- 
+
+
+
+
+
+
+
+
+ --> PROFESSOR DIZ QUE APRENDEMOS MT COISA SOBRE SESSIONS... ->
+
+
+
+
+
+ PROFESSOR DIZ QUE 
+
+
+ TEMOS 1 PROBLEMA, AINDA, NO 'CART'
+
+ e nas 
+ 'ORDERS'...
+
+
+
+
+
+
+
+
+ ----> O PROBLEMA, É CLARO, É QUE 
+
+
+
+
+
+
+
+________ SEM UMA 'VALID SESSION' (session que 
+
+
+NÃO TEREMOS, DE FATO, APÓS A _DESTRUÍRMOS.... ),
+
+
+
+
+
+
+__ TODOS ESSES METHODS/ACTIONS 
+
+
+
+
+
+
+EXTRAÍDOS/EXISTENTES LÁ NO MODEL DE 'user',
+QUE 
+
+
+POR SUA VEZ __ SÓ 
+
+É _ RETRIEVADO __ A PARTIR __ 
+
+
+DA 
+
+'SESSION DATA' 
+
+
+que 
+é 
+
+obtida pelo middleware de 'session' (  '''' app.use(session({}))  '''),
+
+
+
+
+
+__ NÃO PDOERÃO SER USADOS/vão falhar.... --------> E ISSO, É CLARO,
+
+
+FAZ 
+
+
+
+__TOTAL SENTIDDO.... --> FAZ SENTIDO __ PQ __ PRECISAMSO 
+
+
+
+DE 
+
+1 SESION para 
+
+
+FETCHEAR 
+
+O 
+
+
+MONGOOSE MODEL com todos os methods especiais (model de 'user'),
+
+
+
+
+
+E 
+
+ESSE 
+
+
+
+
+MONGOOSE MODEL/qualuqer model mongoose 
+
+
+
+SÓ __ PODE __ SER OBTIDO __ A PARTIR DO USODE 
+
+
+'session data',
+
+ OBTIDA ANTERIOREMNTE ao EXECUTE do middleware que _ SETTA _ O OBJETO 'user' dentro de 'request'....
+
+
+
+
+
+
+
+
+ ----> ISSO SIGNIFICA QUE __ AS ÚNICAS COISAS QUE ESTÃO FUNCIONANDO, AQUI,
+
+
+ no nosso project,
+
+
+
+ __SÃO __OS ___ 
+
+ 'PRODUCTS' 
+
+
+ e a index page'... ------> E É AÍ QUE O PROFESSOR PROPÕE O _aDJUST__ De 
+
+ NOSSAS VIEWS,
+
+
+ que 
+
+ JÁ HAVÍAMOS FEITO (basta ler 
+ 
+ o início deste arquivo)....
+
+
+
+
+
+
+
+
+
+
+
+ ISSO FEITO,
+
+ ESTAMOS ACABADOS, E AGORA SÓ RESTA O WRAPUP...

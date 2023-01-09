@@ -1,0 +1,423 @@
+
+
+
+
+
+
+
+
+
+
+
+---> OK... NESSE MÓDULO O PROFESSOR NOS MOSTROU __COMO ENVIAR EMAILS__ COM O 'NODEMAILER'... -----> 
+
+
+
+
+
+
+NO NOSSO CASO, 
+
+
+
+usamos o THIRD-PARTY SERVICE DO 
+
+
+
+
+'sendgrid' PARA ENVIAR ESSE EMAIL ----> MAS 1 COISA 
+
+
+
+
+QUE O PROFESSOR 
+
+
+QUER 
+
+
+
+NOS ESCLARECER:
+
+
+
+
+
+
+
+
+
+A MANEIRA PELA QUAL ENVIAMOS 1 EMAIL 
+
+
+
+
+ali,
+
+
+
+
+lá naquele code block de 
+
+
+
+''
+
+          return req.session.save((err) => {
+              console.log(err);
+
+
+              res.redirect('/');
+              return transporter.sendMail(
+                {
+                  to: email,              ///////EIS O CÓDIGO EM QUESTÃO.
+                  from: 'arthur.panazolo@acad.pucrs.br',
+                  subject: 'Thank you for accessing our shop', 
+                  html: `<h1>User login detected in ${formattedDate}, at ${time} </h1>`
+                }
+              )
+
+                console.log('SENT');
+
+
+
+
+    
+
+
+
+            });
+
+
+
+
+'''''''''
+
+
+
+
+
+
+
+----->  NESSE CODE BLOCK AÍ,
+
+PROFESSOR DIZ QUE 
+
+É 
+
+
+
+'BOM'
+
+
+
+
+__EXECUTARMOS O CÓDIGO DE MODO __ QUE 
+
+___ REALIZAMOS O 'REDIRECT' __ _E ENVIAMOS __ O 'EMAIL' ________AO MESMO TEMPO....
+
+
+
+
+---> ELE EXPLICA QUE 
+
+
+ESSA 
+
+
+ORDEM 
+
+
+de 
+
+
+''
+              res.redirect('/');
+              return transporter.sendMail(
+
+
+                '''
+
+
+
+
+
+    
+
+    É MELHOR PQ __ SE VOCê __ TIVER__ UM APP __ COM UM MONTE DE REQUESTS,
+
+
+  
+
+
+
+  SERIA MT RUIM TER QUE ___ ESPERAR__ O EMAIL SER ENVIADO __ PARA REDIRECIONAR O USER...  ---------> 
+
+
+
+
+
+  ISSO FAZ TOTAL SENTIDO... --> ISSO DEIXARIA SEU APP BEM MAIS LENTO, PQ 
+
+
+  ___É ÓBVIO QUE VOCê VAI ENVIAR 1 MONTE DE EMAILS, A DIFERENTES USERS,
+
+
+  E ISSO 
+
+
+
+  PODE DEIXAR O APP MAIS LENTO MSM... 
+
+
+
+
+
+
+
+
+
+
+  --> RESUMINDO: é melhor REDIRECIONAR ANTES,
+
+
+  MANDAR O EMAIL DEPOIS/conseguir o send do email DEPOIS...
+
+
+
+
+
+
+
+
+
+
+
+  --> bem, e __ DEPENDENDO DO __ TAMANHO DO SEU APP,
+
+
+
+  POR EXEMPLO SE SEU APP __FOR__ 
+
+  REALMENTE __ GIGANTE,
+
+
+
+  VOCê PODERIA/PODE __ PROCURAR__ APPROACHES__ 
+
+
+
+  TOTALMENTE DIFERENTES,
+
+
+  APPROACHES EM QUE __ VOCÊ 
+
+  TERÁ/TEM 
+
+
+
+  'SERVERSIDE SCRIPTS'
+
+
+  __RODANDO A CADA 'X horas' 
+
+  ,
+
+  ou 
+
+  'X MINUTOS',
+
+
+
+  SCRIPTS 
+
+  que 
+
+
+  ENVIAM/ENVIARÃO EMAILS 
+
+ 
+
+ a 
+
+
+ 'NEWLY SIGNED USERS' (batches de emails, essencialmente...)
+
+
+
+
+
+
+
+ ------> É CLARO QUE ISSO SÓ VAI IMPORTAR 
+
+
+
+QUANDO ESTIVERMOS FALANDO DE 'LARGE SCALE APPS' 
+
+em diante,
+
+
+
+
+
+E LÁ _ VOCÊ TEM __ DIFERENTES PROBLEMAS, MESMO ASSIM... -----> MAS O  QUE O PROFESSOR 
+
+
+
+QUER 
+
+
+
+NOS 
+
+
+
+
+
+ENSINAR, AQUI,
+
+É 
+
+
+QUE 
+
+VOCÊ 
+
+
+NÃO DEVE 
+
+ESCREVER 
+
+
+
+o código de 
+
+
+
+'redirect - send email'
+
+
+__ DE UMA FORMA 'BLOCKING', não deve SUBMETER O __ REDIRECT__ DO USER_ 
+
+
+à condição 'o email foi enviado',
+
+
+
+PQ 
+
+
+
+____ SE VOCê/O USER TIVER QUE 
+
+ESPERAR 
+
+PELO 
+
+
+FINISH DESSE SEND DO EMAIL,
+
+
+
+
+SEU APP PODE FICAR BEM __LENTO__... -------> AÍ VOCê ___ 
+
+
+
+
+DEVE AVALIAR:
+
+
+
+
+OU:
+
+
+
+
+1) O USER PODE 'LIVE WITHOUT THAT EMAIL BEING DELIVERED INSTANTLY',
+
+
+
+OU 
+
+
+
+2) O USER __ PRECISA__ QUE ESSE EMAIL SEJA ___  ENVIADO, MESMO QUE ISSO DEIXE SEU APP MAIS LENTO... -----> 
+
+
+
+
+TUDO DEPENDE DA SITUAÇÃO,
+
+é claro;
+
+
+é 
+
+
+
+a SITUAÇÃO/caso-concreto que VAI DITAR QUAL DESSES 
+
+2 
+
+APPROACHES É O MAIS ADEQUADO..
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA JÁ SABEMOS COMO ENVIAR EMAILS... -----> DEVEMOS USAR _ __ ESSE CONHECIMENTO_ 
+
+
+
+
+NO PRÓXIMO MÓDULO PARA 'ENHANCE THE AUTH PROCESS',
+
+
+
+PARA__ QUE _ SEJA POSSÍVEL___ REDEFINIR__ NOSSAS SENHAS___ 
+
+
+por meio de emails... 
+
+
+
+
+
+
+
+
+
+---------> VAMOS MELHORAR AS AUTH FEATURES OFERECIDAS PELO NOSSO APP...
+
+
+
+
+
+
+
+
+
+Attached, you find the source code for this section.
+
+When using my source code, make sure to run npm install in the extracted folder!
+
+Useful resources:
+
+Nodemailer Official Docs: https://nodemailer.com/about/
+
+SendGrid Official Docs: https://sendgrid.com/docs/
+
+
+
+
+
+
+

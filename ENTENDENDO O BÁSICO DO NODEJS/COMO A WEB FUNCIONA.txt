@@ -1,0 +1,821 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> DEVEMOS REFRESHAR NOSSO CONHECIMENTO DE COMO A WEB FUNCIONA... 
+
+
+
+
+
+
+
+
+
+
+
+
+---> nós temos 1 user, 1 client,
+
+
+
+
+no browser... visitando uma webpage...
+
+
+
+
+
+
+
+
+-----> ESTAMOS INTERAGINDO COM WEBPAGES.... ----> 
+
+
+
+
+
+ENTRAMOS 
+
+
+EM UMA 
+
+URL
+ 
+
+ de 
+
+
+
+ 'mypage.com'... ----> 
+
+
+ POR TRÁS 
+
+ DAS CENAS,
+
+
+O QUE ACONTECE É 
+
+
+
+QUE 
+O 
+
+BROWSER 
+
+
+
+
+
+'REACHES OUT TO SOME DOMAIN NAMED SERVERS,
+
+TO LOOK THAT DOMAIN UP'... ----> 
+
+ISSO 
+
+
+PQ 
+
+
+ESSE 
+
+DOMAIN NÃO É 
+
+O 
+ADDRESS 
+
+DE 
+VERDADE 
+
+DO 
+
+SEU 
+
+SERVER,
+e
+SIM 
+É
+ 
+
+ UMA 
+
+
+
+
+
+'ENCODED HUMAN READABLE VERSION'
+
+desse 
+
+address ---> SEU SERVIDOR EM SI 
+
+
+
+
+
+
+TEM APENAS UM 
+
+
+
+'IP ADDRESS' ---> ISSO É APENAS 
+
+ALGO 
+
+
+
+TÉCNICO,
+
+BEHIND THE SCENES..
+
+
+
+
+
+
+
+
+
+
+------> OK, O BROWSER 
+
+
+
+
+ENVIA 
+
+UM 
+
+
+REQUEST 
+
+
+
+AO 
+
+SERVER,
+
+
+
+__ COM AQUELE 'GIVEN IP ADDRESS' pertencente àquele domain... -----> 
+
+
+
+
+
+
+
+
+
+
+
+
+FINALMENTE,
+
+
+
+CHEGAMOS NA PARTE 
+
+EM QUE 
+
+O 
+
+
+NODEJS 
+
+
+
+___ IMPORTA____ -----------> VOCÊ 
+
+
+
+
+VAI 
+
+
+ESCREVER 
+
+O 
+
+CÓDIGO QUE 
+
+RODA/RODARÁ 
+
+
+
+NAQUELE COMPUTADOR 
+
+NA INTERNET 
+
+QUE 
+
+TEM 
+
+AQUELE 
+
+'IP ADDRESS'... -------->
+
+
+
+
+
+
+
+
+VOCÊ 
+
+
+ESCREVE O CÓDIGO 
+
+QUE 
+
+'SPINS UP THAT SERVER',
+
+
+
+o server que 
+
+
+
+FAZ HANDLE 
+
+DO INCOMING REQUEST 
+
+
+E 
+
+ENTÕA 
+
+FAZ ALGO COM ELE....
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE NÃO PRECISAMOS OBRIGATORIAMENTE USAR 
+
+NODEJS 
+PARA 
+
+FAZER 
+
+ISSO... ---> VOCÊ PODERIA 
+
+USAR 
+
+
+PHP, 
+
+
+
+ASP.NET,
+
+ruby on rails,
+
+ETC...
+
+
+
+
+
+
+
+
+
+
+--> MAS NESSE SERVIDOR VOCÊ PODE FAZER 
+
+UM MONTE 
+
+DE COISAS,
+
+
+
+
+__ COMO 'USER INPUT VALIDATION',
+
+
+
+___ COMMUNICATE COM UMA DATABASE (que roda em um database SERVER SEPARADO),
+
+mas 
+que 
+
+você tipicamente 
+
+faz reach out 
+
+POR MEIO 
+
+DESSE SEU BACKEND SERVERSIDE,
+
+
+
+
+
+
+
+
+
+
+
+
+
+DEPOIS QUE 
+
+VOCÊ FAZ TUDO ISSO,
+
+
+
+
+
+VOCÊ 
+
+FAZ UMA COISA MT IMPORTANTE,
+
+
+
+VC __ FAZ ___ O SEND ___ DE 
+
+UMA 
+
+'RESPONSE'
+
+
+ DE VOLTA 
+
+ AO CLIENT... ------>   
+
+
+
+
+
+ ESSA RESPONSE PODE SER 
+
+
+ ALGUM 
+
+
+
+ TEXTO HTML/CÓDIGO HTML 
+ que 
+
+ será
+  
+  handlado 
+
+
+
+
+
+
+PELO CLIENT,
+
+
+
+
+__MAS TAMBÉM __ PODE 
+
+SER OUTRO 
+
+TIPO DE 
+
+DATA,
+
+
+
+
+COMO UMA 
+
+FILE,
+
+
+
+
+ALGUM 'JSON'
+
+
+OU 
+
+'XML DATA'...
+
+
+extensible markup language file,
+
+
+
+
+
+The Extensible Markup Language (XML)
+ is a simple text-based format for representing structured information: 
+ documents, data, configuration, books, transactions, invoices, and much more. 
+ It was derived from an older standard format called SGML (ISO 8879), in order to be more suitable
+  for Web use.
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> A RESPONSE É MAIS DO QUE APENAS O 'CONTENT',
+
+btw....  --------> 
+
+
+
+
+TANTO O REQUEST COMO O RESPONSE ___ POSSUEM ___ 
+
+
+'HEADERS'... ---> 
+
+
+
+
+
+
+HEADERS ==== 
+
+
+
+É 
+
+'SOME META INFORMATION'
+
+que 
+é 
+
+ANEXADA 
+
+AO 
+
+REQ 
+
+E 
+
+RES,
+
+ 
+
+
+ E QUE 
+
+ 
+
+ DESCREVEM O QUE 
+
+
+
+ FICA DENTRO 
+
+ DELES,
+
+ POR EXEMPLO....
+
+
+
+
+
+
+
+ -------> OK, 
+
+
+
+
+ VAMOS FOCAR NO NODEJS,
+
+ O CÓDIGO QUE COMPÕE 
+ ESSE SERVER, NO FINAL DAS CONTAS....
+
+
+
+
+
+ -----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> E AQUELA TRANSMISSÃO 
+
+DE 
+
+
+
+REQ/RES 
+
+
+
+É FEITA 
+
+
+__POR MEIO DE UM 
+
+
+
+___PROTOCOLO,
+
+
+
+
+OU, EM OUTRAS PALAVRAS,
+
+
+
+'A STANDARDIZED WAY OF COMMUNICATING'.. -----> ISSO PQ 
+
+
+
+
+OBVIAMENTE,
+
+
+
+___ PARA _____ CORRECTLY HANDLE UM REQUEST 
+
+E ENTÃO 
+
+'SEND BACK A RESPONSE '
+
+ 
+
+ COM A QUAL O BROWSER PODERÁ TRABALHAR,
+
+
+ DEVEMOS 
+
+
+ __SEGUIR ALGUMAS ___ REGRAS____ ---------> 
+
+
+ E 
+
+ ESSAS 
+
+
+ REGRAS 
+
+ SÃO 
+
+
+ GERALMENTE 
+
+
+ DEFINIDAS 
+
+
+
+
+ _____PELO __ PROTOCOLO__ 
+
+ QUE 
+
+ USAMOS,
+
+
+
+
+
+
+
+ PROTOCOLO 
+ QUE 
+
+ PODE 
+
+ SER 
+
+
+
+
+
+ 'HTTP'  --> HYPER TEXT TRANSFER PROTOCOL 
+                (A protocol for Transferring Data which is understood by Browser and Server)
+
+
+
+
+ ou 
+
+
+
+ 'HTTPS'
+
+
+ HTTPS é uma implementação do protocolo HTTP
+  sobre uma camada adicional de segurança que utiliza o protocolo SSL/TLS.
+   Essa camada adicional permite que os dados sejam transmitidos por meio de uma conexão 
+   criptografada e que se verifique a autenticidade do servidor e do cliente por meio 
+   de certificados digitais
+
+
+
+
+
+
+
+
+
+
+
+
+------> HTTPS --->  HYPER TEXT TRANSFER PROTOCOL __ SECURE___....
+
+
+
+
+
+
+
+
+
+
+
+---> ESSE PROTOCOLO  DEFINE 
+
+
+'HOW A VALID REQUEST 
+
+SHOULD LOOK LIKE,
+  
+
+E COMO 
+
+
+UMA DATA DEVE SER TRANSFERIDA 
+
+
+BROWSER-SERVER'...
+
+
+
+
+
+
+
+
+-----> E O HTTPS É A MESMA COISA ,
+
+
+MAS 
+
+
+
+COM A ADIÇÃO 
+
+
+DE ENCRYPTION 
+
+
+DE 
+
+'SSL' ------> SSL ENCRYPTION TURNED ON --> QUALQUER 
+
+
+DATA QUE 
+
+É 
+
+TRANSMITIDA 
+
+___ ACABA__ SENDO ENCRIPTADA__, para aumentar a segurança,
+
+
+
+
+
+EVITAR CASOS EM QUE ALGUÉM 
+
+ESTÁ 
+
+'SPOOFING YOUR CONNECTION' (pessoa que pega seu ip e finge ser você quando conecta em rede privada de computadores, como companhias, pc da companhia, etc....), 
+
+
+essas 
+
+pessoas 
+
+
+NÃO PODERÃO 
+
+'READ YOUR DATA'...
+
+
+
+
+
+
+
+
+
+---> NO FINAL DO CURSO,
+PROFESSOR 
+
+VAI NOS MOSTRAR 
+
+
+COMO 
+
+
+
+__FAZER __ ENABLE__ DO HTTPS........
+
+
+
+
+
+
+
+
+--> MAS PELA MAIOR PARTE DO CURSO,
+
+USAREMOS 
+
+SÓ 
+
+
+HTTP....
+
+
+
+
+
+USAREMOS 
+
+HTTP 
+
+
+
+
+PQ ___ VAMOS SÓ DESENVOLVER ESSE CÓDIGO LOCALMENTE.... --> mas quando 
+
+
+
+
+
+transformarmos nosso código na versão 'for production',
+
+
+professor 
+
+
+vai nos mostrar 
+
+COMO 
+
+LIGAR 
+
+ESSA 
+
+'SSL ENCRYPTION'... 
+
+
+
+
+
+
+
+
+
+------> É ASSIM QUE 
+
+A WEB FUNCIONA,
+
+
+E É ESSA A RELAÇÃO QUE O NODEJS TEM COM ELA...
+
+
+
+
+
+
+-> VAMOS CRIAR UM SERVER COM NODEJS...

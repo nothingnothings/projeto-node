@@ -1,0 +1,1476 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE ANTES DA AUTHENTICATION, DEVEMOS VER A 'PAGINATION',
+
+
+OU SEJA,
+
+COMO SPLITTAR NOSSA LISTA DE POSTS 
+
+
+AO LONGO DE MÚLTIPLAS 'PAGES'...
+
+
+
+
+
+
+
+
+
+
+
+
+---> PARA FAZER ISSO,
+
+
+PRECISAMOS DE MÚLTIPLOS POSTS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR CRIA MÚLTIPLOS POSTS...
+
+
+
+
+
+
+
+
+
+
+
+
+---> 
+
+
+
+
+
+
+
+
+
+
+
+
+CERTo...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR QUER LIMITAR O NÚMERO DE POSTS 
+
+QUE 
+
+VEMOS 
+POR 
+
+'PAGE'... --> E AÍ ELE QUER 
+
+
+
+ENVIAR UMA INFO AO FRONTEND DIZENDO QUANDO 
+
+
+OS BOTÕES DE 'NEXT' E 'PREVIOUS'
+
+lá embaixo devem existir....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR JÁ ADICIONOU ESSA LÓGICA  NO FRONTEND,
+
+
+
+MAS 
+
+
+AINDA NÃO ADICIONAMOS PAGINATION NO BACKEND,
+
+o que é necessário para fazer tudo isso funcionar...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> professor vai até 'getPosts',
+
+
+pq 
+
+
+esse é o local do nosso backend em que ele quer implementar essa pagination..
+
+
+
+
+
+
+
+
+
+
+
+---> bem, lá em 'loadPosts',
+
+
+já temos um código como este:
+
+
+
+
+ loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('http://localhost:8080/feed/posts') //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> NESSE CÓDIGO AÍ,
+
+  O PROFESSOR JÁ 
+
+  ESTAVA 
+
+   'SETTING UP SOME PAGES'...
+
+
+
+
+
+
+
+
+
+nesse 'loadPosts'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> já temos nossa própria pagination logic no lugar,
+
+
+
+visto em 
+
+
+códigos 
+
+como 
+
+'let page = this.page.postPage'...  --------------> 
+
+
+
+
+É POR ISSO QUE 
+
+PODEMOS SIMPLESMENTE 
+
+PASSAR 
+
+ESSA 
+
+'page data'
+
+
+
+ DE VOLTA 
+
+ AO MEU BACKEND.... -------> VAMOS FAEZR ISSO POR MEIO DE 
+
+ QUERYPARAMS... ---------> 
+
+
+
+
+
+
+
+
+ BASTA ENCODAR ISSO AÍ NA NOSSA URL..
+
+
+
+
+
+
+
+
+
+ --> professor escreve assim:
+
+
+
+ fetch(`http://localhost:8080/feed/posts/?page=${this.state.postPage}`)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> CERTO.... mas o professor vai escrever 'page',
+
+ em vez de 
+
+
+ 'this.state.postPage',
+
+
+
+ o que 
+
+ nao deixa de ser EXATAMENTE A MESMA COISA, mas 
+
+ mais abreviado...
+
+
+ ex:
+
+
+
+
+
+ fetch(`http://localhost:8080/feed/posts/?page=${page}`)
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE ESSA VARIÁVEL VAI SER 'MANAGED INTERNALLY'
+
+
+no seu 
+
+react app -->  e essa page vai ser a página 1,2,3, qualquer page que 
+
+
+vamos tentar carregar no nosso app....
+
+
+
+
+-> OK... PASSAMOS ESSE QUERY PARAMETER AO NOSSO BACKEND..
+
+
+
+
+
+-> LÁ NO 
+
+controller 
+
+de 
+
+
+'getPosts',
+
+professor 
+
+escreve o simples:
+
+
+
+
+
+const currentPage = req.query.page  || 1
+
+
+
+
+
+
+
+
+
+-------> VAMOS USAR O 'PIPE OPERATOR' aqui, no caso,
+
+simplesmente 
+
+PQ 
+
+
+
+ELE VAI SERVIR PARA OS CASES EM QUE 
+
+'req.query.page'
+
+
+
+
+ESTIVER COMO 'UNDEFINED'... (como no caso do user entrando diretamente na page,
+
+sem 
+
+
+estar em nenhuma page inicialmente...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> PROFESSOR ENTÃO CRIA UMA CONSTANTE 
+
+de 
+
+'const perPage = 2'.... 
+
+
+
+
+
+
+
+
+
+
+
+-> ESSA CONSTANTE É PROVAVELMENTE AQUELA CONSTANTE 
+
+
+'const ITEMS_PER_PAGE' 
+
+
+que 
+
+eu havia 
+
+usado 
+
+no módulo de pagination...
+
+
+
+
+
+
+
+
+
+
+
+---------> professsor hardcodou esse 'perPage' 
+
+aqui,
+
+
+e tbm hardcodou no frontend (não entendi essa parte)...
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR ENTÃO CRIA (declara) UMA NOVA CONSTANTE,
+
+
+'totalItems',
+
+que 
+
+será 
+usada 
+
+
+PARA ARMAEZNAR O NÚMERO DE ITEMS QUE TEMOS NA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> aí o professor escreve 
+
+
+
+'Post.find().countDocuments(
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ISSO AÍ NÃO VAI ACTUALLY RETRIEVAR 
+
+OS 
+
+
+
+DOCUMENTS, E SIM VAI APENAS 'FIND THEM'...
+
+
+
+
+
+
+
+
+
+
+aí ele vai escrevendo os then catch blocks 
+
+a partir 
+desse 
+
+
+countDocuments....
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+
+    const currentPage = req.query.page;
+    const perPage = 2;
+    let totalItems;
+
+
+    Post.find()
+    .countDocuments()
+    .then(
+        (result) => {
+
+        }
+    )
+    .catch(
+        (err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        }
+    )
+
+}
+
+
+
+
+
+------------------------------
+
+
+SE NÓS FORMOS BEM SUCEDIDOS,
+
+
+
+NAQUELE THEN BLOCK 
+
+VAMOS QUERER 
+
+USAR 
+
+
+'find' 
+
+
+DE NOVO,
+
+
+DESSA VEZ 
+
+PARA 
+
+ACTUALLY 
+
+PEGAR OS POSTS... --> E AÍ, ESSE FIND VAI 
+
+SER 
+
+LIMITADO 
+
+
+por 
+
+'.limit()"
+
+e 
+
+
+
+'.skip()"....
+
+
+
+
+
+
+
+
+--> MAS ANTES DISSO, PROFESSOR VAI ARMAZENAR O RESULT ('count') 
+
+
+
+DE TODOS 
+
+OS 
+
+ITEMS 
+
+
+NAQUELA VARIÁVEL DE '
+
+totalItems'.....
+
+
+
+
+
+
+
+ex
+
+
+
+exports.getPosts = (req, res, next) => {
+
+    const currentPage = req.query.page;
+    const perPage = 2;
+    let totalItems;
+
+
+    Post.find()
+    .countDocuments()
+    .then(
+        (count) => {
+            totalItems = count;
+
+
+
+        }
+
+    )
+    .catch(
+        (err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+DENTRO DESSE THEN BLOCK 
+
+
+DO 
+'countDocuments',
+
+
+VAMOS QUERRER 
+
+
+
+'RETURN OUR OLD FETCHING LOGIC'....
+
+
+
+
+
+
+
+--> OU SEJA,
+
+VAMOS QUERER 
+
+EXECUTAR 
+
+
+'
+
+return Post.find()
+.skip()
+'
+
+
+
+
+
+
+
+
+
+
+
+
+E É CLARO QUE AGORA AQUELE 'catch block'
+
+
+
+VAI 
+
+
+
+SER RESPONSÁVEL PELO ERROR HANDLING DE TANTO O 'COUNTING'
+
+como o 
+
+'INTERNAL FINDING' dos posts....
+
+
+
+
+
+
+
+
+
+
+---> MAS É CLARO QUE COM ESSE 'Post.find()'
+
+VAMOS 
+
+
+
+
+QUERER IMPLEMENTAR PAGINATION, E A LÓGICA É A MESMA DE ANTES... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VAMOS PRIMEIRAMENTE __ SKIPPAR__ 1 CERTA QUANTIDADE 
+
+DE ITEMS,
+
+POR MEIO 
+
+DO 
+
+MÉTODO 
+
+'skip()"...
+
+
+
+
+
+----------->  VAMOS QUERER USAR A EXPRESSÃO/CÁLCULO 
+
+
+'currentPage - 1' * perPage ' 
+
+
+
+
+
+
+
+-> ISSO PARA QUE SE EU ESTIVER NA PAGE 1, 
+
+VOU SKIPPAR 0 ITEMS... -> SE EU ESTIVER NA PAGE 2,
+
+VOU SKIPPAR 
+
+APENAS 
+
+2/5 items (depende da coisa que vocÊ colocou como valor de 'perPage')
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO, VAMOS QUERER LIMITAR A QUANTIDADE DE ITEMS QUE VAMOS RETRIEVAR,
+
+TUDO POR MEIO DO MÉTODO 
+
+'.limit()',
+
+chamado em cima de '.skip()'...
+
+
+
+
+
+eX:
+
+
+
+return Post.find()
+.skip(
+    currentPage - 1 * perPage
+)
+.limit(perPage);
+
+--------------------------------------
+
+
+
+
+
+
+
+
+OK.... O CÓDIGO COMPLETO VAI FICANDO ASSIM:
+
+
+
+exports.getPosts = (req, res, next) => {
+
+    const currentPage = req.query.page;
+    const perPage = 2;
+    let totalItems;
+
+
+    Post.find()
+    .countDocuments()
+    .then(
+        (count) => {
+            totalItems = count; 
+            return Post.find()
+                .skip(
+                    currentPage - 1 * perPage
+                    )
+.limit(perPage);
+        }
+    )
+    .then(
+        (posts) => {
+            res.status(200).
+            json({
+                message: 'Posts fetched successfully.', posts: posts
+            })
+        }
+    )
+    .catch(
+        (err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        }
+    )
+
+}
+
+
+
+------------------------------------
+
+
+
+CERTO... 
+
+
+isso vai retrievar 
+
+a quantidade 
+
+de 
+
+
+posts que desejamos,
+ 
+
+
+ no caso...
+
+
+
+
+
+
+
+
+
+ --> MAS É CLARO QUE ESSA RESPONSE 200 ali está mt simples...
+
+
+
+
+
+
+
+
+
+
+
+ --> NOSSO FRONTEND PRECISA RECEBER MAIS INFO DE 
+
+
+ NOSSO 
+
+ BACKEND,
+
+ precisa 
+ receber 
+
+
+ algumas propriedades 
+
+ que 
+
+ comuniquem 
+
+
+ se 
+
+ é 
+
+ necessário mostrar os button de 
+
+
+ 'next' 
+
+ e 
+
+ 'previous'...
+
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO,
+
+ PROFESSOR 
+
+
+ ADICIONA 
+
+
+
+ OUTRAS PROPRIEDADES,
+
+
+
+ COMO 
+
+
+ 'totalItems'... ----------> 
+
+
+
+
+O NÚMERO TOTAL DE ITEMS SERÁ IMPORTANTE... para mostrar esses buttons dinamicamente....
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+
+    const currentPage = req.query.page;
+    const perPage = 2;
+    let totalItems;
+
+
+    Post.find()
+    .countDocuments()
+    .then(
+        (count) => {
+            totalItems = count; 
+            return Post.find()
+                .skip(
+                    currentPage - 1 * perPage
+                    )
+.limit(perPage);
+        }
+    )
+    .then(
+        (posts) => {
+            res.status(200).
+            json({
+                message: 'Posts fetched successfully.', posts: posts, totalItems: totalItems
+            })
+        }
+    )
+    .catch(
+        (err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        }
+    )
+
+}
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+OK.... ISSO QUER DIZER QUE AGORA TEMOS PAGINATION,
+
+EXATAMENTE COMO 
+
+HAVÍAMOS VISTO ANTERIORMENTE,
+
+
+
+
+no app nodeexpress comum...
+
+
+
+
+--> ISSO QUER DIZER QUE PAGINATION 
+
+COM REST 
+
+
+APIs 
+
+
+é algo realmente
+ 
+
+
+ BEM PARECIDO 
+
+ com pagination 
+
+ em apps comuns 
+
+
+ nodeexpress.... (com render de views)....
+
+
+
+
+
+
+
+
+
+ ---> OK, É SÓ UM POUQUINHO DIFERENTE PQ NÓS TEMOS 
+
+
+ 'A SEPARATE FRONTEND'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> tudo bem, eu entendi, mas 
+
+
+o problema 
+
+do 
+
+bug das PAGES,
+
+
+
+de nossa pagination (nossa versão do código)
+
+
+AINDA CONTINUA...
+
+
+
+vou ter que ver como resolver isso amanhã....
+
+
+
+
+
+
+
+
+
+--> PARA CONSERTAR O BUG DA PAGINATION, TENHO QUE QUEBRAR 1 POUCO A CABEÇA...
+
+
+
+
+--> primeiramente,
+
+
+
+
+vou deletar todos os posts de minha database,
+
+e as images correspondentes a eles (ver se não é isso que está causando o problema)...
+
+
+
+
+
+
+
+
+
+--> hmmmm vejo um pequeno erro de 
+
+user interface.... --> 
+
+
+
+
+
+do nada recebo 'failed to fetch',
+
+
+e aí 
+
+
+
+
+
+NÃO CONSIGO MAIS 
+
+
+
+
+DIGITAR NO MEU INPUT FIELD DE 
+
+'
+title'... do post que vou criar...
+
+
+
+
+
+
+
+
+
+
+
+----> TAMBÉM RECEBI OUTRO ERRO,
+
+
+
+'Route.put() requires a callback function but got a [object Undefined]'
+
+
+
+
+
+
+
+--> ESSE PROBLEMA ERA/É CAUSADO PELO CÓDIGO DE VALIDATION DE 
+
+
+//   [
+//     body('email')
+//       .isEmail()
+//       .withMessage('Inputted email is not valid')
+//       .custom((value, { req }) => {
+//         ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+//         console.log(value);
+//         return User.findOne({ email: value }).then((user) => {
+//           console.log(user);
+//           if (user) {
+//             console.log(user, 'LINE');
+//             return Promise.reject(
+//               'An user with the chosen email already exists, please choose another one.'
+//             );
+//           } else {
+//             return value;
+//           }
+//         });
+//       }),
+//     ,
+//     body('name')
+//       .isLength({ min: 7 })
+//       .withMessage('Your name has to have at least 7 characters.')
+//       .isString()
+//       .withMessage('Invalid name.'),
+//   ],
+
+
+
+
+
+
+
+
+
+------> tenho que arrumar alguma coisa nesse código aí....
+
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA É ESTE TRECHO:
+
+
+
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, 'LINE');
+            return Promise.reject(
+              'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      }),
+
+
+
+
+
+
+
+
+
+--> alguma coisa está errada, aí...
+
+
+
+
+
+
+
+
+
+--> esse código continua errado,
+
+
+mas eu não sei o que exatamente está causando esse erro... o professor 
+
+
+
+não menciona, também...
+
+
+
+
+
+
+
+---> VOU TENTAR ARRUMAR O BUG DAS PAGES 
+
+DA PAGINATION (pages extras), ANTES....
+
+
+
+
+
+
+----> de novo, estou tendo sempre UMA PÁGINA EXTRA,
+
+1 página em BRANCO depois das outras...
+
+
+
+
+
+
+
+
+
+--> provavelmente um erro no frontend....
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI... ERA UM PROBLEMA NO FRONTEND:
+
+
+
+
+
+
+
+
+
+            <Paginator
+              onPrevious={this.loadPosts.bind(this, 'previous')}
+              onNext={this.loadPosts.bind(this, 'next')}
+              lastPage={Math.ceil(this.state.totalPosts / 5)}
+              currentPage={this.state.postPage}
+            >
+
+
+
+
+
+
+
+
+
+            ------> EXATAMENTE NESSE LOCAL AÍ,
+
+
+            em 
+
+            'lastPage',
+
+
+            QUE É ESSE PROP QUE 
+
+            DIVIDE/fragmenta nossa lista de posts em VÁRIAS PAGES...
+
+
+
+
+
+
+
+
+
+
+---> AGORA ISSO ESTÁ FUNCIONANDO DIREITINHO...
+
+
+
+
+
+
+
+
+
+--> certo.... de volta ao bug 
+
+
+da validation...
+
+

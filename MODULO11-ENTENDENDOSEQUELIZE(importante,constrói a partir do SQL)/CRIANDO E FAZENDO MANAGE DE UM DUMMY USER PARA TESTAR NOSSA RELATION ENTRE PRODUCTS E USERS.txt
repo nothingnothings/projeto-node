@@ -1,0 +1,2108 @@
+
+
+
+
+
+
+
+------> BEM, NÓS PRECISAMOS DE UM DUMMY USER..
+
+
+
+
+
+
+
+
+
+
+--> PRECISAMOS DE UM DUMMY USER PQ __ AINDA NÃO TEMOS 
+
+
+
+AUTHENTICATION PROCESS ALGUM,
+
+
+
+
+POR ISSO 
+
+
+
+
+VAMOS CRIAR UM 
+
+USUÁRIO MANUALMENTE,
+
+
+
+
+POR ENQUNATO...
+
+
+
+
+
+
+
+------>  OK........ ------> 
+
+
+
+
+AÍ, PROFESSOR CITA ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+Product.belongsTo(User,   ///DEFINE __ UMA RELATION ONE-TO-ONE ENTRE 'Product' e 'User'...
+  
+{
+  constraints: true, onDelete: 'CASCADE' ////ver anotação 'ADICIONANDO UMA RELATIONSHIP one-to-many', LÁ NO MÓDULO 11, 'entendendoSEQUELIZE'... ---> esse objeto são OPÇÕES, é um objeto OPCIONAL PARA CONFIGURAR A RELATION...
+}
+
+)     
+User.hasMany(Product); //////DEFINE/CRIA UMA RELATION 'ONE-TO-MANY' entre User e Product (cada user terá MÚLTIPLOS PRODUCT)....
+
+
+
+
+
+sequelize.sync( 
+                 
+)
+                    .then(
+  (result) => {
+    app.listen(3000); 
+  }
+)
+.catch(
+  (err) => {
+      console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+ESSE 
+
+
+'sequelize.sync()'
+
+
+
+É __ EXECUTADO_ _ APÓS __ MINHAS TABLES 
+
+SEREM 
+
+
+CRIADAS, por meio das linhas de 
+
+
+'''
+Product.belongsTo(User,   ///DEFINE __ UMA RELATION ONE-TO-ONE ENTRE 'Product' e 'User'...
+  
+{
+  constraints: true, onDelete: 'CASCADE' ////ver anotação 'ADICIONANDO UMA RELATIONSHIP one-to-many', LÁ NO MÓDULO 11, 'entendendoSEQUELIZE'... ---> esse objeto são OPÇÕES, é um objeto OPCIONAL PARA CONFIGURAR A RELATION...
+}
+
+)     
+User.hasMany(Product); //////DEFINE/CRIA UMA RELATION 'ONE-TO-MANY' entre User e Product (cada user terá MÚLTIPLOS PRODUCT)....
+
+
+
+
+''''
+
+
+
+
+
+
+
+
+......... OK.... DEPOIS DAS TABLES TEREM SIDO CRIADAS,
+
+DENTRO 
+
+
+DESSE 
+
+CÓDIGO 
+DE 
+
+
+'sequelize.sync()',
+
+
+
+
+
+
+
+
+DENTRO DAQUELE '.then()'
+
+
+BLOCK,
+
+
+
+
+
+___ 
+
+
+
+
+O PROFESSOR VAI QUERER __ ACTUALLY__ CRIAR O NOSSO USER...
+
+
+
+
+
+
+
+
+
+
+-----> PORTANTO, 
+
+
+DENTRO 
+
+DO THEN BLOCK,
+
+
+
+O PROFESSOR 
+
+VAI USAR 
+O 
+
+
+model 
+
+de 
+
+'User',
+
+
+
+PARA 
+
+ENTÃO 
+
+CHECAR __ SE ENCONTRA  
+
+
+
+____aLGUM USER 
+
+
+
+COM 
+
+
+O 
+
+ID 
+
+de 
+
+'1'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+Product.belongsTo(User,   ///DEFINE __ UMA RELATION ONE-TO-ONE ENTRE 'Product' e 'User'...
+  
+{
+  constraints: true, onDelete: 'CASCADE' ////ver anotação 'ADICIONANDO UMA RELATIONSHIP one-to-many', LÁ NO MÓDULO 11, 'entendendoSEQUELIZE'... ---> esse objeto são OPÇÕES, é um objeto OPCIONAL PARA CONFIGURAR A RELATION...
+}
+
+)     
+User.hasMany(Product); //////DEFINE/CRIA UMA RELATION 'ONE-TO-MANY' entre User e Product (cada user terá MÚLTIPLOS PRODUCT)....
+
+
+
+
+
+sequelize.sync( 
+                 
+)
+                    .then(
+  (result) => {
+
+      User.findByPk(1); ////////EIS O CÓDIGO EM QUESTÃO.
+
+
+    app.listen(3000); 
+  }
+)
+.catch(
+  (err) => {
+      console.log(err);
+  }
+)
+
+-----------------------------
+
+
+
+
+O PROFESSOR 
+
+
+NOS EXPLICA QUE 
+
+É 
+
+CLARO QUE 
+
+
+ESSE É SÓ UM 
+
+'DUMMY CODE'
+
+
+
+
+
+QUE VAMOS EXECUTAR _ PARA 'SEE IF I DO HAVE ONLY ONE USER' (isso 
+
+
+pq 
+
+
+é óbvio que SÓ VAMOS USAR/PRECISAR 1 USER NO MOMENTO,
+
+pois não temos authentication no lugar...)
+
+
+
+
+
+
+
+
+
+------> OK.... -----> E SE 
+
+EU 
+
+TIVER 
+
+
+
+1 USER 
+
+com esse id,
+
+
+
+
+
+EU __ NÃO VOU CRIAR UM NOVO _ USER,
+
+
+
+
+
+E __ SE EU 
+
+
+NÃO __ TIVER __ 1 USER COM ESSE ID,
+
+
+VOU CRIAR UM NOVO...
+
+
+
+
+
+
+
+
+--> PARA EXECUTAR CÓDIGO A PARTIR DESSE 'CHECK',
+
+
+
+professor VAI FAZER __RETURN__ DO RESULTADO 
+
+desse 
+
+'User.findByPk(1)',
+
+
+
+
+PARA ENTÃO ADICIONAR UM SEGUNDO THEN BLOCK
+
+
+
+EM QUE 
+
+
+vai conseguir 'user' ,
+
+
+e que 
+
+ENTÃO VAI 
+
+
+
+CHECK (if check)
+
+
+PELA EXISTÊNCIA DO USER...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+sequelize.sync( 
+                 
+)
+                    .then(
+  (result) => {
+
+     return User.findByPk(1); ////////EIS O CÓDIGO EM QUESTÃO.
+
+    app.listen(3000); 
+  }
+)
+.then(
+    (user) => {
+        if(!user) { ///EIS O CÓDIGO EM QUESTÃO.
+
+
+        }
+    }
+)
+.catch(
+  (err) => {
+      console.log(err);
+  }
+)
+
+
+-----------------------
+
+
+
+
+SE NENHUM 
+
+USER 
+
+
+
+
+FOR ENCONTRADO (!user),
+
+
+
+PROFESSOR VAI QUERER ___CRIAR UM NOVO __ USER __ NA TABLE DE USERS,
+
+
+
+POR MEIO DO CÓDIGO 
+
+
+
+
+'User.create(
+    {
+        name: 'Max', 
+        email: 'test@test.com'
+    }
+)
+
+'
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+--> o 'User.create({})'
+
+
+TAMBÉM VAI RETORNAR UMA PROMISE.....
+
+
+
+
+
+
+
+
+
+
+--> mas o problema é que 
+
+
+
+
+
+
+'return User.findByPk(1)' É UM CÓDIGO 
+
+QUE 
+
+
+
+VAI _ OBSTAR__ 
+
+
+ A EXECUÇÃO DE 
+
+
+ 'app.listen(3000)',
+
+ que é o código que realmente 
+
+
+
+INICIA NOSSO SERVER...
+
+
+
+
+
+
+--> PARA CONSERTAR ISSO ,
+
+
+PROFESSOR TIRA O 'app.listen()' desse 
+
+primeiro 
+
+
+THEN BLOCK,
+
+
+
+para 
+
+
+
+
+
+então colocar no PRÓXIMO THEN BLOCK....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR PROPÕE UM CÓDIGO DE 
+
+
+
+
+''
+
+
+
+sequelize
+
+.sync(
+)
+.then(
+  (result) => {
+
+
+
+        return User.findByPk(1);
+  }
+)
+.then(
+  (user) => {
+    return User.create({name: 'Max', email: 'test@test.com'})
+  }
+
+  return user;
+)
+.catch(
+
+  (err) => {console.log(err)}
+)
+
+
+
+
+
+
+
+
+-----> MAS AÍ ELE 
+
+NOS CONTA QUE SE ESCREVERMOS NOSSO CÓDIGO ASSIM,
+
+FICAREMOS 'INCONSISTENTES',
+
+
+pois aquele 
+
+segundo THEN BLOCK 
+
+
+vai 
+
+estar 
+
+RETORNANDO 
+OU:
+
+
+1) UMA PROMISE, que é 'User.create({})'....
+
+
+
+
+
+2) UM OBJECT (Que é aquele 'user' em 'return user'...)
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR DIZ QUE ISSO É UM PROBLEMA PQ 
+
+
+VAMOS QUERER 
+
+QUE 
+
+
+OS 2 'CASES' 
+
+RETORNEM UMA PROMISE,
+
+
+retornem uma promise para que 
+
+ENTÃO CONSIGAMOS CHAMAR 
+
+
+um 
+
+próximo 
+
+'.then()'
+
+
+sobre 
+
+
+
+o seu resultado/promise retornada por eles....  
+
+
+
+
+
+
+
+
+
+--> PARA CONSERTAR ISSO,
+
+PROFESSOR 
+
+
+
+VAI SUBSTITUIR 
+
+
+
+'return user' 
+
+por 
+
+
+
+'return Promise.resolve(user)',
+
+
+
+(QUE É ESSENCIALMENTE UMA PROMISE QUE É 'IMMEDIATELY RESOLVED'..., resolvida como 'USER'...)
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+sequelize
+
+.sync(
+)
+.then(
+  (result) => {
+
+
+
+        return User.findByPk(1);
+  }
+)
+.then(
+  (user) => {
+    if(!user) {
+      return User.create({name: 'Max', email: 'test@test.com'})
+    }
+
+
+    return Promise.resolve(user); ////////EIS O CÓDIGO EM QUESTÃO.
+  }
+
+  
+)
+.catch(
+
+  (err) => {console.log(err)}
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> TECNICAMENTE,
+
+VOCÊ PODERIA 
+
+OMITir 
+
+
+'
+Promise.resolve()' wrappando o user,
+
+
+
+
+____ PQ SE VOCê RETORNAR 
+
+
+1 
+
+
+object (como estamos fazendo aqui, com 'user')
+
+
+
+
+
+
+DENTRO DE UM THEN BLOCK,
+
+
+ELE 
+
+
+JÁ 
+
+É 
+
+'AUTOMATICALLY WRAPPED IN A PROMISE',
+
+
+
+O PROFESSOR 
+
+
+
+SÓ QUERIA 
+
+
+NOS MOSTRAR/EXPLICAR QUE 
+
+
+
+
+
+
+'THE VALUES THAT ARE RETURNED IN THE 2 CASES __ ARE EQUAL___'... (os 2 vão ser objetos 'user', só que 1 será OBTIDO LÁ DA DATABASE, ENQUANTO O OUTRO SERÁ CRIADO NA HORA, por 'User.create()'...)
+
+
+
+
+
+
+
+
+
+
+
+CERTO... você pode escolher qualquer uma das sintaxes... vou escolher a mais simples:
+
+
+
+
+
+
+
+
+
+
+
+
+
+sequelize
+
+.sync(
+)
+.then(
+  (result) => {
+
+
+
+        return User.findByPk(1);
+  }
+)
+.then(
+  (user) => {
+    if (!user) {
+      return User.create({name: 'Max', email: 'test@test.com'})
+    }
+
+
+ return user;    /////esse 'user', objeto, é automaticamente convertido para ficar 'Promise.resolve(user)', por trás das cenas... (todo OBJETO retornado DENTRO DE UMA PROMISE é wrappado EM UMA NOVA PROMSE.... por trás das cenas...)
+  }
+
+)
+.catch(
+
+  (err) => {console.log(err)}
+)
+
+
+
+
+
+
+
+---------------------------------------
+
+
+OK... ISSO FEITO, VAMOS ADICIONAR UM NOVO 
+
+
+
+THEN BLOCK,
+
+
+
+
+para lidar com o result de 'user' (que é UMA PROMISE, como devemos nos lembrar..)
+
+
+
+
+
+
+ele 
+
+
+
+adiciona um console.log ali,
+
+
+E TAMBÉM O 'LISTEN' 
+
+
+DO NOSSO SERVER...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+sequelize
+  .sync()
+  .then((result) => {
+
+    return User.findById(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user; /////esse 'user' é automaticamente convertido para ficar 'Promise.resolve(user)', por trás das cenas... (todo OBJETO retornado DENTRO DE UMA PROMISE é wrappado EM UMA NOVA PROMSE.... por trás das cenas...)
+  })
+  .then(
+    (user) => {
+
+          console.log(user);
+          app.listen(3000);
+    }
+  )
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+--------------------------------------
+
+
+
+
+
+
+OK... ISSO REALMENTE VAI CRIAR UM 'DUMMY USER'
+
+
+NO NOSSO SERVER...
+
+
+
+
+
+CERTO.... FUNCIONOU.
+
+
+
+
+
+
+AGORA TEMOS ESSE 
+
+'DUMMY USER'
+
+
+ARMAZENADO 
+
+LÁ 
+
+
+NA 
+
+TABLE 
+
+DE 
+
+'users',
+
+lá 
+
+
+
+NO WORKBENCH MYSQL....
+
+
+
+
+
+
+
+
+
+------------> quando reiniciarmos o server, ele não vai criar um novo 
+
+
+user 
+
+com 
+
+'User.create({name: 'Max', email: 'test@test.com'}),
+
+
+
+JUSTAMNETE 
+
+PQ 
+
+
+JÁ TEREMOS UM USER (a condição '(!user)' não será satisfeita)
+
+
+
+
+
+
+
+
+OK.... ESSE CÓDIGO ESTÁ FUNCIONANDO COMO DEVIA... 
+
+
+
+
+
+
+
+
+
+
+--> COM ESSA CHANGE NO LUGAR,
+
+AGORA 
+
+SEMPRE 
+
+TEMOS 
+
+1 
+
+USER 
+
+DISPONÍVEL...
+
+
+
+
+
+
+
+
+
+------> COMO PRÓXIMO ETAPA,
+
+
+O PROFESSOR VAI QUERER 
+
+
+__REGISTRAR__ 
+
+
+
+
+
+UM NOVO MIDDLEWARE 
+
+NO NOSSO 
+
+main 
+
+'app.js'...
+
+
+
+
+
+
+
+--> ELE VAI REGISTRAR UM NOVO MIDDLEWARE PQ 
+
+
+
+__ELE VAI QUERER _____ 'STORE THAT USER'
+ 
+
+
+
+
+__DENTRO __ DE TODOS OS REQUESTS_ DO 
+
+
+USUÁRIO/ADMIN,
+
+
+TUDO 
+
+PARA QUE 
+
+
+__ ESSE ADMIN/USUÁRIO __CONSIGA _ USAR 
+
+ESSE 
+
+
+OBJETO 
+
+'user'
+
+
+EM QUALQUER LUGAR 
+
+DE NOSSO APP, CONVENIENTEMENTE...
+
+
+
+
+
+
+
+
+
+
+---> para isso, 
+
+
+professor 
+
+
+cria um novo middleware 
+
+
+
+com um código de 
+
+
+
+
+
+
+'app.use(
+  (req, res, next) => {
+
+
+  }
+)
+
+
+
+
+
+
+
+
+--> DENTRO 
+
+
+DESSE MIDDLEWARE, O PROFESSOR VAI QUERER 
+
+'REACH OUT TO MY DATABASE',
+
+
+
+
+E AÍ 
+
+VAI QUERER __ RETRIEVAR_ NOSSO USEr,
+ 
+
+
+
+ POR MEIO 
+
+ DE UM CÓDIGO 
+
+ COMO 
+
+
+
+ 'User.findByPk(1)'...
+
+
+
+
+ ex:
+
+
+
+
+
+
+ 
+'app.use(
+  (req, res, next) => {
+
+
+    User.findByPk(1);
+
+  }
+)
+
+
+'
+
+
+
+
+
+
+------> OK.... AÍ VOCÊ PODE ESTAR SE PERGUNTANDO 
+
+
+
+SE 
+
+
+ESSE CÓDIGO AÍ 
+
+
+VAI REALMENTE CONSEGUIR 'retrieve 1 user'... --> isso pq 
+
+
+
+
+
+NOSSO CÓDIGO ESTÁ ESCRITO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use(
+  (req, res, next) => {
+
+
+    User.findByPk(1);
+
+  }
+)
+
+
+
+sequelize
+  .sync()
+  .then((result) => {
+
+    return User.findById(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user; /////esse 'user' é automaticamente convertido para ficar 'Promise.resolve(user)', por trás das cenas... (todo OBJETO retornado DENTRO DE UMA PROMISE é wrappado EM UMA NOVA PROMSE.... por trás das cenas...)
+  })
+  .then(
+    (user) => {
+
+          console.log(user);
+          app.listen(3000);
+    }
+  )
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> OU SEJA,
+
+
+  TECNICAMENTE 
+
+  O 
+
+
+  'sequelize.sync()' 
+
+  e o 
+
+  START DE NOSSO SERVER (app.listen(3000))
+
+  ESTÃO 
+
+  ESCRITOS LÁAÁA´´AÁ embaixo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ----> VOCÊ DEVE TER EM MENTE QUE 
+
+  'app.use(( ) => {}')' 
+
+
+
+
+
+
+
+SÓ VAI 'REGISTER SOME MIDDLEWARE' -------->  ISSO QUER DIZER QUE 
+
+
+
+
+PARA 1 INCOMING REQUEST,
+
+
+
+
+E SÓ QUANDO 1 INCOMING REQUEST REALMENTE CHEGAR,
+
+
+
+
+
+VAMOS 
+
+
+__EXECUTAR __ ESSA FUNCTION DE '(req, res, next) => {}' 
+
+
+atribuída nesse middleware...
+
+
+
+
+
+
+
+
+
+----> JÁ 
+
+ o 'sequelize.sync()'
+
+
+
+ É ___ EXECUTADO __ PELO ____ 
+
+
+ NPM START, automaticamente,
+
+
+
+ E __NÃO DEPENDE DE 1 'INCOMING REQUEST' como 
+
+ aquele middleware...
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE 
+
+ O 
+
+ MIDDLEWARE __ SEMPRE SERÁ EXECUTADO ___ DEPOIS __ DE 'sequelize.sync()',
+
+
+ POIS 
+
+
+O MIDDLEWARE É:
+
+
+
+
+
+
+1) É REGISTRADO NO STARTUP DO SERVER (com o sequelize.sync(), nesse caso), 
+
+
+
+2) MAS __ ISSO __ NÃO QUER DIZER QUE ELE É __ EXECUTADO NESSE MOMENTO; NÃO, O MOMENTO EM QUE 
+
+ELE É EXECUTADO É BEM DEPOIS,
+
+
+QUANDO OCORRE UM ___ REQUEST__,  QUANDO EXISTENTE UM 'INCOMING REQUEST' ao nosso 
+
+servidor nodeJS... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK..
+
+
+
+RESUMINDO:
+
+
+
+INCOMNIG REQUESTS SÃO FUNNELADOS APENAS POR DENTRO DOS NOSSOS MIDDLEWARES,
+
+
+
+
+
+e não 
+
+
+por dentro de nosso 'sequelize.sync(... app.listen(3000)'.... ---->
+
+
+
+
+
+E OS MIDDLEWARES 
+
+
+SÃO EXECUTADOS __POSTERIORMENTE à 'sequelize.sync()' JUSTAMENTE POR ISSO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ok..... --> o npm start vai RODAR ESSE CÓDIGO de sequelize.sync() que vai SETTAR NOSSA DATABASE UP,
+
+
+
+mas 
+
+
+ISSO N QUER DIZER QUE ELE VAI EXECUTAR A ANON FUNCTION DE '(req, res, next)' dentro DAQUELE middleware (app.use), JUSTAMNETE 
+
+PQ 
+
+ESSE MIDDLEWARE __ DEPENDE DE 1 INCOMING REQUEST__ PARA SER ATIVADO...
+
+
+
+
+
+
+
+
+--> IT JUST REGISTERS IT 
+
+AS MIDDLEWARE FOR INCOMING REQUESTS... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> app.use((req, res, next) => {
+
+
+
+  user.findByPk(1);
+
+})
+
+
+
+
+
+
+
+------> CERTO.... E ESSE CÓDIGO AÍ SÓ VAI RODAR PARA INCOMING REQUESTS,
+
+REQUESTS
+ QUE 
+
+ SÓ 
+
+ VÃO CONSEGUIR O ALCANÇAR SE NÓS 
+
+
+ INICIAMOS NOSSO SERVER COM SUCESsO, Com 
+
+ 'app.listen(3000)',
+
+ QUE 
+ 
+
+ POR SUA VEZ 
+
+ SÓ É EXECUTADO 
+
+
+ SE NOSSO 
+
+
+ CÓDIGO QUE SETTA A DATABASE 
+
+
+
+ __ É SUCCESSFUL,
+
+
+
+ nosso código de 'sequelize.sync()' que CRIA TABLES 
+
+
+
+ e INSERE 1 record de 'user' na table users.... (E QUE também vai executar o CÓDIGO DE NOSSO SERVER NODEJS, o código de 'intake' e 'outtake' do nosso backend nodejs, pq temos aquele 'app.listen(3000)' no seu interior...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> OK... ISSO SIGNIFICA QUE 
+
+ É 
+
+ 100% CERTO QUE 
+
+
+ __VAMOS ENCONTRAR 
+
+ 1 
+
+ USER 
+
+
+ POR MEIO 
+
+ DE 
+
+ 'User.findByPk(1)',
+
+ DENTRO 
+
+
+ DESSE MIDDLEAWRE...
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ app.use((req, res, next) => { ////MIDDLEWARE CLÁSSICO, QUE VAI EXECUTAR ESSA ANON FUNCTION A PARTIR DE INCOMING REQUESTS QUE ATINJAM NOSSO BACKEND... ----> detalhe: esse código da anon function sempre SERÁ EXECUTADO__ DEPOIS __ DE 'sequelize', no momento em que 1 REQUEST ATINGIR NOSSO BACKEND... --> E ESSE BACKEND SÓ SERÁ ABERTO, com 'app.listen(3000)', SE O CO´DIGO DE 'sequelize.sync()' (CÓDIGO QUE SETTA NOSSA DATABASE SQL/vincula-a ao nosso app nodeJS) tiver sido executado com sucesso, pois o 'app.listen(3000)' se encontra DENTRO DELA, NO THEN BLOCK FINAL....
+
+    User.findByPk(1)
+    
+    .then(
+      (user) => {
+
+      }
+    )
+    
+    .catch((err) => {
+
+
+        console.log(err);
+    })
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+--->OK, MAS O QUE DIABOS O PROFESSOR QUER FAZER COM O USER NESSE THEN BLOCK?
+
+
+
+
+
+
+
+
+--> bem, o professor vai querer 
+
+ARMAZENAR 
+
+
+ESSE 
+
+USER 
+
+
+
+ 
+
+ em 
+
+
+ 1
+
+
+ 'REQUEST'... --->   PARA ISSO,
+
+
+
+ professor 
+
+ vai 
+
+ escrever 
+
+
+
+ 'req.user = user' .... --> E NÓS PODEMOS REALMENTE FAZER ISSO;
+
+
+
+ PODEMOS SIMPLESMENTE ADICIONAR UM NOVO FIELD 
+
+
+ AO NOSSO 
+
+
+ 
+
+ OBJETO 'request',
+
+
+ chamado 
+
+ de 
+ 'user',
+
+
+ com o valor 
+
+
+ desse 
+
+ 'user' 
+
+ QUE RETRIEVAMOS LÁ 
+
+ DE NOSSA DATABASE....
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+ 
+app.use((req, res, next) => {
+  ////MIDDLEWARE CLÁSSICO, QUE VAI EXECUTAR ESSA ANON FUNCTION A PARTIR DE INCOMING REQUESTS QUE ATINJAM NOSSO BACKEND... ----> detalhe: esse código da anon function sempre SERÁ EXECUTADO__ DEPOIS __ DE 'sequelize', no momento em que 1 REQUEST ATINGIR NOSSO BACKEND... --> E ESSE BACKEND SÓ SERÁ ABERTO, com 'app.listen(3000)', SE O CO´DIGO DE 'sequelize.sync()' (CÓDIGO QUE SETTA NOSSA DATABASE SQL/vincula-a ao nosso app nodeJS) tiver sido executado com sucesso, pois o 'app.listen(3000)' se encontra DENTRO DELA, NO THEN BLOCK FINAL....
+
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user; ///vai definir uma nova propriedade/field de USER __DENTRO DO NOSSO OBJETO 'request', objeto request de nosso usuário/admin... esse valor, 'user', será o USER QUE FOI RETRIEVADO LÁ DE NOSSA DATABASe por meio de 'User.findByPk(1)'...
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR EXPLICA QUE 
+
+
+
+NÃO EXISTE 
+
+'user' 
+
+a priori,
+
+no 
+
+
+objeto 
+
+'request'... --> POR ISSO,  o field 'user' inicial é undefined,
+
+mas 
+
+mudamos isso com 
+
+
+
+
+'req.user = user';
+
+
+
+
+
+
+
+----> OK.... -> NOSSO 'USER' 
+
+ESTÁ SENDO ARMAZENADO 
+
+NESSE OBJECT AÍ......
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ENTÃO, PROFESSOR NOS DIZ:
+
+
+
+DEVEMOS TER EM MENTE QUE 
+
+O 
+
+
+USER 
+
+QUE ESTAMOS RETRIEVANDO/VAMOS RETRIEVAR DA DATABASE
+
+
+
+_-NESSE LUGAR__ AÍ 
+
+
+____NÃO É UM SIMPLES OBJETO JAVASCRIPT COM 
+
+
+
+OS VALUES ARMAZENADOS EM UMA DATABASE,
+
+
+e sim 
+
+
+_______ É UM 
+
+
+
+
+'SEQUELIZE OBJECT',
+
+
+
+
+OBJECT COM 
+
+
+
+
+MAIS DO QUE 
+
+APENAS OS VALUES ARMAZENADOS NA DATABASE,
+
+PQ 
+
+ELE 
+
+
+TAMBÉM 
+
+VAI 
+
+TER 
+
+
+___'ALL THESE UTILITY METHODS' 
+
+
+
+adicionados pelo SEQUELIZE,
+
+como 
+
+'destroy'...
+
+
+
+
+
+
+
+
+
+
+--> isso significa que 
+
+quando escrevemos, aqui,
+
+
+
+'req.user = user',
+
+
+
+
+_ NÓS 
+
+ACABAMOS ARMAZENANDO 
+
+
+NÃO SÓ 
+
+ALGO COMO 
+
+
+
+
+'{
+
+  name: 'Max',
+  email: 'test@test.com'
+}
+',
+
+
+um objeto javascript simples, com fields simples,
+
+
+
+
+
+___ E SIM __ ARMAZENAMOS ALGO COMO:
+
+
+
+
+
+{
+
+  name: 'Max',
+  email: 'test@test.com',
+  destroy: () => {destroy()},
+  create: () => {create()},
+
+  etc tec....
+}
+
+
+
+
+
+-----> 'SEQUELIZE OBJECT',
+
+
+com 
+
+
+um monte de utility methods... -------> POR 
+
+
+
+ESSE 
+
+OBJETO/OBJETOS RETRIEVADOS 
+
+ASSIM 
+
+
+
+
+
+__ POSSUIR _ ESSES UTILITY METHODS,
+
+
+
+vamos 
+
+poder 
+
+
+
+
+
+CHAMAR MÉTODOS 
+
+dentro 
+
+desse objeto,
+
+
+em QUALQUER LUGAR 
+
+DE NOSSO APP...
+
+
+
+
+
+
+
+--> por exemplo, podemos ir lá no controller de 'admin.js'
+
+
+
+e 
+
+escrever 
+
+
+
+'req.user.destroy()',
+
+
+POR EXEMPLO,
+
+
+
+_ PQ __ ESSE MÉTODO REALMENTE PASSARÁ 
+
+A EXISTIR/EXISTIRÁ 
+
+
+_DENTRO __ 
+
+
+DESSE FIELD/PROPRIEDADE 
+
+
+'user'
+
+
+
+
+no nosso request...
+
+
+
+
+
+
+
+
+--> OK.... MAS UM PROBLEMA É QUE AGORA NOSSO APP NODEJS NÃO ESTÁ INICIANDO..
+
+
+
+
+
+
+
+--> ACHO QUE É PQ EU ESQUECI DE ESCREVER 
+
+'next()'
+
+PARA __ PASSAR __ AO RESTO DE MEU CÓDIGO (pq esse meu 'app.use()' NÃO ENVIOU UMA 
+
+RESPONSE POR meio de 'res.xxx()' ,o que 
+
+
+
+
+ENTÃO FEZ COM QUE A EXECUÇAÕ DE CÓDIGO DE NOSSO SV parasse por aí....)
+
+
+
+
+
+
+
+
+
+
+OK.... DEU CERTO...
+
+
+
+
+
+
+
+
+-> COM ISSO,
+
+
+AGORA TEMOS O USER 
+
+
+'SETUP' 
+
+e também 
+
+RETRIEVADO 
+
+
+
+por meio desse nosso middleware...
+
+
+
+
+
+
+
+
+
+--> O PRÓXIMO PASSO É  USAR ESSE USER 
+
+
+PARA 
+
+
+
+__CRIAR NOVOS PRODUCTS, ASSOCIADOS A ELE...
+
+
+
+
+
+
+
+--> VEREMOS ISSO NA PRÓXIMA AULA...

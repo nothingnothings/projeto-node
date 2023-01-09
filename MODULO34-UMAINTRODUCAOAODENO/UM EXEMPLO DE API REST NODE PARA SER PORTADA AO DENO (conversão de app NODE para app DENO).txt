@@ -1,0 +1,1323 @@
+
+
+
+
+
+
+
+
+--> O PROFESSOR DIZ QUE DEVEMOS COMEÇAR COM O WRITE DE UMA 
+
+
+REST API BEM BÁSICA 
+
+
+NESSE NOSSO FOLDER...
+
+
+
+
+
+
+
+--> CRIO ESSE PROJETO NO FOLDER 
+
+
+'NOVOPROJETOAPIBASICANODEEXEMPLO'...
+
+
+
+
+
+
+
+
+
+-----> executo npm init... 
+
+
+
+
+
+
+
+
+
+
+-----> AÍ GANHO O PACKAGE.JSOn..
+
+
+
+
+
+--> PRECISO INSTALAR 
+
+
+
+
+O EXPRESS, BODY-PARSER, ETC...
+
+
+
+
+
+
+
+
+
+
+--> VOU EXECUTANDO/INSTLAANDO ESTAS PACKAGES:
+
+
+
+
+
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> npm install --save express
+
+added 50 packages, and audited 51 packages in 3s
+
+
+found 0 vulnerabilities
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> npm install --save body-parser      
+
+up to date, audited 51 packages in 1s
+
+2 packages are looking for funding
+
+found 0 vulnerabilities
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> npm install --save-dev @types/express
+
+added 9 packages, and audited 60 packages in 4s
+
+  run `npm fund` for details
+
+found 0 vulnerabilities
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> npm install --save-dev @types/node  
+
+up to date, audited 60 packages in 1s
+
+2 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> npm install --save-dev @types/body-parser
+
+up to date, audited 60 packages in 1s
+
+2 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> npm install --save nodemon
+
+added 116 packages, and audited 176 packages in 7s
+
+17 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO> tsc --init  
+
+Created a new tsconfig.json with:                                                                                       
+                                                                                                                     TS   
+  target: es2016
+  module: commonjs
+  strict: true
+  esModuleInterop: true
+  skipLibCheck: true
+  forceConsistentCasingInFileNames: true
+
+
+You can learn more at https://aka.ms/tsconfig.json
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\NOVOPROJETOAPIBASICANODEEXEMPLO>
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+PROFESSOR DECIDE NÃO USAR 
+
+
+
+
+'models'/'controllers'..
+
+
+
+
+
+
+
+
+
+
+--> SERÁ UMA 
+
+
+API TODO BEM SIMPLES....
+
+
+
+
+
+
+
+
+--> MAS 
+
+
+
+
+NÃO SERÁ SOBRE UM APP FANCY,
+
+E SIM 
+
+
+ALGO SIMPLES, QUE MOSTRE AS DIFERENÇAS ENTRE 
+
+O 
+
+DENO E O NODE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESCREVI TUDO BEM RÁPIDO:
+
+
+
+
+
+
+import express from 'express';
+
+
+
+import todoRoutes from './routes/todos';
+
+
+
+
+
+const app = express();
+
+
+
+
+app.use(todoRoutes);
+
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> aGORA SÓ FALTA O 'controllers'..
+
+
+
+
+
+
+
+
+
+
+
+----> TAMBÉM FALTA O IMPORT DE 'body-parser',
+
+PARA QUE 
+
+
+MEU APP CONSIGA HANDLAR 
+
+
+
+REQUESTS COM JSON DATA NOS BODIES...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+import express from 'express';
+
+
+
+import todoRoutes from './routes/todos';
+
+
+
+import bodyParser from 'body-parser';
+
+
+
+
+
+const app = express();
+
+
+app.use(bodyParser.json());
+
+
+
+app.use(todoRoutes);
+
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+certo... até agora, tudo bem...
+
+
+
+
+
+
+
+
+
+
+
+--> estou arrumando tudo corretamente...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> nosso primeiro 'controller'
+
+deverá retornar TODOS OS 'todo'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+import { Router } from "express";
+
+import { getTodos } from '../controllers/todos';
+
+
+const router = Router();
+
+
+
+
+
+
+router.get('/todos', getTodos);
+
+
+
+
+
+
+router.post('/', );
+
+
+
+
+router.put('/', );
+
+
+
+router.delete('/', );
+
+
+
+
+
+
+
+
+
+
+export default router;
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... VAMOS QUERER RETORNAR TODOS...
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR VAI COLOCAR ROUTES PARA 'POST',
+
+'PUT',
+
+
+E 'DELETE'..
+
+
+
+
+
+
+
+
+
+
+
+
+--> PUT E DELETE (edit e delete)
+
+
+VÃO 
+
+
+PEDIR 
+
+O ID __ DE NOSSO 'todo' específico 
+
+NA URL,
+
+nos 'params'....
+
+
+
+
+
+
+
+
+
+
+
+
+-> OK.. FICOU ASSIM:
+
+
+
+
+
+
+
+import { Router } from "express";
+
+import { getTodos, deleteTodo, editTodo, createTodo } from '../controllers/todos';
+
+
+const router = Router();
+
+
+
+
+
+
+router.get('/todos', getTodos);
+
+
+
+
+
+
+router.post('/todos', createTodo );
+
+
+
+
+router.put('/todos/:todoId', editTodo );
+
+
+
+router.delete('/todos/:todoId', deleteTodo);
+
+
+
+
+
+
+export default router;
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> RODAMOS UM 'tsc',
+
+PARA 
+
+PRODUZIR OS ARQUIVOS '
+
+.js'
+
+CORRESPONDENTES...
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PODERÍAMOS REGISTRAR OUTROS MIDDLEWARES EM 'app.js',
+
+
+SE DESEJARMOS...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+import express from 'express';
+
+
+
+import todoRoutes from './routes/todos';
+
+
+
+import bodyParser from 'body-parser';
+
+
+
+
+
+const app = express();
+
+
+app.use(bodyParser.json());
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+            console.log('Some middleware!');
+            next();
+    }
+)
+
+
+app.use(todoRoutes);
+
+
+
+
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+OK... 
+
+É ASSIM QUE 
+
+PODEMOS FAZER TUDO ISSO EM 'NODE EXPRESS',
+
+
+MAS 
+
+NOSSA 
+
+
+LÓGICA DE 
+
+
+
+get todos/delete todo/post todo/update todo 
+
+
+
+
+
+
+
+
+
+AINDA ESTÁ FALTANDO...
+
+
+
+
+
+
+
+
+
+
+--> PARA MANTER NOSSO CÓDIGO SIMPLES,
+
+
+
+
+
+O PROFESSOR CRIA UM ARRAY DE TODOS LÁ EM 
+
+
+
+'controller'... ----> SERÁ 1 ARRAY BEM SIMPLES,
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> quando conseguirmos um 
+
+
+
+
+
+REQUEST DE TIPO 'GET',
+
+
+VAMOS QUERER 
+
+
+
+SIMPLESMENTE RETORNAR UMA RESPONSE JSON (com '.json()' EM QUE 
+
+vamos 
+
+
+ENVIAR OS 'tdos'..
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+import { Request, Response, NextFunction } from 'express'; ///soluciona nosso problema de 'auto-correct'....
+
+
+
+
+
+type Todo = {
+        text: string
+}
+
+
+
+
+
+let todos: Todo[] = []; ////uso de TYPESCRIPT...
+
+
+
+
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+
+
+    res.status(200).json(
+        {
+            message: 'Got all Todos',
+            todos: todos
+        }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... 
+
+UMA RESPONSE BEM SIMPLES, NA VERDADE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO FEITO,
+
+
+
+
+
+
+vamos para o POST REQUEST..
+
+
+
+
+
+
+
+
+--> SE CONSEGUIRMOS 
+
+UM 
+
+
+
+'post request',
+
+VAMOS QUERER CRIAR UM NOVO TODO --> 
+
+
+UM NOVO TODO 
+
+
+vai 
+
+ser 
+
+um objeto 
+
+JAVASCRIPT 
+
+
+
+novo,
+
+
+
+
+EM QUE 
+
+
+VAMOS TER 1 ID que vai ser criado por 
+
+
+
+'new Date().toISOSTRING()' 
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+VAI FICAR ALGO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const newTodo: Todo = {
+        id: new Date().toISOString(),
+        text: req.body.text,
+    }
+
+
+
+    todos.push(newTodo);
+
+
+    res.status(201).json(
+        {
+            message: 'Added Todo',
+            todos: todos
+        }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+--------> OK.... 
+
+
+
+
+
+
+
+
+PRÓXIMO PASSO 
+
+
+
+
+É _ O CONTROLLER DE 'put' (edit) ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> o professor fala do BODYPARSER, que eu já havia instalado...
+
+
+
+
+
+
+
+
+
+
+
+
+--------> QUANTO AO 'edit todo',
+
+
+ELE ESCREVE ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+    const todoId = req.params.todoId;
+
+
+
+    const todoText = req.body.text;
+
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+           return todo.id === todoId
+        }
+    )
+
+
+
+    todos[todoIndex].text = todoText;
+
+
+
+    res.status(201).json(
+        {
+            message: 'Edited Todo',
+            todos: todos
+        }
+    )
+
+
+
+
+}
+
+
+
+
+
+
+
+
+export const deleteTodo = (req: Request, res: Response, next: NextFunction) => {
+
+    const todoId = req.params.todoId;
+
+
+    todos.filter(
+        (todo) => {
+               return todo.id !== todoId
+        }
+    )
+
+    res.status(200).json(
+        {
+            message: 'Deleted Todo',
+            todos: todos
+        }
+    )
+
+    
+    
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E O DELETE TAMBÉM FICOU MAIS OU MENOS ASSIM...
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+
+    const params = req.params as RequestParams;
+
+
+
+    const body = req.body as RequestBody;
+
+
+    const todoId = params.todoId;
+
+
+    const todoText = body.text;
+
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+           return todo.id === todoId
+        }
+    )
+
+
+
+    todos[todoIndex].text = todoText;
+
+
+
+    res.status(201).json(
+        {
+            message: 'Edited Todo',
+            todos: todos
+        }
+    )
+
+
+
+
+}
+
+
+
+
+
+
+
+
+export const deleteTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    
+
+
+    const params = req.params as RequestParams;
+
+
+    const todoId = params.todoId;
+
+
+    todos.filter(
+        (todo) => {
+               return todo.id !== todoId
+        }
+    )
+
+    res.status(200).json(
+        {
+            message: 'Deleted Todo',
+            todos: todos
+        }
+    )
+
+    
+    
+
+
+}
+
+
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+CERTO.... BASTANTE PROGRESSO, JÁ...
+
+
+
+
+
+
+-> ESCREVEMOS 'tsc'
+
+e, depois,
+
+
+'npm start'... --> 
+
+
+NOSSO CÓDIGO EXECUTA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> PODEMOS USAR POSTMAN PARA TESTAR 
+
+
+NOSSA API...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> ok... --> isso está funcionando... nossas routes estão funcionando com o POSTMAN, O API ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+--> AGORA DEVEMOS VER COMO CONSTRUÍMOS ESSA MESMA API,
+
+MAS COM O 'DENO' E O 'OAK'....

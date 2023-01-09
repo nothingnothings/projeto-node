@@ -1,0 +1,463 @@
+
+
+
+
+
+
+
+OK.... CONSERTAMOS A FEATURE DE 
+
+
+'ADD A PRODUCT',
+
+
+'FETCH A SINGLE PRODUCT'
+
+
+E 
+
+'
+FETCH ALL PRODUCTS',
+
+
+tudo agora usando o 
+
+
+MONGODB (database NOSQL)....
+
+
+
+
+
+
+
+
+
+
+
+
+---> O PRÓXIMO PASSO,
+
+AGORA, 
+
+É 
+
+FAZER 
+
+A FEATURE 
+
+DE 
+
+
+'
+EDIT A PRODUCT'
+
+
+E 
+
+'DELETE A PRODUCT'
+
+
+
+funcionar também...
+
+
+
+
+
+
+
+
+
+-------> ok... o botão de delete PROVAVELMENTE SERÁ MAIS FÁCIL..
+
+
+
+
+
+
+
+
+
+
+----> OK... CONSEGUI O BUTTON DE DELETE....
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+  const productId = req.body.id; 
+  
+  
+  
+  Product.deleteProduct(productId)
+  .then(
+    (result) => {
+          console.log(result, 'LINE');
+          res.redirect('/admin/product-list-admin');
+
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  
+}
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+       <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product._id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="POST">
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+        </div>
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+  static deleteProduct(productId) {
+
+
+    const db = getDb();
+
+
+
+
+   return db.collection('products').deleteOne({"_id": ObjectId(productId) })
+    .then(
+      (result) => {
+        console.log(result, 'LINE');
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+  }
+
+
+
+
+
+
+
+
+
+  -------------------------------
+
+
+
+
+
+
+
+
+
+  CERTO....
+
+
+
+
+
+
+  AGORA PRECISO 
+
+
+  FAZER A PAGE 
+
+
+  DE 
+
+
+  'edit a product'...
+
+
+
+
+
+
+
+
+  DOCS DO MONGODB:
+
+
+
+
+
+
+
+
+  To perform an update to one or more documents, create an update document that specifies the update operator (the type of update to perform) and the fields and values that describe the change. Update documents use the following format:
+
+
+
+
+
+
+  {
+   <update operator>: {
+      <field> : {
+         ...
+      },
+      <field> : {
+      }
+   },
+   <update operator>: {
+      ...
+   }
+}
+
+
+
+
+
+
+
+-> OK.. E AÍ, TEMOS ESTE CÓDIGO:
+
+
+
+
+
+const filter = { _id: 465 };
+// update the value of the 'z' field to 42
+const updateDocument = {
+   $set: {
+      z: 42,
+   },
+};
+const result = await collection.updateOne(filter, updateDocument);
+
+
+
+
+
+
+
+
+
+
+
+
+--> AQUELA PARTE ALI É IMPORTANTE:
+
+
+'collection.updateOne(filter, updateDocument);'...
+
+
+
+
+
+
+
+
+
+
+OK.... EU ESTAVA FAZENDO TUDO CERTO,
+
+QUANDO RECEBI ESTE ERRO:
+
+
+
+
+TypeError: Argument passed in must be a Buffer or string of 12 bytes or a string of 24 hex characters
+
+
+
+
+
+
+OK, CONSEGUI,
+
+ERA SÓ 
+
+PQ 
+
+um input field 
+
+
+estava 
+
+
+assim:
+
+
+'product.id'
+
+
+em vez de 
+
+
+assim:
+
+
+
+'_product.id'...
+
+
+
+
+
+
+
+
+---------------
+
+
+
+
+
+
+OK... VOU VER O CÓDIGO DO PROFESSOR....
+
+
+
+
+
+
+--> ele começa com 
+
+
+
+
+
+aquela página de 'edit product' .... --> 
+
+
+
+
+
+
+
+
+
+
+OK.... --> 
+
+
+
+
+
+ele 
+
+
+
+
+usa o 'fetchAll'
+
+
+na route de 
+
+
+
+'getProducts' do 
+
+
+
+ADMIN, para 
+
+então 
+
+
+
+conseguir 
+
+all products,
+
+
+
+
+para entaõ 
+
+
+ter a página 
+
+de todos os products...
+
+
+
+
+
+
+
+
+--> PARA FAZER OS BOTÕES DE EDIT E DELETE,
+
+PROFESSORR 
+
+
+
+
+
+
+
+
+ENTRA 
+
+NA PÁGINA 
+
+
+
+
+de 
+
+
+
+'product-list-admin.ejs',
+
+em admin,
+
+
+
+
+e AÍ
+
+
+
+
+
+
+professor diz que devemos focar no 'edit' dos products na PRÓXIMA LIÇÃO...

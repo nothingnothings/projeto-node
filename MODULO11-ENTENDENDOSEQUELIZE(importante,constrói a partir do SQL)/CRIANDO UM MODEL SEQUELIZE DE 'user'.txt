@@ -1,0 +1,604 @@
+
+
+
+
+
+
+
+--> AGORA É HORA DE INTRODUZIR MAIS MODELS SEQULIZE 
+
+
+NO 
+
+
+NOSSO PROEJTO... 
+
+
+
+
+
+
+
+
+
+
+--> E O PROFESSOR VAI 
+
+
+INTRODUZIR 
+
+
+__ UM MODEL COMPLETAMENTE 
+
+NOVO ANTES 
+
+DE COMEÇARMOS 
+
+A TRABALHAR COM O CART DE NOVO...
+
+ 
+
+
+
+
+
+
+ --> É O MODEL DE 'user.js'...
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR EXPLICA QUE POR ENQUANTO NÃO TEMOS NNEHUM PROCESSO 
+
+ DE 
+
+ AUTHENTICATIOn,
+
+
+
+
+
+
+
+ E POR ISSO VAMOS TRABLAHAR SÓ COM 1 DUMMY USER,
+
+
+
+ user que não 
+
+
+ terá a necessidade de 'login'... --> authentication virá MAIS TARDE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS MESMO NÃO TENDO AUTHENTICATION,
+
+ PROFESSOR 
+ DIZ UQE 
+
+
+
+ SOMOS 
+
+ CAPAZES 
+
+ DE 
+
+ 'CREATE' 1 user,
+
+
+
+
+ de criar 1 user 
+
+ QUE 
+
+  __REALMENTE __
+
+
+
+  CRIOU UM 'PRODUCT',
+
+
+  e portanto estará 
+
+  CONECTADO A ESSE PRODUCT... ------> 
+
+
+
+
+
+
+
+
+  O USER TAMBÉM DEVERÁ 
+
+  'HOLD A CART',
+
+
+
+  e 
+
+  esse 
+
+  cart 
+
+
+  DEVERÁ 
+
+  segurar 
+
+  MÚLTIPLOS PRODUCTS, OS PRODUCTS QUE ELE 
+
+  PLANEJA COMPRAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---> E É ASSIM, PORTANTO, QUE VAMOS 
+
+
+  PODER 
+
+  'OVERALL CONNECT EVERYTHING'....
+
+
+
+
+
+
+
+
+
+
+
+  ------> essencialmente, teremos DIFERENTES 
+
+
+  TIPOS 
+
+
+  DE TABLES:
+
+
+
+
+
+
+
+
+  1) table para os PRODUCTS que serão exibidos na loja....
+
+
+
+
+
+
+  2) table para os PRODUCTS que cada usuário colocou no seu CART.... (vamos ter que usar relations, talvze...)
+
+
+
+
+
+
+
+
+
+
+
+  ----> OK... PROFESSOR ADICIONA UM 
+
+
+
+
+  ARQUIVO 
+
+  'user.js'
+
+
+
+  no folder de 'models'...
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR DIZ QUE 
+
+  DEVEMOS 
+
+  TENTAR CRIAR UM SEQUELIZE MODEL,
+
+
+
+
+
+  QUE 
+
+
+  DEVE TER UM 
+
+  USER 
+
+  QUE 
+
+  TEM 
+
+  1 ID (id que deverá CUMPRIR A MESMA FUNÇÃO do ID no model de 'product'...)
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+---> UM USER DEVE TER 
+
+
+
+
+1 
+
+ID 
+
+
+E UM EMAIL, POR ENQUANTO...
+
+
+
+
+
+
+
+--> you can use varchar as your data type for
+
+ email column as emails are usually composed of letters, 
+ 
+ numbers and special characters. The right value of data lenght for
+ 
+ 
+  the email field is database-agnostic. If you are also considering standard
+  
+  
+   SQL types, the same can be said for data type, that is a string.
+
+
+
+
+
+
+
+--> Sequelize.STRING                      // VARCHAR(255)  (É O EQUIVALENTE no 'sequelize', basicamente...)
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const User = sequelize.define(
+    'user', {
+        id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        name: {
+            allowNull: false,
+            type: Sequelize.STRING,
+        },
+        email: {
+            allowNull: false,
+            type: Sequelize.STRING ////É O EQUIVALENTE A 'VARCHAR(255)', lá no WORKBENCH/DATABASE SQL COMUM...
+        },
+        password: {
+            allowNull: false,
+            type: Sequelize.NUMBER
+        }
+    }
+)
+
+
+
+
+
+
+
+-------> ___ACHO___ QUE ESTÁ CERTO.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ESCREVE ISTO:
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+
+
+
+
+
+
+
+
+
+
+
+--> 'const sequelize' --> É ISSO QUE IMPORTA A CONNECTION POOL 
+
+
+
+E TODOS OS MÉTODOS IMPORTANTES DO SEQUELIZE..
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR ESCREVE ISTO:
+
+
+
+
+
+
+const Product = sequelize.define('product', {
+
+});
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DO OBJETO, ELE ESCREVE ISTO:
+
+
+
+
+
+
+
+const User = sequelize.define(
+    'user', {
+        id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        name: {
+            allowNull: false,
+            type: Sequelize.STRING,
+        },
+        email: {
+            allowNull: false,
+            type: Sequelize.STRING ////É O EQUIVALENTE A 'VARCHAR(255)', lá no WORKBENCH/DATABASE SQL COMUM...
+        },
+        password: {
+            allowNull: false,
+            type: Sequelize.NUMBER
+        }
+    }
+)
+
+
+
+
+
+
+--> O NAME O PROFESSOR VAI COLOCAR QUE VAI SER UMA STRING,
+
+
+
+
+e o email
+
+DEVERÁ SER UMA STRING, TAMBÉM....
+
+
+
+---> o password ele não colocou... então vou tirar...
+
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+
+
+const User = sequelize.define(
+    'user', {
+        id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        name: {
+            allowNull: false,
+            type: Sequelize.STRING,
+        },
+        email: {
+            allowNull: false,
+            type: Sequelize.STRING ////É O EQUIVALENTE A 'VARCHAR(255)', lá no WORKBENCH/DATABASE SQL COMUM...
+        },
+        // password: {
+        //     allowNull: false,
+        //     type: Sequelize.NUMBER
+        // }
+    }
+)
+
+
+module.exports = User;
+
+
+
+
+
+
+
+
+
+---------> COM ISSO EXPORTADO,
+
+
+
+PODEMOS 
+
+COMEÇAR 
+
+A USAR 
+
+
+ESSE 
+
+
+
+MODEL...
+
+
+
+
+
+
+
+
+
+
+
+--> E 1 COISA 
+
+
+
+EM QUE 
+
+
+O PROFESSOR VAI querer 
+
+USAR 
+
+
+
+ESSE 
+
+'User'
+ 
+ É 
+
+
+
+
+ COM A CRIAÇÃO DE 
+ UMA 
+
+ 'ASSOCIATION',
+
+
+
+ ASSOCIATION 
+
+
+ ENTRE 
+
+
+
+ 'product' 
+
+ e 
+
+ 'user'...
+
+
+
+
+
+
+
+
+
+
+ ---> VAMOS VER COMO FAZER ISSO NA PRÓXIMA AULA.... 
+
+
+ TAMBÉM VEREMOS O QUE __É UMA ASSOCIATION/RELATIONSHIP...

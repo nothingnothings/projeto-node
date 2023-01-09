@@ -1,0 +1,1926 @@
+
+
+
+
+
+
+
+
+
+--> NOSSAS PÁGINAS HTML AINDA ESTÃO BEM BORING...
+
+
+
+
+
+
+
+---> E, OBVIAMENTE,
+
+
+
+
+ESTE NÃO É UM CURSO SOBRE CSS....
+
+
+
+
+
+
+
+
+
+------> AINDA ASSIM, DEVEMOS 
+
+
+COMPREENDER COMO PODEMOS 
+
+
+
+'SERVE CSS'
+
+COM 
+
+
+
+
+
+____ NOSSOS NODE APPS... (isso pq 
+
+NÓS TIPICAMENTE 
+
+TEMOS 
+
+CSS 
+
+E JS 
+
+
+NOS NOSSOS APPS...)
+
+
+
+
+
+
+
+
+
+
+------> OK... --> VAMOS ATÉ 
+
+
+'shop.html'... ---> 
+
+
+
+
+PROFESSOR DIZ QUE DEVEMOS 
+
+ADICIONAR ALGUM STYLING COM O BOM E VELHO 
+
+
+
+__STYLE__ TAG 
+
+
+lá 
+
+na head section.... ---------> 
+
+
+
+
+OBVIAMENTE,
+
+NÃO É ASSIM QUE 
+
+VAMOS 
+
+MANTER ESSE NEGÓCIO,
+
+
+
+APENAS 
+
+FAREMOS 
+
+
+ASSIM PARA QUE 
+
+
+
+CONSIGAMOS TRABALHAR COM 
+
+
+O STYLING 
+
+
+
+NO MOMENTO 
+
+
+
+
+___, E PARA QUE CONSIGAMOS 'AUTO-UPDATE THIS'... ---> ISSO PQ IMPORTAR_ UM 
+
+
+
+'EXTERNAL STYLE FILE' 
+
+
+
+no nosso 
+
+código NODEJS 
+
+
+_NÃO FUNCIONARIA/NÃO FUNCIONA NO MOMENTO (para spoilar a diversão...)
+
+
+
+
+
+
+
+
+
+
+--> AGORA ME LEMBRO DA MANEIRA __DEFAULT _ DE USAR STYLESHEETS 
+
+EM HTMLS...
+
+
+''''                                                    ''''
+    <link rel="stylesheet" href="assets/styles/app.css" />
+
+
+
+
+
+
+
+
+
+
+
+
+    ----> OK, VAMOS COMEÇAR A ESTILIZAR 
+
+
+    NOSSO 
+
+     
+
+
+
+HTML DE 'shop'... 
+
+
+
+
+
+
+
+--> PROFESSOR COMEÇA PELO HEADER...
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR ADICIONA UMA CLASS DE 
+
+
+
+de 'main-header'
+
+AO HEADER...
+
+
+
+
+
+---> depois 
+
+ele
+
+
+coloca uma 
+
+class 
+
+
+de 
+
+
+'main-header__nav'
+
+
+
+
+
+NO NAV...
+
+
+ex:
+
+
+
+
+    <header class="main-header">
+        <nav class="main-header__nav">
+            <ul>
+                <li><a href="/">Shop</a></li>
+                <li><a href="/add-product">Add Product</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+----------> BEM --> block element modifier --> É UMA MANEIRA DE NOMEAR SUAS CLASSES 
+
+PARA 
+
+EVITAR 
+
+'DOUBLE CLASS NAMES'...
+
+
+
+
+
+
+
+---> 
+
+
+aí ele 
+
+
+
+também 
+
+coloca 
+
+uma class na ul 
+
+de 
+
+
+
+
+'main-header__item-list',
+
+
+
+
+E AÍ NOS 
+
+LI 
+
+ele 
+
+coloca 
+
+
+"main_header__item">..
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR COLOCA UM STYLE NA STYLE TAG 
+
+de 
+
+
+'.header {
+
+
+
+
+    width: 100%;
+    height: 3.5rem;
+    background-color: yellowish...
+}
+
+'
+
+
+
+
+
+
+
+
+--> PROFESSOR USA UM HEX CODE NA COR... (PARA CONSEGUIR UM HEX CODE, BASTA CLICAR EM CIMA de 'rgb' PARA FAZER COM QUE ELE TROQUE PARA HEX CODES, no VISUAL STUDIO CODE....)
+
+
+
+
+
+
+
+
+
+
+--> OK... SALVAMOS ISSO ... RECARREGAMOS...
+
+
+
+
+
+
+
+--> AGORA TEMOS UM FUNDO AMARELO NA 'NAV BAR'...
+
+
+
+
+
+
+
+
+
+--> MAS PROFESSOR DIZ QUE TEMOS UM PADDING NO BODY,
+
+
+
+E TEMOS QUE TIRAR ISSO, E TAMBÉM A MARGIN... --> 
+
+
+
+
+
+PROFESSOR EXPLICA QUE AINDA TEMOS MARGIN EM CIMA E EMBAIXO,
+
+isso é devido ao MARGIN COLLAPSING devido à existência DA MARGIN NA NOSSA 'ul'..
+
+
+
+
+
+
+ESTILOS VÃO FICANDO:
+
+
+
+
+
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+
+.header {
+    width: 100%;
+    height: 3.5rem;
+    background-color: yellowish...
+}
+
+
+
+
+
+-----------------
+
+TIPO ALGO ASSIM:
+
+
+
+
+
+
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .main-header {
+            width: 100%;
+            height: 3.5rem;
+            background-color: #c2c213;
+        }
+
+        .main-header__item-list {
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-header__item {
+            text-decoration: none;
+            color: black;
+            padding: 0;
+            margin: 0;
+        }
+
+
+
+
+
+
+---------------------
+
+PROFESSOR TROCA O DISPLAY DA LIST PARA USAR 'FLEX', flexbox...
+
+
+
+
+
+
+
+
+---> ok... depois disso,
+
+
+
+ele 
+
+
+ESTILIZA 
+
+NOSSOS ITEMS UM POUCO... ----> 
+
+
+
+ELE REMOVE A MARGIN,
+
+também 
+
+a padding...
+
+
+
+
+
+
+----> DEPOIS DISSO, ELE ESTILIZA OS LINKS... --->  PARA ESTILIZAR OS LINKS,
+
+ELE 
+
+EDITA 
+
+AS ANCHOR TAGS...
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .main-header {
+            width: 100%;
+            height: 3.5rem;
+            background-color: #c2c213;
+        }
+
+
+        .main-header__nav {
+                height: 100%;
+        }
+
+
+
+
+
+        .main-header__item-list {
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-header__item {
+            list-style: none;
+            text-decoration: none;
+            color: black;
+            padding: 0;
+            margin: 0;
+        }
+
+
+        .main-header__item a {
+
+            text-decoration: white;
+
+
+        }
+
+
+
+
+---------------------------------------
+
+
+
+
+PROFESSOR DIZ QUE UM CENTERING NESSES ITEMS 
+
+
+SERIA BOM, 
+
+
+POR 
+
+ISSO 
+
+
+ELE 
+
+ADICIONA 
+UM __ CENTERING_ NO 
+
+
+
+'nav'... ---->  COMO O 'MAIN HEADER NAV'
+
+é 
+
+um CHILD ELEMENT 
+
+DE 
+
+
+'main header',
+
+
+ELE 
+
+
+TOMA TODO O HEIGHT 
+
+DO 
+'MAIN HEADER'...
+
+
+
+
+
+
+--> POR ISSO 
+
+VAMOS COLOCAR DISPLAY FLEX TBM,
+
+
+
+e aí vamos colocar 
+
+
+
+'align-items: center' --> PARA ALINHAR NOSSOS ITEMS 
+
+
+VERTICALMENTE...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+      .main-header__nav {
+                height: 100%;
+                display: flex;
+                align-items: center;
+        }
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+------> ok...... O STYLING ESTÁ FICANDO ASSIM:
+
+
+
+
+
+EX:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-header {
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        a
+      }
+
+      .main-header__item {
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__list">
+          <li class="main-header__item"><a href="/">Shop</a></li>
+          <li><a href="/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>My Products</h1>
+      <p>List of all my products</p>
+    </main>
+  </body>
+</html>
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+--> SALVAMOS E RECARREGAMOS 
+
+A PÁGINA...- --> agora o NAV ESTÁ CENTRALIZADO NO HEADER,
+
+
+
+mas agora precisamos 
+
+ADICIONAR UM PADDING ENTRE ITEMS...
+
+
+
+
+ex:
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-header {
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .main-header__item {
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__list">
+          <li class="main-header__item"><a href="/">Shop</a></li>
+          <li><a href="/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>My Products</h1>
+      <p>List of all my products</p>
+    </main>
+  </body>
+</html>
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+---> ok... ficou razoável...
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+--> PROFESSOR TROCA A FONT-FAMILY 
+
+para 
+
+
+'sans-serif'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+      .main-header {
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .main-header__item {
+        margin: 0;
+        padding: 25px;
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/">Shop</a></li>
+          <li class="main-header__item"><a href="/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>My Products</h1>
+      <p>List of all my products</p>
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+---> PARA O SPACING ENTRE 
+
+OS 
+
+
+LINKS,
+
+
+
+
+colocamos 
+
+
+
+
+
+uma margin de 
+
+
+
+
+'0 1rem' 
+
+
+
+
+
+NOS LIST ITEms....
+
+
+EX:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+      .main-header {
+          padding: 0 1.5rem;
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .main-header__item {
+        margin: 0 1rem;
+        /* padding: 25px; */
+        padding: 0;
+
+
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/">Shop</a></li>
+          <li class="main-header__item"><a href="/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>My Products</h1>
+      <p>List of all my products</p>
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR TAMBÉM COLOCA UNS PSEUDOSELECTORS,
+
+
+
+de hover 
+
+e 
+
+active...
+
+
+
+
+
+
+
+
+
+--> 
+
+
+ex:
+
+
+
+
+.main-header__item a:hover,
+.main-header__item a:active,
+.main-header__item a:active {
+
+
+    color: #6200ff;
+
+}
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR 
+
+
+FAZER COM QUE 
+
+
+
+NOSSO LINK 'ACTIVE'
+
+
+
+fique 
+
+
+COM UMA COR ESPECIAL QUANDO 
+
+ESTIVERMOS NAQUELE LINK/PÁGINA ESPECÍFICA,
+
+
+vamos 
+
+adicionar 
+
+classes 
+
+
+
+
+'class="active" ' 
+
+
+
+
+nos 2 
+
+main-header__item..
+
+
+
+(MAIS TARDE VEREMOS COMO SETTAR ISSO DINAMICAMENTE, MAIS TARDE NO CURSO... ---> eu vi como fazer com react/nextjs, mas não sei como isso é integrado com o NODE..)
+
+
+
+
+
+EX:
+
+
+
+
+
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/add-product" class="active">Add Product</a></li>
+                                                                ^^^^ CLASS EM QUESTÃO.
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+----> 
+
+
+agora vamos ESTILIZAR A PARTE 
+
+
+'<MAIN>'
+
+
+DO SHOP.HTMl...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+ 
+
+
+ PROFESSOR VAI DEFINIR UMA 'GENERAL RULE'/class 
+
+
+ PARA 
+
+ O 
+
+ MAIN,
+
+
+
+
+ em que 
+  
+
+
+  ele 
+
+
+  vai 
+
+  colocar uma padding 
+
+
+
+
+  de 
+
+
+  '1.5rem',
+
+  em tODAS AS DIREÇÕES...
+
+
+
+
+
+
+
+  ---------------------------
+
+
+
+
+  OK... O STYLING ESTÁ UM POUCO MELHOR... 
+
+
+
+
+
+
+
+  --> PROFESSOR ENTÃO PEGA TODO O STYLING QUE TEMOS 
+
+  NESSE 
+
+  'shop.html'
+
+  E AÍ 
+
+
+
+
+  __MOVE__ PARA 
+
+
+
+
+
+O 'SHOP.HTML'....
+
+
+
+
+
+
+É CLARO QUE PRECISAMOS 
+
+REPLICAR 
+
+
+TODAS 
+
+AS 
+
+CLASSES/CÓDIGO COM AS CLASSES DO HEADER QUE 
+
+USAMOS 
+
+LÁ 
+
+
+
+
+em 
+
+'shop.html'...
+
+
+
+---------------------
+
+
+
+EX:
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: sans-serif;
+        }
+  
+  
+  
+        main {
+            padding: 1.5rem;
+        }
+  
+        .main-header {
+            padding: 0 1.5rem;
+          width: 100%;
+          height: 3.5rem;
+          background-color: #c2c213;
+        }
+  
+        .main-header__nav {
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+  
+        .main-header__item-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: space-between;
+        }
+  
+        .main-header__item {
+          margin: 0 1rem;
+          /* padding: 25px; */
+          padding: 0;
+        }
+  
+        .main-header__item a {
+          text-decoration: none;
+          color: white;
+        }
+      </style>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/">Shop</a></li>
+            <li class="main-header__item"><a href="/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main>
+        <form action="/add-product" method="POST">
+        <input type="text" name="title"></title>
+        <button type="submit">Add Product</button>
+        </form>
+</main>
+</body>
+</html>
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+MAIS TARDE, BTW, 
+
+
+VAMOS 
+
+
+
+
+
+__DESCOBRIR COMO REUTILIZAR ESSE HEADER AO LONGO 
+
+DE NOSSOS ARQUIVOS... (usaríamos react, mas podemos eventualmente usar esse approach do professor.. )
+
+
+
+
+
+
+
+
+
+-----> OK.... COPIAMOS ESSE HEADER...
+
+
+
+
+
+
+
+
+--> trocamos a active class para ficar NO LINK DE 
+
+'add-product', pq estaremos nesse link aí...
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+OK... ESTILIZEI UM POUCO MELHOR A PÁGINA...
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS TRABALHAR NA NOSSA FORM...
+
+
+
+
+
+
+
+
+
+----> PARA ISSO VAMOS ATÉ A FORM 
+
+
+de 
+
+'add-product'
+
+E ENTÃO 
+ADICIONAMOS 
+
+UMA 
+
+CLASS 
+
+de 
+
+
+'product-form'... ---> 
+
+
+
+
+
+AÍ DENTRO DESSE NEGÓCIO O PROFESSOR COLOCA UMA <div>,
+
+
+
+em que coloca uma 
+
+
+CLASS DE 
+
+'form-control'... --> DENTRO DESSA DIV 
+
+
+TEREMOS 
+
+
+TANTO NOSSO <input>
+
+
+COMO TAMBÉM UMA 
+
+'<label>'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/">Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product" class="active">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+        <button type="submit">Add Product</button>
+        </form>
+</main>
+</body>
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+--> AGORA VAMOS ESTILIZAR 
+
+
+ESSES ELEMENTOS.... ---> 
+
+
+
+vamos escrever 
+
+
+
+'.form-control label, 
+.form-control input {
+
+
+    display: block; ////ISSO FARÁ COM QUE SEJA TOMADA A WIDTH COMPLETA DO SURROUNDING ELEMENT...
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: sans-serif;
+        }
+  
+  
+  
+        main {
+            padding: 1.5rem;
+        }
+  
+        .main-header {
+            padding: 0 1.5rem;
+          width: 100%;
+          height: 3.5rem;
+          background-color: #c2c213;
+        }
+  
+        .main-header__nav {
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+  
+        .main-header__item-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: space-between;
+        }
+  
+        .main-header__item {
+          margin: 0 1rem;
+          /* padding: 25px; */
+          padding: 0;
+        }
+  
+        .main-header__item a {
+          text-decoration: none;
+          color: white;
+        }
+
+        .main-header__item a:hover,
+        .main-header__item a:active,
+        .main-header__item a.active {
+            color: #9f2fc4;
+        }
+        
+        .form-control label,
+        .form-control input {
+            display: block;  /* fará com que o  elemento tome toda a SURROUNDING WIDTH..*/
+        }
+
+        .form-control input {
+            border: 1px solid #dbc441;
+            font: inherit;
+            border-radius: 2px;
+        }
+      </style>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/">Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product" class="active">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+        <button type="submit">Add Product</button>
+        </form>
+</main>
+</body>
+</html>
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+---> por fim, 
+
+
+
+estilizamos o button... --> 
+
+
+
+
+escrevemos 
+
+um estilo genérico para o button,
+
+escrevemos 
+
+
+
+'button {
+    font: inherit;
+    border: 1px solid #dbc441;
+    color: #dbc441;
+    backgrond: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+'
+
+
+
+
+----------------------
+
+
+POR FIM, VAMOS QUERER UM SPACING 
+
+
+ENTRE 
+
+
+___ 
+
+A DIV DE 
+
+'form-control'
+
+
+
+E O 
+
+
+
+'BUTTON' EM SI....
+
+
+
+
+
+
+
+----> PARA ISSO,
+
+
+NO 
+
+'FORM-CONTROL' 
+
+em si 
+
+o 
+
+PROFESSOR 
+
+VAI 
+
+ADICIONAR 
+
+
+
+uma 
+
+
+
+'margin: 1rem 0'....
+
+
+
+
+
+
+
+
+
+
+ADICIONA ISTO AQUI, TAMBÉM...:
+
+
+
+
+button:hover,
+button:active {
+    background-color: #6200ff;
+    color: white;
+     
+}
+
+
+------------
+
+
+
+
+
+
+
+
+
+
+----> NÃO ESTÁ TÃO RUIM.... --> trabalharemos nessa página ao longo do curso...
+
+
+
+
+
+
+
+
+
+
+-------> ok... AGORA CENTRALIZAMOS A FORM INTEIRA,
+
+POR MEIO 
+
+DA 
+CLASS 
+
+
+
+
+'product-form {
+
+
+
+    width: 30rem;
+    max-width: 100%;
+    margin: auto; ///ISSO VAI AUTOMATICAMENTE CENTRALIZAR NOSSO ELEMENTO 'form'..
+
+
+}
+'
+
+
+
+
+
+
+
+----------------------
+
+
+
+OK.... 
+
+
+
+
+
+
+
+RECARREGAMOS TUDO, AGORA NOSSA PÁGINA FICOU MELHOR...
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+STYLING BÁSICO QUE UTILIZAREMOS AO LONGO DO CURSO....
+
+
+
+
+--> POR FIM, COPIAMOS O STYLE DO ARQUIVO 
+
+'shop.html'
+
+
+E COLAMOS 
+
+
+LÁ 
+
+
+NO 
+
+ARQUIVO 
+
+
+'404.html' (DE PAGE NOT FOUND...)
+
+
+
+
+
+
+
+
+
+--> ISSO PQ LÁ NA PAGE DE NOT FOUND TAMBÉM VAMOS QUERER USAR AQUELE HEADER QUE CRÍAMOS...
+
+
+
+
+
+
+
+
+
+
+--->OK, QUANDO INPUTTAMOS UMA PAGE QUE NÃO EXISTE,
+
+
+
+ainda recebemos uma page de 'not found'
+
+
+E 
+
+
+
+
+AQUELE HEADER LOGO EM CIMA..
+
+
+
+
+
+------------------
+
+
+OK, TERMINAMOS O STYLING..

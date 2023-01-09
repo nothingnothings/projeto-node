@@ -1,0 +1,892 @@
+
+
+
+
+
+
+eu acho que já fiz isso, pois tudo está funcionando...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR 
+
+
+
+COMEÇA 
+
+
+
+
+ARRUMANDO O CÓDIGO DE 'Feed.js,'
+
+
+NO NOSSO FRONTEND... ----> É LÁ EM 'LOADPOSTS'
+
+
+que vamos 
+
+escrever nossa lógica...
+
+
+
+
+
+
+
+
+
+
+
+
+--> professor escreve a graphqlQuery dele...
+
+
+
+
+ex:
+
+
+
+
+const graphqlQuery = {
+
+
+    query: `
+        {
+
+            posts {
+                posts {
+                    _id
+                    title
+                    content
+                    imageUrl
+                    creator{
+                        name
+                    }
+                    createdAt
+                }
+                totalPosts
+            }
+        }
+    
+    `
+}
+
+
+
+
+
+
+
+
+
+
+--> TUDO ISSO FICARÁ ASSIM,
+
+
+
+__ TUDO DE ACORDO COM NOSSO SCHEMA DEFINIDO EM 'schema.js'...
+
+
+
+
+
+
+
+
+
+
+
+--> isso feito,
+
+
+
+
+profesSOR 
+
+
+
+MUDA O 'fetch api' call,
+
+
+
+
+
+
+COLOCA AQUELE 
+
+
+'http://localhost:8080/graphql',
+
+
+
+
+COLOCA UM METHOD DE POST,
+
+
+
+HEADERS DA TOKEN (
+
+
+    Authorization: 'Bearer' + this.props.token
+)
+
+
+
+
+
+E 
+
+
+TAMBÉM 
+
+O HEADER DE 
+
+'Content-Type',
+
+
+
+DE TIPO application/json...
+
+
+
+
+--> POR FIM,
+
+ELE CONVERTE O 
+
+
+
+BODY,
+
+
+por meio de 
+
+
+'body: JSON.stringify(graphqlQuery);'
+
+
+
+
+
+
+
+
+CÓDIGO FICA ASSIM, PORTANTO:
+
+
+
+
+
+      const graphqlQuery = {
+//só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+
+
+
+/// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+        query: `
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } 
+        `
+      }
+
+
+      const loadedPostsResult = await fetch(
+        // `http://localhost:8080/feed/posts?page=${page}`, ///OBS:: NÃO VAMOS MAIS CONSEGUIR ENCODAR O 'PAGENUMBER' NA NOSSA URL, POIS NO MUNDO GRAPHQL SÓ EXISTE 1 ENDPOINT (o endpoint de 'localhost:8080/graphql', DE TIPO POST)....
+        `http://localhost:8080/graphql`,
+
+        {
+          method: 'POST', ////sim, vamos usar um METHOD DE 'POST', mesmo que esse seja um GET REQUEST, pq estamos no mundo graphql...
+          headers: {
+            //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+            Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+            'Content-Type': 'application/json' //aqui vamos querer ENVIAR DATA CONCRETA (o page number, nesse request de tipo POST, post pq é GRAPHQL WORLD).... , por isso o 'application/json', e esse header aí...
+          },
+
+
+          body: JSON.stringify(
+            graphqlQuery
+          )
+        }
+      );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      -> PROFESSOR EXPLICA QUE 
+
+      ESSA QUERY 
+
+      MOSTRA EXATAMENTE 
+
+      A 
+      FLEXIBILIDADE 
+
+
+
+
+
+DO GRAPHQL... --> 
+
+ESTMAOS FETCHEANDO 
+EXATAMENTE 
+
+A DATA 
+
+
+
+DOS POSTS DE _ QUE _ PRECISAMOS.... -> NAÕ ESTAMOS FETCHEANDO COISAS 
+
+
+
+
+COMO 
+
+
+
+'THE CREATOR EMAIL' (pq não precisamos),
+
+
+
+NEM 
+
+O 
+
+
+FIELD DE 'updatedAt' (também desnecessário),
+
+
+
+
+
+_ E  AÍ __ FETCHEAMOS 
+
+
+
+SÓ O QUE PRECISAMOS....
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR TAMBÉM REMOVE O 'imageUrl',
+
+PQ NÃO VAMOS RENDERIZAR COISA ALGUMA 
+
+
+
+COM ESSA 'imageUrl',
+
+
+lá no 'loadPosts'....
+
+
+
+
+
+
+
+
+PORTANTO, FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+        query: `
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } 
+        `
+      }
+
+
+      const loadedPostsResult = await fetch(
+        // `http://localhost:8080/feed/posts?page=${page}`, ///OBS:: NÃO VAMOS MAIS CONSEGUIR ENCODAR O 'PAGENUMBER' NA NOSSA URL, POIS NO MUNDO GRAPHQL SÓ EXISTE 1 ENDPOINT (o endpoint de 'localhost:8080/graphql', DE TIPO POST)....
+        `http://localhost:8080/graphql`,
+
+        {
+          method: 'POST', ////sim, vamos usar um METHOD DE 'POST', mesmo que esse seja um GET REQUEST, pq estamos no mundo graphql...
+          headers: {
+            //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+            Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+            'Content-Type': 'application/json' //aqui vamos querer ENVIAR DATA CONCRETA (o page number, nesse request de tipo POST, post pq é GRAPHQL WORLD).... , por isso o 'application/json', e esse header aí...
+          },
+
+
+          body: JSON.stringify(
+            graphqlQuery
+          )
+        }
+      );
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK.. ESTAMOS USANDO O GRAPHQL 
+
+
+
+
+COM 
+
+PRIMOR, AQUI...
+
+
+
+
+
+
+
+
+
+------> PROFESSOR 
+
+
+FAZ UM HANDLE DE ERROS 
+
+
+BÁSICo,
+
+
+
+
+
+ele 
+
+escreve tipo isto:
+
+
+
+
+
+
+
+      const manipulatedPostsResult = await loadedPostsResult.json();
+
+      if (manipulatedPostsResult.errors) {
+        throw new Error('Failed to fetch posts.');
+      }
+
+      console.log(manipulatedPostsResult);
+
+
+
+
+
+
+
+
+
+      TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      const loadedPostsResult = await fetch(
+        // `http://localhost:8080/feed/posts?page=${page}`, ///OBS:: NÃO VAMOS MAIS CONSEGUIR ENCODAR O 'PAGENUMBER' NA NOSSA URL, POIS NO MUNDO GRAPHQL SÓ EXISTE 1 ENDPOINT (o endpoint de 'localhost:8080/graphql', DE TIPO POST)....
+        `http://localhost:8080/graphql`,
+
+        {
+          method: 'POST', ////sim, vamos usar um METHOD DE 'POST', mesmo que esse seja um GET REQUEST, pq estamos no mundo graphql...
+          headers: {
+            //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+            Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+            'Content-Type': 'application/json' //aqui vamos querer ENVIAR DATA CONCRETA (o page number, nesse request de tipo POST, post pq é GRAPHQL WORLD).... , por isso o 'application/json', e esse header aí...
+          },
+
+
+          body: JSON.stringify(
+            graphqlQuery
+          )
+        }
+      ); ///esse request vai ser enviado PRIMEIRAMENTE ao middleware do arquivo 'is-auth', na pasta 'middlewareHelpers'...
+
+      // fetch('/feed/posts') //FORMA ERRADA.
+      // .then((res) => {
+      // if (loadedPostsResult.status !== 200) {
+
+      // return res.json();
+
+      const manipulatedPostsResult = await loadedPostsResult.json();
+
+      if (manipulatedPostsResult.errors) {
+        throw new Error('Failed to fetch posts.');
+      }
+
+      console.log(manipulatedPostsResult);
+      // })
+      // .then((data) => {
+      // console.log('ENTERED25125');
+      this.setState({
+        // posts: data.posts,
+
+        // posts: manipulatedPostsResult.posts.map((post) => {
+          posts: manipulatedPostsResult.data.getPosts.posts.map((post) => {
+          return {
+            ...post,
+            imagePath: post.imageUrl,
+          };
+        }),
+        totalPosts: manipulatedPostsResult.totalItems,
+        postsLoading: false,
+      });
+      // })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      --> OK... AÍ ELE REESTRUTURA A VERSÃO DELE DOS DADOS,
+
+      para que 
+
+      a data dos posts 
+
+      conseguisse 
+
+      ser reproduzida no frontend....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK..... NOSSOS POSTS ESTÃO FICANDO RENDERED, ESTAMOS 
+
+VENDO 
+
+o 
+
+USERNAME,
+
+
+
+e tudo mais...
+
+
+
+
+
+
+
+
+-->  O PRÓXIMO PASSO É 
+
+ADICIONAR UM CÓDIGO 
+
+PARA 
+
+
+
+
+
+AO CRIAR UM POST,
+CONSEGUIR REPRESENTAR ESSE POST IMEDIATAMENTE NA NOSSA PAGE... 
+
+(
+
+    não sei se já consegui fazer isso...
+)
+
+
+
+
+
+
+
+
+-> PROFESSOR EXPLICA QUE SÓ DEPOIS VAMOS VER 'PAGINATION'..
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DA PAGINATION, VEREMOS COMO PODEMOS __ 'GET OUR IMAGE ONTO THE SERVER' (upload de images)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> bem, o ADD DE UM POST ESTÁ FUNCIONANDO ___ PARCIALMENTE____ ---> 
+
+
+
+
+
+
+quando adicionamos um novo post, 
+
+
+
+ELE APARECE NO TOPO DOS POSTS QUE 
+
+JÁ EXISTIAM,
+
+
+MAS O PROBLEMA 
+
+É QUE 
+
+NOSSOS 
+
+
+BUTTONS DE 
+
+'forward'
+
+e 
+
+'previous'
+
+NÃO ESTÃO MAIS FUNCIONANDO...
+
+
+(
+
+    algum problema 
+
+    na conexão backend-frontend....
+)
+
+
+
+
+
+
+
+
+
+
+
+CONSERTEI... ERA UM ERRO NESTE TRECHO AQUI, em 'Feed.js' (frontend):
+
+
+
+
+
+
+
+
+
+      console.log(manipulatedPostsResult.data.getPosts, 'LINE');
+      // })
+      // .then((data) => {
+      // console.log('ENTERED25125');
+      this.setState({
+        // posts: data.posts,
+
+        // posts: manipulatedPostsResult.posts.map((post) => {
+          posts: manipulatedPostsResult.data.getPosts.posts.map((post) => {
+          return {
+            ...post,
+            imagePath: post.imageUrl,
+          };
+        }),
+        totalPosts: manipulatedPostsResult.data.getPosts.totalItems,
+        postsLoading: false,
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      --> EU ESTAVA PROCURANDO 'totalItems' dentro de 'posts',
+
+      MAS 
+
+      ELE __ EXISTE__ NO LADO DE __ FORA DE 'posts',
+
+
+
+      COMO VISTO 
+
+
+
+
+
+      NO NOSSO SCHEMA DE 'postsData':
+
+
+
+
+
+
+    
+
+
+
+    
+type PostsData {
+      posts: [Post!]!
+      totalItems: Int!
+      page: Int!
+}
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO.... -----> o professor adiciona o código 
+
+para adicionar um 
+
+
+novo 
+
+
+
+POST....
+
+
+
+
+
+
+
+--> LÁ EM 'Feed.js',
+
+
+professor vai 
+
+até 
+
+
+
+o 
+
+código
+
+
+
+
+de 'finishEditHandler',
+
+
+
+
+
+
+
+
+
+AÍ ELE NOS DÁ UM 
+
+
+'CÓDIGO ARRUMADO',
+
+
+preparado por ele... 
+
+
+
+
+(
+
+    mas eu não preciso, pois meu código já está funcionando....
+)
+
+
+
+
+
+
+
+
+----> certo.... 
+
+O PRÓXIMO PASSO É 
+
+
+VER 
+
+a pagination (
+
+
+    mas eu já arrumei isso.... é o 'totalItems' que 
+
+
+    faz a pagination funcionar, no caso de nosso código.... isso e o código FRONTEND...
+)
+

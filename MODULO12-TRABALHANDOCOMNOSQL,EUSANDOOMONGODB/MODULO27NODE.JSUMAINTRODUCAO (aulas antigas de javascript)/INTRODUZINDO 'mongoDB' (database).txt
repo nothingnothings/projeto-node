@@ -1,0 +1,3440 @@
+ 
+ PARA ACABAR COM O TÓPICO 'node.js' desse curso, o professor 
+
+
+
+ QUER ADICIONAR UMA PEQUENA 'database' AO NOSSO PROJETO...
+
+
+
+
+
+
+
+ VAMOS FAZER isso para que NÓS NÃO FAÇAMOS UM SIMPLES STORAGE DOS DADOS EM UMA MEMÓRIA TEMPORÁRIA (temporary storage),
+
+
+ E SIM UMA STORAGE EM UM BANCO DE DADOS (database)...
+
+
+
+ ISSO EVITA QUE NOSSOS DADOS SEJAM PERDIDOS SEMPRE QUE NÓS O REINICIEMOS.... (também evita que os dados sejam perdidos quando/na eventualidade de acabar a memória do nosso aplicativo.)
+
+
+
+
+
+
+
+ EM VEZ DISSO, AGORA O PROFESSOR VAI QUERER USAR UMA DATABASE DE VERDADE....
+
+
+
+
+
+ E é claro que você pode gastar horas e horas em um curso completo sobre databases,
+
+
+
+E, DE FATO, O PROFESSOR TEM UM CURSO COMPLETO SOBRE 'mongoDb', que é uma DATABASE.... 
+
+
+
+
+
+---> DEVEMOS ESTUDAR O CURSO DE 'node.js' e do 'mongoDB'...
+
+
+
+
+----> mongoDB --> é uma ENGINE DE DATABASE MUITO FAMOSA, que funciona em conjunto com o node.js...
+
+
+
+
+
+
+
+------------> É ESSE MONGODB que estudaremos e tentaremos usar agora...
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+Visitamos mongodb.com
+
+
+
+
+
+O QUE USAREMOS AQUI É UM SERVIÇO 'CLOUD' que eles oferecem....
+
+
+
+AÍ NÃO PRECISAMOS INSTALAR E GERENCIAR UMA LOCAL DATABASE...
+
+
+devemos 'signin' e criar uma nova conta de graça.
+
+
+
+
+
+
+Criamos uma conta...
+
+
+Aí 
+
+
+teremos uma welcome screen...
+
+nela críamos o nosso primeiro/nosso cluster...
+
+
+
+aí você vai no 'cloud provider' e escolhe 'AWS'..
+
+
+
+Depois disso, escolha n. virginia.
+
+
+
+Escolha 'M0', que é o FREE TIER... free tier dos clusters...
+
+
+
+
+Deixe todas as outras settings como estão.
+
+
+
+
+AÍ VOCÊ TERÁ UM CLUSTER CHAMADO DE 'Cluster0'...
+
+
+
+Esse cluster VAI SEGURAR TODAS AS DATABASESE QUE VOCÊ VAI QUERER TER...
+
+
+
+Clique no botão 'connect'...
+
+
+
+Isso vai te mostrar um modal  
+
+
+Esse modal vai 
+
+
+te dizer 
+
+como conectar seu aplicativo..
+
+
+
+Clique em 'connect your application'...  
+
+
+
+
+NESSE LUGAR, AQUELE 
+
+
+
+'Connection string only' SE TORNARÁ IMPORTANTE MAIS TARDE, EXPLICA O PROFESSOR.
+
+
+
+ANTES DISSO, DEVEMOS IR ATÉ O 'DATABASE ACCESS', debaixo de 'security' e então 
+
+
+
+DEVEMOS CRIAR UM __NOVO USUÁRIO____ 
+
+
+
+Um novo user, com qualquer password de nossa escolha.
+
+
+
+VOCÊ DEVE SETTAR OS PRIVILÉGIOS DESSE USER COMO SENDO DE 
+
+
+'Read and write to any database'...
+
+(pelo menos isso).
+
+
+
+
+VOCÊ TAMBÉM DEVERÁ IR EM 'NETWORK ACCESS' e então, ali, em 
+
+
+
+'IP whitelist',
+
+
+
+
+VOCÊ DEVERÁ CLICAR EM 'ADD IP ADDRESS' para então colocar 
+
+
+SEU LOCAL IP ADDRESS NAQUELA CAIXA DE 'whitelist entry'...
+
+
+
+
+
+Agora podemos voltar ÀQUELE lugar dos 'clusters' e então 
+
+
+
+FAZER A CONEXÃO DA DATABASE AO NOSSO APLICATIVO....
+
+
+
+
+
+A PERGUNTA AGORA É:
+
+
+
+
+Como diabos podemos usar essa fita de string?
+
+
+
+COMO PODEMOS NOS CONECTAR A ESSA DATABASE, de dentro do nosso código javascript?
+
+
+
+
+
+PARA ISSO, VOCÊ DEVE PROCURAR NA INTERNET PELO 
+
+
+
+
+'MongoDB Node.js Driver'....
+
+
+
+
+https://mongodb.github.io/node-mongodb-native/
+
+
+
+
+
+
+AÍ VOCê PODE APRENDER MAIS SOBRE O MONGODB DRIVER, que é simplesmente 
+
+
+
+uma TPP (third party package) PARA NODE JS que TORNAM o trabalho com 
+
+MONGODB E O ENVIO DE HTTP REQUESTS A ELE MUITO MAIS FÁCEIS.
+
+
+
+
+Basta que você execute o código 
+
+
+'npm install mongodb --save' no terminal, no local do seu projeto.. 
+
+
+
+
+(
+    OBS: VOCÊ DEVE FAZER ISSO NO BACKEND, POIS NÓS ACESSAREMOS A DATABASE DE LÁ...
+
+    ***NÃO*** EXECUTE ESSE COMANDO NA PASTA DO SEU FRONTEND, pois ali você NÃO ACESSARÁ/UTILIZARÁ 
+
+    A DATABASE...
+)
+
+
+
+
+VOCÊ VERÁ 
+
+
+
+'"mongodb": "^3.6.5"'
+
+
+
+
+nas __entries__ DO 
+
+
+
+'package.json'...
+
+
+
+
+--------------------------------
+
+
+
+
+COM ISSO, AGORA PODEMOS __USAR ESSE DRIVER__ (e o mongodb)...
+
+
+
+É EVIDENTE QUE você pode aprender tudo sobre o driver ali nas 'releases', no link 'documentation'...
+
+
+
+Ali você pode ler sobre como INSTALAR E USAR O DRIVER...
+
+
+
+
+
+ESTAMOS INTERESSADOS PARTICULARMENTE 
+
+NAS 
+
+
+'CRUD operations' ( Create, Read, Update and Delete)
+
+
+
+
+
+
+QUEREMOS ISSO pq nós vamos querer 
+
+
+
+__ADICIONAR __ e LER___ dados   ----> essas são as 2 coisas que vamos querer fazer, no nosso projeto (mas o 'update' e o 'delete' também são super úteis...)
+-----------------------------------------
+
+
+
+
+
+
+VER O CURSO DE NODE.JS E de MONGO.DB do professor. Em ambos ele fala sobre o mongodb...
+
+
+
+Na documentação do mongodb VOCÊ VÊ BASTANTE EXEMPLOS SOBRE COMO 
+
+
+VOCÊ ADICIONA ALGO À database...
+
+
+
+tudo começa por meio de um 
+
+
+
+
+
+'REQUIRE()' do módulo 
+
+'mongodb' 
+
+no nosso 
+
+arquivo  'location.js', ou SEJA, ___NO ARQUIVO EM QUE VAMOS QUERER ___ USAR EFETIVAMENTE UMA DATABASE...
+
+
+começamos
+ELO ___IMPORT DO 'MONGO CLIENT' propriamente dito...
+
+
+
+
+
+ex:
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+--------------------------------------------------------------
+
+
+
+
+
+DEPOIS DISSO, PROFESSOR EXPLICA QUE VAMOS QUERER FAZER 
+
+
+
+uma 'OPERAÇÃO DE INSERT' SEMPRE QUE NÓS VAMOS CONSEGUIR UMA 'NEW LOCATION' (whenever we get a new location)...
+
+
+
+
+Para que o MONGODB funcione, 
+
+
+PRECISAMOS DA NOSSA 'CONNECTION URL'...
+
+
+
+como assim 'connection url'?
+
+
+
+
+
+Bem, a documentação do MONGODB fala que precisamos 
+
+
+
+de 
+
+
+
+1) 'const MongoClient'
+
+
+
+2) 'const assert = require('assert'); '   (NÃO SEI O QUE FAZ) 
+
+
+
+
+3) const dbName = 'myproject' (É O DATABASE NAME. NÃO SEI SE IMPORTA)
+
+
+
+e 
+
+
+
+4) 'Connection URL' ----> que está como 'const url = 'mongodb://localhost:27017';....'
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+ESSE É O CÓDIGO DE QUE PRECISAMOS:
+
+
+
+
+const url = 'mongodb://localhost:27017';
+
+
+
+
+
+----------------------------------
+
+
+
+
+REPRESENTAÇÃO:
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb://localhost:27017';
+
+
+
+------------------------------------
+
+
+PROFESSOR EXPLICA QUE ESSA URL DEVE SER DEFINIDA __GLOBALMENTE___, ou seja, 
+
+
+FORA DAS MIDDLEWARE FUNCTIONS....
+
+
+
+Essa url, explica o professor, deverá ser, É ÓBVIO, A __URL___ QUE VOCê 
+
+ENCONTRA NO SEU 'CLUSTER'.... (lá no site do mongodb)...
+
+
+
+
+ou seja, é ESSE LINK AQUI, no nosso caso:
+
+
+
+'mongodb+srv://madblorga:<password>@cluster0.nhtjo.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+
+
+
+
+
+
+
+NOSSO CÓDIGO FICARÁ:
+
+
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:<password>@cluster0.nhtjo.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+
+
+
+-----------------------------
+
+
+
+
+
+OBS: você deve substituir o 'username' e o 'password' COM O USERNAME E O PASSWORD DO USUÁRIO QUE VOCÊ 
+
+CRIOU EM 'database access' naquele site do mongodb....
+
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+CERTO...
+
+
+
+Naquela 'connection string' aqui, NESSA STRING QUE EXISTE DEPOIS DO 'slash' ('/') que fica 
+
+após o '.net',  ou seja, 
+
+
+esse código aqui:
+
+
+'/myFirstDatabase?retryWrites=true&w=majority'; 
+
+
+
+
+
+
+ESSA SERÁ A DATABASE A QUAL VOCÊ QUER CONECTAR.....
+
+
+
+Professor diz que você pode colocar o nome que você quiser ali no lugar de 'myFirstDatabase'...
+
+
+Se essa database não existir inicialmente, ela será CRIADA ____ON THE FLY__...
+
+
+o professor decide nomeá-la como 'locations', e nós FAZEMOS O MESMO.
+
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';
+
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+
+DEIXE O RESTO DA URL como está...
+
+
+
+
+
+CERTO...
+
+
+
+
+
+De volta à DESCRIÇÃO DAS 'crud operations' LÁ NO MONGOB, 
+
+
+
+
+o professor aponta que o guia diz que NÓS DEVEMOS CRIAR 
+
+
+UM 
+
+NOVO 'MONGO CLIENT' nesse nosso arquivo .js....
+
+
+Para fazer isso, devemos instanciar aquela constante que está com o módulo 'MongoClient'...
+
+
+fazemos isso com a palavra 'new'...
+
+
+ex:
+
+
+
+new mongoClient(url);
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+MAS NÃO BASTA APENAS INSTANCIAR essa constante/item,
+
+
+devemos armazenar essa instância EM UMA CONSTANTE...
+
+
+devemos fazer isso para que 
+
+
+O CLIENT SEJA ___EFETIVAMENTE CRIADO___...
+
+
+
+Essa instância daquele 'MongoClient' vai sempre EXIGIR/PEDIR 
+
+
+uma ___URL___ como parâmetro....
+
+Essa url vai ser 
+
+
+aquela url que você colocou na const 'url', aquela url que foi extraída do site do MongoDB...
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';
+
+const client = new MongoClient(url); //////////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+-------------------------------------------------------------------
+
+
+
+
+
+
+
+ISSO FEITO, AGORA PODEMOS __REALMENTE__ usar o client do mongo, pois agora ele está CONFIGURADO... (está com aquela url atribuída a ele...)....
+
+
+
+
+PARA REALIZAR A __CONEXÃO___ com o database do mongo que críamos, PRECISAMOS 
+
+
+usar o método 
+
+'.connect()' DENTRO DESSE CLIENT....
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';
+
+const client = new MongoClient(url);
+
+client.connect();
+
+
+
+------------------------------
+
+
+
+
+A ESSE MÉTODO 'CONNECT()' deve ser passada uma ____CALLBACK FUNCTION___...
+
+
+Dentro dessa callback function NÓS VAMOS CONSEGUIR ACESSO AO 'client' que foi conectado... (é por isso que o segundo parâmetro é 'client', é o client recebido....)
+
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';
+
+const client = new MongoClient(url);
+
+client.connect((err, client) => { /////eis o código em questão... 
+
+});
+
+
+
+------------------------------
+
+
+
+ASSIM QUE CONSEGUIRMOS ACESSO A ESSE 'CONNECTED CLIENT', podemos então 
+
+
+_UTILIZAR ESSE CLIENT__ (o segundo parâmetro dessa callback function) 
+
+
+PARA ENTÃO 'EXECUTAR QUERIES CONTRA ELE' ('run queries against it')...
+
+
+
+
+------------------------
+
+
+
+
+Código ''''completo'''' dessa conexão:
+
+
+
+
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const router = express.Router();
+const url = 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';
+
+const client = new MongoClient(url);
+
+client.connect((err, client) => { 
+    
+    console.log('connected correctly to server');
+
+});
+
+
+
+
+--------------------------------------------------------
+
+
+Certo, mas agora o professor inventa uma viagem...
+
+
+Ele pega UM PEDAÇÃO do código exemplo do mongoDB e insere dentro da ROUTE DE 'post'.... (router.post)....
+
+
+
+Isso significa que ele copia 
+
+
+
+tudo isso aqui de código:
+
+
+'
+//Use connect method to connect to the server
+client.connect(function(err, client) {
+    assert.equal(null, err);
+    console.log('Connected correctly to server');
+
+
+    const db = client.db(dbName);
+
+
+
+    //Insert a Single Document
+    db.collection('inserts').insertOne({a:1}, function(err, r) {
+    assert.equal(null, err);
+    assert.equal(1, r.insertedCount);
+
+
+
+
+        //Insert multiple documents
+        db.collection('inserts').insertMany({a:2}, {a:3}, function(err, r) {
+        assert.equal(null, err);
+        assert.equal(2, r.insertedCount);
+
+         client.close();
+    })
+
+
+
+    });
+
+
+   
+})
+
+
+'
+
+
+-------------------------------
+
+
+INSERIR ESSAS MUITAS LINHAS DE CÓDIGO 
+
+
+
+dentro 
+
+do 'router.post'....
+
+
+
+ex:
+
+
+
+
+(ANTES)
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+
+    
+    locationStorage.locations.push({
+        id: id
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+
+
+(DEPOIS)
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+//Use connect method to connect to the server
+client.connect(function(err, client) {
+    assert.equal(null, err);
+    console.log('Connected correctly to server');
+
+
+    const db = client.db(dbName);
+
+
+
+    //Insert a Single Document
+    db.collection('inserts').insertOne({a:1}, function(err, r) {
+    assert.equal(null, err);
+    assert.equal(1, r.insertedCount);
+
+
+
+
+        //Insert multiple documents
+        db.collection('inserts').insertMany({a:2}, {a:3}, function(err, r) {
+        assert.equal(null, err);
+        assert.equal(2, r.insertedCount);
+
+         client.close();
+    })
+
+
+
+    });
+
+
+   
+})
+
+    locationStorage.locations.push({
+        id: id,
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+
+
+----------------------------------------
+
+
+
+No entanto, professor pede para remover os 'assert statements', como
+
+
+
+'assert.equal(null, err)'...
+
+
+
+
+resultado:
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+//Use connect method to connect to the server
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+
+
+    const db = client.db(dbName);
+
+
+
+    //Insert a Single Document
+    db.collection('inserts').insertOne({a:1}, function(err, r) {
+
+
+
+
+
+        //Insert multiple documents
+        db.collection('inserts').insertMany({a:2}, {a:3}, function(err, r) {
+
+
+         client.close();
+    })
+
+
+
+    });
+
+
+   
+})
+
+    locationStorage.locations.push({
+        id: id,
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+---------------------------------------
+
+
+
+NO ENTANTO, A LINHA 
+
+
+'const db = client.db(dbName);' deve ser MANTIDA,
+
+
+deve ser mantida PQ É AÍ QUE NÓS CONSEGUIMOS O ACESSO A DATABASE.... (o acesso reside em 'db', essa constante... que deverá ser chamada.)
+
+
+
+
+
+
+preste atenção nessa linha, pois ELA __É A LINHA MAIS IMPORTANTE__, É ELA QUE ESTABELECE A CONEXÃO AO 
+
+DATABASE....
+
+
+
+const db = client.db(dbName); --------->  'db' é uma propriedade DENTRO DO 'client', desse parâmetro 'client' QUE SERÁ RECEBIDO PELO MÉTODO 'connect()'...
+
+
+
+
+---------------------------------------
+
+
+
+
+DEPOIS DISSO, O PROFESSOR EXPLICA QUE O 'MONGODB' funciona com coisas chamadas 
+
+
+'COLLECTIONS' e outras coisas chamadas 
+
+de 
+
+'DOCUMENTS'...
+
+
+
+
+---> VOCÊ TEM UMA ____'collection', que é como uma 'TABLE OF RECORDS'...
+
+
+e aí você tem um 'DOCUMENT', que é como um simples  'ROW' (linha) naquela table...
+
+
+
+
+Na escrita 
+
+
+
+'db.collection('inserts')' ,
+
+
+NÓS TEMOS UMA 
+
+
+_____COLLECTION___...
+
+
+
+o professor renomeia esse negócio, troca de 'inserts' para 
+
+
+'user-locations'........
+
+
+
+já aquele método 'insertOne()' TE DEIXA 
+
+____INSERIR ___ 1 ÚNICO NOVO DOCUMENTO DENTRO DESSA COLLECTION...
+
+
+
+
+O 'document' que vamos querer inserir DENTRO DESSA TABLE 
+
+deverá 
+
+TER O ___MESMO FORMATO__ daquele 
+
+
+objeto 'location' QUE O PROFESSOR HAVIA 'INSERTED' dentro 
+
+DA MEMÓRIA LOCAL ('locationStorage', aquele objeto que TEM O ARRAY DE 'locations'...).....
+
+
+
+
+
+EX (do código antigo):
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+    locationStorage.locations.push({
+        id: id,
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+--------------------------------
+
+
+
+OU SEJA, O PROFESSOR VAI COMENTAR PARA FORA DO CÓDIGO ESSE CALL DE 'push' 
+
+
+NA LOCATIONSTORAGE, pois nós não mais a utilizaremos no futuro...
+
+
+ex:
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+   // locationStorage.locations.push({
+       // id: id,
+     //   address: req.body.address,
+    //    coords: { lat: req.body.lat, lng: req.body.lng }
+ //   });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+
+FICA SÓ ISSO AQUI, dessas linhas de código:
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+----------------------------------------------
+
+
+
+
+MAS ANTES DE SE LIVRAR DESSE PUSH do objeto 'location' dentro do locationStorage,
+
+
+O PROFESSOR COPIA A ESTRUTURA/MODELO do objeto 
+
+'location', COPIA E COLA 
+
+
+NAQUELE LOCAL '{a: 1}' DENTRO 
+
+
+DO CÓDIGO DO CLIENT DO 'MONGODB'...
+
+
+Ele vai fazer isso PQ É EXATAMENTE ALI QUE O MONGODB VAI __INSERIR ___ 1 ÚNICO 'document' à COLLECTION 
+
+QUE JÁ EXISTE....
+
+
+
+
+ex (RESULTADo):
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+//Use connect method to connect to the server
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+
+
+    const db = client.db(dbName);
+
+
+
+    //Insert a Single Document
+    db.collection('user-locations').insertOne({
+        id: id, 
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+
+
+
+
+
+        //Insert multiple documents
+        db.collection('inserts').insertMany({a:2}, {a:3}, function(err, r) {
+
+
+         client.close();
+    })
+
+
+
+    });
+
+
+   
+})
+
+   // locationStorage.locations.push({
+    //    id: id,
+   //     address: req.body.address,
+   //     coords: { lat: req.body.lat, lng: req.body.lng }
+  //  });
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+CERTO...
+
+
+
+A ÚNICA COISA QUE MUDARÁ, NESSE MODELO DO OBJETO 'location', ao ser transplantado para aquele 
+
+INSERTONE no mongodb, É O 'id'....
+
+
+
+
+É o 'id', o id você não precisará usar mais, por isso vocÊ pode REMOVER O FIELD/PROPRIEDADE 'id' e o 
+seu valor correspondente... --------> mas pq isso? ----> PQ O MONGODB VAI ____CRIAR UM ID___ PARA ESSE ITEM ____AUTOMATICAMENTE ___ PARA NÓS___...
+
+
+----------------------------------
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+//Use connect method to connect to the server
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+
+
+    const db = client.db(dbName);
+
+
+
+    //Insert a Single Document
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+
+
+        //Insert multiple documents
+        db.collection('inserts').insertMany({a:2}, {a:3}, function(err, r) {
+
+
+         client.close();
+    })
+    });
+})
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+Certo....
+
+
+
+Mas o 'insertOne' 
+
+
+não exige/aceita somente 
+
+
+
+esse argumento 
+
+de 
+
+
+'{
+    address: req.body.address,
+    coords: { lat: req.body.lat, lng: req.body.lng }
+}',
+
+
+
+
+
+não....
+
+
+
+Esse 'insertOne' também aceita/exige uma função (a função 'function(err, r) {...}' )....
+
+
+
+
+
+ESSA FUNÇÃO SERÁ __DISPARADA____  assim que O MONGODB estiver 
+
+
+
+'done' COM ESSA OPERAÇÃO de 'insertOne'... 
+
+
+
+
+essa função 
+
+
+
+'function(err, r)' 
+
+
+vai nos dar TANTO 
+
+ou um __ERRO___ ('err') OU O 
+
+
+___RESULTADO___ dessa operação de insert ('r')...
+
+
+
+
+
+OBS:::: PROFESSOR DIZ QUE PODEMOS NOS LIVRAR DO RESTO DO 'dummy/example code' do 
+
+MONGODB (aquele código de 'insertMany' e todos os 'ASSERT'):
+
+
+Ele também tira o 'client.close();'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+//Use connect method to connect to the server
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+
+
+    const db = client.db(dbName);
+
+
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+            ////essa função ficará basicamente ''vazia''....
+    })
+    });
+})
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+CÓDIGO LIMPO:
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+    const db = client.db(dbName);
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+
+    })
+    });
+})
+    resp.json( {message: 'Stored location!', locId: id});
+});
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+AGORA APENAS TEMOS QUE NOS ASSEGURAR QUE DENTRO DESSA FUNÇÃO 'function(err, r)' , 
+
+
+
+dentro do seu body, dentro dessa função QUE SERÁ APENAS DISPARADA DEPOIS do 
+
+ INSERT DAQUELE ÚNICO 'document' na collection de 'user-locations',
+
+
+ TEMOS QUE NOS ASSEGURAR QUE O CÓDIGO NO INTERIOR DESSA FUNÇÃO 
+
+ ___ENVIE DE VOLTA A NOSSA 'RESPONSE'___ (nossa response, de código 'resp.json( { message: 'Stored location!', locId: id});'   )
+
+
+
+
+PARA ISSO, O PROFESSOR SIMPLESMENTE TRANSPLANTA O CÓDIGO DA NOSSA RESPONSE PARA DENTRO Do body dessa função...
+
+
+
+
+ex:
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+    const db = client.db(dbName);
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        resp.json( {message: 'Stored location!', locId: id});
+    })
+    });
+})
+    
+});
+
+
+
+--------------------------------------------------------
+
+
+
+
+Certo... essa mudança fará com que ESSA NOSSA RESPONSE __APENAS SEJA __ ENVIADA 
+
+depois que essa função assíncrona de 'insertOne' tenha acabado.... (essa função 'err, r' é assíncrona PQ ELA SÓ VAI SER EXECUTADA UMA VEZ QUE AQUELE OBJETO com as propriedades 'address' e 'coords' tenha sido inserido por meio do 'insertOne' naquela collection de 'user-locations'...   )
+
+
+
+
+
+
+
+
+TEORICAMENTE, DIZ O PROFESSOR, TAMBÉM DEVERÍAMOS CHECAR POR ERROS NESSE LUGAR...
+
+
+'ex: if(err) {...}' ----> isso nos mostraria UMA MENSAGEM DIFERENTE SE CONSEGUIRMOS UM ERRO...
+
+
+---> professor diz que o error handling deixaria as coisas desnecessariamente complicadas nesse nosso exemplo.
+Para mais informações, cheque o curso de node.js dele.
+
+
+
+-----------------------
+
+
+
+Certo...
+
+
+então aqui na response estamos dando 'store' dessa propriedade 
+
+
+'message' de 'Stored location!' e 
+
+o locId...
+
+
+
+
+
+esse 'locId' terá um valor de 'id'....
+
+
+
+
+Certo...
+
+
+
+
+MAS___, DIZ O PROFESSOR, AQUELE 'id' QUE EU VOU QUERER 
+
+ENVIAR DE VOLTA AO USUÁRIO/clientside por meio dessa response 
+
+___DEVE/TEM__ DE SER 'RETRIEVED' por meio 
+
+
+daquele 
+
+'RESULT' ('r') QUE RECEBEMOS NESSA FUNÇÃO 'err, r'...
+
+
+
+
+Para isso, para ver o que há dentro desse 'result' (dentro do 'r'),
+
+
+nós devemos fazer um 'console.log' dele....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+    const db = client.db(dbName);
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r); /////////poderemos ver o que há dentro dele quando é armazenado nessa função...
+        resp.json( {message: 'Stored location!', locId: id});
+    })
+    });
+})
+    
+});
+
+
+
+--------------------------
+
+
+
+Restartamos o nosso servidor node.js 
+
+e checamos o resultado.
+
+
+
+
+
+----> quando clicarmos em 'Find Place', 
+
+
+vamos 
+
+receber UM 
+
+
+___ERRO___ no 
+
+
+
+console...
+
+
+
+o erro 
+
+
+
+
+será de 
+
+
+
+'POST http://localhost:3000/add-location
+net::ERR_CONNECTION_REFUSED
+
+
+Uncaught(in promise)
+TypeError: Failed to fetch'
+
+
+
+---------------------------------------------
+
+
+PODEMOS VER O QUE É O ERRO NO NOSSO TERMINAL DO NODE.JS...
+
+
+
+
+O terminal nos diz 
+
+
+
+'TypeError: Cannot read property 'db' of null'....
+
+
+ 
+
+ Professor explica que a razão disso é porque 
+
+
+ 'dbName', essa variável em 
+
+
+ 'const db = client.db(dbName)',
+
+
+ __NÃO EXISTE___ NO NOSSO CÓDIGO__.
+
+
+
+ Precisamos 
+
+
+ criar uma variável dessas....
+
+
+
+
+
+ O professor explica que o 'dbName' é visto na nossa url do mongodb que estamos 
+
+ usando no código....
+
+
+
+ ex
+
+
+
+ 'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';'
+
+
+
+
+ AQUI, NESSE CASO, o nosso'dbName' será 
+
+ 'LOCATIONS', pois esse é a coisa que inserimos depois do '/' depois do 'net'...
+
+
+
+
+
+Para que nosso código funcione, portanto, o professor diz que devemos simplesmente trocar 
+
+
+
+'const db = client.db(dbName)'
+
+
+
+por 
+
+
+
+''const db = client.db('location');' 
+
+
+
+------------------------------------------------
+
+
+
+RESULTADO:
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+    const db = client.db('locations'); //////// CERTO. ISSO CONSERTARÁ O PROBLEMA DO 'db = null'.
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: id});
+    })
+    });
+})
+    
+});
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+Isso quer dizer que nós vamos QUERER USAR A DATABASE DE 'locations'... (a database de nome 'locations'...), 
+
+
+
+a qual nos conectamos 
+
+
+com o uso da url de 
+
+
+'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/locations?retryWrites=true&w=majority';'....
+
+
+
+----------
+
+
+
+
+
+
+
+
+COM ISSO DEVEMOS RESTARTAR O SERVIDOR...
+
+
+
+AGORA NÓS NÃO VAMOS RECEBER MAIS NENHUM ERRO NO CONSOLE...
+
+
+O que vamos receber é uma MENSAGEM NO TERMINAL 
+
+
+DO NODE.JS, produzida pelo 'console.log'...
+
+
+
+Será um objeto gigante...
+
+
+É um objeto produzido pelo 'mongoDB'...
+
+
+
+bem complexo...
+
+
+
+BEM NO FINAL, NO ENTANTO, O QUE ELE TERÁ 
+
+
+É UMA PROPRIEDADE 
+
+de 
+
+'insertedId: 5d941051058102580821058'  (números e letras aleatórios)....
+
+
+
+
+
+PROFESSOR DIZ QUE ESSA PROPRIEDADE É EXATAMENTE A COISA DE QUE PRECISAMOS, aqui, no nosso projeto, para 
+
+randomizar os ids de usuário armazenados na nossa database...
+
+
+
+precisamos dessa propriedade 
+
+
+
+'insertedId'...
+
+
+
+por isso 
+
+
+vamos lá no código 
+
+
+de 
+
+
+'resp.json( { message: 'Stored location!', locId: id} )' 
+
+
+E SUBSTITUÍMOS O 'id' em 'locId' 
+
+
+POR ESSE 
+
+'insertedId', QUE FOI PRODUZIDO PELO __MONGODB___, automaticamente....
+
+
+
+
+
+Mas não basta dizermos 'insertedId', precisamos 
+
+
+REFERENCIAR 
+
+o 'r' (o RESULT produzido pelo INSERT do 'document' na 'collection' de nome 'user-locations' POR MEIO DO MONGODB....)
+
+
+
+
+ou seja, precisamos 
+
+escrever 
+
+'r.insertedId'...
+
+
+
+
+
+É essa a data/informação/valor de propriedade que o professor vai querer 
+
+enviar de volta ao usuário...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    const id = Math.random();
+
+
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+    const db = client.db('locations'); //////// CERTO. ISSO CONSERTARÁ O PROBLEMA DO 'db = null'.
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+    
+});
+
+
+
+
+----------------------
+
+
+
+ISSO FEITO, PODEMOS REMOVER O CÓDIGO DE 'const id = Math.random()' de nosso código, 
+
+pois agora temos essa feature do MONGODB de gerar ids AUTOMATICAMENTE...
+
+
+
+ex (antes):
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    //const id = Math.random(); ///COISA A SER REMOVIDA
+
+
+client.connect(function(err, client) {
+    console.log('Connected correctly to server');
+    const db = client.db('locations'); 
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+    
+});
+
+
+
+-----------------------------------------------
+
+
+
+ex(depois):
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+
+
+
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+    
+});
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+COM ISSO, SE AGORA REINICIARMOS NOSSO SERVIDOR E CLICARMOS EM 'find place' de novo, 
+
+
+
+
+
+veremos que agora 
+
+
+vamos 
+
+RECEBER 
+
+
+
+UMAS URLS com campo 'id' bem mais aleatório,
+
+pois eles foram gerados 
+
+por meio do MONGODB...
+
+
+ex:
+
+
+
+'http://localhost:8080/my-place?location=5d94a1367523661251f500'
+
+
+
+
+----------------------------------------------
+
+
+
+
+COM ISSO, AGORA ESTAMOS ___ARMAZENANDO___ dados no 'mongoDB'...
+
+
+
+
+agora fazer RETRIEVE desses dados também seria legal....
+
+
+
+
+
+Seria legal fazer RETRIEVE desses dados quando nós enviarmos/enviássemos os 'get' request....
+
+
+
+
+
+
+
+.... isso pq, até agora, se nós entrarmos na página com aquela url, 
+
+
+
+nossa página/mapa daquele lugar da url NÃO VAI CARREGAR AUTOMATICAMENTE...
+
+
+
+
+não, não vai nem carregar...
+
+
+há um 
+
+alerta de 
+
+
+
+'Could not find location', que havíamos programado antes...
+
+isso significa 
+
+que 
+
+!location ----> retorna true, no momento...
+
+
+
+
+
+ISSO ACONTECE, EXPLICA O PROFESSOR, PQ ATÉ AGORA NÓS NÃO TEMOS NENHUMA LÓGICA PARA 
+
+
+FAZER 'RETRIEVE' dos dados da url/location armazenada no serverside....
+
+
+
+
+
+
+MAS OS DOCS do 'MONGODB DRIVER' NOS AJUDAM COM ISSO...
+
+
+
+
+Se nós scrollarmos para baixo, vemos outras funções que podemos executar....
+
+
+
+FUNÇÕES PARA UPDATAR E DELETAR DOCUMENTOS...
+
+
+
+
+MAS O PROFESSOR QUER ___aCHAR__ um documento...
+
+
+
+
+é por isso que ele vai querer ler os métodos de ___READ___.
+
+
+
+
+ALI, DE NOVO, NÓS TEMOS TODA A LÓGICA para fazer o 'connect' do servidor ao 
+
+
+clientside....
+
+
+
+
+
+O que nós podemos fazer, aqui, é copiar todo o código 
+
+
+
+de dentro de 
+
+
+
+'router.post' (o código meio copiado do 'mongo.db')...
+
+
+
+ou seja, o código de 
+
+
+
+'
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+
+'
+
+
+
+
+------------------------------------------------------
+
+
+
+
+PROFESSOR VAI COPIAR TODO O CÓDIGO DO BODY dessse 'router.post' 
+
+
+
+E COLAR EM 
+
+
+'router.get' (ou seja, na nossa OUTRA ROTA, que recebe os request de 
+tipo 'GET'...)....
+
+
+
+ 
+
+
+ Lembre-se do código de 'router.get':
+
+
+
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    })
+    if(!location) {
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+});
+
+
+
+
+------------------------
+
+
+
+PROFESSOR DIZ QUE VAI ACRESCENTAR/COLAR ESSE CÓDIGO DO 'router.post' (do mongoDB) logo 
+
+
+após o código que efetivamente faz o 'retrieve' da locationID... (ou seja, aquele código de 'const locationId = +req.params.lid;')...
+
+
+
+PROFESSOR DIZ QUE 
+
+SUBSTITUIRÁ 
+
+AS LINHAS DE CÓDIGO DE 
+
+
+'    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    })'
+
+
+
+POIS A TAREFA DESSAS LINHAS DE CÓDIGO (a função de 'find') AGORA 
+
+
+SERÁ DESEMPENHADA PELO 
+
+
+CÓDIGO COPIADO DO 'mongoDB' (aquele código de 
+
+
+'client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})'
+)
+
+
+
+
+EX(resultado do copia e cola):
+
+
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = +req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').insertOne({
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body. lng }
+    }, function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+
+    if(!location) {
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+});
+
+
+
+------------------------------------------------------------------
+
+
+
+
+
+Professor explica que ele ainda vai querer se conectar, nesse código aí, ao 
+
+
+database de 'locations', como estávamos fazendo na rota do 'POST'...
+
+
+
+e que ainda vamos querer nos conectar 
+
+
+À collection de 'user-locations', mas agora é claro que 
+
+O PROFESSOR NÃO VAI QUERER 
+
+
+____INSERIR ___ UM 'document' por meio do método 'insertOne', e sim vai querer 
+
+
+
+
+'findOne()' ------------------> ESSE É OUTRO MÉTODO DO 'MONGODB'... ----> ELE ___ENCONTRA___ um 
+'document' dentro de uma 'collection'...
+
+
+
+
+
+
+
+'findOne()' --------> VOCÊ AINDA DEVE PASSAR UM __OBJETO__ como parâmetro ao 'findOne'... MAS 
+
+EM VEZ DE PASSAR o objeto em si (como fazíamos com 'insertOne', em que 
+
+PASSÁVAMOS A ""ESTRUTURA"" do objeto ---> tipo o objeto location: 
+
+{
+    address: req.body.address, 
+    coords: { lat: req.body.lat, lng: req.body.lng }
+}
+
+)
+
+
+
+
+
+EM VEZ DE PASSAR O OBJETO EM SI, AQUI DEVEMOS PASSAR ___OS 'CRITÉRIOS' (the 'criteria') PARA 
+
+___ENCONTRAR AQUELE DOCUMENTO___...
+
+
+E vocÊ pode, por exemplo, ENCONTRAR UM DOCUMENTO POR meio de um 'id', aqui....
+
+
+
+
+
+----> mas como encontrar um documento/objeto/location por meio de seu id?
+
+
+---> professor explica que o ID é, na verdade, armazenado dentro de 
+
+um field '_id' NO MONGODB... e é por isso que podemos usar 
+
+
+'_id' E ENTÃO PODEMOS USAR O 'locationId' que foi EXTRAÍDO DOS 'params' DO REQUEST RECEBIDO 
+NESSA 'ROUTE' de 'GET'....
+
+
+ex(veja por si mesmo isso aí, no código):
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = +req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').findOne({ //////EIS O CÓDIGO EM QUESTÃO
+    
+        _id: locationId /////////EIS O OUTRO CÓDIGO EM QUESTÃO.
+
+    }, 
+    
+    
+    function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+
+    if(!location) {
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+});
+
+
+
+---------------------------------------------
+
+
+
+certo....
+
+
+mas o professor diz que devemos remover o '+'   em 
+
+
+'+req.params.lid', pois NÃO VAMOS MAIS PRECISAR DO VALOR DESSA CONSTANTE NA FORMA 
+
+DE UM NÚMERO....
+
+
+
+
+
+ex:
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').findOne({ //////EIS O CÓDIGO EM QUESTÃO
+    
+        _id: locationId /////////EIS O OUTRO CÓDIGO EM QUESTÃO.
+
+    }, 
+    
+    
+    function(err, r) {
+        console.log(r);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+
+    if(!location) {
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+});
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+certo.... então agora o nosso código, aqui, vai tentar encontrar 
+
+UM DOCUMENT QUE TENHA O seu '_id' (o id INTERNO, do mongodb) COM UM 
+
+VALOR IGUAL AO 
+
+
+DAQUELE 'locationId' extraído do nosso request, que é o valor de 'req.params.lid'...
+
+
+
+
+o '_id' vai ter que ser igual àquele valor de 'req.param.lid' NA FORMA DE STRING (o 'locationId')...
+
+
+
+
+e esse 
+
+
+'req.params.lid' é ___EXTRAÍDO DA NOSSA URL___...  
+
+
+
+
+
+Certo...
+
+
+e nós temos que passar UM SEGUNDO PARÂMETRO/ARGUMENTO 
+
+
+
+à função 'findOne'.... 
+
+
+
+esse segundo parâmetro/argumento atuará 
+
+
+DA MESMA FORMA QUE O SEGUNDO ARGUMENTO na função 'insertOne'... ou seja, 
+
+
+ele SOMENTE EXECUTARÁ 
+
+DEPOIS QUE 
+
+
+A PRIMEIRA PARTE DESSA FUNÇÃO, A PARTE QUE FAZ O 'find' (que acha o 'document' que tem o seu '_id' como sendo o valor de 'locationId'....), TIVER ACABADO 
+
+E TER SIDO BEM SUCEDIDA..
+
+
+
+
+
+
+Certo...
+ 
+
+ nessa segunda função, 
+
+ a função 
+
+
+ 'function(err, r)',
+
+
+ NÓS VAMOS 
+
+
+
+ OU:
+
+
+
+ 1) CONSEGUIR UM ERRO (err) 
+
+
+
+ ou 
+
+
+
+ 2) CONSEGUIR O DOCUMENTO PELO QUAL ESTÁVAMOS PROCURANDO (r) ---> PROFESSOR RENOMEIA 
+ESSE 'r' como 'doc', PARA QUE NÃO CONFUNDAMOS ESSE PARÂMETRO COM O PARÂMETRO USADO EM 
+'insertOne'( que também é 'r')...
+
+
+
+
+ex:
+
+
+
+
+function(err, doc) {
+    ....
+
+}
+
+
+
+--------------------------------
+
+
+Nessa função, o professor espera/a funçao espera RECEBER O 'DOCUMENT'...
+
+
+
+ex(código completo):
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').findOne({ 
+    
+        _id: locationId 
+
+    }, 
+    
+    
+    function(err, doc) {
+        console.log(doc);
+        resp.json( {message: 'Stored location!', locId: r.insertedId });
+    })
+    });
+})
+
+    if(!location) {
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+});
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+Certo, mas ainda não acabamos com esse código aí...
+
+
+
+naquele trecho 
+
+
+'resp.json()', ou seja, naquela parte 
+
+EM QUE ___RETORNAMOS ALGO__ nesse nosso código/por meio desse nosso código,
+
+
+
+O PROFESSOR VAI QUERER USAR A LÓGICA DE 
+
+'encontrar/não encontrar location' de antes...
+
+
+(
+
+    ou seja, 
+
+    aquela lógica de 
+
+
+'
+        if(!location) {
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})'
+
+
+)
+
+
+
+
+ELE VAI QUERER USAR ESSA LÓGICA DENTRO DO NOSSO MÉTODO 
+
+'findOne()' novo...
+
+
+Ele vai simplesmente substituir as linhas 
+
+
+
+
+'console.log(doc);
+resp.json( {message: 'Stored location!', locId: r.insertedId });
+
+
+
+
+
+POR ESSAS LINHAS COM ESSE IF CHECk...
+
+
+
+
+ex(código alterado):
+
+
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').findOne({ 
+    
+        _id: locationId 
+
+    }, 
+    
+    
+    function(err, doc) {
+     
+    if(!location) { //////////CÓDIGO QUE PASSAMOS POR CIMA DO ANTIGO....
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+    })
+    });
+})
+
+});
+
+
+
+--------------------------------------------------------------
+
+
+
+
+
+
+É claro que o professor fará algumas alterações nesse código, para que ele funcione...
+
+
+
+primeiro ele vai trocar '!location' por '!doc' (esse statement vai dizer 'se nós não tivermos um "document"....")
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').findOne({ 
+    
+        _id: locationId 
+
+    }, 
+    
+    
+    function(err, doc) {
+     
+    if(!doc) { 
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: location.address, coordinates: location.coords})
+    })
+    });
+})
+
+});
+
+
+
+-------------------------------------
+
+
+
+
+
+o código de 
+
+'return resp.status(404).json(
+    {
+        message: 'Not Found!'
+    }
+)'
+
+ELE AINDA NÃO MUDARÁ,
+
+POIS ELE AINDA VAI QUERER RETORNAR 
+
+ESSa resposta de 'not found' na eventualidade do 'document' não existir/não for encontrado...
+
+
+
+
+
+MAS NO CASO DE ESSE 'document' (doc) ser encontrado, o professor vai querer 
+
+
+RETORNAR UMA 
+
+
+RESPONSe ('resp')....
+
+
+
+
+nessa response, o 'address' e a 'coordinates' poderão/deverão ser 
+
+ENCONTRADOS SEMPRE NO 'document' (doc), 
+
+
+
+por isso o professor altera aquele 
+
+
+objeto 
+
+
+'resp.json( { address: location.address, coordinates: location.coords });'
+
+
+
+
+PARA FICAR 
+
+
+'resp.json( {address: doc.address, coordinates: doc.address });'
+
+
+
+---------------------------------------
+
+
+
+
+
+Certo...
+
+
+O resto fica como estava..
+
+
+
+o código fica:
+
+
+
+
+
+
+ router.get('/location/:lid', (req, resp, next) => {
+    const locationId = req.params.lid;
+   
+client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    db.collection('user-locations').findOne({ 
+    
+        _id: locationId 
+
+    }, 
+    
+    
+    function(err, doc) {
+     
+    if(!doc) { 
+        return resp.status(404).json( {
+            message: 'Not Found!'
+        })
+    }
+    resp.json( {address: doc.address, coordinates: doc.coords})
+    })
+    });
+})
+
+
+
+
+
+--------------------------------
+
+
+
+SALVAMOS E RECARREGAMOS O SERVIDOR.
+
+
+
+Entramos em 'My-place' de novo....
+
+
+
+
+o nosso site ainda nos dá 'could not find place/location'...
+
+
+
+A razão PARA 
+ESSE 
+
+
+ERRO TER SIDO MOSTRADO É 
+
+
+__ALGO ESPECÍFICO AO 'MONGODB'...____
+
+
+
+
+
+___O____ 'ID' _____ de um 
+
+ELEMENTO QUE É ADICIONADO À DATABASE não é, 'actually', UMA 
+
+
+STRING...
+
+
+o id de elementos adicionados À DATABASES DO 'mongodb' NÃO 
+
+
+É CONSIDERADO COMO UMA STRING...
+
+
+
+
+todos esses id dos elementos que são adicionados à database do 'mongoDB' 
+
+NÃO SÃO 
+
+
+
+DE 'DATA-TYPES COMUNS'... ---> ou seja, esses ids nunca estarão em um formato 'string/número'....
+
+
+
+não, esses ids sempre 
+
+
+
+
+
+SERÃO DE UM 'SPECIAL DATA TYPE'... ------> é um special data type 
+
+____USADO PELO MONGODB, INTERNAMENTE.........
+
+
+
+
+o nome desse 'special data type' é  
+
+
+'OBJECTID' (objectId).... ---> esse data type 
+
+NÃO É UM TIPO DE 
+
+DATA DO JAVASCRIPT... ('not a javascript data-type...') 
+
+
+
+
+É UMA 'MONGODB SPECIFIC DATA-TYPE'... (é uma data type EXCLUSIVA DO MONGODB...)...
+
+
+
+
+Isso significa que QUANDO VOCÊ FAZ QUERY POR UM ID 
+
+
+em 
+
+
+
+'db.collection('user-locations').findOne(
+    {
+        _id: locationId ////negócio armazenado em uma database do 'mongoDB' 
+    }
+)',
+
+
+
+VOCÊ, portanto, TEM QUE PROCURAR por esse tipo de negócio, por 
+
+
+esse 'data type especial' do mongodb, por esse 'objectId data-type'......
+
+
+
+
+VOCÊ PODE PROCURAR ('findOne()', 'findMany()', etc etc) POR 'IDs' internos dos objetos do 'mongoDB' por meio 
+
+
+DE UMA __FEATURE__ do 
+
+
+'MongoClient'.... (
+
+
+oq é esse MongoClient?
+
+
+
+Bem, é aquele negócio que inserimos no nosso código...
+
+é o 
+
+
+'const MongoClient = require('mongodb').MongoClient;'
+)
+
+
+
+
+----------------------------------
+
+
+
+
+Certo,
+
+devemos usar 
+
+esse 
+
+'MongoClient'...
+
+
+
+
+
+Felizmente, não é muito difícil fazer essa 'procura especial' ('special search') 
+
+POR 
+
+
+ESSES IDS no formato 'objectId'...
+
+
+----------------------------
+
+
+Professor explica que quando nós 
+
+importamos o 
+
+
+'mongoClient' por meio da sintaxe de  'const MongoClient = require('mongodb').MongoClient;',
+
+
+NÓS PODEMOS 
+
+
+IMPORTAR NÃO SÓ 
+
+esse 'MongoClient' inteiro,
+
+MAS TAMBÉM MAIS UMA OUTRA COISA...
+
+
+Para isso, 
+
+
+ele diz que devemos reestruturar nosso código...
+
+
+
+ex(ANTES):
+
+
+
+
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+
+
+
+
+
+ex(DEPOIS):
+
+
+
+
+const express = require('express');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.mongoClient;      //////// ESSA ALTERAÇÃO DE SINTAXE FAZ COM QUE NÓS NOS TORNEMOS CAPAZES DE PUXAR OUTRAS COISAS DO 'Mongodb'... outras coisas como esse 'MongoClient' DENTRO DO 'mongodb'...
+
+
+
+
+--------------------------------
+
+
+
+
+as 'outras coisas' em que o professor está interessado são, nesse caso, é 
+
+
+o 'OBJECT CONSTRUCTOR DE OBJECTID'...
+
+
+
+
+('objectId constructor')....
+
+
+
+Para usar 
+
+esse constructor,
+
+
+
+você deve chamar 
+
+
+
+'mongodb.ObjectId()'....
+
+
+
+ex:
+
+
+const express = require('express');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.mongoClient;
+
+(um monte de código entre os 2 trechos)...
+
+
+'db.collection('user-locations').findOne(
+    {
+        _id: mongodb.ObjectId()
+    }
+)
+
+
+
+
+
+--------------------------------
+
+
+
+
+-------------------------------
+
+
+
+CERTO...
+
+
+MAS não basta só chamar 
+
+
+'mongodb.ObjectId()'... VOCê 
+
+PRECISA TAMBÉM 
+
+
+__INSTANCIAR___    essa classe/constructor de 'ObjectId()' ( COMO QUALQUER OUTRA CLASSE EM JAVASCRIPT.... LEMBRE-SE: ISSO É UMA REGRA GERAL, VOCÊ SEMPRE TEM DE FAZER ISSO).
+
+
+
+E para instanciar, é claro que você vai usar a keyword 'new' na frente de sua escrita...
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.mongoClient;
+
+(um monte de código entre os 2 trechos)...
+
+
+'db.collection('user-locations').findOne(
+    {
+        _id: new mongodb.ObjectId()/////eis o código em questão...
+    }
+)
+
+
+
+----------------------------------------
+
+
+
+
+
+
+CERTO....
+
+
+E a esse 'mongodb.ObjectId()', A ESSE CONSTRUCTOR/CLASSE, 
+
+
+VOCÊ DEVERÁ PASSAR ___O SEU ___ 'ID' ___ COMO UMA STRING...
+
+
+
+No nosso caso, o que vamos querer passar é 
+
+
+'locationId' (exatamente dessa forma)....
+
+
+RESUMINDO: o 'locationId' precisa SER BUSCADO DESSA FORMA, 
+
+DENTRO DAS DATABASES DO MONGODB.... (e isso você tem de fazer COM QUALQUER 
+PROPRIEDADE QUE VOCÊ QUER BUSCAR DENTRO DO MONGODB; VOCÊ TEM QUE FAZER EXATAMENTE ISSO, 
+USAR ESSE CONSTRUCTOR DE 'objectId' PARA REALIZAR BUSCAS INTERNAS EM OBJETOS/'documents' ARMAZENADOS 
+DENTRO DAS 'collections' DO MONGODB...)
+
+
+
+
+
+ex (resultado):
+
+
+
+
+
+const express = require('express');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.mongoClient;
+
+(um monte de código entre os 2 trechos)...
+
+
+'db.collection('user-locations').findOne(
+    {
+        _id: new mongodb.ObjectId('locationId'); ///eis o código em questão.
+    }
+)
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+essa constructor 
+
+function 
+
+
+'ObjectId' VAI FAZER UM 'WRAP' em volta dessa constante/variável que você passou, 
+
+e fará com QUE ELA FUNCIONE COM A QUERY DE AS PROPRIEDADES/OBJETOS com o data-type 
+bizarro típico do MONGODB.... (ou seja, ela passará de um query INVÁLIDO para um VÁLIDO, aos olhos do MONGODB....)
+
+
+
+Com isso, salvamos e recarregamos o servidor...
+
+
+
+
+----> Agora o link que vai até a pagina 'my-place' funciona 
+
+e a página 
+
+REALMENTE TEM O MAPA...
+
+
+
+
+
+---> professor explica que nosso servidor está LONGE DE FICAR 'BOM'...
+
+
+
+
+---> poderíamos fazer bem mais nesse servidor... poderíamos 
+
+adicionar 
+
+
++ERROR HANDLING 
+
+
++ SCENARIOS 
+
+E TAMBÉM 
+
+
+DEIXAR O CÓDIGO MAIS REUTILIZÁVEL... ( e também NEM SEMPRE OBRIGAR NOSSO 
+
+CÓDIGO A CRIAR UMA NOVA 'connection' naquela rota de 
+
+
+'router.get', como vemos naquele trecho 
+
+
+'client.connect(...)'.... )
+
+
+
+
+MAS ESSE MÓDULO EXISTE APENAS PARA INTRODUZIR O NODE.JS a nós...
+
+
+
+e também para nos introduzir ao mongodb...
+
+
+
+---> Esse módulo nos mostra como o javascript pode funcionar em diferentes contextos/ambientes.
+
+
+
+
+
+
+TIP FINAL:
+
+
+
+
+
+
+The finished code of this section will crash if you try to visit /my-place/:id with an invalid ID (that can't be converted to the special MongoDB ObjectId type).
+
+You can of course add error handling in a similar way as you learned it before in the course:
+
+try-catch for synchronous code (or async/ await)
+
+then() / catch() for promise-based code (where you don't use async/ await)
+
+Example:
+
+router.get('/location/:lid', (req, res, next) => {
+  const locationId = req.params.lid;
+
+  client.connect(function(err, client) {
+    const db = client.db('locations');
+
+    // Insert a single document
+    db.collection('user-locations').findOne(
+      {
+        _id: new mongodb.ObjectId(locationId)
+      },
+      function(err, doc) {
+        // if (err) {}
+        if (!doc) {
+          return res.status(404).json({ message: 'Not found!' });
+        }
+        res.json({ address: doc.address, coordinates: doc.coords });
+      }
+    );
+  });
+});
+
+
+
+can be improved like this:
+
+
+
+
+
+router.get('/location/:lid', (req, res, next) => {
+  const locationId = req.params.lid;
+
+  client.connect(function(err, client) {
+    const db = client.db('locations');
+    
+    // THIS WAS ADDED
+    let locationId;
+    try {
+        locationId = new mongodb.ObjectId(locationId);
+    } catch (error) {
+        // return to make sure the other code does not execute
+        return res.status(500).json({message: 'Invalid id!'}); 
+    }
+    // END OF ADDED CODE
+
+    // Insert a single document
+    db.collection('user-locations').findOne(
+      {
+        _id: locationId // will only be reached if the above code didn't throw an error
+      },
+      function(err, doc) {
+        // if (err) {}
+        if (!doc) {
+          return res.status(404).json({ message: 'Not found!' });
+        }
+        res.json({ address: doc.address, coordinates: doc.coords });
+      }
+    );
+  });
+});
+
+
+I dive deeper into more generic NodeJS error handling in my "NodeJS - The Complete Guide" course but the important takeaway here is, that you have the same error handling tools as in browser-side JavaScript.

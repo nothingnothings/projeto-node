@@ -1,0 +1,2291 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS IR ATÉ NOSSO 
+
+
+
+
+
+
+APP REACT.... --> LÁ, 
+
+
+
+___TAMBÉM __ VAMOS INSTALAR UMA NOVA PACKAGE,
+
+POR MEIO DE 
+
+'npm install 
+
+
+
+
+--save socket.io-client' 
+
+
+
+
+
+
+
+
+
+
+
+
+---> VAMOS INSTALAR ISSO AÍ __ PARA __ CONSEGUIR __ RODAR __ CÓDIGO QUE 'DEFINE CONNECTION WEBSOCKETS'
+ 
+ lá 
+
+
+
+ no nosso client (
+
+
+
+     pq uma conexão websockets requer o CONNECT TANTO DO SERVER COMO DO CLIENT, connect entre os 2...
+ )
+
+
+
+
+
+
+
+
+ --> VAMOS QUERER INSTALAR ESSE PACOTE LÁ 
+
+
+
+
+ NO NOSSO 
+
+ PROJETO REACT...
+
+
+
+
+
+
+
+
+
+
+
+
+ certo.... AÍ TESTAMOS NOSSO CÓDIGO...
+
+
+
+
+ rodar tanto o backend como o frontend...
+
+
+
+
+
+
+ ----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ QUANDO ISSO TIVER ACABADO,
+
+
+
+ PROFESSOR PEDE QUE 
+
+
+
+ ENTREMOS 
+
+ LÁ 
+
+
+
+ NO 
+
+
+
+
+
+
+ ARQUIVO/COMPONENT page de 
+
+
+
+ 'Feed.js'.... ---> LÁ,
+
+
+ BEM NO TOPO
+
+
+
+
+ dos imports,
+
+
+ DEVEMOS IMPORTAR 
+
+
+
+
+UM PACOTE
+
+
+De 
+
+
+
+
+'socket.io-client'...
+
+
+
+
+
+
+
+
+
+
+
+--> O OBJETO QUE DEVEMOS IMPORTAR, LÁ DESSE PACOTE,
+
+
+
+
+É 
+
+o 
+
+objeto 
+
+
+'openSocket' -----> (VOCÊ PODE COLOCAR O NOME QUE VOCÊ QUISER,
+
+
+O QUE INTERESSA É QUE 
+
+ESSA FUNÇÃO/OBJETO VAI 'OPEN A NEW CONNECTION/SOCKET'... 
+
+)
+
+
+
+
+
+
+
+
+ESCREVEMOS:
+
+
+
+
+
+
+
+import openSocket from 'socket.io-client'...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+import React, { Component, Fragment } from 'react';
+
+import openSocket from 'socket.io-client'; /////NECESSÁRIO PARA SETTAR UMA CONEXÃO 'websockets' entre O BACKEND E NOSSO FRONTEND...
+
+import Post from '../../components/Feed/Post/Post';
+
+import Button from '../../components/Button/Button';
+
+import FeedEdit from '../../components/Feed/FeedEdit/FeedEdit';
+
+import Input from '../../components/Form/Input/Input';
+
+import Paginator from '../../components/Paginator/Paginator';
+
+import Loader from '../../components/Loader/Loader';
+
+import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
+
+import './Feed.css';
+
+class Feed extends Component {
+  state = {
+    isEditing: false,
+    posts: [],
+    totalPosts: 0,
+    editPost: null,
+    status: '',
+    postPage: 1,
+    postsLoading: true,
+    editLoading: false,
+  };
+
+  componentDidMount() {
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  }
+
+  // loadPosts = (direction) => {
+
+
+
+  //     // const token = localStorage.getItem('token');  // já vamos obter isso por meio dos PROPS repassados pelo 'App.js'..
+
+  //   if (direction) {
+  //     this.setState({ postsLoading: true, posts: [] });
+  //   }
+
+  //   let page = this.state.postPage;
+  //   console.log(page);
+
+  //   if (direction === 'next') {
+  //     page++;
+  //     this.setState({ postPage: page });
+  //   }
+
+  //   if (direction === 'previous') {
+  //     page--;
+  //     console.log(this.state.postPage);
+  //     this.setState({ postPage: page });
+  //     console.log(this.state.postPage);
+  //   }
+
+  //   console.log(this.state.postPage, 'NEEDPOSTPAGE');
+  //   // fetch('URL')
+  //   fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+  //     {
+  //         headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+  //           'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+  //           // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+  //         }
+  //     }
+  //   ) ///esse request vai ser enviado PRIMEIRAMENTE ao middleware do arquivo 'is-auth', na pasta 'middlewareHelpers'...
+    
+    
+  //   // fetch('/feed/posts') //FORMA ERRADA.
+  //     .then((res) => {
+  //       if (res.status !== 200) {
+  //         throw new Error('Failed to fetch posts.');
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       console.log('ENTERED25125');
+  //       this.setState({
+  //         // posts: data.posts,
+
+  //         posts: data.posts.map((post) => {
+  //           return {
+  //             ...post,
+  //             imagePath: post.imageUrl,
+  //           };
+  //         }),
+  //         totalPosts: data.totalItems,
+  //         postsLoading: false,
+  //       });
+  //     })
+  //     .catch(this.catchError);
+  // };
+
+
+
+
+
+
+
+
+  loadPosts = async (direction) => {
+
+
+
+    // const token = localStorage.getItem('token');  // já vamos obter isso por meio dos PROPS repassados pelo 'App.js'..
+
+
+
+    try {
+
+
+    
+  if (direction) {
+    this.setState({ postsLoading: true, posts: [] });
+  }
+
+  let page = this.state.postPage;
+  console.log(page);
+
+  if (direction === 'next') {
+    page++;
+    this.setState({ postPage: page });
+  }
+
+  if (direction === 'previous') {
+    page--;
+    console.log(this.state.postPage);
+    this.setState({ postPage: page });
+    console.log(this.state.postPage);
+  }
+
+  console.log(this.state.postPage, 'NEEDPOSTPAGE');
+  // fetch('URL')
+  const loadedPostsResult = await fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+    {
+        headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        }
+    }
+  ); ///esse request vai ser enviado PRIMEIRAMENTE ao middleware do arquivo 'is-auth', na pasta 'middlewareHelpers'...
+  
+  
+  // fetch('/feed/posts') //FORMA ERRADA.
+    // .then((res) => {
+      if (loadedPostsResult.status !== 200) {
+        throw new Error('Failed to fetch posts.');
+      }
+      // return res.json();
+
+
+
+    const manipulatedPostsResult = await loadedPostsResult.json();
+    // })
+    // .then((data) => {
+      // console.log('ENTERED25125');
+      this.setState({
+        // posts: data.posts,
+
+        posts: manipulatedPostsResult.posts.map((post) => {
+          return {
+            ...post,
+            imagePath: post.imageUrl,
+          };
+        }),
+        totalPosts: manipulatedPostsResult.totalItems,
+        postsLoading: false,
+      });
+    // })
+
+  } catch (err) {
+        this.catchError();  ////não sei se isso está certo.
+  }
+    // .catch(this.catchError);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  statusUpdateHandler = (event) => {
+    event.preventDefault();
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Can't update status!");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(this.catchError);
+  };
+
+  newPostHandler = () => {
+    this.setState({ isEditing: true });
+  };
+
+  startEditPostHandler = (postId) => {
+    console.log(postId);
+
+    this.setState((prevState) => {
+      const loadedPost = {
+        ...prevState.posts.find((post) => post._id === postId),
+      };
+      console.log(loadedPost);
+      return {
+        isEditing: true,
+        editPost: loadedPost,
+      };
+    });
+
+    console.log(this.state.editPost);
+  };
+
+  cancelEditHandler = () => {
+    this.setState({ isEditing: false, editPost: null });
+  };
+
+  // finishEditHandler = (postData) => {
+  //   ///usado tanto para o ADD como para o EDIT de posts...
+  //   this.setState({ editLoading: true });
+
+  //   //Set up data (with image!)
+  //   // let url = 'URL';
+
+
+
+  //   ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+  //   let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+  //   formData.append('title', postData.title);
+  //   formData.append('content', postData.content);
+  //   formData.append('image', postData.image);
+
+  //   console.log(postData.image);
+
+  //   let url = 'http://localhost:8080/feed/post';
+  //   let method = 'POST';
+
+
+  //   if (this.state.editPost) {
+  //     // url = 'URL';
+  //     // url = 'http://localhost:8080/feed/post-edit';  ////approach do method 'PATCH', com o POSTID enviado no BODY do request (send no body do request, em vez de o extrair de um SEGMENTO DINÂMICO NA URL)....
+  //     // method = 'PATCH';
+  //     url = `http://localhost:8080/feed/post/${postData.id}`;
+  //     method = 'PUT';
+  //     console.log(postData);
+  //     // formData = new FormData(); /// approach antiga, do 'formData'.... --> essa approach é usada com o 'createPost', mas não com o EDIT POST...
+  //     // formData.append('postId', postData.id); //ver anotação logo acima... approach do método 'patch', antiga, minha, obsoleta.
+  //     // formData.append('title', postData.title);
+  //     // formData.append('content', postData.content);
+  //     // formData.append('image', postData.image);
+
+  //   } 
+
+  //   for (var pair of formData.entries()) {
+  //     console.log(pair[0] + ', ' + pair[1]);
+  //   }
+
+  //   fetch(url, {
+  //     method: method,
+  //     // body: JSON.stringify(postData),
+  //     body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+  //     headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+  //       'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+  //       // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+  //     }
+
+
+  //     // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+  //     //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+  //     //                       'multipart/form-data'
+  //     // }
+  //   })
+  //     .then((res) => {
+  //       if (res.status === 400) {
+  //         throw new Error(
+  //           'Please input values that are valid and not equal to previous ones.'
+  //         );
+  //       }
+  //         console.log(res.status);
+  //       if (res.status !== 200 && res.status !== 201) {
+  //         throw new Error('Creating or editing a post failed!');
+  //       }
+
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       console.log(data.post);
+  //       const post = {
+  //         _id: data.post._id,
+  //         title: data.post.title,
+  //         content: data.post.content,
+  //         creator: data.post.creator,
+  //         createdAt: data.post.createdAt,
+  //       };
+
+  //       this.setState((prevState) => {
+  //         let updatedPosts = [...prevState.posts];
+  //         if (prevState.editPosts) {
+  //           const postIndex = prevState.posts.findIndex((post) => {
+  //             return post._id === prevState.editPost._id;
+  //           });
+  //           updatedPosts[postIndex] = post;
+  //         } else if (prevState.posts.length < 2) {
+  //           updatedPosts = prevState.posts.concat(post);
+  //         }
+  //         return {
+  //           posts: updatedPosts,
+  //           isEditing: false,
+  //           editPost: null,
+  //           editLoading: false,
+  //         };
+  //       });
+
+  //       this.loadPosts();
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       this.setState({
+  //         isEditing: false,
+  //         editPost: null,
+  //         editLoading: false,
+  //         error: err,
+  //       });
+  //       this.loadPosts();
+  //     });
+  // };
+
+
+
+
+
+  finishEditHandler = async (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+
+
+    try {
+
+    
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST';
+
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      // url = 'http://localhost:8080/feed/post-edit';  ////approach do method 'PATCH', com o POSTID enviado no BODY do request (send no body do request, em vez de o extrair de um SEGMENTO DINÂMICO NA URL)....
+      // method = 'PATCH';
+      url = `http://localhost:8080/feed/post/${postData.id}`;
+      method = 'PUT';
+      console.log(postData);
+      // formData = new FormData(); /// approach antiga, do 'formData'.... --> essa approach é usada com o 'createPost', mas não com o EDIT POST...
+      // formData.append('postId', postData.id); //ver anotação logo acima... approach do método 'patch', antiga, minha, obsoleta.
+      // formData.append('title', postData.title);
+      // formData.append('content', postData.content);
+      // formData.append('image', postData.image);
+
+    } 
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+   const editAndAddResults = await fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      // .then((res) => {
+        if (editAndAddResults.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+          console.log(editAndAddResults.status);
+        if (editAndAddResults.status !== 200 && editAndAddResults.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        // return res.json();
+      // })
+      // .then((data) => {
+        console.log(editAndAddResults.post);
+
+
+
+
+      const manipulatedEditAndAddResults = editAndAddResults.json();
+
+
+
+
+        const post = {
+          _id: manipulatedEditAndAddResults.post._id,
+          title: manipulatedEditAndAddResults.post.title,
+          content: manipulatedEditAndAddResults.post.content,
+          creator: manipulatedEditAndAddResults.post.creator,
+          createdAt: manipulatedEditAndAddResults.post.createdAt,
+        };
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      //   console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      // });
+
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  statusInputChangedHandler = (input, value) => {
+    this.setState({ status: value });
+  };
+
+  // deletePostHandler = (postId) => {
+  //   this.setState({ postsLoading: true });
+
+  //   fetch(`http://localhost:8080/feed/delete-post/${postId}`, {
+  //     // method: 'POST',
+  //     method: 'DELETE',
+
+
+  //     headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+  //       'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+  //       // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+  //     }
+
+
+
+
+
+
+
+  //     // headers: {  
+  //     //   'Content-Type': 'application/json',
+  //     // },
+  //     // body: JSON.stringify({ ///Não é mais necessário, pois não vamos mais querer extrair o 'postId' de dentro do BODY DO REQUEST de tipo 'POST', e sim vamos extrair LÁ DA URL DESSE REQUEST de method de tipo 'DELETE' (que nunca aceitam BODIES, deve-se relembrar...)
+  //     //   postId: postId,
+  //     // }),
+  //   })
+  //     .then((res) => {
+  //       if (res.status !== 200 && res.status !== 201) {
+  //         throw new Error('Deleting a post failed!');
+  //       }
+
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       console.log(data);
+  //       this.setState((prevState) => {
+  //         const updatedPosts = prevState.posts.filter((post) => {
+  //           return post._id !== postId;
+  //         });
+  //         return { posts: updatedPosts, postsLoading: false };
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       this.setState({ postsLoading: false });
+  //     });
+  // };
+
+
+
+
+
+  deletePostHandler = async (postId) => {
+
+    try {
+
+    
+    this.setState({ postsLoading: true });
+
+ const deleteResult = await fetch(`http://localhost:8080/feed/delete-post/${postId}`, {
+      // method: 'POST',
+      method: 'DELETE',
+
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+
+
+
+
+
+
+      // headers: {  
+      //   'Content-Type': 'application/json',
+      // },
+      // body: JSON.stringify({ ///Não é mais necessário, pois não vamos mais querer extrair o 'postId' de dentro do BODY DO REQUEST de tipo 'POST', e sim vamos extrair LÁ DA URL DESSE REQUEST de method de tipo 'DELETE' (que nunca aceitam BODIES, deve-se relembrar...)
+      //   postId: postId,
+      // }),
+    });
+
+      // .then((res) => {
+        if (deleteResult.status !== 200 && deleteResult.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        // return res.json();
+      // })
+      // .then((data) => {
+        console.log(deleteResult);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      // })
+    } catch (err) {
+      // .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      // });
+
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  errorHandler = () => {
+    this.setState({ error: null });
+  };
+
+  catchError = (error) => {
+    this.setState({ error: error });
+  };
+
+  render() {
+    return (
+      <Fragment>
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <FeedEdit
+          editing={this.state.isEditing}
+          selectedPost={this.state.editPost}
+          loading={this.state.editLoading}
+          onCancelEdit={this.cancelEditHandler}
+          onFinishEdit={this.finishEditHandler}
+        />
+        <section className="feed__status">
+          <form onSubmit={this.statusUpdateHandler}>
+            <Input
+              type="text"
+              placeholder="Your status"
+              control="input"
+              onChange={this.statusInputChangedHandler}
+              value={this.state.status}
+            />
+            <Button mode="flat" type="submit">
+              Update
+            </Button>
+          </form>
+        </section>
+        <section className="feed__control">
+          <Button mode="raised" design="accent" onClick={this.newPostHandler}>
+            New Post
+          </Button>
+        </section>
+        <section className="feed">
+          {this.state.postsLoading && (
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <Loader />
+            </div>
+          )}
+          {this.state.posts.length <= 0 && !this.state.postsLoading ? (
+            <p style={{ textAlign: 'center' }}>No posts found.</p>
+          ) : null}
+          {!this.state.postsLoading && (
+            <Paginator
+              onPrevious={this.loadPosts.bind(this, 'previous')}
+              onNext={this.loadPosts.bind(this, 'next')}
+              lastPage={Math.ceil(this.state.totalPosts / 5)}
+              currentPage={this.state.postPage}
+            >
+              {this.state.posts.map((post) => (
+                <Post
+                  key={post._id}
+                  id={post._id}
+                  author={post.creator.name}
+                  date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                  title={post.title}
+                  image={post.imageUrl}
+                  content={post.content}
+                  onStartEdit={this.startEditPostHandler.bind(this, post._id)}
+                  onDelete={this.deletePostHandler.bind(this, post._id)}
+                />
+              ))}
+            </Paginator>
+          )}
+        </section>
+      </Fragment>
+    );
+  }
+}
+
+export default Feed;
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+-------> CERTO. .... ----------->
+
+
+
+
+
+
+
+OK.... --> 
+
+
+
+ESSA FUNÇÃO EXPÕE UMA FUNÇÃO NO CLIENT ___TAMBÉM,
+
+
+E É UMA FUNÇÃO QUE TE DEIXA FAZER 'CONNECT'...
+
+
+
+
+
+
+
+
+
+
+-_> NO CASO,
+
+
+VAMOS 
+
+ATÉ 
+
+
+
+
+AQUELA FUNÇÃO DE 
+
+
+'componentDidMount()',
+
+QUE 
+
+É 
+
+
+
+A FUNCTION QUE FAZ FETCH 
+
+DE 
+
+NOSSOS POSTS/POSTS RELACIONADOS ÀQUELE USER....
+
+
+
+
+
+
+
+
+
+
+--> NO CASO, 
+
+
+TEMOS ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ESSE CÓDIGO APARENTEMENTE__ ESTÁ _ _DESATUALIZADO,
+
+  pq 
+
+  o professor está com um código DIFERENTE... (
+
+
+      eu ainda não 
+
+      settei uma route para o 
+
+
+
+      'status' de meu user,
+
+      e nem tenho essa feature no meu projeto... é algo que passou despercebido,
+
+      pq o professor nem mesmo mencionou...
+  )
+
+
+
+
+
+
+
+
+
+  ---> vou codar 
+
+  essa route 
+
+
+
+
+
+  e 
+
+
+
+  suas features rapidinho,
+
+  para então prosseguir com a aula...
+
+
+
+
+
+
+
+
+
+  O CÓDIGO DO PROFESSOR ESTÁ, NO MOMENTO, + OU - ASSIM:
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+
+      fetch('http://localhost:8080/auth/status', 
+
+
+      {
+        headers: {
+            Authorization: 'Bearer ' + this.props.token
+        }
+      }
+      
+      
+      
+      )
+      .then(
+          (res) => {
+
+
+              if (res.status !== 200) {
+
+                  throw new Error('Failed to fetch user status.');
+
+              }
+          }
+      )
+  }
+
+
+
+
+
+
+
+
+
+  ------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+  O professor codou 2 CÓDIGOS DE 'status',
+
+  o 
+
+  '
+  getUserStatus'  (acontece quando ENTRAMOS NA PAGE, ACHO EU)....
+
+  e o 
+
+  'UPDATE USER STATUs'... (acontece quando clicamos em 'UPDATE' do status)...
+
+
+
+
+
+
+
+
+
+
+  --> o 'getUserStatus'
+
+
+  provavelmente SÓ VAI BUSCAR PELA PROPRIEDADE 
+
+
+
+  'status'
+
+  DENTRO DAQUELE USER QUE ESTÁ LOGGADO (vamos usar a propriedade 'req.userId', que foi armazenada no nosso browser/client/objeto request do user POR MEIO DA TOKEN...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  exports.getUserStatus = async (req, res, next) => {
+  const userId = req.userId; ///isso existe no nosso browser se tivermos essa TOKEN...
+
+  try {
+    const user = await User.findOne({ _id: ObjectId(userId) });
+
+    if (!user) {
+      const error = new Error('User not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      status: user.status,
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  }
+};
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA SÓ FALTA O CONTROLLER DE 
+
+'updateUserStatus'....
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.updateUserStatus = async (req, res, next) => {
+  const userId = req.userId;
+
+  const newStatus = req.body.status;
+
+  try {
+    const user = await User.findOne({ _id: ObjectId(userId) });
+
+    if (!user) {
+      const error = new Error('User could not be found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    user.status = newStatus;
+
+    const savedUser = await user.save();
+    res.status(200).json({ message: 'User status updated.' });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E AGORA SÓ FALTA ATUALIZAR O CÓDIGO DO FRONTEND, PARA 
+
+QUE 
+
+
+
+REQUEST VÁLIDOS SEJAM ENVIADOS A ESSES 
+
+ENDPOINTS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> NUNCA SE ESQUEÇA:
+
+
+
+
+com requests de tipo 
+
+'
+POST/PATCH/PUT',
+
+
+você 
+SEMPRE 
+
+DEVE COLOCAR 
+
+
+'Content-Type: application/json' NOS SEUS HEADERS...
+
+
+
+
+
+
+--> mas mesmo assim, estou com um problema bem chato... --> 
+
+
+
+
+meu 
+
+
+
+
+user, sempre que tento UPDATAR ESSE STATUS,
+
+acaba com essa propriedade 'comida' (removida, na verdade)...
+
+
+
+
+
+
+
+
+
+
+--> ERA UM ERRO NO FRONTEND... --> eu havia escrito 'this.PROPS.status',
+
+quando o correto era 
+
+
+'this.STATE.status'...
+
+
+
+
+
+
+
+
+
+--> ok, prosseguindo com a aula do professor...
+
+
+
+
+
+
+
+
+
+
+
+-------> INSTALADA A PACKAGE NO NOSSO PROJETO REACT,
+
+
+
+VAMOS ATÉ 
+
+O 
+
+
+'Feed.js',
+
+
+IMPORRTAMOS 
+
+
+
+AQUELE 
+
+
+
+'openSocket'.... ----->  FUNÇÃO QUE VAI ABRIR UM NOVO SOCKET...
+
+
+
+
+
+
+
+
+
+
+
+----> AÍ TEMOS AUQELE 
+
+
+'
+componentDidMount'...
+
+
+
+
+
+
+
+
+
+
+
+--> NESSA FUNÇÃO,
+
+
+EM QUE 
+
+CARREGAMOS 
+
+NOSSOS PRIMEIROS POSTS E ASSIM POR DIANTE,
+
+
+
+
+PROFESSOR VAI QUERER CHAMAAR 
+
+
+A FUNÇAÕ 
+
+
+'openSocket'
+
+
+
+
+LOGO DEPOIS DO CALL DO METHOD 
+
+'this.loadPosts()'..
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> NO CASO ,
+
+  VAMOS ESCREVER ASSIM:
+
+
+
+
+
+
+
+    componentDidMount() {
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); 
+
+    openSocket(''); ///AQUI...
+  }
+
+
+
+----------------------
+
+
+
+AGORA, NO CASO, 
+
+
+
+
+
+
+TEMOS QUE __ DEFINIR:
+
+
+
+
+
+
+
+1) A URL __ DO SERVER__ 
+
+EM QUE 
+
+VOCÊ 
+
+
+ESTABELECEU 
+
+
+seu 
+
+'SERVER SOCKETIO' (sim, é OUTRO SERVIDOR, ESSENCIALMENTE, NO __ MESMO SERVIDOR NODEEXPRESS...)
+
+
+
+
+
+
+
+
+--> é claro que aqui, no caso, vamos colocar o endereço do nosso 
+
+'BACKEND SERVER ADDRESS'.. --> http://localhost:8080 
+
+
+
+
+
+
+--> E NADA MAIS 
+
+
+SERÁ NECESSÁRIO, AQUI.... -----> NESSE LOCAL NÓS VAMOS REALMENTE 
+
+ESCREVER 
+
+
+'http',
+
+coisa normal,
+
+
+
+__JUSTAMENTE__ PQ O 'WEBSOCKETS'
+
+
+
+
+
+É 'BUILT UPON HTTP'... ---------> 
+
+
+
+
+
+
+BUILDS UPON HTTP... ------> 
+
+
+
+
+
+OK... ISSO FEITO,
+
+
+ESSA 
+
+
+
+FUNÇÃO 'openSocket'
+
+PROVIDENCIADA 
+
+
+PELO 
+
+
+SOCKET.IO 
+
+
+
+
+__ VAI FAZER TODO O 'HEAVY LIFTING' 
+
+
+
+POR TRÁS DAS CENAS...
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+    componentDidMount() {
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); 
+
+    openSocket('http://localhost:8080'); ///AQUI...
+  }
+
+
+
+
+  ---------------------------
+
+
+
+
+
+
+
+  OK... -----> AÍ RESETTAMOS TODOS NOSSOS SERVERS...
+
+
+
+
+
+
+
+
+
+
+  --> AGORA QUANDO CONECTARMOS NOSSO 
+
+
+
+  FRONTEND AO BACKEND,
+
+
+  VAMOS RECEBER,
+
+
+
+  NO TERMINAL DO 
+
+  VISUAL STUDIO CODE,
+
+
+
+
+  AQUELA MENSAGEM de 
+
+
+
+
+  'Client connected' (
+
+
+
+
+
+      SINAL DE QUE 
+
+
+
+      AQUELE CÓDIGO DE 
+
+
+
+
+      '''
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ////AQUI, VAMOS __ ARMAZENAR__ NOSSO SERVIDOR (o app nodeexpress em si) EM UMA CONST DE NOME 'server', QUE VAI SER USADA NAQUELE CALL DE 'socket.io' ali embaixo (pq o protocolo WEBSOCKETS 'builds upon' o protocolo HTTP, que é o default dos browsers/app nodeexpress)...
+    const io = require('socket.io')(server); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+            ///você deve usar seu 'server' (o app nodeexpress na totalidde) como ARGUMENTO DO CALL DESSE 'require('socket.io')'....
+            //É ISSO QUE VAI DEFINIR NOSSA 'websockets connection'...
+    
+            io.on('connection', (socket) => {  ////'.on()' é o método do SOCKET.IO __ que __dEFINE EVENT LISTENERS, TRIGGADOS POR DETERMINADAS COISAS.... (como 'connections', nesse nosso exemplo)...
+              /// o segundo parâmetro SEMPRE SERÁ UMA CALLBACK FUNCTION, function que recebe o ARGUMENTO 'socket' (que será A ACTUAL CONNECTION, A WEBSOCKETS CONNECTION ENTRE CLIENT E SERVER)....
+
+              console.log('Client connected'); ////não veremos, 'out of the box',  esse 'client connected' no console... --> mas pq?  ------> PQ PRECISAMOS QUE _ _SEJA ESTABELECIDA/TENTEADA __ UM 'WEBSOCKET REQUEST', lá do BROWSERSIDE, disparado do browserside, PARA QUE ESSE CÓDIGO de 'io.on('connection')', esse eventListener aí, __ SEJA __ TRIGGADO_... (e para que seja feito aquele console.log...)
+            }) 
+
+
+            //'io.on()' --> É UM LISTENER... -> NO CASO DE 'connections', vamos FAZER COM QUE ESSE CÓDIGO DO SEGUNDO PARÂMETRO SEJA EXECUTADO __ SEMPRE QUE _UMA NOVA CONNECTION (feita por um client) FOR ESTABELECIDA AO NOSSO NODEEXPRESS APP...
+
+
+            ///'socket' --> é o client/conexão ao client, objeto que representa essa conexão...
+        
+        
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+'''''''''
+
+
+
+
+
+
+
+
+
+
+
+
+
+FOI EXECUTADO,
+
+
+AQUELE 
+
+
+
+''
+
+ io.on('connection', (socket) => {  
+
+              console.log('Client connected'); 
+            }) 
+
+
+
+'''
+
+
+
+
+
+FOI EXECUTADO (
+
+
+
+    pq ocorreu uma NOVA CONNECTION...
+)
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> CERTO, MAS NO MEU CASO,
+
+  RECEBI 
+
+
+
+  ESTES 
+
+  ERROS 
+
+  1 MILHAO DE VEZES:
+
+
+
+
+  Access to XMLHttpRequest at
+  
+   'http://localhost:8080/socket.io/?EIO=4&transport=polling&t=NsiydyE' from 
+   
+   
+   origin 'http://localhost:3000' has been blocked by CORS policy: No 
+   
+   
+   'Access-Control-Allow-Origin' header is present on the requested resource.
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+hmmmm.... parece que o uso de websockets TAMBÉM INTRODUZ PROBLEMAS DE CORS....
+
+
+
+
+
+-> temos que resolver isso, de alguma maneira...
+
+
+
+
+
+
+
+
+--> parece que o websockets realmente estabelece uma CONEXÃO CONTÍNUA ENTRE O SERVER E NOSSO FRONTEND,
+
+
+
+PQ 
+
+
+estou recebendo erros perpetuamente...
+
+
+
+
+
+
+
+
+https://stackoverflow.com/questions/24058157/socket-io-node-js-cross-origin-request-blocked
+
+
+
+
+
+
+
+
+
+ACHO QUE ENCONTREI A SINTAXE CORRETA/NECESSÁRIA...
+ 
+
+
+
+
+ NESSE POST AQUI:
+
+
+
+
+
+
+
+
+
+ https://stackoverflow.com/questions/58914404/socket-io-cors-error-by-using-node-react-and-socket-io
+
+
+
+
+
+
+ -------------------------------------------------------
+
+
+
+
+
+
+
+
+
+ --> NO CASO, O MODELO DE CÓDIGO DE QUE PRECISAMOS É ESTE:
+
+
+
+ const io = socketio(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> eu vou escrever tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080);
+    const io = require('socket.io')(server, {
+
+            cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST", "PATCH", "PUT", "DELETE'],
+                credentials: true
+            }
+
+
+
+    }); 
+            io.on('connection', (socket) => {  
+
+              console.log('Client connected'); 
+            }) 
+        
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+  -----------------------------------
+
+
+
+
+
+  DEU CERTO...
+
+
+
+  REALMENTE FUNCIONOU.
+
+
+
+
+  NOSSO CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+  mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ////AQUI, VAMOS __ ARMAZENAR__ NOSSO SERVIDOR (o app nodeexpress em si) EM UMA CONST DE NOME 'server', QUE VAI SER USADA NAQUELE CALL DE 'socket.io' ali embaixo (pq o protocolo WEBSOCKETS 'builds upon' o protocolo HTTP, que é o default dos browsers/app nodeexpress)...
+    const io = require('socket.io')(server,  /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+            ///você deve usar seu 'server' (o app nodeexpress na totalidde) como ARGUMENTO DO CALL DESSE 'require('socket.io')'....
+            //É ISSO QUE VAI DEFINIR NOSSA 'websockets connection'...
+    
+
+            { ////SEGUNDO PARÂMETRO.... necessário para EVITAR _ ERROS _ DE CORS... (sim, também precisamos fazer handle do cors NO NOSSO CANAL 'WEBSOCKETS', além do http...)
+              cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+                credentials: true
+            }
+          }
+
+    )
+
+            io.on('connection', (socket) => {  ////'.on()' é o método do SOCKET.IO __ que __dEFINE EVENT LISTENERS, TRIGGADOS POR DETERMINADAS COISAS.... (como 'connections', nesse nosso exemplo)...
+              /// o segundo parâmetro SEMPRE SERÁ UMA CALLBACK FUNCTION, function que recebe o ARGUMENTO 'socket' (que será A ACTUAL CONNECTION, A WEBSOCKETS CONNECTION ENTRE CLIENT E SERVER)....
+
+              console.log('Client connected'); ////não veremos, 'out of the box',  esse 'client connected' no console... --> mas pq?  ------> PQ PRECISAMOS QUE _ _SEJA ESTABELECIDA/TENTEADA __ UM 'WEBSOCKET REQUEST', lá do BROWSERSIDE, disparado do browserside, PARA QUE ESSE CÓDIGO de 'io.on('connection')', esse eventListener aí, __ SEJA __ TRIGGADO_... (e para que seja feito aquele console.log...)
+            }) 
+
+
+            //'io.on()' --> É UM LISTENER... -> NO CASO DE 'connections', vamos FAZER COM QUE ESSE CÓDIGO DO SEGUNDO PARÂMETRO SEJA EXECUTADO __ SEMPRE QUE _UMA NOVA CONNECTION (feita por um client) FOR ESTABELECIDA AO NOSSO NODEEXPRESS APP...
+
+
+            ///'socket' --> é o client/conexão ao client, objeto que representa essa conexão...
+        
+        
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------> AGORA SEMPRE QUE RECARREGO MINHA PÁGINA,
+
+
+  recebo um
+   
+
+
+   'client connected' 
+
+   no meu terminal.... 
+
+
+
+   (sinal de que esse código do websockets funcionou integralmente...)
+
+
+
+
+
+
+
+
+
+
+
+--> PRIMEIRA OBSERVAÇÃO DO 'WEBSOCKETS'... --> NÃO PODEMOS ENVIAR 
+
+'RESPONSES'
+
+por meio de 
+
+
+'res.json({})',
+
+etc etc... ---> O OBJETO 'res'
+
+
+NÃO FICA DISPONÍVEL
+ 
+
+ NESSA FUNÇAÕ DE 
+
+
+
+ 'io.on()'...
+
+
+
+
+
+ ------------------------------------
+
+
+
+
+
+
+
+
+ --> PROFESSOR EXPLICA QUE 
+
+
+
+
+
+ AGORA TEMOS UMA CONEXÃO SOCKET.IO 
+
+
+ _ ENTRE NOSSO 
+
+
+ BACKEND E FRONTEND... 
+
+
+
+
+
+
+ --> ELE EXPLICA QUE TODOS OS HTTP REQUESTS COMUNS AINDA VÃO FUNCIONAR COMO ANTES...
+
+
+
+
+
+
+
+
+
+
+ -_> PROFESSOR DIZ QUE 
+
+ DEVEOMS USAR 
+
+ ESSA CONEXÃO 
+
+ SOCKET.IO 
+
+ para 
+
+ fazer algo ÚTIL,
+
+ PARA FAZER ALGO QUE 
+
+
+
+ __ NÃO CONSEGUIRÍAMOS FAZER SEM ESSA FEATURE (algo que NÃO FUNCIONARIA COM O APPROACH DO PROTOCOLO HTTP COMUM...)

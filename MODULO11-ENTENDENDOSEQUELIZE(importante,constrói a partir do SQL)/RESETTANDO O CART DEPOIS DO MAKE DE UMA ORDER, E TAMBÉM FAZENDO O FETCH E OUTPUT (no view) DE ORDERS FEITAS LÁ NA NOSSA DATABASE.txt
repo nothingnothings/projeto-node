@@ -1,0 +1,2921 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> AGORA QUE PODEMOS 'ADD/MAKE ORDERS',
+
+
+
+
+UMA COISA __ESTÁ FALTANDO,
+
+E ESSA 
+
+COISA 
+
+
+É 
+O 
+
+'CLEAR'
+
+DE NOSSO CART....
+
+
+
+
+
+
+---> para isso,
+
+VAMOS 
+
+PRECISAR DE MAIS LÓGICA...
+
+
+
+
+
+
+
+
+--> nosso CONTROLLER 
+
+de 
+
+
+
+'orderPost'
+
+
+está assim:
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+          console.log(cart);
+         return cart.getProducts(
+         );
+        }
+
+      )
+      .then(
+        (products) => {
+
+          console.log(products, 'LINEE');
+
+           req.user.createOrder(  //////método mágico criado com  ''''User.hasMany(Order);''' e   '''Order.belongsTo(User);'''
+           )
+            .then(
+              (order) => {
+                                  ///aqui vemos um uso de MAP para __ EDITAR/ACRESCENTAR_  UM FIELD EXTRA (quantity) aos PRODUCTS que serão convertidos/adicionados como 'orderItem' na table de 'orderItems'...
+               return order.addProducts(products.map(  ///////// ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'... --> como consequência disso, teremos records/linhas 'orderItem' ADICIONADAS À table de 'orderItems', e cada um desses records terá um field 'orderId', VINCULADO ESPECIFICAMENTE A ESSA 'order' que escrevemos em 'order.addProducts()', aqui...
+                 product => {
+
+                  product.orderItem = { quantity: product.cartItem.quantity} //professor escreve esse 'product.orderItem' PARA __EDITAR__  O VALOR DE CADA propriedade 'mágica' 'orderItem' dentro de cada 1 de nossos product.... --> e ele vai editar isso para COLOCAR O VALOR CORRETO DO FIELD 'quantity' de cada um desses records 'orderItem', justamente por meio do acesso ao valor 'product.cartItem.quantity', específico a esse product... 
+                   return product;
+                 }
+               ));
+              }
+            )
+            .catch(err => {console.log(err)})
+          }
+      )
+      .then(
+        (result) => {
+          res.redirect('/orders');
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+-------------------------------
+
+
+
+
+
+PRECISAMOS 
+
+ADICIONAR ALGUM CÓDIGO QUE 
+
+Dê 
+
+'CLEAR' no 
+
+cart, ao mesmo tempo que realiza 
+
+
+aquela operação de 
+
+
+'CREATE' de nossa order e 'addProducts'
+
+
+nessa order (o que faz os ORDERITEMS serem criados...)
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR DIZ QUE VAI QUERER FAZER ESSE CLEAR 'RIGHT AFTER WE ADDED THE ORDERS'... 
+
+
+
+
+
+
+
+--> ou seja,
+
+
+vamos colocar esse negócio em um THEN BLOCK ANTES DO NOSSO REDIRECT...
+
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE VAMOS TER QUE TRABALHAR COM O __CART_,,
+
+
+
+
+portanto 
+
+ELE 
+
+
+VAI 
+TER QUE 
+
+FAZER 
+
+AQUELA GAMBIARRA 
+
+
+de 
+
+
+definir 
+
+'let fetchedCart'
+
+
+lá no início do controller,
+
+
+PARA 
+
+ENTÃO 
+
+
+
+O DEFINIR 
+
+
+como uma constante LOCAL/GLOBAL 
+
+de 
+
+
+'postOrder',
+
+mais para baixo no código..
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+    let fetchedCart; //EIS O CÓDIGO EM QUESTÃO.
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+            fetchedCart = cart; //////EIS O CÓDIGO EM QUESTÃO.
+          console.log(cart);
+         return cart.getProducts(
+         );
+        }
+
+      )
+      .then(
+        (products) => {
+
+          console.log(products, 'LINEE');
+
+           req.user.createOrder(  //////método mágico criado com  ''''User.hasMany(Order);''' e   '''Order.belongsTo(User);'''
+           )
+            .then(
+              (order) => {
+                                  ///aqui vemos um uso de MAP para __ EDITAR/ACRESCENTAR_  UM FIELD EXTRA (quantity) aos PRODUCTS que serão convertidos/adicionados como 'orderItem' na table de 'orderItems'...
+               return order.addProducts(products.map(  ///////// ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'... --> como consequência disso, teremos records/linhas 'orderItem' ADICIONADAS À table de 'orderItems', e cada um desses records terá um field 'orderId', VINCULADO ESPECIFICAMENTE A ESSA 'order' que escrevemos em 'order.addProducts()', aqui...
+                 product => {
+
+                  product.orderItem = { quantity: product.cartItem.quantity} //professor escreve esse 'product.orderItem' PARA __EDITAR__  O VALOR DE CADA propriedade 'mágica' 'orderItem' dentro de cada 1 de nossos product.... --> e ele vai editar isso para COLOCAR O VALOR CORRETO DO FIELD 'quantity' de cada um desses records 'orderItem', justamente por meio do acesso ao valor 'product.cartItem.quantity', específico a esse product... 
+                   return product;
+                 }
+               ));
+              }
+            )
+            .catch(err => {console.log(err)})
+          }
+      )
+      .then(
+        (result) => {
+          res.redirect('/orders');
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+-------------------------------
+
+
+
+OK.... ISSO FEITO,
+
+SÓ VAMOS PRECISAR 
+
+EXECUTAR 
+
+
+
+ALGUM MÉTODO 
+
+PARA 
+
+
+
+
+
+FAZER 
+
+'delete' 
+
+desse 
+
+'CART',
+
+e de todos 
+
+os 
+
+CARTITEMS 
+
+RELACIONADOS A ELE, lá na table de 'cartItems'...
+
+
+
+
+
+
+--> se examinarmos a page de 
+
+
+''https://medium.com/@jsmney/a-more-in-depth-look-at-sequelizes-magic-methods-428928c70d58''
+
+
+
+MAIS UMA VEZ,
+
+
+encontramos alguns métodos:
+
+
+
+
+
+cat.removeOwner()	M:M	owner {}, or ownerId	int	number of owners removed
+cat.removeOwners()	M:M	array of owner {} or ownerId, can be a combination	int	number of owners removed
+owner.removeCat()	1:M, M:M	cat {}, or catId	object 'cats' (referencing the table) if 1:M, # rows removed if M:M	
+owner.removeCats()	1:M, M:M	array of cat {} or catId, can be a combination	object 'cats' (referencing the table) if 1:M,# rows removed if M:M	
+owner.setCat()	1:1	cat {}, or catId	cat object	with updated ownerId
+owner.setCats()	1:M, M:M	array of cat {} or catId, can be a combination	owner {}
+
+
+
+
+
+
+
+
+
+
+
+--> eu acho que o correto seria 
+
+REMOVER TODOS OS CARTITEMS 
+
+
+VINCULADOS ÀQUELE CART,
+
+E NÃO 
+
+REMOVER O CART EM SI... ---> para isso,
+
+
+provavelmente 
+
+teremos 
+
+de 
+
+executar algo como 
+
+
+
+
+
+'fetchedCart.removeProducts().then().catch()'...
+
+
+
+
+
+
+
+
+
+
+--> OK... PROFESSOR ADMITE EXATAMENTE ISSO:
+
+
+
+AQUELE CART DEVERÁ 'DROP ALL ITS CART ITEMS'...
+
+
+
+
+
+
+
+--> OK.......... MAS AÍ 
+
+
+ELE 
+
+escreve 
+
+
+
+ALGO COMPLETAMENTE DIFERENTE.... --> 
+
+
+ele não 
+escreve 
+
+
+
+'fetchedCart.removeProducts()',
+
+
+E SIM 
+
+
+ESCREVE 
+
+
+'fetchedCart.setProducts()'... ------> 
+
+
+
+
+
+E AÍ ELE 
+
+
+VAI 
+
+
+LÁ 
+
+E SETTA 
+
+os products como sendo 'null'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+'fetchedCart.setProducts(null)'
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+    let fetchedCart; //EIS O CÓDIGO EM QUESTÃO.
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+            fetchedCart = cart; //////EIS O CÓDIGO EM QUESTÃO.
+          console.log(cart);
+         return cart.getProducts(
+         );
+        }
+
+      )
+      .then(
+        (products) => {
+
+          console.log(products, 'LINEE');
+
+           req.user.createOrder(  //////método mágico criado com  ''''User.hasMany(Order);''' e   '''Order.belongsTo(User);'''
+           )
+            .then(
+              (order) => {
+                                  ///aqui vemos um uso de MAP para __ EDITAR/ACRESCENTAR_  UM FIELD EXTRA (quantity) aos PRODUCTS que serão convertidos/adicionados como 'orderItem' na table de 'orderItems'...
+               return order.addProducts(products.map(  ///////// ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'... --> como consequência disso, teremos records/linhas 'orderItem' ADICIONADAS À table de 'orderItems', e cada um desses records terá um field 'orderId', VINCULADO ESPECIFICAMENTE A ESSA 'order' que escrevemos em 'order.addProducts()', aqui...
+                 product => {
+
+                  product.orderItem = { quantity: product.cartItem.quantity} //professor escreve esse 'product.orderItem' PARA __EDITAR__  O VALOR DE CADA propriedade 'mágica' 'orderItem' dentro de cada 1 de nossos product.... --> e ele vai editar isso para COLOCAR O VALOR CORRETO DO FIELD 'quantity' de cada um desses records 'orderItem', justamente por meio do acesso ao valor 'product.cartItem.quantity', específico a esse product... 
+                   return product;
+                 }
+               ));
+              }
+            )
+            .catch(err => {console.log(err)})
+          }
+      )
+      .then(
+        (result) => {
+          fetchedCart.setProducts(null); /////EIS O CÓDIGO EM QUESTÃO.
+          res.redirect('/orders');
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+---> ISSO FEITO,
+
+
+professor 
+
+
+faz o RETURN DESSE STATEMENT..., e aí escreve outro then block, com o REDIRECT....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+    let fetchedCart; //EIS O CÓDIGO EM QUESTÃO.
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+            fetchedCart = cart; //////EIS O CÓDIGO EM QUESTÃO.
+          console.log(cart);
+         return cart.getProducts(
+         );
+        }
+
+      )
+      .then(
+        (products) => {
+
+          console.log(products, 'LINEE');
+
+           req.user.createOrder(  //////método mágico criado com  ''''User.hasMany(Order);''' e   '''Order.belongsTo(User);'''
+           )
+            .then(
+              (order) => {
+                                  ///aqui vemos um uso de MAP para __ EDITAR/ACRESCENTAR_  UM FIELD EXTRA (quantity) aos PRODUCTS que serão convertidos/adicionados como 'orderItem' na table de 'orderItems'...
+               return order.addProducts(products.map(  ///////// ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'... --> como consequência disso, teremos records/linhas 'orderItem' ADICIONADAS À table de 'orderItems', e cada um desses records terá um field 'orderId', VINCULADO ESPECIFICAMENTE A ESSA 'order' que escrevemos em 'order.addProducts()', aqui...
+                 product => {
+
+                  product.orderItem = { quantity: product.cartItem.quantity} //professor escreve esse 'product.orderItem' PARA __EDITAR__  O VALOR DE CADA propriedade 'mágica' 'orderItem' dentro de cada 1 de nossos product.... --> e ele vai editar isso para COLOCAR O VALOR CORRETO DO FIELD 'quantity' de cada um desses records 'orderItem', justamente por meio do acesso ao valor 'product.cartItem.quantity', específico a esse product... 
+                   return product;
+                 }
+               ));
+              }
+            )
+            .catch(err => {console.log(err)})
+          }
+      )
+      .then(
+        (result) => {
+         return fetchedCart.setProducts(null); /////EIS O CÓDIGO EM QUESTÃO.
+     
+        }
+      )
+      .then(
+        (result) => {
+
+               res.redirect('/orders'); ///EIS O CÓDIGO EM QUESTÃO.s 
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+OK... AGORA, QUANDO VOLTARMOS 
+
+
+AO NOSSO APP E TESTARMOS 
+
+
+ESSE 
+
+
+
+'Make order',
+
+VEREMOS QUE 
+
+
+
+NOSSA 
+
+TABLE 
+
+DE 
+
+'cartItems'
+
+ficará 
+
+
+
+VAZIA 
+
+após o click nesse button.... (o que é um sucesso...)
+
+
+
+
+
+
+OK... MAS SERÁ QUE ISSO TBM NÃO FUNCIONARIA COM 
+
+
+'fetchedCart.removeProducts()'? --> vou testar...
+
+
+
+
+
+
+
+NÃO. NÃO FUNCIONA/NÃO FUNCIONARIA.... --> não sei a razão disso,
+
+é algo bizarro... ---> com o 'fetchedCart.removeProducts()',
+
+
+
+
+OS CARTITEMS 
+
+SEGUEM EXISTINDO 
+
+
+EM 'cartItems'...
+
+
+
+
+
+
+
+
+PARECE QUE É PORQUE O 
+
+
+'removeProducts'
+
+
+PRECISA 
+
+
+DE UM PARÂMETRO,
+
+PARÂMETRO QUE 
+
+PODE/DEVE SER:
+
+
+
+
+array of cat {} or catId, can be a combination
+
+
+
+
+
+
+
+
+
+
+--> ele exige um array, essencialmente... array que o professor NÃO TEM AQUI, diretametne...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA DEU CERTO....
+
+
+
+
+
+
+
+
+CÓDIGO ALTERNATIVO:
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+    let fetchedCart; //padrão bem recorrente.
+    let productsArray;
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+          fetchedCart = cart; //padrão bem recorrente.
+          console.log(cart);
+         return cart.getProducts(
+         );
+        }
+
+      )
+      .then(
+        (products) => {
+
+          console.log(products, 'LINEE');
+          productsArray = products
+
+           req.user.createOrder(  //////método mágico criado com  ''''User.hasMany(Order);''' e   '''Order.belongsTo(User);'''
+           )
+            .then(
+              (order) => {
+                                  ///aqui vemos um uso de MAP para __ EDITAR/ACRESCENTAR_  UM FIELD EXTRA (quantity) aos PRODUCTS que serão convertidos/adicionados como 'orderItem' na table de 'orderItems'...
+               return order.addProducts(products.map(  ///////// ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'... --> como consequência disso, teremos records/linhas 'orderItem' ADICIONADAS À table de 'orderItems', e cada um desses records terá um field 'orderId', VINCULADO ESPECIFICAMENTE A ESSA 'order' que escrevemos em 'order.addProducts()', aqui...
+                 product => {
+
+                  product.orderItem = { quantity: product.cartItem.quantity} //professor escreve esse 'product.orderItem' PARA __EDITAR__  O VALOR DE CADA propriedade 'mágica' 'orderItem' dentro de cada 1 de nossos product.... --> e ele vai editar isso para COLOCAR O VALOR CORRETO DO FIELD 'quantity' de cada um desses records 'orderItem', justamente por meio do acesso ao valor 'product.cartItem.quantity', específico a esse product... 
+                   return product;
+                 }
+               ));
+              }
+            )
+            .catch(err => {console.log(err)})
+          }
+      )
+      .then(
+        (result) => {
+
+              // return fetchedCart.setProducts(null);
+              return fetchedCart.removeProducts(productsArray); ///VERSÃO ALTERNATIVA DO MESMO CÓDIGO... (mas com 'removeProducts()' em vez de 'setProducts(null)'...)
+        }
+      )
+      .then(
+        (result) => {
+
+          res.redirect('/orders');
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+------------------------------
+
+
+
+É CLARO QUE O CÓDIGO DO PROFESSOR É MAIS ELEGANTE, elegante pq 
+
+não precisa 
+
+
+do store daquela variável de 'productsArray' anteriormente (pq 
+
+aquele método de 'removeProducts' PRECISA DESSE ARRAY AÍ...)
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+ok.................
+
+
+
+--> NÓS 
+
+
+'CLEANED UP THE CART BY SETTING UP ALL THE PRODUCTS/cart-items to NULL'...
+
+
+
+
+
+
+
+
+--> É FÁCIL ASSIM LIMPAR NOSSO 
+
+CART...
+
+ 
+
+
+
+MAS O QUE FALTA, AGORA?
+
+
+
+
+
+
+
+
+
+--> JÁ TEMOS TODA A LÓGICA QUE QUERÍAMOS, AQUI...
+
+
+
+
+
+
+
+--> AGORA SÓ PRECISAMOS 
+
+
+FAZER 'SHOW' 
+
+
+DAS 
+
+
+NOSSAS 'ORDERS',
+
+ou seja,
+
+
+
+
+
+DE TODA INFO ACERCA DE NOSSos orderItems/order...
+
+
+
+
+
+
+
+
+------> VAMOS CRIAR UM CONTROLLER PARA ISSO....
+
+
+
+
+
+O CÓDIGO ESTAVA ASSIM:
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+  res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    path: '/orders',
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+-----> vamos editar isso....
+
+
+
+
+
+
+
+
+
+
+--> COMEÇO MEU CÓDIGO ASSIM, PARA 
+
+
+VER 
+
+
+
+COMO 
+
+PODE SER...
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+ 
+ 
+
+    req.user.getOrders(); //////////talvez assim?
+
+
+
+
+
+
+ 
+ 
+ 
+  res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    orders: orders
+    path: '/orders',
+  });
+};
+
+
+
+
+
+------------------------------------
+
+
+
+
+SIM, PROFESSOR 
+
+FEZ EXATAMENTE ISSO...
+
+
+
+
+
+
+
+
+--> AÍ VAMOS 
+
+
+EXECUTAR UM THEN BLOCK EM CIMA DISSO...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+ 
+ 
+
+    req.user.getOrders()
+    .then(
+      (orders) => {
+
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+
+
+
+
+ 
+  res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    orders: orders
+    path: '/orders',
+  });
+};
+
+
+
+
+
+
+
+
+--> NO THEN BLOCK,
+
+SABEMOS QUE VAMOS CONSEGUIR 
+
+AS 
+
+'orders'...
+
+
+
+
+
+
+
+--> OK... AGORA EU __SEI__ QUE 
+
+
+
+DENTRO 
+
+
+
+DE 
+
+CADA 
+
+
+
+'order' 
+
+
+em 
+
+
+'orders'
+
+
+eu vou 
+
+ter 
+
+UMA 
+
+
+PROPRIEDADE 
+
+
+MÁGICA 
+
+
+CHAMADA 
+
+
+DE 
+
+
+'orderItem'...
+
+
+
+
+
+
+
+
+
+--> OK... MAS A PRIMEIRA COISA QUE O PROFESSOR VAI FAZER É ENFIAR NOSSO 
+
+
+RENDER 
+
+
+dentro desse then block,
+
+e aí 
+
+forwardar 
+
+'orders' 
+
+
+para dentro 
+
+
+de uma propriedade 
+
+'orders'
+
+
+nesse render...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+ 
+ 
+
+    req.user.getOrders()
+    .then(
+      (orders) => {
+
+
+
+
+
+              res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    orders: orders ////TIPO ASSIM.....
+    path: '/orders',
+  });
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+
+
+
+
+ 
+
+};
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+OK.... AÍ, AGORA,
+
+
+ELE 
+
+
+PROVAVELMENTE 
+
+VAI QUERER 
+
+__ADICIONAR 
+
+1 FIELD 
+de 
+
+
+'quantity'
+
+
+
+A 
+
+CADA 
+
+
+
+
+UM 
+
+
+
+DOS 
+
+'orderItems' 
+
+
+
+DENTRO 
+
+DE 
+
+
+'orders'...
+
+
+
+
+
+
+
+
+--> para fazer isso,
+
+
+novamente,
+
+
+talvez ele 
+
+
+queria usar 
+
+'.map()'...
+
+
+
+
+
+
+
+---> NA VERDADE, ACHO QUE EU NEM MESMO VOU PRECISAR DISSO,
+
+eu só preciso 
+
+
+acessar 
+
+
+
+'order.orderItem.quantity',
+
+
+
+LÁ 
+
+
+
+
+NO MEU VIEW DE 
+
+
+'orders.ejs', 
+
+
+
+no código 
+
+de 
+
+
+'products.forEach(product)'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+ 
+ 
+
+    req.user.getOrders()
+    .then(
+      (orders) => {
+
+
+              res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    orders: orders ////TIPO ASSIM.....
+    path: '/orders',
+  });
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+
+
+
+
+ 
+
+};
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+OK...
+
+
+
+
+O PROFESSOR VAI ATÉ 
+
+
+
+O 
+
+
+FOLDER DE VIEWS,
+
+
+lá no view 
+
+de 
+
+
+'orders'...
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <h1>THE ORDERS PAGE</h1>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+---------> VAMOS ESCREVER ISTO:
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul>
+
+
+              <% order.forEach(order => { %>
+
+                <li></li>
+
+
+
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul>
+ <% orders.forEach(order => { %>
+     <li>
+        
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK.. E 
+
+
+CADA 
+
+'order'
+
+QUE VAMOS 
+
+
+
+CONSEGUIR 
+
+
+__TERÁ__ 'A COUPLE OF PRODUCTS THAT BELONG TO THE ORDER'...
+
+
+
+
+
+
+
+
+
+
+
+-----> para 
+
+ver esses PRODUCTS AÍ,
+
+
+
+O PROFESSOR 
+
+
+
+VAI QUERER __ OUTPUTTAR UMA 
+TAG 
+
+'h1'
+
+
+
+com 
+
+
+
+a 
+
+'order.id',
+
+
+
+
+e aí
+
+
+
+OUTRA 
+
+NESTED UNORDERED LIST,
+
+dessa vez 
+
+
+
+COM OS 
+
+
+'orderItems'
+
+
+PERTENCENTES 
+
+A 
+ESSA 
+
+ORDER... (we'll loop THROUGH THE PRODUCTS BELONGING TO THAT ORDER...)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul>
+ <% orders.forEach(order => { %>
+     <li>
+        <h1># <%= order.id %></h1>
+        <ul> 
+          <% order.orderItem.forEach( (product) { %>
+
+              <li>
+              <h1><%= product.title %> (<%= product.quantity %>)</h1>
+              
+              </li>
+
+          <% }) %>
+          </ul>
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+
+
+
+
+-----------------------
+
+
+
+
+
+OK, ATÉ AÍ TUDO CERTo,
+
+
+MENOS ESTE TRECHO:
+
+
+
+(<%= product.quantity %>) -------> ISSO __NÃO FUNCIONARÁ, 
+
+O PROFESSOR JÁ NOS FALA... ----> 
+
+
+ISSO 
+
+PQ 
+
+
+
+
+ESSA 
+
+PROPERTY AÍ,
+
+a 'quantity',
+
+
+SÓ __ EXISTE EM 
+
+
+
+'orderItem', e não existe dentro de CADA PRODUCT....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+------> OK, GANHAMOS UM ___ERRO____________...........
+
+
+
+
+
+
+
+
+
+-->>>>> O ERRO OCORRE PQ __ NÃO PODEMOS 
+
+
+LOOPAR 
+
+POR DENTRO 
+
+DE 
+
+'orderItem'....
+
+
+
+O ERRO 
+é 
+
+
+
+'Cannot read property 'forEach' of undefined'....
+
+
+
+
+
+
+---> O CÓDIGO ERRADO É ESTE:
+
+
+
+
+
+
+'order.orderItem.forEach(item => {...})' 
+
+
+
+
+
+
+
+
+
+ISSO, ESSE MÉTODO, 'forEach'
+
+
+__NÃO FUNCIONA NESSE NEGÓCIO PQ 
+
+
+__ELE NÃO É UM ARRAY COMUM JAVASCRIPT.... ----> 
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+DEVEMOS, PARA 
+
+COMPREENDER
+ 
+
+ ESSE ERRO,
+
+
+ DAR UMA OLHADA 
+
+
+
+ NO CONTROLLER 
+
+ de 
+ 'getOrders':
+
+
+
+
+
+
+
+
+
+
+ 
+exports.getOrdersPage = (req, res, next) => {
+ 
+ 
+
+    req.user.getOrders()
+    .then(
+      (orders) => {
+
+
+              res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    orders: orders ////TIPO ASSIM.....
+    path: '/orders',
+  });
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+
+
+
+
+ 
+
+};
+
+
+
+
+
+
+
+
+
+-------> LÁ, DEVEMOS 
+
+OUTPUTTAR (console.log)...
+
+
+'orders',
+
+para ver exatamente o que conseguimos....
+
+
+
+
+
+
+
+------> NO CONSOLE.LOG 
+
+
+de 
+
+'orders',
+
+
+
+VEMOS 
+
+QUE 
+
+
+
+NÓS 
+
+TEMOS, 
+
+
+DE FATO,
+
+
+
+UM ARRAY 
+
+DE 
+
+
+'orders',
+
+
+
+
+__MAS NOSSAS __ 'ORDERS'
+
+nunca possuem 
+
+
+
+UMA KEY DE 
+
+'orderItem'...  -------> ISSO SIGNFICA QUE ESSA 'PROPRIEDADE MÁGICA'
+
+
+
+______NÃO É PROVIDENCIADA PELO SEQUELIZE....
+
+
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE __ SE NÓS QUISERMOS, TAMBÉM,
+
+
+__fAZER O FETCH 
+
+__DOS 
+
+
+'RELATED PRODUCTS' (products relacionados a ESSA ORDER),
+
+
+
+
+
+
+NÓS SOMOS __oBRIGADOs__ 
+
+
+A PASSAR 
+
+
+
+
+__________UM OBJETO___ COMO PARÂMETRO
+
+
+
+daquele 
+
+
+
+'req.user.getOrders()'... (nunca fizemos isso antes)...
+
+
+
+
+
+
+
+-----> NESSE PARÂMETRo,
+
+
+
+
+VAMOS TER QUE 
+
+ESCREVER 
+
+UM OBJETO 
+
+
+
+
+com 
+
+uma key de 
+
+'include',
+
+
+
+
+
+
+E AÍ 
+
+TEREMOS 
+
+
+DE COLOCAR, COMO VALOR DESSA KEY,
+
+um 
+
+
+array com uma 
+
+STRING dizendo 'products'....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+req.user.getOrders({include: ['products']})
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+ 
+exports.getOrdersPage = (req, res, next) => {
+ 
+ 
+
+    req.user.getOrders({include: ['products']})
+    .then(
+      (orders) => {
+
+
+              res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    orders: orders ////TIPO ASSIM.....
+    path: '/orders',
+  });
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+
+
+
+
+ 
+
+};
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+--> ISSO É POSSÍVEL/RECOMENDADO _ JUSTAMNETE 
+
+PQ 
+
+LÁ 
+
+EM 
+
+
+'app.js'
+
+
+NÓS ASSOCIAMOS 
+
+
+
+
+
+________UMA 'ORDER' (cada uma de nossas ORDERS) 
+
+
+
+A 
+
+
+'Product/products'...
+
+
+
+
+
+--> POR MEIO DO CÓDIGO ''''Order.belongsToMany(Product, {through: OrderItem})'''
+
+
+
+
+
+
+
+
+
+--> COMO NÓS ASSOCIAMOS 
+1 ORDER 
+
+a 
+
+'MANY PRODUCTS',
+
+
+
+NÓS 
+
+
+SOMOS 
+
+CAPAZES 
+
+
+
+de fazer 
+
+INCLUDE desse 'products' -------> 
+
+
+
+
+vai ser 
+
+
+'products'
+
+
+pq 
+
+
+o sequelize 
+
+PLURALIZA 
+
+
+O VALOR 
+
+QUE VOCÊ DEFINIU LÁ NO MODEL, em 'sequelize.defnie('product', {...})'...
+
+
+
+
+
+
+
+
+
+----> AÍ O PROFESSOR DIZ QUE 
+
+
+
+PODEMOS USAR UM CONCEITO DO 
+
+
+
+SEQUELIZE CHAMADO DE 
+
+'eager loading',
+
+EM QUE 
+
+NÓS __ BASICAMENTE 
+
+
+
+
+__iNSTRUÍMOS O SEQUELIZE 
+
+
+a 
+
+
+'
+HEY, SE VOCê ESTÁ FETCHEANDO TODAS AS ORDERS DE UM DETERMINADO USER,
+
+
+__ POR FAVOR__, TAMBÉM __ 
+
+
+FAÇA FETCH DE TODOS 
+
+OS 
+
+'RELATED PRODUCTS' 
+
+DESSAS ORDERS'... 
+
+
+(
+
+o eager loading, no caso, é essa 
+
+feature 
+
+de 
+
+escrever 
+
+'.getXXXX(include: ['yyyyy'])',
+
+
+COMO 
+
+
+VISTO EM 
+
+
+'req.user.getOrders({include: ['products']})'
+
+
+
+) -------> 
+
+
+
+OU SEJA,
+
+
+
+
+
+
+
+VAMOS DIZER 'POR FAVOR, __ ME DÁ __ UM ARRAY DE ORDERS 
+
+EM QUE 
+
+
+__CADA __ ORDER JÁ INCLUA SEUS "RELATED PRODUCTS", os related products Àquela order'...
+
+
+
+
+
+
+-------> MAS É EVIDENTE UQE 
+
+
+__iSSO SÓ FUNCIONA__ PQ 
+
+TEMOS 
+
+
+UMA 
+
+
+RELATION 
+
+DEFINIDA 
+
+ENTRE 
+
+
+'orders'
+
+e 
+
+'products',
+
+
+
+
+
+COMO 
+
+SETTADO
+ 
+ EM 
+
+ 'app.js',
+
+ POR MEIO DAQUELE CÓDIGO 
+
+ de 
+
+
+ 'Order.belongsToMany(Product, {through: OrderItem})'
+
+
+
+
+
+
+
+
+
+
+
+ ------> E AGORA, PORTANTO,
+
+
+
+
+ PODEMOS 
+
+ CARREGAR 
+
+ OS 
+
+ 'products'
+
+
+
+ e 
+
+
+ as 
+
+ 'orders'
+
+ __JUNTOS___.... ---->  ISSO 
+
+
+
+ AINDA 
+
+ NÃO VAI FAZER NOSSO 
+ TEMPALTE 
+
+
+
+
+ FUNCIONAR IMEDIATAMENTE,
+
+
+ mas o que 
+
+ muda é que agora 
+
+
+
+ TEREMOS 'orders'
+
+ em 
+ 'orders: orders'
+
+ COM _ MAIS __ 
+
+ DATA 
+
+
+ NO SEU INTERIOR....
+
+
+
+
+
+
+
+ -----> CADA 'order' AGORA TAMBÉM 
+
+ TERÁ 
+
+ UM 
+
+
+ ARRAY 
+
+ DE 
+
+ 'products'
+
+
+ no seu interior....
+
+
+
+
+
+
+
+
+ --> SABENDO DISSO,
+
+
+ PODEMOS 
+
+ VOLTAR AO NOSSO VIEW 
+
+ DE CÓDIGO 
+
+
+
+ ''
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul>
+ <% order.forEach(order => { %>
+     <li>
+        <h1># <%= order.id %></h1>
+        <ul>
+          <% orders.orderItem.forEach(item => { %>
+
+            <li><%= item.title %> (<%= item.quantity %>)</li>
+
+        <%  }) %>
+        </ul>
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+'''
+
+
+
+
+
+_E TWEAKAR ESSE CÓDIGO...
+
+
+
+
+
+
+-------> 
+
+
+
+
+NÓS, DE FATO,
+
+VAMOS LOOPAR 
+
+POR DENTRO 
+
+DE TODAS AS ORDERS 
+
+
+por meio 
+
+de 
+
+
+'orders.forEach(order => {...})',
+
+
+
+E CADA 
+
+'order'
+
+VAI TER 1 'id'...
+
+
+
+
+
+
+
+
+---> OK... MAS MAIS ABAIXO,
+
+
+
+uma order 
+
+AINDA NÃO VAI TER UM 
+
+
+'order.orderItem',
+
+
+E SIM 
+
+
+
+
+
+
+_____ TERÁ UM ARRAY__ DE 'products',
+
+
+
+
+
+
+POR ISSO 
+
+NOSSO CÓDIGO SERÁ 
+
+ALTERADO PARA FICAR ASSim:
+
+
+
+
+
+
+     <% orders.products.forEach(item => { %>
+
+
+
+
+
+
+
+
+
+
+--> CERTO... E AGORA VAMOS PODER 'LOOPAR' POR DENTRO DE TODOS OS PRODUCTS 
+
+
+
+dentro de cada 'order'... ------> 
+
+
+E 
+
+
+CADA 'item' 
+
+será um product,
+
+
+por isso vamos renomear para ficar assim:
+
+
+
+
+
+     <% orders.products.forEach(product => { %>
+
+
+
+
+
+
+
+
+
+--------> E AÍ, ISSO FEITO,
+
+
+continuamos 
+
+
+
+com 
+
+aquele 
+
+
+'<%= product.title %>',
+
+PQ 
+
+
+
+CADA 
+
+'product'
+
+realmente terá essa propriedade...
+
+
+
+
+
+------> MAS A ALTERAÇÃO 
+
+FINAL 
+É 
+
+
+
+'<%= product.quantity %>',
+
+
+QUE 
+
+É ALTERADO PARA FICAR 
+
+
+
+'<%= product.orderItem.quantity %>',
+
+
+
+______JUSTAMENTE___ PQ 
+
+
+CADA 
+
+
+__'product' __ NESSE 
+
+
+
+NOSSO 
+
+ARRAY 
+
+RECÉM 
+
+ADICIONADO/INCORPORADO 
+
+de 
+
+'products' (em cada order),
+
+
+
+graças ao 'getOrders({include: ['products']})',
+
+
+
+
+
+
+___ TAMBÉM VAI TER AQUELA PROPRIEDADE MÁGICA 
+
+de 
+
+'orderItem' 
+
+
+adicionada  
+
+
+POR MEIO 
+
+
+DAQUELE 
+
+CÓDIGo 
+
+
+de 
+
+
+'Product.belongsToMany(Order)', etc etc....,
+
+
+
+
+
+
+
+
+
+E COMO TEMOS ACESSO 
+
+a 
+
+
+'product.orderItem',
+
+
+TEREMOS ACESSO 
+
+
+À 
+
+'quantity' 
+
+desse ORDERITEM,
+
+que é o que queremos....
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE O CÓDIGO FICA ASSim:
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul>
+ <% orders.forEach(order => { %>
+     <li>
+        <h1># <%= order.id %></h1>
+        <ul>
+          <% order.products.forEach(product => { %>
+
+            <li><%= item.title %> (<%= product.orderItem.quantity %>)</li>
+
+        <%  }) %>
+        </ul>
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul>
+ <% orders.forEach(order => { %>
+     <li>
+        <h1># <%= order.id %></h1>
+        <ul>
+          <% order.products.forEach(product => { %>
+
+            <li><%= product.title %> (<%= product.orderItem.quantity %>)</li>
+
+        <%  }) %>
+        </ul>
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+AGORA SALVAMOS TUDO E RECARREGAMOS A PÁGINA...
+
+
+
+
+
+
+
+-> OK... 
+
+
+
+AGORA CONSEGUIMOS 
+
+VER 
+
+
+NOSSAS ORDERS 
+
+NA PAGE DE 
+
+'orders'...
+
+
+
+
+
+
+--> mas o negócio ainda está um pouco bugado,
+
+
+estou vendo 
+
+várias linhas,
+
+mesmo não tendo nenhuma 
+
+'orderItem'
+
+
+
+na minha database...
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS AGORA TEMOS O 'FULL FLOW'
+
+de nosso app...
+
+
+
+
+
+
+
+--> ok... ISSO NOS DEU UMA INTRODUÇÃO AO SEQUELIZE....
+
+
+
+
+--> devemos ler mais sobre ele nos docs....
+
+
+
+
+
+
+
+
+
+
+
+--> ALGUMA COISA ESTÁ CRIANDO VÁRIOS 
+
+'carts'
+
+
+no meu 
+
+
+projeto... --> tenho que consertar isso... tirar esse código aí...

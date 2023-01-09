@@ -1,0 +1,579 @@
+
+
+AGORA QUE SOMOS CAPAZES DE FAZER 
+
+
+SIGNUP E SIGNIN,
+
+
+
+
+
+NÓS TEMOS QUE 
+
+TRABALHAR 
+
+NA 
+
+
+
+'
+ROUTE PROTECTION'... ------> isso pq 
+
+
+
+NÓS 
+
+
+TEMOS 
+
+
+1 
+
+SETUP, NO MOMENTO, 
+
+
+EM QUE 
+
+
+
+
+___SÓ __ MOSTRAMOS AS 'MENU OPTIONS'
+
+
+
+QUE 
+
+___REALMENTE__ DEVEMOS/PODEMOS ___ INTERAGIR,
+
+
+quando 
+
+
+
+temos aquele 'auth status'... ---> MAS 
+
+O PROBLEMA É QUE 
+
+
+NOSSAS ROUTES__ AINDA PODEM _ SER VISITADAS __ MANUALMENTE,
+
+QUANDO DIGITAMOS 
+
+
+
+_ AS URLS 
+
+NA BARRA 
+
+DE ENDEREÇOS... -------> 
+
+
+
+
+
+
+
+
+
+TEMOS QUE 
+
+
+
+
+ESTABELECER ___ GUARDS__ NAS NOSSAS ROUTES_, JUSTAMNETE 
+
+
+__ PARA __ 
+
+
+
+IMPEDIR QUE ISSO ACONTEÇA...
+
+
+
+
+
+
+
+
+
+---------> SE TENTAMOS 
+
+
+ENTRAR 
+
+
+
+NA PAGE DE 
+
+
+'ADD A PRODUCT'
+
+
+sem 
+
+estarmos 'logged in',
+
+é 
+
+ÓBVIO QUE __VAMOS FALHAR __ IMEDIATAMENTE (ou o user, supondo),
+
+
+ISSO 
+
+PQ 
+
+
+__ NÃO EXISTIRÁ OBJETO 'user'
+
+
+NO BACKEND  QUE CORRESPONDA A ESSE 'LOGGED IN USER',
+
+justamente 
+pq 
+
+
+__NÃO TEREMOS NENHUM 'LOGGED IN USER',
+
+nessa hipótese... ----------> OK, MAS 
+
+
+ESSA 
+
+
+
+NÃO É A USER 
+
+
+
+EXPERIENCE QUE 
+
+VAMOS QUERER 
+
+
+OFERECER.... -----> NÃO,
+
+NÓS 
+
+
+__NEM MESMO _ VAMOS QUERER __ 
+
+
+
+DEIXAR O USER _ CARREGAR__ ESSA PAGE,
+
+se ele não estiver 
+
+'logged in'....
+
+
+
+
+
+
+
+
+
+
+-------> PARA ISSO,
+
+PRECISMAOS 
+
+FAZER 
+
+'PROTECT' DE NOSSAS ROUTES... --> PARA __ 
+
+
+FAZER 
+
+PROTECT/GUARD __ DE NOSSAS ROUTES,
+
+
+NÓS ___ VAMOS QUERER ____ CHECAR___ 
+
+
+SE 
+
+o 
+USER 
+
+ESTÁ 
+
+
+
+'AUTHENTICATED'... -------> VAMOS QUERER CHECAR __ SE ELE 
+
+ESTÁ 
+
+
+'AUTH'
+
+
+
+__aNTES__ _DE RENDERIZAR_ __
+
+
+
+
+COISAS COMO A PAGE DE 'add a product',
+
+
+
+POR EXEMPLO...
+
+
+
+
+
+
+
+
+------------> PARA ISSO,
+
+
+
+VAMOS 
+
+LÁ 
+
+
+
+NO 
+
+CONTROLLER 
+
+DE 
+
+
+
+'admin.js',
+
+
+
+
+
+
+
+
+NO CONTROLLER DE 
+
+
+
+
+'getAddProductPage',
+
+
+
+QUE TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn
+    // isLoggedIn: req.isLoggedIn
+    // isLoggedIn: isLoggedIn
+  });
+};
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+ANTES MESMO 
+
+
+DE CARREGARMOS ESSA PÁGINA,
+
+
+
+VAMOS QUERER 
+
+
+
+_____CHECAR___ SE 
+
+
+
+DENTRO DO OBJETO 
+
+
+
+'req.session'.... --> VAMOS QUERER __CHECAR___ 
+
+
+
+Se 
+
+
+'req.session.isLoggedIn' __ NÃO __ ESTÁ SETTADO_ ou seja, se o user_ _NÃO ESTÁ 'LOGGEDIN'....
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+
+
+  if(!req.session.isLoggedIn) { ///É ___A GUARD__ DE NOSSA PÁGINA... -> se o usuário NÃO ESTIVER 'LOGGED IN'/ autenticado, NÃO VAMOS RENDERIZAR A PAGE COMUM DE 'ADD A PRODUCT' para ele... (vamos bloquear a route, essencialmente; ou, em outras palavras, renderizar OUTRA COISA que não a page original, de 'add a product', destinada AOS USERS AUTENTICADOOS...)
+
+
+
+
+  }
+
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn
+
+  });
+};
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+NO CASE DE O USER NÃO ESTAR 'LOGGED IN',
+
+
+VAMOS QUERER __ O REDIRECIONAR__ PARA 
+
+
+A 
+
+PAGE DE 
+
+'/login',
+
+por exemplo...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+
+
+  if(!req.session.isLoggedIn) { ///É ___A GUARD__ DE NOSSA PÁGINA... -> se o usuário NÃO ESTIVER 'LOGGED IN'/ autenticado, NÃO VAMOS RENDERIZAR A PAGE COMUM DE 'ADD A PRODUCT' para ele... (vamos bloquear a route, essencialmente; ou, em outras palavras, renderizar OUTRA COISA que não a page original, de 'add a product', destinada AOS USERS AUTENTICADOOS...)
+
+
+    return res.redirect('/login'); //EIS O CÓDIGO EM QUESTÃO.
+
+  }
+
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn
+
+  });
+};
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR RECARREGA A PÁGINA,
+
+e AÍ __ SOMOS __ REDIRECIONADOS __ à PÁGINA DE 
+
+'login',
+
+
+
+SINAL QUE ISSO FUNCIONOU...
+
+
+
+
+
+
+
+
+--> E SE EU 
+
+
+
+FIZER LOGIN, 
+
+VOU CONSEGUIR 
+
+
+
+'GO PAST THIS IF CHECK',
+
+
+E aí 
+
+acessar a page NORMAL DE
+
+'add a product'....
+
+
+(
+
+
+    e devo fazer a mesma coisa com as outras page que precisam desse 'guard', que 
+
+    são 
+
+    'Orders' 
+
+
+    e 
+
+
+    'Cart'....
+)
+
+
+
+
+
+
+
+----> PROFESSOR ADMITE QUE __ ESSE É UM CÓDIGO __ QUE PODERÍAMOS __ ADICIONAR 
+
+
+A 
+CADA 
+
+ROUTE QUE QUEREMOS PROTEGER,
+
+ 
+
+
+
+
+
+ _____ MAS QUE ADICIONAR ESSE GUARD ASSIM,
+
+
+ DE FORMA 
+
+
+ MEIO TOSCA,
+
+ É 
+
+
+ MEIO 
+
+
+ __CUMBERSOME__.... --> É POR ISSO 
+
+
+
+ QUE 
+
+ O 
+
+ PROFESSOR QUER 
+
+ NOS MOSTRAR 
+
+
+ UMA 
+
+
+ __MANEIRA__ MELHOR ___ DE ADICIONAR 'GUARDS',
+
+
+ UMA 
+
+ MANEIRA __ MENOS __ CUMBERSOME e mais 
+
+ SCALABLE....
+
+
+
+ (
+   É O ARQUIVO MIDDLEWARE DE 'isAuth', lá no folder de 'middlewares'...
+ )
+
+
+
+ 

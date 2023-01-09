@@ -1,0 +1,1249 @@
+ 
+
+
+
+
+
+
+  -----> O QUE É UMA 'SESSION'? 
+
+
+
+
+
+
+
+
+
+
+
+  -> NÓS DEMOS UMA OLHADA EM 'COOKIES',
+
+
+
+
+
+
+
+
+
+que tinham este funcionamento:
+
+
+
+
+
+
+1) O USER VAI SUBMITTAR A LOGIN DATA por meio da form 
+
+
+
+
+
+2) NÓS VAMOS RETORNAR UMA RESPONSE, 
+
+
+
+QUE PODERÁ SER 1 NOVO 'VIEW' A QUE REDIRECIONAMOS O USER,
+
+MAS 1 VIEW __ACOMPANHADO_ DE 1 COOKIE DIZENDO 'este user está logged in'...
+
+
+
+
+
+
+
+
+
+
+--> ESSE 'COOKIE' que enviamos ao user SIMPLESMENTE É IMPORTANTE 
+
+
+PARA _DIZEr__ AO USER/armazenar 
+
+
+
+A INFO DE QUE __ O USER 
+
+ ___ESTÁ 'AUTHENTICATED'.... -----> E NÓS PODEMOS 
+
+
+
+
+ __aRMAZENAR _ ESSA INFO NO BROWSER, no FRONTEND,
+
+ no ENVIRONMENT COM QUE O USER INTERAGE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  __aGORA VAMOS VER O QUE 
+
+  É UMA 
+
+
+  'SESSION'.... 
+
+
+
+
+
+
+
+
+
+  --> BEM, TEMOS O MESMO 
+
+
+
+
+
+  SETUP DE ANTES, QUE ERA ASSIM:
+
+
+
+
+
+
+
+
+
+  
+| USER browser| 
+
+        |
+        V
+
+| Frontend (Views) | 
+
+        | request
+        V 
+
+| Server (node app) | 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+entretanto, agora nosso setup vai ficar assim:
+
+
+
+
+
+
+  
+| USER browser| 
+
+        |
+        V
+
+| Frontend (Views) | 
+
+        | request
+        V 
+
+| Server (node app) | --> STORES 'Session' in its system... (store in memory, option 1 of session storage mechanisms)
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, É 1 USER USANDO UM 'FRONTEND',
+
+
+INTERAGINDO COM NOSSO SERVER, EM QUE 
+
+TEMOS NOSSO CÓDIGO DO NOSSO NODE APP... ->  AÍ, 
+
+
+NÓS ENVIAMOS 
+
+1 
+
+REQUEST 
+
+
+
+
+
+E NÓS 
+
+
+'DO LOGIN'... ----->
+ 
+
+
+
+
+
+
+
+
+ AÍ, DE NOVO, VAMOS ASSUMIR QUE __ 
+
+
+
+ ENVIAMOS 
+
+
+
+ CREDENTIALS VÁLIDAS DE LOGIN... (não vamos validar nossos inputs nesse módulo, ainda, mas veremos isso no futuro)...
+
+
+
+
+
+
+
+
+
+ -----> OK.... AGORA __ EM VEZ__ DE 
+
+
+ ARMAZENAR 
+
+ A 
+
+
+
+ INFO DE QUE 
+ 'O USER ESTÁ AUTENTICADO'
+
+
+
+
+ LÁ NO FRONTEND (caso dos cookieS.... descobrimos que ESSE É UM LUGAR __PÉSSIMO PARA 
+ ARMAZENAR INFO DE QUE O USER ESTÁ LOGGADO, PQ ESSA INFO PODE SER MANIPULADA..),
+
+
+
+
+
+
+ ____  --> EM VEZ DE 
+
+
+
+ ARMAZENAR ESSA INFO LÁ NO 
+ 'FRONTEND',
+
+
+ info de que ele está loggado,
+
+
+
+ __vAMOS _ QUERER __ ARMAZENAR __ 
+
+
+
+ ESSA INFO 
+
+
+ _____LÁ NO BACKEND__,
+  
+
+
+  por meio daquilo que chamamos 
+
+
+  de uma 
+
+  'SESSION'.... -----> E 1 SESSION 
+
+
+
+  É 
+
+
+
+
+  UM NOVO 'CONSTRUCT',
+
+
+
+QUE AINDA NÃO USAMOS NESSE CURSO, NEM APRENDMEOS... ---------> POR 'SESSION',
+
+
+
+PROFESSOR 
+
+QUER 
+
+
+DIZER ALGO QUE 
+
+
+__NÃO É ARMAZENADO NO REQUEST... ( 
+
+    isso pq 
+
+
+    já vimos QUE ISSO, DO __STORE__ DE INFORMATION EM 1 REQUEST,
+
+    É __ ALGO QUE NÃO FUNCIONA, N FUNCIONA PQ 
+
+    O 
+
+    REQUEST É SEMPRE REFRESHADO ao recarregarmos nossas páginas,
+
+
+
+    e pq 
+
+
+    'CADA REQUEST É ÚNICO'....
+),
+
+
+
+
+
+
+____ E TBM QUER DIZER ALGO QUE __ NÃO É 
+
+
+ARMAZENADO 'IN SOME VARIABLE IN OUR EXPRESS APP',
+
+
+
+PQ 
+
+
+
+SE NÓS FIZÉSSEMOS ISSO,
+
+
+SE ARMAZENÁSSEMOS 
+
+ESSA INFO 
+
+EM UMA VARIÁVEL 
+
+
+DO 
+
+
+
+
+'NODE APP',
+
+
+NÓS ACABARÍAMOS 
+
+
+FAZENDO COM QUE 
+
+ESSA VARIABLE 
+
+FICASSE 
+
+
+
+__COMPARTILHADA___ COM TODOS OS USERS 
+
+
+DE 
+
+NOSSO 
+
+
+APP/backend... (isso seria 'SHARED ACROSS ALL USERS AND ALL REQUESTS'...) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... ISSO SIGNIFICA QUE 
+
+__NÓS ___ APENAS__ VAMOS QUERERR 
+
+'SHARE THE INFO OF LOGIN'
+
+
+__ AO LONGO DE __tODOS OS REQUESTS___ DE 
+
+1 MESMO USER,
+
+
+e NÃO __ AO LONGO DE TODOS OS REQUESTS___ DE TODOS OS USERS.... --------------->
+
+
+
+
+
+E ISSO É ___BEM IMPORTANTE__ DE SE ENTENDER... ------------>  Queremos isso 
+para que 
+
+
+OUTROS USERS NÃO CONSIGAM 
+
+
+VER 
+
+
+A 
+
+DATA DE OUTROS USERS,
+
+
+para que 
+
+
+a 
+
+data 
+
+
+de 
+
+cada 
+
+user de login seja 
+
+'privada'...  ---------> NÃO QUEREMOS ISSO 
+
+
+
+
+
+PQ 
+
+
+
+__ NÃO QUEREMOS __ QUE 
+
+
+
+USERS 
+
+'TAKE EACH OTHERS ROLEs',
+
+
+
+
+assumam a identidade de outros usuários,
+
+
+
+
+
+consigam ver a data de outros users,
+
+
+etc... ----> PARA QUE NÃO POSSAM DIZER QUE 
+
+
+
+ELES ESTÃO AUTENTICADOS NO SEU SERVER... -------> 
+
+
+
+
+
+
+
+SÓ O PRÓPRIO USER DIRÁ QUE ESTÁ 'AUTHENTICATED'... ------->  OK.... PARA ISSO,
+
+
+
+
+vamos 
+
+precisar 
+
+
+
+ARMAZENAR ESSA INFO NO SERVER.... --> PARA COMEÇAR,
+
+
+VAMOS 
+
+
+
+COMEÇAR 
+
+
+
+
+__PELO __STORE DESSA INFO 
+
+
+
+NA 'MEMORY' 
+
+
+DE NOSSO SERVER.... ( o que 
+
+significa que 
+
+
+vamos fazer algo BEM SIMILAR COM O 
+
+
+'STORE' DESSA INFO EM UMA __VARIABLE__...
+
+
+
+) ------------> 
+
+
+
+
+
+OK, VAMOS COMEÇAR COM O 'STORE NA MEMORY'
+ 
+
+
+ de nosso backend,
+
+
+ MAS EVENTUALMENTE 
+
+
+
+ VAMOS PROSSEGUIR COM 
+
+
+
+ O ESTUDO,
+  
+
+
+  E AÍ 
+
+
+
+
+  PASSAR __ PARA 
+
+
+
+  UM TIPO DE STORAGE __DIFERENTE__, 
+
+
+
+
+  A __DATABASE___... -> VAMOS USAR __ 
+
+
+
+
+  UMA ___DATABASE__ (sql, nosql... não sei) 
+
+
+
+  PARA __ 
+
+
+  STORE __ 
+
+
+  DE SESSIONS........ E AÍM QUANDO O FIZERMOS,
+
+
+
+
+  VAMOS PRECISAR 
+
+
+
+  DE 
+
+  1 
+
+
+  PEDAÇO DE INFORMATION __MT IMPORTANTE__.... ---> 1 CLIENT 
+
+
+
+  PRECISA__ DIZER 
+
+
+
+
+AO 
+
+'SERVER/BACKEND'
+
+
+
+
+_______A QUE __ SESSION ELE PRÓPRIO (o client)
+
+
+PERTENCE.... (
+
+
+    isso pq 
+
+
+
+
+    a session vai ser, NO FINAL DAS CONTAS,
+
+
+
+    ___APENAS UMA 'ENTRY' ___ ARMAZENADA 'IN MEMORY',
+
+
+
+    OU ___ ARMAZENADA 
+
+
+    EM 
+
+
+    1 
+
+    DATABASe...
+)
+
+
+
+
+
+
+
+
+---> sessions ---> vão ser armazenadas OU 'IN MEMORY',
+
+OU 
+
+
+EM __DATABASES__.....
+
+
+
+
+
+
+
+
+
+-------> E AÍ, O PROFESSOR  NOS EXPLICA QUE 
+
+
+
+
+
+_____NÃO VAMOS 'MATCHEAR' a session por meio 
+
+de 
+
+IP ADDRESSEs 
+
+
+ou QUALQUER COISA DO TIPO..... ------> ISSO PQ 
+
+
+___ O 'MAINTAIN'
+
+
+
+
+de 
+
+
+
+sessions que CONSIDERAM 'IP ADDRESSES'
+
+
+em 
+
+DATABASES 
+
+é 
+
+
+ALGO BEM DIFÍCIL,
+
+
+
+
+
+
+ALÉM DE __ SER POSSÍVEL __ FAKAR (mesmo assim),
+
+
+
+fraudar, e todas outras coisas legais.....
+
+
+(é por isso que NÃO VAMOS FAZER ISSO, NÃO VAMOS COLOCAR INFO DO 'IP ADDRESS' nas nossas entries 
+
+
+'session' nas nossas databases...
+
+
+)
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+| USER browser| 
+
+        |
+        V
+
+| Frontend (Views) | 
+
+        | request
+        V 
+
+| Server (node app) | --> STORES 'Session' in its system...  (store in memory, option 1 of session storage mechanisms)
+                      OU               |
+                                       |
+        |                              |
+        | OU                           |
+        V                              |
+                                       |
+    | Database |  < -------------------
+                 (STORE SESSIONS IN A DATABASE, option 2 of session storage mechanisms)....
+    
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK......MAS SE __NÃO VAMOS __ USAR 
+
+
+
+'IP ADDRESSES'
+
+
+
+para 
+
+DETERMINAR/VINCULAR NOSSAS SESSIONS,
+
+
+COMO 
+
+
+
+PODEMOS 
+
+ADICIONAR 
+
+
+
+
+MATCHEAR NOSSA 
+
+
+'SESSION' 
+
+
+
+no SERVER 
+
+
+
+
+
+com 
+
+
+ALGO __ NO BROWSER DO USER? (que faça esse match)?
+
+
+
+
+
+
+--------> BEM, PROFESSOR EXPLICA QUE _ EM VEZ __de USARMOS 
+
+
+
+
+O 'IP ADDRESS' DENTRO DE NOSSAS SESSIONS, PARA ENTÃO COMPARAR COM A INFO DO IP DO USER QUE UTILIZA O BROWSER,
+
+
+
+
+
+___ __ NÓS VAMOS USAR __ 1 COOKIE, COOKIE ___ EM QUE __ VAMOS 
+
+
+
+__aRMAZENAR___ O ID _ DE NOSSA SESSION ESPECÍFICA,
+
+sessioN 
+
+
+A QUE 
+
+
+O 
+
+
+USER DAQUELE BROWSER ESTÁ VINCULADO...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+| USER browser| 
+
+        |
+        V
+
+| Frontend (Views) |   ------->   COOKIE 
+                                    |  (session ASSOCIATED WITH USER/CLIENT VIA COOKIE)...
+        | request                   |
+        V                           V
+
+| Server (node app) | -->           SESSION 
+                      OU               |
+                                       |
+        |                              |
+        | OU                           |
+        V                              |
+                                       |
+    | Database |  < -------------------
+                         (SESSION STORAGE)....
+    
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+--> OK... VAMOS USAR 1 COOKIE EM QUE 
+
+
+__vAMOS ARMAZENAR O 
+
+'ID' 
+
+
+DAQUELA SESSIOn... 
+
+
+
+
+
+
+
+------------> É ÓBVIO QUE O USER/VOCÊ AINDA PODE ____ 
+
+
+
+'CHANGE' 
+
+
+o valor desse id no cookie,
+
+
+
+SE VOCÊ QUISER,
+
+
+
+
+__ PARA ENTÃO __TENTAR__ IMPERSONAR OUTRO USER... ----> MAS __ ISSO __ _____NÃO VAI FUNCIONAR ASSIM,
+
+
+
+
+VOCÊ ___ NÃO VAI CONSEGUIR FAZER ISSO..... --------> ISSO PQ 
+
+
+
+
+O __ VALUE__ QUE 
+
+
+ARMAZENAMOS/ARMAZENAREMOS 
+
+
+
+
+
+
+
+__ NESSE COOKIE  ___ ACTUALLY__ NÃO 
+
+__ SERÁ O 'ACTUAL ID' 
+
+
+
+__ARMAZENADO NO SERVER/DATABASE,
+
+
+
+__ SIM ___ SERÁ 
+
+
+UM 
+
+
+'HASHED' ID',
+
+
+
+HASHEADO COM UM CERTO ALGORITMO,
+
+
+ALGORITMO QUE __ SÓ O SERVER SABERÁ/SABE,
+
+
+
+
+O QUE FARÁ COM QUE __ SÓ O SERVER 
+
+
+
+CONSIGA DETERMINAR SE AQUELE 
+
+
+
+'id'
+
+ARMAZENADO __ NO 
+
+
+
+'COOKIE'
+
+
+realmente 
+é 
+
+VÁLIDO,
+
+que realmente NÃO FOI MEXIDO POR VOCÊ... (tudo isso para 
+
+
+que 
+voc~e 
+
+
+NÃO FUTRIQUE
+
+
+com o cookie/session armazenado no cookie,
+
+QUE VOCÊ NÃO TENHA TENTADO CRIAR 1 DIFERENTE 'SESSION' NO SEU COOKIE...
+ )
+
+
+
+
+
+
+ --------------------------------
+
+
+
+
+
+ OK...... --> 
+
+
+
+
+
+ RESUMINDO:
+
+
+
+
+
+
+
+
+
+
+ 1) USER:
+  
+
+  a) tem COOKIE com uma SESSION no interior.... --> esse cookie/session TERÁ 1 'id' field, QUE SERÁ ___ uma versão HASHEADA__ DO ID QUE VOCÊ TEM ARMAZENADO NA SUA DATABASE/SERVER....
+
+
+
+
+
+
+
+2) SERVER NODE (memory) ou DATABASE 
+
+--> vai conter uma entry com sua SESSION, e terá 1 ID que SÓ É DISPONÍVEL NO SV/DATABASE em si, e que é então MATCHEADO com o id HASHEADO armazenado na SESSION armazenada no COOKIE que você envia de volta ao user...
+
+
+
+
+
+
+
+
+
+
+
+------> OK.... --> ISSO SIGNIFICA QUE 
+
+
+
+ESSA SERÁ UMA 'SECURE WAY',
+
+
+PQ 
+
+
+_VOCÊ BASICAMENTE__ ARMAZENOU/ARMAZENA __ 
+
+O 
+
+ID 
+
+DE 
+
+UMA MANEIRA ENCRIPTADA,
+
+
+
+
+MANEIRA ENCRIPTADA EM QUE 
+
+
+__ SÓ O SERVER__ EM SI É CAPAZ DE __CONFIRMAR QUE 
+
+o 
+
+'STORED COOKIE VALUE'
+
+
+
+REALMENTE TEM RELAÇÃO COM ALGUM ID 
+
+
+
+na sua database... ----------> ISSO, POR CONSEQUÊNCIA,
+
+
+
+
+ACABA RESULTANDO QUE __ NÓS 
+
+FICAMOS COM UM 
+
+'SAFE VALUE'
+
+
+
+ARMAZENADO NO COOKIE,
+
+
+
+
+
+SAFE VALUE QUE __VOCÊ NÃO __ PODE ALTERAR
+
+PARA TENTAR CONSEGUIR OUTRA SESSION
+
+,
+
+
+
+POIS __ NÃO VAI FUNCIONAR, VOCê NÃO VAI CONSEGUIR... (pq n tem como você 'LER O ALGORITMO'/descobrir o algoritmo usado pelo servidor NO __ENCRYPT__ DOS 'HASHED IDs'....)
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... AINDA ASSIM,
+
+1 
+
+SESSION 'CAN BE MATCHED',
+
+
+
+
+E ESSA SESSION PODE ENTÃO __ CONTER__ 
+
+A 
+
+
+'CONFIDENTIAL DATA '
+
+
+
+QUE VOCÊ _ __ NÃO 
+PODE __ MEXER __ 
+
+
+DE 
+
+DENTRO DO BROWSER (pq o browser só vai receber o 'hashed id' dessa session, versão hasheada do id  da session....)
+
+
+
+
+
+
+
+
+---------> OK....
+
+
+
+
+
+
+RESUMO:
+
+
+
+
+
+1) SESSIONS __ SÃO ARMAZENADAS __ NO SERVER..... (serverside, databases...)
+
+
+
+
+
+
+2) COOKIES__ SÃO ARMAZENADOS __ NO CLIENTSIDE... ---> ATÉ MESMO OS 
+
+COOKIES RELACIONADOS A SESSIONS.... (que são armazenadas no server....)
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+OK.... E AGORA O PROFESSOR VAI ___ NOS MOSTRAR__
+
+
+
+O MEIO DE IMPLEMENTAR UMA SESSION,
+
+
+COMO PODEMOS IMPLEMENTAR 1 SESSIOn....
+
+
+
+

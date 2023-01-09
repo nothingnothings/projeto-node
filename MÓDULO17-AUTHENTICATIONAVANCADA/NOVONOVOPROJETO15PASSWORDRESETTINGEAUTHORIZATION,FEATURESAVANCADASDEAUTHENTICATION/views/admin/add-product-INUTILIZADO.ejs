@@ -1,0 +1,30 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description"></textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price"></title>
+        </div>
+        <button type="submit" class="btn">Add Product</button>
+    </form>
+</main>
+<%- include('../includes/end.ejs'); %>

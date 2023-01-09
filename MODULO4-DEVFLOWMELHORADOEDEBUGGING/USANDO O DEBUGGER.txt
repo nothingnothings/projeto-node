@@ -1,0 +1,238 @@
+
+
+
+
+
+
+
+
+
+
+
+AINDA ESTAMOS COM O DEBUGGER RODANDO....
+
+
+
+
+
+
+
+
+
+
+
+--> E AGORA QUE O PROFESSOR NOS DEU UM OVERLOOK DE COMO 
+
+
+
+ELE FUNCIONA,
+
+DEVEMOS 
+
+
+CONSERTAR 
+
+O 
+
+ERRO 
+
+de 
+
+
+'const message = parsedBody.split('=')[0]'
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+--> NÓS DETERMINAMOS/DESCOBRIMOS QUE NOSSO ERRO DE LÓGICA NÃO ESTÁ CONTIDO 
+
+EM 
+
+'writeFile'....
+
+
+
+
+
+
+
+
+--> IMAGINAMOS QUE O PROBLEMA ESTÁ NESSA 
+
+'const message'... -----> 
+
+
+
+
+
+
+
+
+
+
+
+'message' está como 'message',
+
+e isso está ERRADO... ------> conseguimos perceber que 
+
+'split()'
+
+FOI O RESPONSÁVEL PELO ERRO... --> 
+
+
+
+
+coloquei o indexador de '[0]',
+
+quando deveria 
+
+
+SER 
+
+'[1]'..
+
+
+
+
+
+
+
+
+
+
+
+---> E NO TERMINAL DO DEBUGGER, VOCÊ PODE REPETIR OPERAÇÕES/CÓDIGOS que 
+
+você executou 
+
+ali no seu código,
+
+
+COM AS MESMAS CONSTANTES,
+PARA VER O QUE 
+
+EXATAMENTE 
+
+SUAS LINHAS RETORNAM....
+
+
+(por exemplo,
+
+podemos 
+
+
+
+escrever 
+
+
+'parsedBody.split('=')' 
+
+
+
+PARA 
+
+ENTÃO 
+
+VER 
+
+QUE 
+
+ELE 
+
+NOS RETORNA UM 
+
+ARRAY 
+
+COM 
+
+'['message', 'xxxx']',
+
+
+
+E OUTRAS PROPRIEDADES/MÉTODOS 
+
+DO PROTOTYPE DE 'ARRAY'..
+
+)
+
+
+
+
+
+
+
+
+---> ISSO NOS DIZ QUE O SPLIT ESTÁ FUNCIONANDO, ENTÃO A ÚNICA COISA 
+
+QUE PODE 
+
+ESTAR 
+
+ERRADA 
+É 
+
+O VALOR QUE ESTOU EXTRAINDO AQUI... ----> 
+
+
+
+
+É O 
+
+
+ELEMENTO ERRADO SENDO EXTRAÍDO DO ARRAY,
+
+
+
+estamos extraindo o com indexador 0, quando deveríamos estar extraindo 
+
+o 
+
+
+
+INDEXADOR De '[1]'...
+
+
+
+
+
+
+
+
+------> É ASSIM QUE USAMOS O DEBUGGER----> 
+
+
+
+
+
+VOCê DEVE TER EM MENTE QUE O NODEJS 
+
+
+
+TRABALHA COM BREAKPOINTS,
+
+
+
+
+e que 
+
+você deve se ligar que 
+
+ELES SÃO REGISTRADOS 
+
+'TO BE EXECUTED IN THE FUTURE',
+
+
+
+E QUE VOCê DEVE USAR OS BREAKPOINTS 
+PARA 
+
+
+CONTROLAR E ACOMPANHAR OS VALORES QUE ELES VAO ASSUMINDO/MANIPULANDO...

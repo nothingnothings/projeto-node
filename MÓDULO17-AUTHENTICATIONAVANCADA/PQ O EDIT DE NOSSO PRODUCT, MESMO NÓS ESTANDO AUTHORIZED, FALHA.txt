@@ -1,0 +1,153 @@
+
+
+
+
+
+
+--> EU PAREÇO GANHAR UM ERRO DE 
+
+
+
+
+
+''
+
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+
+
+''
+
+QUANDO TENTO 
+
+FAZER EDIT 
+
+
+DE UM PRODUCT QUE EU MESMO CRIEI....
+
+
+
+
+
+
+--> BEM, A QUESTÃO É QUE O 
+
+
+'req.user._id'
+
+
+
+
+
+ESTÁ FICANDO 'undefined',
+
+
+COMO VISTO POR ESTE CONSOLE.LOG:
+
+
+
+      console.log(product.userId, req.user_id);
+
+
+
+
+      RESULTADO:
+
+
+
+new ObjectId("61889f7e3424581fd6726b6c") undefined
+
+
+
+
+
+
+
+
+
+
+
+
+----> DESCOBRI O PROBLEMA... 
+
+
+ERA ISTO:
+
+    .then((product) => {
+
+      console.log(req.user, 'XXX');
+      console.log(product.userId, req.user._id);
+      if(product.userId.toString() !== req.user._id.toString()) {
+
+        return res.redirect('/');
+      } else {
+
+
+
+
+
+
+
+
+------> ESTAVA FALTANDO O 
+
+
+'.toString()'
+
+
+
+NESSES 
+
+
+
+
+'objectId()'....
+
+
+
+
+(VALORES DO MONGODB, MESMo.... que devem ter '.toString()' executado sobre si __ PARA QUE CONSIGAM SER COMPARADOS...)
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+ok.... COM ISSO, O NEGÓCIO FUNCIONOU..
+
+
+
+
+AGORA PODEMOS FAZER UPDATE 
+
+E 
+
+DELETAR 
+
+
+OS PRODUCTS QUE CRÍAMOS/CADA USER CRIOU....
+
+
+
+
+
+
+--------------
+
+
+
+
+-> SE TENTAMOS VISUALIZAR ESSES PRODUCTS NA PAGE DE 'admin products'
+
+
+SEM __ SERMOS_ 
+
+O USER QUE CRIOU ESSES PRODUCTS,
+
+NÃO VAMOS OS ENXERGAR....

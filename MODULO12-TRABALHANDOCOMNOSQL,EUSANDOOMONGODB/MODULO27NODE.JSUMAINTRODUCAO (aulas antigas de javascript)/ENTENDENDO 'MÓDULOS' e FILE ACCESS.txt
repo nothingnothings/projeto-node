@@ -1,0 +1,756 @@
+
+
+
+
+
+CERTO, TEMOS NOSSO SCRIPT BÁSICO 'app.js'...
+
+
+
+
+ex:
+
+
+
+const userName = 'Max';
+
+
+console.log(`Hi${userName}!`);
+
+
+
+--------------------------------------
+
+
+
+ELE OUTPUTTA AQUELA MENSAGEM NO CONSOLE....
+
+
+
+
+MAS QUE TAL __ESCREVER___ ESSES DADOS EM UM ARQUIVO ___ E ENTÃO ___ 
+
+LER ESSES DADOS ___ DESSE TAL ARQUIVO...?
+
+
+
+
+
+
+PARA ISSO, PRECISAMOS DE UM PUNHADO DE ___PACKAGES___...
+
+
+
+SÃO PACKAGES QUE FICAM DISPONÍVEIS QUANDO __VOCê ___ INSTALA O NODE.JS...
+
+
+
+
+---> NODE.JS funciona de modo QUE CERTAS FEATURES IMPORTANTES ESTÃO SEMPRE 
+
+__DISPONÍVEIS __ GLOBALMENTE...
+
+
+
+--> por exemplo, a função 'setTimeout()'...
+
+
+
+
+---> ESSA FUNÇÃO É UMA ____BROWSER API__, MAS É UMA BROWSER API QUE TAMBÉM FOI IMPLEMENTADA 
+
+EM NODE.JS...
+
+
+
+----> POR SER UMA BROWSER API QUE FOI IMPLEMENTADA 
+
+EM 'NODE.JS', VOCÊ PODE SIMPLESMENTE USAR 'setTimeout()' dessa forma... (de pronto)... você pode fazer 
+
+isso EM QUALQUER ARQUIVO 'NODE.JS'...
+
+
+
+
+----->  MAS OUTRAS FUNCIONALIDADES, umas funcionalidades as quais VOCÊ NÃO PRECISA USAR 
+TANTO ASSIM, PRECISAM ___SER IMPORTADAS___ EXPLICITAMENTE... ---> POR EXEMPLO, FUNCIONALIDADES 
+PARA __TRABALHAR COM O __fILE SYSTEM___...
+
+
+
+
+----> funcionalidades para trabalhar com o file system ---> PARA ISSO, O NODE.JS 
+
+TRABALHA COM aquilo que chamamos de 'MÓDULOS'...
+
+
+
+
+---> LÁ NO SITE DO NODE.JS, você tem os docs...
+
+
+Neles, se você clicar em 'API REFERENCE DOCUMENTATION', VOCê ENCONTRA TODAS AS PACKAGES, todos os 'core modules' QUE 
+
+COMPÕEM O NODE.JS ('all the core modules node.js is made up of'...).
+
+
+
+--> POR EXEMPLO, DEBAIXO DE 'FILE SYSTEM, VOCÊ ENCONTRA A DOCUMENTAÇÃO COMPLETA SOBRE 
+ESSE MÓDULO...
+
+
+
+---> é evidente que HÁ MUITO O QUE FALAR SOBRE ESSE 'FILE SYSTEM MODULE', 
+
+
+e é óbvio que o professor só nos mostrará pouca coisa disso, 
+
+
+
+MAS VAMOS USAR UM POUCO AGORA....
+
+
+
+
+Lá, por exemplo, podemos ver COMO PODEMOS FAZER/CRIAR Esse módulo 
+
+NO NOSSO ARQUIVO QUE SERÁ EXECUTADO PELO 'node.js'...
+
+
+VEMOS COMO PODEMOS FAZER ESSE MÓDULO E SUAS FEATURES FICAREM DISPONÍVEIS 
+
+EM UM SCRIPT NODE.JS....  ---->  E ESSA É UMA IMPORTANTE DIFERENÇA
+ EM RELAÇÃO AOS SCRIPTS 'BROWSERSIDE' -->  ___ A ___SINTAXE__ DE IMPORTAÇÃO/EXPORTAÇÃO ___ 
+
+ DO __ NODE.JS ___ É UM POUCO __ DIFERENTE___....
+
+
+
+
+
+Em vez de usarmos 
+
+
+'import xxx from yyy', como NO JAVASCRIPT 'BROWSERSIDE',
+
+
+no 
+
+
+JAVASCRIPT 'nodejsside' 
+
+NÓS USAMOS 
+
+
+
+ 
+'REQUIRE()'...... PARA IMPORTAR ALGUMA COISA...
+
+
+
+para importar algo, Nós REQUEREMOS UM MÓDULO.... 
+
+
+
+fazemos 'require()' desse módulo, SEJA ELE UM MÓDULO 
+
+___PROVIDENCIADO___ PELO NODE.JS, como nesse exemplo de 'const fs = require('fs');', 
+
+OU PROVIDENCIADO __POR SEU PRÓPRIO/PRÓPRIO ARQUIVO/ARQUIVOS___........
+
+
+
+
+ASSIM QUE VOCÊ FAZ ESSE 'REQUIREMENT' do módulo que você quer, VOCÊ ARMAZENA 
+ESSA 'REQUIRED DATA' (esse módulo que foi recebido por meio de 'require()', basicamente)
+
+EM UMA CONSTANTE...
+
+
+
+VOcê armazena isso NA SUA PRÓPRIA CONSTANTE, NA CONSTANTE QUE ENTÃO VOCÊ PODERÁ/PODE USAR 
+
+NO SEU SCRIPT...
+
+
+
+ex:
+
+
+
+
+const fs = require('fs');
+
+
+
+fs.unlink('/tmp/hello', (err) => {
+    if (err) throw err;
+    console.log('successfully deleted /tmp/hello');
+});
+
+
+--------------------------------------------
+
+
+
+
+MAIS TARDE, O PROFESSOR NOS EXPLICARÁ ___COMO ____ EXPORTAR___ ALGO ___ NO NODE.JS...
+
+
+
+
+-------------------------------------------
+
+
+
+
+NOSSO CÓDIGO 'app.js', a ser executado pelo NODE.JS, agora 
+
+terá esse código:
+
+
+
+
+'const fs = require('fs');'  //////////// FS  ========== 'FILE SYSTEM', basicamente.
+
+
+
+
+---------------------------------------------------------
+
+
+
+ESSA LINHA DE CÓDIGO VAI 'PULL IN' o MÓDULO 'FILE SYSTEM', esse módulo 
+QUE JÁ FOI INSTALADO COMO __PARTE INTEGRANTE___ DO NODE.JS quando o node.js 
+foi instalado... (isso significa que não temos que o instalar separadamente....) ----> ainda que não precisemos REALIZAR SUA INSTALAÇÃO SEPARADAMENTE, AINDA PRECISAMOS ___ADICIONAR ____ ESSE MÓDULO AO NOSSO ARQUIVO javascript que será executado pelo node.js, por meio da sintaxe de importação do 'require'...
+
+
+
+
+
+
+------------------------------------------
+
+
+
+Com isso, agora podemos usar o objeto 'fs' (OBJETO 'FILE SYSTEM') PARA 
+
+___tRABALHAR COM O FILE SYSTEM____....
+
+
+
+Por exemplo, podemos chamar o método 'writeFile' nesse objeto...
+
+
+
+ex:
+
+
+
+
+const fs = require('fs');
+
+
+fs.writeFile();
+
+
+
+----------------------------------------------------
+
+
+
+
+ESSE MÉTODO '.writeTofile' ACEITA/exige como parâmetros:
+
+
+
+
+1) O ___PATH___ A UM DETERMINADO ARQUIVO __....
+
+
+
+
+2) OS ___DADOS ___ (the data) QUE QUEREMOS ESCREVER NESSE ARQUIVO....
+
+
+
+-----------------------------------------------
+
+
+
+
+Professor explica que, como exemplo, poderíamos 
+
+providenciar um SIMPLES 'FILE NAME', como STARTING POINT de nossas aventuras com node.js....
+
+
+ex:
+
+
+
+
+
+const fs = require('fs');
+
+
+fs.writeFile('arquivo.txt');
+
+
+
+
+----------------------------------------------------------------
+
+
+
+SE FIZERMOS ISSO, ESSE MÉTODO VAI ESCREVER O SEGUNDO PARÂMETRO NESSE OBJETO DE nome 'arquivo.txt' DENTRO 
+DA MESMA PASTA EM QUE 
+
+O 'app.js' SE ENCONTRA...
+
+
+
+Professor usa um exemplo de 'user-data.txt'... 
+
+
+
+--------------------------------------------
+
+
+
+ex:
+
+
+
+
+
+const fs = require('fs');
+
+
+fs.writeFile('user-data.txt');
+
+
+-------------------------------------------
+
+
+
+AÍ, COMO SEGUNDO PARÂMETRO, PODERÍAMOS/PODEMOS DEFINIR ALGUM TEXTO, COMO EXEMPLO... (uma string).
+
+
+
+
+
+
+ex:
+
+
+
+
+const fs = require('fs');
+
+
+fs.writeFile('user-data.txt', 'username=Max');
+
+
+
+
+---------------------------------------
+
+
+PROFESSOR EXPLICA QUE __AINDA HÁ UM ___TERCEIRO PARÂMETRO ___, UM PARâMETRO 
+
+DE 'opções', QUE É UM ___OBJETO___ ({})... Dentro desse objeto você pode definir coisas 
+
+COMO O __TIPO DE ENCODING__ e assim por diante, mas não usaremos isso agora... (e esse PARÂMETRO DE ___OPÇÕES____ É OPCIONAL...)
+
+
+
+ex:
+
+
+const fs = require('fs');
+
+
+fs.writeFile('user-data.txt', 'username=Max', {option: value} );
+
+
+
+
+--------------------------------------------------
+
+
+
+Entretanto, professor aponta que HÁ AINDA OUTRO PARÂMETRO NECESSÁRIO, É O TERCEIRO/QUARTO PARÂMETRO (dependendo da existência ou não do OBJETO DE OPÇÕES/options object)...
+
+
+ESSE TERCEIRO/QUARTO PARÂMETRO ___DEVE___ OBRIGATORIAMENTE SER UMA __CALLBACK FUNCTION__...
+
+
+
+ESSA CALLBACK FUNCTION POTENCIALMENTE SEGURARÁ __UM ERRO___... um código de erro QUE SERÁ 
+
+EXECUTADO SE __ A FUNÇÃO 'writeFile' __ FALHAR___...
+
+
+
+Com esse código mais abaixo, o professor FAZ O CONSOLE.LOG do ERRO recebido (err)  
+
+
+
+por meio de um CONSOLE.LOG DE 'err'...
+
+
+
+
+Para o 'else case', o professor define um console.log de 
+
+'Wrote to file!', que nos INFORMA QUE O WRITE DEU CERTO...
+
+(ou seja, o código do if block do ERRO SÓ SERÁ EXECUTADO 
+SE O ERRO REALMENTE EXISTIR/ACONTECER.)
+
+
+
+ex:
+
+
+
+
+
+
+
+const fs = require('fs');
+
+
+fs.writeFile('user-data.txt', 'username=Max', err => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('Wrote to file!');
+    }
+} );
+
+
+
+
+------------------------------------------
+
+
+
+COM ISSO, SE AGORA SALVARMOS E EXECUTARMOS O CÓDIGO por meio da escrita de 
+
+'node app.js' NO TERMINAL do IDE, 
+
+veremos, no console:
+
+
+
+PS C:\projeto\MODULO27NODE.JSUMAINTRODUCAO> node app.js
+Hello world!
+isso também funciona
+Wrote to file!
+
+
+
+
+
+MAS NÃO É SÓ ISSO..... SE AGORA 
+
+
+OLHARMOS OS CONTEÚDOS DE NOSSA PASTA, PERCEBEREMOS 
+
+QUE ___UM NOVO ____ ARQUIVO, UM ARQUIVO 'user-data.txt', 
+
+ACABOU 
+
+DE SER CRIADO...
+
+
+
+
+DENTRO DESSE ARQUIVO, É POSSÍVEL VER 
+
+A MENSAGEM 
+
+
+'username=Max' ESCRITA NA PRIMEIRA LINHa 
+( ou seja, SUCESSO)....
+
+
+
+
+
+E É ASSIM A MANEIRA PELA QUAL VOCÊ __ESCREVE__ EM UM 
+
+
+ARQUIVO COM A AJUDA DO NODE.JS...
+
+
+(é bem fácil, mesmo)...
+
+
+
+
+
+É CLARO, DIZ O PROFESSOR, QUE VOCÊ TAMBÉM PODE 
+
+
+LER OS CONTEÚDOS ___NO INTERIOR __ DE UM ARQUIVO__...
+
+(ou seja, PARSEAR UM ARQUIVO)...
+
+
+
+--------------------------------
+
+
+
+PARA FAZER ISSO, VOCÊ DEVE USAR 
+
+
+o objeto file system ('fs') 
+
+
+E O MÉTODO 
+
+'readFile()'.....
+
+
+
+
+READFILE EXIGE ALGUNS ARGUMENTOS:
+
+
+
+
+
+1o argumento ---> O CAMINHO (o 'path') ATÉ O ARQUIVO...  aqui nós usamos o EXEMPLO do 'user-data.txt' DE NOVO...
+
+
+
+
+
+PROFESSOR DIZ QUE PODEMOS ENTÃO PASSAR ALGUNS ARGUMENTOS a mais dentro desse slot....
+
+
+OU, que podemos simplesmente adicionar o 
+
+SEGUNDO ARGUMENTO....
+
+
+
+2o argumento/argumento seguinte aos opcionais -----> O CALLBACK QUE DEVE SER ADICIONADO (é obrigatório)...
+--------------------------> É UMA CALLBACK FUNCTION QUE ACEITA 
+2 ARGUMENTOS ----> primeiro argumento É UMA ___POTENCIAL___ ERROR OBJECT__, um 
+
+OBJETO QUE SERÁ 'UNDEFINED' SE TIVÉRMOS NENHUM ERRO/NENHUM ERRO ACONTECER DURANTE A EXECUÇÃO 
+DO NOSSO CÓDIGO...
+
+
+
+
+ex:
+
+
+
+fs.readFile('user-data.txt', (err, ) => {
+
+})
+
+
+
+---------------------------------------------
+
+
+
+
+JÁ O SEGUNDO ARGUMENTO DESSA FUNÇÃO INTERNA/CALLBACK FUNCTION SERÁ 
+
+___A DATA___ ('the data') QUE NÓS, COM SORTE (hopefully), CONSEGUIREMOS/conseguimos 
+pela execução do código....
+
+
+
+ex:
+
+
+
+const fs = require('fs');
+
+
+
+fs.readFile('user-data.txt', (err, data) => {
+
+})
+
+
+-------------------------------------
+
+
+
+
+DENTRO DO FUNCTION BODY DESSA FUNÇÃO INTERNA/CALLBACK FUNCTION, podemos 
+
+
+CHECAR 
+
+SE NÓS RECEBEMOS UM ERRO (por meio de um if check e do subsequente console.log 
+desse erro)... 
+
+NÓS TAMBÉM ATRIBUÍMOS UM 'return' A ESSA FUNÇÃO; FAZEMOS ISSO PARA QUE 
+A EXECUÇÃO DELA SEJA INTERROMPIDA
+
+
+
+
+ex:
+
+
+
+
+
+const fs = require('fs');
+
+
+
+fs.readFile('user-data.txt', (err, data) => {
+    if (err) {
+        console.log(err);
+        return;
+    } else {
+        console.log(data);
+    }
+})
+
+
+
+
+---------------------------------------
+
+
+
+
+CASO CONTRÁRIO (else block) VAMOS QUERER SABER/SER INFORMADOS 
+
+DE QUE NOSSOS DADOS CONSEGUIRAM/FORAM CAPAZES DE SEREM __LIDOS__...
+
+
+Fazemos isso por meio de um console.log, é claro... um console.log de 'data'..
+
+
+
+AO EXECUTARMOS O SCRIPT de 'app.js' DE NOVO, POR MEIO DO CÓDIGO 
+
+DE 
+
+'node app.js' NO TERMINAL, 
+
+
+OBSERVAMOS O OUTPUT DE 
+
+
+Hello world!
+isso também funciona
+<Buffer 75 73 65 72 6e 61 6d 65 3d 4d 61 78>
+Wrote to file!
+
+
+
+------------------------------
+
+
+
+OU SEJA, NÓS RECEBEMOS O OUTPUT 
+
+
+
+de 'wrote to file!', MAS TAMBÉM RECEBEMOS 
+
+
+O OUTPUT de '<Buffer 75 73 65 72 6e 61 6d 65 3d 4d 61 78>'...
+
+
+
+
+ESSE OUTPUT DE 'buffer' É UM RESULTADO DO console.log de 'data'... 
+
+
+É O RESULTADO DO ___PARSING__ do arquivo 'user-data.txt' PELO 
+
+NODE.JS... 
+
+
+
+
+PROFESSOR EXPLICA QUE É CLARO QUE ESSE 'BUFFER', por si só, NÃO É TÃO ÚTIL...
+
+
+
+MAS SE NÓS CHAMARMOS O MÉTODO '.toString()' EM CIMA DESSA 'data' QUE ESTAMOS REFERENCIANDO NO CONSOLE.LOG (data é, no final das contas, ESSE __BUFFER__ produzido pelo PARSING de 'user-data.txt' PELO NODE.JS...),
+
+
+CONSEGUIREMOS ALGO BEM MAIS ÚTIL; CONSEGUIREMOS O OUTPUT CERTINHO, 
+
+A STRING QUE ESTÁ DENTRO DE 'user-data.txt'...
+
+
+
+
+ex:
+
+
+
+const fs = require('fs');
+
+
+fs.readFile('user-data.txt', (err, data) => {
+    if (err) {
+        console.log(err);
+        return;
+    } else {
+        console.log(data.toString()); ///////EIS O CÓDIGO EM QUESTÃO. 
+    }
+})
+
+
+OUTPUT:
+
+
+
+
+Hello world!
+isso também funciona
+username=Max
+Wrote to file!
+
+
+-----------------------------------------
+
+
+
+
+CERTO, AGORA TEMOS O CONTEÚDO DO OUTPUT  CERTINHO SENDO OUTPUTTADO NO NOSSO TERMINAL...
+
+
+----------------------------
+
+
+
+Portanto, esse é um exemplo de UM APLICATIVO NODE.JS BEM SIMPLES...
+
+
+
+
+---> MAS AQUI NÓS JÁ PUDEMOS OBSERVAR ALGUNS NODE.JS APIs em ação...
+
+
+AO MESMO TEMPO, VIMOS SINTAXE REGULAR JAVASCRIPT, como IF STATEMENTS 
+
+e 'console.logs()' SENDO USADOS 
+
+dentro do NODE.Js...
+
+
+
+
+
+também vimos a 'const' keyword..

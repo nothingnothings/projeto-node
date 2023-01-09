@@ -1,0 +1,798 @@
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+AGORA 
+
+DEVEMOS 
+
+
+TRABALHAR COM 
+
+
+NOSSAS 
+
+SHOP PAGES... --. vamos 
+
+querer 
+
+
+
+
+
+FETCHEAR 
+
+TODOS 
+
+OS NOSSOS 
+
+PRODUCTS,
+
+ESSENCIALMENTE..
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+NOVAMENTE 
+
+
+VAMOS 
+
+ATÉ 
+O 
+
+
+NOSSO PRODUCT MODEL,
+
+
+ONDE VAMOS ESCREVER UM 
+
+METHOD 
+
+que 
+
+
+
+fará 
+
+o 
+
+fetch 
+
+de 
+
+TODOS OS PRODUCTS
+
+
+
+DA COLLECTION 'products'... --> SERÁ UM MÉTODO STATIC,
+
+
+evidentemente (existirá só nessa constructor function)....
+
+
+
+
+
+
+
+
+RECEBI UM ERRO:
+
+
+TypeError: Cannot read property 'find' of undefined
+
+
+
+
+
+
+
+
+https://www.w3schools.com/nodejs/nodejs_mongodb_find.asp
+
+
+
+Find All
+To select data from a table in MongoDB, we can also use the find() method.
+
+The find() method returns all occurrences in the selection.
+
+The first parameter of the find() method is a query object. In this example we use an empty query object, which selects all documents in the collection.
+
+
+
+
+
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mydb");
+  dbo.collection("customers").find({}).toArray(function(err, result) {
+    if (err) throw err;
+    console.log(result);
+    db.close();
+  });
+});
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+OK.... TUDO QUE EU TENTEI NÃO FUNCIONOU...
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE 
+
+DEVEMOS 
+
+
+
+
+
+criar 
+
+
+um method 
+de 
+
+'fetchAll'.... ------> 
+
+
+
+
+
+
+
+ele vai escrever 
+
+
+
+static fetchAll() {
+
+
+
+}
+
+
+
+
+
+
+
+--> ELE NOVAMENTE VAI QUERER 
+
+
+'return db.collection('products').find()' 
+
+
+
+
+
+
+
+(OU SEJA, ESCREVEU EXATAMENTE A MESMA COISA QUE EU...)
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+static fetchAll() {
+
+
+    const db = getDb();
+
+    return db.collection('products').find()
+}
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+'FIND()'
+
+pode ser 
+
+configurado para 
+
+USAR 
+
+UM FILTER...
+
+
+
+-----> poderíamos, por exemplo,
+
+
+
+ENCOTNRAR 
+
+TODOS 
+
+OS 
+
+FILTERS 
+
+
+
+EM QUE 
+
+'title: A book'... ----> É CLARO QUE 
+
+
+EXISTEM FILTERS BEM MAIS COMPLEXOS DO QUE ESSE,
+
+FILTERS 
+
+EXPOSTOS 
+
+
+NO CURSO 
+
+DE 
+
+MONGODB DO PROFESSOR...
+
+
+
+
+
+
+
+----> OK.... AÍ É CLARO QUE 
+
+
+
+QUEREMOS ENCONTRAR TODOS OS PRODUCTS....
+
+-> por isso não vamos passar nenhum 
+
+parâmetro...
+
+
+
+
+
+
+
+
+
+
+-->A COISA CURIOSA SOBRE O 'find',
+
+E A FONTE 
+
+DE MEUS ERROS,
+
+É 
+
+QUE 
+
+
+
+___ O   'FIND ' __NÃO RETORNA IMEDIATAMENTE UMA PROMISE....---> 
+
+
+
+
+
+EM VEZ DISSO,
+
+
+
+a COISA QUE 
+
+
+'find()"
+
+
+RETORNA 
+É 
+
+AQUILO QUE 
+
+CHAMAMOS 
+
+DE 
+
+'cursor',
+
+UM 
+
+
+___CURSOR___... ----> UM CURSOR É UM OBJECT__ 
+
+
+
+
+_______ PROVIDENCIADO __ PELO 'MONGODB'
+
+
+QUE NOS 
+
+__ PERMITE 
+
+'GO THROUGH OUR ELEMENTS/documents'
+
+
+
+_______sTEP BY __ STEP__...  ----> 
+
+
+
+
+vamos 
+
+
+por entre nossos 
+
+documents 
+
+'etapa por etapa'... ---------> ISSO 
+
+
+PQ, TEORICAMENTE,
+
+
+_'find()'
+
+
+PODERIA ___ RETORNAR 
+
+
+
+MILHÕES DE DOCUMENTS,
+
+
+E VOCÊ 
+
+__NÃO VAI QUERER __ 
+
+
+FAZER TRANSFER DE __TODOS ELES_ _ 
+
+
+AO LONGO DO 'FIO' 
+
+
+_ TUDO DE UMA VEZ.... -----> É POR ISSO QUE 
+
+
+
+
+O 'FIND'
+
+NOS DÁ UM 
+
+'HANDLE',
+
+handle 
+
+COM O QUAL
+ 
+ PODEMOS 
+
+
+ DIZER AO 
+
+ MONGODB 
+
+
+
+
+ '''OK,
+
+
+
+ ME DÊ O PRÓXIMO DOCUMENT... OK, ME DÊ O PRÓXIMO DOCUMENT,
+
+
+ OK ME DÊ O PRÓXIMO DOCUMENT''',
+
+
+ várias e várias vezes... --------> 
+
+
+
+
+
+
+ ISSO INÚMERAS VEZES... --->  AINDA ASSIM,
+
+
+
+
+
+ PROFESSOR DIZ QUE 
+
+
+
+ __ HÁ UM MÉTODO QUE FAZ 'OVERRIDE' DESSA NECESSIDADE DO HANDLE,
+
+
+ e 
+
+
+
+ que 
+
+ __ TE DEIXA__ PEGAR TODOS ___OS 
+
+ 'documents' 
+
+ em 
+
+ 1 collection MESMO ASSIM.... --> 
+
+
+
+ O 
+
+ MÉTODO 
+
+
+
+ QUE ELE ESTÁ MENCIONANDO É 
+
+
+
+
+ '.toArray()'... -->  _____ESSE MÉTODO FAZ COM QUE TODOS OS DOCUMENTS NAQUELA 
+
+ COLLECTION __ SEJAM__ TRANSFORMADOS__ EM UM 
+
+ JAVASCRIPT ARRAY....
+
+
+
+
+
+
+
+
+ É POR ISSO QUE NOSSO CÓDIGO FICA ASSIM:
+
+
+
+
+ static fetchAll() {
+
+     return db.collection('products').find().toArray();
+ }
+
+
+
+
+
+ --> MAS É CLARO QUE VOCê __ SÓ DEVE USAR__ ESSE METHOD AÍ,
+
+ o 
+
+
+ 'toArray()'
+
+
+
+ ______ SE VOCê __ SABE, TEM CERTEZA,
+
+
+ QUE ___ VOCÊ 
+
+ ESTARÁ TRABALHANDO COM 
+
+ APENAS 
+
+
+
+ UMAS DÚZIDAS, TALVEZ 100 DOCUMENTS... 
+
+
+
+
+
+-----> quando você tem collections maiores 
+
+do que 
+
+
+CEM DOCUMENTS,
+
+a alternativa melhor, superior a escrever '.find().toArray()' para fazer 
+
+fetch dessas coisas,
+
+
+
+PASSA A SER 
+
+
+A FEATURE DA 'PAGINATION',
+
+QUE É ALGO QUE 
+
+IMPLEMENTAREMOS __EM UM MOMENTO POSTERIOR,
+
+
+NESTE CURSO...
+
+
+
+
+
+
+
+
+
+
+
+
+ OK.... MAS MESMO COM TUDO ISSO,
+
+
+ AINDA RECEBO UM ERRO:
+
+
+
+ TypeError: db.collection(...).find(...).then is not a function......
+
+
+
+
+
+
+
+
+
+ ---> OK.... COM ISSO,
+
+
+
+ 
+
+ VAMOS REALMENTE RECEBER UMA PROMISE,
+
+
+ e aí 
+
+
+ PODEMOS 
+
+
+ COLOCAR OS CLÁSSICOS 
+
+
+ then e catch blocks 
+
+
+
+ terminando 
+
+ essa operação..
+
+
+
+
+
+
+
+
+ OK.... TERMINAMOS TUDO ISSO, E O CÓDIGO FICA ASSIM:
+
+
+   static getProducts() {
+
+
+    const db = getDb();
+
+
+     return db.collection('products').find()
+     .then(   
+
+      (products) => {
+                  console.log(products);
+                  return products;
+            }
+          )
+          .catch(
+            (err) => {
+              console.log(err);
+            }
+          )
+
+
+
+
+
+
+
+
+
+-----> MAS 
+
+
+NOSSO 
+
+
+CÓDIGO AINDA NÃO FUNCIONA,
+
+
+RECEBEMOS ESTE ERRO:
+
+
+
+
+
+TypeError: db.collection(...).find(...).then is not a function
+
+
+
+
+
+
+
+
+
+
+
+------->  O PROFESSOR 
+
+
+ESCREVE 
+
+
+
+
+
+
+'Product.getProducts(
+
+).then
+(
+    (products) => {
+
+
+        CÓDIGO DE RENDER....
+    }
+)
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO DO PROFESSOR FUNCIONOU, SÓ O NOSSO QUE ESTÁ DANDO PROBLEMA...
+
+
+
+
+
+
+
+
+--> É PQ EU HAVIA ESQUECIDO O 
+
+
+'.toArray()'
+
+em
+
+
+
+'db.collection('products').find().toArray().then()'....
+
+
+
+
+
+
+
+
+
+--> OK, FUNCIONOU...
+
+
+
+
+
+USAMOS ESSE MESMO CÓDIGO EM 
+
+'admin products'...
+
+
+
+
+
+
+
+
+
+
+----> OK... AGORA PRECISAMOS DA PAGE DE 'PRODUCT DETAIL',
+
+
+etc....
+
+
+
+
+
+
+--. O PROFESSOR DIZ QUE 
+
+AGORA 
+
+
+QUER 
+
+
+MUDAR 
+
+
+ALGO EM NOSSAS 
+
+
+'VIEWS',
+
+ALGO QUE TEM 
+
+A VER COM A  MANEIRA
+ 
+ PELA QUAL 
+
+ TRABALHAMOS COM NOSSOS 
+
+ IDs,
+
+
+ MAS ISSO É ALGO QUE VEREMOS NA PRÓXIMA LIÇÃO...

@@ -1,0 +1,698 @@
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... COMEÇAMOS COM O DENO,
+
+E HAVÍAMOS ESCRITO ESTE CÓDIGO ------ 
+
+
+
+
+
+
+
+
+--->MAS O PROFESSOR DIZ
+
+QUE 
+
+vai trocar de volta suas extensions,
+
+
+colocar DE VOLTA O 'DENO', a extensão que buga tudo, que volta a ficar 'enabled'...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> AÍ ELE DIZ QUE DEVEMOS CONTINUAR O DEVELOPMENT COM O DENO...
+
+
+
+
+
+
+--> PARA ENTENDER MAIS SOBRE ELE, TEMOS QUE 
+
+
+SABER 
+
+
+MAIS _ SOBRE__ COMO ELE É __ORGANIZADO__..
+
+
+
+
+
+
+
+
+
+
+----> COMO CÓDIGO DENO E FEATURES SÃO ORGANIZADOS?
+
+ 
+
+
+
+
+
+
+
+
+ 1) TEMOS AQUELES 'NAMESPACE APIs' do denO...--> SÃO BASICAMENTE 
+
+
+ 'BUILT-IN UTILITIES' ,
+
+ integradas ao DENO...
+
+
+
+ SÃO CORE FUNCTIONALITIES BUILTIN EM 
+
+
+ UTILITY FUNCTIONS.... --> são coisas como 'setTimeout' 
+
+
+e 'writeFile'.....
+
+
+
+
+
+
+--> SÃO AS CORE APIs que vemos 
+
+no 
+
+'deno doc' website...
+
+
+
+
+
+
+
+
+2) TEMOS A  'STANDARD LIBRARY' DO DENO -------> ESSA LIBRARY STANDARD __ É UM 
+
+'SET DE MODULES'
+
+OS QUAIS__ VOCÊ 
+
+TEM QUE 
+
+
+__IMPORTAr__ NAS SUAS FILES PARA_ CONSEGUIR UTILIZAR,
+
+MAS QUE 
+
+_aINDA SÃO 'MAINTAINED' 
+
+PELA 
+
+TEAM DO DENO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR FIM, TEMOS 3:
+
+
+
+
+
+
+3) THIRD PARTY LIBRARIES --> LIBRARIES 
+
+
+DE TERCEIROS,
+
+MANTIDAS PELA __ _COMUNIDADE__...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM... AS 'DENO NAMESPACE APIs'
+
+
+
+SÃO _ ESTÁVEIS,
+
+
+
+
+__ POR ISSO NÃO VÃO MUDAR MUITO MAIS .... -> TAMBÉM SÃO __ ESTÁVEIS__ E 'MAINTAINED BY CORE TEAM'....
+
+
+
+
+
+
+
+
+
+
+--> 2) STANDARD LIBRARY --> TAMBÉM SÃO 'MAINTAINED PELA TEAM',
+
+
+
+MAS __ NÃO _ SÃO 'STABLE '-------> ISSO SIGNIFICA QUE 
+
+
+ALGUMAS FEATURES/COISAS NESSES MODULES PODEM __ MDUAR_ AO LONGO DO TEMPO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+3) third party libraries ---> SÃO MANTIDAS POR DIFERENTES EQUIPES,
+
+
+
+E NÃO PELA TEAM DENO OFICIAL --> A MATURITY E STABILITY 
+
+
+_ VARIAM_ MT... ->  ALGUMAS SAÕ MT NEW/PROTOTÍPICAS, AO PASSO QUE 
+
+OUTRAS 
+
+SÃO 
+
+
+MT MAINTAINED E SÃO HIGHLY STABLE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1) ---> AS NAMESPACE APIS __ não _ requrem 
+
+IMPORTS/INSTALLATIONS __ PARA 
+
+
+SEREM UTILIZADAS..(
+
+
+    isso é visto com 
+
+
+
+    o código de 
+
+    'Deno.writeFile()',
+
+
+
+    ESSE METHOD DE 'WRITEFILE,'
+
+
+
+
+    QUE PODE    SER USADO __ OUT OF THE BOX,
+
+    coisa que não 
+
+    ocorre com o 
+
+    'writeFile' 
+
+
+
+    do NODE__, 
+
+
+    QUE __ TE OBRIGA A IMPORTAR AQUELE CORE MODULE DE 'fs'...
+)
+
+
+
+
+
+
+
+
+
+
+---------------------------- FILE SYSTEM API DO NODE- ->p recisamos 
+
+
+do código de 
+
+
+
+'const fs = require('fs')' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> MAS SE FORMOS UMA ETAPA ALÉM,
+
+
+
+
+PARA CHEGARMOS 
+
+
+NO 'STANDARD LIBRARY',
+
+
+
+
+veremos que 
+
+
+__tAMBÉM__ VAMOS PRECISAR __ IMPORTAR ALGUNS MODULES, NO DENO,
+
+PARA 
+
+
+NOS TORNARMOS CAPAZES DE USAR ALGUMAS FEATURES...
+
+
+
+
+
+
+(
+
+
+    nós ainda NÃO PREICSAMOS ISNTALAR 
+
+    COISA ALGUMA NO 'DENO',
+
+
+    MAS __ VAMOS TER QUE IMPORTAR....
+)
+
+
+
+
+
+
+
+OBS::: COMO VOCÊ JÁ DEVE TER PERCEBIDO,
+
+'INSTALLATION' DE SCRIPTS __ NÃO É UMA COISA/NÃO EXISTE PRESENCIALMENTE 
+
+
+
+NO MUNDO DO 'DENO SCRIPTS'.... --> em vez disso,
+
+você 
+
+
+SÓ TEM __IMPORTS (tanto da standard library como das third party) 
+
+
+
+E AS 'namespace apis' (que já existem OUT OF THE BOX)...
+
+
+
+
+
+
+
+
+-------> MAS PRECISAMOS INSTALAR ESSAS LIBRARIES 
+
+
+PARA 
+
+
+SER POSSÍVEL AS UTILIZAR....
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS AÍ SURGE A PERGUNTA:
+
+
+
+
+'O QUE SÃO 
+
+
+STANDARD LIBRARIES, E QUAL É O EQUIVALENTE 'NODE' 
+
+
+DELAS?'
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NA PÁGINA DO DENO.LAND,
+
+
+
+temos 
+
+
+a opção 'standard library' --> SÃO UM MONTE DE PAKCAGES
+ 
+
+ QUE 
+
+
+
+
+'BUILD UPON THE CORE APIS/runtime APIS',
+
+
+E QUE 
+
+
+fazem ALGUMAS COISAS 
+
+SEREM MAIS __ FÁCEIS__ DE SEREM _ UTILIZADAS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ PODE/PODERIA __ CONSTRUIR __ QUALQUER TIPO DE APP __ SÓ 
+
+
+
+COM 
+
+
+AS 
+
+'CORE RUNTIME APIs'.... -----> mas fica bem mais fácil 
+
+
+
+se você 
+
+
+
+USAR ALGUNS 'STANDARD LIBRARY MODULES',
+
+
+
+
+OU ATÉ MESMO ALGUNS 'THIRD PARTY MODULES',
+
+
+
+
+
+
+
+PQ 
+
+
+
+ESSAS 2 MODALIDADES DE 'MODULES'
+
+
+fazem 'BUILD UP' sobre 
+
+essas CORE APIs 
+
+
+
+PARA 
+
+DEIXAR 
+
+
+
+O WRITE DE ALGUMAS COISAS __ BEM MAIS FÁCIL... 
+
+
+
+(
+
+    ex: 
+    
+
+    'LISTENING TO INCOMING REUQESTS' --> há standard e third party libraries que FACILITAM ESSA FUNCIONALIDADE...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... ESSA É TODA A IDEIA POR TRÁS DISSO... -> A STANDARD LIBRARY 
+
+
+FAZ O 
+
+TRABALHO COM ESSES APIs ser bem mais fácil...
+
+
+
+
+
+
+
+
+
+
+-----> AS THIRD PARTY LIBRARIES TBM N PEDEM QUE VOCÊ AS INSTALE,
+
+mas PEDEM QUE 
+
+VOCÊ 
+
+
+
+AS IMPORTE NOS ARQUIVOS script _PARA SEREM UTILIZADAS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK...   MAS QUANTOS 
+
+
+DESSES 
+
+
+'RUNTIME APIS' (namespace apis)
+
+
+
+
+EXISTEM?
+
+
+
+
+
+
+
+POUCOS....
+
+
+
+
+
+
+
+
+
+
+'''a small set of low-level core functionalities'''''... ----> ISSO SIGNIFICA QUE 
+
+
+
+
+
+SIM, É POSSÍVEL CONSTRUIR ''QUALQUER COISA''' COM ESSAS APIs,
+
+mas seria uma bosta,
+
+
+
+mt cumbersome... -----> E É EXATAMENTE POR ISSO QUE 
+
+
+TEMOS 
+
+ 
+
+
+
+ AS STANDARD E THIRD PARTY LIBRARIES, OS 'MODULES',
+
+
+ QUE 
+
+
+ __CONSTROEM A PARTIR DESSAS APIs,
+
+
+ para fazer a integração de certas features BEM MAIS FÁCIlL....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> é por isso que 
+
+
+ DEVEMOS 
+
+
+
+ AVANÇAR 
+ E USAR 
+
+ ALGUMAS 
+
+ DESSAS STANDARD LIBRARIES,
+
+
+ para então ver OUTRO ASPECTO IMPORTANTE DO DENO:
+
+
+
+
+
+
+
+ *** COMO INTEGRAMOS OUTROS MODULES AO NOSSO 'DENO CODE'?
+
+
+
+
+
+
+
+
+
+
+ --> veremos isso na próxima aula,
+  
+
+
+  em 
+
+
+  'USING A/THE STANDARD LIBRARY'....

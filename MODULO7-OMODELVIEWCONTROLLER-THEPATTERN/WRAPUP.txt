@@ -1,0 +1,252 @@
+ACABAMOS COM ESTE MÓDULO...
+
+
+
+
+
+
+
+
+
+
+
+--> APRENDEMOS SOBRE 
+
+
+
+O PATTERN FUNDAMENTAL
+
+
+ 
+
+ DO MVC...
+
+
+
+
+
+
+
+
+
+
+ MODEL ----> PAPÉIS:
+
+
+
+
+
+
+
+ 1) RESPONSÁVEL POR __ REPRESENTAR_ NOSSA DATA__ no código....
+
+
+
+ 2) RESPONSÁVEL PELO __ MANAGE DE SUA DATA (saving, fetching, etc... __GERALMENTE OPERAÇÕES ASSÍNCRONAS....)...
+
+
+ 3) O MODEL É SEMPRE MEIO PARECIDO, NÃO INTERESSA SE VOCê VAI FAZER MANAGE DE SUA DATA NA MEMÓRIA DO APP, OU EM ARQUIVOS OU EM DATABASES...
+        (O MODEL É SEMPRE RESPONSÁVEL POR SUA DATA, não interessa o formato do storage..
+        )
+
+
+4) CONTÉM TODA A LÓGICA 'DATA-RELATED'...
+
+
+
+
+
+
+
+
+
+
+
+
+VIEW --> PAPÉIS:
+
+
+
+
+1) RESPONSÁVEL POR 'AQUILO QUE O USER VÊ'...
+
+
+
+
+
+
+2) NÃO DEVE CONTER __MUITA__ LÓGICA__.... (handlebars... templating engine que nos FORÇAVA A NÃO COLOCAR MT L´GICA NO TEMPLATE) --> a exceção é O  PUG....
+
+        com o EJS, VOC~E PODE COLOCAR MAIS LÓGICA NO VIEW, mas a moral 
+
+        é que você deve 'FIND YOUR OWN PERSONAL BALANCE'.... --> ALGUMAS PESSOAS QUEREM 
+
+        TER UM APPROACH TOTALMENTE PURA , outras (como o professor)
+        gostam 
+
+        de ter 1
+        pouquinho de lógica nos templates.... mas sua lógica 
+
+        n pode 
+
+        ficar mt 
+
+        nos templates... -------> SUA LÓGICA DEVE FICAR ___ MAJORITARIAMENTE NO MODEL,
+
+        e 'PARTLY' no ___CONTROLLER/CONTROLLERS...  ---> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONTROLLER ---> PAPÉIS:
+
+
+
+
+
+1) DEVE __ CONECTAR _ O 'MODEL' E AS 'VIEWS'... -----> 
+
+
+ELE DEVE ___ RENDERIZAR AS __ VIEWS, __ LEVANDO EM CONSIDERAÇÃO A DATA OBTIDA 
+
+POR MEIO DO 'MODEL' (operations and data management in the MODEL...)
+
+
+
+
+2) O PAPEL PRINCIPAL DO CONTROLLER 
+É 
+
+'MAKE SURE THAT THE VIEW AND MODEL CAN COMMUNICATE IN __BOTH __ DIRECTIONS'...  
+
+
+-----> 
+
+
+VAMOS QUERER 
+
+'GET THE DATA FROM A TO B' (ou B to A)
+
+
+
+
+
+
+
+COMO ASSIM, 'BOTH DIRECTIONS'?  -----> 
+
+
+
+EX:
+
+
+
+'FROM B TO A '---> DO VIEW AO __ MODEL ---> exemplo perfeito são FORMS... --> FORMS VAO ENVIAR A DATA CAPTADA NO VIEW AO ___ MODEL__....
+
+
+
+
+'FROM A TO B' ----> VAMOS _REPRODUZIR A DATA OBTIDA/HANDLADA NO MODEL (Data de arquivos/databases) ___LÁ NO NOSSO VIEW, view que é então RETURNED TO THE USER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK, ESSE É O PADRÃO MVC... ---> PROFESSOR VAI CONTINAUR 
+
+
+
+
+TRABALHANDO COM ESSE PADRÃO...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE AINDA PODEMOS TRABALHAR BASTANTE COM NOSSO MODEL,
+
+PQ 
+
+AINDA 
+
+
+ESTAMOS 
+
+TRABALHANDO COM UMA LISTA DE FEATURES BEM LIMITADA...
+
+
+
+
+
+
+
+-----> ATÉ MESMO NOSSO 'product',
+
+
+ELE É 
+
+APENAS 
+
+1 ÚNICO 'FIELD'
+
+
+
+
+até agora...
+
+
+
+
+
+---> PODEMOS FAZER MAIS COISAS COM NOSSO MODEL....
+
+
+
+
+
+
+
+--> O PRÓXIMO MÓDULO SERÁ SOBRE O TRABALHO COM NOSSO 
+
+PROJETO,
+
+
+
+
+
+___ E AÍ PRATICAR TODAS AS COISAS QUE APRENDEMOS ATÉ AGORA... tbm vamos adicionar 
+
+databases,
+
+mais tarde...
+
+
+

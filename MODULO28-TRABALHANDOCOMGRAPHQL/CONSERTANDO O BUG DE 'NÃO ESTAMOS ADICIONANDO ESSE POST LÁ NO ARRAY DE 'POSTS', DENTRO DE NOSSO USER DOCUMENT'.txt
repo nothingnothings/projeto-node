@@ -1,0 +1,666 @@
+    user.posts.push( //não está funcionando, no GRAPHQL world... --> professor diz que nós REALMENTE FIZEMOS 'push' do array aqui, mas que nós NUNCA 'SAVED THAT CHANGE'... (ué, mas eu salvei logo abaixo...).
+            {
+                postId: ObjectId(post._id),
+              }
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+         --> isso ainda não está funcionando... não estou entendendo a razão disso.... -> (talvez 
+         
+         
+         
+         seja 
+         
+         
+         
+         
+         pq 
+         
+         
+         nosso 
+         
+         
+         
+         MODEL MONGOOSE não está 
+         
+         
+         com 
+
+         uma definição adequada desse array de 'Posts'...
+         
+         )
+
+
+
+
+
+        OK, MAS E SE EU TENTASSE EXECUTAR ESTA FUNÇÃO AQUI:
+
+
+        userSchema.methods.addPost = function(post) {
+  const updatedPosts = [...this.posts];
+
+  updatedPosts.push({
+    postId: ObjectId(post._id),
+  });
+
+  this.posts = updatedPosts;
+
+  this.save();
+};
+
+
+
+
+
+?
+
+
+
+
+
+--> vamos tentar....
+
+
+
+
+
+--> esse bug está acontecendo pq meu 'User' está aparecendo como 'null' (não sei a razão disso.... talvez o id errado?)
+
+
+
+
+
+
+
+
+
+--> o '_id' do user que fica armazenado na token fica __ ERRADO___ (fica diferente do _id que existe no document de 'user'....)... não sei a razão disso....
+
+
+
+
+
+
+
+
+
+
+
+--> ok... consegui ABRIR o debugger... não foi fácil... 
+
+
+
+(quando aparece 'debugger attached', você já pode usar normalmente...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI... ERA 
+
+
+
+
+
+a propriedade 'userId' 
+
+
+lá 
+
+
+
+em 
+
+
+
+'''
+
+
+
+  req.userId = decodedToken._id; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+  
+  req.isAuth = true; ////diferente de nosso 'is-auth.js' (mundo REST API) --> essa propriedade NAÕ EXISTE NA VERSÃO 'REST API'...
+
+  next(); ///após armazenar o userId no request, fazemos forward do request, para que continue com o flow do runtime, para que alcance os controllers como o de 'getPosts'...
+
+
+
+
+  ''',
+
+
+
+
+
+
+
+
+  QUE DEVERIA ESR 
+
+
+  'decodedToken._id',
+
+
+  E NÃO 
+
+  'decodedToken.userId'....
+
+
+
+
+
+  ---------------------
+
+
+
+  CERTO... 
+
+
+
+consertamos nosso código, essencialmente...
+
+
+
+
+
+
+
+
+------------------
+
+
+
+
+
+
+
+
+
+--> AGORA O PROFESSOR EXPLICA QUE 
+
+VAMOS QUERER 
+
+
+
+
+
+
+
+QUE __ TAMBÉM __ cONSIGAMOS __ EXTRAIR_  A DATA DOS 'POST'
+
+
+CORRETAMENTE 
+
+LÁ 
+
+
+NO FRONTEND,
+
+PARA QUE 
+
+TAMBÉM
+
+
+
+
+CONSIGAMOS VER TODOS OS POSTS (load all posts)....
+
+
+
+
+
+
+
+
+
+
+
+--> PARA A DATA EXTRACTION DAQUELE ÚNICO POST QUE CRIAMOS,
+
+
+PERCEBEMOS QUE 
+
+o 
+
+
+formato 
+
+em que 
+
+recebemos 
+
+
+essa data é assim:
+
+
+
+
+
+{
+
+    data: {
+        createPost: {
+            _id: ...,
+            title: ...
+
+        }
+    }
+}
+
+
+
+
+
+----------------------
+
+
+ESSA É A SUBDIVISÃO, EM OUTRAS PALAVRAS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI... FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+     createPost: async function(args, req) {    
+
+
+        console.log(req.isAuth, 'LINESAHDSUU');
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+
+        const errors = [];
+
+
+        if (validator.isEmpty(args.userInput.title) || !validator.isLength(args.userInput.title, {min: 6})) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'Please insert a valid title, with more than 6 characters.'})
+        }
+
+
+        if (validator.isEmpty(args.userInput.content) || !validator.isLength(args.userInput.content, {min: 6})) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Please input valid content, with more than 6 characters.'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+        
+
+        // console.log(args.userInput);
+
+        console.log(req.userId, 'LINEdzxc');
+
+
+        const post = new Post({
+            title: args.userInput.title,
+            content: args.userInput.content,
+            imageUrl: args.userInput.imageUrl, ///talvez o mesmo funcionamento do Multer?
+            creator: {
+                userId: ObjectId(req.userId) ///extraído do TOKEN, que vai ter ficado armazenado no request object....
+            },
+            //updatedAt e createdAt vão ser criados/addados __ AUTOMATICAMENTE PELO MONGOOSE, por conta de 'timestamps: true'. Mesma coisa com '_id' desse post....
+        });
+
+
+        const savedPost = await post.save();
+
+
+        console.log(savedPost, 'LINE');
+
+        // console.log(ObjectId(req.userId));
+        
+     const user = await User.findOne({ _id: ObjectId(req.userId) });
+
+
+     console.log(user, 'LINESAFASF');
+
+
+     if (!user) {
+         const error = new Error('Invalid user.');
+         error.code = 401;
+         throw error;
+     }
+
+        // user.posts.push( //não está funcionando, no GRAPHQL world... --> professor diz que nós REALMENTE FIZEMOS 'push' do array aqui, mas que nós NUNCA 'SAVED THAT CHANGE'... (ué, mas eu salvei logo abaixo...).
+        //     {
+        //         postId: ObjectId(post._id),
+        //       }
+        // );
+
+
+        // user.addPost(post);
+
+        user.posts.push(
+            {
+                postId: ObjectId(post._id)
+            }
+        )
+
+    const savedUser = await user.save();
+
+
+    console.log(savedUser.name, 'LINE22');
+
+
+    console.log(post);
+
+        return {
+            post: {
+                ...savedPost._doc,
+                _id: savedPost._id.toString(), //para evitar o return do id do post NA FORMA DE UM OBJETO, vamos OVERWRITTAR O VALOR DESSE ID OBJETO POR SUA FORMA 'string'....
+                createdAt: savedPost.createdAt.toISOString(), //mesma coisa; o formato 'DATE TYPE', usado pelo mongoose, NÃO É RECONHECIDO PELA GRAPHQL API __ COMO __ SENDO UMA VALID STRING (String!), por isso temos que o converter por meio de 'toISOString()'...
+                updatedAt: savedPost.updatedAt.toISOString(),
+                creator: {
+                    name: savedUser.name
+                }
+            },
+            creator: {
+                _id: savedUser._id.toString(),
+                name: savedUser.name
+            }
+        }
+
+
+     }
+
+
+}
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+meu objeto retornado por esse 
+
+
+
+
+query é ESTE:
+
+
+
+{data: {…}}
+
+
+
+data:
+createPost:
+creator:
+name: "exemplo"
+_id: "61c226e059e2a83ca0171acc"
+[[Prototype]]: Object
+post:
+content: "FASFASSFASa"
+createdAt: "2021-12-21T19:42:25.426Z"
+creator: {name: 'exemplo'}
+imageUrl: "Dummy"
+title: "asffasasfAS"
+updatedAt: "2021-12-21T19:42:25.426Z"
+_id: "61c22e2132011b55a99e300c"
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+O PROFESSOR EXPLICA QUE É EXATAMENTE ASSIM QUE DEVEMOS 'RETRIEVE' A NOSSA DATA...
+
+
+
+
+
+
+
+
+
+
+
+
+(ou seja,
+
+
+PODEMOS __ SELECIONAR QUAIS PEDAÇOS DE DATA VAMOS QUERER RETRIEVAR 
+
+
+
+EM UMA QUERY; ESSA É A VANTAGEM DO GRAPHQL...
+
+)
+
+
+
+
+
+
+
+--> ok... agora basta ajeitar o 
+
+
+
+
+código frotend para 
+
+
+
+CONSEGUIR EXTRAIR 
+
+ESSA DATA 
+
+
+
+
+
+QUE RECEBEMOS 
+
+
+DO BACKEND....
+
+
+
+
+
+
+
+
+PARA ISSO, ALTEREI O CÓDIGO DO 'Feed.js',
+
+E DEIXEI BASICAMENTE ASSIM:
+
+
+      const post = {
+        _id: manipulatedEditAndAddResults.data.createPost.post._id,
+        title: manipulatedEditAndAddResults.data.createPost.post.title,
+        content: manipulatedEditAndAddResults.data.createPost.post.content,
+        creator: manipulatedEditAndAddResults.data.createPost.post.creator,
+        createdAt: manipulatedEditAndAddResults.data.createPost.post.createdAt,
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... AGORA PRECISO ESCREVER ALGUM CÓDIGO DE 'getAllPosts',
+UMA 
+
+
+QUERY, NO NOSSO FLOW DE CÓDIGO,
+
+QUE FAÇA COM QUE 
+
+TODOS 
+
+OS POSTS 
+
+
+DE NOSSO APP, 
+
+NA NOSSA DATABASE,
+
+SEJAM FETCHEADOS....
+
+
+
+
+
+
+
+--> para isso, vou criar um NOVO MÉTODO lá em 'resolvers.js'....
+
+
+
+
+
+
+
+
+
+
+--> é o método 'getPosts'... --> é claro que 
+
+
+esse 
+
+código COMEÇA SIMPLES,
+
+MAS AINDA PRECISAMOS ADICIONAR PAGINATION, E UM MONTE DE OUTRAS FEATURES....
+
+
+
+
+
+
+
+
+
+
+
+
+--> não estou conseguindo retornar a 'LIST' dos posts... 
+
+
+
+
+
+---> MINHA QUERY HAVIA FICADO ASSIM:
+
+
+
+
+
+      const graphqlQuery = {
+//só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+        query: `
+        {
+          getPosts(pageNumber: ${page}) {
+            posts
+            page
+            totalItems
+          }
+        } 
+        `
+      }
+
+
+
+
+
+
+
+--> mas isso NÃO DEU CERTO.... (os 'posts' não chegam em um array...)
+
+
+
+
+
+
+
+
+
+
+
+--> devo ver a PRÓXIMA AULA...

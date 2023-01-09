@@ -1,0 +1,1214 @@
+
+
+
+
+
+
+
+BEM, AO LONGO DESSE CURSO NÓS APRENDEMOS SOBRE COMO PODMOES __ PROCESSAR__ REQUESTS __ COM 
+
+O 
+
+NODEJS....
+
+
+
+
+
+
+
+
+
+
+
+
+------> E TAMBÉM VIMOS QUE 
+
+
+ISSO 
+
+NÃO É MT LEGAL SE VOCÊ TENTAR FAZER TUDO ISSO POR CONTA PRÓPRIA,
+
+
+
+
+SEM __ UM FRAMEWORK PARA TE AJUDAR (como o EXPRESS)....
+
+
+
+
+
+
+
+
+O SEU CÓDIGO FICA UM PESADELO,
+
+
+
+
+
+
+
+
+
+no caso do node...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> NO CASO DO DENO,
+
+SE VOCÊ USAR SÓ OS CORE APIS (standard library),
+
+
+VOCÊ 
+
+TERIA QUE 
+
+FAZER 
+
+TODO 
+
+
+ O REQUEST PROCESSING,
+
+
+
+ BODY PARSING,
+
+ TUDO MAIS,
+
+ POR CONTA PRÓPRIA.... -----> 
+
+
+ E ISSO 
+
+
+ É UM SACO,
+
+ É UMA BOSTA ------> 
+
+
+
+
+
+ EM VEZ DISSO,
+
+ O MAIN TAKEAWAY,
+
+ É QUE 
+
+ TIPICAMENTE 
+
+ NÃO VAMOS QUERER 
+
+
+ FAZER ISSO POR CONTA PRÓPRIA... --> em vez disso,
+
+ vamos querer 
+
+ usar 
+
+
+ alguns frameworks 
+
+ QUE 
+
+
+
+FAZEM O HEAVY LIFTING PARA NÓS,
+
+
+FAZEM 
+
+O 
+
+
+'BODY PROCESSING' PARA NÓS,
+
+
+
+
+
+
+
+e que 
+
+deixam 
+
+
+nós focarmos na nossa CORE BUSINESS 
+
+LOGIC...
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+----> 2 TIPOS DE WEB APPS QUE CONSTRUÍMOS:
+
+
+
+
+
+
+1) API APPs...  --> PROVIDENCIAM 'ENDPOINTS' (que são URLS + HTTP METHODS), que RETORNAM DATA (DATA EM FORMATO JSON)...
+
+
+
+--> TEMOS UM 'STANDALONE FRONTEND', QUE SE COMUNICA COM A API  (mobile apps, single page web apps) QUE __ FAZEM __ QUERIES__ NA API....
+
+
+
+
+
+
+2) SERVERSIDE RENDERED VIEWS  ----> PROVIDENCIAM 'ENDPOINTS' (URLS + HTTP METHODS __ LIMITADOS) que retornam __ VIEWS__  
+
+
+
+
+--> frontend e backend são 'ONE UNIT', são inseparáveis...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> É ISSO QUE APRENDEMOS DURANTE O CURSO... --> VIMOS TEMPLATING ENGINES 
+
+
+E 
+
+REST APIS....
+
+
+
+
+
+
+
+
+--> E VOCÊ PODE USAR NODE PARA TODO TIPO DE APPS... --> VOCÊ TAMBÉM PODE 
+
+
+
+FAZER SERVE DE SERVERSIDE RENDERED VIEWS com o DENO,
+
+
+
+E VOCÊ TAMBÉM PODE CONSTRUIR APIs com o DENO...
+
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR VAI FOCAR EM APIs nesse módulo pq isso é SIMPLESMENTE MAIS FÁCIL,
+
+E PQ 
+
+ISSO 
+DEIXA O PROFESSOR FOCAR UM POUCO MAIS NO __ DENO__, 
+
+
+e não 
+
+
+
+EM COISAS OVERHEAD,
+
+COMO TEMPLATING ENGINES...
+
+
+
+
+
+
+
+
+-> MAS VOCê PODE CONSTRUIR QAUQLEUR COISA COM O DENO,
+
+E ISSO É IMPORTANTE...
+
+
+
+
+
+
+
+
+
+
+----> NÃO INTERESSA O QUE VOCÊ ESTÁ CONSTRUINDO; 
+
+
+VOCÊ NUNCA VAI QUERER FAZER ESSE 'BODY PARSING' 
+
+
+POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+--> VAMOS VER OS FRAMEWORKS USADOS COM O DENO, E COMO ELES FUNCIONAM...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> EXPRESS --> É O FRAMEWORK MAIS USADO COM NODE,
+
+
+USADO PARA FAZER O HEAVY LIFTING..
+
+
+
+
+
+
+
+
+
+------> com o deno,
+
+TEMOS O 'OAK'... 
+
+
+
+
+
+
+
+
+
+--> OAK FRAMEWORK --> COMO O EXPRESS,
+
+
+ELE É UM 'MIDDLEWARE-FOCUSED DENO FRAMEWORK'
+
+
+,
+
+USADO 
+
+PARA 
+
+BUILDAR WEB APPLICATIONS -----------> E ELE É __ PARECIDO_ _ COM 
+
+
+
+O 
+
+
+
+
+EXPRESS.... ------> MAS O 
+
+
+OAK 
+
+
+
+NÃO É DIRETAMENTE INSPIRADO PELO EXPRESS,
+
+
+
+e sim 
+
+pelo 
+
+
+
+'KOA',
+
+
+ 
+
+
+ QUE É UM 
+
+
+
+ FRAMEWORK QUE EXISTE PARA O NODEJS,
+
+ mas que 
+
+ O PROFESSOR 
+
+
+
+
+ NÃO NOS ENSINOU DURANTE ESSE CURSO....
+
+
+
+
+
+
+
+
+
+
+ KOA --> É UM 'NEXT-GEN FRAMEWORK PARA O NODEJS' 
+
+
+
+
+
+
+
+
+
+ --> A IDEIA DO KOA É BASICAMENTE SER UM 'EXPRESS MELHOR'...
+
+
+
+
+
+
+
+
+
+
+ --> SE VOCÊ CHECAR OS DOCS,
+
+ VERÁ 
+ QUE 
+
+ É 
+
+ MIDDLEWARE-BASED,
+
+
+ QUE 
+ É 
+
+ PARECIDO COM 
+
+
+ O 
+
+ EXPRESS,
+
+ MAS QUE 
+
+ FAZ ALGUMAS COISAS DE FORMA DIFERENTE....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> E O KOA FOI INSPIRADO PELO EXPRESS....
+
+
+
+
+
+
+
+
+
+
+
+ --> O 'OAK' É UM THIRD PARTY MODULE 
+
+
+
+ DO DENO.... --> E VOCÊ O ENCONTRA 
+
+
+ NA PARTE DO 
+
+ 'THIRD PARTY MODULES'
+
+ NO SITE DO DENO... -----> VOCÊ 
+
+ 
+
+ ENCONTRA 
+
+
+
+ VÁRIOS 
+
+ MODULES THIRD PARTY,
+
+
+
+
+ e o OAK é um deles... 
+
+
+
+
+
+
+
+
+
+ --> O OAK É UM KOA-INSPIRED 
+
+
+
+
+
+__ MIDDLEWARE USADO COM O DENO...
+
+
+
+
+
+
+
+
+
+
+
+
+-_> VOCÊ TAMBÉM ENCONTRA CERTOS FRAMEWORKS QUE SÃO 'BASICAMENTE EXPRESS PARA O DENO',
+
+
+
+
+FRAMEWORKS QUE PODEM SER PODEROSOS NO FUTURO,
+
+mas uqe 
+
+
+
+não são agora pq _ ELES __ 
+
+NÃO TEM ALGUMAS FEATURES DO 
+
+EXPRESS..
+
+
+
+
+
+
+
+
+
+
+--> há diversas libraries, QUE TENTAM SOLUCIONAR DIFERENTES PROBLEMAS... --> 
+
+
+
+MAS 
+
+
+
+
+
+O PROBLEMA MAIS COMUM QUE QUEREM RESOLVER É SEMPRE O MESMO:
+
+
+QUEREM 
+
+
+FAZER O WRITE DE SEU CODE SER MAIS FÁCIL,
+
+E QUEREM 
+
+
+
+TIRAR O TRABALHO CHATO DE PARSING DE BODIES E ETC 
+
+
+
+DA SUA FRENTE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> SE LERMOS O MODULE 
+DO 
+
+OAK,
+
+temos docs sobre como o utilizar..
+
+
+
+
+
+
+
+
+
+--> TEMOS UM CODE SNIPPET BÁSICO,
+
+que é este:
+
+
+
+
+
+
+''''
+
+
+import { Application } from "https://deno.lang/x/oak/mod.ts"
+
+
+
+
+const app = new Application();
+
+
+app.use(
+    (ctx) => {
+
+            ctx.response.body = 'Hello world!";
+
+    }
+)
+
+
+await app.listen({port: 8000});
+
+
+
+
+
+'''''''''''''''''''''''''''''''''
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+ESSE É O CÓDIGO QUE USAMOS PARA FAZER 'HANDLE DE INCOMING REQUESTS',
+
+
+
+E PARA 
+
+ENVIAR DE VOLTA RESPONSES ao user...
+
+
+
+
+
+
+
+
+
+
+
+
+
+TUDO COM O 'OAK MODULE'...
+
+
+
+
+
+
+
+
+
+
+--> A PARTE __ MAIS DIFERENTE DO NODE, AQUI, 
+
+É QUE 
+
+
+'NÓS NÃO TEMOS PACKAGE.JSON FILE'...
+
+
+
+
+
+
+
+
+
+------> COMO NÃO TEMOS PACKAGE.JSON,
+
+NÃO TEMOS UMA TOOL COMO 'npm' 
+PARA 
+
+GERENCIAR 
+
+DEPENDENCIES...
+
+
+
+
+
+
+
+
+--> com o nodejs 
+
+TÍNHAMOS CORE MODULES,
+
+
+QUE TÍNHAMOS QUE IMPORTAR (mas que, alguns, faziam parte do node)...
+
+
+
+
+
+
+
+
+
+--> TAMBÉM TÍNHAMOS PACKAGES, QUE ERAM INSTALADAS COM 'npm install'...
+
+
+
+
+
+
+
+
+
+
+
+-> COM O DENO ESSE CONCEITO NÃO EXISTE,
+
+
+PQ 
+
+COM ELE 
+
+NÓS TEMOS ESSES 
+
+
+'URL IMPORTS' 
+
+
+(
+
+    como 
+
+'''
+"https://deno.lang/x/oak/mod.ts"
+
+'''
+
+)
+
+
+
+
+
+
+
+
+
+----> isso SIGNFIIC QUE 
+
+
+VOCÊ NUNCA VAI MANAGE 
+
+LOCAL DEPENDENCIES COM O DENO,
+
+E SIM 
+
+SEMPRE 
+
+VAI 
+
+'REACH OUT' 
+
+A UM WEBSERVER E BAIXAR 
+
+
+
+
+UMA FUNÇÃO DESSE ARQUIVO NO WEBSERVER..
+
+
+
+
+
+
+
+
+
+
+--> NÓS __ AINDA PODEMOS_ IMPORTAR ALGUMAS VERSÕES ESPECÍFICAS 
+
+
+
+DE 
+
+'PACOTES'
+
+deno,
+
+
+
+POR MEIO 
+
+
+
+
+DO INCLUDE 
+
+do número da versão na URL 
+
+de que 
+
+vocÊ está importando,
+
+
+
+
+MAS __ VOCÊ _ NÃO VAI TER UMA 
+
+'DEDICATED PACKAGE MANAGER',
+
+
+como 
+
+você 
+
+tem com 
+
+
+NODE PROJECTS...
+
+
+
+
+
+
+
+
+
+
+
+--> E CABE A VOCÊ 
+
+DECIDIR SE QUER 
+
+
+SEGUIR ESSE APPROACH DO DENO OU DO NDOE...
+
+
+
+
+
+
+
+
+--> BEM, O PROFESSOR COPIA 
+
+ESSE 
+
+CÓDIGO-MODELO DO OAK
+
+e cola 
+
+em 
+
+
+'app.ts'...
+
+
+
+
+
+
+
+
+
+
+ --> CERTO... COM ESSE CÓDIGO COLOCADO NO LUGAR,
+
+
+
+
+
+
+
+ temos este código:
+
+
+
+
+ import { Application } from "https://deno.lang/x/oak/mod.ts"
+
+
+
+
+const app = new Application();
+
+
+app.use(
+    (ctx) => {
+
+            ctx.response.body = 'Hello world!";
+
+    }
+)
+
+
+await app.listen({port: 8000});
+
+
+
+
+
+
+
+
+
+-> OK... OQ ESTAMOS FAZENDO, AQUI, É:
+
+
+
+
+
+
+1) IMPORTAMOS O 'APP CONSTRUCTOR FUNCTION' (ou class), DESSA URL DE '/oak/mod.ts', DESSE 'THIRD-PARTY MODULE FILE'...
+
+
+
+
+
+
+
+2) aí INSTANCIAMOS UM OBJETO 'app', que será nosso ACTUAL APP...
+
+
+
+''const app = new Application();'''
+
+
+
+
+
+
+
+
+
+3) REGISTRAMOS UM MIDDLEWARE, POR MEIO DO USO Do código 
+
+
+
+
+'app.use(
+    (ctx) => {
+        ctx.response.body = 'Hello world!';
+    }
+)
+'
+
+
+
+
+--> MAS A ESTRUTURA DISSO É UM POUCO DIFERENTE DAQUELA DO 'EXPRESS'... 
+
+
+
+
+
+--> EM VEZ DE 'obtermos' 
+
+
+(req, res, next) => {},
+
+
+
+
+AQUI OBTEMOS 
+
+
+(ctx) => {
+
+}
+
+
+
+
+
+
+
+--> NA VERDADE, TAMBÉM TEMOS UMA FUNÇÃO 'next',
+
+MAS 
+
+NESSE SNIPPET NÃO COLOCARAM, POR ALGUMA RAZÃO...
+
+ex:
+
+
+(ctx, next) => {
+    
+}
+
+
+
+
+
+
+---> ESSE 'ctx' SIGNIFICA ''''CONTEXT''''
+
+
+--> ESSE 'CONTEXT' 
+
+OBJECT _ SEGURA_ TANTO O OBJETO 'request'
+
+
+COMO O OBJETO 'response'... 
+(
+
+    o objeto 'context' 
+    RESUME TANTO' request' como 'response'... 
+)
+
+
+
+
+
+
+
+
+--> E QUANDO ___ DEFINIMOS O 'body'
+DESSA RESPONSE POR MEIO DO 
+
+objeto 'response',
+
+
+
+ESSA RESPONSE JÁ SERÁ ENVIADA AO USER __ AUTOMATICAMETNE...
+
+
+
+
+
+
+
+
+
+4) FAZEMOS O CALL DE 
+
+
+'await app.listen({port: 3000})'
+
+
+
+
+
+,
+
+
+PARA 
+
+FAZER 
+
+
+LISTEN OVERALL, PARA 
+
+COMEÇAR NOSSO SERVER (com esse 'top-level await')...
+
+
+
+
+
+
+
+--> certo, mas o AUTO-COMPLETION DO 'ctx'
+
+ESTÁ BUGADO( não estão aparecendo os objetos/methods dentro dele)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> SE QUISERMOS RODAR ESSE ARQUIVO DENO,
+
+
+novamente,
+
+
+PRECISAREMOS PASSAR 'PERMISSIONS',
+
+
+no caso 
+a 
+permission de 
+
+
+
+'--allow-net' ,
+
+
+PARA QUE 
+
+
+
+CONSIGA SER FEITO O 'LISTEN TO REQUESTS' nesse server...
+
+
+
+
+
+
+
+
+AGORA CONSERTEI O AUTO-COMPLETE, DE ALGUMA FORMA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> O DENO VAI BAIXAR ESSA PACKAGE E TODAS SUAS DEPENDENCIES, YADDA YADDA YADDA 
+
+
+-> se visitamos 'localhost:3000',
+
+recebemos 
+
+
+'hello world'...
+
+
+
+
+
+
+
+--> OK, É UM DENO APP,
+
+DENO APP QUE AGORA ESTÁ USANDO O THIRD PARTY MODULE DO 
+
+OAK 
+
+,
+
+
+OAK FRAMEWORK,
+
+PARA HANDLAR REQUESTS E ENVIAR DE VOLTA RESPONSES..
+
+
+
+
+
+
+
+--> AGORA PODEMOS FOCAR NA NOSSA BUSINESS LOGIC....
+
+
+
+
+
+
+
+
+--> DEVEMOS CONSTRUIR UMA REST API BEM SIMPLES COM O OAK FRAMEWORK, E DEPOIS COMPARAR 
+
+O 
+
+MESMO 
+
+
+APP COM 
+
+
+O NODE...
+
+
+
+
+
+(
+
+    VAMOS CRIAR O APP 
+
+    NO FORMATO NODE PARA ENTÃO 
+
+    PORTAR AO 
+
+    FORMATO 'deno',
+
+    MAIS TARDE...
+)

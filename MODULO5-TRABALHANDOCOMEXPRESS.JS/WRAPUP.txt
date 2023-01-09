@@ -1,0 +1,567 @@
+
+
+
+
+
+
+
+DURANTE ESTE MÓDULO, APRENDEMOS MT....
+
+
+
+
+APRENDEMOS SOBRE MIDDLEWARE, BASICAMENTE...
+
+
+
+
+
+
+
+
+
+--> VAMOS CONTINUAR COM O NODEJS NESSE CURSO, MAS 
+
+PRINCIPALMENTE UTILIZADO EM CONJUNTO COM O EXPRESSJS...
+
+
+
+
+
+
+
+
+
+EXPRESSJS --> UM FRAMEWORK PODEROSO --> É UM FRAMEWORK DO NODEJS,
+
+POR ISSO CONTINUAMOS USANDO NODEJS... (como visto com o uso 
+
+de 
+
+'path', aquele CORE MODULE DO NODEJS,
+
+
+nesse 
+
+nosso 
+
+
+módulo...)
+
+
+
+--> O EXPRESSJS É ALTAMENTE EXTENSÍVEL, E OUTROS PACKAGES 
+
+PODEM SER PLUGGADOS NELE... (por meio do MIDDLEWARE!).... (
+    packages 
+
+    adicionais instaladas EXPÕEM MIDDLEWARE FUNCTIONS EXTRAS....
+)
+
+
+
+
+
+---> expresJS é uma package QUE ADICIONA UM MONTE DE UTILITY FUNCTIONS E TOOLS,
+
+E UM 
+
+
+
+SET CLARO DE REGRAS 
+
+DE COMO 
+
+
+SEU APP DEVE SER CONSTRUÍDO (middleware!)...
+
+
+
+
+
+---------> MIDDLEWARES SÃO MT IMPORTANTES...
+
+
+
+
+
+
+
+
+
+-----> MIDDLEWARES ----> 
+
+
+
+
+
+É UM CONCEITO MT IMPORTANTE ---> MIDDLEWARE FUNCTIONS SÃO FUNCTIONS QUE 
+
+
+
+
+ACEITAM/EXIGEM OBJETOS 'REQ, RES' E 'NEXT'... ----> 
+
+
+
+
+
+
+
+
+
+
+NEXT() É UMA FUNÇÃO QUE É CHAMADA DENTRO DE UM MIDDLEWARE;
+
+
+
+QUANDO É CHAMADA, 
+
+
+
+O 
+
+
+
+REQUEST SEGUE EM DIANTE,
+
+SEGUE ATÉ O PRÓXIMO MIDDLEWARE (from top to bottom...).
+
+
+
+
+
+
+
+
+----> ESSE É UM POINT CRUCIAL QUE VOCÊ 
+
+DEVE ENTENDER:
+
+
+
+VOCÊ SEMPRE DEVE 
+
+CHAMAR 
+
+
+'next()',
+
+
+A NÃO SER QUE 
+
+VOCÊ QUE 
+
+
+
+__ ENVIE UMA RESPONSE
+
+com 
+
+
+'res.xxxx'
+
+
+
+(como 
+
+
+'res.send()' 
+
+ou 
+
+'res.sendFile()'....
+
+)
+
+
+
+
+
+
+
+
+** EXPRESSJS RELIES HEAVILY ON MIDDLEWARE FUNCTIONS -->  YOU CAN EASILY 
+
+
+
+ADD THEM BY CALLING 'use()" ou 
+
+
+
+
+
+'post()' 
+
+
+ou 
+
+'get()'...
+
+
+
+
+
+** MIDDLEWARE FUNCTIONS HANDLAM REQUESTS, E DEVEM CHAMAR 
+
+'next()' PARA FORWARDAR O REQUEST 
+
+
+
+
+AO PRÓOXIMO 
+
+
+
+MIDDLEWARE NA FILA,
+
+ou então 
+
+DEVEM CHAMAR 
+
+'res.xxx' para ENVIAR UMA RESPONSE E EVITAR 
+
+
+O 
+
+
+call de 'next()'...
+
+
+
+
+
+
+
+
+----> E DIFERENTES RESPONSES SERÃO ENVIADAS __ DEPENDENDO __ DA 
+
+
+_____rOUTE____ QUE 
+
+O 
+
+
+USUÁRIO/VOCÊ ESTIVER ACESSANDO (ou seja,
+
+
+
+
+o send de responses depende do PATH E DO METHOD 
+
+que você está entrando/usando...) 
+
+
+
+
+
+
+
+
+------>  ____ E NÓS APRENDEMOS SOBRE ROUTING...
+
+
+
+
+
+
+APRENDEMOS QUE PODEMOS 
+
+
+'FILTER REQUESTS' facilmente por meio 
+
+de 
+
+PATHS E METHODS... 
+
+
+
+
+
+
+
+-------> APRENDEMOS QUE 
+
+
+
+
+''IF YOU FILTER BY METHOD, PATHS ARE __MATCHED__ EXACTLY___; OTHERWISE,
+
+THE FIRST SEGMENT OF A URL IS MATCHED (casos em que chamamos 'app.use()' em vez de 'app.get()' ou 'app.post()', etc etc...)
+
+
+
+
+
+
+
+
+---> APRENDEMOS QUE PODEMOS USAR O 
+
+
+'express.Router' PARA __ SPLITTAR NOSSAS ROUTES 
+
+
+
+AO LONGO DE DIVERSAS FILES, DE FORMA ELEGANTE...
+
+
+
+
+
+
+''''YOU CAN USE THE express.Router to split your routes 
+
+across files elegantly''''' -------> 
+
+
+
+
+VOCÊ 
+
+PODE 
+
+
+FAZER ISSO PQ 
+
+
+O 
+
+ROUTER QUE VOCÊ 
+
+
+
+
+__EXPORTA___ 
+
+
+EM ARQUIVOS 'ROUTE' PODE SER 
+
+ADICIONADO COMO UMA 
+
+'MIDDLEWARE FUNCTION' 
+
+
+
+___ LÁ NO SEU 'APP.USE()'
+
+
+NO SEU 'ROOT FILE'( que´e app.js)....
+
+
+
+
+-------------
+
+
+
+
+
+
+POR FIM, MAS NÃO MENOS IMPORTANTE,
+
+APRENDEMOS 
+
+QUE 
+
+TAMBÉM 
+PODEMOS 
+
+
+'SERVE FILES'... -----> 
+
+
+E É IMPORTANTE ENTENDER QUE 
+
+
+
+VOCÊ 
+
+__NÃO ESTÁ LIMITADO__ AO 
+
+
+SERVE 
+
+
+DE __ 'DUMMY TEXT'
+
+ou coisas assim.. .---> 
+
+
+VOCÊ 
+PODE, SIM,
+ 
+ ENVIAR 
+
+
+ __ARQUIVOS__ (como fizemos com HTML FILES)....
+
+
+
+
+
+
+
+
+
+
+
+ ---> E SE UM REQUEST É FEITO ___ DIRETAMENTE A UM ARQUIVO (exemplo perfeito: arquivos CSS sendo requisitados...),
+
+
+ você pode ENABLAR 
+
+
+
+ 'STATIC SERVING' PARA FILES como esses,
+
+
+
+
+ por meio 
+
+ daquele 
+
+ método
+
+
+
+
+ 'express.static()' dentro de UM MIDDLEWARE 
+
+
+ NO 
+
+ SEU 
+
+
+
+MAIN 'app.js',
+
+
+tipo assim:
+
+
+
+
+
+'''app.use(express.static(__dirname, 'public'))'''' 
+
+
+^^^^^^ ISSO FUNCIONA PERFEITAMENTE 
+
+
+COM 
+
+CSS, IMAGES E ARQUIVOS JS 
+
+
+
+QUE 
+VOCÊ 
+DEIXA LÁ 
+
+
+EM 
+
+'public'... ---> VOCÊ PODE ENABLAR 
+
+
+
+
+STATIC SERVING 
+
+
+
+__ PARA __ TAIS ARQUIVOS, COM AJUDA DO 
+
+'express.static',
+
+QUE 
+
+É UMA PARTE 
+
+CRUCIAL 
+
+
+
+DE QUALQUER
+ 
+
+
+ WEB APP QUE VOCÊ 
+
+
+
+ CONSTRUIR... -----> ISSO PQ 
+
+
+
+ __ VOCÊ TIPICAMENTE __ TEM 
+
+
+ ARQUIVOS COMO ESSES,
+
+
+ ARQUIVOS QUE __ SÃO '''DEPENDENCIES''' DOS SEUS ARQUIVOS HTML,
+
+ arquivos 
+
+
+
+ que os html realmente precisam...
+
+
+
+
+
+
+
+
+
+ -----> OK.... ESSE É O 'CORE BASIC KNOWLEDGE' que 
+
+
+
+
+ você deve ter sobre o EXPRESSJS,
+
+
+
+ E É SOBRE ISSO QUE VAMOS CONSTRUIR NOSSO CONHECIMENTO,
+
+
+
+
+ VAMOS 
+
+
+ MERGULHAR 
+
+
+
+
+
+ FUNDO NOS TÓPICOS DE 
+
+
+ 'HOW TO RENDER DYNAMIC CONTENT',
+
+
+
+
+ COMO ACESSAR DATABASES,
+
+
+
+
+
+ ___ COMO __ ENABLAR AUTHENTICAÇÃO,
+
+
+
+
+
+ __ COMO __ MANAGEAR DATA NO SERVER,
+
+ e muito, muito mais...

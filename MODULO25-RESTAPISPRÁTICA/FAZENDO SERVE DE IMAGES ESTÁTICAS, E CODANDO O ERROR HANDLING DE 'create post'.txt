@@ -1,0 +1,4300 @@
+
+
+
+
+
+
+
+
+
+
+
+--------> DEVEMOS NOS ASSEGURAR QUE CONSEGUIMOS 'SERVE' AQUELA 
+
+IMAGE DE 
+
+'o-fantastico-jaspion.jpg'
+
+
+em 
+
+
+'images' (folder), LÁ NO BACKEND... (
+
+
+
+    e devemos, além disso,
+
+
+
+    CRIAR A BASE PARA QUE NOSSO APP NO 
+
+    FUTURO CONSIGA 'ACCEPT IMAGE UPLOADS'...
+)
+
+
+
+
+
+
+
+
+--> PARA O SERVE DAQUELA IMAGE,
+
+
+
+
+__TEMOS QUE NOS ASSEGURAR DE QUE 
+
+CONSEGUIMOS 
+
+
+___ 
+
+
+
+FAZER SERVE DAQUELE FOLDER DE 'images' 
+
+
+estaticamente... --> PELO MENOS ESSE É O APPROACH _ QUE O PROFESSOR QUER USAR_....
+
+
+
+
+
+
+
+
+
+------> APRENDEMOS TUDO SOBRE O SERVE 
+
+
+
+
+ESTÁTICO DE FOLDERS LÁ 
+
+
+NO MÓDULO DE 'FILE UPLOADS AND DOWNLOADS'....
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+--> para isso, tenho que ler 
+
+
+
+aquelas aulas...
+
+
+
+
+
+
+
+
+
+
+
+
+-> para conseguir fazer o SERVE ESTÁTICO  
+
+
+
+de files NO NOSSO BACKEND,
+
+
+
+
+
+precisamos 
+
+
+
+fazer: 
+
+
+
+
+1) O STORE FÍSICO DESSE ARQUIVO, NO NOSSO BACKEND, em algum folder... (folder de 'images', por exemplo)...
+
+
+
+2) PRECISAMOS FAZER O ___STORE___ DO 'path' 
+
+a esse arquivo/arquivos image, 
+
+
+LÁ NA NOSSA DATABASE.... (
+
+    provavelmente dentro de cada 'post', em 'imageUrl'...
+)
+
+
+
+
+
+
+
+
+
+
+
+---------> isso provavelmente será feito no nosso CONTROLLER DE 'createPost'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> bem, mas o primeiro passo é usar 
+
+
+'express.static()'
+
+PARA 
+
+
+
+FAZER SERVE ESTÁTICO DAQUELE FOLDER  DE 'images'....
+
+
+
+
+
+
+
+
+
+
+
+
+----> A __ LÓGICA GERAL__ DE 'FILE UPLOADS'
+
+
+
+
+AINDA É A MESMA DE UM APP NODEEXPRESS COMUM...
+
+
+
+
+
+
+
+
+
+
+
+---------> OK.... 
+
+
+
+
+profesor escreve, lá em 'app.js',
+
+
+
+
+
+
+
+
+
+'app.use()' 
+
+
+
+
+
+--> ELE FAZ ALGO __ QUE NÃO HAVÍAMOS FEITO.... --> 
+
+
+
+
+
+
+
+
+
+
+ESTE ERA O CÓDIGO USADO NO NOSSO SERVIDOR NODEEXPRESS ANTIGO:
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
+
+
+
+
+
+
+
+
+--> como você pode ver,
+
+O PROFESSOR 
+
+
+
+FAZIA COM QUE FOSSE UTILIZADO 
+
+ESSE MIDDLEWARE DE SERVE ESTÁTICO __ SÓ _ QUANDO 
+
+O 
+
+
+REQUEST__ ERA DIRECIONADO ('filtrado')
+
+
+POR AQUELA 
+
+
+ROUTE/PATH DE 
+
+
+'/images'...
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+--> vamos querer fazer a mesma coisa agora, pois escrevemos:
+
+
+
+
+
+
+
+
+
+
+
+'app.use('/images', express.static(path.join(__dirname, 'images')))'
+
+
+
+
+
+
+
+
+--------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+ok......... 
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+const mongoose = require('mongoose'); ///nem mesmo precisamos do 'mongodb' driver.... (mas instale mesmo assim).
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+const feedRoutes = require('./routes/feed');
+
+const authRoutes = require('./routes/auth');
+
+app.use(bodyParser.json());
+
+app.use('/images', express.static(path.join(__dirname, 'images')));  //não se esqueça do '/images' no início...
+
+console.log(path.join(__dirname, 'images'));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+app.use(authRoutes);
+
+app.use('/feed', feedRoutes);
+
+// app.listen(3000);
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// app.listen(8080); // usamos a porta 8080 PQ NO REACT JÁ USAMOS AUTOMATICAMENTE A PORTA '3000'...
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok, conseguiremos fazer serve estático desse folder aí, a todos os requests que vão por '/images'...
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO,
+
+
+
+
+
+DEVEMOS SER CAPAZES DE 'USE/SEE THAT IMAGE IN OUR FRONTEND' ....
+
+
+
+
+
+
+
+
+
+
+------------> salvamos esse código serverside.... --> MAS PARA SERMOS 
+
+
+CAPAZES 
+
+DE 
+
+VER 
+ESSA 
+
+IMAGE 
+
+
+
+
+NO 
+
+CÓDIGO FRONTEND,
+
+
+QUEREMOS 
+
+QUE 
+
+
+a IMAGE 
+
+SEJA 
+
+DISPLAYADA 
+
+QUANDO 
+
+O BUTTON DE 'view' 
+
+
+
+FOR CLICADO, EM CADA POST... ----------------> 
+
+
+isso 
+
+
+pq 
+
+
+A IMAGE EM SI _ _SÓ VAI _ SER DISPLAYED__ LÁ NA PAGE DE 'Detail'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ESSA ROUTE DE 'post-detail'
+
+
+NÃO VAI FUNCIONAR,
+
+
+
+ISSO PQ _ AINDA NÃO TEMOS ROUTE ALGUMA PARA ESSA PAGE 
+
+DE 
+
+'post-detail'...
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+MAS ANTES DE VER MAIS DETALHES SOBRE ISSO,
+
+
+
+PROFESSOR 
+
+QUER 
+
+SETTAR 
+
+
+'PROPER ERROR HANDLING' 
+
+
+
+
+no nosso 
+
+
+CONTROLLER DE 'createPost',
+
+que 
+
+por enquanto tem este código:
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY',
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---> NÓS TEMOS 
+
+ESSE CÓDIGO, SIM,
+
+
+
+mas por enquanto estamos apenas 
+
+fazendo console.log do erro, e nada mais com isso...
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS ___ ENVIAR __ ESSE ERROR AO NOSSO FRONTEND,
+
+PARA 
+
+
+QUE ELE CONSIGA SER USADO NAQUELE NOSSO 'ErrorHandler' 
+
+component...
+
+
+
+
+
+
+
+
+
+-_> para isso, provavelmente vamos querer escrever uma 
+
+
+
+RESPONSE 
+
+
+
+de 
+
+
+
+'
+
+.catch(
+    (err) => {
+
+        
+res.status(500).json(
+    {
+        message: 'Failed to create Post.',
+        error: err
+    }
+)
+    }
+)
+
+
+
+'
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--------> VAMOS RETORNAR UM STATUS CODE DE 500 pq 
+
+isso NÃO SERÁ UM ERRO 422.... --> ERROS 
+
+
+
+422 já são contemplados 
+
+
+naquele block 
+
+de 
+
+
+
+''
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+
+
+  '''
+
+
+
+
+  ------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+  -----> PROFESSOR EXPLICA QUE 
+
+
+  'NÓS APRENDEMOS QUE PODEMOS SETUP A GENERAL ERROR HANDLING FUNCTION' 
+
+
+  lá no nodeexpress.... --> PARA ISSO,
+
+
+
+
+  PRECISAMOS 
+
+
+
+  SETTAR 
+
+
+
+
+
+
+AQUELES 'GENERAL ERROR HANDLING' 
+
+
+
+coisos,
+
+
+
+
+que ficam lá no APP.JS,
+
+
+
+
+LOGO ANTES DO FINAL DAS ROUTES...
+
+(
+
+    é uma 'catch all route', só que de ERROS, E É POR ISSO QUE 
+
+    É UM 
+
+
+    SPECIAL ERROR HANDLING MIDDLEWARE...
+)
+
+
+
+
+
+
+
+
+
+-> para obter um desses error handling middlewares,
+
+precisamos 
+
+escrever 
+
+
+
+
+app.use(
+    (error, req, res, next) => {
+
+
+    }
+)
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+esse é o modelo do 
+
+error handling middleware....
+
+
+
+
+
+
+
+
+
+--> certo, mas aqui encontramos um 
+
+
+__PROBLEMA___. O CÓDIGO ANTIGO DESSE MIDDLEWARE ERA:
+
+
+
+
+app.use(
+  ///////MIDDLEWARE ESPECIAL DO EXPRESS. USADO PARA HANDLING DE ERROS... (o express identifica que ele é especial POR MEIO DOS SEUS 4 ARGUMENTOS, 'error, req, res, next'...)
+  (error, req, res, next) => {
+    //para acessar/executar o código contido nesse MIDDLEWARE/nesses middlewares especial/especiais, basta USAR A FUNÇÃO 'next()' e então passar UM ERRO COMO PARÂMETRO, TIPO ASSIM: 'next(erroQueVocêQuerPassar)' ------> SE VOCÊ USAR ISSO EM ALGUM LUGAR DO SEU CO´DIGO, ESSE CALL VAI AUTOMATICAMETNE TRIGGAR ESTE MIDDLEWARE AQUI, de 'error, req, res, next'...
+    //e sim, a execuçaõ desse middleware especial vai pular ATÉ MESMO A EXECUÇAÕ DE 'error404' (que é o middleware/route 'unknown' de nosso app, que faz catch de todos os paths/routes não compreendidos por 'adminRoutes', 'authRoutes', etc...)
+
+    // res.redirect('/500'); //ver controller de 'error500', lá em 'error.js'...
+
+    console.log(req.method);
+      console.log(req.session, 'ENTER');
+
+      res.status(500).render('500', {
+        pageTitle: 'Error!',
+        path: '/500',
+        isLoggedIn: req.session.isLoggedIn,
+      });
+    }
+  // }
+);
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+OU SEJA, FAZÍAMOS O RENDER DE UMA PAGE; usávamos o serverside para fazer o RENDER DE UMA PAGE...
+
+
+
+
+
+
+
+--> ENTRETANTO, COMO AQUI ESTAMOS COM UM APP REACT,
+
+O IDEAL
+ 
+ SERIA 
+
+ ENVIAR 
+
+
+
+JSON DATA,
+e não 
+
+
+o render de uma page(código html)...
+
+
+
+
+
+
+
+
+
+
+
+--------> ok... 
+
+
+
+
+
+
+
+
+o que o professor faz?
+
+
+
+
+
+
+
+
+
+
+----> BEM, ELE DIZ QUE 
+
+DEVEMOS 
+
+
+
+
+
+
+
+COMEÇAR, PRIMEIRAMENTE, COM O CASE DA 'VALIDATION'...
+
+
+
+
+
+
+
+
+--> ATÉ AGORA, ESTAMOS FAZENDO O RETURN DE UMA 
+
+MENSAGEM 
+
+
+MANUAL DE ERRO..
+
+
+
+
+
+
+
+
+tipo assim:
+
+
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+
+
+
+
+
+
+
+
+-----> EM VEZ DISSO,
+
+
+
+ 
+ EM VEZ DE FAZER ESSE RETURN MANUAL,
+
+
+ PROFESSOR 
+
+ DIZ QUE 
+
+
+ ELE VAI CRIAR UMA NOVA CONSTANTE 
+
+
+ 'error',
+
+
+
+
+ QUE CONTERÁ UM 
+
+
+
+ NOVO OBJETO 'Error'...
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  const errors = validationResult(req); 
+
+
+
+  if (!errors.isEmpty()) { 
+        const error = new Error('Validation failed, entered data is incorrect.'); ////EIS O CÓDIGO EM QUESTÃO.
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY',
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+AÍ, É CLARO,
+
+ELE VAI REFERENCIAR ESSE ERRO MAIS PARA BAIXO...
+(
+
+    em 'message: error'...
+)
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  const errors = validationResult(req); 
+
+
+
+  if (!errors.isEmpty()) { 
+        const error = new Error('Validation failed, entered data is incorrect.'); ////EIS O CÓDIGO EM QUESTÃO.
+    return res
+      .status(422)
+      .json({ message: error, errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY',
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+NÃO... MAS ESSE CÓDIGO ESTÁ ___ ERRADO__.... não podemos 
+
+passar esse 
+
+
+objeto 'error'
+
+como propriedade daquela 'message',
+
+
+isso não seria bom...
+
+
+
+
+
+
+
+
+
+
+
+------> EM VEZ DISSO,
+
+
+PROFESSOR DECIDE ___ CUSTOMIZAR ESSE 'OBJETO ERRO',
+
+por meio 
+
+daquele método de 
+
+
+
+'error.statusCode = 422' (ou seja, vai DEFINIR O SEU STATUS CODE INTERNO)...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  const errors = validationResult(req); 
+
+
+
+  if (!errors.isEmpty()) { 
+        const error = new Error('Validation failed, entered data is incorrect.'); ////EIS O CÓDIGO EM QUESTÃO.
+        error.statusCode = 422;
+    return res
+      .status(422)
+      .json({ message: error, errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY',
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+CUSTOMIZADO O STATUS CODE DESSE ERRO,
+
+
+o professor vai FAZER __ THROW_ _DELE...
+
+(
+
+    ELE também REMOVE __ AQUELE CÓDIGO de return manual de erro,
+
+    aquele 
+
+
+    'return res.status(422).json({})'...
+)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  const errors = validationResult(req); 
+
+
+
+  if (!errors.isEmpty()) { 
+        const error = new Error('Validation failed, entered data is incorrect.'); ////EIS O CÓDIGO EM QUESTÃO.
+        error.statusCode = 422;
+        throw error; ///////EIS O CÓDIGO EM QUESTÃO.
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY',
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS O QUE O THROW DE UM ERRO FAZ PARA NÓS, AQUI? 
+
+
+
+
+
+
+BEM,
+
+
+O QUE 
+
+ISSO FAZ __ É EFETIVAMENTE_  ATIVAR AQUELE 
+
+
+'ERROR HANDLING MIDDLEWARE' 
+
+
+
+definido lá no app.js (isso pq NÃO ESTAMOS DENTRO DE UMA ASYNC FUNCTION... estamos em código síncrono, e esse é o seu comportamento...)
+
+
+
+
+
+
+
+---------> NÓS TAMBÉM TEMOS OUTRO 'POSSIBLE ERROR',
+
+visto lá naquele 
+
+catch block 
+
+
+do 
+
+
+'.save()',
+
+
+
+
+
+
+
+QUE 
+
+É 
+
+'when something goes wrong when storing the post'... -------->
+
+
+
+
+
+
+
+
+
+É NESTE TRECHO AQUI:
+
+
+
+
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+
+
+
+
+
+------> NESSE TRECHO AÍ,
+
+
+
+EU NÃO VOU QUERER FAZER CONSOLE.LOG DO ERRO,
+
+
+E SIM 
+
+
+
+
+
+
+__ VOU QUEREr__ 
+
+
+
+ESCREVER UM IF CHECk... --> 
+
+
+
+
+'SE MEU ERROR CODE TEM 
+
+UM STATUS 
+
+CODE FIELD (ele não terá, mas é bom escrever isso, para garantir),
+
+
+
+
+SE ELE NÃO EXISTIR,
+
+VOU ADICIONAR.... --> VOU QUERER ADICIONAR O STATUS CODE DE 500' (isso pq 
+
+
+O STATUS CODE DE 500 É UM SERVERSIDE ERROR GENÉRICO...)
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+            if( !err.statusCode) {
+                err.statusCode = 500;
+            }
+    });
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+BEM... COMO AQUI ESTAMOS EM UM 'ASYNC CODE SNIPPET',
+
+
+
+
+FAZER __ O THROW__ DE UM ERROR _ _SIMPLESMENTE 
+
+'WONT DO THE TRICK'....
+
+
+
+
+
+(
+
+
+
+    vimos isso no módulo do error handling,
+
+
+    como 
+
+
+    temos 
+
+    tanto 
+
+    'throw' 
+
+
+
+    como 
+
+
+
+    'next(error)'...
+)
+
+
+
+
+
+
+
+
+
+LEMBRE-SE: 
+
+
+
+
+
+'next(error)' --> PARA CÓDIGOS __ ASYNC__ 
+
+
+
+
+'throw error' --> PARA __ CÓDIGOS__ SYNC__...
+
+
+
+
+
+É POR ISSO QUE VAMOS ESCREVER ISTO:
+
+
+
+
+
+
+
+  post
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+            if( !err.statusCode) {
+                err.statusCode = 500;
+            }
+            
+            next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'....
+    });
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+COM ISSO, COM O 'next(err)',
+
+
+VAMOS EFETIVAMENTE 
+
+
+'REACH THE NODEEXPRESS ERROR HANDLING MIDDLEWARE',
+
+
+
+QUE É O QUE QUEREMOS...
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+A ÚLTIMA ETAPA É _ REGISTRAr__ ESSE MIDDLEWARE ___ (
+
+
+    e fazer a lógica de 'output error'
+
+    desse negócio...
+)
+
+
+
+
+
+
+
+
+
+
+------> ok... professor escreve o clássico:
+
+
+app.use(
+    (error, req, res, next) => {
+
+
+
+    }
+) 
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE 
+
+ESSA FUNÇÃO 
+
+
+VAI SER 
+
+EXECUTADA SEMPRE 
+
+
+
+QUE UM 
+
+ERROR FOR: 
+
+
+
+1) THROWN COM 'throw' 
+
+
+
+
+
+
+
+2) 'NEXXED' com 'next()'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUE PODEMOS FAZER, AQUI, É CONSOLE.LOGGAR ESSE ERROR,
+
+
+
+E AÍ 
+
+
+__EXTRAIR _ O STATUS CODE... (
+
+
+    de 
+
+    'const status = error.statusCode'...
+)
+
+
+
+
+
+
+
+
+
+---> PROFESSOR DIZ QUE TAMBÉM PODEMOS OBTER A 'message' 
+
+desse error, 
+
+por meio de 
+
+
+'const message = error.message'..
+
+
+
+
+
+
+
+--> ELE NOS EXPLICA QUE 
+
+ESSA PROPRIEDADE 
+
+'message'
+
+
+EXISTE__ POR DEFAULT__ EM OBJETOS 'error',
+
+
+
+E 'IT HOLDS THE MESSAGE YOU PASSED TO THE CONSTRUCTOR OF THE ERROR OBJECT'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+app.use(
+    (error, req, res, next) => {
+
+                console.log(error);
+                const status = error.statusCode;
+                const message = error.message;
+    }
+) 
+
+
+
+
+
+
+
+
+
+
+
+--> E AGORA, A PARTIR DISSO,
+
+PROFESSOR DIZ QUE PODEMOS ___ FAZER__ RETURN___ 
+
+
+
+DE UMA 
+
+
+
+____rESPONSE___ 
+
+
+COM UM STATUS CODE 
+
+
+
+de 'status' (error.statusCode, STATUS CODE QUE FOI EXTRAÍDO LOGO ACIMA),
+
+
+
+
+
+
+
+E ___ 
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+app.use(
+  (req, res, next, error) => {
+      console.log(error);
+      const status = error.statusCode || 500; ///COM ESSA SINTAXE, DEFINIMOS '500' por default.... será o default caso nenhum status code tiver sido definido anteriormente, no objeto 'erro'...
+      const message = error.message; ////'message' é uma propriedade QUE SEMPRE EXISTE NOS OBJETOS 'error'... é a mensagem que você escreve tipo em 'new Error('Mensagem escrita')' ....
+
+
+      res.status(status).json( ///RESPOSTA PADRONIZADA...
+        {
+          message: message
+        }
+      )
+  }
+)
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+COM ISSO, AGORA TEMOS ESSA 
+
+'GENERAL ERROR HANDLING FUNCTIONALITY',
+
+
+
+QUE DEVE FUNCIONAR,
+
+
+
+e que 
+
+VAI 
+
+
+
+
+FAZER  O SHOW 
+
+
+
+DE NOSSO ERROR HANDLER EXATAMENTE COMO ANTES,
+
+
+mas 
+
+agora 
+
+
+
+USANDO ESSE 
+
+SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE....
+
+(
+
+    vimos o console.log, 
+
+    e vimos o status code apropriado sendo definido...
+)
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+tudo deu certo...
+
+
+
+
+
+
+agora estamos usando nossa 'custom error handling function'
+
+QUE É UMA MANEIRA 
+
+UM POUCO MAIS ELEGANTE 
+
+DE HANDLAR NOSSOS ERROS..
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS VER COMO __ 'CREATE THE ROUTE TO GET A SINGLE POST',
+
+
+
+PARA QUE CONSIGAMOS 
+
+VER 
+
+
+SE CONSEGUIMOS 'SEE OUR IMAGE'....
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR 'see our image',
+
+
+
+PRECISAMOS 
+
+
+
+
+ESCREVER UMA LÓGICA DE 'FETCH SINGLE POST',
+
+
+QUE É VISTA LÁ NO COMPONENT 
+
+
+
+
+PAGE 
+
+DE 
+
+'SinglePost.js':
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PRECISAMOS 
+
+
+SUBSTITUIR AQUELE 
+
+
+'
+fetch('URL')' 
+
+
+
+
+POR NOSSO ENDPOINT/PATH APROPRIADA 
+
+NO BACKEND 
+
+NODEEXPRESS....
+
+
+
+
+
+
+
+
+
+
+
+--> fica tipo assim:
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`)
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> É CLARO QUE PRECISAMOS ESCREVER ESSA ROUTE NO NOSSO BACKEND.... 
+
+
+
+
+FICA TIPO:
+
+
+
+
+// GET  /feed/post/:postId
+
+router.get('/post/:postId', feedController.getSinglePost);
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+E AGORA, PRECISAMOS DO CONTROLLER
+
+'getSinglePost'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> para isso, vamos até o  controller de 'feed.js',
+
+novamente...
+
+
+
+
+
+
+
+
+
+
+--> TIPO ALGO ASSIM:
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+
+  }
+)
+.catch(
+  (err) => {
+
+    next(err);
+  }
+)
+
+
+
+
+}
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+é claro que PRECISAMOS FAZER ALGO COM AQUELE 
+
+
+'POST' que foi encontrado.... (return de json data, provavelmente...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOU VER O VÍDEO DO PROFESSOR...
+
+
+
+
+
+
+
+
+-> ele vai até 'feed.js'
+
+e adiciona uma NOVA ROUTE,
+
+DYNAMIC ROUTE DE GET...
+
+
+
+
+
+
+--> 
+
+
+
+'router.get('/post/:postId')' -----> 
+
+
+
+
+VAMOS ENCODAR 
+
+
+O ID 
+
+
+DO POST 
+
+
+
+
+
+que QUEEREMOS FETCHEAR (vamos 
+
+extrair esse id 
+
+lá 
+
+
+no controller de  'feed.js'...
+)
+
+
+
+
+
+
+
+
+---> certo... ---> esse é o nosso PATH...
+
+
+
+
+
+
+
+
+
+---> agora vamos 
+
+
+
+
+
+ter aquele controller 
+
+de 
+
+
+
+'exports.getSinglePost = (req, res, next) => {
+
+
+
+
+}
+'
+
+
+
+
+
+
+
+
+
+----> DENTRO DESSE NEGÓCIO,
+
+
+
+
+VAMOS 
+
+querer  escrever 
+
+
+'const postId = req.params.postId'...
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+certo...
+
+
+
+
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+
+  }
+)
+.catch(
+  (err) => {
+
+    next(err);
+  }
+)
+
+
+
+
+}
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+--> mas no catch block eu esqueci um pouco da minha lógica....
+
+
+
+-> o que tenho que fazer é CHECAR SE 
+
+em 
+
+'err' 
+
+TEMOS UM STATUSCODE JÁ DEFINIDO... (
+
+
+  se não tivermos, vamos querer DEFINIR COMO '500' 
+
+  seu status code, e aí forwardar 
+
+  para nosso 
+
+  middleware de error handling, por meio de 'next(err)'....
+)
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+
+  }
+)
+.catch(
+  (err) => {
+      if(!err.statusCode) {
+        err.statusCode = 500;
+      }
+    next(err);
+  }
+)
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+encontrado esse post, no then block,
+
+
+
+
+VAMOS QUERER __ CHECAR_, PRIMEIRAMENTE,
+
+
+SE ESSE 'POST'
+
+ESTÁ COMO UNDEFINED... (
+
+
+  ou seja,
+
+
+  SE __ NÃO __ EXISTE__ UM POST COM ESSE ID,
+
+  LÁ NA NOSSA DATABASE....
+
+)
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+      if(!post) {
+
+
+
+      }
+  }
+)
+.catch(
+  (err) => {
+      if(!err.statusCode) {
+        err.statusCode = 500;
+      }
+    next(err);
+  }
+)
+
+
+}
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> SE NÃO TIVERMOS 1 POST,
+
+
+SABEREMOS QUE NENHUM POST FOI FOUND, E AÍ PODEREMOS ACTUALLY __ 
+
+
+CRIAR/DEFINIR UM NOVO OBJETO 'error',
+
+
+COM UMA MENSAGEM DE 
+
+
+
+'Could not find post.',
+
+
+
+E AÍ ___ DEFINIR O STATUS CODE PARA '404' (NOT FOUND)....
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+      if(!post) {
+            const error = new Error('Could not find post.');
+            error.statusCode = 404;
+
+
+      }
+  }
+)
+.catch(
+  (err) => {
+      if(!err.statusCode) {
+        err.statusCode = 500;
+      }
+    next(err);
+  }
+)
+
+
+}
+
+
+
+-------------------
+
+
+
+
+
+POR FIM, PROFESSOR DIZ QUE PODEMOS FAZER 'THROW' DESSE ERROR,
+
+LÁ NESSE 
+
+
+if block... -------->
+
+
+
+
+
+mas isso é meio confuso... --> isso pq ESTAMOS FAZENDO O THROW DE UM ERROR __ DE DENTRO__ 
+
+DE 
+
+1 CÓDIGO ASSÍNCRONO... e aprendemos que 
+
+SEMPRE DEVEMOS USAR 'next()'
+
+DENTRO 
+
+DE CÓDIGOS ASYNC.... --------------> MAS O PEGA-RATÃO É:
+
+
+
+
+
+
+SE VOCÊ __ FAZ_ THROW__ DE UM ERROR___ DENTRO_ __ DE UM __ THEN BLOCK,
+
+
+
+OBRIGATORIAMENTE O __ PRÓXIMO 'CATCH BLOCK'
+
+
+SERÁ ALCANÇADO... 
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+      if(!post) {
+            const error = new Error('Could not find post.');
+            error.statusCode = 404;
+            throw error; //// vai fazer com que o catch block seja alcançado...
+
+      }
+  }
+)
+.catch(
+  (err) => {
+      if(!err.statusCode) {
+        err.statusCode = 500;
+      }
+    next(err);
+  }
+)
+
+
+}
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+E COMO O CATCH BLOCK VAI SER ALCANÇADO, E JÁ TEMOS UM STATUS CODE DEFINIDO,
+
+
+
+o catch block vai simplesmente executar 'next(err)'
+
+
+
+e terminar 
+
+
+a execução de código nesse controller (será executado aquele middleware especial de error handling, lá no app.js....)
+
+
+
+
+
+
+
+
+
+
+-------> OK.... ------> ENTÃO A ÚNICA COISA QUE 
+
+ACONTECE COM O 'THROW' DE UM ERROR NAQUELE THEN BLOCK 
+
+é 
+
+o 
+
+
+'ENTER' naquele catch block,
+
+que 
+
+de fato faz o 'next()' do error...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+        if(!post) {
+          const error = new Error('Could not find post.');
+          error.statusCode = 404; //pq o POST NÃO PODE SER ENCONTRADO ('NOT FOUND', é isso que significa esse código...)
+          throw error; //vai fazer com que entremos no CATCH BLOCK...
+        }
+  }
+)
+.catch(
+  (err) => {
+
+    if(!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+)
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+----> CERTO.... 
+
+
+
+
+
+
+
+
+o error será thrown se não encontrar o post....
+
+
+
+
+
+
+
+
+
+
+-_> MAS SE O POST FOR ENCONTRADO,
+
+
+
+VAMOS QUERER
+
+
+__ENVIAR__ UMA RESPONSE,
+
+
+COM UM STATUS CODE 
+
+DE 
+
+'200' (request successful),
+
+
+
+
+
+
+
+EM QUE 
+
+
+RETORNAREI UMA JSON DATA... 
+
+
+
+
+
+
+--> tipo assim:
+
+
+
+res.status(200).json(
+  {
+    message: ....
+  }
+)
+
+
+
+
+
+
+
+
+
+
+-- VAMOS DEFINIR UMA MESSAGE NESSE RETURN DE JSON DATA,
+
+MAS ISSO 
+
+
+NÃO É OBRIGATÓRIO... (opcional)...
+
+
+
+
+
+
+
+
+--> E VAMOS QUERER 
+
+
+RETORNAR NOSSO 'ACTUAL POST DATA',
+
+
+
+por meio de uma key de nome 'post'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+
+const postId = req.params.postId;
+console.log(postId, 'LINE');
+
+
+Post.findOne({_id: ObjectId(postId)})
+.then(
+  (post) => {
+        if(!post) {
+          const error = new Error('Could not find post.');
+          error.statusCode = 404; //pq o POST NÃO PODE SER ENCONTRADO ('NOT FOUND', é isso que significa esse código...)
+          throw error; //vai fazer com que entremos no CATCH BLOCK...
+        }
+
+
+        res.status(200).json({message: 'Post fetched.', post: post}) ////////// EIS O CÓDIGO EM QUESTÃO....
+  }
+)
+.catch(
+  (err) => {
+
+    if(!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+)
+
+
+
+
+}
+
+
+
+
+
+------------------------------
+
+
+
+
+
+AGORA, NO CASO, VAMOS QUERER ___ 
+
+OUTPUTTAR__ ESSA 
+
+
+
+
+
+
+JSON DATA QUE ENVIAMOS AGORA,
+
+
+
+
+
+LÁ 
+
+
+
+NO NOSSO FRONTEND...
+
+
+
+
+
+-------------------------
+
+
+
+OK... MAS COMO VAMOS FAZER, NO NOSSO FRONTENd?
+
+
+
+
+
+
+
+
+
+BEM, NOSSO CÓDIGO DO FRONTEND, ESCRITO PELO PROFESSOR, JÁ ESTÁ BEM BOM:
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`)
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+como você pode ver,
+
+
+
+
+NÓS JÁ TEMOS 
+
+
+
+O CÓDIGO DE FETCH BEM CERTINHO:
+
+
+
+
+
+
+
+
+componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`)
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ISSO ACABA COLOCANDO A DATA DO 'POST'
+
+  LÁ 
+
+
+  NO 
+
+
+  STATE 
+
+
+  LOCAL DE NOSSA PAGE, QUE 
+
+  É ENTÃO 
+
+  USADO 
+
+  NAQUELE RENDER ALi....
+
+
+
+
+
+    render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+
+
+
+
+
+
+
+  ---------------------------------------------
+
+
+
+
+
+
+
+
+
+certo... vou testar brevemente meu código...
+
+
+
+
+
+
+
+
+
+
+
+--> COLOCO O ID DE UM POST QUE EXISTE NA MINHA DATABASE, MAS RECEBO ESTE ERRO:
+
+
+
+
+
+
+
+
+
+reason: BSONTypeError: Argument passed in must be a string of 12 bytes or a string of 24 hex characters     
+      at new BSONTypeError (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\bson\lib\error.js:41:28) 
+      at new ObjectId (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\bson\lib\objectid.js:65:23)   
+      at castObjectId (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\cast\objectid.js:25:12)
+      at ObjectId.cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schema\objectid.js:245:12)
+      at ObjectId.SchemaType.applySetters (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1135:12)
+      at ObjectId.SchemaType._castForQuery (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1567:15)
+      at ObjectId.SchemaType.castForQuery (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1557:15)
+      at ObjectId.SchemaType.castForQueryWrapper (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1534:20)
+      at cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\cast.js:280:34)
+      at model.Query.Query.cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\query.js:4968:12),
+  valueType: 'Object',
+  statusCode: 500
+
+
+
+
+
+
+
+
+
+  --------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  professor escreve 
+
+
+  'router.get('/post/:postId', feedController.getSinglePost)'...
+
+
+
+
+
+  ---> MAS O PROFESSOR EXPLICA QUE 
+
+
+
+  O FUNCIONAMENTO DE NOSSO 
+
+
+
+  APP ESTÁ COMPROMETIDO, PQ 
+
+
+  LÁ NA 
+
+  STARTING PAGE NÓS 
+
+
+
+  FETCHEAMOS/TEMOS POSTS 
+
+  ERRADOS,
+
+  POSTS COM DUMMY DATA,
+
+
+  E NÃO OS 
+
+  'ACTUAL POSTS'
+
+
+
+  criados na nossa database...
+
+
+
+  (
+
+é pq lá em 
+
+'exports.getPosts', controller de GETPOSTS,
+
+estamos 
+
+
+NÃO USANDO A DATABASE,
+
+E SIM 
+
+
+FAZENDO O RETURN 
+
+
+DE UNS 
+
+DUMMY POSTS...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+  res.status(200).json({
+    posts: [
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'Second Post',
+        content: 'This is the second post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+    ],
+  });
+
+
+
+
+
+
+
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+  MAS COMO AGORA ESTMAOS USANDO UMA DATABASE DE VERDADE,
+
+
+
+  COMO ADICIONAMOS UMA DATABASE,
+
+
+
+  DEVEMOS 
+
+  FAZER FETCH DE NOSSOS POSTS DE VERDADE, 
+
+  NESSE CONTROLLER AÍ,
+
+  TAMBÉM...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> vou tentar escrever sozinho...
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+
+  exports.getPosts = (req, res, next) => {
+
+  Post.find({}).
+  then(
+    (posts) => {
+
+        if(!posts) {
+               const error = new Error('There was a problem, and no posts could be fetched.');
+               error.statusCode(404);
+                  throw error;
+        }
+      res.status(200).json({ ///código que fazia return de DUMMY POSTS...
+        message: 'Posts fetched successfully',
+        posts: posts
+      });
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+
+      if(!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+
+    }
+  )
+};
+
+
+
+
+
+------------------------
+
+
+
+
+
+ACHO QUE É ALGO ASSIM...
+
+
+
+
+
+
+--> É CLARO QUE 
+
+lá 
+
+
+
+
+NO NOSSO FRONTEND,
+
+em 
+
+'react app',
+
+
+TEMOS 
+
+PROBLEMAS 
+
+DE 
+
+DATA 
+específica...
+
+
+
+
+
+
+
+recebemos um erro:
+
+
+
+
+
+TypeError: Cannot read properties of undefined (reading 'name')
+(anonymous function)
+A:/projeto4 - NODEJS/MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO/NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- FRONTEND (REACTJS)/src/pages/Feed/Feed.js:276
+  273 | <Post
+  274 |   key={post._id}
+  275 |   id={post._id}
+> 276 |   author={post.creator.name}
+      | ^  277 |   date={new Date(post.createdAt).toLocaleDateString('en-US')}
+  278 |   title={post.title}
+  279 |   image={post.imageUrl}
+
+
+
+
+
+
+
+
+
+  ------> isso ocorreu/ocorre pq 
+
+
+
+  nosso document 
+
+  'post'
+
+  lá 
+
+
+
+  na database 
+
+  NÃO TEM 
+
+
+
+  UM FIELD DE 'creator'.... (e nem um 'name' dentro dele...)
+
+
+
+
+
+  -------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -> PROFESSOR ESCREVE UM CÓDIGO SIMILAR AO MEU...
+
+
+
+  TIPO ASSIm:
+
+
+
+
+
+
+  
+  Post.find({}).
+  then(
+    (posts) => {
+
+        if(!posts) {
+               const error = new Error('There was a problem, and no posts could be fetched.');
+               error.statusCode(404);
+                  throw error;
+        }
+      res.status(200).json({ ///código que fazia return de DUMMY POSTS...
+        message: 'Posts fetched successfully',
+        posts: posts
+      });
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+
+      if(!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+
+    }
+  )
+
+
+
+
+
+
+
+
+  ----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> certo... ele escreveu a mesma coisa que eu, essencialmente...
+
+
+
+
+
+
+
+
+--> SALVAMOS TUDO ISSO, VOLTAMOS AO FRONTEND... --> NO CÓDIGO DO PROFESSOR, O POST FOI 
+ACTUALLY CARREGADO....(
+
+
+  sinal que fizemos bosta em algum lugar...
+)
+
+
+
+
+
+
+
+
+
+--> certo... fiz o hard code 
+
+
+de 
+
+'author: {
+
+  name: 'Max'
+
+}
+
+'
+
+DENTRO DESSE MEU POST,
+
+
+LÁ 
+
+NO MONGODBCOMPASS,
+
+
+o que, por sua vez,
+
+
+fez com que o código de 
+
+'fetchAllPosts'
+
+
+FUNCIONASSE...
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE AGORA VAMOS QUERER 
+
+SER CAPAZES DE CLICAR EM 
+
+'view'
+
+
+
+E ENTAÕ 
+
+
+
+____ 
+
+
+VER __ ESSE 
+
+'SINGLE POST'...
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+SÓ PRECISAMOS AJUSTAR NOSSO 
+
+
+'REACT CODE' (frontend code)
+
+
+PARA 
+QUE 
+
+ELE 
+
+SEJA CAPAZ DE 'LOAD THAT SINGLE POST',
+
+
+
+
+
+em uma nova page...
+
+
+
+
+
+-_> FAZEMOS ISSO NO ARQUIVO 'PAGE' de 
+
+'SinglePost.js',
+
+no frontend react...
+
+
+
+
+
+
+
+
+EU ESCREVI ESTE CÓDIGO AQUI, mas não está funcionando muito bem:
+
+
+
+
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`)
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+
+--> O ERRO QUE RECEBO É ESTE:
+
+
+
+
+CastError: Cast to ObjectId failed for value "{ postId: '61a66da80433525e80e5f09b' }" (type Object) at path "_id" for model "Post"
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+
+--> O PROBLEMA ERA ISTO:
+
+const  ObjectId = require('mongodb').ObjectId;
+
+
+
+
+
+QUE ESTAVA ASSIM (errado):
+
+
+const  { ObjectId } = require('mongodb').ObjectId;
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+OK... AGORA DEU CERTO...
+
+
+VEJO DETALHES DO MEU POST,
+
+
+
+como 
+
+
+
+'AAAAA 
+
+
+Created by (vazio) on 11/30/2021' 
+
+
+
+
+
+
+
+
+BBBB (é o content)...
+
+
+
+
+
+
+
+
+
+
+-->OK, SÓ O 'author.name' está faltando, essencialmente...
+
+
+
+
+
+
+
+
+
+-->OK, AGORA CORRIGI,
+
+
+
+
+
+FIZ COM QUE O DOCUMENT/OBJECT NA DATABASE FICASSE ASSIm:
+
+
+
+
+
+
+
+
+
+{
+    "_id": {
+        "$oid": "61a66da80433525e80e5f09b"
+    },
+    "title": "AAAAAA",
+    "content": "BBBBB",
+    "imageUrl": "DUMMY",
+    "createdAt": {
+        "$date": "2021-11-30T18:30:00.654Z"
+    },
+    "updatedAt": {
+        "$date": "2021-11-30T18:30:00.654Z"
+    },
+    "__v": 0,
+    "creator": {
+        "name": "Max"
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+CERTO...
+
+
+
+
+
+SÓ FALTOU A IMAGE, ESSENCIALMENTE...
+
+
+
+
+
+
+
+
+
+
+
+ok......  MAS ESTAMOS CHEGANDO PERTO...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> A RAZÃO PARA A IMAGE NÃO ESTAR DISPLAYADA 
+
+
+É 
+
+'WE ARE LOOKING FOR THE WRONG URL'.... 
+
+(
+
+  no caso, eu coloquei só uma 
+
+
+  'imageUrl' de 
+
+  'DUMMY',
+
+
+
+
+  mas 
+
+  eu posso testar 
+
+
+
+  SUBSTITUIR ESSE DUMMY 
+
+
+  por um path de verdade, 
+
+
+  como 
+
+  '/images/o-fantastico-jaspion.jpg'...
+)
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+FUNCIONOU...
+
+
+
+
+
+
+-> O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`)
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          image: data.post.imageUrl,
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM (documento/post lá na DATABASe):
+
+
+
+
+
+
+
+
+
+{
+    "_id": {
+        "$oid": "61a66da80433525e80e5f09b"
+    },
+    "title": "AAAAAA",
+    "content": "BBBBB",
+    "imageUrl": "images/o-fantastico-jaspion.jpg",
+    "createdAt": {
+        "$date": "2021-11-30T18:30:00.654Z"
+    },
+    "updatedAt": {
+        "$date": "2021-11-30T18:30:00.654Z"
+    },
+    "__v": 0,
+    "creator": {
+        "name": "Max"
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+(eu dei uma alterada naquele block de 'this.setState()', para incluir a IMAGE.... image que será extraída 
+
+de 
+
+'data.post.imageUrl'...)
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+--------> ok... professor faz exatamente o que fizemos...
+
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+É CLARO QUE NÓS AINDA NÃO INTEGRAMOS 'FILE UPLOAD'
+
+
+
+NO NOSSO 
+
+
+
+
+BACKEND,
+
+
+
+
+VAMOS FAZER ISSO AGORA.... (
+
+
+  e vamos integrar tudo, o backend com frontend e database...
+)
+
+
+
+
+
+
+
+
+
+
+------->  vamos ver o image upload...

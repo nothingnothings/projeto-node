@@ -1,0 +1,82 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+    <section class="pagination">
+        
+        <a href="/products/?page=1" 
+       <% if (currentPage === 1) { %>
+        class="disabled"
+        <% } %>
+        >1</a>
+
+
+        <% if ((currentPage !== 1) && (currentPage > 2) ) { %>
+            <a href="/products/?page=<%= currentPage - 1 %>" 
+                ><%= currentPage - 1 %></a>
+   
+                <%  } %>
+
+
+        <% if ((currentPage !== lastPage) && (currentPage !== 1)) { %>
+        <a href="/products/?page=<%= currentPage %>" 
+          class="disabled"
+            ><%= currentPage %></a>
+
+          
+            <% } %>
+
+
+            <% if ((currentPage !== lastPage) && (currentPage + 1 !== lastPage)) { %>
+                <a href="/products/?page=<%= currentPage + 1 %>" 
+                    ><%= currentPage + 1 %></a>
+       
+                    <% } %>
+
+
+        <a href="/products/?page=<%= lastPage %>" 
+        <% if (currentPage === lastPage) { %>
+         class="disabled"
+         <% } %>
+         ><%= lastPage %></a>
+        </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>

@@ -1,0 +1,179 @@
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ADICIONA UM NOVO 
+
+
+
+ARQUIVO HTML EM VIEWS,
+
+
+
+
+um 
+
+arquivo chamado 
+
+
+'404.html'... 
+
+
+
+
+
+
+
+--> AÍ ELE ESCREVE 
+
+'Page not Found' no title,
+
+
+e aí 
+
+
+
+
+ELE 
+
+
+
+
+DIZ QUE PODEMOS SER CRIATIVOS COM O BODY,
+
+mas que aqui ele só vai escrever isto:
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not Found</title>
+</head>
+<body>
+    <main>Page not Found, please<a href="/">&nbsp;return to the Home Page</a></main>
+</body>
+</html>
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+------> AÍ NO MIDDLEWARE, ELE ESCREVE:
+
+
+
+const path = require('path');
+
+
+
+
+app.use(
+  (req, res, next) => { ///CLÁSSICO USE-CASE DE UM __ RETORNADOR DE PÁGINA DE 'ERRO 404'... ---> PAGE NOT FOUND... ---> COMO ESSE MIDDLEWARE ESTÁ DEFINIDO BEM NO FINAL DESSE ARQUIVO 'app.js', ELE __ SÓ SERÁ EXECUTADO SE NENHUM OUTRO MIDDLEWARE FOR ATIVADO A PARTIR DO PATH/URL besteirol/inexistente que o usuário inputtou...
+      // res.status(404).send('<h1>PAGE NOT FOUND!</h1>'); ///EXEMPLO DE CHAINING DE METHODS JUNTO DE 'send' (aqui usamos 'status' antes, para definir um STATUS CODE DE 404, page not found...)
+ 
+      res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+ 
+    } 
+)
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+--> ok, ele usa 'sendFile'
+ 
+ PARA 
+
+ ENVIAR 
+
+
+ NOSSA PÁGINA HTML DE 'NOT FOUND'....
+
+
+
+
+
+
+
+ --> aí ele escreve o clássico 
+
+
+
+ 'path.join(__dirname, 'views', '404.html')'..
+
+
+
+
+
+
+
+ --> VAMOS TAMBÉM ENVIAR AQUELE 
+
+ STATUS CODE DE 404... (erro 404)....
+
+
+
+
+
+
+
+ -->OK ,
+
+
+ NOSSO CÓDIGO VAI FUNCIONAR EXATAMENTE COMO ANTES...
+
+
+
+
+
+
+
+
+ -------> AGORA ISSO ESTÁ FUNCIONANDO, 
+
+
+
+ E AGORA ESSA É UMA MANEIRA BEM MELHOR 
+
+
+
+DE FAZER 'SERVE' DE UM CONTEÚDO AO USUÁRIO (pq enviar código HTML DIRETAMENTE, POR MEIO DE 'send(xxxxx)', É UM LIXO...)
+
+
+
+
+
+
+
+
+
+--> MAS UM POUCO DE STYLING SERIA ÓTIMO, POR ISSO VAMOS TRABALHAR 
+
+
+NESSE ASPECTO NAS PRÓXIMAS AULAS...

@@ -1,0 +1,1018 @@
+
+
+
+
+
+
+
+
+-> PROFESSOR NOS DÁ O CÓDIGO DE UM PROJETO SIMPLES 
+
+
+para testarmos essa sintaxe de import/export...
+
+
+
+
+
+
+
+
+
+
+
+-> TEMOS UM PACKAGE.JSON,
+
+EM QUE 
+
+SÓ 
+
+
+INSTALAMOS O EXPRESS...
+
+
+
+
+
+
+
+
+
+--> TEMOS UM 'app.js',
+
+
+
+
+EM QUE IMPORTAMOS ALGUMAS COISAS....
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS CONVERTER ESSES IMPORTS 'VERSÃO NODE'
+
+
+NA 
+
+'VERSÃO ES6'...
+
+
+
+
+
+
+
+
+
+
+
+bem simples...
+
+
+
+
+
+
+
+
+
+
+
+COMECEI ASSIM:
+
+
+
+// const fs = require('fs');
+//const readFile = requireq('fs').readFile;
+
+
+import fs from 'fs';
+
+//import { readFile } from 'fs';
+
+const express = require('express');
+
+const app = express();
+
+app.get('/', (req, res, next) => {
+  fs.readFile('my-page.html', 'utf8', (err, data) => {
+    res.send(data);
+  });
+});
+
+app.listen(3000);
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+só o 'APP' que é estranho.... estranho pq o express é EXECUTADO ALI EMBAIXO.... entretanto, acho que isso não muda nada....
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+// const fs = require('fs');
+//const readFile = requireq('fs').readFile;
+
+
+import fs from 'fs';
+
+//import { readFile } from 'fs';
+
+// const express = require('express');
+
+
+import express from 'express';
+
+const app = express();
+
+app.get('/', (req, res, next) => {
+  fs.readFile('my-page.html', 'utf8', (err, data) => {
+    res.send(data);
+  });
+});
+
+app.listen(3000);
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ESSE APP SÓ FAZ ISSO:
+
+
+ELE 
+
+
+
+RECEBE REQUESTS DE TIPO GET QUE CHEGAM ATÉ '/',
+
+
+E AÍ 
+
+RETORNA O CONTEÚDO,
+
+
+
+
+
+
+
+ CONTEÚDO DE 
+
+
+ ''my-page.html',
+
+
+
+ E AÍ 
+ O 
+
+ RETORNA
+
+
+
+
+ COMO CONTEÚDO PURO,
+
+ por meio do código 
+
+ 'res.send(data)'...
+
+
+
+ ex:
+
+
+
+
+
+
+ app.get('/', (req, res, next) => {
+  fs.readFile('my-page.html', 'utf8', (err, data) => {
+    res.send(data);
+  });
+});
+
+app.listen(3000);
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> É UM APP BEM SIMPLES....
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR, ENTRETANTO,
+
+
+VAI QUERER __ 
+
+
+OUTSOURCEAR ESSE CÓDIGO DE 'app.get('/')'
+
+
+PARA UM ARQUIVO ROUTE, EU ACHO,
+
+
+PARA QUE 
+
+ENTÃO 
+
+CONSIGAMOS VER COMO FUNCIONA A SINTAXE DE EXPORTS 
+
+
+
+
+
+ES6...
+
+
+
+
+
+
+
+
+
+ex(arquivo 'route')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS RECEBI UM ERRO:
+
+
+
+
+(node:1620) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A:\projeto4 - NODEJS\MODULO32- JAVASCRIPT MODERNO E NODEJS\NOVOPROJETOALTERNATIVO,CONVERSAODEIMPORTNODEPARAIMPORTES6 (versao ES6)\app.js:5
+import fs from 'fs';
+^^^^^^
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OUTRA QUESTÃO, AQUI....
+
+
+
+
+
+
+
+
+
+--> PARECE QUE O __NODE__ É BURRO.... --> ELE, POR ALGUMA RAZÃO,
+
+
+PARECE
+
+
+TER ESQUECIDO 
+
+
+QUE 
+
+
+
+
+
+
+quando não escrevemos '.js' do lado de um ARQUIVO QUE EXPORTAMOS,
+
+
+ESTAMOS FALANDO IMPLICITAMENTE 
+
+
+DE UM ARQUIVO .js...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+// const fs = require('fs');
+//const readFile = requireq('fs').readFile;
+
+
+import fs from 'fs';
+
+//import { readFile } from 'fs';
+
+// const express = require('express');
+
+
+import pageRoute from './routes/route.js';
+
+
+import express from 'express';
+
+
+
+
+const app = express();
+
+
+
+app.get('/', pageRoute);
+
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> EU TIVE QUE ESCREVER 
+
+'import pageRoute from './routes/route.js'
+
+
+
+PARA CONSEGUIR 
+
+FAZER COM QUE ISSO FUNCIONASSE (antes estava 
+
+dando 
+
+este erro aqui:
+
+
+
+
+\NOVOPROJETOALTERNATIVO,CONVERSAODEIMPORTNODEPARAIMPORTES6 (versao ES6)\routes\route' imported from A:\projeto4 - NODEJS\MODULO32- JAVASCRIPT MODERNO E NODEJS\NOVOPROJETOALTERNATIVO,CONVERSAODEIMPORTNODEPARAIMPORTES6 (versao ES6)\app.js
+Did you mean to import ../routes/route.js?
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+TIVE DE ADICIONAR '.js'
+
+
+em 
+
+'route.js'...
+
+---------------------------
+
+
+
+
+
+
+OK... MAS ISSO FEITO, O CÓDIGO FUNCIONOU PERFEITAMNETE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS VER O OFFICIAL DOCS...
+
+
+
+
+
+
+
+
+
+
+
+
+-> o PROFESSOR APONTA QUE A ESTABILIDADE DOS ES6 MODULES __ É EXPERIMENTAL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE A IMPLEMENTAÇÃO EXATA PODERIA MUDAR, NO FUTURO...
+
+
+
+
+
+
+
+
+
+--> não é bom usar isso em production.... (é por isso que a maior parte dos projetos não usa essa sintaxe)....
+
+
+
+
+
+
+
+
+
+
+
+-------> VOCÊ VERÁ A MESMA SINTAXE IMPORT/EXPORT NO BROWSER...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... CONTINUANDO...
+
+
+
+
+
+
+
+-> PARA ATIVAR 
+
+
+
+
+
+
+O 'USO DE MODULES'
+
+
+em projetos NODE,
+
+
+PRECISAMOS 
+
+
+
+ENABLAR UMA COISA...
+
+
+
+
+
+
+
+
+
+
+--> há 2 MANEIRAS PRINCIPAIS (A terceira é meio ignorada)....
+
+
+
+
+
+
+
+
+
+
+
+
+-----> 1a maneira: DEVEMOS __ RENOMEAR NOSSOS ARQUIVOS,
+
+de '.js'
+ 
+ PARA 
+
+
+ '.mjs'... (module javascript)
+
+
+
+
+
+
+
+
+
+
+
+ -----> ESSE APPROACH É MEIO FRAU... -----> 
+
+
+
+
+ NESSE APPROACH, NÓS RENOMEAMOS 
+
+
+
+ 'app.js'
+
+ PARA 
+
+
+ 'app.mjs',
+
+
+
+
+ E ISSO AGORA ME DEIXA IMPORTAR 
+
+
+
+
+
+
+
+ MODULES com aquela sintaxe de 
+
+ 'import xx from 'yyy''...
+
+
+
+
+
+
+
+
+ MAS O PROFESSOR NÃO VAI USAR ESSE APPROACH...
+
+
+
+
+
+
+
+
+
+
+ ------> EM VEZ DISSO,
+
+
+ devemos seguir O SEGUNDO APPROACH (qeu eu JÁ SEGUI)....
+
+
+
+
+
+
+
+
+
+
+
+ --> NESSE APPROACH, NÓS MANTEMOS 'app.js',
+
+
+
+
+
+ MAS AÍ 
+
+ VAMOS ATÉ O PACKAGE.JSOn 
+
+ e 
+
+ adicionamos um field de 
+
+ "type",
+
+
+ com um valor de "module"...
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+ {
+  "name": "complete-guide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node app.js"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/udemy-course-nodejs-complete"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+'''IN THE NEAREST PACKAGE.JSON FILE CONTAINS A TOP-LEVEL FIELD TYPE WITH A VALUE OF MODULE'''...
+
+
+(
+    ok, é isso que fizemos...
+
+
+    isso conserta o erro de 
+
+
+
+
+)
+
+
+
+
+EX:
+
+
+
+
+(node:16776) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.
+A:\projeto4 - NODEJS\MODULO32- JAVASCRIPT MODERNO E NODEJS\NOVOPROJETOALTERNATIVO,CONVERSAODEIMPORTNODEPARAIMPORTES6 (versao ES6)\app.js:5
+import fs from 'fs';
+^^^^^^
+
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+PROFESSOR USA 
+
+
+A SINTAXE DO 'DEFAULT EXPORT',
+
+
+coisa bem simples...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR FALA DA 'EXTENSION'... ->  ELE EXPLICA QUE 
+
+REALMENTE,
+
+A EXTENSION É NECESSÁRIA,
+
+NA 
+
+SINTAXE 
+
+DE 
+
+
+
+
+'IMPORT ES6'
+
+
+__ SERVERSIDE__ (na browserside, isso não é necessário)... --> ENTRETANTO,
+
+
+
+
+NO SERVERSIDE,
+
+PARA 
+
+
+
+_IMPORTS__ DE ARQUIVOS DE SEU PROJETO (e não third party modules, como 'express')',
+
+
+
+ISSO 
+
+É 
+
+__ REALMETNE NECESSÁRIO...
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+certo, mas agora tudo está funcionando, E PODEMOS VISITAR NOSSA PAGE DE NOVO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCê PODE OPTAR PELA SINTAXE DO ES6,
+
+
+
+
+OU PELA DO REQUIRE....
+
+
+
+
+
+
+
+
+--> A DO ES6 É EXPERIMETNAL....
+
+
+
+
+
+
+
+
+
+
+ELE FALA DA SINTAXE SEM 'DEFAULT EXPORT',
+
+que é tipo 
+
+
+
+
+
+export const chinelo = () => {
+    ...
+},
+
+
+
+
+E DEPOIS 
+
+
+
+
+
+
+
+import { chinelo } from 'chinelo.js'....
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... ENTENDi...
+
+
+
+
+
+PROFESSOR FALA QUE 
+
+
+
+A RAZÃO DE 'express' e 'fs' 
+
+
+
+FUNCIONAREM SEM '.js' NO FINAL É QUE 
+
+__ELES JÁ USAM 
+
+
+'DEFAULT EXPORTS' 
+
+UNDER THE HOOD....

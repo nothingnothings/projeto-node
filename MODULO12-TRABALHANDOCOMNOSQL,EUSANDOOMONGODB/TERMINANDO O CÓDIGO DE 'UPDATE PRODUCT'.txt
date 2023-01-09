@@ -1,0 +1,320 @@
+ 
+
+
+
+
+
+
+
+
+
+ --> JÁ TRABALHAMOS NO MODELO DE 'product',
+
+ deixamos
+  
+
+
+  O 
+
+
+
+  MÉTODO DE 
+
+  'save()' 
+
+  mais FLEXÍVEL,
+
+
+
+
+
+  E O CÓDIGO DE 
+
+  NOSSO CONTROLLER 
+
+  de 
+
+  edit product 
+  agora 
+
+  está assim:
+
+
+
+
+
+
+
+
+
+
+
+  exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+console.log(productId);
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+
+
+
+
+  Product.save( title, price, imageUrl, description, productId) ///CÓDIGO DO PROFESSOR... UM POUCO MAIS OPTIMIZADO DO QUE O MEU, POIS USA UM MESMO MÉTODO, 'save()', para RODAR 2 OPERAÇÕES DIFERENTES, 1 OPERAÇÃO DE EDIT E OUTRA DE ADD....
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+
+
+
+  ---------------------------------
+
+
+
+
+
+
+  ok... só cometemos um ERRO, aí.... ----> 
+
+
+
+
+
+  COMO 
+
+
+  NOSSO METHOD É 
+
+  um 
+
+  MÉTODO __ NÃO ESTÁTICO,
+
+  primeiramente 
+
+  precisamos 
+
+
+  INSTANCIAR 
+
+
+  um 'product' aqui,
+
+  para então
+
+
+  poder chamar 
+
+  'product.save()'....
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+  
+  exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+console.log(productId);
+
+ const title = req.body.title;
+const imageUrl = req.body.imageUrl;
+const description = req.body.description;
+const price = req.body.price;
+
+
+
+
+
+const product = new Product(title, price, imageUrl, description, productId)
+
+  product.save() ///CÓDIGO DO PROFESSOR... UM POUCO MAIS OPTIMIZADO DO QUE O MEU, POIS USA UM MESMO MÉTODO, 'save()', para RODAR 2 OPERAÇÕES DIFERENTES, 1 OPERAÇÃO DE EDIT E OUTRA DE ADD....
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+
+
+
+
+
+  -----------------------
+
+
+
+
+
+
+
+  OK... FUNCIONOU.
+
+  Nosso product agora está sendo 
+
+  editado...
+
+
+
+
+  CÓDIGO DO MODEL FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+  class Product {
+  constructor(title, price, imageUrl, description, id) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this._id = id;
+  }
+
+  save() { ///vai EDITAR ou ADICIONAR UM PRODUCT, a depender do 'truthy'/'falsy' de 'this._id' ( ou seja, a presença ou inexistência dessa propriedade dentro do objeto 'Product' que é instanciado por meio de 'new Product'...)
+   const db = getDb();
+
+   let dbOp;
+
+
+
+
+  //  const identifiedProduct = { ///CÓDIGO QUE CRIA FORÇADAMENTE UM 'id' dentro de um objeto 'product'... --> é desnecessário, pois o MONGODB já cria um ID PARA NÓS, o field de '_id' em cada document...
+
+  //   ...this, 
+  //   id: Math.random() * Math.random()
+  //  }
+
+
+
+
+if (this._id) {
+        ///runs the code that UPDATES a product that ALREADY EXISTS on the database...
+
+          
+   const updateDocument = {
+
+    $set: {
+      title: this.title,
+      price: this.price,
+      imageUrl: this.imageUrl, 
+      description: this.description
+     } }
+
+        dbOp = db.collection('products').updateOne({_id: ObjectId(this._id)}, updateDocument);
+
+} else { 
+
+  dbOp =  db.collection('products').insertOne(this) //vai se referir a PRODUCT... este mesmo product do constructor 'Product'....
+
+
+
+}
+
+
+return dbOp  ///será executado DE QUALQUER JEITO, basicamente...
+      .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   );
+  }
+
+
+
+
+
+
+
+
+  ----------------------------
+
+
+
+
+
+
+
+
+
+
+  A coisa mais importante é que nosso method de 'save()'
+
+  funcionou....
+
+
+
+
+
+  -> É ASSIM QUE PODEMOS UPDATAR UM PRODUCT COM O MONGODB,
+
+  COM A AJUDA 
+
+  DO 
+
+  MÉTODO 
+
+
+  'updateOne()'...
+
+
+
+
+
+
+
+  

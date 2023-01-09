@@ -1,0 +1,1285 @@
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS 
+
+
+
+TERMINAR O SETUP 
+
+
+DA TABLE 
+
+DE 
+
+'PRODUCTS'... ----->  VAMOS PRECISAR DESSA TABLE PARA O NOSSO PRIMEIRO DEMO...
+
+
+
+
+
+
+
+
+-->  NO EDITOR DE TABLE,
+
+NO WORKBENCH,
+
+
+
+PODEMOS __DEFINIR COMO UM 
+
+
+
+'PRODUCT ENTRY'
+
+
+DEVERÁ 
+
+SE PARECER... ----> 
+
+
+
+
+PARA ISSO,
+
+
+
+
+
+O PROFESSOR PRIMEIRAMENTE VAI DEFINIR UMA 
+
+'column/field'
+
+de 
+
+'id'... ----> ISSO FEITO, 
+
+ELE PRECISA DEFINIR O DATATYPE
+
+
+
+DESSE FIELD... --------> 
+
+
+
+PROFESSOR EXPLICA QUE 
+
+PARA 
+
+
+
+
+
+1 
+
+'id,'
+
+
+
+
+
+O DATATYPE DE 
+
+'integer'
+
+É 
+
+_fINE....
+
+
+(há mtos tipos diferentes de DATATYPE....)
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ, DO LADO DISSO,
+
+TEMOS VÁRIAS CAIXAS/CHECKBOXES...
+
+
+
+
+
+
+
+
+
+
+são 
+
+
+
+'PK' (
+    ''''TELLS MYSQL THAT IT SHOULD BE THE PRIMARY KEY BY WHICH 
+
+RECORDS IN THIS TABLE WILL BE IDENTIFIED''''''  ------> 
+)
+
+
+'NN'
+
+'UQ'
+
+'BIN'
+
+
+'UN' 
+
+'ZF'
+
+
+
+'AI' 
+
+
+'G'...
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+
+DIZ QUE 
+
+AQUELE 
+
+
+'PK' é 
+
+
+'PRIMARY KEY',
+
+
+e é a opção 
+
+QUE 
+
+
+''''TELLS MYSQL THAT IT SHOULD BE THE PRIMARY KEY BY WHICH 
+
+RECORDS IN THIS TABLE WILL BE IDENTIFIED''''''  ------> 
+
+
+
+
+
+
+
+
+
+
+
+já 
+
+
+
+'NN' --> SIGNIFICA 'not null' --> ISSO SIGNIFICA QUE 
+
+ESSE FIELD __ NÃO PODE SER __ NULL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+JÁ 
+
+'uq' -->>> ISSO SIGNIFICA 
+
+
+
+'UNIQUE',
+
+
+
+DIZ AO SQL QUE ___ 
+
+
+TODOS OS RECORDS __DEVERÃO SER 'UNIQUE'...
+
+
+
+
+
+
+
+
+
+
+
+B/BIN -->  isso 
+
+
+
+
+INFORMA SE OS RECORDS/ESSE FIELD 
+
+
+
+_DEVERÃO 
+
+'HOLD BINARY DATA' (que não é o que queremos, aqui....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'UN' -----> SIGNIFICA 'UNSIGNED' ---> ISSO INFORMA 
+
+
+
+__ SE ESSE FIELD DEVERÁ 'HOLD NO NEGATIVE VALUES'.... ---> 
+
+
+
+
+NO CASO DE 'id', do ID de nossos products, desse field AÍ,
+
+
+VAMOS QUERER 
+
+
+__MARCAR__ 'unsigned',
+
+PQ 
+
+
+NOSSO 'ID', qualquer um deles,
+
+SEMPRE 
+
+SERÁ 
+
+UM 
+
+'INTEGER'
+
+
+
+COMEÇANDO 
+
+
+
+___ EM 1 __ e então incrementando por 1...
+
+
+
+
+
+
+
+
+
+
+
+ZF -----> SIGNIFICA 'ZERO FILL'... --> professor deixa DESMARCADO... --> '''FILLS UP VALUES FOR THAT COLUMN WITH 0s if IT IS NUMERIC...'''
+
+
+
+
+
+
+
+AÍ TEMOS 
+
+
+
+
+'AI'  -----> SIGNIFICA 'AUTO-INCREMENTING'... --> 
+
+
+
+ESSA 
+
+
+
+OPÇÃO/CHECKBOX É MT IMPORTANTE PARA NÓS,
+
+
+
+
+__ PQ __ VAMOS QUERER __ QUE CADA NOVO RECORD 'id' 
+
+
+
+DEVERÁ __ RECEBER __ 
+
+1 NÚMERO MAIOR DO QUE O ANTERIOR __ AUTOMATICAMENTE,
+
+
+
+
+
+E ESSE VALOR REALMENTE DEVERÁ SER 
+
+MAIOR DO QUE 
+
+O RECORD ANTERIOR.... -> E VAMOS QUERER ESSA OPÇÃO, CERTAMENTE...
+
+
+
+
+
+--------------
+
+
+
+
+
+
+
+
+--> __ CERTO... ----> AÍ, DEPOIS DISSO,
+
+
+TEMOS 
+
+
+
+UM FIELD 
+
+DE 
+
+
+'title'... ----> PROFESSOR EXPLICA QUE 
+
+O 
+
+DATATYPE 
+
+desse negócio 
+
+
+DEVERÁ 
+
+
+
+
+
+___ SER UM 
+
+
+'VARCHAR(número)'  -------> 
+
+
+
+
+
+
+VARCHARS --------> SÃO ___bASICAMENTE__ STRINGS.... 
+
+
+
+
+
+
+
+
+
+--> E O '()' DEPOIS DO 
+
+'VARCHAR', na opção de 'datatype',
+
+
+É __LITERALMENTE __ O NÚMERO MÁXIMO DE CARACTERES 
+
+ACEITOS 
+
+
+
+PARA ESSE FIELD... --> professor troca o número inicial, de 45, para 255...
+
+
+
+
+
+
+
+
+
+
+CERTO...
+
+ESTÁ FICANDO:
+
+
+
+
+
+                     PK NN UQ BIN UN ZF AI G 
+title  VARCHAR(255)  
+
+
+
+
+
+--------------------------------------------------
+
+
+
+titles MAIS LONGOS DO QUE '255'
+
+
+SERÃO CORTADOS....
+
+
+
+
+
+
+
+
+----> PROFESSOR DEFINE QUE 
+
+O 
+
+TITLE 
+
+DEVERÁ 
+
+'NOT BE NULL' (nn checado...)
+
+
+
+
+
+
+----> MAS ALÉM DE 'nn',
+
+NENHUMA OUTRA SETTING/CHECKBOX DEVERÁ SER MARCADA....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+column    datatype   PK NN  UQ BIN UN ZF AI G 
+title  VARCHAR(255)      X
+
+
+
+
+
+--------------------------------------
+
+
+
+
+ALÉM DE FIELDS 
+
+
+'id' 
+
+
+e 
+
+
+'title',
+
+
+PROFESSOR 
+
+
+
+NOS EXPLICA QUE 
+
+
+PARA 
+
+1 PRODUCT 
+ELE 
+
+
+TAMBÉM VAI QUERER 
+
+1 
+
+'PRICE',
+
+
+
+
+
+e
+
+
+
+AÍ, como DATA TYPE DESSE FIELD,
+
+
+ELE VAI QUERER 
+
+
+TER 
+
+UM TYPE 
+
+DE 
+
+
+'DOUBLE' (
+
+
+
+
+    pq DOUBLE 
+
+
+    __NOS DEIXA __ ENTER UM 
+
+    VALOR 
+
+
+    QUE 
+
+
+    TEM 
+
+    'DECIMAL PLACES'....
+)
+
+
+
+
+
+
+
+--> E O PRICE TBM NÃO PODERÁ FICAR COMO NULL...
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+column    datatype    PK NN  UQ BIN UN ZF AI G 
+price  DOUBLE             X
+
+
+
+
+
+---------------------------
+
+
+
+
+ALÉM DESSES FIELDS AÍ,
+
+
+o professor também vai querer ter um field 
+DE 
+
+DESCRIPTION,
+
+
+
+
+
+
+
+
+
+
+
+QUE 
+
+
+NÃO SERÁ UM VARCHAR,
+
+
+
+e sim 
+
+
+será 
+
+de datatype
+'text'...
+
+
+
+
+
+----->  oq, mas QUAL É A DIFERENÇA  
+
+
+
+
+__eNTRE 
+
+'VARCHAR' 
+
+E 
+
+
+'TEXT'? -------> 
+
+
+
+
+AÍ, O PROFESSOR NOS DIZ QUE
+
+
+DEVEMOS CONSULTAR UM 
+
+
+
+CURSO DE SQL COMPLETO,
+
+PARA 
+
+
+APRENDER MAIS SOBRE 
+
+OS DATATYPES 
+
+DISPONÍVEIS
+ 
+
+ E COMO TRABALHAR COM ELES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> OK... MAS ESSENCIALMENTE, 'TEXT' 
+
+ É 
+
+
+
+ SIMPLESMENTE UM 
+
+ VARCHAR MAIS LONGO, uma string mais longa... (o varchar é um TEXT/string, mas uma string COM UMA LIMITAÇÃO DE CARACTERES...)
+
+
+
+
+
+
+
+
+
+ -----> POR FIM, TEREMOS UM field 
+
+ DE 
+
+ 'imageUrl',
+
+
+
+  o qual 
+
+  professor settará 
+
+
+  como 
+
+
+
+  varchar(255) tbm...
+
+
+
+
+
+
+
+
+  COM ISSO,
+
+  DEFINIMOS COMO 
+
+
+
+  1 
+
+  RECORD DE 'product'
+
+
+  DEVERÁ SE PARECER...
+
+
+
+
+
+
+
+  -----> VOCÊ PODE DEIXAR O RESTO TUDO COMO ESTÁ,
+
+  E AÍ CLICAR 'APLICAR', PARA APLICAR TODAS ESSAS MUDANÇAS 
+
+
+
+NA ESTRUTURA DOS 'FIELDS' DESSA TABLE...
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+O WORKBENCH VAI NOS MOSTRAR 
+
+
+
+
+O SQL STATEMENT QUE ELE VAI EXECUTAR... --> e é claro que 
+
+
+
+VOCÊ PODE/PODERIA 
+
+TER ESCRITO ISSO NO CÓDIGO NODEJS,
+
+
+
+escrever um código para 
+
+CRIAR UMA NOVA TABLE...
+
+
+
+
+
+----------> MAS AQUI FIZEMOS ISSO NO WORKBENCH....
+
+
+
+
+
+
+
+
+
+--> OK, AGORA LÁ EM 
+
+
+'products',
+
+
+
+LÁ NAS TABLES DO 'DATABASE SERVER/SCHEMA' 
+
+
+
+de 
+
+'node-complete-course',
+
+
+
+VOCê PODERÁ 
+VER SUAS 
+
+ENTRIES/RECORDS ARMAZENADOS NESSA TABLE....
+
+
+(PARA ISSO, VOCÊ DEVE CLICAR NO ÍCONE QUADRADO BEM DA DIREITA....)
+
+
+
+
+
+
+
+
+ALÉM DAS ENTRIES,
+
+
+
+NÓS TBM 
+
+
+
+VEMOS 
+
+O 
+
+QUERY 
+
+
+SQL 
+
+
+
+QUE FOI 
+
+EXECUTADO 
+
+
+
+___PARA __ OLHAR PARA __ DENTRO _ DESSA SUA TABLE ESPECÍFICA,
+
+NESSE SEU SCHEMA/DATABASE SERVER de sua database SQL.... 
+
+
+
+
+
+
+
+
+--> no caso,
+
+
+VEMOS 
+
+
+'SELECT * FROM `node-complete-course`.products;'
+
+
+
+
+
+
+
+
+
+
+
+EXATAMENTE O CÓDIGO QUE O PROFESSOR HAVIA ESCRITO MAIS 
+
+CEDO 
+
+
+
+NESTE MÓDULO, NAQUELE CÓDIGO DE 
+
+
+
+
+'
+db.execute('Select * FROM 'node-complete-course'.products ' )
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+CERTO... MAS O CÓDIGO QUE O PROFESSOR HAVIA USADO 
+
+
+ERA UM POUCO DIFERENTE...
+
+
+estava assim:
+
+
+
+
+
+'db.execute('SELECT * FROM products');'  (isso pq A DATABASE de 'node-complete-guide' JÁ ESTAVA SELECIONADA, POR MEIO DO CÓDIGO DE '     const pool = mysql.createPool({name: 'nodejs-complete-course'}), lá em 'database.js', no folder UTIL de nosso PROJETO NODE...                             )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+ 
+
+ PROFESSOR DIZ QUE 
+
+ AGORA SÓ PRECISAMOS ADICIONAR UMA ENTRY/RECORD MANUALMENTE,
+
+ TUDO PARA QUE 
+
+ TENHAMOS ALGUMA DATA PARA 
+
+ 'FETCH', para nosso DEMO...
+
+
+
+
+
+
+
+
+
+
+
+ professor adiciona um BOOK...
+
+
+
+
+
+
+
+
+
+ --> vemos isso no WORKBENCH:
+ INSERT INTO `node-complete-course`.`products` (`id`, `title`, `price`, `description`, `imageUrl`) VALUES ('1', 'book', '215125', 'A BOOK', 'asjasojasaso');
+
+
+
+
+
+
+
+
+
+ --------------------------------------------------------------------------
+
+
+
+
+
+ OK... ESSE 
+
+ 1 ELEMENTO FOI ADICIONADO ALi....
+
+
+
+
+
+
+ AGORA, 
+
+ DE VOLTA 
+
+
+ AO NOSSO CÓDIGO 
+
+
+ NODEJS/EXPRESSJS,
+
+
+
+
+
+
+
+ professor 
+
+
+
+ diz que 
+
+
+ podemos 
+
+ escrever 
+
+ algo como isto:
+
+
+
+
+
+
+
+
+''''db.execute('SELECT * FROM products') '''''
+
+
+
+
+
+
+
+
+
+MAS __ ALÉM DE ESCREVER ISSO,
+
+VAMOS 
+ESCREVER 
+
+'.then()'....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+db.execute('SELECT * FROM products').then(
+
+)
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+O CÓDIGO COMPLETO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express'); ///necessário.
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express(); /////necessário.
+
+
+
+
+
+app.set('view engine', 'ejs'); 
+
+
+
+// const adminData = require('./routes/admin');
+
+
+const adminRoutes = require('./routes/admin');
+
+
+const shopRoutes = require('./routes/shop');
+
+
+const errorController = require('./controllers/error');
+
+
+const db = require('./util/database'); ///////SERÁ/É O EXPORT da 'pool'/'database' SQL que vamos querer utilizar....
+
+
+
+
+
+db.execute('SELECT * FROM products').then(); /////////EIS O CÓDIGO EM QUESTÃO.
+
+app.use(bodyParser.urlencoded({extended: false})); ////1 DE _DIVERSOS_ MÉTODOS__ que podemos usar para PARSEAR NOSSAS 'INCOMING REQUESTS'....--> nesse caso, vamos usar 'urlencoded()', que é algo que usamos PARA PARSEAR DADOS ENVIADOS POR MEIO DE UMA FORM...
+
+
+
+
+app.use(express.static(path.join(__dirname, 'public'))); ////////    COM ISSO, COM ESSE SIMPLES MIDDLEWARE, USERS  DEVERÃO/CONSEGUIRÃO  SER CAPAZES  DE ACESSAR O  FOLDER 'PUBLIC'  NO ROOT FOLDER.... --> FAZEOMS ISSO PARA CONSEGUIR FAZER 'SERVE' DAS __ FILES CSS__ DE NOSSO PROJETO (ver aula 'serving files statically', em que SOLUCIONAMOS O PROBLEMA ___ DOS ARQUIVOS CSS SERVIDOS/UTILIZADOS EM PÁGINAS SERVIDAS PELO NODEJS/EXPRESSJS...)
+///^^^este código é MUITO IMPORTANTE.
+
+
+
+app.use(
+ 
+
+  '/admin', //será APLICADO NA URL de nosso path, do path desse negócio aí... (que está lá em 'admin.js')...
+
+
+      
+
+    adminRoutes ////uso do EXPRESSJS...
+);
+
+
+
+app.use(
+  shopRoutes   ////uso do EXPRESSJS...
+)
+
+
+
+
+app.use(
+
+  errorController.error404
+)
+
+
+
+
+app.listen(3000); ///é um resumo/shorthand de 'const server = http.createServer(app);' e 'server.listen(3000)'...
+                    ///também torna desnecessário o import de 'const http = require('http'), PQ ESES MÓDULO JÁ VEM COM esse método '.listen()' no nosso app EXPRESS..
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+OBS:::: NÓS __SÓ SOMOS CAPAZES DE USAR 
+
+'.then()'
+
+
+AQUI 
+
+DEVIDO 
+
+AO NOSSO EXPORT 
+ESPECIAL 
+
+
+de 
+
+'module.exports = pool.promise()',
+
+LÁ EM 
+
+'database.js'...
+
+
+
+
+---------> ISSO SIGNIFICA QUE 
+
+AGORA 
+
+
+NÓS CONSEGUIMOS DE VOLTA 
+
+'PROMISES' 
+
+
+AO __ EXECUTAR (execute()) 
+
+
+
+QUERIES COMO 
+
+
+'db.execute('SELECT * FROM products');'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> E PROMISES POSSUEM __ 2 FUNÇÕES:
+
+
+
+
+THEN 
+
+
+
+E 
+
+CATCH....
+
+
+
+
+
+
+
+
+--> VEREMOS ESSAS FUNÇÕES NA PRÓXIMA LIÇÃO...

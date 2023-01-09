@@ -1,0 +1,760 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> VAMOS COMEÇAR COM O 'UPLOAD' DE FILES.... ------> PROFESSOR NOS EXPLICA QUE 
+
+
+
+
+
+
+
+
+
+
+JÁ TEMOS 1 EXCELENTE USE-CASE 
+
+
+
+
+em nosso app.... --> 
+
+
+O USE-CASE É:
+
+
+
+
+
+
+
+
+
+
+
+
+
+QUANDO ADICIONAMOS UM NOVO PRODUCT, VAMOS QUERER __UPLOADAR_ UMA IMAGE DE NOSSO 
+
+COMPUTADOR... (pq adicionar uma url manualmente NÃO É UM SETUP MT REALÍSTICO...) -----> 
+
+
+
+ISSO 
+
+PQ 
+
+
+
+EM UM 
+
+CONTEXTO DE VIDA REAL,
+
+
+
+
+AS PESSOAS QUE VÃO USAR SEU MARKETPLACE TIPICAMENTE __ NÃO VÃO TER __ 
+
+
+
+FOTOS DOS 
+
+PRODUCTS DELES ARMAZENADAS EM ALGUM LUGAR DA WEB....
+
+
+
+
+
+
+
+
+--------> OK.... É POR ISSO QUE PRECISAMOS DE UM 'FILE PICKER',
+
+
+
+UMA MANEIRA DE DEIXAR OS USERS 
+
+SELECIONAR 1 ARQUIVO PARA UPLOADAR 
+
+
+
+
+à NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+--------> É ISSO QUE FAREMOS...
+
+
+
+
+
+
+
+
+
+PARA CONSEGUIR ADDAR 'FILE UPLOAD',
+
+
+
+PRECISAMOS SER CAPAZES DE FAZER 2 COISAS:
+
+
+
+
+
+
+
+1) PRECISAMOS __ ADJUST OUR FORM, ajustar a FORM nessa page de edit/add product,
+
+
+para que 
+
+ELA DEIXE O USER 
+
+
+
+__ESCOLHER_ 1 ARQUIVO DE TIPO 'IMG'
+
+
+de seu  pc (jpg, png, etC)...
+
+
+
+
+
+
+
+
+-------> VAMOS QUERER MOSTRAR UM 'FILE PICKER' AOS USERS.. --> uma ferramenta que os users 
+
+PODERÃO USAR PARA SELECIONAR 1 ARQUIVO NO SEU OS (operating system)...
+
+
+
+
+
+
+
+
+
+
+
+
+2) PRECISAMOS SER CAPAZES DE 'ACCEPT THAT FILE',
+
+
+
+ACEITAR ESSE ARQUIVO NO __ LUGAR___ EM QUE NÓS HANDLAMOS ESSE ARQUIVO.. (
+
+
+    no lugar em que ___HANDLAMOS OS 'INCOMING REQUESTS'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> BEM, PROFESSOR DIZ QUE DEVEMOS 'START WITH THE FORM'... ---------> 
+
+
+
+
+
+PARA ISSO,
+
+
+
+
+
+VAMOS ADICIONAR UM 
+
+'FILE PICKER'
+
+
+
+
+
+
+LÁ NA NOSSA VIEW.... 
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR FAZER ISSO,
+
+
+
+
+
+TEMOS O ARQUIVO 
+
+
+'edit-product.ejs',
+
+
+C
+OM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" required  name="imageUrl" id="imageUrl" value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+--> NO FINAL DAS CONTAS, ESSE INPUT de 'imageUrl'
+
+
+DEVERÁ ___ SE TORNAR/TRANSFORMAR EM UM 'FILE PICKER'...... --> 
+
+
+
+
+
+
+
+
+PARA ISSO,
+
+
+
+     
+
+
+     ELE COMENTA ESSE CÓDIGO PARA FORA,
+
+
+
+     MAS 
+
+
+     AGORA 
+
+
+
+
+     ELE 
+
+
+
+
+     VAI ESCREVER ALGO ASSIM:
+
+
+
+
+
+     
+
+       <div class="form-control">
+                    <label for="image">Image </label>
+                <input 
+                
+                
+                type="text" 
+                
+                
+                required  
+                
+                
+                name="imageUrl" 
+                
+                
+                id="imageUrl" 
+                
+                
+                value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS EDITAR TUDO ISSO, É CLARO...
+
+
+
+
+
+
+
+
+
+
+-------->  A PARTE IMPORTANTE:
+
+
+
+
+
+MUDAMOS 'text'
+ 
+ PARA 
+
+ 'file'...
+
+
+
+
+
+
+
+
+
+
+ 
+       <div class="form-control">
+                    <label for="image">Image </label>
+                <input 
+                
+                
+                type="file"  ///////EIS O CÓDIGO EM QUESTÃO.
+                
+                
+                required  
+                
+                
+                name="imageUrl" 
+                
+                
+                id="imageUrl" 
+                
+                
+                value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+--> O PROFESSOR TAMBÉM MUDA O NAME PARA 'image', e o 'id' também...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+       <div class="form-control">
+                    <label for="image">Image </label>
+                <input 
+                
+                
+                type="file"  ///////EIS O CÓDIGO EM QUESTÃO.
+                
+                
+                required  
+                
+                
+                name="image" 
+                
+                
+                id="image" 
+                
+                
+                value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+O PROFESSOR TAMBÉM REMOVE O 'value'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required 
+                 name="image" 
+                 id="image" 
+                 >
+            </div>
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+------> ok... VIROU UM FILE PICKER, EU ACHO...
+
+
+
+
+
+
+--> TIRAMOS O VALUE, TAMBÉM....
+
+
+
+
+
+
+--> FICA TIPO ASSIM:
+
+
+
+
+
+
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required  
+                name="image" 
+                id="image" 
+                
+                
+                >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR EXPLICA QUE AGORA TEREMOS QUE __TWEAK OUR BACKEND LOGIC... -------> 
+
+
+
+
+
+
+VAMOS TER QUE 
+
+EDITAR A BACKEND PARA __ QUE __ NÓS CONSIGAMOS FAZER 
+
+
+'EDIT' 
+
+
+DESSA IMAGE 
+
+NA ROUTE DE 
+
+
+'EDIT A PRODUCT' (para não fazer o SEND DE UM NOVO ARQUIVO, E SIM SÓ O REPLACE DO 
+
+FILE ANTIGO COM O FILE NOVO...)
+
+
+
+
+
+
+
+-----------> mas faremos isso no FUTURO.... 
+
+
+
+
+
+
+
+
+
+
+
+--> OK, SALVAMOS TUDO ISSO E RECARREGAMOS A PÁGINA...
+
+
+
+
+
+
+
+
+
+
+
+-> AGORA, TENDO RECARREGADO ESSA PÁGINA, VEREMOS UM BOTÃO DE 
+
+
+
+'choose file', e do lado teremos 'no file chosen'.... --------> SINAL QUE 
+
+
+
+
+ESSE 
+
+ATTRIBUTE DE 
+
+'type="file"'
+
+
+__FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSE ELEMENTO DE 'CHOOSE A FILE' 
+
+É 
+
+UM 
+
+
+
+
+DEFAULT HTML ELEMENT.... --->  CLICANDO NESSE NEGÓCIO, PODEMOS ESCOLHER 1 FILE  DO NOSSO 
+
+
+
+
+PC...
+
+
+
+
+
+
+
+----------> A FILE TEM QUE SER UMA IMAGE, PARA FUNCIONAR NO NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+
+
+----------> CERTO... MAS SE TENTÁSSEMOS/TENTARMOS ADDAR ESSA IMAGE AGORA,
+
+
+
+do jeito que o código está,
+
+
+tentar 
+
+adicionar um product com essa image,
+
+nós _ FALHARÍAMOS__... ---------> FALHARÍAMOS JUSTAMNETE 
+
+
+
+PQ_ _' WE HAVE GOT NO LOGIC IN PLACE TO HANDLE INCOMING 
+
+FILES', 
+
+o que 
+
+
+quer 
+
+dizer que NÓS NÃO ARMAZENAMOS, NEM FAZEMOS COISA ALGUMA,
+
+COM 
+
+ESSE 
+
+ARQUIVO/image...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E, DE FATO, VAMOS RECEBER 
+
+
+'Invalid image Url',
+
+
+NAQUELA
+ 
+
+ PAGE 
+
+ DE 
+
+ ADMIN PRODUCTS.... --> é um tipo de fail,
+
+
+
+
+ e NÃO DEIXA DE ESTAR CERTO.... (a image url realmente é invalida, pq NÃO EXISTIU... n existiu pq eu UPLOADEI UM ARQUIVO...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> E ESSA É A PARTE QUE TEREMOS DE AJUSTAR:
+
+
+
+ TEREMOS DE AJUSTAR NOSSO CÓDIGO PARA QUE ELE SE TORNE CAPAZ DE 
+
+ 'ACCEPT INCOMING FILES' (
+
+
+     aceite o SEND/UPLOAD DE FILES POR PARTE DO 
+
+     CLIENT/USER... ------> VAMOS QUERER 
+
+
+
+QUE 
+
+NOSSO APP NODEJS 
+
+CONSIGA ACEITAR FILES, EXATAMENTE COMO ACEITA 'TEXT' (que é o que deixamos ele receber, até agora....)
+
+ )

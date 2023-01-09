@@ -1,0 +1,1457 @@
+
+
+
+
+
+
+
+
+
+----> PROFESSOR ESTÁ 
+
+
+OUTPUTTANDO AQUELA 
+
+MESSAGE DE 
+
+ERROR 
+
+LÁ 
+
+
+NA NOSSA VIEW, 
+
+
+na view de 
+
+'login.ejs'....
+
+
+
+
+
+
+BASTA VER O CÓDIGO:
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div><%= errorMessage %></div>
+            <% } %>
+            <form class="login-form" action="/login" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button class="btn" type="submit">Login</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+----->
+
+
+
+
+
+
+
+A MESSAGE DE ERROR APARECE NESSE TRECHO:
+
+
+
+        <% if (errorMessage) {  %>
+            <div><%= errorMessage %></div>
+            <% } %>
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS AGORA 
+O PROFESSOR VAI QUERER ESTILIZAR ESSA DIV UM POUCO MELHOR....
+
+
+
+
+
+
+--> VAI ADICIONAR UMA CLASS DE 
+
+'user-message',
+
+
+
+
+
+
+junto com 
+
+
+
+
+'user-message--error',
+
+
+
+
+
+TUDO 
+
+
+UM STYLING 
+
+COM NOMENCLATURA 'BEM'.... (block element modifier)...
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+CSS STYLING 
+
+CONVENTION...
+
+
+
+
+
+--> OK, ADICIONAMOS ESSAS 
+
+2 CLASSES,
+
+
+1 para 
+
+
+um 
+
+
+'GENERAL LOOK',
+
+
+
+E 
+
+A 
+OUTRA 
+
+
+PARA DEFINIR A COR/CARACTERÍSTICAS MENORES,
+
+
+PARA DEMARCAR QUE É UMA MESSAGE DE 
+
+'ERROR' (pq no futuro talvez queiramos __OUTPUTTAR_ MESSAGES DE SUCCESS, POR EXEMPLO)...
+
+
+
+
+
+
+
+
+
+
+
+OK, COM ISSO, 
+
+PROFESSOR DIZ QUE 
+
+ELE 
+
+DEVE 
+
+
+ADICIONAR ALGUNS ESTILOS 
+
+
+CSS RAPIDINHO,
+
+
+
+
+
+
+
+
+E ÁI 
+
+ELE 
+
+
+__ VAI __CRIAR 
+
+ESSES 
+
+STYLES 
+
+
+
+NO 
+
+ARQUIVO 
+
+'main.css'
+
+
+
+
+
+
+
+
+--> ELE 
+
+
+
+ESCREVE 
+
+
+
+'.user-message {
+
+
+
+
+
+}'
+
+
+
+
+
+
+--> E AÍ COLOCA OS STYLES 
+
+de 
+
+
+'margin: auto' ---> PARA FICAR CENTERED ...
+
+
+
+
+
+
+
+
+
+'WIDTH ' DE 90%,
+
+
+
+
+
+---> TAMBÉM UMAS MEDIA QUERIES,
+
+
+na media query
+ 
+
+
+
+ de 'min-width: 768px' (bigger screens)
+
+
+ VAMOS QUERER 
+
+ UMA WIDTH DE 30REM,
+
+
+
+
+
+ __ E AÍ __ 
+
+
+
+
+
+ vamos
+
+
+
+
+ COLOCAR UMA BORDER DE '1px solid blueish color'....
+
+
+
+
+
+
+
+
+
+
+ -------> OK....
+
+
+
+
+
+
+
+
+
+
+ ----> AÍ COLOCAMOS UM 'background' 
+ COM UMA 
+
+ COR PARECIDA,
+
+
+ e aí 
+
+ vemos como isso 
+
+
+ vai 
+
+ se parecer...
+
+
+
+
+
+TAMBÉM ADICIONA UMA PADDING DE 1REM,
+
+e 
+
+alguns 
+
+CORNERS, por meio de 'border-radius'....
+
+
+
+
+
+
+
+
+
+
+VAI FICAR ASSIM:
+
+
+
+
+
+.user-message {
+
+    margin: auto;
+    width: 90%;
+    border: 1px solid #4771fa;
+    padding: 1rem;
+    border-radius: 3px;
+    background: #b9c9ff;
+    text-align: center;
+}
+
+
+
+
+
+------------- 
+
+
+
+SALVAMOS TUDO ISSO E TESTAMOS...
+
+
+
+
+
+
+
+
+---> OK... 
+
+ESSA 
+
+
+É A 'MAIN MESSAGE',
+
+
+
+sem 
+
+
+ter o modificador de 'error'...
+
+
+
+
+
+
+
+
+--> AOGRA VAMOS DAR A VERSÃO DE 
+
+'ERROR'
+
+
+desse style,
+
+
+que 
+
+será 
+
+
+
+'.user-message--error {
+
+    border-color: red;
+    background: rgb(255, 176, 176);
+}
+'
+
+
+
+
+
+ 
+
+ OK, ESSA SERÁ 
+
+ A 
+ 'ERROR MESSAGE'....
+
+
+
+
+
+
+
+
+
+ OK... MAS 1 PROBLEMA, AGORA, É QUE 
+
+
+ ESSE 'QUADRO'
+
+
+ DA error MESSAGE (
+
+
+     ou seja,
+
+     o elemento 
+
+
+
+     '''
+         <div class="user-message user-message--error"><%= errorMessage %></div>
+         ''''
+
+
+
+         EM SI
+ )
+
+
+
+
+
+ SEMPRE ESTÁ SENDO RENDERIZADO, ATÉ MESMO QUANDO NAO TEMOS NENHUMA MESSAGE DE ERROR/user não inpputou 
+
+ nenhuma info errada...
+
+
+
+
+
+
+
+ --> PROFESSOR DIZ QUE VAMOS CONSERTAR ISSO NA PRÓXIMA LIÇÃO...
+
+
+
+ (vou tentar consertar AGORA...)
+
+
+
+
+
+
+
+
+
+
+ --> É, O NOSSO DIV DE ERROR ESTÁ BEM BUGADO, mesmo... tenho que consertar...
+
+
+
+
+
+
+
+
+ --> PARECE QUE O __ERRO_ __ OCORRE PQ 
+
+
+
+
+
+o 
+
+
+__TYPE__ de 
+
+'req.flash('error')' 
+
+É 
+
+
+
+__ UM OBJECT,
+
+
+APESAR DE __ PARECER UM ARRAY... (pq fica assim, quando vazio: '[]'..)
+
+
+
+
+
+
+
+
+
+
+
+-_> NÃO... MAS AQUI, 
+
+NEM MESMO 
+
+A 
+
+ERROR MESSAGE ESTÁ SENDO PASSADA NESSE 
+
+
+'flash'... --> isso é um problema...
+
+
+
+
+
+
+
+
+--> BEM, O FORMATO DE NOSSA SESSION FICA ASSIM, 
+
+A 
+
+PARTIR 
+
+DE 
+ALGUM 
+
+'ERROR':
+
+
+
+
+
+
+
+
+
+{
+    "_id": "Sx70nypKQSuHZlCmMBztYfSTjwIe-Zef",
+    "expires": {
+        "$date": "2021-11-20T03:27:20.007Z"
+    },
+    "session": {
+        "cookie": {
+            "originalMaxAge": null,
+            "expires": null,
+            "secure": null,
+            "httpOnly": true,
+            "domain": null,
+            "path": "/",
+            "sameSite": null
+        },
+        "csrfSecret": "GW_J2XxmnPVRvCvrjCILL-gz",
+        "flash": {
+            "error": ["Invalid Password."]
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+então FLASH É UM __ OBJETo__,
+
+
+
+E DENTRO DELE TEMOS UMA PROPERTY, 'error',
+
+QUE 
+AÍ 
+
+SEGURA UM ARRAY COM NOSSA MESSAGE (de 'invalid password')...
+
+
+
+
+
+--> LÁ
+
+
+NO NOSSO RENDER,
+
+temos 
+
+esta linha 
+
+de código:
+
+
+
+
+
+
+  errorMessage: req.flash('error')
+
+
+
+
+
+
+
+
+ok..... ----> isso DEVERIA funcionar... ---> talvez n funcione pq 'req.flash(....') 
+
+É UM 
+
+CÓDIGO ASYNC? (é uma possibilidade)....
+
+
+
+
+
+-----------------------
+
+
+PARA 
+
+
+
+
+CONTORNAR 
+
+ESSE 
+
+
+PROBLEMA 
+
+DO 
+
+
+'TYPE'
+
+
+de 
+
+'
+req.flash('error'),
+
+
+
+
+
+PROFESSOR 
+EXPLICA QUE 
+
+DEVEMOS 
+
+
+
+ARMAZNEAR 
+
+
+O VALOR DE 
+
+
+'req.flash('error')' 
+
+
+EM UMA CONST,
+
+ANTES DE A REFERENCIAR NO DATA OBJECT DE 'res.render'...
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+exports.getLogin = (req, res, next) => {
+
+
+
+
+
+    const message = req.flash('error'); ///////TIPO ASSIM...
+    res.render('auth/login', 
+    
+    {
+
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: message
+    }
+    
+    
+    
+    )
+}
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+OK.... ISSO CONSERTOU A 'AUSÊNCIA DE MESSAGE'
+
+
+
+na nossa div de error...
+
+
+
+
+
+
+
+ok.....
+
+
+
+
+
+isso tira a hipótese de 'CARREGAR A ERROR MESSAGE/CAIXA DA ERROR MESSAGE 
+
+
+MESMO QUANDO NÃO TIVERMOS ERROR'.... 
+
+(
+        que estava acontecendo 
+
+        pq 
+
+        TÍNHAMOS UM CÓDIGO, 
+
+
+        em 
+
+        'res.render()',
+
+
+
+
+        ASSIM:
+
+
+        errorMessage: req.flash('error')
+
+
+
+
+        EM VEZ 
+
+        DE 
+
+        ASSIM:
+
+
+
+
+        const message = req.flash('error');
+
+            res.render('xxx', 
+                            {...
+      errorMessage: message
+
+            ...
+                    }
+
+)
+
+
+
+)
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+ok...
+
+
+
+
+
+
+nós essencialmente EXTRAÍMOS A MESSAGE ANTES,
+
+
+E AÍ PASSAMOS 
+
+A 
+
+ESSE 
+
+RENDER 
+
+
+
+que usa 
+
+
+'errorMessage: message'... 
+
+
+
+
+
+
+
+
+
+
+
+--> MAS NÃO É SÓ ISSO..... ---> PROFESSOR AINDA VAI QUERER__ MODIFICAR__ 
+
+
+
+ESSA CONSTANTE DE 
+
+'message'.. --> ELE 
+
+ADICIONA 
+
+UM 
+
+IF CHECK
+ 
+
+ nO 
+
+
+ CONTROLLER 
+
+ de 
+
+
+ 'getLogin',
+
+
+
+ FAZENDO 
+
+
+
+ 'if (message.length > 0)',
+
+
+
+
+ OU SEJA,
+
+
+ SE 
+
+
+
+AQUELE ARRAY DE 'message' TIVER MAIS DO QUE 0 ELEMENTOS NO SEU INTERRIOR,
+
+
+
+
+VAMOS 
+
+
+
+__SABER__ QUE TEMOS UMA MESSAGE__ 
+
+
+NO 
+
+SEU 
+
+
+INTERIOR....
+
+
+(É UM CÓDIGO BEM SPAGHETTI CODE)...
+
+
+
+
+
+
+
+
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getLogin = (req, res, next) => {
+
+
+
+
+
+    let message = req.flash('error'); ///////TIPO ASSIM...
+
+
+    if( message.length > 0) {
+
+            message = message[0]; ////como VAMOS QUERER RETRIEVAR O ÚNICO ELEMENT DENTRO DESSE ARRAY, escrevemos O DEFINE de nossa variável assim mesmo....
+
+    }
+
+
+
+
+
+    res.render('auth/login', 
+    
+    {
+
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: message
+    }
+    
+    
+    
+    )
+}
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+OK... ENTÃO O PROFESSOR PROSSEGUE COM O CÓDIGO;
+
+
+
+SE NOSSO ARRAY em 'message' NÃO TIVER MAIS DE 0 ELEMENTOS,
+
+vamos querer 
+
+
+QUE 
+
+ELE 
+
+SEJA __ DEFINIDO COMO 'null',
+
+
+JUSTAMENTE PARA QUE 
+
+NÃO TRIGGUE 
+
+O 
+
+RENDER, LÁ NA NOSSA VIEW,
+
+
+
+
+de 
+
+
+''
+
+
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+
+'''
+
+
+
+
+
+
+
+OK... ENTENDI...
+
+
+
+
+
+
+
+
+
+
+
+
+CÓDIGO INTEIRO FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+let message = req.flash('error'); /////USO DE 'flash-connection'... particularmente, do método 'req.flash()', que é SEU __cORE METHOD.... -----> AQUI NÓS VAMOS __ UTILIZAR__ a message/error message armazenada na key de 'error' DENTRO DE NOSSA SESSION (o store dessas error messages na session do user é mt efetivo PQ __ PODEMOS __ USAR a data das sessions AO LONGO DE REQUESTS DISTINTOS.... isso quer dizer que a DATA PERSISTE, pode ser usada em QUALQUER PAGE DE NOSSO APP, para fazer o ERROR HANDLING junto de REDIRECTS... esse é o uso de 'req.flash()' ) -----> OBS: ESSE É O REQ.FLASH() que __ USA__ o 'flash' que você definiu anteriormente... --> para ver a definição de um 'FLASH', veja o controller de 'postLogin', aquele block de 'if(!user)'...
+
+    ///////////////ESTE TRECHO DE CÓDIGO AQUI __ VAI CONSERTAR__ O 'ALWAYS RENDER' de nosso ELEMENTO DE ERRO/div de erro QUE APARECE LÁ na página de 'login' a que somos redirecionados... --> este é um FIX da USAGE do FLASH-CONNECT, que é MEIO BUGADO....
+if (message.length > 0) {
+
+  message = message[0];
+} else { ////caso NÃO EXISTA NENHUMA MESSAGE dentro de 'error' ( ou seja, user não COMETEU NENHUM ERRO de password/email, o que faz com que o objeto 'error' na sua session FIQUE VAZIO, SEM ELEMENTOS, portanto length de 0...), vamos querer SETTAR SEU VALOR COMO 'NULL', tudo para que SEJA __ EVITADO _ O TRIGGER DE 'if(errorMessage) { <div> }' LÁ NA NOSSA VIEW...
+
+  message = null
+}
+
+
+
+
+  res.render(
+    'auth/login',
+
+    {
+      pageTitle: 'Login',
+      path: '/login',
+      // errorMessage2: req.flash('error') /////USO DE 'flash-connection'... particularmente, do método 'req.flash()', que é SEU __cORE METHOD.... -----> AQUI NÓS VAMOS __ UTILIZAR__ a message/error message armazenada na key de 'error' DENTRO DE NOSSA SESSION (o store dessas error messages na session do user é mt efetivo PQ __ PODEMOS __ USAR a data das sessions AO LONGO DE REQUESTS DISTINTOS.... isso quer dizer que a DATA PERSISTE, pode ser usada em QUALQUER PAGE DE NOSSO APP, para fazer o ERROR HANDLING junto de REDIRECTS... esse é o uso de 'req.flash()' ) -----> OBS: ESSE É O REQ.FLASH() que __ USA__ o 'flash' que você definiu anteriormente... --> para ver a definição de um 'FLASH', veja o controller de 'postLogin', aquele block de 'if(!user)'...
+      errorMessage: message
+    
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----->  AGORA SE DIGITARMOS ALGO ERRADO,
+
+
+
+veremos 
+
+
+
+
+nossa 
+
+
+BOX DE ERROR.... --> CASO CONTRÁRIO, NÃO A ENXERGAREMOS ( que é o que queríamos)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, É ASSIM QUE 
+
+
+PODEMOS USAR 
+
+
+
+ESSAS 'FLASH MESSAGES'
+
+
+
+
+E ENTÃO __ OUTPUTTAR__ SUAS MESSAGES 'IN A NICE BOX'...
+
+
+
+
+
+
+
+
+----> AGORA O PROFESSOR PROPÕE UM DESAFIO A NÓS....
+
+
+
+
+
+
+
+
+
+----> __ENCONTRE__ OUTROS LUGARES NAS PAGES DE 'LOGIN' E 'SIGNUP'
+
+
+
+EM QUE 
+
+FARIA 
+
+SENTIDO __ FLASHAR__  OUTRAS MESSAGES NA TELA... ----> 
+
+
+
+
+
+
+
+e aí, faremos isso juntos, na próxima aula...
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> CONSEGUI. 
+
+
+
+
+
+
+COLOQUEI 
+
+
+
+
+ALGUNS CASES DIFERENTES:
+
+
+
+
+
+
+
+
+
+
+
+
+PAGE DE 'SIGNUP':
+
+
+
+
+
+
+
+VIEW FICOU ASSIM:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+            <form class="login-form" action="/signup" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <div class="form-control">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="confirmPassword">
+                </div>
+                <button class="btn" type="submit">Signup</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1) PASSWORDS NÃO MATCHEIAM:
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.')
+    return res.redirect('/signup');
+  }
+
+
+
+
+
+
+
+
+2) JÁ EXISTE 1 USER COM ESSE EMAIL NA DATABASE:
+
+
+
+
+
+
+
+ User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+
+
+
+
+
+
+
+
+
+
+
+3) CÓDIGO COMPLETO:
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    // return res.status(400).json({ message: "Passwords don't match!" });
+    req.flash('error', 'Passwords do not match, please try again.')
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+
+        req.flash('error', 'An User with that Email already exists, please choose another one.')
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+----> E SE ESCREVÊSSEMOS ALGUNS SUCCESS cases? -->
+
+
+
+MAS TVZ SEJA 
+
+MELHOR FAZER ISSO NO PRÓXIMO MÓDULO....

@@ -1,0 +1,1923 @@
+
+
+
+
+
+
+
+
+
+--> nas últimas aulas,
+
+
+PROFESSOR 
+
+MENCIONOU COMO 
+O NODE FUNCIONA 
+
+COM 
+
+ASYNC CODE,
+
+
+
+E MENCIONOU O EVENTLOOP...
+
+
+
+
+
+
+----------> AGORA ELE QUER MERGULHAR NISSO,
+ 
+
+ E NOS MOSTRAR COMO EXATAMENTE O NODEJS 
+
+
+ EXECUTA NOSSO CÓDIGO PARA 
+
+ 'STAY PERFORMANT'
+
+ e ainda 
+
+
+ fica capaz 
+
+
+ de trabalhar com processos longos, como o 
+
+ WORK COM FILES....
+
+
+
+
+
+
+
+
+
+
+
+ ---> PQ HÁ ALGO QUE DEVEMOS ENTENDER PARA ENTENDER O QUE ACONTECE POR TRÁS DAS CENAS....
+
+
+
+
+
+
+
+
+
+
+ --> NO NOSSO NODE APP,
+
+     
+
+     TEMOS NOSSO CÓDIGO.
+
+
+
+
+     TENHA EM MENTE:
+
+
+
+     NODEJS 
+
+
+     USA 
+
+
+     A SINGLE JAVASCRIPT THREAD,
+
+
+
+     EXATAMENTE COMO A VERSÃO DO BROWSER... --> ELE HANDLA 
+
+     1 
+
+     ÚNICA THREAD,
+
+     1 único processo...
+
+
+
+
+
+
+
+
+
+
+--> A QUESTÃO ÓBVIA É:
+
+
+
+COMO DIABOS ELE É CAPAZ, ENTÃO,
+
+
+DE 
+
+
+HANDLAR 
+
+MÚLTIPLOS REQUESTS   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO PQ SE NAO SOMOS CAPAZES DE ASSIGN A DIFFERENT/NEW  
+THREAD 
+
+PARA 
+
+CADA 
+
+REQUEST, ISSO ACABA 
+
+
+SIGNIFICANDO/SIGNIFICARIA QUE 
+
+TODOS 
+
+
+OS 
+
+
+REQUESTS/´PROCESSOS DOS REQUESTS ESTARIAM RODANDO EM UM MESMO THREAD....- ->  E ISSO 
+
+
+
+TRARIA A TONA A QUESTAO: 
+
+
+É POSSÍVEL VOCE ACESSAR DATA 
+
+
+
+DO REQUEST A 
+
+
+NO REQUEST B, OU NAO...
+
+
+
+
+
+--------> ALÉM DISSO, MAIS IMPORTANTE DO QUE ISSO,
+
+
+QUANDO FALAMOS SOBRE PERFORMANCE,
+
+
+
+ISSO NÃO SIGNIFICARIA QUE 
+
+
+ENQUANTO O NODEJS 
+
+ESTÁ 
+TRABALHANDO COM 
+
+'A',
+
+O 
+
+'B' 
+
+NÃO PODE SER HANDLED:::::
+
+
+
+
+
+
+
+
+
+
+
+-----> BEM.... --> AMBAS AS QUESTÕES SÃO SOLUCIONADAS PELO NODEJS...
+
+
+
+
+
+
+
+
+
+
+--> mas o professor quer focar aqui na questão da PERFORMANCE.... (mas ele tbm vai falar da questão da segurança)...
+
+
+
+
+
+
+
+OK... --> PERFORMANCE--> 
+
+
+
+
+
+
+DIGAMOS QUE TEMOS UM CÓDIGO QUE TRABALHA COM O FILESYSTEM 
+
+do servidor.... -------> BEM, O TRABALHO COM ARQUIVOS 
+
+
+COM FREQUENCIA 
+
+É 
+UM 
+
+
+TRABALHO QUE DEMORA UM BOCADO,
+
+É 
+
+UM 
+
+TRABALHO QUE NÃO COMPLETA 
+
+INSTANTANEAMENTE... ---> 
+
+
+OK...
+
+
+PORTANTO,
+
+
+SE FAZEMOS ISSO A PARTIR DE UM 
+
+'UPCOMING REQUEST',
+
+um 
+
+
+segundo request 
+
+PODE   
+
+
+
+TER QUE 
+
+'WAIT' for a bit.... --> BEM,
+
+
+
+UM CONSTRUCT 
+
+IMPORTANTE 
+
+MENCIONADO PELO PROFESSOR 
+´
+E 
+
+O 
+
+EVENTLOOP.. --> ELE É INICIADO PELO 
+
+
+NODEJS 
+
+AUTOMATICAMENTE QUANDO VOCE INICIA O SEU SERVER...
+
+
+
+
+
+--> OK... --> ESSE EVENT LOOP É RESPONSÁVEL 
+
+PELO 
+
+CALL 
+
+DE 
+
+'EVENT CALLBACKS'... ------------>
+
+
+
+TODAS ESSAS FUNÇÕES QUE 
+
+ADICIONAMOS QUE DEPENDEM DE EVENTS PARA 
+
+
+SEREM DISPARADAS 
+
+são handladas 
+
+
+PELO EVENTLOOP, QUE 
+
+
+DEVERÁ 
+
+
+AS EXECUTAR QUANDO ESSES EVENTS 
+
+
+ACONTECEREM... (ele sempre fica ciente desses callbacks....) -----> 
+
+
+
+
+
+
+
+
+
+
+OK... MAS AINDA QUE ELE KEEP TRACK DESSAS CALLBACK FUNCTIONS,
+
+
+ELE 
+
+NÃO NOS AJUDA 
+
+COM   A 'FILE OPERATION' EM SI... ---------> E É IMPORTANTE 
+
+
+ENTENDER QUE 
+
+ELE 
+
+
+ A -_'FILE OPERATION' __ _NÃO __ É HANDLADA PELO 
+
+ EVENT LOOP, DE MANEIRA ALGUMA... -------> 
+
+
+
+ SÓ O __CALLBACK__ 
+
+É HANDLADO/MANAGEADO PELO EVENTLOOP... (ou seja,
+
+
+A FUNÇÃO QUE É EXECUTADA __aPÓS-__ A OPERAÇÃO LONGA 
+
+TER ACABADO....) -----------> 
+
+
+
+
+ESSE CÓDIGO AÍ,
+
+
+QUE É EXECUTADO QUANDO OPERATIONS LONGAS ACABAM,
+
+
+É REALMENTE EXECUTADO PELO EVENTLOOP... ---> MAS 
+
+ESSE 
+
+CÓDIGO AÍ TERMINA __ RÁPIDO__ ... -->   ISSO QUER 
+
+DIZER QUE 
+
+O 
+
+
+EVENTLOOP SÓ VAI CUIDAR/HANDLAR 
+
+CALLBACKS __ QUE __ TENHAM 
+
+
+
+'FAST FINISHING CODE',
+
+
+como 
+
+RESPONSES, POR EXEMPLO....
+
+
+
+
+
+
+EM VEZ DISSO,
+
+
+NOSSAS OPERATIONS DE FILE SYSTEM E OUTROS 
+
+TIPOS 
+(demorados)
+
+
+
+SÃO 
+
+ENVIADAS PARA 
+
+UMA 
+
+
+'WORKER POOL',
+
+que 
+
+é um CONSTRUCT QUE TAMBÉM É 'MANAGED' 
+
+
+E 'SPUN UP' 
+
+PELO 
+
+NODEJS 
+
+AUTOMATICAMENTE....
+
+
+
+
+
+
+-> ESSE WORKER POOL--->  É 
+
+
+
+RESPONSÁVEL POR TODO O  'HEAVY LIFTING'... -------. 
+
+
+
+E ELE É 'KINDOF'
+
+
+
+DETACHED 
+
+DO 
+
+SEU JAVASCRIPT CODE... ---------> 
+
+
+E ELE 
+
+
+RODA 
+
+___ EM DIFERENTES __ THREADS, MÚLTIPLAS THREADS... ---> 
+
+
+
+
+ELE PODE SPIN UP MULTIPLE THREADS,
+
+
+e  
+
+
+
+É BEM LIGADO AO OPERATING SYSTEM EM QUE VOCE ESTÁ RODANDO O APP... ----->
+
+
+
+OK, 
+
+É 
+
+DESCONECTADO DO SEU CÓDIGO... -------> 
+
+
+
+
+
+SE VOCE ESTIVER FAZENDO  ALGO COM UM ARQUIVO,
+
+O RESPONSÁVEL 
+
+SERÁ 
+
+UM 
+'WORKER'
+
+DAQUELA WORKER POOL,
+
+
+E ELE VAI FAZER SEU TRABALHO TOTALMENTE 
+
+
+DETACHED 
+DO SEU CÓDIGO,
+
+
+DO REQUEST 
+
+
+E 
+DO 
+EVENTLOOP EM SI.... -----> 
+
+
+A ÚNICA CONEXAO 
+
+
+COM O EVENTLOOP 
+
+QUE TEMOS/TEREMOS 
+
+É 
+
+QUE 
+QUANDO 
+
+
+O WORKER PARA AQUELA OPERATION 
+
+___tIVER-_ TERMINADO O SEU TRABALHO,
+
+ELE 
+
+
+VAI ___ TRIGGAR__ O CALLBACK -_ PARA 
+
+AQUELA/daquela
+OPERATION...
+
+
+
+
+--> E COMO O EVENTLOOP É 
+
+RESPONSÁVEL PELOS EVENTS E CALLBACKS,
+
+
+
+ISSO (o resultado da FILE OPERATION/operation do worker) VAI 
+
+ACABAR 
+
+
+NO EVENTLOOP -----> E AÍ O NODEJS 
+
+VAI EXECUTAR 
+
+O 
+
+CALLBACK APROPRIADO 
+
+ÀQUELE EVENT 
+'FINISH'...
+
+
+
+
+
+
+
+
+---> OK... MT COISA BEHIND THE SCENES,
+
+
+E TUDO ISSO 
+
+É AUTOMÁTICO DO NODEJS,
+
+voc~E 
+
+
+não precisa escrever nada disso para 
+
+fazer o negócio funcionar...
+
+
+
+
+
+
+
+
+
+-------> SE VOCê ESCREVER SEU CÓDIGO NORMALMENT,
+
+  VOCE 
+  JÁ VAI TIRAR PROVEITO DISSO TUDO.
+
+
+
+
+---> ESSES CONCEITOS NOS DEIXAM APRENDER O NODEJS MELHOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> EVENTLOOP --> É, NO FINAL DAS CONTSA,
+
+
+
+UM LOOP QUE É INICIADO PELO NODEJS 
+
+QUE 
+
+MANTÉM O PROCESSO NODEJS ROADNDO,
+
+E QUE 
+
+HANDLA TODOS OS CALLBACKS.... -----> E ELE TEM UMA CERTA 
+
+'ORDEM'
+
+QUE 
+ELE SEGUE, QUANDO VAI POR DENTRO DOS CALLBACKS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO, ELE É UM LOOP...
+
+
+
+
+LOOP PERPÉTUO...
+
+
+
+
+
+
+
+
+
+--> A ORDEM É ESTA:
+
+
+
+NO INÍCIO DE CADA ITERATION/LOOP,
+
+
+ELE 
+
+
+PROCURA/INVESTIGA 
+
+SE 
+
+HÁ QUALQUER 
+
+'TIMER CALLBACK'
+
+
+QUE PRECISA SER EXECUTADO... (timers expirados)...
+
+
+
+
+
+
+--> NÓS AINDA NÃO SETTAMOS ALGUM TIMER,
+
+
+
+mas basicamente existe 
+
+
+'setTimeout'
+
+
+e 
+
+
+'setInterval'...
+
+
+
+
+
+
+
+------> FRONTEND JAVASCRIPT --> 
+
+
+ESSES MÉTODOS TBM EXISTEM LÁ....
+
+
+
+
+
+
+
+
+
+
+
+-------> BEM, NO NODEJS, VOC~E 
+
+
+
+TAMBEM PODE SETTAR UM TIMER,
+
+
+e VOCê
+basicamente
+
+
+DEFINE UM TIMER 
+
+E Sempre 
+
+
+PASSA 
+
+UMA 
+
+FUNÇÃO QUE 
+
+DEVE 
+
+SER 
+
+EXECUTADA 
+
+
+
+QUANDO O TIMER TIVER COMPLETADO ... --> 
+
+
+
+E O NODEJS 
+
+TEM CIÊNCIA DISSO,
+
+POR ISSO 
+
+ELE VAI SEMPRE CHECAR 
+
+
+'ANY DUE TIMER CALLBACKS' 
+
+
+no INÍCIO DE CADA LOOP/ITERAÇÃO...
+
+
+
+--> OK...
+
+
+
+DEPOIS DE EXECUTAR 'setTimeout' e 'setInterval' 
+
+CALLBACKS EXPIRADOS/COMPLETOS,
+
+
+
+
+O 
+
+'EVENTLOOP'
+
+
+VAI PARA O SEGUNDO PASSO,
+
+
+
+
+EM QUE ELE CHECA __ OUTROS CALLBACKS... --------.> 
+
+
+
+
+('''execute I/O - RELATED CALLBACKS THAT WERE DEFERRED''')...
+
+
+
+
+
+----> ELE CHECA CALLBACKS COMO 
+
+'WRITE/READ FILE' NESSA ETAPA... -----> 
+
+
+AÍ, SE UMA OPERAÇÃO COMO WRITE/READ ACABOU, 
+
+
+ELE TAMBÉM VAI EXECUTAR O CALLBACK ASSIGNADO A TAL OPERAÇÃO...  
+
+
+
+
+
+
+
+-> '''IO-RELATED CALLBACKS''' --> PROFESSOR QUER DIZER 
+
+'INPUT E OUTPUT',
+
+
+
+OPERAÇÕES 'INPUT E OUTPUT' EM GERAL...- -->
+
+
+ISSO 
+
+
+COM FREQUENCIA QUER DIZER 'FILE OPERATIONS',
+
+MAS 
+
+TAMBÉM 
+
+PODE
+SER 
+
+
+'NETWORK OPERATIONS' ----> EM GERAL,
+
+O QUE 
+O PROFESSOR 
+
+ESTÁ FALANDO AQUI,
+
+
+É QUE 
+
+BLOCKING/LONG TAKING OPERATIONS 
+
+SÃO ESSAS OPERATIONS QUE SAO 'TAKEN CARE OF' AQUI, 
+
+
+nessa segunda etapa... (verifica-se se TERMINARAM, se realmente 
+
+podemos executar suas callback functions...)
+
+
+
+
+
+É IMPORTANTE 
+
+ENTENDER QUE O NODEJS 
+
+VAI 
+
+
+'LEAVE THAT PHASE'
+
+
+
+em um certo momento no tempo... ------> 
+
+E ISSO QUER 
+DIZER 
+
+
+
+que ''''if there ARE TOO MANY OUTSTANDING CALLBACKS''',
+
+
+
+O NODEJS VAI CONTINUAR AUTOMATICAMENTE SUA LOOP 
+
+ITERATION E ENTÃO POSTPONE (vai adiar) 
+
+ALGUNS 
+
+CALLBACKS DESSE TIPO __ A __ FUTURAS ITERATIONS (next iterations do eventloop,
+que 
+então os executará...   )....
+
+
+
+
+
+
+
+DEPOIS DE TRABALHAR COM ESSES 'OPEN CALLBACKS'
+
+
+e ter 
+
+TERMINADO DE EXECUTAR TODOS ELES,
+
+
+
+
+
+O EVENTLOOP VAI ENTRAR 
+
+EM UMA 
+
+
+'POLL PHASE'... ------------>
+
+
+A 
+
+'POLL PHASE'
+
+
+É 
+
+O MOMENTO/FASE 
+
+EM QUE 
+O NODEJS 
+
+VAI 
+
+
+__PROCURAR__ POR NOVOS EVENTS 'I/O',
+
+
+
+
+E EM QUE 
+
+
+
+
+VAI BASICAMENTE 'DO ITS BEST TO EXECUTE THEIR CALLBACKS 
+
+
+immediately, if possible'...
+
+
+
+
+
+-> E SE ESSA EXECUÇÃO NÃO FOR POSSÍVEL,
+
+DE NOVO,
+
+O 
+
+NODEJS 
+
+VAI 
+
+'ADIAR' 
+
+A EXECUTION 
+
+
+E AÍ 
+
+VAI BASICAMENTE
+
+
+'REGISTER THIS/THEM AS A PENDING CALLBACK'...
+
+
+
+
+
+
+
+
+
+
+
+
+IMPORTANTE!!!! --> O 
+
+NODEJS 
+
+TAMBÉM
+ 
+
+ VAI CHECAR 
+
+ SE 
+ HÁ 
+
+ QUAISQUER 
+
+
+
+
+
+
+
+
+ 'TIMER CALLBACKS' A SEREM EXECUTADOS (depois de poll)------------> 
+
+
+
+
+ SE ELE
+ CONSTATAR QUE 
+
+ EXISTEM,
+
+ ELE 
+
+ VAI
+  
+  
+
+
+
+
+  'JUMP TO THAT TIMER PHASE (fase número 1)' E ENTÃO 
+
+
+
+OS 
+
+EXECUTAR 'RIGHT AWAY', executar esses callbacks...
+
+
+
+(ISSO SIGNIFICA QUE O EVENTLOOP __ PODE_ 'JUMP BACK THERE'),
+
+
+
+
+SIGNIFICA QUE EXISTE A POSSIBILIDADE, SIM, 
+
+DE O
+ 
+
+ EVENTLOOP
+
+ NÃO TERMINAR UMA ITERATION/LOOP; (que é esse caso aí,
+ 
+ caso em que 
+ 
+ ele constata 
+ 
+
+ que há a necessidade de executar um callback 
+
+ porque um timer expirou/acabou...
+ 
+ )
+
+
+
+
+
+
+
+
+ ------------------
+
+
+
+
+
+
+
+
+
+TERMINADA ESSA FASE,
+
+PASSAMOS A PHASE
+ 
+
+ DE 
+
+ 'CHECK',
+
+
+ EM QUE 
+
+ O 
+
+
+ EVENTLOOP 
+
+
+ CHECA E EXECUTA 
+
+
+
+ CALLBACKS 
+
+
+ de 
+
+ 'setImmediate()'
+
+
+
+---> ESSA FUNCOA É UM POUCO COMO 
+
+
+setInterval e 
+
+setTimeout,
+
+
+
+
+MAS A DIFERENCA 
+
+EM RELACAO A ELES 
+
+É 
+
+QUE 
+
+
+ESSA FUNCAO SERÁ EXECUTADA __IMEDIATAMENTE_,
+
+SEMPRE 
+
+
+IMEDIATAMENTE 
+
+APÓS  'ANY OPEN CALLBACKS HAVE BEEN EXECUTED', para ser mais preciso... 
+
+(
+        ou seja,
+
+
+        tipicamente
+
+        MAIS RÁPIDO DO QUE 
+
+
+        'setTimeout()',
+
+        com 
+
+        'ONE MILISSECOND of open duration',
+
+        MAS __dEPOIS__ DO 'CURRENT CYCLE'  tiver acabado/depois 
+
+        do 
+
+        HANDLE DE TODOS OS CALLBACKS QUE ESTAVAM PARA SEREM EXECUTADOS NA CURRENT ITERATION...
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO,
+
+
+
+
+ENTRAMOS EM UM TERRENO SUPER TEÓRICO... -------->  (vocÊ deve estudar isso se quer entrar para O DEV TEAM DO NODEJS...)
+
+
+
+
+ENTRAMOS NA FASE DO 
+
+
+'EXECUTE ALL CALLBACKS DE EVENTOS DE TIPO 'CLOSE'...
+
+
+
+
+
+---> OU SEJA,
+
+SE VOCÊ 
+
+REGISTROU QUALQUER EVENT 
+
+DE TIPO 'CLOSE',
+
+
+É AQUI QUE O 
+
+
+EVENTLOOP VAI EXECUTAR SEUS 'APPROPRIATE CALLBACKS'...
+
+
+
+
+
+
+
+
+---> RESUMINDO, TEMOS:
+
+
+
+
+
+1) TIMER CALLBACKS (que são checados)
+
+
+
+2) I/O-RELATED callbacks
+
+
+3) OTHER EVENT CALLBACKS..
+
+
+4) SETIMMEDIATE CALLBACKS...
+
+
+
+
+5) 'CLOSE EVENT CALLBACKS' (ou seja,
+
+
+eventos de tipo 'close' 
+
+SÃO 
+
+BASICAMENTE 
+
+'
+HANDLED SEPARATELY'...) -----> na verdade, SEUS __ CALLBACKS_ __
+
+
+são handlados de forma separada, por assim dizer....
+
+
+
+
+
+
+
+----> BEM.... AÍ,
+
+
+
+
+TERMINADO __ TODO ESSE 
+
+
+
+LOOP AÍ,
+
+
+temos uM 
+
+
+
+POSSÍVEL 
+
+
+SEXTO PASSO,
+
+
+
+
+
+QUE É 
+
+
+UM POSSÍVEL 
+
+
+'process.exit' -------------> MAS 
+
+
+
+
+ISSO 
+
+SÓ EXISTIRÁ/SERÁ 
+
+
+EXECUTADO 
+
+
+'IF THERE ARE NO REMAINING
+ 
+ EVENT __HANDLERS___ REGISTRADOS'.... (
+
+
+
+   e é por isso que o 
+
+   professor 
+
+
+   escreveu, no slide,
+
+   'refs == 0', refs equal null....
+ ) -------> 
+
+
+
+
+
+
+ OU SEJA,
+
+ INTERNAMENTE O 
+
+
+
+ NODEJS 
+
+ 'KEEPS TRACK'
+
+
+
+ ___ DOS ___ EVENT LISTENERS__ ABERTOS.... ---> 
+
+
+ E AÍ 
+
+ O NODEJS 
+
+
+  
+
+  TEM BASICAMENTE UM COUNTER (o 'refs'),
+
+
+  QUE 
+
+
+  É INCREMENTADO POR 1 UNIDADE 
+
+  PARA 
+
+
+  CADA 
+
+  NOVO 
+
+  'CALLBACK'
+
+
+
+  que 
+
+  deve/deva
+
+  ser registrado....  --> TODO 
+
+
+
+  NOVO EVENT LISTENER 
+  QUE 
+
+  É 
+  REGISTRADO 
+
+  ACABA SENDO COMPUTADO
+   
+
+   NESSE 
+
+   counter 'refs'.... ------> E CADA 'NOVO EVENT LISTENER'
+
+
+   BASICAMENTE 
+
+
+   __SIGNIFICA __ 'EVERY NEW FUTURE WORK IT HAS TO DO/HAS PLANNED'... -----> 
+
+
+
+
+   E AÍ  
+
+
+   ELE __ REDUZ__ 
+
+   ESSE 
+
+   COUNTER POR '1'
+
+   PARA 
+
+   CADA 
+
+
+   'EVENT LISTENER IT DOESNT NEED ANYMORE',
+
+
+
+   para __ cada __ CALLBACK ELE 
+
+   'FINISHAR'............
+
+
+
+
+
+
+
+   ----> E COMO EM UM ___ ENVIRONMENT 
+
+
+   DE 
+
+   SERVER 
+
+
+
+   NÓS __ CRÍAMOS UM SERVER 
+
+   POR MEIO 
+
+   DO CALL 
+
+   DE 
+
+   'createServer()'
+
+   E 
+
+   AÍ 
+
+   FAZEMOS 
+
+   'LISTEN TO' 
+
+   AOS 
+
+   INCOMING 
+
+   REQUESTSS 
+
+
+
+   POR MEIO 
+
+   de 
+
+   'server.listen()',
+
+
+
+___ ESSE (o evento 'createServer')
+
+É 
+
+
+UM 
+
+
+EVENT 
+
+QUE 
+
+___NUNCA 
+
+
+ACABA SENDO FINISHED__ POR DEFAULT..... -----> 
+
+
+
+
+
+ISSO SIGNIFICA, EM OUTRAS PALAVRAS,
+
+QUE 
+
+
+SMEPRE 
+
+
+VAMOS 
+TER 
+
+
+
+
+1 REF 
+
+nesse counter 
+
+de 
+
+'refs' 
+
+aí,
+
+sempre sempre sempre,
+
+
+
+mesmo não tendo mais nada rodando 
+
+no nosso server, só o server em si....
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+
+EM UM 
+
+
+
+
+
+NODE WEB SERVER PROGRAM ____ NORMAL__, 
+
+
+NÓS NUNCA VAMOS 
+
+
+'EXIT' por meio desse 'process.exit()'
+
+
+implícito/oculto....
+
+
+
+
+
+
+------> ENTRETANTO,
+
+NÓS PODEMOS 
+
+CHAMAR 
+
+
+
+ESSE CÓDIGO 
+
+DE 
+
+'process.exit()'
+
+
+
+POR CONTA PRÓPRIA,
+
+
+
+
+
+
+COMO JÁ VIMOS.
+
+
+
+
+
+E SE 
+
+NÓS 
+
+FIZERMOS 
+
+
+QUALQUER OUTRA COISA,
+
+
+
+
+COMO NO INÍCIO DO CURSO,
+
+EM QUE 
+
+
+
+
+
+EXECUTAMOS UM ARQUIVO/CODE 
+
+QUE 
+
+
+NÕA FAZIA 
+
+'LISTEN TO' EM UM WEB SERVER/TO A WEB SERVER,
+
+
+
+
+SE VOCÊ TIVER UMA SITUAÇÃO 
+
+
+DESSAS, É ÓBVIO QUE 
+
+
+O 
+
+
+
+NODEJS 
+
+
+_ VAI_ _ SÓ 
+
+
+
+EXECUTAR 
+
+'process.exit()'
+
+
+DEPOIS 
+
+DE TERMINAR DE PARSEAR E EXECUTAR TODO O CÓDIGO QUE 
+
+VOCÊ TINHA NO SEU APP/ARQUIVO JS que foi executado por ele... (isso pq os refs estarão como '0'...)
+
+
+
+
+
+
+
+
+
+
+OK............. ------> É ASSIM QUE 
+
+O EVENTLOOP 
+
+FUNCIONA.... -----> E TUDO ISSO PODE SER BEM __ TEÓRICO___.... ----> 
+
+
+
+
+TODAS ESSAS PHASES DIFERENTES TIPICAMENTE 
+
+NÃO IMPORTAM A NÓS;
+
+
+
+
+
+CERTAMENTE NÃO IMPORTAM QUANDO VOCÊ COMEÇA COM 
+O NODEJS...
+
+
+
+
+
+
+
+------> 
+VOCÊ DEVE CHECAR 
+
+
+
+ESSE CONTEÚDO SE QUISER FICAR MAIS AVANÇADO COM O NODEJS,
+
+
+mas 
+
+
+
+
+
+essa figura básica de 
+
+como o 
+
+
+
+
+NODEJS 
+
+HANDLA WORK COMPLEXO 
+
+
+(com a worker pool, diferentes threads, etc etc),
+
+
+
+
+
+
+____ WORKER POOL ---> IMPEDE QUE SUAS COISAS FIQUEM 'BLOCKED'
+
+
+E ASSEGURA 
+
+
+QUE 
+
+SEU CÓDIGO 'STAYS PERFORMANT'....
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR TBM FALOU 
+
+
+
+DE SEGURANÇA,
+
+
+
+DA IMAGINADA INSEGURANÇA POR 
+
+
+DISPORMOS DE APENAS 
+
+1 ÚNICO 
+
+
+
+THREAD 
+
+no nodejs.... -------> PROFESSOR EXPLICA QUE 
+
+
+NÃO TEMOS PROBLEMA POR DEFAULT acerca disso, 
+
+
+
+APESAR DE QUE
+
+
+
+MAIS TARDE ___ O PROFESSOR VAI VOLTAR A ESSE CONTEÚDO PARA 
+
+NOS MOSTRAR 
+
+COMO 
+PODEMOS 
+
+
+FAZER 
+
+'MANAGE DE GLOBAL DATA',
+
+
+E como 
+
+PODEMOS 
+
+MANAGEAR ESSA 
+
+DATA 
+
+PARA 
+
+QUE NÃO ACABEMOS 
+
+'SPOILING THAT DATA'
+
+
+
+de request A para request B....
+
+
+
+
+
+
+
+
+
+
+ENTRETANTO, CABE RESSALTAR QUE __ POR DEFAULT __ TEMOS UMA SEPARAÇÃO 
+
+
+ENTRE 
+
+
+
+PROCESSOS, PQ 
+
+
+__ VOCÊ DEVE SE LEMBRAR QUE 
+
+
+
+AQUELE 
+
+
+
+CALLBACK METHOD EM 
+
+'createServer'
+
+É 
+
+
+EXECUTADO 
+
+
+
+'FOR EVERY INCOMING REQUEST',
+
+
+e portanto ESSA FUNÇAÕ 
+
+
+
+
+__ ´SO RODA PARA 
+
+'THAT INCOMING REQUEST',
+
+
+
+
+E TUDO 
+
+QUE
+
+
+FAZEMOS AOS OBJECTS REQ E RES 
+
+
+
+DESSE REQUEST __ NÃO __ SERÁ EXPOSTO A OUTROS OBJETOS REQ/RES 
+
+
+
+JUSTAMENTE 
+
+
+
+PQ 
+
+
+CADA FUNÇÃO 'IS ONLY SCOPED TO ITSELF',
+
+
+E INACESSÍVEL 
+
+a OUTRAS FUNÇÕES.... ----> por isso,
+
+
+
+
+TEMOS ESSA SEPARAÇÃO 
+
+
+ENTRE 
+
+
+
+PROCESSOS/SINGLE THREADS DE CADA 
+
+INCOMNIG REQUEST___ JUSTAMENTE__ 
+
+
+
+
+DEVIDO à MANEIRA PELA QUAL O JAVASCRIPT FUNCIONA...
+
+
+
+
+
+
+
+
+--> OK... ISSO FOI MT TEÓRICO... ---> 
+
+
+
+VOCÊ 
+
+DEVE TER EM MENTE,
+
+pq 
+é 
+
+assim que 
+
+o nodejs 
+
+FAZ MANAGE DE SEU TRABALHo...

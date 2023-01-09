@@ -1,0 +1,1273 @@
+
+
+
+
+
+
+
+
+
+
+
+----> NÓS JÁ SABEMOS FAZER AS OPERAÇÕES 'CRUD' BÁSICAS COM O MONGODB... (create, read, update, delete)....
+
+
+
+
+
+
+
+
+
+--> JÁ SABEMOS COMO INSERIR,
+
+ENCONTRAR,
+
+EDITAR 
+
+
+E DELETAR DOCUMENTS COM O MONGODB... -> e também sabemos como NOS 
+
+CONECTAR 
+
+
+
+COM O MONGODB...
+
+
+
+
+
+
+
+
+
+
+--> AGORA É HORA DE __tRABALHARMOSS COM __ RELATIONS MAIS UMA VEZ __, 
+
+DESSA 
+
+
+
+VEZ 
+
+
+NOS UTILIZANDO 
+
+DO 
+
+'MONGODB'.... ---> 
+
+
+
+VAMOS 
+
+
+
+VER 
+
+
+
+COMO 
+
+IMPLEMENTAR 
+
+RELATIONS 
+
+
+COM O MONGODB 
+
+
+
+_ USANDO UM EXEMPLO DE 
+
+'users'...
+
+
+
+
+
+
+
+
+--------> OK... COM O SEQUELIZE,
+
+NÓS NÃO TÍNHAMOS 
+
+
+UM 
+
+
+
+
+'AUTHENTICATION FLOW',
+
+e nós 
+
+DE FATO 
+
+NÃO TEREMOS 
+
+
+UM 
+
+
+AQUI,
+
+
+TAMBÉM,
+
+
+
+
+MAS AGORA 
+
+O 
+
+PROFESSOR 
+
+
+
+
+
+
+VAI QUERER 
+
+'CREATE NEW USERS'
+
+
+
+
+
+já 
+
+no início do nosso app,
+
+
+
+
+
+em 'app.js'...
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA ISSO, É CLARO,
+ 
+ ELE DIZ QUE 
+
+ DEVEMOS
+
+
+ COMEÇAR 
+
+
+ PELO MODEL 
+ D
+ E 
+
+ 'Product.js'...
+
+
+
+
+
+
+
+
+ --> ELE DIZ QUE VAI MANTER AS COISAS SIMPLES, 
+
+
+
+ MAS QUE 
+
+ VAI NOVAMENTE 
+
+
+
+
+
+ UTILIZAR 
+
+
+ UMA 
+
+
+
+ CLASS JAVASCRIPT COMUM 
+
+
+
+
+
+ para definir os methods 
+
+
+ de 
+ 'User'...
+
+
+
+
+
+
+
+
+ --> ELE CRIA UMA NOVA CLASS 
+
+ com 
+
+ um 
+
+ código 
+
+ de 
+
+
+
+
+
+
+
+ class User {
+
+
+     constructor() {
+
+     }
+
+
+
+ }
+
+
+
+
+
+
+
+
+ module.exports = User;
+
+
+
+
+
+
+ -------------------------------
+
+
+
+
+
+ OK.... DENTRO DESSE CONSTRUCTOR 
+
+
+
+VAMOS 
+
+
+
+
+
+QUERER ACEITAR COMO PARÂMETROS 1 USERNAME 
+
+E 
+
+1 
+
+EMAIL,
+
+para começar....
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ class User {
+
+
+     constructor(username, email) {
+
+                        this.username = username;
+                        this.email = email;
+     }
+
+
+
+ }
+
+
+
+
+
+
+
+
+ module.exports = User;
+
+
+
+
+ ----------------------------
+
+
+
+
+
+
+
+
+
+ OK... E PODERÍAMOS ADICIONAR MAIS PROPERTIES, É CLARO,
+
+
+
+
+SE ASSIM O DESEJÁSSEMOS...
+
+
+
+
+
+--> AÍ O PROFESSOR 
+
+VAI 
+
+
+
+ADICIONAR UM MÉTODO 
+DE 
+
+'save(){}',
+
+
+QUE 
+SERÁ 
+USADO 
+
+PARA 
+
+SALVAR 
+
+ESSE 
+
+
+USER NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+--> E É CLARO QUE 
+
+
+ELE TAMBÉM VAI ADICIONAR 
+
+
+UM STATIC METHOD,
+
+
+
+método 
+
+de 
+
+'findById()',
+
+
+
+que 
+
+ACEITARÁ 
+
+Um 
+
+
+'id' 
+
+COMO PARÂMETRO,
+
+E QUE 
+
+ENCONTRARÁ 
+
+
+NOSSO 
+
+
+
+USER POR MEIO DESSE ID...
+
+
+
+
+
+
+
+
+
+-> ok....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+ class User {
+
+
+     constructor(username, email) {
+
+                        this.username = username;
+                        this.email = email;
+     }
+
+
+
+
+
+
+save() {
+
+
+}
+
+
+
+
+
+static findById(userId) {
+
+
+}
+
+
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+ module.exports = User;
+
+
+
+
+
+
+------------------------------
+
+
+
+OK...
+
+
+
+
+NOSSO DESAFIO É TENTAR IMPLEMENTAR ISSO POR CONTA PRÓPRIA....
+
+
+
+
+
+
+--> TENTE USAR O MONGODB E 
+
+AQUELA 
+
+
+
+CONEXÃO CENTRAL DO MONGODB PARA:
+
+
+1) SAVE A USER 
+
+
+
+
+2) PROCURAR UM USER POR UM ID,
+
+na database do mongodb...
+
+
+
+
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const getDb = require('../util').getDb;
+
+const ObjectId = require('mongodb').ObjectId;
+
+class User {
+  constructor(username, email) {
+    this.username = username;
+    this.email = email;
+  }
+
+  save() {
+    const db = getDb();
+
+    db.collection('users')
+      .insertOne(this)
+      .then((result) => {
+        console.log('User Created in Database');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  findUserById(productId) {
+    const db = getDb();
+
+    return db
+      .collection('users')
+      .findOne({
+        _id: ObjectId(productId),
+      })
+      .then((product) => {
+        return product;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+
+module.exports = User;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA SÓ TEMOS QUE ___EXECUTAR ESSE CÓDIGO EM ALGUM LUGAR DE NOSSO APP... --> 
+
+
+
+TALVEZ 
+
+
+
+
+NO _STARTUP,
+
+LÁ EM 
+
+'app.js'?
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... PROFESSOR ESCREVEU QUASE O MESMO CÓDIGO QUE EU; A ÚNICA DIFERENÇA FOI QUE 
+ELE USOU 
+
+
+'.find({_id: new ObjectId(userId)}).next()',
+
+
+
+
+
+
+OU SEJA,
+
+
+ELE USOU AQUELE 
+
+MÉTODO 
+
+DE 
+
+'.find()',
+
+QUE 
+
+É 
+
+O METHOD QUE NOS 
+
+
+
+RETORNA UM __ CURSOR__, E QUE NOS OBRIGA 
+A 
+USAR 
+
+'.next()'
+
+para conseguirmos ficar com apenas 
+
+1 object/document retornado por aquele 
+
+critério 
+
+de 
+
+'{
+    _id: xxxxx
+}'
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> OK.... O FINDONE, POR SUA VEZ,
+
+
+
+VAI IMEDIATAMENTE NOS RETORNAR AQUELE SINGLE ELEMENT QUE NOS INTERESSA...
+
+
+
+
+
+-------------
+
+
+
+
+
+
+
+--> OK, AGORA TEMOS 2 METHODS  
+CRIADOS,
+
+
+
+2 METHODS QUE 
+VAO 
+
+
+ME 
+
+
+DIXAR 
+
+
+CRIAR NOVOS USERS 
+
+E 
+
+
+TAMBÉM 
+
+
+'FIND ESSES USERS'...
+
+
+
+
+
+
+
+
+
+
+--> COM ESSE 
+
+
+
+
+
+USER MODEL ADICIONADO,
+
+
+
+PROFESSOR DIZ UQE 
+
+DEVEMOS 
+
+
+
+IMPORTAR 
+
+O 
+
+MODEL 
+DE 
+
+
+
+'User'
+
+LÁ 
+
+EM 
+
+'app.js',
+
+
+PARA
+
+
+QUE 
+
+
+
+SEJA CRIADO NOSSO USER NO STARTUP DE NOSSO APP....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ESCREVE 
+
+
+
+'const User = require('./models/user');'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO ELE VAI QUERER USAR ESSE MODEL DE 'User'?
+
+
+
+
+
+
+--> BEM, PARA INÍCIO DE CONVERSA,
+
+PROFESSOR 
+DIZ QUE 
+
+
+DEVEMOS 
+
+COMENTAR ESTE CÓDIGO (aquele middleware que estávamos usando com a database SQL)
+
+
+
+DE VOLTA 
+
+
+
+
+
+NO FLOW DESSE ARQUIVO:
+
+
+
+
+
+
+
+app.use(
+
+    (req, res, next) => {
+
+            User.findById(1)
+            .then(user => {
+
+                    req.user = user;
+                    next();
+
+            })
+            .catch(
+                (err) => {
+                    console.log(err);
+                }
+            );
+            next();
+        
+    }
+)
+
+
+
+
+
+
+
+
+
+
+--------> NESSE CÓDIGO AÍ,
+O PROFESSOR 
+
+VAI QUERER 
+
+'find a user by this id here',
+
+
+E ENTÃO 
+
+
+__ARMAZENAR __ ESSE USER __ NO NOSSO OBJECT 
+'request'....
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, ELE SÓ VAI COMENTAR ESSE CÓDIGO PARA DENTRO,
+ 
+
+ sem fazer quaisquer alterações,
+
+ pq 
+
+
+
+ NOSSO CÓDIGO JÁ ESTÁ FORMATADo (nomes certos)
+
+ PARA 
+
+
+ ADICIONAR ESSA FUNCIONALIDADE...
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+const getDb = require('../util').getDb;
+
+const ObjectId = require('mongodb').ObjectId;
+
+class User {
+  constructor(username, email) {
+    this.username = username;
+    this.email = email;
+  }
+
+  save() {
+    const db = getDb();
+
+    db.collection('users')
+      .insertOne(this)
+      .then((result) => {
+        console.log('User Created in Database');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  findUserById(productId) {
+    const db = getDb();
+
+    return db
+      .collection('users')
+      .findOne({
+        _id: ObjectId(productId),
+      })
+      .then((product) => {
+        return product;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+
+module.exports = User;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ app.use(
+
+    (req, res, next) => {
+
+            User.findById(1)
+            .then(user => {
+
+                    req.user = user;
+                    next();
+
+            })
+            .catch(
+                (err) => {
+                    console.log(err);
+                }
+            );
+            next();
+        
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------
+
+
+
+AINDA VAMOS USAR ESSE MESMO CÓDIGO, PORTANTO...
+
+
+
+
+
+
+--> MAS O PROFESSOR DIZ QUE VAI TROCAR AQUELE HARDCODE DE '1' no id,
+
+vai trocar por um 
+
+ID DE VERDADE, logo logo...
+
+
+
+
+
+
+
+
+
+-> OBS::: ESTOU RECEBENDO UM ERRO:
+
+
+
+
+
+
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+OK... MAS A PRIMEIRA COISA QUE O PROFESSOR VAI QUERER FAZER,
+AGORA,
+
+
+É 
+
+ADICIONAR UM CÓDIGO 
+
+
+em 
+
+
+'mongoConnect(
+) => {
+
+    app.listen(3000);s
+}
+)'
+
+
+
+
+_PARA CHECAR __ SE UM USER COM UM CERTO ID EXISTE 
+
+
+
+NA DATABASE...
+
+
+
+
+
+
+
+
+ELE VAI ESCREVER UM IF CHECK, PORTANTO, ASSIM:
+
+
+
+
+
+
+'mongoConnect(
+) => {
+
+
+
+if() {
+
+
+}
+    app.listen(3000);
+}
+)'
+ 
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+--> O PROFESSOR ENTÃO CRIA UMA COLLECTION MANUALMENTE COM O 
+
+MONGODB COMPASS,
+E AÍ 
+
+
+TAMBÉM CRIA UM USER 
+
+
+DUMMY.... ele copia o '_id' value 
+
+do 
+
+
+
+DUMMY USER 
+
+
+e cola 
+
+
+lá em 
+
+'app.js',
+
+
+
+
+
+
+em 
+
+
+
+'User.findById(xxxx)'...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE MAIS TARDE VAMOS ADICIONAR UM 'REAL AUTHENTICATION FLOW',
+
+em que 
+
+users poderão signup e signout, criar contas, e tudo mais...
+
+
+
+
+
+
+
+
+
+
+
+
+OK, COM ISSO ESTAREMOS COMEÇANDO O SETUP DE UM
+
+
+
+USER 
+
+
+NO NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+----> NA PRÓXIMA LIÇÕA,
+
+VAMOS USAR 
+
+ESSE 
+
+OBJECT 
+
+'User'
+
+
+ 
+
+ E ENTÃO __ VAMOS __ ARMAZENAR UMA REFERENCE A ESSE OBJETO 'user'
+ LÁ 
+
+ NA NOSSA DATABASE...
+
+
+
+
+
+ (eu sigo com aquele erro 
+ 
+ 
+ 
+ 
+ de
+ 
+ 
+ 
+ 
+ '''Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client''''
+ 
+ 
+ 
+ 
+  )

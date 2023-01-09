@@ -1,0 +1,1534 @@
+
+
+
+
+
+
+
+
+
+
+------------> VAMOS COLOCAR MAIS 1 MÉTODO NO MODEL  DE 'CART', agora...
+
+
+
+
+
+
+
+
+-> TEMOS O MÉTODO ESTÁTICO DE 'ADD' EM 
+
+CART,
+
+
+
+
+
+MAS AOGRA 
+
+
+PRECISAMOS 
+
+
+
+DE UM 
+
+
+OUTRO MÉTODO 
+
+
+
+ESTÁTICO,
+
+mas dessa vez 
+
+de 
+
+'delete'....
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+ 
+
+ PROFESSOR COMEÇA 
+
+
+ ESCREVENDO:
+
+
+
+
+ 'static deleteProductFromCart(id) {
+
+ }'...
+
+
+
+
+
+
+
+
+ É CLARO QUE VAMOS QUERER FAZER 
+
+ GET 
+
+
+ DO 
+
+
+
+
+ ID _ DO PRODUCT QUE VAMOS QUERER DELETAR...
+
+
+
+
+
+
+
+
+
+
+
+ -------> E NÓS TAMBÉM VAMOS QUERER 
+
+ CONSEGUIR O 
+ 'PRICE'
+
+ DESSE PRODUCT.. --> por isso o professor vai chamar 
+
+
+
+
+ isso de 'productPrice'... (ISSO PQ VAMOS PRECISAR UPDATAR O 'TOTAL CART PRICE'..)
+
+
+
+ ex:
+
+
+
+ 
+static deleteProductFromCart(id, productPrice) {
+  
+}
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+--> COM ISSO, 
+
+
+O QUE O PROFESSOR PRECISA FAZER... É:
+
+
+
+
+
+1) PRIMEIRAMENTE,
+
+PRECISAMOS 
+
+FAZER 
+
+'GET' DO NOSSO CART,
+
+LER O STATUS ATUAL DE NOSSO CART.... -------> 
+
+
+PARA 
+
+ISSO,
+
+
+VAMOS 
+
+PRECISAR 
+
+EXECUTAR 
+
+
+
+'fs.readFile',
+
+
+para ler 
+
+
+'cart.json'
+
+
+
+
+
+
+-------> 
+
+
+
+
+
+
+FICARÁ TIPO:
+
+
+
+static deleteProductFromCart(id, productPrice) {
+
+
+        fs.readFile(filePath, (err, fileContent) => {
+
+
+        })
+}
+
+
+------------------------------------------
+
+
+
+
+
+OK, VOU LER O CART..... ----> 
+
+
+e 
+
+se 
+
+EU RECEBER UM __ERROR___ DURANTE ESSE READ,
+
+
+
+
+EU VOU JÁ 
+
+QUERER 'return'... --> PQ ISSO VAI SIMPLESMENTE SIGNIFICAR que 
+
+
+
+''EU JÁ NÃO TENHO 1 CART, POR ISSO JÁ NÃO HÁ NADA A DELETAR'''...
+
+
+
+
+
+
+
+SE não recebemos um erro, vamos continuar...
+
+
+
+
+
+
+ex:
+
+
+
+static deleteProductFromCart(id, productPrice) {
+
+
+        fs.readFile(filePath, (err, fileContent) => {
+
+                if(err) {
+                        return;
+                }
+
+                ...
+        })
+}
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+--------> agora É A PARTE QUE O PROFESSOR VAI QUERER __ UPDATAR__ O CART... (remover o 
+
+product do array de 'cart', remover o product que foi deletado....)
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+PROFESSOR VAI FAZER UMA CÓPIA DE TODAS AS 'PROPERTIES' 
+
+
+DO VELHO CART (tanto os products como o PRICE)
+
+
+
+
+e vai 
+
+
+
+AS COLOCAR EM UM NOVO OBJETO...
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+const updatedCart = { ...cart };
+
+
+
+
+
+--------------------------
+
+
+
+
+OBS: É CLARO QUE __ ESSE 'cart' aí NÃO EXISTE... --> NÓS PRECISAMOS 
+
+
+PARSEAR ESSE VALOR 
+
+
+
+LÁ 
+
+
+DE 
+
+'fileContent'...
+
+
+
+
+
+TIPO ASSIM, CREIO EU:
+
+
+
+
+
+
+
+static deleteProductFromCart(id, productPrice) {
+
+
+        fs.readFile(filePath, (err, fileContent) => {
+
+                if(err) {
+                        return;
+                }
+
+                const cart = JSON.parse(fileContent);
+
+                const updatedCart = { ...cart };
+        })
+}
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+AGORA, COM ISSO,
+
+ 
+ O PROFESSOR VAI QUERER UPDATAR TANTO 
+
+
+ O 
+
+
+ 'PRODUCT' no array/propriedade de 'products'
+
+
+ COMO TAMBÉM O 'TOTALPRICE' 
+
+ contido nesse cart... 
+
+
+
+
+
+
+
+
+ -> o 
+
+
+
+ 'cart.totalPrice' 
+
+
+
+ DEVERÁ 
+
+ SER  
+
+
+
+ REDUZIDO 
+
+ POR UM 
+
+
+ VALOR como 
+
+
+ 'updatedCart.totalPrice = updatedCart.price - productPrice'...
+
+
+
+
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+ static deleteProductFromCart(id, productPrice) {
+
+
+        fs.readFile(filePath, (err, fileContent) => {
+
+                if(err) {
+                        return;
+                }
+
+                     const cart = JSON.parse(fileContent);
+                const updatedCart = { ...cart };
+
+                updatedCart.totalPrice = updatedCart.totalPrice - productPrice;
+        })
+}
+
+
+
+
+
+
+-----------------------------------------
+
+
+OK... MAS ISSO AÍ PODE DAR UM PROBLEMA.... --> e se tivermos 
+
+nosso 
+
+
+product 
+
+
+no cart '''three times'''?  --> AÍ ESSE VALOR TERIA DE SER REDUZIDO 
+
+
+'BY THE PRODUCT PRICE TIMES THREE'... ---> devemos 
+
+
+ADIAR 
+
+
+
+esse cálculo/lógica para mais tarde...
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ANTES DE MAIS NADA, DEVEMOS DESCOBRIR __ COM QUAL FREQUÊNCIA TEMOS 
+
+
+AQUELE PRODUCT NO CART....
+
+
+
+
+
+
+
+-----> PARA ISSO, PROFESSOR VAI USAR 
+
+
+'findIndex()" DE NOVO...
+
+
+
+
+ex:
+
+
+
+
+
+                const cart = JSON.parse(fileContent);
+                const updatedCart = { ...cart };
+
+                const productIndex = updatedCart.products.findIndex(
+                        (prod) => {
+                                prod.id === productId
+                        }
+                )
+
+
+
+
+
+
+------------------> CERTO... ISSO VAI NOS DAR 
+
+O 
+
+INDEXADOR 
+
+
+
+do 
+
+
+
+objeto product que tem um id COM VALOR EQUIVALENTE AO 'productId'
+
+
+passado a 'deleteProductFromCart'... ------->   MAS AÍ 
+
+
+
+O PROFESSOR MUDA DE IDEIA.. --> 
+
+
+
+ELE DIZ QUE 
+
+É MELHOR USAR 
+
+
+
+o 
+
+
+'.find()' (em vez de findIndex),
+
+
+PARA 
+
+ENTÃO 
+
+'FIND THE PRODUCT RIGHT AWAY',
+
+
+
+____ PQ AÍ ELE VAI REMOVER 
+
+
+
+ESSE PRODUCT DE FORMA DIFERENTE, DE NOSSO PRODUCTS ARRAY...
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+OU SEJA, FICARÁ ASSIM:
+
+
+
+                const cart = JSON.parse(fileContent);
+                const updatedCart = { ...cart };
+
+                const product = updatedCart.products.find( ///EIS O CÓDIGO EM QUESTÃO.
+                        (prod) => {
+                                prod.id === productId
+                        }
+                )
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+--> SE O PROFESSOR CONSEGUE O 'PRODUCT' EM SI,
+
+
+ISSO É 
+
+
+
+MT WORTH,
+
+
+pq 
+
+ele 
+
+vai 
+
+CONSEGUIR UM OBJETO COMO 
+
+'{
+        xxx,
+
+        quantity: 3
+}
+'
+,
+
+
+
+
+OU SEJA,
+
+UM OBJETO COM AQUELE 
+
+
+FIELD
+ 
+ DE
+ 
+
+
+ 'quantity',
+
+ QUE NOS INTERESSA...
+
+
+
+
+
+ -----------------------
+
+
+ 
+
+
+
+ --> E VAMOS PODER USAR ESSE 'quantity'
+
+
+
+
+ NAQUELE CÁLCULO 
+
+
+ DE 
+
+ '''
+
+
+
+   updatedCart.totalPrice = updatedCart.totalPrice - productPrice;
+
+
+
+   '''
+
+
+
+
+
+   TIPO ASSIM:
+
+
+
+
+   updatedCart.totalPrice = updatedCart.totalPrice - productPrice * product.quantity;
+
+
+
+
+
+
+   (OU SEJA, ISSO SERÁ PERFEITO...  )
+
+
+
+
+
+
+
+
+
+   TIPO ASSIM:
+
+
+
+
+
+
+
+   
+static deleteProductFromCart(productId) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+
+        
+
+    })
+}
+
+
+
+-----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+---> AGORA, COM ISSO, PROFESSOR PODE 
+
+
+'UPDATE OUR CART PRODUCTS'.... -----> 
+
+
+
+
+
+
+
+ELE FARÁ ISSO POR MEIO DE UM 
+
+CALL 
+DE 
+
+
+
+
+'updatedCart.products = updatedCart.products.filter(
+        (item) => {
+                item.id !== product.id
+        }
+)
+'
+
+
+
+
+
+
+
+---------> CERTO, ISSO VAI EXCLUIR SÓ O 
+
+
+
+PRODUCT ESPECÍFICO QUE QUEREMOS DELETAR...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+static deleteProductFromCart(productId) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity;
+        updatedCart.products = updatedCart.products.filter( ///////EIS O CÓDIGO EM QUESTÃO.
+                (prod) => { prod.id !== id }
+        );
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+
+        
+
+    })
+}
+
+
+
+
+
+
+
+
+------>  com isso, vamos querer _FAZER WRITE DE ESSE 
+
+
+'updatedCart'
+
+
+POR CIMA 
+
+
+DO ARQUIVO 'cart.js'
+
+QUE TÍNHAMOS ANTERIORMENTE,
+
+POR MEIO DE 
+
+
+
+'fs.writeFile()'....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+static deleteProductFromCart(productId) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity;
+        updatedCart.products = updatedCart.products.filter( ///////EIS O CÓDIGO EM QUESTÃO.
+                (prod) => { prod.id !== id }
+        );
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+
+        fs.writeFile(filePath, JSON.stringify(updatedCart), 
+
+        (err) => {
+                
+                if(err) {
+                                console.log(err);
+
+                }
+
+        }
+        
+        )
+        
+
+    })
+}
+
+
+
+
+
+
+
+
+
+
+--> AGORA ESSE MÉTODO 'deleteProductFromCart
+
+'
+
+
+
+
+
+DEVE FUNCIONAR...
+
+
+
+
+
+
+
+-> SÓ TEMOS QUE IMPORTAR ESSE MÉTODO 
+
+LÁ 
+
+EM 
+
+
+
+'product.js',
+
+
+
+
+LÁ NAQUELA FUNÇÃO DE 
+
+
+
+
+'static deleteProduct'...
+
+
+
+
+
+
+--> PROFESSOR IMPORTA 
+
+
+O 
+
+'MÓDULO' 
+DO 
+
+CART 
+
+
+LÁ 
+
+EM 
+
+'product.js' (model)...
+
+
+
+
+
+
+
+--> 
+
+
+
+
+
+ele escreve 
+
+
+
+'const Cart = require('./cart');'
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+---> COM ISSO IMPORTADO, PROFESSOR VAI COLOCAR UM CALL DESSE 'deleteProductFromCart()'
+
+LÁ 
+
+
+
+NO  if(!err) {
+
+}
+
+
+DE 
+
+
+
+'deleteProduct'..
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+'const Cart = require('./cart');'
+
+
+
+
+
+
+
+
+
+
+static deleteProduct(productId) {
+  getProductsFromFile( 
+    (products) => {
+      const updatedProducts = products.filter(prod => prod.id !== productId);
+      fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+        console.log(err);
+
+        if (!err) { ////EIS O CÓDIGO EM QUESTÃO.
+          Cart.deleteProductFromCart(productId);
+        }
+      })
+
+  console.log('test');
+    }
+)
+} 
+
+
+------------------------------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+static deleteProduct(productId) {
+  getProductsFromFile( //versão do professor (mais optimizada).
+    (products) => {
+      const updatedProducts = products.filter(prod => prod.id !== productId);
+      fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+        console.log(err);
+
+        if (!err) {
+          Cart.deleteProductFromCart(productId); ////vai DELETAR ESSE PRODUCT ESPECÍFICO DO NOSSO CART/CART DO USUÁRIO, caso o admin DELETE ESSE PRODUCT DA LISTA DE PRODUCTS DISPONÍVEIS...
+        }
+      })
+  console.log('test');
+    }
+)
+} 
+
+
+
+
+
+------> CERTO.... MAS É CLARO QUE NÓS __ TAMBÉM __ VAMOS PRECISAR __ DO __PRICE__ DESSE 
+
+
+PRODUCT AÍ,
+
+
+
+coisa que não temos nessa função... 
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+static deleteProduct(productId) {
+
+  getProductsFromFile( 
+    (products) => {
+      const productPrice = products.find((product) => {return product.id === productId}).price; //////EIS O CÓDIGO EM QUESTÃO.
+      const updatedProducts = products.filter(prod => prod.id !== productId);
+
+      fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+        console.log(err);
+
+        if (!err) {
+          Cart.deleteProductFromCart(productId, productPrice); ////vai DELETAR ESSE PRODUCT ESPECÍFICO DO NOSSO CART/CART DO USUÁRIO, caso o admin DELETE ESSE PRODUCT DA LISTA DE PRODUCTS DISPONÍVEIS...
+        }
+      })
+  console.log('test');
+    }
+)
+} 
+
+
+
+
+-------------
+
+
+
+
+
+OK.. PROFESSOR FEZ EXATAMENTE O QUE EU FIZ....
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO, AGORA SEREMOS CAPAZES DE 'DELETE A 
+
+
+
+PRODUCT BY ITS ID, AND ALSO 
+
+
+
+DELETE IT FROM THE CART IF IT WAS THERE'..
+
+
+
+
+
+
+
+--> CERTO... ISSO FUNCIONOU.
+
+
+
+
+
+
+ESTE ERRO AQUI:
+
+
+
+
+A:\projeto4 - NODEJS\MODULO9-ROUTESAVANÇADAS,MODELOSDINÂMICOS... (dynamic MODELS in the model view controller)\130 09-fixing-a-delete-product-bug\09-fixing-a-delete-product-bug\controllers\shop.js:19
+      pageTitle: product.title,
+                         ^
+
+TypeError: Cannot read property 'title' of undefined
+    at A:\projeto4 - NODEJS\MODULO9-ROUTESAVANÇADAS,MODELOSDINÂMICOS... (dynamic MODELS in the model view controller)\130 09-fixing-a-delete-product-bug\09-fixing-a-delete-product-bug\controllers\shop.js:19:26
+    at A:\projeto4 - NODEJS\MODULO9-ROUTESAVANÇADAS,MODELOSDINÂMICOS... (dynamic MODELS in the model view controller)\130 09-fixing-a-delete-product-bug\09-fixing-a-delete-product-bug\models\product.js:71:7
+    at A:\projeto4 - NODEJS\MODULO9-ROUTESAVANÇADAS,MODELOSDINÂMICOS... (dynamic MODELS in the model view controller)\130 09-fixing-a-delete-product-bug\09-fixing-a-delete-product-bug\models\product.js:17:7
+
+
+
+
+
+
+
+--> MUITO COMPLICADO....
+
+
+
+
+ATÉ O CÓDIGO DO PROFESSOR TEM ESSE ERRO.... não sei como consertar....
+
+
+
+
+
+
+
+
+
+
+--> ACHEI COMO CONSERTAR:
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+  const productId = req.params.productId;
+
+  Product.findProduct(productId, (product) => {
+
+    if(!product) {  ////conserta o problema de 'product.title' is undefined...
+      return;
+    }
+    res.render('shop/product-detail', {
+      pageTitle: product.title,
+      path: '/products',
+      product: product
+    });
+  });
+};
+
+
+
+
+
+
+
+
+------> ESSE 
+
+
+'if(!product) {
+
+
+}'
+
+
+
+CONSERTA O PROBLEMA, PQ 
+QUANDO 
+
+O 
+
+FINDPRODUCT FOR EXECUTADO DE NOVO,
+
+
+ELE VAI SER INTERROMPIDO,
+
+pq 
+
+'nenhum product terá sido encontrado',
+
+interrompendo o prosseguimento DAQUELA 
+
+CALLBACK FUNCTION...
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... CONTINUANDO, ESTÁVAMOS COM ISTo aqui:
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+    Product.deleteProduct(req.body.id);
+    console.log('TEST');
+    res.redirect('/');
+
+}
+    
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+PROFESSOR FAZ PEQUENA SIDENOTE:
+
+
+
+ele nos 
+
+DIZ QUE 
+
+
+
+__SERIA MELHOR _ se tivéssemos 
+
+UM 
+
+
+'CALLBACK'
+
+
+EM 
+
+
+'deleteProduct' (o deleteproduct de PRODUCT, E NÃO DO CART...),
+
+
+
+
+___ PARA_ _QUE NÓS 
+
+
+
+
+SÓ FIZÉSSEMOS 
+
+'redirect' ___NO CALLBACK___ 
+
+QUANDO TERMINÁSSEMOS 
+
+
+DE 
+
+
+
+DELETAR 
+
+
+AQUELE PRODUCT...
+
+
+
+
+
+
+
+--> E A MESMA COISA SE APLICA AO 'updating', o updating DO __ EDIT__ DE PRODUCTS...
+
+
+
+que tem este código:
+
+
+
+exports.editProduct = (req, res, next) => {
+
+    const editedProduct = new Product(req.body.id, req.body.title, req.body.imageUrl, req.body.description, req.body.price);
+
+
+    editedProduct.save();
+
+    res.redirect('/admin/product-list-admin');
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, COLOCAR AQUELE 
+
+
+'res.redirect(....)'
+
+
+
+__DENTRO __ DA FUNÇÃO 
+
+
+
+'save()',
+
+
+e dentro 
+
+da 
+função 
+
+
+'deleteProduct()'...
+
+
+
+
+
+
+
+
+
+--> MAS NÃO FAREMOS ISSO AGORA,
+
+
+SÓ FAREMOS DEPOIS,
+
+DEPOIS 
+
+ADICIONAREMOS ESSA PEQUENA FUNCIONALITY....
+
+
+
+
+
+
+
+
+
+
+
+---> OK... SALVAMOS 
+
+TUDO 
+
+
+
+E AÍ TESTAMOS SE O DELETE 
+
+
+
+REALMENTE FUNCIONA...
+
+
+
+
+------> nosso product está sendo DELETADO, 
+
+E TAMBÉM 
+
+
+
+removido do cart....
+
+
+
+
+----------------------------------------
+
+
+
+
+
+professor encontra problemas 
+
+com 
+
+'JSON.parse(fileContent)',
+
+mesma 
+
+coisa que 
+
+eu tive antes...
+
+
+
+-------------------------------
+
+
+
+
+
+OK... MAS O QUE INTERESSA É QUE ESSA FEATURE DE DELETE AGORA ESTÁ FUNCIONANDO,
+
+
+e nosso 
+
+PRICE TAMBÉM É REDUZIDO QUANDO REMOVEMOS ALGUM PRODUCT DO CART..
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS TERMINAR ESTE MÓDULO COM 2 COISAS:
+
+
+
+
+1) ASSEGURAR QUE OS 
+
+ITEMS QUE FORAM ADICIONADOS AO CART REALMENTE APAREÇAM NO LINK 
+
+
+DE 
+'Cart', na toolbar...
+
+
+

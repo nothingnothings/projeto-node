@@ -1,0 +1,1047 @@
+
+
+
+
+
+
+
+
+
+
+
+--> PRECISAMOS DE MAIS ROUTES EM 'routes.ts',
+
+
+ROUTES PARA 
+
+'
+DELETE A todo' 
+
+
+
+
+e 
+
+
+'update a todo'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA UPDATE E DELETE 1 TODO,
+
+preciso _ DO __ ID DESSE TODO...
+
+
+
+
+
+
+
+
+
+--> VOU CONSEGUIR ISSO DA URL/dynamic path segment, PROVAVELMENTE...
+
+
+
+
+
+
+
+
+
+
+
+--> ESCREVO ALGO ASSIM:
+
+
+
+
+
+
+
+
+export const deleteTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const todoId = req.params;
+
+
+
+
+    todos.find(
+        (todo) => {
+                return todo.id !== todoId;
+        }
+    )
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ RECEBO UM ERRO __ BIZARRO.... --> 
+
+
+
+
+This condition will always return 'true' since the types 'string' and 'ParamsDictionary' have no overlap.
+
+
+
+
+
+
+
+
+
+
+
+--> NÃO ENTENDI...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR COLOCA UMA PUT ROUTE 
+
+
+
+
+
+
+,
+
+
+para fazer o EDIT de um todo....
+
+
+
+
+
+
+
+
+
+ELE ESCREVE ASSIM:
+
+
+
+
+router.put('/todo/:todoId)' .
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICARÁ ALGO BEM SIMPLES, TIPO ISTo:
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const todoId = req.params as unknown;
+
+
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+                return todo.id === todoId;
+        }
+    );
+
+
+    const inputtedText = req.body.text
+
+    todos[todoIndex].text =  inputtedText;
+
+
+}
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA O QUE O USER INPUTTAR 
+
+
+
+ali, 
+
+
+
+
+
+
+
+NO INPUT FIELD DE 'text',
+
+V
+AI 
+
+SUBSTITUIR 
+
+O 
+
+VALOR 
+
+
+
+
+
+DO 
+
+'text'
+
+
+desse elemento todo, encontrado por esse index....
+
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR COLOCA UM 
+
+
+
+IF CHECK DE 
+
+
+'if (todoIndex >= 0) {
+
+
+
+}',
+
+
+
+PARA __ ASSEGURAR__ QUE ACHAMOS UM INDEX VÁLIDO.... 
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const todoId = req.params as unknown;
+
+    const inputtedText = req.body.text
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+                return todo.id === todoId;
+        }
+    );
+
+
+    if (todoIndex >= 0) {
+
+        todos[todoIndex].text = inputtedText;
+
+    }
+
+
+
+    res.status(404).json(
+        {
+            message: 'Could not find todo for this id.'
+        }
+    )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> CERTO.... MAS DENTRO DESSE IF BLOCK, SABEMOS QUE 
+
+TEMOS 1 TODO 'Valido'...
+
+
+
+
+
+
+
+
+
+-------> por isso o professor escreve exatamente a mesma coisa que 
+
+eu escrevi,
+
+isto aqui:
+
+
+    todos[todoIndex].text = inputtedText;
+
+
+
+
+
+
+
+
+
+
+
+-------> NA VERDADE,
+
+
+O PROFESSOR 
+
+
+
+
+VAI TENTAR 
+
+
+'INSERT A NEW OBJECT' no lugar desse objeto velho....
+
+
+
+
+
+
+
+
+---> o 'id' 
+
+
+
+DEVERIA SER MANTIDO COMO O VELHO ID...  -> é por isso que vou updatar SÓ O TEXT 
+
+desse neg´cio...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS FEITO ISSO,
+
+
+PRECISAMOS __ RETORNAR UMA RESPONSE _ AO CLIENT,
+
+
+com 
+
+
+'return res.status(200).json(
+    {
+        message: 'Updated todo',
+        todo: todo
+    }
+)
+'
+
+
+
+
+
+
+
+(
+
+    PARA QUE CONSIGAMOS UPDATAR O FRONTEND....
+)
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+    if (todoIndex >= 0) {
+
+        todos[todoIndex].text = inputtedText;
+
+        res.status(200).json(
+            {
+                message: 'Updated todo',
+                todos: todos
+            }
+        )
+
+    }
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR TAMBÉM HAVIA ESQUECIDO DE ADICIONAR UMA RESPONSE NO 
+
+
+
+
+
+
+CONTROLLER DE 'post',
+
+que é o que ele faz, agora....
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const todoId = req.params as unknown;
+
+    const inputtedText = req.body.text
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+                return todo.id === todoId;
+        }
+    );
+
+
+    if (todoIndex >= 0) {
+
+        todos[todoIndex].text = inputtedText;
+
+        res.status(200).json(
+            {
+                message: 'Updated todo',
+                todos: todos
+            }
+        )
+
+    }
+
+
+
+    res.status(404).json(
+        {
+            message: 'Could not find todo for this id.'
+        }
+    )
+
+
+}
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+--> é claro que PODEMOS ESCOLHER QUAL TIPO DE DATA VAMOS RETORNAR (e como vamos updatar isso, no frontend)...
+
+
+
+
+
+-> certo....
+
+
+
+
+
+
+
+
+
+
+--> SIDENOTE: adicione o 'return' naquele if block com o 'res.status(200).json()'
+
+PARA EVITAR QUE A RESPONSE DE ERRO 404 TAMBÉM SEJA ENVIADA....
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+
+
+    const errors = validationResult(req); 
+      
+    if (!errors.isEmpty()) {
+      console.log(errors);
+    return res.status(422).json(
+        {
+            message: 'ENTERED DATA IS INVALID',
+            errors: errors
+        }
+    )
+    }
+
+
+
+
+
+
+    const todoId = req.params as unknown;
+
+    const inputtedText = req.body.text;
+    
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+                return todo.id === todoId;
+        }
+    );
+
+
+    if (todoIndex >= 0) {
+
+        todos[todoIndex].text = inputtedText;
+
+      return res.status(200).json(
+            {
+                message: 'Updated todo',
+                todos: todos
+            }
+        )
+
+    }
+
+
+
+    res.status(404).json(
+        {
+            message: 'Could not find todo for this id.'
+        }
+    )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK... AGORA É HORA DA ROUTE DE 'DELETE':
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> vai ser bem parecido com o controller de 'put',
+
+
+
+MAS 
+
+
+
+
+vamos updatar o array de todos 
+
+
+
+PARA __ REMOVER__ AQUELE TODO COM AQUELE ID ESPECÍFICO....
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR FAZER ISSO,
+
+
+PROFESSOR TROCA O NOSSO ARRAY DE TODOS, QUE ERA UMA CONST, PARA SER UMA __ VARIABLE__. (let)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEFINIDO COMO 'LET',
+
+
+
+
+AGORA PODEMOS __ OVERRIDE__ ESSE ARRAY COM UM NOVO ARRAY, ARRAY SEM ESSE NOSSO ELEMENTO/TODO ESPECÍFICO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MEU CÓDIGO HAVIA FICADO ASSIM:
+
+
+
+
+
+
+
+
+
+
+export const deleteTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const todoId = req.params as unknown;
+
+
+
+  const newTodoArray = todos.find(
+        (todo) => {
+                return todo.id !== todoId;
+        }
+    )
+
+
+
+    todos = newTodoArray;
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS ELE ESTÁ RETORNANDO UM __ERROR__...
+
+
+
+
+
+
+--> ah, é pq eu escrevi só 
+
+'req.params',
+
+quando deveria ter sido 
+
+'req.params.todoId'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, MAS EU __ AINDA__ ESTOU RECEBENDO AQUELE ERROR de 
+
+
+''
+
+
+
+
+
+
+
+
+
+
+é melhor rodar um código de 'FILTER' 
+
+do que 
+
+esse código de 
+
+
+
+'find' que retorna todos menos o nosso todo com aquele id....
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+export const deleteTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const todoId = req.params.todoId;
+
+
+
+
+    todos.find(
+        (todo) => {
+            return todo.id === todoId
+        }
+    )
+
+    if (todos.length === 0) {
+
+        return res.status(404).json(
+            {
+                message: 'Todo could not be found'
+            }
+        )
+    }
+
+
+    todos = todos.filter(
+        (todo) => {
+               return  todo.id !== todoId;
+        }
+    )
+
+
+    res.status(200).json(
+        {
+            message: 'Deleted todo successfully',
+            data: todos
+        }
+    )
+
+
+
+}
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, UMA REST API BEM SIMPLES, COM 4 ROUTES --> 
+
+
+
+nos deixa 
+
+
+
+'GET' 
+
+todos,
+
+
+
+
+
+DELETE, 
+
+
+
+
+POST,
+
+UPDATE 
+
+
+
+TODOS.....
+
+
+
+
+
+
+
+
+
+
+
+-> VAMOS TESTAR ESSE NEGÓCIO, VER SE TUDO FUNCIONA, 
+
+PARA
+
+ENTÃO 
+
+TRABALHARMOS UM POUCO MAIS NA ESTRUTURA DE NOSSO CÓDIGO,
+
+
+e sobre como 
+
+
+O 
+
+SPLITTARMOS... (
+
+
+    também 
+
+
+    veremos 
+
+    mais algumas informações sobre o typescript...
+)

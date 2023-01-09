@@ -1,0 +1,1398 @@
+
+
+
+
+
+
+
+
+
+
+
+-> OK.. PARA CONSEGUIR USAR 'WEBSOCKETS',
+
+
+TEMOS QUE 
+
+OS 
+
+ADICIONAR TANTO NO 
+
+SERVER COMO NO CLIENT...
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+ 
+ TANTO NO NODE, COMO NO REACT APP...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> CLIENT E SERVER VÃO SE COMUNICAR ENTRE WEBSOCKETS,
+
+
+ POR ISSO PRECISAMOS ESTABELECER ESSE 
+
+
+ COMMUNICATION CHANNEL ENTRE 
+
+
+
+ OS 
+
+ 'DOIS ENDS'....
+
+
+
+
+
+(no frontend, e no backend)....
+
+
+
+
+
+
+
+
+---> COMEÇAMOS NO BACKEND....
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+PROFESSOR INSTALA, NO NOSSO NODE APP,
+
+
+
+o 
+
+
+
+
+package de 
+
+socket.io com 
+
+
+
+
+
+'npm install --save socket.io' 
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+BEM, E COMO UTILIZAMOS ESSE PACOTE? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+BEM, DEVEMOS IR ATÉ O 
+
+'app.js' (node),
+
+
+
+
+
+
+O PRIMEIRO ARQUIVO QUE RODA QUANDO COMEÇAMOS NOSSO SERVER....
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE LOCAL,
+
+DEVEMOS 
+
+'SETUP OUR SOCKET.IO connections'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> DEVEMOS EXPOR AS CONEXÕES 
+
+
+
+'SOCKET.IO'
+
+que 
+
+devem 
+
+
+existir no nosso 
+
+webapp (exatamente como fizemos com nossas ROUTES COMUNS de HTTP)... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> COM AS ROUTES HTTP, TÍNHAMOS 'app.use('/feed', feedRoutes)',
+
+
+
+
+ETC ETC... --> NESSAS ROUTES,
+
+NÓS FAZÍAMOS FORWARD
+
+DOS REQUESTS AS  NOSSAS ROUTES...
+
+
+
+
+
+
+
+
+
+
+---------> E É CLARO QUE PODEMOS FAZER O SETUP DO 'SOCKET.IO' '''endpoints'''
+
+EM UM ARQUIVO SEPARADO NO NOSSO PROJETO,
+
+MAS 
+
+
+PROFESSOR APONTA QUE 
+
+PREFERE 
+
+
+
+AS SETTAR 
+
+NESSE 'app.js'
+
+
+MESMO...
+
+
+
+
+
+
+
+--------> OK.... ANTIGAMENTE SETTAMOS 
+
+
+
+ROUTES PARA OS 'NORMAL HTTP REQUESTS',
+
+
+
+
+
+e agora 
+
+
+
+PODEMOS FAZER A MESMA COISA, MAS PARA 
+
+NOSSOS 
+
+'SOCKET.IO CHANNELS'...
+
+
+
+
+
+
+
+
+
+
+------> MANTENHA EM MENTE: 
+
+
+
+
+
+OS WEBSOCKETS USAM UM PROTOCOLO __ DIFERENTE (websockets),
+
+
+
+
+
+E ISSO QUER 
+
+DIZER QUE 
+
+
+OS 
+
+
+
+'WEBSOCKET REQUESTS'
+
+
+
+__ NÃO VAO INTERFERIR __ COM OS NORMAL HTTP REQUESTS, ENVIADOS PELO BROWSER, POR DEFAULT...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK...
+
+
+
+NOSSO CÓDIGO, NO MOMENTO, É ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+const uuid = require('uuid').v4;
+
+const multer = require('multer'); /////sim, vamos usar o multer novamente, para FAZER HANDLE DOS FILE UPLOADS FEITOS PELO USER AO NOSSO BACKEND/APP...
+
+const mongoose = require('mongoose'); ///nem mesmo precisamos do 'mongodb' driver.... (mas instale mesmo assim).
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+const feedRoutes = require('./routes/feed');
+
+
+
+const authRoutes = require('./routes/auth');
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    console.log(file.fieldname, 'LINE');
+
+    cb(null, uuid() + '-' + file.originalname); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  console.log(file);
+
+  console.log(req.body.title, 'LINE3');
+
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    if (
+      req.body.title.length > 6 &&
+      req.body.title.match(/^[A-Za-z]+$/) &&
+      req.body.content.length > 6
+    ) {
+      console.log('IMAGE UPLOADED')
+      return cb(null, true);
+    } else {
+      return cb('Invalid data inputted, file was not saved.', false);
+    }
+  } else {
+   return cb(null, false); ///isso é o que interessa... vai parar nosso fileupload, se o chamarmos... (ou não).
+  }
+};
+
+app.use(bodyParser.json());
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
+
+app.use('/images', express.static(path.join(__dirname, 'images'))); //não se esqueça do '/images' no início...
+
+// console.log(path.join(__dirname, 'images'));
+
+
+
+app.use('/auth', authRoutes);
+
+app.use('/feed', feedRoutes);
+
+
+// app.listen(3000);
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500; ///COM ESSA SINTAXE, DEFINIMOS '500' por default.... será o default caso nenhum status code tiver sido definido anteriormente, no objeto 'erro'...
+  const message = error.message; ////'message' é uma propriedade QUE SEMPRE EXISTE NOS OBJETOS 'error'... é a mensagem que você escreve tipo em 'new Error('Mensagem escrita')' ....
+  const data = error.data; ///ver o código de 'exports.signup', lá em 'auth.js'...
+  res.status(status).json(
+    ///RESPOSTA PADRONIZADA...
+    {
+      message: message,
+      data: data 
+    }
+  );
+});
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> NESSE LOCAL AÍ,
+
+
+
+
+
+
+ALI NO TRECHO 
+
+
+
+do 
+
+'mongoose.connect()',
+
+
+
+
+
+
+EM QUE _ FAZEMOS __ CONNECT DO NOSSO BACKEND A 
+
+
+
+NOSSA 
+
+DATABASE,
+
+
+
+
+
+
+BEM NAQUELE LOCAL ALI 
+
+VAMOS QUERER 
+
+
+
+
+
+
+ESTABLISH/SETUP UMA CONEXÃO 
+
+
+
+
+'WEBSOCKET' entre 
+
+
+
+O BACKEND E O FRONTEND... -> PARA ISSO,
+
+
+
+
+PROFESSOR CRIA UMA NOVA CONSTANTE,
+
+
+'io',
+
+
+
+
+
+
+E 
+
+NESSA CONSTANTE O PROFESSOR VAI FAZER REQUIRE DA PACKAGE DE 'socket.io' (é bizarro, pois ele 
+
+NÃO VAI IMPORTAR ESSA PACKAGE EM UM CONTEXTO GLOBAL,
+
+E SIM 
+
+
+
+EM UM CONTEXTO LOCAL)...
+
+
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+const uuid = require('uuid').v4;
+
+const multer = require('multer'); /////sim, vamos usar o multer novamente, para FAZER HANDLE DOS FILE UPLOADS FEITOS PELO USER AO NOSSO BACKEND/APP...
+
+const mongoose = require('mongoose'); ///nem mesmo precisamos do 'mongodb' driver.... (mas instale mesmo assim).
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+const feedRoutes = require('./routes/feed');
+
+
+
+const authRoutes = require('./routes/auth');
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    console.log(file.fieldname, 'LINE');
+
+    cb(null, uuid() + '-' + file.originalname); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  console.log(file);
+
+  console.log(req.body.title, 'LINE3');
+
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    if (
+      req.body.title.length > 6 &&
+      req.body.title.match(/^[A-Za-z]+$/) &&
+      req.body.content.length > 6
+    ) {
+      console.log('IMAGE UPLOADED')
+      return cb(null, true);
+    } else {
+      return cb('Invalid data inputted, file was not saved.', false);
+    }
+  } else {
+   return cb(null, false); ///isso é o que interessa... vai parar nosso fileupload, se o chamarmos... (ou não).
+  }
+};
+
+app.use(bodyParser.json());
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
+
+app.use('/images', express.static(path.join(__dirname, 'images'))); //não se esqueça do '/images' no início...
+
+// console.log(path.join(__dirname, 'images'));
+
+
+
+app.use('/auth', authRoutes);
+
+app.use('/feed', feedRoutes);
+
+
+// app.listen(3000);
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500; ///COM ESSA SINTAXE, DEFINIMOS '500' por default.... será o default caso nenhum status code tiver sido definido anteriormente, no objeto 'erro'...
+  const message = error.message; ////'message' é uma propriedade QUE SEMPRE EXISTE NOS OBJETOS 'error'... é a mensagem que você escreve tipo em 'new Error('Mensagem escrita')' ....
+  const data = error.data; ///ver o código de 'exports.signup', lá em 'auth.js'...
+  res.status(status).json(
+    ///RESPOSTA PADRONIZADA...
+    {
+      message: message,
+      data: data 
+    }
+  );
+});
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080);
+
+
+    const io = require('socket.io'); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+-------------------------------
+
+
+
+
+
+EX:
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080);
+    const io = require('socket.io'); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+    
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+--> ESSA COISA AÍ/PACKAGE 
+
+
+NA VERDADE 
+
+
+
+__ 'EXPOSES A FUNCTION',
+
+
+
+
+
+UMA __ FUNCTION QUE __ ACTUALLY ___ REQUER_ NOSSO 
+
+'FULLY CREATED NODESERVER' (O APP EM SI) COMO _ UM ARGUMENTO.... 
+
+
+
+
+
+
+
+
+--------> OK, MAS __ COMO DIABOS __ VAMOS PASSAR 'NOSSO SERVIDOR INTEIRO'
+
+
+
+COMO ARGUMENTO? 
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PRECISMAOS 
+
+
+USAR 
+
+AQUELE CALL DE 'app.listen(8080)'....
+
+
+
+
+
+
+
+--> VAMOS ARMAZENAR ESSE CALL DE 'app.listen(8080)'
+
+
+
+
+__ DENTRO DE UMA CONSTANTE, E AÍ __ __
+
+
+USAR 
+
+
+
+ESSA CONSTANTE NESSE CALL DE 
+
+
+
+
+'const io = require('socket.io');'
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ///ARMAZENAMOS NOSSO SERVER INTEIRO DENTRO DESSA CONST...
+    const io = require('socket.io'); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+    
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+AGORA, MUNIDOS DESSE SERVER, ARMAZENADO NESSA 'const',
+
+
+
+
+
+PASSAMO-NO 
+
+
+
+__ À '''FUNÇÃO'''' 
+
+
+
+
+de 
+
+
+'require('socket.io')',
+
+
+COMO UM __ ARGUMENTO..
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ///ARMAZENAMOS NOSSO SERVER INTEIRO DENTRO DESSA CONST...
+    const io = require('socket.io')(server); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+    
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+---> OK, VAMOS __ EXECUTAR__ ESSE 'server' aí, por meio do parâmetro...
+
+
+
+
+
+
+
+
+
+
+----> É ESSE CÓDIGO AÍ QUE VAI 'SETUP A WEBSOCKETS CONNECTION',
+
+que é uma 
+
+conexão/protocolo que 
+
+USA O 
+
+
+PROTOCOLO HTTP COMO UMA 
+
+'BASE'...
+
+
+
+
+
+
+
+
+
+
+----> CERTO... --> ISSO ÁI,
+
+
+ESSE REQUIRE EXECUTADO AÍ,
+
+
+
+__ VAI __ NOS DAR UM 
+
+
+'SOCKET IO OBJECT',
+
+
+
+UM OBJECT QUE 
+
+
+
+
+___ VAI __ SETTAR__ 
+
+
+
+'ALL THE WEBSOCKET-STUFF 
+
+BEHIND THE SCENES' para nós,
+
+
+
+
+
+E QUE __ PODEMOS ACTUALLY_ UTILIZAR....
+
+
+
+
+
+
+
+
+
+
+
+
+-----> DE CARA,
+
+
+JÁ PODEMOS 
+
+UTILIZAR 
+
+
+
+'io' ,
+
+
+esse objeto aí,
+
+
+
+
+__ para_ _ definir __ UM PUNHADO __ DE EVENT LISTENERS,
+
+
+
+por exemplo...
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR, NO CASO,
+
+
+ESCREVE 
+
+
+
+
+'io.on()' 
+
+
+
+
+
+
+--> '.on()'
+é 
+
+UM 
+
+
+MÉTODO EXISTENTE DENTRO DESSE OBJETO 'io',
+
+
+
+
+E QUE 
+
+
+
+__  FAZ O 'WAIT'
+ 
+ POR NOVAS CONNECTIONS 
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> ex:
+
+
+
+
+ io.on('connection'); -------> SE 
+
+
+
+ PASSAMOS 
+
+
+ A STRING 'connections',
+
+
+
+
+ FAZEMOS COM QUE 
+
+ SEJA DEFINIDO UM NOVO LISTENER DO IO __ QUE___ VAI ESCUTAR __ POR 
+
+
+ 'NOVAS CONNECTIONS' AO NOSSO 
+
+
+ backend.. --> OU SEJA,
+
+
+ SEMPRE QUE 
+
+
+UM _NOVO CLIENT__ SE CONECTAR A NÓS...
+
+
+
+ ___  ----> 
+
+
+
+
+
+
+ É CLARO QUE ESSE LISTENER EXIGE UMA _ _SEGUNDA FUNÇÃO,
+
+ FUNÇÃO EM QUE 
+
+
+
+
+ NÓS OBRIGATORIAMENTE RECEBEMOS UM 
+ OBJETO,
+
+ objeto 
+
+
+ 'socket' (que é, 
+ 
+ 
+ NA VERDADE__, O __ CLIENT EM SI)...
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ////AQUI, VAMOS __ ARMAZENAR__ NOSSO SERVIDOR (o app nodeexpress em si) EM UMA CONST DE NOME 'server', QUE VAI SER USADA NAQUELE CALL DE 'socket.io' ali embaixo (pq o protocolo WEBSOCKETS 'builds upon' o protocolo HTTP, que é o default dos browsers/app nodeexpress)...
+    const io = require('socket.io')(server); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+            ///você deve usar seu 'server' (o app nodeexpress na totalidde) como ARGUMENTO DO CALL DESSE 'require('socket.io')'....
+            //É ISSO QUE VAI DEFINIR NOSSA 'websockets connection'...
+    
+            io.on('connection', (socket) => {  ////'.on()' é o método do SOCKET.IO __ que __dEFINE EVENT LISTENERS, TRIGGADOS POR DETERMINADAS COISAS.... (como 'connections', nesse nosso exemplo)...
+              /// o segundo parâmetro SEMPRE SERÁ UMA CALLBACK FUNCTION, function que recebe o ARGUMENTO 'socket' (que será A ACTUAL CONNECTION, A WEBSOCKETS CONNECTION ENTRE CLIENT E SERVER)....
+
+            }) 
+        
+        
+        
+        
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+--> E ESSA FUNÇÃO 'socket => {
+    '
+}' 
+
+
+
+VAI SER EXECUTADA _ PARA CADA NOVO CLIENT QUE SE CONECTAR AO NOSSO APP..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ///'socket' --> é o client/conexão ao client, objeto que representa essa conexão...
+
+
+
+
+
+
+
+ --> E ESSA FUNÇÃO 
+
+
+
+ 'socket => {}' 
+
+
+
+ VAI SER EXECUTADA 
+
+
+ _ MAIS DE 1 VEZ,
+
+ PARA CADA 
+
+
+
+ NOVO CLIENT QUE SE CONECTAR AO NOSSO APP...
+
+
+
+
+ --------------------------
+
+
+
+
+
+
+
+
+ -> NO CASO, O PROFESSOR VAI UM 
+
+
+
+ console.log de 'Client connected'...
+
+
+
+ Ex:
+
+
+
+
+ 
+ mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ////AQUI, VAMOS __ ARMAZENAR__ NOSSO SERVIDOR (o app nodeexpress em si) EM UMA CONST DE NOME 'server', QUE VAI SER USADA NAQUELE CALL DE 'socket.io' ali embaixo (pq o protocolo WEBSOCKETS 'builds upon' o protocolo HTTP, que é o default dos browsers/app nodeexpress)...
+    const io = require('socket.io')(server); /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+            ///você deve usar seu 'server' (o app nodeexpress na totalidde) como ARGUMENTO DO CALL DESSE 'require('socket.io')'....
+            //É ISSO QUE VAI DEFINIR NOSSA 'websockets connection'...
+    
+            io.on('connection', (socket) => {  ////'.on()' é o método do SOCKET.IO __ que __dEFINE EVENT LISTENERS, TRIGGADOS POR DETERMINADAS COISAS.... (como 'connections', nesse nosso exemplo)...
+              /// o segundo parâmetro SEMPRE SERÁ UMA CALLBACK FUNCTION, function que recebe o ARGUMENTO 'socket' (que será A ACTUAL CONNECTION, A WEBSOCKETS CONNECTION ENTRE CLIENT E SERVER)....
+
+                    console.log('Client connected');
+            }) 
+        
+        
+        
+        
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--__ IMPORTANTE!!!! --> NÓS NUNCA VAMOS 
+
+
+VER 
+
+ESSE CONSOLE.LOG 
+
+outputtado 
+
+
+
+NO CONSOLE DE NOSSO APP NODEEXPRESS (no terminal).... --> NÓS NUNCA 
+
+VEREMOS 
+
+ISSO 
+
+
+JUSTAMENTE 
+
+
+
+PQ 
+
+
+ESTABELECEMOS 
+
+
+
+__ TODO ESSE CÓDIGO AQUI:
+
+
+'''''
+
+
+const io = require('socket.io')(server)
+io.on('connection', socket => {console.log('Client connected.')})
+
+
+
+
+
+'''''
+
+
+
+
+
+
+SÓ _ NO 'SERVERSIDE'... -----> (
+
+
+
+  OU SEJA,
+
+  AGORA TEMOS UMA 
+
+ 
+'WAITING SOCKET CONNECTION/PORT'... -----> MAS AINDA ASSIM,
+
+
+
+
+NÃO POSSUÍMOS ALGUM CLIENT QUE 
+
+SE 
+
+CONECTE 
+
+
+AO NOSSO BACKEND, a esse nosso app nodeexpresss.... --> PQ SÓ ISSO É QUE 
+
+VAI REALMENTE TRIGGAR ESSE CÓDIGO AÍ,
+
+
+esse 
+
+'io.on('connection')'....
+   
+)
+
+
+
+
+
+
+
+
+
+
+
+--> E É EXATAMENTE ISSO QUE FAREMOS NA PRÓXIMA AULA,
+
+EM QUE 
+
+
+
+___ 
+
+
+
+ESCREVEREMOS O 'FIRE OFF' 
+
+
+
+de um 
+
+
+REQUEST 
+DE 
+
+
+
+'WEBSOCKET'
+
+LÁ DE NOSSO FRONTEND...

@@ -1,0 +1,5107 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA VER O GRAPHQL EM AÇÃO,
+
+
+PROFESSOR NOS JOGA DE VOLTA NO PROJETO 
+
+REST API... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ANTERIORMENTE, HAVÍAMOS ADICIONADO 'SOCKET.IO'
+
+ao nosso projeto....
+
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE AGORA 
+
+
+ELE VAI QUERER __ REMOVER __ A PARTE DO SOCKET.IO 
+
+DO NOSSO PROJETO,
+
+PQ ISSO VAI NOS ATRAPALHAR...
+
+
+
+
+
+
+
+--> PARA ISSO, ELE REMOVE O ARQUIVO 
+
+'socket.js',
+
+
+
+
+E AÍ 
+
+TAMBÉM 
+
+REMOVE 
+
+
+
+
+OUTRAS COISAS, COMO TODAS AS ROUTES (não vmaos mais ter routes,
+
+e sim 
+APENAS 
+
+
+
+1 
+
+
+ÚNICO ENDPOINT,
+
+QUE SERÁ 
+
+
+
+'/graphQL' DE TIPO POST...
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+CERTO...  DEI UMA LIMPADA NO CÓDIGO....
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR DEIXA O RESTO COMO ESTÁ...
+
+
+
+
+
+
+
+
+
+-------> TIRAMOS AQUELE STORE DO SERVER,
+aquele código de 
+
+
+'const server = app.listen(8080)',
+
+
+
+
+PQ AGORA NÃO VAMOS MAIS 'SET UP A WEBSOCKETS CONNECTION ON TOP OF OUR SERVER'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    // const server = app.listen(8080);  NÃO VAMOS MAIS 'SET A WEBSOCKET CONNECTION ON TOP OF OUR HTTP SERVER'...
+
+    app.listen(8080);
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+OK.... PROFESSOR TAMBÉM NOS EXPLICA QUE ___ NÃO USAREMOS MAIS O FOLDER DE 
+
+'routes',
+
+JUSTMAENTE 
+
+
+PQ 
+
+
+
+VAMOS TER APENAS 
+
+1 ENDPOINT...
+
+
+
+
+
+
+
+
+
+
+--> OK.... 
+
+
+LIMPADO TUDO ISSO,
+
+
+
+PROFESSOR NOS EXPLICA QUE 
+
+ELE VAI QUERER USAR O GRAPHQL...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+É EVIDENTE QUE VAMOS QUERER __ INSTALAR__ A PACKAGE DE _ 
+
+
+'graphQL'
+
+
+
+no nosso backend...
+
+
+
+
+
+
+
+
+
+---> NA VERDADE,
+
+
+VAMOS INSTSALR __ 
+
+2
+ NOVAS PACKAGES..
+
+
+
+
+
+
+
+ A PRIMEIRA DELAS É REALMENTE 'graphql'....
+
+
+
+
+
+
+
+
+
+
+
+--> O PACKAGE DE 'graphql'
+
+vai ser 
+
+
+NECESSÁRIO 
+
+
+PARA 
+
+
+
+'DEFINING THE SCHEMA OF OUR GRAPHQL SERVICE',
+
+
+
+OU SEJA,
+
+
+
+
+
+
+'AS DEFINIÇÕES DAS QUERIES,
+
+
+MUTATIONS,
+ 
+
+
+ SUBSCRIPTIONS, 
+ ETC ETC...., TODAS ESSAS COISAS QUE QUEREMOS ALLOW'...
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> ALÉM DISSO,
+
+ VAMOS PRECISAR _ DE UMA SEGUNDA PACKAGE,
+
+
+ A PACKAGE DE 
+
+
+
+ 'express-graphql',
+
+  
+
+  QUE SERÁ 
+
+  USADA 
+
+
+  PARA FAZER O 
+
+  'SET DE UM SIMPLES SERVER, SERVER QUE 
+
+  VAI FAZER O PARSE 
+
+  DOS INCOMING REQUESTS, E ASSIM POR DIANTE'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  PACKAGES INSTALADOS: 
+
+
+
+
+  1) GRAPHQL 
+
+
+
+  2) express-graphql...
+
+
+
+
+
+
+
+
+  -------------------
+
+
+
+  CERTO....  mas encontrei um erro:
+
+
+
+
+
+
+
+
+
+
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR! 
+npm ERR! While resolving: nodeexpressbackend@1.0.0 
+npm ERR! Found: graphql@16.1.0
+npm ERR! node_modules/graphql
+npm ERR!   graphql@"^16.1.0" from the root project 
+npm ERR! 
+npm ERR! Could not resolve dependency:
+npm ERR! peer graphql@"^14.7.0 || ^15.3.0" from express-graphql@0.12.0       
+npm ERR! node_modules/express-graphql
+npm ERR!   express-graphql@"*" from the root project
+npm ERR!
+npm ERR! Fix the upstream dependency conflict, or retry
+npm ERR! this command with --force, or --legacy-peer-deps
+npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
+npm ERR!
+npm ERR! See C:\Users\Usuário\AppData\Local\npm-cache\eresolve-report.txt for a full report.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!  
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+CERTO, ACHO QUE ISSO FUNCIONARÁ....
+
+
+
+
+ 
+
+
+
+
+
+ GRAPHQL.ORG --> ISSO TEM UM MONTE DE DOCUMENTAÇÃO 
+
+
+
+
+ SOBRE O GRAPHQL...
+
+
+
+
+
+
+
+ --> PROFESSOR DIZ QUE 
+
+
+ HÁ UM MONTE DE DOCS SOBRE ESSA QUERY LANGAUGE,
+
+ QUE É 
+
+
+ 'CLEARLY DEFINED',
+
+
+
+
+ E PROFESSOR 
+
+ EXPLICA QUE 
+
+
+
+
+
+REALMENTE É NECESSÁRIO UM 'STRONG RULESET'
+
+
+PARA ESCREVER BOAS QUERIES...
+
+
+
+
+
+
+
+
+
+
+--- >SE VOCÊ ESCREVER EM 'code',
+
+VOCÊ ENCONTRARÁ
+ 
+
+
+
+ LIBRARIES PARA TODOS OS TIPOS DE LANGUAGES...
+
+
+
+
+
+
+
+ NA OPÇÃO JAVASCRIPT ENCONTRAMOS DETALHES 
+
+
+  
+
+  sobre essa package de 
+
+  'npm install graphql'...,
+
+
+
+  e menção 
+
+  ao 
+
+  'npm install express-graphql'... 
+
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR 
+
+  DIZ QUE 
+
+  ESSE SITE TAMBÉM 
+
+
+  TE 
+
+  DÁ OUTRAS SOLUÇÕES,
+
+  SOLUÇÕES PARA OUTRAS 
+
+
+  FRAMEWORKS,
+
+  como o 
+
+
+  'apollo-server',
+
+
+
+  QUE É SUPER POPULAR 
+
+
+
+  E FUNCIONA 
+
+  COM QUALQUER 
+
+  FRAMEWORK 
+
+  NODE  ---------> 
+
+
+
+
+
+
+
+
+
+
+
+
+  ELE É REALMENTE MELHOR DO QUE O 'express-graphql',
+
+
+
+
+
+
+  QUE É MEIO 'BAREBONES',
+
+
+MAS 
+
+
+O 
+
+PROFESSOR 
+
+
+
+
+
+
+
+
+
+DIZ QUE 
+
+
+
+
+
+
+VAI NOS MOSTRAR O 
+
+'express-graphql'
+
+
+
+PQ __ ELE 
+
+
+__ NÃO ESCONDE _ ALGUMAS DAS 'COISAS FEIAS'
+ 
+
+
+
+ do 
+
+
+ parse 
+
+
+ DOS 
+
+
+
+
+ QUERIES GRAPHQL 
+
+
+ no backend.... --> ISSO 
+
+ PQ 
+
+ O 
+
+ APOLLO 
+
+
+ 'HIDES SOME OF THESE THINGS',
+
+
+
+
+
+
+
+ 
+
+
+NÃO É TÃO DIDÁTICO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, COM ISSO TUDO FORA DO CAMINHO,
+
+VOLTAMOS AO NOSSO PROEJTO...
+
+
+
+
+
+
+
+
+
+
+
+-----> INSTALAMOS 
+
+
+
+AQUELES NEGÓCIOS,
+
+
+
+E LIMPAMOS 
+
+NOSSO 
+PROJETO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA É HORA DE ADICIONAR UM POUCO DE LÓGICA 
+
+GRAPHQL....
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK, MAS COMO FAZEMOS ISSo? 
+
+
+
+
+
+
+
+
+
+
+
+
+--> ANTES DE MAIS NADA, PROFESSOR PEDE QUE CRIEMOS UM NOVO FOLDER,
+
+CHAMADO DE 
+
+'graphql',
+
+
+
+EM QUEE 
+
+
+
+VAMOS COLOCAR 
+
+
+TODO NOSSO CÓDIGO RELATIVO AO GRAPHQL....
+
+
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE FOLDER,
+
+
+PROFESSOR VAI ADICIONAR UM ARQUIVO CHAMADO DE 
+
+'schema.js',
+
+
+EM QUE 
+
+
+
+VAMOS DEFINIR AS QUERIES,
+
+MUTATIONS 
+
+
+
+E 
+
+SUBSCRIPTIONS (tyPES)
+
+
+
+
+
+COM _OS QUAIS __ 
+
+
+
+VAMOS TRABALHAR NO 
+
+
+
+'GRAPHQL SERVICE'
+
+que vamos criar...
+
+
+
+
+
+
+
+
+----> DEPOIS DISSO,
+
+
+
+PROFESSOR CRIA UM ARQUIVO 
+
+'resolvers.js',
+
+
+EM QUE 
+
+
+SERÃO CRIADOS OS 'RESOLVERS' (Que são basciamente CONTROLLERS, seriam os CONTROLLERS em um app RESTFUL/APP NDOE CLÁSSICO)....
+
+
+
+
+
+
+
+
+
+
+
+
+OK, ENTÃO CRIAMOS ESSES 2 ARQUIVOS: 
+
+
+1) resolvers.js
+
+
+
+
+2) schema.js...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> NOS RESOLVERS VAMOS ESCREVER A 'LÓGICA QUE SERÁ EXECUTADA 
+
+
+
+ON INCOMING QUERIEs'...
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... --> 
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE DEVEMOS COMEÇAR PELO 
+
+'schema.js'...
+
+
+
+
+
+
+
+
+-- >DENTRO DELE,
+
+
+
+PROFESSOR DIZ QUE 
+
+DEVEMOS 
+
+
+IMPORTAR,
+
+POR MEIO DO REQUIRE,
+
+
+
+
+
+
+
+ALGUNS OBJETOS LÁ DAQUELA PACKAGE DE 
+
+'graphql' (que é usada para SETTAR NOSSOS SCHEMAS GRAPHQL)..
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const {} = require('graphql');
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+--> OK.... MAS QUE OBJETO/ESTRUTURA VAMOS IMPORTAR?
+
+
+
+
+
+
+VAMOS IMPORTAR 
+
+
+
+
+A FUNÇÃO 
+
+'buildSchema',
+
+
+QUE 
+
+
+
+
+JUSTAMENTE NOS PERMITE 
+
+
+
+'BUILD A SCHEMA 
+
+
+
+WHICH CAN THEN BE PARSED BY 
+
+GRAPHQL AND EXPRESS-GRAPHQL'...
+
+
+
+
+
+
+
+
+
+
+-> 
+
+EX:
+
+
+
+
+
+const { buildSchema } = require('graphql'); ////é este package que te deixa DEFNIIR O 'SCHEMA' do seu SERVIÇO graphQL...
+/// 'buildSchema' NOS DEIXA __ CONSTRUIR _ UM SCHEMA, SCHEMA QUE SERÁ A COISA QUE O GRAPHQL VAI ENTENDER, VAI CONSEGUIR PARSEAR... --> só as possibilidades que escrevermos dentro desse schema serão CONSIDERADAS pelo graphql, NO PARSE DOS INCOMING REQUEST BODIES/queries nos incoming requests (request bodies)..
+
+
+
+
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+O PROFESSOR EXPLICA QUE 
+
+ 
+
+ ELE VAI QUERER __ EXPORTAr_ ESSE SCHEMA,
+
+
+
+
+ POR ISSO 
+
+ ELE 
+
+
+ VAI 
+
+ QUERER 
+
+
+
+
+
+
+
+ CHAMAR A FUNÇÃO 
+
+
+ 'buildSchema',
+
+
+ A EXECUTAR,
+
+ E AÍ 
+
+
+
+
+
+
+ A ENFIAR NAQUELE CALL DE 
+
+ 'module.exports',
+ PARA QUE 
+
+ SEJA EXPORTADA SUA INSTANCIAÇÃO/CALL....
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ const { buildSchema } = require('graphql');
+
+
+ module.exports = buildSchema();
+
+
+
+
+
+
+ ----------------------------------
+
+
+
+ OK... MAS É CLARO QUE 
+ NÃO ACABAMOS...
+
+
+
+
+ EU CHUTO QUE DENTRO DESSE SCHEAM 
+
+ VAMOS ESCREVER UM OBJETO,
+
+ objeto 
+ que 
+
+ vai 
+
+ ser similar ao 
+
+ schema que settamos com o mongoose...
+
+
+
+
+
+
+
+
+
+
+
+ --> CERTO... MAS PARECE QUE EU ERREI.... -> A COISA QUE PASSAREMOS 
+
+ COMO PARÂMETRO 
+
+ NÃO SERÁ 
+
+
+
+
+
+ UM __ OBJECT ({}),
+
+
+ E SIM 
+
+
+ SERÁ UMA __ STRING__....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> O PROFESSOR PEDE QUE USEMOS 
+
+
+
+ __ TEMPLATE LITERAL (``) 
+
+
+
+ AQUI,
+
+
+
+SIMPLESMENTE PARA QUE 
+CONSIGAMOS 
+
+ESCREVER 
+
+'MULTI-LINE STRINGS'....
+
+
+
+
+
+
+ ----> 
+
+
+ ex:
+
+
+
+
+
+ 
+
+ const { buildSchema } = require('graphql');
+
+
+ module.exports = buildSchema(`
+
+
+
+`
+
+ );
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+const { buildSchema } = require('graphql'); ////é este package que te deixa DEFNIIR O 'SCHEMA' do seu SERVIÇO graphQL...
+/// 'buildSchema' NOS DEIXA __ CONSTRUIR _ UM SCHEMA, SCHEMA QUE SERÁ A COISA QUE O GRAPHQL VAI ENTENDER, VAI CONSEGUIR PARSEAR... --> só as possibilidades que escrevermos dentro desse schema serão CONSIDERADAS pelo graphql, NO PARSE DOS INCOMING REQUEST BODIES/queries nos incoming requests (request bodies)..
+
+
+
+///esse setup é parecido com o DO MONGOOSE, eu acho... (mas não passamos um OBJETO ao 'schema creator', E SIM __ UMA STRING... string com TEMPLATE LITERAL....)
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+ `
+ 
+ 
+ `
+
+)
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+E AGORA,
+
+PARA CONSEGUIRMOS 
+
+
+SETTAR 
+
+
+
+
+UM 
+
+'GRAPHQL 
+
+SCHEMA'
+
+nessa 
+
+string,
+
+
+
+PROFESSOR 
+
+DIZ QUE 
+
+
+NÓS DEVEMOS DIGITAR 
+
+
+
+
+
+'schema {}' 
+
+
+
+
+
+(schema e CURLY BRACES) --> E SEM ':' depois do SCHEMA, PQ ISSO AQUI NÃO É JSON, NÃO É JSON DATA...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+module.exports = buildSchema(
+  `
+    schema {
+
+    }
+  
+  `
+
+)
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+DENTRO DESSE 'schema',
+
+PROFESSOR EXPLICA QUE 
+
+AGORA 
+
+
+DEVEMOS __ DEFNIR ___ 
+
+
+
+
+
+
+
+1 FIELD 
+
+DE 
+
+'query'... 
+
+
+
+
+
+
+
+--> devemos nos lembrar daquele esquema:
+
+
+
+
+
+
+
+
+{
+        query {
+            user {
+                name
+                age
+            }
+        }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+--> portanto, aqui temos:
+
+
+1) operação de tipo QUERY (quer fazer GET de dados)....
+
+
+
+
+
+2) endpoint 'USER', que deve ser algo que já settamos anteriormente no backend... (endpoints disponíveis/permitidos)....
+
+
+
+
+
+3) POR FIM, 
+
+
+'NAME' e 'AGE' 
+
+
+
+são OS __ FIELDS_ QUE VAMOS __ QUERER __ EXTRAIR__, 
+
+LÁ 
+
+
+
+__ DESSE 
+
+
+ENDPOINT __ DE 
+
+
+'user'...  
+
+(
+
+    vamos querer, nesse exemplo,
+
+    SÓ O 'NAME' E A 'AGE',
+
+
+
+DEIXANDO DE LADO COISAS COMO 
+
+'address',
+ 
+
+
+ 'email', '_id',
+
+
+ etc etc.... 
+
+
+
+    
+
+)
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... NO CASO,
+ 
+
+ ESCREVEREI:
+
+
+
+
+
+ `
+
+
+schema {
+  query:
+}
+
+
+
+ `
+
+
+
+
+
+
+
+
+
+
+ -> NESSE FIELD DE QUERY/ESSE FIELD _DE QUERY __ 
+
+
+
+
+
+ SERÁ __ UM OBJETO ___ COM __ TODAS _  AS QUERIES__ 
+                                    (
+                                      E QUERIES SÃO AS PARTES/OPERAÇÕES EM QUE __ VOCê FAZ 'GET' DE DATA
+                                    )
+
+
+
+
+QUE __ VOCê QUER PERMITIR_...
+
+
+
+
+
+(SIMPLES ASSIM)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS PARA DEIXAR ___ ESSE CÓDIGO_ MAIS FÁCIL DE LER,
+
+O PROFESSOR 
+
+ESCREVE 
+
+
+'type Query'
+
+
+
+NO INÍCIO 
+
+
+
+do 
+
+texto....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE TAMBÉM EXPLICA QUE PODERÍAMOS NOMEAR ISSO DE FORMA DIFERENTE,
+
+PODERÍAMOS ESCREVER 
+
+ALGO COMO 
+
+'rootQuery',
+
+
+OU QUALQUER OUTRA COisa...
+
+
+
+
+
+
+
+
+
+
+-> ok, usamos 'rootQuery'...
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+ `
+    type RootQuery {
+
+
+    }
+
+
+    schema {
+        query: 
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+ESSE JEITO DE ESCREVER 
+
+O SCHEMA É BEM ESTRANHO... MAS TUDO BEM.
+
+
+
+
+
+
+
+
+
+
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+      --> para exemplificar,
+
+
+
+
+  
+  O PROFESSOR ESCREVER UMA QUERY MEIO 'dummy'
+
+
+
+  DENTRO DO 'RootQuery'...
+
+
+
+
+  é a query de 'hello',
+
+
+
+
+  QUE VAI RETORNAR SÓ uma __ STRING_...
+
+
+
+
+
+
+
+
+  portanto, vai ficar assim:
+
+
+
+
+
+
+
+
+
+  
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+ `
+    type RootQuery {
+          hello: String ////EIS O CÓDIGO EM QUESTÃO.
+
+    }
+
+
+    schema {
+        query: 
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+OK... QUANDO VOCÊ 
+
+
+ESCREVE 
+
+
+': String',
+
+
+VOCÊ __ ESTÁ DEFININDO O  '''RETURN TYPE PARA ESSA QUERY ESPECÍFICA'''... -----------> 
+
+
+ISSO SIGNIFICA QUE 
+
+
+QUANDO 
+
+
+
+
+
+1 USER FIZER UMA QUERY POR 
+
+
+
+
+
+
+
+'hello',
+
+
+ELE SÓ VAI __ PODER__ 
+
+
+
+TER RETORNADA UMA STRING A SI...
+
+
+
+
+
+
+
+
+
+
+
+-----> O GRAPHQL SABE __ ALGUNS __ TIPOS __ DE DATA ALÉM DE 'String'... --> 
+
+
+
+
+sabe coisas como:
+
+
+
+A) INTEGERS 
+
+
+
+B) FLOATS 
+
+
+
+C) BOOLEANS 
+
+
+
+D) IDs 
+
+
+
+
+
+etc.....
+
+
+
+
+
+
+
+
+
+------> FEITA A DEFINIÇÃO DO 'TIPO DE DATA'
+
+que será 
+
+retornada 
+
+
+
+
+
+PELO QUERY DE 'hello',
+
+
+O PROFESSOR 
+
+
+
+
+BASICAMENTE A REFERENCIA 
+
+DENTRO 
+
+
+DAQUELE 
+
+'schema {}',
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+ `
+    type RootQuery {
+          hello: String 
+
+    }
+
+
+    schema {
+        query: RootQuery   ////////EIS O CÓDIGO EM QUESTÃO.
+    }
+ 
+ `
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+ESPERE... ACHO QUE ESTOU ENTENDENDO...
+
+
+
+
+
+
+
+
+
+--> devo rever o modelo 
+
+
+daquele 
+
+'request GRAPHQL'...
+
+
+
+
+
+
+
+
+
+o modelo era assim:
+
+
+
+
+
+
+
+
+{
+        query {
+            user {
+                name
+                age
+            }
+        }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+OPERATION: QUERY 
+
+
+ENDPOINT/COMMAND --> USER 
+
+
+
+DATA/KEY REQUISITADA ---> 'name'/ 'age'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> no nosso caso,
+
+
+
+caso 
+
+
+desse SCHEMA AÍ,
+
+
+provavelmente
+
+
+
+temos que 
+
+
+
+aquele 
+
+'
+query:' 
+
+
+
+VAI ABRIGAR TODOS OS 'endpoints/commands'
+
+
+POSSÍVEIS 
+
+
+DE NOSSO APP.... -------> E COMO ATÉ AGORA SÓ 
+
+
+TEMOS 
+
+
+
+
+
+1 'TYPE' 
+
+
+
+de 
+
+query,
+
+que é aquele 
+
+
+
+'RootQuery',
+
+
+
+
+
+__ NÓS __ SÓ PASSAMOS __ ELE __ A 
+
+ESSE 
+
+
+
+'query: ...' 
+
+
+
+
+
+
+
+
+
+
+--> É EXATAMENTE POR ISSO QUE 
+
+O CÓDIGO FICA 
+
+
+
+
+
+
+
+
+'schema {
+  query: RootQuery
+}
+'
+
+
+
+
+
+
+
+
+
+SE TIVÉSSEMOS MAIS TIPOS DE 'query',
+
+PROVAVELMENTE 
+
+
+O NEGÓCIO 
+
+
+FICARIA ASSIM:
+
+
+
+
+
+query: {
+  RootQuery,
+  PageQuery, etc etc...
+}
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... eu __ ACHO __ que é assim...
+
+
+
+
+
+
+
+
+
+
+
+-> O PROFESSOR NOS EXPLICA QUE ISSO AÍ É, AGORA, 
+
+
+'A VERY BASIC SCHEMA',
+
+
+
+um schema 
+
+
+EM QUE PODEMOS 
+
+ENVIAR 
+
+
+
+1 
+
+QUERY especificando 
+
+'hello',
+
+
+essa KEY 
+
+
+aí,
+
+
+PARA 
+
+
+
+CONSEGUIRMOS RECEBER/FAZER SER RETORNADO 
+
+
+
+1
+
+
+
+'TEXT' (por causa do type 'String')...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS QUE TEXT __ VAI __ SER RETORNADO__? ----> BEM, O TEXT/STRING EM SI,,
+
+
+
+
+
+E QUALQUER___ TIPO DE DATA__ RETORNADA POR 1 DESSAS 'KEYS',
+
+
+
+
+VAI SER __  
+
+
+
+DEFINIDO/ESCRITO _ LÁ NOS NOSSOS RESOLVERS,
+
+
+QUE SÃO RESPONSÁVEIS 
+
+
+PELO 
+
+
+EXECUTE DO CÓDIGO BACKEND AO RECEBER 
+
+1 DESSES REQUESTS __VÁLIDOS__ (compatíveis com os endpoints/commands)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAS POR ENQUANTO, NOSSO 
+
+
+CO´DIGO DO SCHEMA FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+      `       
+   type RootQuery { 
+         hello: String
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+CERTo....
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... 
+
+
+
+
+MAS COMO SERÁ O FORMATO DO ARQUIVO DOS RESOLVERS?
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> bem, começamos pelo EXPORT 
+
+
+
+DE UM OBJETO.... --> isso PQ __ O _ RESOLVER__ VAI SER 
+1 
+
+
+
+'EXPORTED OBJECT'... ------>  
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE ESCREVEREMOS ISTO:
+
+
+
+
+
+
+
+module.exports = {
+
+}
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+DENTRO DESSE OBJETO QUE VAMOS EXPORTAR,
+
+
+O PROFESSOR DIZ QUE 
+
+VAMOS TER QUE 
+ESCREVER 
+
+
+1 METHOD DE 
+
+
+'hello',
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+hello() {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+module.exports = {
+
+
+
+        hello() {
+
+        }
+
+
+
+}
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+CERTO... E VOCÊ VAI PRECISAR 
+
+
+DE 
+
+1 
+
+
+
+'METHOD'
+
+
+
+PARA __ CADA 
+
+
+
+
+QUERY, MUTATION OU SUBSCRIPTION 
+
+
+
+QUE VOCÊ DEFINIR NO SEU SCHEMA... -----> E, OBVIAMENTE,
+
+
+
+O 
+
+
+
+NOME _ DESSE METHOD_ TEM QUE MATCHEAR 
+
+a coisa que 
+
+
+VOCÊ 
+
+
+ESCREVEU LÁ NO SCHEMA 
+
+
+do 
+
+
+
+
+'GRAPHQL'...
+
+
+
+
+
+
+
+
+
+-> O PROFESSOR ESCREVEU ESSE METÓDO DE 'hello()'
+
+
+justamente 
+
+pq 
+escrevemos 
+
+a possibilidade, lá no schema,
+
+
+de uma query 
+de 
+
+
+
+
+
+'type RootQuery {
+  hello: String
+}
+'
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+-----> CERTO... AÍ O PROFESSOR NOS DISCORRE OUTRO DETALHE:
+
+
+
+
+VOCÊ NÃO PRECISA REFERENCIAR, LÁ 
+
+
+NO arquivo dos 'resolvers',
+
+
+a ''''query''''
+
+
+de 
+
+
+'RootQuery'
+(
+
+
+
+  ou seja,
+
+
+  não precisamos escrever 
+
+  'RootQuery(){}' junto do 'hello(){}'
+)
+
+
+
+
+
+
+
+
+
+-------> ELE EXPLICA QUE NÃO PRECISAMOS FAZER ISSO 
+
+
+
+JUSTAMENTE PQ 
+
+
+
+NO NOSSO SCHEMA 
+
+NÓS JÁ DEFINIMOS ESSE 
+
+'RootQuery',
+
+
+
+QUE É ENTÃO 
+
+
+COMPOSTO DESSES 'SUB QUERIES';
+
+
+
+
+
+
+
+
+
+NO FINAL DAS CONTAS,
+
+
+__ SÓ __ OS 'SUB QUERIES'___ VÃO PRECISAR SER DEFINIDOS/ESPECÍFICADOS NO ARQUIVO 'resolvers'...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+module.exports = {
+
+
+
+    hello() {
+
+    }
+
+    
+}
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+OK, AGORA TEMOS 
+
+
+
+
+UM METHOD PARA ESSE 'hello'... --> NO FINAL DAS CONTAS,
+
+
+PRECISAMOS 
+
+
+
+FAZER COM QUE 
+
+
+ESSE METHOD DE 'hello'
+
+
+NOS RETORNE UMA STRING,
+
+PQ FOI ISSO QUE ESPECIFICAMOS 
+
+
+EM 
+
+
+
+'schema.js',
+
+
+lá 
+
+
+em 
+
+
+'hello: String'....
+
+
+
+
+
+
+
+
+O PROFESSOR ENTÃO NOS CONTA OUTRO DETALHE:
+
+
+
+
+
+
+
+SE VOCÊ QUISER QUE UM CERTO DATA TYPE __ SEJA__ OBRIGATÓRIO __ NO SEU SCHEMA,
+
+como 
+o 
+
+
+RETURN DESSA STRING,
+
+
+
+
+VOCÊ DEVE UTILIZAR '!' (bang) DEPOIS __ 
+
+
+
+DO VALOR DESSE DATA TYPE...
+
+
+
+
+ex:
+
+
+
+
+      `       
+   type RootQuery { 
+         hello: String! ////ISSO VAI TORNAR O RETURN DESSE DATATYPE, quando adentramos o method de 'hello(){}', __OBRIGATÓRIO__....
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA SE NÃO RETORNARMOS UMA STRING,
+
+VAMOS 
+
+
+OBTER UM ERRO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... --> DENTRO 
+do 
+
+'hello(){}',
+
+
+
+
+O PROFESSOR 
+
+DECIDE ESCREVER 
+
+
+UMA STRING DE 'Hello World!'...
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+--> PARA 
+
+
+
+FAZER SER 
+
+
+ENVIADO ESSE VALOR 
+
+AO 
+
+USER,
+
+
+
+
+o professor escreve 
+
+
+'return 'Hello World!'..
+
+
+
+
+
+(
+
+
+  isso vai retornar o valor que quisermos,
+
+  nessa query,
+
+
+
+  quando ___ for enviado 1 request do nosso frontend com essa query de 
+
+
+  'hello'...
+)
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+module.exports = {
+
+
+
+    hello() {
+
+        return 'Hello World!';
+    }
+
+    
+}
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+certo....
+
+
+
+
+
+
+
+--> COM ISSO, PROFESSOR QUE VAMOS TER CRIADO UM 
+
+'VERY SIMPLE GRAPHQL SERVICE'... 
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... --> ANTES __ DE TESTARMOS __ 
+
+
+
+
+ISSO, 
+
+
+O PROFESSOR 
+
+
+
+QUER DEIXAR NOSSO SCHEMA UM POUQUINHO MAIS COMPLEXO...
+
+
+
+
+
+
+
+
+
+--> NO NOSSO 'SCHEAM',
+
+
+
+o professor 
+
+
+
+
+
+ADICIONA UM NOVO 'TYPE'.. 
+
+
+
+
+
+
+
+--> 
+
+
+vai ser o type de nome 
+
+
+'TestData'...
+
+
+
+
+
+--> DENTRO DESSE 
+
+'type',
+
+
+VAMOS TER UMA SUBQUERY DE 
+
+'text', 
+
+QUE VAI SER UMA STRING TAMBÉM..
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+      `       
+   type TestQuery {
+      textTest: String!
+   }
+
+
+
+
+
+   type RootQuery { 
+         hello: String!
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+'textTest'... ---> 
+
+
+
+MAS VAMOS COLOCAR MAIS UMA COISINHA NESSA QUERY... --> PROFESSOR PEDE QUE 
+
+COLOQUEMOS 
+
+UMA 
+
+PROPRIEDADE 
+
+
+'views' (não serão views de verdade, no caso),
+
+
+EM QUE 
+
+VAMOS COLOCAR UM DATA TYPE 
+DE 
+
+
+
+'Int!' (INTEGRAL)...
+
+
+
+
+
+
+
+
+
+---> OBS::: QUANDO VOCÊ ESCREVE OS TIPOS __ DE COISAS QUE PODEM SER RETORNADOS EM CADA SUBQUERY, 
+
+VOCÈ __ NÃO VAI ENUMERAR 
+
+AS SUBQUERIES com ',' (não existem COMMAS, vírgulas, no GRAPHQL)...
+
+
+
+
+
+
+
+
+
+
+--> isso significa que 
+
+esse código vai ficar tipo assim:
+
+
+
+
+
+
+
+
+type TestData {
+  text: String!
+  views: Int!
+}
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+      `       
+   type TestQuery {
+      textTest: String!
+      views: Int!
+   }
+
+
+
+
+
+   type RootQuery { 
+         hello: String!
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO... AÍ, NO CASO, 
+
+VAMOS 
+
+
+
+
+RETORNAR UM
+
+
+
+OUTRO query TYPE,
+
+
+no caso 
+
+um query 
+
+type 
+
+de 
+
+nome 
+
+
+'RootQuery2'....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+      `       
+   type TestQuery {
+      textTest: String!
+      views: Int!
+   }
+
+
+
+
+
+   type RootQuery { 
+         hello: String!
+   }
+
+   type RootQuery2 {
+
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+-------------------------------
+
+
+
+
+
+DENTRO DESSE 'ROOTQUERY2',
+
+
+VAMOS COLOCAR __ UM OUTRO TYPE DE QUERY, JÁ EXISTENTE... (
+
+
+
+
+ou seja, NESTING DE QUERIES/SUBQUERIES...
+
+
+)
+
+
+
+
+
+ex:
+
+
+
+
+
+
+module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+      `       
+   type TestQuery {
+      textTest: String!
+      views: Int!
+   }
+
+
+
+
+
+   type RootQuery { 
+         hello: String!
+   }
+
+   type RootQuery2 {
+     hello2: TestQuery
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+OU SEJA, 
+
+
+
+EM 
+
+
+'RootQuery2'
+
+VAMOS __ NESTEaR,
+
+NAQUELA SUBQUERY 
+DE 
+
+'hello2',
+
+
+AQUELA QUERY DE 
+
+'TestQuery',
+
+
+QUE É 
+
+
+'TestQuery {
+  textTest: String!  
+  views: Int!
+}
+'
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+COM ISSO,
+
+
+
+
+VOLTAMOS AO RESOLVER...
+
+
+
+LÁ, ESTÁVAMOS COM ESTE CÓDIGO :
+
+
+
+
+
+
+
+module.exports = {
+
+
+  hello() {
+      return 'Hello World!'
+
+  };
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+--> VAMOS CRIAR UM NOVO METHOD,
+ 
+
+ METHOD DE 
+
+
+ 'hello2() {}',
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+ 
+module.exports = {
+
+
+  hello() {
+      return 'Hello World!'
+
+  };
+
+
+hello2() {
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+--------------------------
+
+
+
+
+DENTRO DESSE METHOD DE 'hello2()',
+
+
+VAMOS COLOCAR __ 
+
+
+
+
+OS __ VALOREs__ QUE _ VÃO SER RETORNADOS __ PARA CADA 'SUBQUERY' 
+
+
+daquele 'hello2' no query de nome 'RootQuery2'....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+module.exports = {
+
+
+  hello() {
+      return 'Hello World!'
+
+  };
+
+
+hello2() {
+
+    return {
+      textTest: 'Hello World!'
+      views: 15125
+    }
+
+}
+
+
+
+}
+
+
+
+
+
+------------------------
+
+
+
+OK, TEMOS 
+
+
+1 VALID RESOLVER( com vários resolvers)
+
+
+
+
+
+E 
+
+1
+ 
+
+
+
+ 'VALID SCHEMA'.... (pq nosso schema também está válido)...
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+ module.exports = buildSchema( /// NO CALL DESSA FUNÇAÕ SEMPRE VAMOS PASSAR UMA STRING, STRING QUE SERÁ um TEMPLATE LITERAL (para que consigamos escrever a string em MÚLTIPLAS LINHAS)... 
+      //no nome desse 'type' você pode escrever o que quiser, pode ser 'type Exemplo', 'type RootExemplo', qualquer coisa mesmo...
+      ///mas é dentro desse '...query' que você vai escrever TODAS AS QUERIES QUE VOCÊ PODERÁ TER NO SEU APP, NO FINAL DAS CONTAS....
+      ///'STRING' --> define ___O  TIPO __ DE DATA_ QUE VAMOS PERMITIR QUE SEJA RETORNADA __ POR MEIO DESSE QUERY Aí (no caso, o query da key 'hello')....
+      ///é importante destacar que o __ VALOR_ dessa string (E de qualquer outro data type) VAI SER __ DEFINIDO LÁ NOS 'RESOLVERS' (Que são basicamente controllers, no final das contas)...
+         ///para tornar um DATA TYPE de algum subquery/key __ ABSOLUTAMENTE 'REQUIRED', você pode adicionar um '!' (bang) DEPOIS __ DO VALOR.... (ex: 'String!')....
+      
+      
+      `       
+   type TestQuery {
+      textTest: String!
+      views: Int!
+   }
+
+
+
+
+
+   type RootQuery { 
+         hello: String!
+   }
+
+
+   type RootQuery {
+      hello2: TestQuery!
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+OK... AGORA QUE JÁ TEMOS UM SCHEMA E UM RESOLVER VÁLIDOS,
+
+
+
+
+__ BASTA__ FAZERMOS 'EXPOSE' 
+
+
+DESSES 
+
+
+
+ELEMENTOS__ AO __ PÚBLICO__ (make them public)...  -------> OU SEJA,
+
+
+
+
+__ PRECISAMOS __ 
+
+
+'SET THESE ROUTES/ENDPOINT' .... -_> PRECISAMOS INCORPORAR 
+
+
+
+ESSES 
+
+ELEMENTOS/FLOW 
+
+
+
+
+
+
+NO RUNTIME DE NOSSO APP NODEEXPRESS,
+
+
+
+ou seja,
+
+CRIAR O ENDPOINT e INCORPORAR 
+
+
+
+
+
+esses queries do SCHEMA a ele...
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+VAMOS __ USAR__ A PACKAGE __ DO 
+
+
+'express-graphql'....
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PROFESSOR VAI ATÉ O ARQUIVO DE 'app.js'
+
+
+E ENTÃO 
+
+
+
+ESCREVE UM IMPORT 
+
+ 
+
+
+ ASSIM:
+
+
+
+
+
+
+
+
+
+ const graphqlHttp = require('express-graphql');
+
+
+
+
+
+
+
+
+
+
+ --------------------------------
+
+
+
+
+
+
+
+
+
+ -------> OK.... 
+
+ ISSO FEITO,
+
+
+
+
+ PROFESSOR VAI ATÉ O TRECHO DE 'app.js'
+
+
+ QUE EXISTE LOGO ACIMA DO 'ERROR HANDLING MIDDLEWARE' (aquele middleware especial de error handling do expresS)
+
+
+
+
+ E 
+
+
+
+ AÍ ELE ESCREVE UM NOVO MIDDLEWARE,
+
+
+
+
+
+
+
+
+
+ tipo assim:
+
+
+
+
+
+
+ app.use(
+
+ )
+
+
+
+
+ -------------------
+
+
+
+
+
+
+O PROFESSOR USA A SINTAXE CLÁSSICA DE MIDDLEWARES..
+
+
+
+ex:
+
+
+
+
+
+app.use('/graphql', ) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR NOS EXPLICA QUE É CERTO _ QUE PODERÍAMOS __ USAR 
+
+
+
+OUTRO NOME, diferente de 
+'graphql',
+
+
+MAS QUE 
+
+
+
+
+ISSO É UMA CONVENÇÃO,
+
+
+É O QUE 
+
+
+GERALMENTE UTILIZAM....
+
+
+
+
+
+
+--> CERTO... MAS UMA PECULIARIDADE __ É QUE _ OPROFESSOR __
+
+DELIBERADAMENTE __ NÃO VAI LIMITAR __ 
+
+
+
+
+ESSE MIDDLEWARE A REQUESTS DE TIPO POST;
+
+
+ou seja,
+
+
+ele não vai escrever 
+
+'app.post',
+
+
+
+E SIM 
+
+
+
+VAI USAR 
+
+
+
+'app.use()' (geral, aceita tanto GET como POST requests)...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... 
+
+
+
+
+
+
+escreva 
+
+
+
+
+
+
+app.use('/graphql', ),
+
+
+E AÍ __ 
+
+
+NO SLOT DO 'CONTROLLER'
+
+
+VOCÊ 
+
+VAI USAR 
+
+
+AQUELE 
+
+
+MÉTODO 
+
+MÁGICO 
+
+GRAPHQL 
+
+
+
+QUE É 
+
+FORNECIDO 
+
+PELA 
+
+
+PACKAGE DE 
+
+
+'express-graphql'...
+
+
+
+
+
+
+
+
+
+--> VOCÊ CHAMA TIPO 'graphqlHttp()'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHttp());
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+app.use('/graphql', graphqlHttp(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+)); 
+
+
+
+--------------------------------------
+
+
+
+
+CERTO.... MAS O PROFESSOR NOS EXPLICA QUE 
+
+ESSE 
+
+
+
+CALL DO OBJETO/FUNÇÃO 'graphqlHttp'
+
+
+__ _EXIGE 1 PARÂMETRO,
+
+PARÂMETRO QUE 
+
+É 
+
+UM __ OBJETO __ CONFIG...
+
+
+
+
+
+
+
+
+
+
+--> ESSE OBJETO CONFIG __ EXIGE 2 ITEMS...
+
+
+
+
+
+
+
+
+
+
+
+--> 1) O PRIMEIRO ITEM É O __ SCHEMA__ QUE VOCÊ VAI QUERER USAR NO SEU APP/projeto GRAPHQL... 
+  --> PARA CONSEGUIRMOS O 'SCHEMA', precisamos o importar _ LÁ DO ARQUIVO 'schema.js'... (que já teremos exportado)....
+
+
+
+
+
+--> ESCREVEMOS 
+
+
+
+'const graphqlSchema = require(./graphql/schema)' --> É O ARQUIVO QUE NÓS CRÍAMOS...
+
+
+
+
+
+
+
+
+2) O __ SEGUNDO ITEM__ QUE PRECISAMOS, NESSE OBJETO CONFIG,
+
+
+
+É ____ O 
+
+
+
+_ RESOLVER EM SI, ARQUIVO 'RESOLVERS'..
+
+
+
+
+
+POR ISSO PRECISAMOS IMPORTAR 
+
+
+ESSE OBJETO, TAMBÉM....
+
+
+
+
+ex:
+
+
+
+const graphqlResolver = require('./graphql/resolvers')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO...
+
+
+lá naquele middleware,
+
+
+escrevemos isto:
+
+
+
+
+app.use('/graphql', graphqlHttp(
+
+{
+
+
+  schema: graphqlSchema, ///ISTO AQUI....
+}
+
+))
+
+
+
+
+
+
+
+
+
+
+E, POR FIM, PRECISAMOS __ INDICAR_ O RESOLVER QUE SERÁ RESPONSÁVEL POR NOSSAS QUERIES...
+
+
+
+
+
+
+--> PARA ISSO, DEVEMOS ESCREVER UMA KEY DE 
+
+
+'rootValue',
+
+
+E AÍ _ APONTAR__ PARA O NOSSO __ RESOLVER/RESOLVERS QUE IMPORTAMOS...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+app.use('/graphql', graphqlHttp(
+
+{
+
+
+  schema: graphqlSchema, ///ISTO AQUI....
+  rootValue: graphqlResolver
+}
+
+))
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+app.use('/graphql', graphqlHttp(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO...
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolvers ///vamos settar nosso RESOLVER/resolvers aqui... também é necessário para settarmos o endpoint....
+
+}
+)); 
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+COM ESSE SETUP,
+
+
+
+
+
+nós podemos INICIAR NOSSO NODE SERVER, finalmente....
+
+
+
+
+
+
+AGORA PODEMOS 
+
+
+TESTAR 
+
+ESSE NEGÓCIO...
+
+
+
+
+
+
+
+
+
+--> VOCÊ 
+
+
+
+DEVE SE LEMBRAR:
+
+
+
+
+NÓS __ VAMOS OBRIGATORIAMENTE ENVIAR REQUESTS DE TIPO POST...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PARA ISSO, 
+
+
+
+VAMOS USAR 'POSTMAN',
+
+diz o professor...
+
+
+
+
+
+
+
+
+
+POSTMAN PARA FINS DE TESTE..
+
+
+
+
+
+
+VAMOS MANDAR O REQUEST PARA O ADDRESS LOCALHOST:8080/graphql...,
+
+
+
+
+REQUEST DE TIPO POST...
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS RECEBI 1 ERRO:
+
+
+
+
+
+
+
+
+TypeError: graphqlHttp is not a function
+    at Object.<anonymous> (A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\app.js:95:21)
+
+
+
+
+
+
+
+--> CONSERTEI...  O CASING ERA O PROBLEMA:
+
+
+const { graphqlHTTP } = require('express-graphql');
+
+
+
+
+(HTTP É MAIÚSCULO)...
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... --> MAS É CLARO QUE __ NESSE __ 
+
+
+'POSTMAN'
+
+nós não vamos 
+
+
+enviar 
+
+só 
+
+
+1 REQUEST DE TIPO 'POST'
+
+VAZIO__... --> E SIM VAMOS __ ENVIAR __ UM 
+
+REQUEST __ COM 
+
+UM BODY 
+
+
+NO SEU INTERIOR... -> ESSE BODY 
+
+
+DEVERÁ 
+
+
+__TER A NOSSA QUERY, EM UM FORMATO JSON...
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE TROCAMOS 
+
+
+AS OPÇÕES 
+
+
+do 
+
+
+
+
+POSTMAN;
+
+
+
+colocamos 
+
+
+'raw' 
+
+
+e 
+
+aí 
+
+
+'application/json',
+
+
+
+
+
+
+TUDO PARA QUE 
+
+SEJA POSSÍVEL ENVIAR 
+
+ESSE RQEUEST com esse body de tipo json, com nossa query....
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS O QUE VAMOS ESCREVER DE DATA DENTRO 
+
+DESSE REQUEST DO POSTMAN?
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+DEVEMOS _ 
+
+
+
+ESCREVER, NESSE BODY,
+
+
+
+
+
+
+
+{
+
+
+
+
+}
+
+
+
+
+
+
+
+(
+
+
+  começamos com um 'objeto',
+
+
+  e aí dentro dele colocaremos coisas...
+)
+
+
+
+
+
+
+
+
+-> A PRIMEIRA  COIAS QUE INSERIMOS 
+
+
+É 
+UMA 
+
+KEY DE 
+
+'query'...  -----> 
+
+
+
+ex:
+
+
+
+
+
+
+
+{
+
+
+query: 
+
+
+}
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+CUIDADO!!! --> A ESCRITA DESSA KEY DE 'query'
+
+
+NÃO SIGNIFICA OBRIGATORIAMENTE QUE VAMOS ENVIAR, NESSE REQUEST,
+
+
+1 COMMAND DE 'QUERY' 
+
+
+em vez de mutation/subscription,
+
+
+
+ 
+
+ E SIM __ É SIMPLESMENTE __ ALGO QUE _ 
+
+
+  A PACKAGE 
+
+  'graphql'
+
+  VAI PROCURAr 
+
+
+  DENTRO DO SEU BODY... --> se ele ler/reconhecer esse write de 
+
+  'query',
+
+
+  ELE SABERÁ 
+
+  QUE 
+
+
+  SE TRATA 
+
+  DE 
+
+  UM CÓDIGO RELATIVO A QUERY QUE VOCÊ QUER EXECUTAR NO BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> CERTO.... --> E NESSA KEY DE 'query',
+
+
+
+
+  VOCê VAI QUERER COLOCAR UM __ VALOR QUE _ SERÁ UMA _ STRING.... --> e aí ,
+
+
+
+  o 
+
+
+
+  VALOR DA STRING QUE VOCÊ COLOCA NESSE LOCAL 
+
+
+
+  'IS YOUR GRAPHQL QUERY 
+
+  EXPRESSION'... 
+
+
+
+
+
+
+
+
+
+
+
+
+  OU SEJA,
+
+
+
+
+  VAMOS TER 'GRAPHQL QUERY EXPRESSIONS',
+
+  que teremos 
+
+  de escrever 
+
+
+  DENTRO 
+
+
+
+  DOS NOSSOS REQUEST BODIES...
+
+
+
+
+
+
+
+
+
+  -----> PARA ESCREVER ESSA GRAPHQL QUERY,
+
+
+  começamos com:
+
+
+
+  query: ""  (é uma string, no final das contas)....
+
+
+
+
+
+
+
+
+
+
+
+
+  --> DEPOIS DE ESCREVER OS MARCADORES DESSA STRING (aspas),
+
+
+
+
+  PROFESSOR APONTA QUE DEVEMOS ESCREVER CURLY BRACES ({}),
+
+
+
+  e aí __ 
+
+
+
+  NO __ MEIO DESSES CURLY BRACES__ VOCÊ __ DEVE INCLUIR ___ O NOME __ DA QUERY
+
+
+  QUE VOCÊ VAI QUERER 
+
+  'TARGET'
+
+
+
+
+  NO 
+
+
+  SEU BACKEND, COMO DEFINIDO LÁ NO SEU __ SCHEMA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---> COMO VIMOS ANTERIORMENTE,
+
+
+  NÓS TEMOS AQUELA QUERY DE 
+
+
+  'RootQuery2',
+
+
+
+
+
+
+  com aquelas SUBQUERIES....
+
+
+
+
+
+
+
+
+
+
+  ----> PARA TARGETTAR A ÚNICA QUERY DESSE 'TYPE ROOTQUERY2', que é 'hello2',
+
+
+
+
+
+
+  PROFESSOR EXPLICA QUE 
+
+
+  DEVEMOS 
+  ESCREVER 
+
+
+
+'hello2' --------> 
+
+
+
+
+ex:
+
+
+
+
+
+query: "{hello2 }"
+
+
+
+
+
+
+
+
+
+
+
+------------------
+
+
+
+LÁ NO NOSSO SCHEMA, TÍNHAMOS/TEMOS ESTE CÓDIGO:
+
+
+
+
+
+module.exports = buildSchema(
+      
+      
+      `       
+   type TestQuery {
+      textTest: String!
+      views: Int!
+   }
+
+
+
+
+
+   type RootQuery { 
+         hello: String!
+   }
+
+
+   type RootQuery2 {
+      hello2: TestQuery!
+   }
+
+
+    schema {
+         query: RootQuery
+        
+    }
+ 
+ `
+
+)
+
+
+
+
+-------------------------------
+
+
+
+
+
+COMO VOCÊ PODE VER,
+
+TEMOS ESSA 'rootQuery2',
+
+E ELA 
+
+
+TEM ESSA SUBQUERY DE 'hello2',
+
+
+QUE POR SUA VEZ TEM AS SUBQUERIES DE 
+
+
+
+'textTest'
+
+
+e 
+
+
+'views'...
+
+
+
+
+
+
+
+
+
+
+
+----> 'textTest' E 'VIEWS', na verdade,
+
+
+
+__ESPECIFICAM OS 'FIELDS' QUE VAMOS QUERER 
+
+'GET BACK'
+
+
+PARA CADA QUERY....
+  
+
+
+
+
+
+
+
+---> NO CASO, 
+
+
+
+
+VAMOS QUERER__ 
+
+
+
+
+
+
+
+
+COLOCAR UM outro '{}' DEPOIS DO NOME DE 'hello2',
+
+
+
+
+
+
+E AÍ__ DENTRO DESSE OBJETO ESPECÍFICAMOS AS PROPRIEDADES/FIELDS QUE VAMOS QUERER __ OBTER/TER RETORNADOS, A PARTIR 
+
+DESSE QUERY ESPECÍFICO...
+
+
+
+
+
+
+
+
+
+
+-----> NO CASO, PROFESSOR DIZ QUE SE QUISERMOS MAIS DE 1 FIELD,
+
+
+NÓS 
+
+SIMPLESMNETE OS SEPARMOS POR 'BLANKS' (espaços em branco)...
+
+
+
+
+
+
+
+
+
+-> NO CASO, O CÓDIGO QUE O PROFESSOR ESCREVE NO BODY DO REQUEST É :
+
+
+
+----------------------------------
+
+
+
+
+{
+
+
+  "query": "{hello2 { textTest }}
+}
+
+
+
+
+
+
+----------------------------
+
+
+
+COM ISSO, A PARTIR DESSE CÓDIGO DE QUERY (query GRAPHQL),
+
+
+
+VAMOS OBTER_ APENAS __ AQUELA STRING DE 
+
+
+'Hello World!',
+
+
+DEIXANDO DE LADO 
+
+
+
+
+AQUELE VALOR DE 
+124215151 
+
+
+que colocamos 
+
+no field 
+
+de 
+
+
+
+'views'...
+
+
+
+
+
+
+
+
+
+
+------> SE VOCê QUISER MAIS DE 1 FIELD/VALOR,
+
+
+
+VOCÊ DEVE 
+ESCREVER 
+
+
+
+
+UM WHITE SPACE ENTRE 
+
+
+
+
+O PRIMEIRO 'FIELD'/PROPRIEDADE E O SEGUNDO, TIPO ASSIM:
+
+
+
+
+
+
+
+{
+  "query": "{hello2 { textTest views}}
+}
+
+
+
+
+
+
+
+
+
+------> COM ISSO, VAMOS OBTER OS VALORES DA STRING__ DO 'textTest' (que é 'HELLO WORLD') 
+
+
+
+E __ 
+
+O 
+
+
+
+NÚMERO 12081208201 (obtido pelo 'views', a partir do RESOLVER)...
+
+
+
+
+
+
+
+
+
+
+--> O OBJETO QUE OBTEMOS, NO CASO, POR MEIO DO SHOW DO POSTMAN,
+
+
+é 
+
+{
+
+
+
+
+
+
+
+  "data": {
+    "hello": {
+      "text": "Hello World!",
+      "views": 1245
+    }
+  }
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+
+
+------> OU SEJA,
+
+SERÁ RETORNADA JSON DATA 
+
+
+
+
+CORRESPONDENDO ÀQUILO QUE 
+
+VOCÊ ESCREVEU/REQUISITOU NA QUERY...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... ------> E ISSO TUDO JÁ TE MOSTRA, IMEDIATAMENTE, A FLEXIBILIDADE DO GRAPHQL..
+
+
+
+
+
+
+
+
+
+
+
+-----> É 'ONE AND THE SAME ENDPOINT',
+
+
+
+
+MAS __ SOMOS NÓS __ QUE DEFINMOS __ QUAL 
+
+DATA/PEDÇAO DA DATA VAMOS QUERER LÁ NO FRONTEND,
+
+
+qual data vamos querer GETTAR lá no frontend...
+
+
+
+
+
+
+
+
+-------> E É IMPORTANTE ENTENDER:
+
+
+
+
+
+
+
+
+COM O GRAPHQL,
+
+
+nós não estamos/estaremos __ FILTRANDO___ A DATA__ NO FRONTEND (como normalmente se faz com REST APIs, naquela opção 2)...
+
+
+
+
+
+
+------> ESSA DATA TODA NÃO É FILTRADA NO FRONTEND, COM LERDEZA,
+
+
+E SIM _ É FILTRADA __ 
+
+____ LÁ _ NO SERVERSIDE EM SI,
+
+
+TUDO POR MEIO DO 
+
+
+'EXPRESS-GRAPHQL' (no nosso caso).... ----> É O EXPRESS-GRAPHQL QUE FAZ TODO O 'HEAVY LIFTING',
+
+no caso... --> 
+
+
+
+A NÓS __ SÓ CABE _ _ DEFINIR O SCHEMA _ E O RESOLVER_ ATRIBUÍDOS AO NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+*** NO RESOLVER,
+
+NÓS FAZEMOS RETURN __DE TODA A DATA ....
+
+
+
+
+
+
+
+
+-> *** AÍ, LÁ NO SERVERSIDE, O GRAPHQL VAI 'FILTER ALL THE DATA THAT WAS REQUEST BY THE CLIENT'.. --->  E É ASSIM QUE 
+
+O 
+
+
+GRAPHQL 
+
+
+FUNCIONA,
+
+'IN A NUTSHELL'..
+
+
+
+
+
+
+
+
+
+
+----->O PRÓXIMO PASSO É VER __ COMO MUTATIONS __ FUNCIONAM/SÃO ADICIONADAS EM UM PROJETO graphql...

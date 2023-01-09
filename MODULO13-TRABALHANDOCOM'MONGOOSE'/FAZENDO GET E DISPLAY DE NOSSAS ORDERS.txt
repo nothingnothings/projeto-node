@@ -1,0 +1,338 @@
+
+
+
+
+
+
+
+
+
+--> JÁ ESCREVI ESSE CÓDIGO... ELE FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+  Order.find({ userId: req.user._id })
+    .populate('products.product')
+    .then((orders) => {
+      console.log(orders);
+
+      orders.forEach((order) => {
+        console.log(order, 'LINE');
+
+            order.products.forEach(
+              (product) => {
+                console.log(product, 'LINE2');
+              }
+            )
+
+        order.totalPrice = order.products
+          .map(
+
+            (product) => {
+                console.log(product, 'LINE3');
+              return product.product.price * product.quantity;
+            }
+          )
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0);
+      });
+      res.render('shop/orders', {
+        pageTitle: 'Your Orders',
+        orders: orders,
+        path: '/orders',
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O PROFESSOR COMEÇA COM UM CÓDIGO ASSIM:
+
+
+
+
+
+
+
+
+exports.getOrders = (req, res, next) => {
+
+
+
+  Order.find({  userId: req.user._id})
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO VAI NOS DAR TODAS AS ORDERS QUE PERTENCEM A ESSE USER...
+
+
+
+
+
+
+
+
+
+
+--> AÍ ELE ESCREVE 
+
+
+
+o clássico 
+
+
+código 
+
+de 
+
+rnder 
+
+das 
+
+
+orders...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getOrders = (req, res, next) => {
+
+
+
+  Order.find({  userId: req.user._id})
+  .then(
+    (orders) => {
+
+
+
+
+      res.render(
+        ....
+      )
+    }
+  )
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+--> MAS O PROFESSOR RECEBE 1 ERRO, É CLARO,
+
+pq 
+
+
+A __ ESTRUTURA__ DE 
+
+NOSSAS 'ORDERS'
+
+mudou...
+
+
+
+
+
+
+
+
+--> ELE REESTRUTURA O CÓDIGO, COISA NORMAL,
+
+
+até 
+
+
+
+
+que 
+
+
+o negócio funcione... no meu caso,
+
+
+a view ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/orders.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul class="order__items">
+ <% orders.forEach(order => { %>
+     <li class="order__item">
+        <h1>Order Code: <%= order._id %></h1>
+        <ul>
+          <% order.products.forEach(product => { %>
+
+            <li><%= product.product.title %> (<%= product.quantity %>)
+              <p>Price: $<%= product.product.price %></h1>
+            
+            </li>
+
+        <%  }) %>
+        <h1>Total Price: <%= order.totalPrice %></h1>
+        </ul>
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ISSO REALMENTE FUNCIONOU...
+
+
+
+
+
+
+
+ok, tudo normal...
+
+
+vamos para o WRAPUP...
+
+
+
+
+
+--> professor propôs um 'total Price',
+
+que eu já havia adicionado... 
+
+
+
+
+
+
+
+
+
+
+-----> OK.. JÁ VIMOS UM MONTE DE ALTERNATIVAS 
+
+
+
+PARA TRABALHAR COM DATABASES E COM DATA...

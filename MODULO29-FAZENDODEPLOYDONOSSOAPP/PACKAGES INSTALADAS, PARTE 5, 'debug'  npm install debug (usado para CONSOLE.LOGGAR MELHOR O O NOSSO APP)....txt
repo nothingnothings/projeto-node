@@ -1,0 +1,19 @@
+
+In this situation, you can use the debug module. Adding it to your project is as easy as:
+
+npm install debug --save
+Then:
+
+const debug = require('debug')('my-namespace')
+const name = 'my-app'
+debug('booting %s', name)
+By default, it will not produce any output. To enable this logger, you have run your application with a special environment variable, called DEBUG.
+
+DEBUG=my-namespace node app.js
+Once you do that, the debug module will come to life and will start producing log events for stdout.
+
+Luckily, this module is widespread in the Node.js community, so if you are using a popular project, like Express, chances are high you can use the debug module with that. Also, you can inspect multiple modules at once, by separating the names with a comma.
+
+DEBUG=my-namespace,express* node app.js
+
+

@@ -1,0 +1,778 @@
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR SE LIVRA DO CÓDIGO QUE TÍNHAMOS ATÉ AGORA,
+
+e aí 
+
+escreve 
+
+
+
+um código novo....
+
+
+
+
+
+
+
+----> UMA COISA IMPORTANTE/DATA STRUCTURE
+ COM A QUAL VOCÊ TRABALHA 
+
+
+
+
+ EM JAVASCRIPT 
+
+
+ SÃO 
+
+ OS 
+
+ 'OBJECTS'.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> PROFESSOR CRIA UMA 
+
+ CONSTANTE 
+
+ DE NOME 
+
+ 'person'...
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+ const person = {
+
+
+
+ }
+
+
+
+
+
+ -----------------
+
+
+
+ AÍ, DENTRO DISSO,
+
+ VOCÊ TEM KEY-VALUE PAIRS...
+
+
+
+
+ VOCê DEFINE UMA KEY 
+
+
+ na esquerda,
+
+ e aí um value na direita, separado por um ':'....
+
+
+
+ ex:
+
+
+
+
+
+ const person = {
+
+
+     name: 'Max',
+    age: 29 
+ }
+
+
+
+
+
+
+
+
+ --> ISSO É UM OBJETO, que podemos console.loggar com 
+
+ 'console.log(person);'
+
+
+
+
+
+
+
+
+ -----> AÍ VEMOS NOSSO OBJETO 
+
+ PRINTADO NO CONSOLE...
+
+
+
+
+ OBJECTS SÃO ÚTEIS PQ ELES NOS DEIXAM AGRUPAR DATA 
+
+
+
+ EM 1 BLOCO Só....
+
+
+
+
+
+
+
+
+
+ --> VOCÊ PODE TER MAIS DO QUE VALUES LÁ DENTRO;
+
+
+ VOCÊ PODE TER __ FUNCTIONS__ TAMBÉM...
+
+
+
+
+
+
+ ------> 
+
+
+
+ AÍ VOCÊ PODE ESCREVER 
+
+ ALGO COMO 
+
+
+ 'greet: () => {}'...
+
+
+
+
+
+
+ --> SIM, VOCÊ PODE 
+
+ TER 
+
+ ARROW FUNCTIONS COMO VALOR 
+
+ APÓS 
+
+ O 
+
+ ':'....
+
+
+
+
+
+
+
+ ex:
+
+
+
+ 
+ const person = {
+
+
+     name: 'Max',
+    age: 29,
+
+
+    greet: () => {
+        console.log('Hi, I am' + this.name);
+    }
+ }
+
+--------------------------------
+
+
+
+
+
+
+
+
+----> SIM, VOCÊ PODE ARMAZENAR ESSA ARROW FUNCTION 
+
+
+
+DENTRO 
+
+DESSA PROPRIEDADE/método desse objeto...
+
+
+
+
+
+
+
+
+
+------> OK, MAS ATENTE PARA O 
+
+'this'... ---> DENTRO DE UM OBJETO,
+
+
+VOCÊ 
+
+DEVE USAR 
+
+'this' PARA 
+
+
+SE 
+
+REFERENCIAR 
+
+
+A 
+
+
+PROPRIEDADES 
+
+NO 
+
+'SURROUNDING OBJECT'.... ----> 
+
+
+AÍ VAMOS 
+
+USAR 
+
+
+A DOT NOTATION PARA 
+
+ACESSAR 
+
+
+o 
+
+
+'name'...
+
+
+(
+
+
+    por isso 
+
+    'this.name'...
+
+
+)
+
+
+
+
+
+
+
+
+AÍ, DO LADO __ DE FORA__ DESSE OBJETO,
+
+PODEMOS __ EXECUTAR __ 
+
+
+ESSE MÉTODO POR MEIO 
+
+
+
+
+DE UMA ESCRITA 
+
+COMO 
+
+
+
+'person.greet();'....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+ const person = {
+
+
+     name: 'Max',
+    age: 29,
+
+
+    greet: () => {
+        console.log('Hi, I am' + this.name);
+    }
+ }
+
+
+
+
+
+
+ person.greet();
+
+
+
+
+
+
+ ------------------------------------------
+
+
+
+
+
+
+
+ 'person' vai se referir ao objeto, enquanto 'greet()'
+ vai se referir 
+
+
+ AO MÉTODO...
+
+
+
+
+
+
+
+
+ ----> E AGORA SE EXECUTARMOS 
+
+ ESSE NEGÓCIO,
+
+
+
+
+ vamos receber ___ 'HI IM UNDEFINED'
+
+
+
+ no console... --> 
+
+ A 
+
+ RAZÃO 
+
+ PARA 
+
+ ISSO, 
+
+ DE FATO,
+
+
+ É AQUILO QUE O PROFESSOR 
+
+
+
+ NOS FALOU 
+
+
+
+ SOBRE ARROW FUNCTIONS... ------> o 'this' 
+
+
+ ALI 
+
+ SE 
+
+ REFERE 
+
+ AO 
+
+
+
+
+ ______________GLOBAL______ SCOPE__, 
+
+
+ AO 
+
+
+ 'GLOBAL NODE RUNTIME SCOPE',
+
+
+
+ E __ NÃO __ A ESSE OBJETO 
+
+
+
+ 'person'...
+
+
+ (bizarro.. não havia pensado nisso..) -------> 
+
+
+
+
+
+
+ PARA QUE 
+
+ ELE 
+
+ SE 
+
+ REFIRA 
+
+
+
+ AO 
+
+
+ OBJETO 
+
+
+
+ 'person' corretamente, para então acessar a propriedade 'name',
+
+
+ NÓS TEMOS 
+
+
+ 2 
+
+ ALTERNATIVAS:
+
+
+
+
+
+
+ 1) OU nós usamos 
+
+
+
+ UMA 'OLD SCHOOL FUNCTION' como 
+
+
+
+ 'function() {
+     ...
+ }',
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+----------------------------------
+
+  const person = {
+
+
+     name: 'Max',
+    age: 29,
+
+
+    greet: function() => { /////////EIS O CÓDIGO EM QUESTÃO
+        console.log('Hi, I am' + this.name);
+    }
+ }
+
+
+
+
+
+
+ person.greet();
+
+
+---------------------------------
+
+
+
+
+
+
+SE FIZERMOS ISSO, VEREMOS 'HI IM MAX',
+
+sinalizando que o 
+
+
+'this' AGORA ESTÁ FAZENDO COM QUE NÓS NOS REFIRAMOS A PROPRIEDADES escritas 
+dentro desse objeto 'person' que contém esse método 'greet'...
+
+
+
+
+
+
+
+
+
+
+2) ___ OU__, USAMOS 
+
+UMA 
+
+
+SINTAXE 1 POUCO DIFERENTE 
+
+AQUI, DENTRO DO OBJETO.... ---> COM ESSA SINTAXE,
+
+
+
+
+___NÃO USAMOS ___ UMA ARROW FUNCTION,
+
+
+
+
+E SIM USAMOS ___ 
+
+GREET 
+
+TIPO ASSIM:
+
+
+
+
+
+'''
+greet() {
+
+}
+
+''''
+
+
+
+(é diferente da sintaxe que eu usava com o react, 
+
+thats for sure...)
+
+
+----------------------------------
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+VAMOS __ OMITIR O ':' 
+
+E ENTÃO VAMOS 
+
+ADICIONAR '{}' 
+
+DEPOIS DO NOME DO MÉTODO/KEYNAME,
+
+
+
+
+
+E AÍ, SEM UMA FUNCTION KEYWORD OU QUALQUER COISA,
+
+
+
+ADICIONAMOS NOSSO 'FUNCTION BODY'....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+  const person = {
+
+
+     name: 'Max',
+    age: 29,
+
+
+    greet() { /////////EIS O CÓDIGO EM QUESTÃO. ESSE É UM 'MÉTODO CLÁSSICO'...
+        console.log('Hi, I am' + this.name);
+    }
+ }
+
+
+
+
+
+
+ person.greet();
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+MAS PQ 
+
+
+A SINTAXE 
+
+DO 
+
+REACT 
+
+
+
+DE MÉTODOS ERA DIFERENTE? 
+
+
+
+
+
+BEM SIMPLES,
+
+é 
+
+pq 
+
+
+
+NÓS ESTÁVAMOS 
+
+
+SEMPRE ESCREVENDO 'CLASS METHODS',
+
+métodos DENTRO DE CLASSES.... -----> 
+
+
+
+
+E ERA POR ISSO QUE 
+
+A SINTAXE ERA ALGO COMO 
+
+
+''''''''
+
+printMovie = () => {
+
+
+    console.log('HI');
+        return;
+}''''''
+
+
+
+
+
+
+
+
+ESSA SINTAXE 
+
+
+AÍ, DO REACT,
+
+
+É UMA 
+
+__SINTAXE ___ ES7..... 
+
+
+
+
+
+
+
+
+
+
+-----> JÁ A SINTAXE ES6 É ESSA QUE O PROFESSOR NOS MOSTROU,
+essa 
+
+de 
+
+
+'printMovie() {
+
+        console.log('HI');
+        return;
+}'
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+-----> E É ESSA A SINTAXE QUE VEREMOS AO LONGO DESSE CURSO:
+
+
+
+
+
+
+'greet() {
+    ....
+}
+'

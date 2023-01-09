@@ -1,0 +1,1542 @@
+
+
+
+
+
+
+
+
+OK... NÓS JÁ CONSEGUIMOS FAZER 'LISTEN TO' A REQUESTS... --> 
+
+
+
+
+
+
+
+FAZEMOS 
+
+
+LISTEN TO A 
+
+REQUESTS 
+
+PARA 
+
+
+
+'/' (slash nothing),
+
+
+
+como visto em:
+
+
+
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<div>');
+                res.write('<form action="/message">');
+                res.write('<label htmlFor="message">Enter a Message!</label>')
+                res.write('<br/>')
+                res.write('<input type="text" name="message"></input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                return res.end(); // 'return' e '.end()' NECESSÁRIOS PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+
+--------------------------
+
+
+
+
+
+E QUANDO CLICAMOS 
+
+
+
+EM 
+
+
+'SEND', 
+
+
+NAQUELE BUTTON LÁ NA FORM,
+
+
+NÓS ACABAMOS 
+
+ENVIANDO UM 
+
+'POST REQUEST' 
+
+
+a 
+
+
+'/message'
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, NÃO ESTAMOS FAZENDO COISA ALGUMA 
+
+
+COM 
+
+ESSE SEND aí... (O SERVIDOR AINDA NAÕ ESTÁ FAZENDO COISA ALGUMA)....
+
+
+
+
+
+
+
+
+--> PARA MUDAR ISSO,
+
+
+ADICIONAMOS 
+
+
+OUTRO IF STATEMENT,
+
+
+
+if statement que checará 
+
+
+
+
+'if (url === '/message')',
+
+
+
+
+E, ALÉM DISSO,
+
+
+VAMOS CHECAR 
+
+
+SE 
+
+
+O METHOD É DE TIPO 'POST'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+if (url === '/message' && req.method === 'POST') {
+
+
+
+
+
+}
+
+
+
+
+
+
+--------------------
+
+
+
+OK.... 
+
+
+TEORICAMENTE,
+
+ISSO DEVERIA FUNCIONAR...
+
+
+
+
+
+
+--> QUANDO SATISFEITAS ESSAS CONDIÇÕES,
+
+
+
+PROFESSOR __ VAI QUERER ___ FAZER 
+
+
+
+2 COISAS:
+
+
+
+
+1) PRIMEIRAMENTE, FAZER 'WRITE' DE UM ARQUIVO 
+
+
+NO NOSSO SERVER, ESCREVER ALGUMA COISA COM 'fs'...
+
+
+
+
+
+2) ISSO FEITO, PROFESSOR VAI QUERER ___ REDIRECIONAR NOSSO VISITANTE À 
+
+PÁGINA INICIAL,
+
+
+OU SEJA,
+
+
+até 
+
+
+'url === '/'...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+
+
+professor 
+
+
+
+
+vai escrever uma lógica específica...
+
+
+
+
+
+
+
+
+
+
+--> ESSA OPERAÇÃO ENVOLVE UM PUNHADO DE COISAS...
+
+
+
+
+
+
+
+
+--> DEVEMOS COMEÇAR COM O REDIRECT E CREATE DESSE ARQUIVO..... ----> 
+
+
+
+
+
+
+TRABALHAMOS COM O CREATE E WRITE DE UM ARQUIVO LÁ 
+
+
+NO PRIMEIRO MÓDULO,
+
+aquele 
+
+código de 
+
+
+'fs.writeFileSync('teste.txt', data);'...
+
+
+
+
+
+
+
+
+
+
+------> OK, EU JÁ SABIA QUE PRECISAMOS DE OUTRA PACKAGE,
+
+
+
+a package de 
+
+'fs',
+file system...
+
+
+
+
+
+
+
+-------> ISSO FEITO,
+
+
+
+FS NOS DEIXA TRABALHAR COM O FILE SYSTEM...
+
+
+
+
+
+
+
+
+
+------> MAS O PROFESSOR USOU UMA FUNÇÃO DIFERENTE DA QUE USEI... ---> 
+
+ele 
+
+usou 
+
+
+'writeFile()'
+
+
+em vez de 
+
+'writeFileSync()'...
+
+
+
+
+
+
+
+
+
+PARECE QUE A DIFERENÇA ENTRE AS DUAS É ISTO:
+
+
+Asynchronous readFile / writeFile is non-blocking,
+ while synchronous readFileSync / writeFileSync is blocking but 
+ allows to complete a job faster. This may be noticeable during intensive IO operations.
+
+
+
+
+
+
+
+
+
+
+
+OK.... writeFileSync
+
+é síncrono e MAIS RÁPIDO, mas é BLOCKING,
+
+enquanto que o outro é ASYNC...
+
+
+
+------------------------------------
+
+
+
+
+
+
+ok... --> e o professor vai usar 
+
+
+
+a versão ASYNC de 
+
+
+escrever arquivos,
+
+'writeFile'...
+
+
+
+
+
+EX:
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+                
+
+                const dataToWrite = req.body;
+                // fs.writeFileSync('test.txt', dataToWrite); ///versão __SÍNCRONA___ de 'write a file'...
+
+                fs.writeFile('message.txt', ); /////versão ASSÍNCRONA DE 'write a file'. É mais utilizada do que a outra.
+
+                return res.end();
+
+        }
+
+
+
+
+
+OK...
+
+
+
+mas o problema,
+
+agora,
+
+
+
+é 
+
+
+
+que EU NÃO SEI QUAL 'PIECE OF DATA'
+
+escrever 
+
+dentro 
+
+
+desse arquivo...
+
+
+
+
+---> VAMOS QUERER 
+
+'STORE WHAT THE USER 
+SENT'... (isso envolve um pouco mais de trabalho (provavelmente decifrar os query/params inseridos na url)),
+
+
+por isso 
+
+
+o professor 
+
+coloca 
+
+DUMMY TEXT por enquanto...
+
+
+
+
+
+
+
+----> FEITO ESSE WRITE,
+
+VAMOS QUERER 
+
+
+'REDIRECT THE USER'.... -----> 
+
+
+
+
+
+
+
+
+
+
+
+OBS:::: PROFESSOR EXPLICA QUE DEVEMOS USAR 
+
+'writeFileSync()'
+
+
+POR ENQUANTO, EM VEZ DE 
+
+
+'writeFile'... ---------> 
+
+
+
+
+
+
+
+
+E ELE DIZ QUE VAI EXPLICAR A DIFERENÇA 
+
+
+ENTRE 
+
+'writeFile' 
+
+e 'writeFileSync'
+
+
+depois....
+
+
+---------------------------------
+
+
+
+
+OK....
+
+
+
+PORTANTO, O CÓDIGO FICA ASSIM:
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+                
+                // const dataToWrite = req;
+
+                // console.log(dataToWrite);
+
+                const dataToWrite = req.body;
+                fs.writeFileSync('test.txt', 'DUMMY'); ///versão __SÍNCRONA___ de 'write a file'... depois professor vai explicar melhor a diferença entre isto e 'writeFile' (A VERSÃO ASSÍNCRONA)... 
+
+                // fs.writeFile('message.txt', ); /////versão ASSÍNCRONA DE 'write a file'. É mais utilizada do que a outra.
+
+
+
+
+                return res.end();
+
+        }
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+DEPOIS DISSO,
+
+
+
+PROFESSOR RECORRE 
+
+AO MÉTODO 
+
+
+de '.writeHead()'
+
+
+LÁ EM 
+
+'res'.... -------> 
+
+
+ELE 
+
+
+EXPLICA QUE 
+
+ESSE MÉTODO 
+
+
+
+__NOS __ DEIXA__ ESCREVER__ 
+
+
+
+'''SOME META INFORMATION IN ONE GO'''... -----> 
+
+
+
+
+
+AÍ, POR MEIO DESSE 'WRITEHEAD',
+
+
+o professor 
+
+PASSA 
+
+UM PRIMEIRO PARÂMETRO 
+
+
+de um número '302' (que é um status code 
+
+
+REFERENTE A __ REDIRECTS, SINALIZA QUE O USER 
+
+FOI REDIRECIONADO;) -------> 
+
+
+
+
+
+E COMO SEGUNDO PARÂMETRO,
+
+
+professor 
+
+
+PASSA 
+
+UM OBJETO 
+
+JAVASCRIPT ({})
+
+
+
+COM ALGUNS HEADERS....
+
+
+
+
+
+EX:
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+        fs.writeFileSync('message.text', 'DUMMY');;
+        fs.writeHead(302, {///aqui vao os headers...
+
+        })
+}
+
+
+
+---------------------------------------
+
+
+
+
+ELE NOS EXPLICA QUE PODERÍAMOS 
+
+
+SETTAR 
+ESSAS 
+
+2 COISAS, 
+
+O 
+
+'STATUS CODE'
+
+
+e o 
+
+
+'HEADER',
+
+
+ de FORMA SEPARADA,
+
+
+
+POR COMANDOS SEPARADOS,
+
+
+tipo 
+
+
+'res.statusCode(302)'
+
+
++ 
+
+
+'res.setHeader('Location', '/');'
+
+
+
+
+
+
+
+(
+
+
+        e se fossemos usar 
+
+
+        o 
+
+'''''''''''''''''''''''''''''''
+        'writeHead':
+
+
+
+          response.writeHead(200, {
+    'Content-Length': Buffer.byteLength(body),
+    'Content-Type': 'text/plain'
+  });
+''''''''''''''''''''''''''''
+
+
+
+)
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+NESSE CASO, O PROFESSOR PASSA/SETTA 
+
+UM HEADER 
+
+DE 
+
+'Location',
+
+QUE 
+
+É UM 
+
+
+HEADER __ ACEITO/RECONHECIDO__ PELO BROWSER__... -----> AÍ ELE VAI 
+
+
+
+
+PASSAR/USAR 
+
+O 
+
+ENDEREÇO 
+
+DE 
+
+'slash nothing',
+
+e isso 
+
+fará 
+
+com que 
+
+
+O NODEJS 
+
+
+SE UTILIZE DO 'THE HOST WE ARE ALREADY RUNNING ON'..
+
+
+
+
+ex:
+
+
+
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+        fs.writeFileSync('message.text', 'DUMMY');;
+        /////fs.writeHead(302, {///aqui vao os headers... por meio dessa função, podemos settar tanto o STATUS CODE como os HEADERS...
+
+                'Location': '/'
+        })
+}
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+                fs.writeFileSync('message.txt', 'DUMMY'); ///versão __SÍNCRONA___ de 'write a file'... depois professor vai explicar melhor a diferença entre isto e 'writeFile' (A VERSÃO ASSÍNCRONA)... 
+                // fs.writeFile('message.txt', ); /////versão ASSÍNCRONA DE 'write a file'. É mais utilizada do que a outra.
+
+
+                // res.statusCode = 302; ///esses 2 códigos são a MESMA COISA QUE O 'writeHead', mas espalhados/escritos em 2 linhas....
+                // res.setHeader = ('Location', '/');
+
+                
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+
+
+
+                return res.end();
+
+        }
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+
+PROFESSOR DIZ QUE FINALMENTE 
+
+DEVEMOS CHAMAR E RETORNAR 
+
+
+
+'res.end()',
+
+
+
+JUSTAMENTE PARA 
+
+INTERROMPER O EXECUTE 
+
+
+DE NOSSO SERVIDOR (mas não o funcionamento em geral dele),
+
+
+
+TUDO PARA QUE 
+
+
+AS LINHAS LOGO ABAIXO 
+
+
+AQUELES 
+
+WRITES DE
+
+'Hello from my NODEJS Server'
+
+
+
+___NÃO SEJAM EXECUTADOS___...
+
+
+(CASO CONTRÁRIO, RECEBEREMOS UM ___ ERRO__, POIS A RESPONSE 
+
+JÁ TERÁ SIDO ENVIADA PELO NODEJ e 
+
+
+ainda 
+
+ESTAREMOS TENTANDO A EDITAR...)
+
+
+
+
+
+
+
+
+----> REINICIAMOS NOSSO SERVER E TESTAMOS A FEATURE DE REDIRECT...
+
+
+
+
+
+
+
+
+OK. FALHAMOS... falhamos pq 
+
+
+
+
+A NOSSA URL CONTINUA BUGADA, CONTINUA 
+
+COM 
+
+AQUELE VALOR 
+
+
+
+GOZADO DE 
+
+
+'''http://localhost:3000/message?message=asasas''''
+
+
+enfiado na url bar,
+
+o que 
+
+faz com que 
+
+
+
+EVITEMOS 
+
+O 
+
+IF BLOCK 
+
+DE 
+
+'''''''''
+
+        
+        if (url === '/message' && req.method === 'POST') {
+                fs.writeFileSync('message.txt', 'DUMMY'); ///versão __SÍNCRONA___ de 'write a file'... depois professor vai explicar melhor a diferença entre isto e 'writeFile' (A VERSÃO ASSÍNCRONA)... 
+                // fs.writeFile('message.txt', ); /////versão ASSÍNCRONA DE 'write a file'. É mais utilizada do que a outra.
+
+
+                // res.statusCode = 302; ///esses 2 códigos são a MESMA COISA QUE O 'writeHead', mas espalhados/escritos em 2 linhas....
+                // res.setHeader = ('Location', '/');
+
+                
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+
+
+
+                return res.end();
+
+        }
+''''''''''',
+
+
+
+QUE SE TORNOU INÚTIL....
+
+
+
+
+
+
+
+
+
+---> tenho que consertar isso de alguma forma...
+
+
+
+
+
+
+
+BEM, UMA COISA QUE EU HAVIA ESQUECIDO ERA DE ESCREVEr 
+
+
+'method="POST" ' 
+
+
+COMO ATTRIBUTE 
+
+
+
+DE MINHA 
+
+TAG 
+
+'<form>',
+
+
+lá 
+
+
+EM:
+
+
+
+     res.write('<form action="/message" method="POST">');
+
+
+
+
+
+
+
+
+
+
+CÓDIGO COMPLETO:
+
+
+
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>')
+                res.write('<div>');
+                res.write('<form action="/message" method="POST">');
+                res.write('<label htmlFor="message">Enter a Message!</label>')
+                // res.write('<br/>')
+                res.write('<input type="text" name="message"></input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                return res.end(); // 'return' e '.end()' NECESSÁRIOS PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+
+
+----------------------------------------
+
+
+
+
+Não, mas isso ainda não consertou meu problema... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+eu envolvi o código todo em um body, pq talvez esse fosse o problema....
+
+
+
+
+
+
+
+
+DESCOBRI O PROBLEMA:
+
+
+
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>');
+                res.write('<body>');
+                res.write('<div>');
+                res.write('<form action="/message" method="POST"');
+                res.write('<label htmlFor="message">Enter a Message!</label>')
+                res.write('<input type="text" name="message"></input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                res.write('</body>');
+                res.write('</html>');
+                return res.end(); // 'return' e '.end()' NECESSÁRIOS PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+
+
+
+
+
+
+
+
+ERA A AUSÊNCIA 
+
+
+
+DO ATTRIBUTE 
+
+'method="post"' 
+
+LÁ 
+
+
+
+
+NA FORM que envolve o button e o input DE 'TEXT'....
+
+
+
+ex:
+
+
+
+
+
+
+
+        res.write('<form action="/message" method="POST"');
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+OK.... REALMENTE AGORA O NEGÓCIO FUNCIONA,
+
+
+
+
+
+QUANDO ENVIAMOS 
+
+
+O INPUT DO USER,
+
+
+somos REDIRECIONADOS INSTANTANEAMENTE,
+
+
+
+
+LOGO APÓS 
+
+O 
+
+REQUEST 
+
+SER ENVIADO 
+
+
+
+AO SERVER E O 
+
+
+SERVER 
+
+
+REALIZAR O 'WRITE' 
+
+DAQUELE ARQUIVO 
+
+'message.txt'...
+
+
+
+
+
+
+
+---------> CERTO.... MAS AGORA DEVEMOS 
+
+
+
+
+
+MUDAR O CÓDIGO, TIRAR AQUELE DUMMY CODE E REALMENTE INCORPORAR 
+
+
+A 
+
+DATA QUE 
+O USER NOS INPUTTOU NO INPUT FIELD,
+
+
+fazer com que ela seja escrita em 
+
+'message.txt'...
+
+
+
+VEREMOS ISSO NA PRÓXIMA LIÇÃO...
+
+
+
+
+
+
+
+
+(AGORA, SIM, USAREMOS O 'REQUEST BODY'...)
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+OK, ISSO FUNCIONOU....... -----> AGORA TODA
+
+
+VEZ 
+
+QUE 
+
+CLICAMOS NAQUELE 'send',
+
+
+ENVIAMOS NOSSA 'MESSAGE',
+
+que 
+
+é 
+
+então PARSEADA/ANALIZADA  E ENTÃO 'WRITTEN' pelo server,
+
+
+
+naquele nosso arquivo 'message.txt'....
+
+
+
+
+
+
+OBS::: ESSA 
+
+MESSAGE/VALOR DA MESSAGE 
+
+
+
+QUE 
+
+
+
+OBTEMOS DO INPUT DO USER VAI SEMPRE 'OVERWRITTAR'
+
+
+TODO O ARQUIVO 'message.txt'
+
+QUE TÍNHAMOS ANTERIORMENTE....
+
+
+
+(tudo será substituído basicamente.)
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+OK, MAS PQ 
+
+
+DEVEMOS EXECUTAR 
+
+'writeFileSync()'
+
+
+
+__DENTRO DO BLOCK DE 'req.on('end', () => {})' ?
+
+
+
+
+
+
+
+
+
+VAMOS QUERER FAZER ASSIM PQ ___ SE FIZERMOS ISSO, SE DEIXARMOS ELE __ FORA,
+
+
+__ ELE (o writeFileSync)
+
+
+VAI ACABAR__ SENDO EXECUTADO _________________ANTES_________________
+
+
+
+
+DA FUNÇÃO 
+
+'req.on('end')'   (QUE É UM LISTENER, LEMBRE DISSO; E POR SER UM LISTENER,
+
+
+É UM EXEMPLO DE CÓDIGO ASSÍNCRONO, CÓDIGO QUE 
+
+VAI 
+
+RODAR 
+
+
+__DEPOIS___ DE 'writeFileSync()', SE VOCÊ DEIXAR O writeFileSync
+
+
+
+
+NO LADO DE FORA, se deixar ele errado tipo assim:
+
+
+
+
+        req.on('end', () => {} 
+        )
+        res.writeFileSync(); /////VERSÃO ERRADA....
+
+
+
+
+
+
+  req.on('end', () => {
+
+
+
+           res.writeFileSync(); /////VERSÃO CERTA....
+  } 
+        )
+       
+
+)
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+em tanto 'req.on('data')' 
+
+
+e 
+
+
+'req.on('end')',
+
+
+REGISTRAMOS 
+
+UMA FUNCTION 
+
+'TO BE EXECUTED IN THE FUTURE'... ( e não é executada imediatamente...) 
+
+
+
+
+
+
+
+
+
+
+ok....... salvo tudo isso, recarregamos e observamos que está funcionando...
+
+
+
+
+
+
+
+
+
+
+
+
+SE COLOCAMOS __SINAIS DE PONTUAÇÃO, 
+
+
+COMO 
+
+
+'!',
+
+
+
+na nossa message,
+
+
+ESSES SINAIS SERÃO __ ENCODADOS __ TAMBÉM... ->
+
+
+
+ex:
+
+
+
+'!' vira 
+
+
+
+'%21'....
+
+
+
+
+
+'Hello!'
+
+vira 
+
+
+'Hello%21'...
+
+
+
+
+
+
+
+
+
+--> MAS ISSO É ALGO COM O QUE 
+VAMOS NOS PREOCUPAR MAIS TARDE....
+
+
+
+
+
+
+
+
+
+
+----> E SE AGORA VOCÊ ESTÁ ASSUSTADO COM O QUÃO COMPLEXO 
+
+
+
+É O NODEJS,
+
+
+
+
+você 
+
+deve 
+
+saber que 
+essa 
+
+é 
+
+a 
+
+'RAW LOGIC'... -----> 
+
+
+
+
+MAIS TARDE VAMOS USAR 
+
+O 
+
+'express.js',
+
+
+
+
+QUE 'ESCONDE' TODA ESSA LÓGICA.... -----> 
+
+
+
+MAS PARA ENTENDER 
+
+
+PQ 
+
+
+NÓS 
+
+
+USAMOS O EXPRESS.JS,
+
+
+
+devemos entender 
+
+
+
+O QUE ESTÁ ACONTECENDO PARA INÍCIO DE CONVERSA...
+
+
+
+
+---> ok, temos nossa lógica básica já aprendida....
+
+
+
+
+
+
+--> DEVEMOS VER AQUELE NEGÓCIO DE 
+
+
+'EVENT LISTENER'
+
+
+e 
+
+'WRITING FILES' 
+
+
+
+
+de novo,
+
+
+
+
+__ PQ __ 
+
+TEM ALGO BEM IMPORTANTE QUE 
+
+DEVEMOS ENTENDER...

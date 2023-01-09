@@ -1,0 +1,1579 @@
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... INSTALEI UMA PORRADA DE COISAS...
+
+
+
+
+O PACKAGE.JSON FICOU ASSIm:
+
+
+
+
+
+
+{
+  "name": "novonovoprojeto30-exemplodenodecomtypescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.2.2",
+    "mongoose": "^6.1.4",
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA VAMOS CRIAR ALGUNS FOLDERS NO NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+CERTO... 
+
+
+CRIEI OS FOLDERS:
+
+
+
+
+
+PUBLIC > CSS, IMAGES, JS 
+
+
+
+
+
+
+
+MODELS 
+
+
+
+ROUTES....
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ACHO QUE TAMBÉM VOU QUERER UM FODLER de 'util',
+
+PARA UTILITY FUNCTIONS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO.... 
+
+
+
+
+
+
+
+
+
+--> PARA CONSERTAR O ERROR DE 
+
+
+'const express = require('express')'; ---> 
+
+
+
+PROFESSOR 
+
+FALA ALGO INTERESSANTE:
+
+
+
+
+
+
+
+
+
+
+''VOCÊ TEM QUE ENTENDER QUE ESSE METHOD DE REQUIRE 
+
+
+__ SÓ EXISTE_  __ QUANDO ESTAMOS RODANOD ESSE CÓDIGO COM O NODE.... SE TENTARMOS RODAR ESSE 
+
+CÓDIGO NO BROWSER, ESSA SINTAXE NÃO EXISTE' ---> e o TYPESCRIPT NÃO 
+
+TEM COMO 
+
+
+SABER 
+
+o
+LOCAL 
+
+EM QUE 
+
+PLANEJAMOS 
+
+RODAR 
+
+ESSE CÓDIGO... ---->  E O IDE DO PROFESSOR TEM 
+
+
+
+'BUILTIN TYPESCRIPT SUPPORT',
+e por isso 
+
+ELE 
+
+DETECTA 
+
+QUE 
+
+O 
+
+TYPESCRIPT NÃO VAI SABER SE ISSO EXISTE OU NÃO...
+.
+
+
+
+
+
+
+------> PARA FAZER COM QUE 
+
+
+TYPESCRIPT SAIBA QUE ISSO EXISTA,
+
+
+PODEMOS 
+
+
+
+SIMPLESMNETE 
+
+
+INSTALAR 
+
+
+
+o código :
+
+
+
+
+'npm install --save-dev @types/node' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ESSE NEGÓCIO DE 
+
+'@types' É 
+
+IMPORTANTE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE LÁ NO NPM 
+
+NÓS VAMOS __ENCONTRAR__ DEZENAS DE PACKAGES '@types',
+
+
+
+
+
+
+
+ESSAS SÃO APCAKGES __ QUE __ 
+
+
+PROVIDENCIAM 
+
+
+'TYPESCRIPT TRANSLATIONS' 
+
+
+PARa __ 
+
+JAVASCRIPT FEATURES, 
+
+
+VOCÊ PODERIA DIZER... ->  ISSO SIGNIFICA QUE 
+
+ELES ADICIONAM CÓDIGO QUE 
+
+DEIXA 
+
+
+__ O TYPESCRIPT ENTENDER CERTA LIBRARY...
+
+
+
+
+
+
+
+
+
+
+
+
+
+MEU PACKAGE.JSON VAI FICANDO ASSIM:
+
+
+
+
+
+{
+  "name": "novonovoprojeto30-exemplodenodecomtypescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.2.2",
+    "mongoose": "^6.1.4",
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.5"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PARTE IMPORTANTE:
+
+
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.5"
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ISSO __ VAI ESSENCIALMENTE_ _ 
+
+
+
+
+DEIXAR A SINTAXE DE 'const xx = require('')'
+
+
+
+
+
+COMO 
+
+
+'VÁLIDA'....
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ESSA DEPENDENCY VAI PROVIDENCIAR A TRANSLATION DE 'require()' 
+
+PARA 
+
+
+JAVASCRIPT VANILLA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> o nosso erro vai SUMIR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> A RAZÃO PARA ISSO É ENCONTRADA DENTRO DE 'node_modules',
+
+
+NO FOLDER DE 
+
+'@types/node'... -------> LÁ NO ARQUIVO DE 'index.d.ts'-->  ESSE ARQUIVO 
+
+
+
+NOS DÁ __ UM MONTE__ DE 
+CORE 
+
+
+
+NODE MODULEs__ TRADUZIDOS__ PARA TYPESCRIPT, essencialmente....
+
+
+
+
+
+(
+
+
+  são só translations de TYPESCRIPT PARA 
+
+  JAVASCRIPT....
+) 
+
+
+
+
+
+
+
+
+
+--> SÃO INSTRUÇÕES CAPAZES DE SEREM ENTENDIDAS PELO TYPESCRIPT....
+
+
+
+
+
+
+
+
+--> VAMOS USAR BEM MAIS DESSAS PACKAGES 
+
+'@type'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> EXEMPLO:
+
+
+
+COm 
+
+
+'EXPRESS',
+
+
+
+
+SE 
+
+
+
+ESCREVERMOS ISTo:
+
+
+ 
+
+
+ app.  -------> . DEPOIS DO APP,
+
+
+
+
+ NÃO VAMOS GANHAR AUTO-COMPLETIOn ---> ISSO ACONTECERÁ _ PQ 
+
+
+
+
+ O NOSSO IDE __ NÃO VAI SABER QUE 
+
+ PODEMOS 
+
+
+
+ USAR COISAS COMO '.listen()'
+
+
+ NESSE OBJETO 'app'... -> ISSO É DEVIDO AO TYPESCRIPT...
+
+
+
+
+
+
+
+
+
+
+
+ --------> É MT NICE TER ESSE 'EXTRA SUPPORT 'pelo nosso IDE... 
+
+
+
+
+
+
+
+
+
+
+ --> É POR ISSO QUE VAMOS INSTALAR 
+
+
+
+ 'npm install --save-dev @types/express'... 
+
+
+
+
+
+
+
+
+ ---------->  OUTRA VANTAGEM __ DE 
+
+
+
+ DEFINIR/INSTALAR __TYPES_ LÁ NO TYPESCRIPT 
+
+
+ É 
+ QUE 
+
+
+
+ ELE 
+
+ VAI 
+ APITAR 
+
+ SEMPRE QUE 
+
+ VOCÊ 
+
+ TENTAR 
+
+ PASSAR 
+ 'INVALID DATA' 
+
+
+
+
+
+ NOS SEUS METHODS/COISAS DO EXPRESS/NODE,
+
+
+ se você 
+
+ tiver 
+
+ cada uma dessas pacakges 
+
+
+ '@types/node'
+
+
+ ou 
+ '@types/express' 
+
+ INSTALADS....
+
+
+
+
+
+
+
+
+
+
+ --> EX:
+
+
+
+
+ app.listen( 
+   {
+    port:  3000 
+   }
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ISSO VAI COMPILAR 'JUST FINE', erroneamente,
+
+
+
+ JUSTAMENTE_ PQ 
+
+ __ TYPESCRIPT __ NÃO ENTENDE, AINDA ,
+
+ que 
+
+
+ ISSO 
+
+ AÍ 
+
+ É UM CÓDIGO DE 
+
+ 'express',
+
+
+ e que 
+
+ ESSA SINTAXE É INVALIDA PARA O EXPRESS (que a correta é 'app.listen(3000)'...)
+
+
+
+
+
+
+(ele só 'ACEITA' esse código)....
+
+
+
+
+
+
+
+
+ --> OK... MAS ISSO __ NÃO ESTÁ FUNCIONANDO NA MINHA VERSÃO DO CÓDIGO... será que fiz algo errado?
+
+
+
+
+
+
+
+
+
+
+--> professor instala 
+
+
+
+'npm install --save-dev @types/express'.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> OK... PROFESSOR CONTINUA.... ---> SÓ O ADD/INSTALL DESSES 
+
+TYPES 
+
+
+NÃO SERÁ SUFICIENTE PARA INTEGRAR SUA INFO COM O TYPESCRIPT.... -------> NÃO, 
+
+
+PQ 
+
+
+
+SE VOCÊ SÓ FIZER ISSO,
+
+
+
+
+VOCÊ NÃO VAI GANHAR MENSAGENS DE ERRO PARA ATROCIDADES DE CÓDIGO COMO ESTA:
+
+
+
+
+
+app.listen( ///ESSA SINTAXE É __ ERRADA_, E O TYPESCRIPT NOS AVISARÁ DISSO...
+{
+    porta: 'assaas'
+}
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> ESSE INSTALL SIMPLES FOI  __ SUFICIENTE PARA O 'NODE',
+
+
+MAS 
+
+__ NÃO SERÁ SUFICIENTE PARA PACKAGES 'MENORES' COMO O EXPRESS... ---> não é suficiente 
+
+para 
+
+essa 
+
+
+
+THIRD PARTY LIBRARY 'express'
+
+QUE 
+
+ESTMAOS 
+
+
+
+IMPORTANDO ASSIM:
+
+
+
+const express = require('express'); 
+
+
+
+
+
+
+
+
+
+
+
+-> AQUI, NO CASO,
+
+É __ A SINTAXE _ DE IMPORT__ QUE É O PROBLEMA... -----------> POR DEFAULT,
+
+O 
+
+
+TYPESCRIPT É 
+
+
+'TUNED'
+
+
+PARA __ WEBAPPS__... -->   ELE É USADO PARA WEBAPPS RODANDO NO BROWSER,
+
+
+
+E LÁ 
+TIPICMAENTE 
+
+ESSA SINTAXE DE 
+
+
+'const express = require()'
+
+
+NÃO FICA 
+
+DISPONÍVEL... --> É POR ISSO QUE 
+
+
+
+ESSA 
+
+NÃO É 
+
+A 
+
+
+'DEFAULT IMPORT SYNTAX'
+
+
+ESPERADA _ PELO ___ TYPESCRIPT___ -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+MAS NÓS __ PODEMOS ___ MUDAR A 'EXPECTATIVA DE IMPORT' 
+
+DO 
+TYPESCRIPT 
+
+
+SE 
+FORMOS 
+ATÉ O 
+
+
+ARQUIVO 
+
+'tsconfig.json',
+
+
+
+
+
+
+
+
+
+
+LÁ NAQUELE TRECHO DE 
+
+
+'module: commonjs',
+ 
+
+
+ LOGO ABAIXO DISSO,
+
+
+
+
+ coloque 
+
+ uma key de 
+
+ nome 
+
+
+ 'moduleResolution',
+
+ E AÍ 
+
+ COLOQUE SEU VALOR COMO 
+
+ "node"...
+
+
+
+
+
+
+
+
+
+
+ ------> ISSO VAI FAZER COM QUE A SINTAXE DE IMPORTS DE 'const xx = require('yy')'
+
+
+ SEJA 
+
+
+ ACEITA...
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+ 
+    /* Modules */
+    "module": "commonjs",                                /* Specify what module code is generated. */
+    "moduleResolution": "node",  /* a versão CLASSIC  é usada se você for usar O TYPESCRIPT PARA CODAR O SEU FRONTEND/WEB APPS*/
+    // "rootDir": "./",                                  /* Specify the root folder within your source files. */
+    // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
+    // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
+    // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
+    // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
+    // "typeRoots": [],                                  /* Specify multiple folders that act like `./node_modules/@types`. */
+    // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
+    // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
+    // "resolveJsonModule": true,                        /* Enable importing .json files */
+    // "noResolve": true,                                /* Disallow `import`s, `require`s or `<reference>`s from expanding the number of files TypeScript should add to a project. */
+
+    /* JavaScript Support */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> MAS ISSO __ AINDA NÃO __ SERÁ SUFICIENTE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR A FEATURE QUE DESEJAMOS,
+
+AINDA TEMOS QUE 
+IR 
+ATÉ 
+
+
+'app.ts'
+
+
+E ADICIONAR MAIS 1 PEQUENO DETALHE... -->  __ O DETALHE É 
+
+
+LÁ NAQUELE 
+
+
+import de 
+
+'const express = require('express')' 
+
+
+
+
+
+
+
+
+
+
+
+
+--------> EM VEZ DISSO,
+
+
+EM VEZ DESSA SINTAXE,
+
+USE A SINTAXE 
+
+
+
+
+'import express = require('express');' 
+
+
+
+
+
+
+
+
+
+(
+
+
+  SIM, É UMA __ FUSÃO _ DAS 2 SINTAXES__....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS AÍ O PROFESSOR USA AQUELA SINTAXE DE IMPORTS 
+
+
+'es6+' --> 
+
+
+ELE ESCREVE ASSIM:
+
+
+
+
+
+import express from 'express';
+
+
+
+
+
+
+
+
+
+
+
+-----> SINTAXE DE IMPORTS BROWSERSIDE...
+
+
+
+
+
+
+
+ACHO QUE ESSA VERSÃO DE IMPORTS É REALMENTE MELHOR, NO TYPESCRIPT... -> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O TYPESCRIPT ACEITA ESSA SINTAXE PERFEITAMETNE ... 
+
+
+
+
+
+
+
+
+
+
+-----> MAS AÍ,
+
+LÁ NO 
+
+'app.js',
+
+SE VOCÊ 
+OLHAR O 
+
+RESULT DO COMPILE COM O 
+
+
+
+
+CÓDIGO NO TERMINAL DE 'tsc,
+
+
+
+VOCÊ VERÁ:
+
+
+
+
+
+
+"use strict";
+// import express from 'express'; //import ES6+  --> PODEMOS USAR ESSA SINTAXE COM ARQUIVOS TYPESCRIPT, PQ ELA SERÁ AUTOMATICAMENTE CONVERTIDA em 'const xx = require(xxx)' pelo TYPESCRIPT, lá nos arquivos '.js' criados a partir dos '.ts'...
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// import express = require('express'); ///// FUSÃO DE SINTAXES DE IMPORTS...
+const express_1 = __importDefault(require("express"));
+const app = (0, express_1.default)();
+app.listen(///ESSA SINTAXE É __ ERRADA_, E O TYPESCRIPT NOS AVISARÁ DISSO...
+{
+    porta: 'assaas'
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> VERÁ ISTO:
+
+
+
+const express_1 = __importDefault(require("express"));
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+-> ESSA SINTAXE, PORTANTO, AINDA VAI USAR 'REQUIRE'
+
+na sua versão final/compilada...
+
+
+
+
+
+
+
+
+
+--> E ESSA VERSÃO/COMPILAÇÃO TAMBÉM TRANSFORMOU NOSSO CÓDIGO DE ALGUMAS OUTRAS MANEIRAS, COISAS INTERNAS....
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS É LEGAL PODER USAR ESSE CÓDIGO DE 
+
+'import xx from yyy' --> 
+ 
+ESPECIALMENTE 
+
+SE VOCê 
+
+
+
+
+VEM DE UM CONTEXTO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR 
+
+
+
+EXPLICOU LÁ NOS MÓDULOS ANTERIORES QUE
+
+A SINTAXE 
+
+
+
+
+'import' 
+
+
+FUNCIONA NATIVAMENTE 
+
+NO 
+
+
+NODE, 
+
+
+
+MAS QUE 
+
+
+
+
+
+
+
+
+
+O TYPESCRIPT É TÃO ÓTIMO QUE 
+
+
+
+ELE 
+
+NOS 
+DEIXA 
+
+'OMIT FILE EXTENSIONS' (.js) 
+
+
+QUANDO 
+
+
+
+
+ESCREVEMOS IMPORTS COM ELE... (É OUTRA diferença em relaçaõ ao suporte DE SINTAXE import/export ES6+ do NODE NATIVO...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> FORA ISSO,
+
+
+HÁ POUCAS DIFERENÇAS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> EM TYPESCRIPT,
+
+
+
+SEMPRE DEVEMOS USAR ESSA SINTAXE 'export/import',
+
+
+
+QUE 
+
+VAI 
+
+AINDA SER 'COMPILED DOWN'
+
+para 
+
+aquele 
+
+formato 'const xx = require()',
+
+
+LÁ 
+
+
+NAS VERSÕES '.js'
+
+DOS 
+
+'.ts'.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> EXISTIRÁ 
+UMA DIFERENÇA ENTRE O CÓDIGO QUE 
+
+ESCREVEMOS E O CÓDIGO QUE ACTUALLY RODA NO SERVER....
+
+
+
+
+
+
+
+
+
+--> OK, MAS COM ISSO,
+
+
+
+VEREMOS QUE 
+
+
+
+VAMOS RECEBER 
+
+
+
+AUTO-COMPLETIon nos methods do express,
+
+
+
+e tam´bem
+
+
+
+
+ACERCA DOS ARGUMETNOS QUE PODEMOS PASSAR A 'LISTEn',
+
+TUDO GRAÇAS AO TYPESCRIPT..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS ISTO AQUI:
+
+
+
+// app.listen( ///ESSA SINTAXE É __ ERRADA_, E O TYPESCRIPT NOS AVISARÁ DISSO...
+// {
+//     porta: 'assaas'
+// }
+// );
+
+
+
+
+
+
+
+
+
+--> AINDA NÃO ESTÁ NOS DANDO UM ERRO..
+
+
+
+
+MAS QUAL A RAZÃO DISSO?
+
+
+
+
+É POR CAUSA DISTO:
+
+
+
+
+
+
+(method) Application<Record<string, any>>.listen(port: number, callback?: (() => void) | undefined): Server (+5 overloads)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO VOCÊ PODE VER,
+
+ali temos 
+
+
+um '<>'
+
+EM QUE 
+
+ENCONTRAMOS 
+
+'string, any'...
+
+
+
+
+
+
+------> E É POR ISSO QUE 
+
+
+
+O TYPESCRIPT 
+
+
+NÃO NOS ENCHE O SACO... 
+
+
+
+
+
+
+
+
+
+--> MAS SE CHAMARMOS 'app.listen()'
+
+PELA PRIMEIRA VEZ,
+
+PODEMOS
+
+
+ver que 
+
+HÁ MÚLTIPLAS MANEIRAS 
+
+
+ 
+
+ DE 
+
+ CHAMAR ESSE METHOD,
+
+
+ mas que 
+
+ A MANEIRA MAIS COMUM DE CHAMÁ-LO É COM O PASS DE UM 'NUMBER' COMO ARGUMENTO 'port'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -> CERTO... ACHO QUE ESTOU ENTENDENDO.... -> e esse EXTRA IDE SUPPORT, 
+
+
+ e essa IMPORT SYNTAX,
+
+
+
+
+
+
+
+
+ ESSAS SÃO ALGUMAS VANTAGENS QUE JÁ ADQUIRIMOS POR MEIO DA UTILIZAÇÃO DO 
+
+
+ TYPESCRIPT...
+
+
+
+
+
+ --> AGORA VEREMOS UMA SIMPLES REST API QUE USA 
+
+
+
+ NODE E TYPESCRIPT...

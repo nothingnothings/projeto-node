@@ -1,0 +1,2593 @@
+
+
+
+
+
+
+
+--> AGORA SOMOS CAPAZES DE ADICIONAR 'PRODUCTS' (esse tipo de embedded document/object)
+
+
+DENTRO 
+
+DE NOSSO 
+
+
+'CART', em 'user',
+
+
+
+
+
+
+AGORA DEVEMOS 
+
+ASSEGURAR QUE 
+
+
+
+também 
+
+
+CONSIGAMOS 
+
+OS 
+
+FETCHEAR, quando 
+
+
+
+formos até a page de 'cart'...
+
+
+
+
+
+
+
+->  ISSO PQ ATÉ AGORA 
+
+
+
+__ NOSSA __ PAGE 
+
+AINDA NÃO 
+
+SUPORTA ESSA FEATURE, E AINDA NÃO RENDERIZA COISA ALGUMA...
+
+
+
+
+
+
+
+
+
+
+------> AINDA NÃO TEMOS NENHUMA LOGIC 
+
+
+PARA FETCHEAR 
+
+
+TODOS 
+
+NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+PROFESSOR 
+
+VAI ATÉ O CONTROLLER 
+
+de 
+
+'shop.js', 
+
+
+que lida com as operations que não 
+
+são 
+
+
+usadas pelo admin....
+
+
+
+
+
+
+------> LÁ NÓS TEMOS A 
+
+ROTUE 
+
+DE 
+
+
+
+'
+
+getCart',
+
+
+QUE ANTIGAMENTE ERA ASSim:
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ///CÓDIGO QUE USA/USAVA SEQUELIZE...
+  // console.log(req.user.cart, 'LINE'); ////isso (o cart) não existe dentro do objeto 'req.user', justamente pq DEVEMOS O CONSEGUIR ATRAVÉS DE 'req.user.getCart()', para conseguir o cart específico Àquele user (userId field dentro do cart e 'id' field no user DEVEM DAR MATCH...)
+
+
+  
+//   // let productList;
+//  req.user
+//     .getCart()
+//     .then((cart) => {
+
+//       const fetchedCart = cart;
+//       return cart.getProducts()
+                  
+//       .then(products => {
+//           console.log(products);
+//  res.render('shop/cart', {
+//         path: '/cart',
+//         pageTitle: 'Your Cart',
+//         products: products,
+//         cart: fetchedCart
+//         // cartItems: cartItems
+//     }) 
+//   })
+//     .catch((err) => {
+//       console.log(err);
+//     })
+
+//   }
+//     )
+//       .catch(
+//         (err) => {console.log(err)}
+//       )
+    
+
+
+
+                            ///////ESTA ERA A MINHA VERSÃO DO CÓDIGO, VERSÃO QUE NÃO SABIA QUE PODÍAMOS, LÁ NO VIEW, simplesmente acessar a quantity de um 'given ASSOCIATED cart item' por meio de 'product.cartItem.quantity'...
+  // let productList;
+
+  // const cartId = req.user
+  //   .getCart()
+  //   .then((cart) => {
+  //     console.log(cart, 'LINE');
+  //     return cart.getProducts();
+  //   })
+  //   .then((products) => {
+  //     console.log(products);
+
+  //     productList = products;
+
+  //     CartItem.findAll({ where: { cartId: req.user.id } }).then((cartItems) => {
+  //       productList.forEach((product) => {
+  //         product.quantity = cartItems.find((cartItem) => {
+  //           return cartItem.productId === product.id;
+  //         }).quantity;
+  //       });
+        // return res.render('shop/cart', {
+        //   path: '/cart',
+        //   pageTitle: 'Your Cart',
+        //   cartProducts: productList,
+        //   // cartItems: cartItems
+        // });
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+};
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+VAMOS COMENTAR TODO ESSE CÓDIGO 'SEQUELIZE' para fora,
+
+
+esse código 
+
+de 
+
+'req.user.getCart()'...
+
+
+
+
+
+------------
+
+
+
+
+
+
+
+
+
+AÍ FICA SÓ ISTO:
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+-----> ok... AGORA 
+
+DEVEMOS ADICIONAR UMA LÓGICA PARA REALMENTE CONSEGUIRMOS FETCHEAR 
+
+NOSSO 
+
+
+
+'Cart',
+lá 
+
+de dentro 
+de 
+'user'...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PROVAVELMENTE VAMOS ADICIONAR UMA FUNCTION/METHOD 
+DE 
+
+
+
+'getCart'
+
+dentro de nosso model 'User'...
+
+
+
+
+
+
+
+
+
+--> algo tipo isto:
+
+
+
+
+
+
+
+
+
+
+
+getCart() {}
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO NÃO SERÁ UM MÉTODO ESTÁTICO.... --> por meio disso,
+
+
+vamos 
+
+SIMPLESMENTE 
+
+QUERER 
+
+FAZER 
+'
+FETCH' 
+
+
+
+de nosso objeto/document 'cart'
+
+dentro
+
+
+DO OBJETO 'user'....
+
+
+
+
+
+
+
+--> para isso,
+
+penso em retornar 
+
+isto:
+
+
+
+
+
+
+
+getCart() {
+
+
+
+   return this.cart;
+
+
+}
+
+
+
+
+
+
+
+
+--> MAS ISSO NÃO FUNCIONA...
+
+
+
+
+
+
+-> O PROFESSOR DIZ QUE 
+
+A IDEIA AQUI É QUE RETORNEMOS, 
+
+DE FATO,
+
+OS 
+
+'CART ITEMS',
+
+tudo para que 
+
+
+
+NO CONTROLLER _ NÓS CONSIGMAOS 
+
+OS 
+
+CARTITEMS LÁ ,
+
+
+para que 
+
+então 
+
+consigamos os outputtar...
+
+
+
+
+
+
+
+-> NO FINAL DAS CONTAS,
+
+
+O QUE PRECISAMOS É APENAS UMA LIST DOS PRODUCTS.... para então 
+
+renderizar isso...
+
+
+
+
+
+
+
+
+--> VAMOS QUERER UMA LIST 
+
+
+
+
+DOS PRODUCTS, COM AS RESPECTIVAS 'QUANTITY'...
+
+
+
+
+
+
+
+-----> CERTO.... E  o 
+
+'getCart()'
+
+
+
+
+VAI EXISTIR/EXISTE 
+
+
+NO 
+
+
+
+MODEL 
+
+'user' 
+
+
+
+
+QUE __ JÁ TEM ESSA PROPRIEDADE 
+
+'cart'... (pq 
+
+essa é a maneira pela qual o mongodb 
+pensa 
+
+
+
+sobre relations.... -----> ISSO SIGNIFICA QUE 
+
+NÓS __ NÃO PRECISAMOS 
+
+FAZER 
+
+'REACH OUT' 
+
+A 
+
+UMA COLLECTION DE 'CARTS', JUSTAMENTE 
+
+PQ 
+
+
+__ESSA COLLECTION __ NÃO EXISTE, ESTÁ ENFIADA 
+
+DENTRO 
+
+DE 
+
+'user'....
+
+)
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS É AÍ QUE NOS DEPARAMOS COM UM PROBLEMA:
+
+
+
+
+
+
+DENTRO DE 
+
+
+'getCart',
+
+
+NÓS _ SÓ VAMOS __ CONSEGUIR 
+
+
+A LIST 
+
+DE 
+
+
+'CART ITEMS',
+
+ou seja,
+
+items como 
+
+este:
+
+
+
+
+
+{
+
+    productItem: xxxxxx,
+    quantity: 2
+
+}
+
+
+
+
+
+
+--> ISSO AÍ, POR SI SÓ,
+
+
+__ NÃO TERÁ ___ AS INFORMAÇÕES ESPECÍFICAS SOBRE CADA 'product'.... ------> NÃO;
+
+PARA 
+QUE 
+
+CONSIGAMOS 
+
+
+ESSAS 
+
+
+INFORMATIONS ESPECÍFICAS,
+
+coisas como 
+
+
+'title',
+
+
+'price',
+
+
+
+'description',
+
+
+etc etc,
+
+
+
+
+VAMOS TER QUE 
+
+FETCHEÁ-LAS 
+
+A PARTIR 
+
+DO 
+
+
+'productId' 
+
+
+que 
+
+existe dentro 
+
+desses 
+
+'cartItems'... 
+
+
+
+
+
+
+
+
+--> NO CASO, O QUE VAMOS QUERER, NESSA PAGE 
+
+
+DE 
+
+'Cart',
+
+
+
+É:
+
+
+
+
+1) O __PRICE__ DE CADA PRODUCT_...
+
+
+
+
+2) O NAME__ DE CADA PRODUCT__..... 
+
+
+
+
+
+
+
+
+
+
+---> PARA CONSEGUIR ESSAS 2 INFORMATIONS,
+vamos 
+
+precisar 
+
+
+RODAR 
+
+ALGUMA LÓGICA ADICIONAL NO NOSSO CONTROLLER,
+
+lógica que será 
+
+
+
+extraída lá 
+
+DE NOSSO MODEL DE 
+
+'product',
+
+PROVAVELMENTE....
+
+
+
+
+
+
+
+
+
+--> TALVEZ SEJA UMA BOA IDEIA CRIAR UM NOVO MÉTODO 
+
+
+em 
+
+'Product',
+
+algo como 
+
+
+'getMultipleProducts',
+
+em vez de 
+
+'getSingleProduct'....
+
+
+
+
+
+---> isso significa que 
+
+PROVAVELMENTE 
+
+
+
+teremos um código como:
+
+
+
+
+
+
+
+
+
+
+static getMultipleProducts(productIds) {
+
+  const db = getDb();
+
+
+
+
+  // const formattedProductIds = [
+  //   ...productIds
+  // ]
+
+  // console.log(formattedProductIds, 'xx');
+
+ return db.collection('products').find({_id: {$in: productIds } }).toArray() //código para encontrar MÚLTIPLS PRODUCTS, por meio de MÚLTIPLOS IDS....
+ .then(
+   (products) => {
+     console.log(products);
+     return products;
+   }
+ )
+ .catch(
+   (err) => {
+     console.log(err);
+   }
+ )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... COM ISSO,
+
+
+EU CONSEGUI 
+
+
+
+
+MEUS 
+
+'product items' detalhados,
+
+
+MAS __ PERDI ___ O 
+
+
+'quantity',
+PQ 
+O 
+
+'quantity'
+
+
+FAZ PARTE 
+
+DOS 
+
+
+'product' 
+
+dentro do 'cart' de 'user',
+
+QUE É OUTRA COISA... (outra fonte de 'data', no final das contas...).
+
+
+
+
+
+
+
+
+
+FIQUEI TRAVADO NISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI........
+
+
+
+
+
+FINALMENTE, CONSEGUI....
+
+
+
+
+
+
+
+
+
+
+FICOU ASSIM O CÓDIGO:
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => { ///É MEU CÓDIGO DE FETCH CART.... não é tão bonito, mas funciona, e faz a vinculação de 2 'collections' diferentes, pq pega os products 'simples' la dentro do 'cart', dentro de cada 'user', e aí VINCULA ISSO (products que possuem as QUANTITIES, pq são cart items)  COM __ AS INFORMAÇÕES DETALHADAS DE CADA PRODUCT, armazenadas nos objetos/documentos 'product' lá na collection de 'products' mesmo....
+
+
+  const productIds = [];
+
+  const simpleProducts = [];
+
+  const cart = req.user.getCart();
+
+
+
+const cartProducts = [
+  ...cart.products
+]
+
+cartProducts.forEach(
+  (product) => {
+      productIds.push(product.productId);
+      simpleProducts.push(product);
+  }
+)
+
+
+  Product.getMultipleProducts(productIds)
+  .then(
+    (products) => {
+
+
+        const editedProducts = [];
+
+        products.forEach(
+          (product) => {
+
+         const neededProductIndex = simpleProducts.findIndex(
+              (prod) => {
+                    return prod.productId.toString() === product._id.toString();
+              }
+            )
+
+
+              if(neededProductIndex === -1) {
+
+                return;
+              } else {
+
+
+                const editedProduct = {
+                  ...product, 
+                  quantity: simpleProducts[neededProductIndex].quantity
+                }
+
+                    editedProducts.push(
+                            editedProduct
+                    )
+              }
+          }
+        )
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: editedProducts
+  
+    }) 
+    }
+  )
+
+
+
+
+
+  -------------------
+
+
+
+
+
+
+  AGORA, PORTANTO,
+
+
+
+  ESTOU 
+
+
+  VENDO 
+
+  TANTO 
+
+  OS 
+
+  TITLES 
+
+  DE CADA PRODUCT 
+
+  como também 
+
+
+  o 'price'
+
+  e 
+
+  a 
+
+  'quantity'....
+
+
+
+
+
+  ---------------
+
+
+
+
+
+
+
+
+
+  OK ... AGORA VAMOS 
+
+  VER A VERSÃO DO PROFESSOR DESSE CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> PROFESSOR NOS EXPLICA QUE 
+
+  VAMOS 
+
+  SÓ 
+
+
+  escrever, lá no model de 'user.js':
+
+
+
+
+
+
+
+
+
+  'getCart() {
+
+    return this.cart;
+  }
+
+  '
+
+
+
+
+
+
+
+  --> E ERA ISSO,
+
+  NÃO PRECISAMOS FAZER MAIS NADA...  -----> E O PROFESSOR 
+
+
+
+
+  NOS RESSALTA QUE PODERÍAMOS 
+
+  ACESSAR, SE QUISÉSSEMOS,
+
+
+
+  a 
+  propriedade 
+
+  'cart'
+
+  diretamente no user,
+
+  tipo 
+  assim:
+
+
+
+
+  'req.user.cart',
+
+
+
+  SE __NÃO QUISÉSSEMOS CHAMAR 
+
+
+
+dessa forma,
+
+com esse method de 
+
+
+'req.user.getCart()'...
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR ADMITE QUE PODEMOS 
+
+
+
+
+COLOCAR MAIS LÓGICA EM 
+
+'getCart'
+
+PARA 
+
+TRANSFORMAR NOSSO 
+
+
+CART 
+
+
+GETTADO AQUI, e coisas assim,
+
+
+MAS O QUE INTERESSA 
+
+
+
+
+É 
+
+QUE 
+
+LÁ
+ 
+
+
+
+ NO CONTROLLER 
+
+ de 
+
+
+ 'shop.js'
+
+ PODEMOS 
+
+ CHAMAR 
+
+
+
+
+ '.getCart'
+
+
+ ASSIM:
+
+
+
+
+
+
+
+ exports.getCart = (req, res, next) => { ///É MEU CÓDIGO DE FETCH CART.... não é tão bonito, mas funciona, e faz a vinculação de 2 'collections' diferentes, pq pega os products 'simples' la dentro do 'cart', dentro de cada 'user', e aí VINCULA ISSO (products que possuem as QUANTITIES, pq são cart items)  COM __ AS INFORMAÇÕES DETALHADAS DE CADA PRODUCT, armazenadas nos objetos/documentos 'product' lá na collection de 'products' mesmo....
+
+
+
+
+req.user.getCart();
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+
+ -----> ENTRETANTO,
+
+
+
+
+ NÃO PODEMOS MAIS CHAMAR AQUELE 
+
+ ' (
+   (cart) => {
+
+     cart.getProducts()
+   }
+ )
+
+'
+
+
+LÁ 
+
+
+
+DO SEQUELIZE/DATABASE SQL... --> MAS NÓS __ TAMBÉM __ NÃO PRECISAMOS FAZER ISSO,
+
+
+PQ JÁ TEMOS TODOS OS PRODUCTS QUE 
+
+DESJEAMOS 
+
+
+DENTRO 
+
+DESSE 
+
+'cart' aí... ------>  NA VERDADE,
+
+
+
+
+PROFESSOR NOS EXPLICA QUE 
+
+O QUE TEMOS 
+
+
+DENTRO 
+
+DO 
+
+
+'CART'
+
+É 
+
+AS 
+
+'REFERENCES' aos products,
+
+E NÃO OS PRODUCTS EM SI... --> PQ FOI ISSO QUE ARMAZENAMOS 
+
+
+NESSES 
+
+'CART ITEMS',
+
+
+ARMAZENAMOS ALGO COMO 
+
+
+'{
+
+  productId: xxxx,
+  quantity: yyyy
+
+
+}
+'
+
+
+
+
+
+
+
+--------> E ISSO, ESSE DETALHE ESPECÍFICO, 
+
+
+É ALGO QUE 
+
+
+PODEMOS 
+
+MUDAR EM 
+
+
+'getCart()',
+
+EXPLICA O PROFESSOR.... ------> 
+
+
+
+
+
+
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+PODEMOS 
+
+ESCREVER UMA LÓGICA/CÓDIGO EM 'user.js',
+
+no 
+
+
+método 
+
+
+'getCart',
+
+
+PARA 
+
+ENTÃO __ CONSEGUIRMOS TODAS 
+
+
+AS INFORMAÇÕES DETALHADAS 
+
+A 
+
+RESPEITO 
+
+
+DE 
+
+CADA 
+
+PRODUCT,
+
+
+a partir do 
+
+
+'productId'
+
+
+que 
+
+temos 
+
+em cada 
+
+'cart item'...
+
+
+
+
+
+
+
+
+
+
+---------> ok... VAMOS QUERER RETORNAR ' A FULLY POPULATED CART',
+
+
+
+
+qual seja um 
+
+CART COM TODOS OS 'PRODUCT DETAILS',
+
+
+
+__ DETAILS QUE TAMBÉM 
+
+QUEREMOS TER.... ------> 
+
+
+
+
+
+E PARA CONSEGUIRMOS FAZER ISSO,
+
+PROFESSOR 
+
+DIZ QUE 
+
+VAMOS TER QUE 
+
+CONSEGUIR ACESSO à DATABASE MAIS UMA VEZ...
+
+
+
+
+
+
+
+--> por isso ele escreve:
+
+
+
+
+
+
+
+getCart() {
+
+
+  const db = getDb();
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+--> AÍ, ISSO FEITO,
+
+
+VAMOS 
+RETORNAR 
+O 
+
+
+'RESULT' 
+
+
+da database 
+
+
+
+e aí 
+
+
+
+executar uma 'query' em cima disso...
+
+
+
+
+
+VAMOS FAZER REACH OUT 
+
+
+
+
+à DATABASE/COLLECTION DE 'products',
+
+ISSO PQ 
+
+EU JÁ TENHO TODA A USERDATA E A 'CARTDATa',
+
+por isso 
+
+só me 
+resta 
+
+
+ENCHER 
+
+
+ESSA 'CARTDATA' 
+
+com alguma 
+
+'vida' 
+
+lá 
+
+da 
+
+
+database 
+de 
+
+'products'...
+
+
+
+
+
+
+
+
+
+----> AÍ, DENTRO DESSA DATABASE, PROFESSOR VAI QUERER 'FIND' 
+
+TODOS OS PRODUCTS QUE 
+
+
+ESTÃO NO MEU CARTZINHO....
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+
+
+getCart() {
+
+
+  const db = getDb();
+
+
+
+return db.collection('products').find() //////////EIS O CÓDIGO EM QUESTÃO...
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+---->OK, MAS COMO PODEMOS 
+
+ENCONTRAR TODOS OS PRODUCTS QUE ESTÃO NO MEU 'cart'? 
+
+
+
+
+
+
+
+
+--> BEM, PROFESSOR 
+
+PROVAVELMENTE VAI NOS MOSTRAR O USO 
+
+DAQUELE 
+
+critério 
+
+
+'find({_id: {$in: [value1, value2, value3]}})'
+
+
+
+
+
+
+
+-----> EXATO, É EXATAMENTE ISSO QUE ELE VAI FAZER,
+
+ELE VAI 
+
+USAR 
+
+
+
+UM 
+
+'SPECIAL QUERY SYNTAX' SUPORTADA PELO MONGODB,
+
+
+
+
+
+QUE 
+
+
+SERÁ O 
+
+
+$in 
+
+
+
+
+
+
+--> DENTRO DE 
+
+'_id: ',
+
+
+NÃO VAMOS QUERER 
+
+COLOCAR 
+
+O 
+VALOR DE 1 ID ESPECÍFICO,
+
+JUSTAMENTE 
+
+PQ 
+NÃO VAMOS 
+
+ESTAR 
+
+PROCURANDO POR 
+
+
+
+'A SINGLE ID',
+
+
+e sim 
+
+
+VAMOS PASSAR UM __ OBJETO__ ({}),
+
+PQ 
+
+
+ESSE OBJETO VAI ME DEIXAR 
+
+
+
+'PASS/USE SOME SPECIAL MONGODB QUERY OPERATORS'...
+
+
+
+
+
+
+
+
+
+------> EXISTEM MTOS 'MONGODB QUERY OPERATORS',
+
+
+e eles 
+
+são cobertos NO CURSO DE MONGODB DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... --> O QUE VAMOS USAR É o 
+
+
+
+'$in' ------> ESSE OPERATOR 
+
+
+
+__aCEITA/EXIGE__  
+
+
+
+COMO PARÂMETRO 
+
+
+__ UM 
+
+__ARRAY__ DE VALORES (ids) QUE VOCÊ VAI QUERER 
+
+ENCONTRAR 
+
+NESSE FIELD QUE VOCÊ ESPECIFICOu...
+
+
+
+
+
+
+
+
+
+----------> PORTANTO, TODOS OS IDS ENCONTRADOS QUE ESTIVEREM PRESENTES 
+
+NESSE ARRAY QUE VOCÊ PASSOU 
+
+
+_SERÃO 'ACCEPTED'
+
+
+e __RETORNADOS__ por esse call 
+
+de 
+
+'find'...
+
+
+
+
+
+
+
+
+
+-----> É CLARO QUE O 'find' 
+
+VAI NOS RETORNAR __ UM CURSOR,
+
+E NÃO 
+
+
+
+OS OBJECTS EM SI,
+
+
+
+por isso vamos ter que 
+
+USAR 
+
+o MÉTODO 
+
+'.toArray()"
+
+PARA 
+
+
+
+__CONVERTEr__ ESSE CURSOR EM 1 ARRAY DE OBJECTS... (objects com 1 '_id' daqueles que mencionamos nesse array..)
+
+
+
+
+
+
+
+--> TUDO QUE PRECISAMOS FAZER, NO CASO, É __ 'CONSTRUCT' UM ARRAY DESSES,
+
+CONSTRUIR UM 
+
+
+ARRAY 
+
+
+DOS IDS QUE VAMOS 
+
+
+
+
+QUERER 
+
+ENFIAR/usar NESSA QUERY....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+getCart() {
+
+
+  const db = getDb();
+
+
+
+const productIdArray = []; ////SERÁ UASDO NO '$in', lá no 'find()'...
+
+
+return db.collection('products').find({_id: {$in: productIdArray}});
+
+
+
+
+
+}
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OBS::: CÓDIGO DO PROFESSOR ATÉ AGORA __ ESTÁ __QUASE IDÊNTICO AO MEU;
+
+A ÚNICA DIFERENÇA
+ 
+ É QUE 
+
+ ESCREVEMOS NOSSO CÓDIGO NO __CONTROLLER__,
+
+ E AQUI 
+
+ ELE 
+
+
+ ESTÁ ESCREVNEDO 
+
+
+
+ lá 
+
+
+ no nosso 'model',
+
+ nessa 
+
+
+ função de 
+
+ 'getCart'
+
+ lá em 'user'..
+
+
+
+
+
+
+
+
+ ----> ok...... 
+
+
+
+
+ --> PARA CONSEGUIR OS 
+
+
+ 'ids' 
+
+DE NOSSOS PRODUCTS/CART-ITEMS,
+
+
+
+
+
+
+
+PROFESSOR 
+
+ESCREVE 
+
+
+
+
+
+'const productIds = this.cart.products.map(
+  (product) => {
+    return product.productId
+  }
+)
+'
+
+
+
+
+
+
+
+--> E ISSO REALMENTE FUNCIONARÁ,
+
+NOS RETORNARÁ UM 
+
+ARRAY 
+
+COM ESTE FORMATO:
+
+
+
+[
+
+  xxxxxxxxxx, xxxxxxxxxx, xxxxxxxxxx
+]
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+
+getCart() {
+
+
+  const db = getDb();
+
+
+
+const productIds = this.cart.products.map(
+  (product) => {
+    return product.productId
+  }
+)
+
+
+return db.collection('products').find({_id: {$in: productIds}});
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+-----> OK, AGORA TUDO ESTÁ ENCAIXANDO DIREITINNHO...
+
+
+
+
+
+
+
+---> array de strings, é isso que queríamos, no final das contas.......
+
+
+
+
+
+
+
+
+
+--------> OK..... ---> AGORA O MONGODB VAI NOS 
+
+DAR 
+
+
+
+TODOS OS 'ELEMENTS'
+
+
+
+
+
+
+
+que matchem 
+
+essa 
+
+query...
+
+
+
+
+
+
+--> OK, AÍ 
+
+VAMOS EXECUTAR 
+
+o 
+
+'.toArray()'
+
+SOBRE ESSE RESULTADO,
+
+E AÍ 
+
+
+VAMOS 
+
+EXECUTAR TBM UM 
+
+'.then().catch()'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+  getCart() { /////usado com o código DO PROFESSOR de 'getCart', é mais optimizado e bonito; tbm melhor pq EXECUTA ESSA LÓGICA DE _TRANSFORMAÇÃO DE NOSSA 'PRODUCT DATA' aqui nesse model, e NÃO NO NOSSO CONTROLLER DE 'shop.js', como fazia meu código... 
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db.collection('products').find({ _id: { $in: productIds } }).toArray()
+    .then(
+      (products) => {
+
+
+        return products;
+
+
+      }
+    )
+    .catch(
+      (err) => {console.log(err)}
+    )
+    
+    
+    ;
+  }
+
+
+
+
+
+
+
+
+
+  ------------> AGORA, É CLARO, EXPLICA O PROFESSOR,
+
+
+
+
+  __VAMOS QUERER ADICIONAR A 
+
+  'QUANTITY'
+
+  DE VOLTA A CADA PRODUCT,
+
+
+  pq 
+
+
+  a 'quantity' está separada deles, é um piece of data que existe só nos 
+
+  objetos 
+  'product' 
+
+  lá 
+
+
+  em 
+  'cart items',
+
+  e não os 'product' COMUNS/DETALHADOS, lá na collection de 'products'...
+
+
+
+
+
+
+
+
+
+  -----> OK, MAS COMO PODEOMS CONSEGUIR 
+
+
+
+  ESSA INFORMATION, A INFORMATION DA 'QUANTITY'
+  de cada product,
+
+
+
+  dentro 
+
+
+
+  de cada product? 
+
+
+
+
+
+
+
+
+
+  ----> BEM ,
+
+
+  O PROFESSOR EXPLICA QUE 
+
+
+  DENTRO 
+
+  DESSE 
+
+  'then block'
+
+
+  O PROFESSOR __ TAMBÉM _ VAI 
+
+
+
+
+  RETORNAR UMA VERSÃO 
+
+  '.map()'
+
+
+  DE 'products',
+
+
+
+
+
+DESSA VEZ 
+
+UM MAP EM QUE 
+
+
+__CADA PRODUCT 
+
+SERÁ 
+
+
+
+
+
+
+CONVERTIDO 1 PCO,
+
+vou retornar 
+
+1 
+
+'object'
+
+para 
+
+cada
+'product',
+
+
+
+
+
+
+
+1 OBJECT 
+
+em que 
+
+
+
+VOU QUERER USAR O SPREAD OPERATOR PARA MANTER TODA A 
+
+DATA E ENTÃO 
+
+
+
+adicionar uma property de 
+
+'quantity',
+
+
+
+
+
+QUE DEVERÁ SER 'POPULATED' COM DATA....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+  getCart() { /////usado com o código DO PROFESSOR de 'getCart', é mais optimizado e bonito; tbm melhor pq EXECUTA ESSA LÓGICA DE _TRANSFORMAÇÃO DE NOSSA 'PRODUCT DATA' aqui nesse model, e NÃO NO NOSSO CONTROLLER DE 'shop.js', como fazia meu código... 
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db.collection('products').find({ _id: { $in: productIds } }).toArray()
+    .then(
+      (products) => {
+
+
+        return products.map(
+          (p) => {
+            return {
+              ...p, 
+              quantity: ////EIS O CÓDIGO EM QUESTÕA.
+            }
+          }
+        )
+
+
+      }
+    )
+    .catch(
+      (err) => {console.log(err)}
+    )
+    
+    
+    ;
+  }
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+CERTO... MAS AGORA VAMOS PRECISAR DESSA DATA,
+
+
+TRANSPLANTÁ-LA DE ALGUM LUGAR...
+
+
+
+
+
+
+
+
+---> NÓS, É CLARO,
+
+
+TEMOS 
+
+
+
+os 
+
+
+'products'
+
+
+ARMAZENADOS DENTRO DO 
+
+
+'cart' 
+
+desse user... (do user que está usando o aplicativo),
+
+
+
+
+
+DENTRO DE 
+
+
+
+'req.user.cart.products''...
+
+
+
+
+
+
+
+
+
+
+
+----> PARA ACESSAR ESSE CART DENTRO 
+
+
+desse method 'getCart',
+
+DENTRO Do model de 'user',
+
+
+
+PROFESSOR NOS EXPLICA UQE 
+
+
+
+PODEMOS SIMPLESMENTE ESCREVER 
+
+
+
+'this.cart.products' --------> 
+
+
+
+
+
+E AÍ, VAMOS SIMPLESMENTE 
+
+EXECUTAR 
+
+
+
+'.find()'
+
+PARA ___ ENCONTRAR O ITEM COM AQUELE 
+
+
+'id' 
+
+
+
+
+EQUIVALENTE 
+
+
+AO ID QUE VOU DESEJAR:
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  getCart() { /////usado com o código DO PROFESSOR de 'getCart', é mais optimizado e bonito; tbm melhor pq EXECUTA ESSA LÓGICA DE _TRANSFORMAÇÃO DE NOSSA 'PRODUCT DATA' aqui nesse model, e NÃO NO NOSSO CONTROLLER DE 'shop.js', como fazia meu código... 
+    const db = getDb();
+
+    const productIds = this.cart.products.map((product) => {
+      return product.productId;
+    });
+
+    return db.collection('products').find({ _id: { $in: productIds } }).toArray()
+    .then(
+      (products) => {
+
+
+        return products.map(
+          (p) => {
+            return {
+              ...p, 
+              quantity: this.cart.products.find(
+                prod => {
+                  return prod.productId.toString() === p._id.toString();
+                }
+              ).quantity
+            }
+          }
+        )
+
+
+      }
+    )
+    .catch(
+      (err) => {console.log(err)}
+    )
+    
+    
+    ;
+  }
+
+
+
+
+
+
+  --------> OK... ISSO REALMENTE FUNCIONARÁ...
+
+
+
+
+
+
+
+  -----> ISSO PODE PARECER CONFUSO, MAS AGORA TEMOS UM ARRAY DE PRODUCTS 
+
+
+  com 
+
+
+  a 'product data' 
+
+
+  que é 
+
+
+  title, description, etc,
+
+
+  JUNTO DE 
+
+  'quantity' (extraída de OUTRA COLLECTION, de outrol ugar),
+
+
+
+
+
+  que agora USAREMOS NO NOSSO CONTROLLER DE 'getCart'....
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------------
+
+
+
+
+
+  OK..... COM ESSE CÓDIGO,
+
+
+  O 'GETCART'
+
+
+  DEVERÁ NOS 
+
+  RETORNAR OS 
+
+
+  PRODUCTS ADEQUADOS,
+
+
+  com todas as informações de que precisamos...
+
+
+
+
+
+
+
+  ------> E ISSO AÍ, 
+
+
+  QUE FIZEMOS AGORA,
+  É ALGO QUE PRECISAMOS 
+
+
+  FAZER _ NO MONGODB, manualmente,
+
+  QUANDO 
+
+
+  TEMOS 
+
+
+  ''A CONNECTION BETWEEN 2 COLLECTIONS''... -> TEMOS QUE 
+
+  FAZER _MERGE__ DAS 2 CONNECTIONS MANUALMENTE, O QUE às VEZES PODE SER 
+
+  UM SACO...
+
+
+
+
+
+
+  -----------------> E COM ESSE MERGE FEITO MANUALMENTE,
+
+  PODEMOS 
+
+  _USAR__ ESSA DATA__.....
+
+
+
+
+
+
+  --> OK... O GETCART DEVE 
+
+
+  RETORNAR TODA 
+
+
+
+
+  A INFO DE QUE PRECISAMOS... AÍ ESCREVEMOS, LÁ 
+
+
+
+  no controller de 'shop.js':
+
+
+
+
+  ------------------------
+
+
+
+  OK..
+
+
+
+
+
+
+
+  AÍ RENDERIZAMOS NOSSA VIEW COM OS PRODUCTS QUE FETCHEAMOS... no worries....
+
+
+
+
+
+
+  ok.... qual o próximo passo?
+
+
+
+
+
+
+
+  ------> PROFESSOR MENCIONA O CÓDIGO DE 
+
+
+  ''
+
+
+
+
+
+
+
+
+  exports.postToCart = (req, res, next) => {
+  
+  
+
+
+  const productId = req.body.productId;
+  console.log(productId);
+
+
+ return Product.getSingleProduct(ObjectId(productId))
+  .then(
+    (product) => {
+      console.log(product, 'postToCart')
+            req.user.addToCart(product)
+            .then(
+              (result) => {
+                      console.log(result); 
+                      res.redirect('/cart');
+              }
+            )
+            .catch(
+              (err) => {
+                console.log(err);
+              }
+            )
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+  
+
+
+  ''
+
+
+
+
+
+  OK, AGORA ISSO FUNCIONA...
+
+
+
+
+
+
+
+
+  PRÓXIMO PASSO É VER SE CONSEGUIMOS 'DELETE PRODUCTS FROM CART'
+
+  por conta própria....

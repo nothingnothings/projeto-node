@@ -1,0 +1,2111 @@
+
+
+
+
+
+
+
+
+
+
+NA ÚLTIMA AULA ADICIONAMOS AQUELA PÁGINA DE 'LOGIN',
+
+
+COM 
+
+
+AQUELA 
+
+
+
+LOGIN FORM...
+
+
+
+
+
+
+
+
+
+--------> CERTO....
+
+
+
+
+
+
+
+-----> NÃO VAMOS ADICIONAR AUTHENTICATION AINDA,
+
+
+faremos isso no próximo módulo...
+
+
+
+
+
+
+
+
+----> MAS É UM ÓTIMO DUMMY SCENARIO PARA __ USAR 1 COOKIE, ARMAZENAR 
+
+1 
+
+
+COOKIE NO BROWSER DO USUÁRIO...
+
+
+
+
+
+
+
+
+
+----> DIGAMOS QUE QUANDO CLICAMOS 
+
+
+NAQUELE BOTÕA 
+
+
+'login',
+
+
+
+
+
+1 
+
+
+COOKIE É __GERADO___ NO SERVIDOR__ E ENTÃO __ ENVIADO, POR MEIO DE 1 RESPONSE,
+
+
+AO 
+
+
+NOSSO 
+
+
+
+browser...
+
+
+
+
+---------------------------
+
+
+
+
+
+
+certo.... para isso, VAMOS PRECISAR __de UMA ROUTE__ DE 
+
+
+
+'post',
+
+
+
+
+
+
+'postLogin',
+
+
+
+OU ALGO ASSIM...
+
+
+------------------------
+
+
+
+
+
+ISSO PQ VAMOS QUERER ENVIAR UM 'LOGIN REQUEST'
+
+AO NOSSO BACKEND...
+
+
+
+
+
+
+
+
+
+ISSO JÁ PODE SER VISTO NO NOSSO VIEW,
+
+
+
+que tem 
+
+
+este código:
+
+
+
+
+
+            <form class="login-form" action="/login" method="POST">
+                <div class="form-control">
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+VAMOS ESTAR ENVIANDO UM POST REQUEST 
+
+À 
+
+
+'/login'... 
+
+
+
+
+
+
+
+--> É POR ISSO QUE VAMOS TER QUE ADDAR UMA ROUTE DESSAS, LÁ  no arquivo 
+
+
+
+route de 
+
+'auth.js'...
+
+
+
+
+
+
+
+
+
+--> TIPO ASSIm:
+
+
+
+
+
+
+
+
+router.post('/login', 
+
+
+
+authController.sendLoginRequest
+
+)
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+--> MAS O PROFESSOR USOU OUTRO NOME,
+
+USOU 
+
+
+'postLogin'... --> É ISSO QUE VAMOS UTILIZAR....
+
+
+
+
+
+
+
+
+
+
+
+--> EM POST LOGIN,
+
+
+
+
+VAMOS CONSEGUIR 
+
+
+
+
+__O LOGIN DATA,
+
+
+
+
+COMO 
+
+
+
+
+'email', 'password', 
+
+etc.... -----> MAS 
+
+
+O 
+
+
+PROFESSOR 
+
+
+
+___REALMENTE__ NAO VAI SE IMPORTAR, POR ENQUANTO (neste módulo)
+
+
+SOBRE ESSA DATA,
+
+
+
+POR ISSO 
+
+
+
+O PROFESSOR 
+
+
+VAI SÓ 
+
+'ASSUME THAT THE USER IS 
+
+
+LOGGED IN',
+
+e 
+
+aí 
+
+
+
+
+
+
+
+VAI 
+
+
+SÓ REDIRECIONAR PARA
+
+
+
+
+
+'/'....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+            res.redirect('/'); ///EIS O CÓDIGO EM QUESTAÕ.
+
+
+}
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+OK.... LÁ NO CÓDIGO DO 
+
+
+
+'NEXTJS',
+
+
+
+
+
+tínhamos esta parte aqui que REALMENTE 
+
+
+ENVIAVA 
+
+
+
+um TOKEN/cookie ao 
+
+
+
+browser...
+
+
+
+
+
+
+if (passwordIsValid) {
+  return {  ////////ISSO AQUI SERÁ NOSSO 'ACTUAL JSON WEB TOKEN' (JWT)... ---> ESSE OBJETO AQUI, retornado ao FINAL DO METHOD/FUNÇÃO 'authorize', É O QUE VAI SER CONSIDERADO/EMBUTIDO/TRANSFORMADO EM UMA WEBTOKEN, que será fornecida/retornada ao browser do usuário, caso ele seja autenticado com sucesso... --> esse objeto aí vai ser 'ENCODED IN A JSON WEB TOKEN'....
+    email: user.email  //vamos retornar só o EMAIl do usuário na nossa json web token, e NÃO O 'hashed password' contido na nossa database, pq isso é inseguro, exporíamos um pouco o usuário (apesar de esse password ser hashed/encriptado....)
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+TOKENS são usados para ARMAZENAR COOKIES....
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+ok... mas de volta ao 
+
+
+caso atual...
+
+
+
+
+
+
+
+---> TÍNHAMOS ESTE CÓDIGO, em 'auth.js' (page),
+
+
+LÁ NO NEXTJS:
+
+
+
+
+
+
+
+import AuthForm from '../components/auth/authForm'; ////CÓDIGO DA GUARD da route VERSÃO __ CLIENTSIDE__ (menos elegante do que a serverside)...
+
+import { getSession } from 'next-auth/client';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+
+import Spinner from '../components/Spinner/Spinner';
+
+const AuthPage = (props) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        router.push('/');
+      } else {
+        setIsLoading(false);
+      }
+    });
+  }, []); //função equivalente a 'componentDidMount()'...
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  return <AuthForm />;
+};
+
+export default AuthPage;
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+nesse negócio aí, 
+
+o 
+
+
+
+'nextAuth' 
+
+fazia a maior parte do trabalho para nós...
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+agora, no caso, vamos 
+
+
+fazer 
+
+
+
+o 
+
+
+STORE de um cookie 
+
+
+
+no browser do usuário de FORMA MANUAL, MESMO...
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+OK, MAS CONTINUNANDO....
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+            res.redirect('/'); ///EIS O CÓDIGO EM QUESTAÕ.
+
+
+}
+
+
+
+
+
+
+
+
+
+--> SE NÓS FIZERMOS ISSO ASSIM,
+
+
+
+
+se fizermos assim e 
+
+ADICIONARMOS UMA ___ROUTE__ NORMAL 
+
+
+
+
+
+
+para 
+
+
+
+'router.post('/login', authController.postLogin)',
+
+
+
+
+
+
+SE FIZERMOS ISSO,
+
+
+
+
+SEM GUARDS,
+
+
+ESTAREMOS 
+
+
+ABRINDO UMA BRECHA 
+
+
+
+PARA 
+
+
+__PESSOAS___ ENVIAREM 
+
+
+
+
+REQUESTS__ A 
+
+
+ESSA URL 
+
+
+
+
+
+
+____POR FORA DE NOSSO APP/FRONTEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> CLARO QUE O PROFESSOR AINDA NÃO MENCIONOU ISSO.... --> 
+
+
+
+
+mas o que interessa é que AGORA SE CLICARMOS EM 'login',
+
+
+
+SOMOS AUTOMATICAMENTE 
+
+FORWARDADOS 
+
+
+
+PARA A ROUTE DE '/'...
+
+
+
+
+
+
+
+
+-----> DIGAMOS QUE __ESTAMOS AUTHENTICATED quando isso acontecer...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... MAS DIGAMOS QUE __ QUEREMOS__ ARMAZENAR __ 
+
+INFORMATION DE QUE 
+
+O 
+
+USER 
+
+
+ESTÁ 
+
+
+___AUTHENTICATED___ lá 
+
+
+no browser dele.....
+
+
+
+
+
+
+
+
+------> COMO PODEMOS FAZER ISSO?
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+
+
+
+teoriza 
+
+
+
+
+
+
+
+
+
+
+
+
+que deveoms 
+
+
+
+
+ARMAZENAR ESSA INFORMATION EM 1 OBJETO 
+
+
+
+'request'/no objeto 'request',
+
+lá em 
+
+
+
+'postLogin'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+    req.login = {
+        email: req.email
+
+    }
+
+
+            res.redirect('/'); ///EIS O CÓDIGO EM QUESTAÕ.
+
+
+}
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+certo... tipo assim:
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+
+
+    req.user2 = {
+
+        email: req.body.email,
+        password: req.body.password
+    }
+
+
+    console.log(req.user2);
+
+    res.redirect('/');
+
+
+
+
+}
+
+
+
+
+------------------------------------
+
+
+
+
+
+MAS O PROFESSOR VAI ESCREVER UM CÓDIGO __ AINDA MAIS SIMPLES,
+
+ELE 
+
+
+
+só vai 
+
+definir uma property de 
+
+
+'isLoggedIn' em 'req', 
+
+
+
+vai settar seu valor como 'true'.... (pq ela não existirá inicialmente, é claro)
+
+
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+
+
+
+    req.isLoggedIn = true;
+
+
+    res.redirect('/');
+
+
+
+
+}
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+OK.......... 
+
+
+
+
+
+
+AGORA 'ESTAMOS LOGGED IN'...
+
+
+
+
+
+
+--> PARA CHECAR 
+
+SE 
+
+
+ISSO FUNCIONOU,
+
+
+professor 
+
+
+
+
+
+READICIONA UMAS LINHAS LÁ EM 
+
+
+
+
+
+'navigation.ejs',
+
+
+
+
+AS LINHAS 
+DE 
+
+
+
+'add a product' 
+
+e 
+
+
+'admin products'... 
+
+
+(
+
+
+    2 routes/pages que SÓ PODEM SER ACESSÍVEIS POR 
+
+
+    USERS 
+
+
+
+    'AUTHENTICATED'....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAI FICAR ASSIM, NOSSA VIEW:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav_item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="mobile-nav_item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+        <li class="mobile-nav_item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="mobile-nav_item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="mobile-nav_item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="mobile-nav_item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+      </ul>
+    </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> É CLARO QUE VAMOS QUERER 
+
+
+ADICIONAR UM CÓDIGO CONDICIONAL PARA __ APENAS__ MOSTRAR ___ 
+
+
+
+
+
+ESSES LINKS na navbar 
+
+QUANDO 
+
+
+
+
+EXISTIR 
+
+um 
+
+
+'isLogged: true'
+
+
+DENTRO DO 
+
+
+
+OBJETO 'req' 
+
+
+
+
+DA PESSOA QUE ESTÁ USANDO O BROWSER....
+
+
+
+
+
+
+
+--> por isso, escrevemos assim:
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav_item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="mobile-nav_item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="mobile-nav_item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="mobile-nav_item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+      </ul>
+    </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE PARA ISSO FUNCIONE, PROFESSOR DIZ QUE DEVEMOS 
+
+COLOCAR 
+
+
+uma variável 'isLoggedIn: req.isLoggedIn' 
+
+
+
+EM CADA 
+
+
+
+RENDER 
+
+
+DE 
+
+VIEW 
+
+
+
+DE NOSSO APP,
+
+
+PARA EVITAR O ERRO DE 
+
+
+
+
+'isLoggedIn is undefined'...
+
+
+
+
+
+
+
+
+-->OK, E É EXATAMENTE ISSO QUE EU FIZ,
+
+TIPO ASSIM:
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: req.isLoggedIn
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK... AGORA NÃO RECEBO AQUELE ERRO, MAS FICO COM UM OUTRO PROBLEMA... -> o problema é que 
+
+
+
+
+__ OS LINKS DE 'ADD A PRODUCT' 
+
+
+E 
+
+
+'admin products'
+
+
+
+
+
+__NUNCA APARECEM.... 
+
+
+
+vocÊ sabe a razão disso?
+
+
+
+
+
+
+(NÃO ESTÁ FUNCIONANDO MESMO NÓS ARMAZENANDO A INFO DE 'isLoggedIn' 
+
+
+
+
+no request...
+
+)
+
+
+
+
+
+
+
+
+--> teoricamente, tudo isso está certo.... --> 
+
+
+
+O PROBLEMA, É CLARO, DIZ O PROFESSOR,
+
+
+
+É QUE NESSE CÓDIGO AQUI:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    req.isLoggedIn = true;
+    res.redirect('/');
+
+
+
+}
+
+
+
+
+
+
+
+
+--> AQUI, O 'isLoggedIn'
+
+
+REALMENTE 
+
+ACABA EMBUTIDO NO OBJETO 'request'
+
+QUANDO 
+
+
+
+
+é executada a linha 
+
+
+'req.isLoggedIn = true'... --> ENTRETANTO,
+
+
+
+
+A PERGUNTA É:
+
+
+
+o que acontece com o REQUEST 
+depois que 
+
+ENVIAMOS UMA RESPONSE (e um redirect CONTA COMO UMA RESPONSE, É CLARO, justamente pela escrita de 'res.redirect('/')'...)
+
+
+
+
+
+
+
+
+-----> BEM, QUANDO ACONTECE UMA RESPONSE, O REQUEST ESTÁ BASICAMENTE 'done',
+
+
+
+NÓS __ BASICAMENTE __ 'FINISHED A REQUEST/GOT SOMETHING ON OUR REQUEST OBJECT',
+
+
+
+
+
+
+
+E __ AÍ ___ ENVÍAMOS UMA __ RESPONSE.... --> e 'thats that'... ------> 
+
+
+
+
+ISSO SIGNIFICA QUE ESSA 
+
+DATA 
+
+
+
+de 
+'isLoggedIn'
+
+
+
+LÁ NO OBJETO 'request'
+
+NÃO VAI 
+
+'stick around' ___NUNCA___... ---> assim que vocÊ ENVIAR 
+
+
+
+
+uma response por meio de 
+
+'res.xxxx',
+
+
+
+SEU __ OBJETO __ REQUEST __ É AUTOMATICAMENTE 'flushed out',
+
+
+
+BASICAMENTE __ 
+
+DEIXA __ DE TER AS COISAS NO INTERIOR DELE....
+
+
+
+
+
+
+--> E É EXATAMENTE POR ISSO QUE NÃO FICAMOS COM ESSA DATA DE 'loggedIn' 
+
+
+depois de sermos redirecionados...
+
+
+
+
+
+
+--> parece que NÓS SÓ CONSEGUIMOS USAR 
+
+
+aquele 
+
+'user' 
+
+
+
+lá em 
+
+'app.js',
+
+
+com este código aqui:
+
+
+
+
+
+
+mongoose.connect( ///sempre ESCREVA ESSE CÓDIGO no seu 'app.js'/arquivo central, pq É ELE __ QUE __ VAI SETTAR SUA CONEXÃO À DATABASE MONGODB, mediada pelo mongoose...
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+  (result) => {
+
+
+
+    User.findOne().then(
+      (user) => {
+
+          if(!user) { ///só vai criar 1 novo document 'user' na nossa collection 'users' __ SE NENHUM USER FOR ENCONTRADO DENTRO DELA... (isso evita a criação de múltiplos users, nesse nosso DUMMY PROJECT)...
+            const user = new User(
+              {  //CRIA UM OBJETO/document 'user' na collection de 'users' com ESSES VALORES NOS FIELDS...
+                name: 'Max',
+                email: 'max@test.com',
+                cart: {
+                  products: []
+                }
+              }
+            )
+            user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+          }
+
+    app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+      }
+    )
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+PQ ___ESSE USER ACABA ADICIONADO AO 
+
+
+objeto 'request'
+
+
+TODA VEZ QUE INICIAMOS QUALQUER PÁGINA 
+
+DE 
+
+
+NOSSO APP... 
+
+
+(
+
+
+    ou seja,
+
+
+
+    coisas que adicionamos ao objeto 'request'
+
+
+
+    ___NÃO FICAM ALI PERSISTENTEMENTE,
+
+
+
+    elas são FLUSHADAS quando 
+
+
+    enviamos algo, quando enviamos uma response....
+)
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+-----> A DATA É PERDIDA QUANDO ENVIAMOS O RESPONSE...
+
+
+
+
+
+
+
+
+
+--> OK.... ISSO SIGNIFICA QUE 
+
+SEMPRE QUE 
+
+
+VISITARMOS OUTRA PAGE,
+
+
+
+AS INFO 
+
+NO NOSSO OBJETO request (como 'isLoggedIn') 
+
+
+SERÃO PERDIDAS.....
+
+
+
+
+
+
+---->  ISSO ACONTECE PQ __ AS REDIRECTION/outras pages 
+
+
+
+VÃO SEMPRE CRIAR UM 'BRAND NEW REQUEST',
+
+
+
+
+
+___ E ISSO É __ SUPER IMPORTANTE__ DE 
+
+ENTENDEr... ------->
+
+
+
+
+
+
+
+
+
+
+
+
+É SUPER IMPORTANTE ENTENDER QUE __NÓS ESTAMOS TRABALHANDO COM __ REQUESTS____ TOTALMENTE ___ 
+
+
+SEPARADOS.... ---->  É IMPORTANTE ENTENDER ISSO PQ 
+
+
+
+
+
+__sUA PAGE/APP TERÁ 
+
+
+
+CENTENAS DE USUÁRIOS,
+
+
+E OBVIAMENTE 
+
+
+
+____OS REQUESTS__ 
+
+
+DE TODOS 
+
+ESSES USERS 
+
+
+
+
+________ NÃO ___ ESTARÃO/NUNCA TERÃO 
+
+
+
+
+RELAÇÕES 
+
+
+1 COM O OUTRO.... ---> caso contrário,
+
+
+
+VOCÊ TERIA 
+
+PROBLEMAS, 
+
+
+ACONTECERIA 
+
+
+
+COISAS COMO USERS 
+
+
+OLHANDO DATA QUE 
+
+
+ELES NÃO DEVERIAM OLHAR.... ---------> 
+
+
+
+
+
+
+
+
+
+E MESMO OS REQUESTS DE 1 MESMO USER,
+
+
+
+OU SJEA,
+
+
+FEITOS 
+
+DE 
+1 MESMO 
+
+
+__IP ADDRESS__,,,,,
+
+
+
+
+
+ELES TAMBÉM SÃO TRATADOS COMO 
+
+
+'TOTALLY INDEPENDENT REQUESTS',
+
+
+
+
+SÃO TRATADOS 
+
+COMO 
+
+REQUESTS TOTALMENTE AUTÔNOMOS,
+
+
+
+
+
+E NÃO __ SÃO VISTOS 'IN A BIGGER CONTEXT'
+
+ou qualquer coisa do gênero... ----------> E ISSO É UMA BOA COISA,
+
+
+
+
+
+
+O SISTEMA REQUEST-RESPONSE É __DELIBERADAMENTE __ 
+
+
+
+PROJETADO DESSA MANEIRA... -----> ISSO SIGNIFICA QUE 
+
+
+
+___QUALQUER DATA_ QUE 
+
+NÓS ARMAZENARMOS
+
+
+
+
+
+
+no objeto 'request',
+
+
+como por meio 
+
+de 
+
+
+'req.isLoggedIn = true',
+
+
+
+__PODERÁ __ SER USADO__,
+
+
+
+
+
+
+
+SIM, 
+
+
+
+___ MAS APENAS___ SE TRABALHARMOS 'ON THE SAME REQUEST'  ('AS LONG AS WE ARE WORKING ON THE SAME REQUEST...'' )
+
+
+
+
+
+
+
+
+
+--> É EXATAMENTE POR ISSO QUE EM 'app.js',
+
+
+ 
+
+ NAQUELE CÓDIGO, 
+
+ NÓS 
+
+
+
+ PODEMOS USAR 
+
+ O 
+
+
+ 'user',
+
+
+
+
+ armazenado no nosso request,
+
+
+
+ __EM TODAS AS PÁGINAS.... --> É PQ 
+
+
+
+
+
+
+
+
+___ ELES VÃO PEGAR 
+
+ESSE 
+
+'user' 
+
+'''AT A LATER POINT OF TIME''',
+
+
+basta você 
+
+
+ler o código:
+
+
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { //esta é a versão MONGOOSE de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+  User.findById('6178c60a90464c24983b0847') ///dummy user...
+    .then((user) => {
+       
+      req.user = user; ////com isso, DEFINIMOS UM OBJETO 'user' no nosso request COMO TENDO O VALOR DO OBJETO/DOCUMENT 'user' ''''MONGOOSADO''' (ou seja, com TODOS OS METHODS CONVENIENCE DO MONGOOSE, ALÉM DA DATA DO USER QUE QUERÍAMOS), extraído lá da collection de 'users'...
+      next();
+
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+  // console.log(req.user, 'LINE666666'); 
+                              next();});
+
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.use(errorController.error404);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OU SEJA,
+
+
+ESSE MIDDLEWARE 
+
+
+__RODA 
+
+
+
+'ON EVERY INCOMING REQUEST',
+
+
+
+
+ANTES MESMO DE NOSSAS ROUTES FAZEREM HANDLE DESSE CÓDIGO, e é exatamente por isso 
+
+
+que essa 
+
+gambiarra do 'user'
+
+FUNCIONA...
+
+
+
+
+
+
+
+
+---> ISSO SIGNIFICA QUE 
+
+
+A DATA 
+
+
+armazenada 
+
+por 
+
+
+
+'User.findById' nesse 'app.use()'
+
+
+
+
+
+__ É USADA __ NO MESMO 
+
+'REQUEST CYCLE',
+
+
+
+
+NOS NOSSOS ROUTE HANDLERS, 
+
+
+
+NOS NOSSOS CONTROLLERS.... ---------------> E É PRECISAMENTE 
+POR ISSO 
+
+
+QUE 
+
+
+
+
+___TENTAR___ MUDAR 1 REQUEST, o REQUEST OBJECT,
+
+
+
+
+__ NO FINAL DO LIFETIME DELE (ou seja, bem na PONTA da corrente de execução,
+
+
+como no CONTROLLER DE auth.js
+
+
+
+),
+
+
+
+
+
+COMO __NO CONTROLLER DE 'auth.js',
+
+
+__ QUE É ___EXECUTADO _______________ BEEEEEEEEEEM DEPOIS_________
+
+
+
+
+DO ARQUIVO 
+
+'app.js',
+
+
+
+
+
+___ 
+
+
+
+É POR ISSO QUE 
+
+MUDAR 
+
+O OBJETO 'request' 
+
+NO FINAL DO LIFETIME dele é UMA DECISÃO BURRA, 
+
+
+nesse caso,
+
+PQ ____ ESSA DATA __ REALMENTE __ NÃO VAI PERSISTIR,
+
+
+NÃO VAI
+
+
+
+
+PERSISTIR como 
+
+aquele 
+
+'user' lá 
+
+
+
+
+PQ VAI ACONTECER ISTO:
+
+
+
+
+
+
+
+
+1) app.js é executado,   o objeto 'user' é adicionado ao objeto 'request'....
+
+
+
+
+
+2) todas as páginas executam...
+
+
+
+3) controller de 'postLogin' é executado, lá em 'auth.js', quando user '''FAZ LOGIN'''.....
+
+
+
+
+
+4) objeto é MODIFICADO, É ADICIONADO 'isLoggedIn' 
+
+
+
+
+5) PROBLEMA: OCORRE O REDIRECIONAMENTO DA PAGE, por meio do send de uma response de 'res.redirect('/')'....
+
+
+
+
+
+
+6) PROBLEMA: O USER APARECE EM '/' DE MÃOS VAZIAS, sem o 'isLoggedIn' no objeto 'request', pq ___ O SEND DE UM REQUEST__ faz com que a data nele __ DEIXE DE EXISTIR NO OBJETO 'request'... 
+
+
+7) USER FICA DE MÃOS VAZIAS EM '/', até aque recebe o 'user' no objeto request de novo, mas sem o 'isLoggedIn' nesse objeto 'request'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE 
+
+
+
+MUDAR O REQUEST 'AT THE END OF ITS LIFETIME', como em 'req.isLoggedIn',
+
+
+
+__ 
+
+NESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+        req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+    res.redirect('/');
+
+},
+
+
+
+
+
+
+___ É ALGO QUE 
+
+NÃO FAZ SENTIDO,
+
+
+
+É 
+
+
+ALGO QUE ___ NÃO É ÚTIL A NÓS.... ------> É REALMENTE IMPORTANTE ENTENDER ISSO..
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE AGORA DEVEMOS VER __ COMO PODERÍAMOS SOLUCIONAR ISSO DE UMA MANEIRA MELHOR....

@@ -1,0 +1,1477 @@
+
+
+
+
+
+RESTA A PERGUNTA:
+
+
+PROFESSOR QUER USAR 
+
+O 
+
+APPROACH 
+
+DO
+
+'useRef'
+
+
+
+
+
+OU 
+
+
+
+DO
+
+
+
+'inputChangedHandler',
+
+com 'useState'....
+
+
+
+
+
+
+
+
+
+
+
+--------> COM A ROUTE DE SIGNUP ADICIONADA,
+
+
+
+
+DEVEMOS ASSEGURAR QUE NÓS ''TALK TO THE API ROUTE''
+
+
+quando o usuário 
+
+se autentica...
+
+
+
+
+PARA ISSO,
+
+QUEREMOS  FAZER 'LISTEN TO' 
+
+
+A FORM SUBMISSION,
+
+e aí 
+
+se estivermos 
+
+no 
+
+'SIGNIN MODE' (CREATE MODE),
+
+
+
+AÍ VAMOS QUERER ENVIAR UM REQUESt 
+
+
+
+
+AO NOSSO BACKEND,
+
+PARA CRIAR UM NOVO USER....
+
+
+
+
+
+--> PARA ISSO,
+
+PROFESSOR 
+
+
+CRIA UM 'SUBMITHANDLER',
+
+
+
+coisa normal...
+
+
+
+ex:
+
+
+
+
+const submitHandler = (event) => {
+
+        event.preventDefault();
+
+
+
+}
+
+
+
+-----------------------------
+
+
+PARECE QUE ELE 
+
+VAI USAR 
+O 
+
+APPROACH DO 
+
+
+'useRef'...
+
+
+
+
+
+
+--> PARA ISSO, PRECISAMOS FAZER O SETUP TODO....
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+import { useState, useRef } from 'react';
+import classes from './auth-form.module.css';
+
+function AuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
+
+
+
+  const emailRef = useRef();
+
+  const passwordRef = useRef();
+
+  function switchAuthModeHandler() {
+    setIsLogin((prevState) => !prevState);
+  }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+
+    const enteredEmail = emailRef.current.value;
+    const enteredPassword = passwordRef.current.value;
+
+
+
+
+    
+
+    fetch('/api/auth/signup', {
+
+      method: 'POST',
+      body: {
+        email: enteredEmail,
+        password: enteredPassword
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+
+    })
+    .then(
+      (res) => {
+            console.log(res.json());
+            return res.json();
+      }
+    )
+    .then(
+    (data) => {
+            console.log(data);
+    }
+    )
+    
+}
+
+  
+
+  return (
+    <section className={classes.auth}>
+      <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
+      <form     onSubmit={
+      (event) => {
+        submitHandler(event)
+      }
+    }>
+        <div className={classes.control}>
+          <label htmlFor='email'>Your Email</label>
+          <input type='email' id='email' required ref={emailRef}/>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='password'>Your Password</label>
+          <input type='password' id='password' required  ref={passwordRef}/>
+        </div>
+        <div className={classes.actions}>
+          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          <button
+            type='button'
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? 'Create new account' : 'Login with existing account'}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
+
+export default AuthForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+É CLARO 
+
+
+
+
+
+
+
+QUE 
+
+
+AINDA RESTA O CLIENTSIDE VALIDATION...  ---> 
+
+
+
+
+
+
+O PROBLEMA É QUE 
+
+ESSE 
+
+
+CÓDIGO 
+
+DE 
+
+
+'SEND'
+
+DE NOSSO 
+
+EMAIL 
+
+E 
+PASSWORD
+
+ESTÁ ACONTECENDO __ TAMBÉM ___ QUANDO ESTAMOS NO 
+
+'LOGIN MODE'...--> 
+
+para evitar que 
+
+isso aconteca 
+
+(para 
+
+que
+
+
+o 
+
+send de http requests 
+
+requisitando o STORE de nosso user ACONTECA 
+
+SÓ 
+
+NO 
+
+
+'CREATE ACCOUNT MODE',
+
+
+
+adicionamos um 
+
+código 
+
+
+condicional,
+
+UM IF CHECK 
+
+checando 
+
+por
+
+
+'isLogin'...
+
+
+
+) ---> assim, acabamos vinculando
+
+
+
+A __UI___ 
+
+
+
+AO 
+
+
+
+FUNCIONAMENTO 'VERDADEIRO' DE NOSSO APP... (só enviamos o http request se estamos em 'create mode'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+import { useState, useRef } from 'react';
+import classes from './auth-form.module.css';
+
+function AuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
+
+
+
+  const emailRef = useRef();
+
+  const passwordRef = useRef();
+
+  function switchAuthModeHandler() {
+    setIsLogin((prevState) => !prevState);
+  }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+
+    if (!isLogin) { ///////////EIS O CÓDIGO EM QUESTÃO.
+      const enteredEmail = emailRef.current.value;
+      const enteredPassword = passwordRef.current.value;
+
+      fetch('/api/auth/signup', {
+  
+        method: 'POST',
+        body: {
+          email: enteredEmail,
+          password: enteredPassword
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+  
+      })
+      .then(
+        (res) => {
+              console.log(res.json());
+              return res.json();
+        }
+      )
+      .then(
+      (data) => {
+              console.log(data);
+      }
+      )
+      
+    }
+
+  
+}
+
+  
+
+  return (
+    <section className={classes.auth}>
+      <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
+      <form     onSubmit={
+      (event) => {
+        submitHandler(event)
+      }
+    }>
+        <div className={classes.control}>
+          <label htmlFor='email'>Your Email</label>
+          <input type='email' id='email' required ref={emailRef}/>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='password'>Your Password</label>
+          <input type='password' id='password' required  ref={passwordRef}/>
+        </div>
+        <div className={classes.actions}>
+          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          <button
+            type='button'
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? 'Create new account' : 'Login with existing account'}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
+
+export default AuthForm;
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO... MAS O QUE O PROFESSOR FEZ FOI OUTSOURCEAR A LÓGICA 
+
+DE 
+'CREATE A USER' 
+
+
+A UMA FUNÇÃO
+
+ADICIONAL,
+
+
+
+
+A FUNCAO 
+
+
+
+
+CHAMADA  
+
+DE 
+
+
+'createUser'... ---->
+
+
+
+
+
+
+vai ficar tipo assim:
+
+
+
+
+
+const createUser = (email, password) => {
+    
+
+    fetch('/api/auth/signup',
+    
+    
+    
+    )
+
+
+
+
+
+}
+
+
+-------------------------
+
+
+
+EU NÃO VOU FAZER OUTSOURCE DESSA FUNÇÃO AÍ.... é desnecessário...
+
+
+
+
+
+--> O QUE EU __eSQUECI__ foi de escrever
+
+
+'json.stringify({
+    email,
+    password
+})'
+
+
+
+
+
+
+PARA CONVERTER MEUS DADOS JAVASCRIPT EM JSON....
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+import { useState, useRef } from 'react';
+import classes from './auth-form.module.css';
+
+function AuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
+
+
+
+  const emailRef = useRef();
+
+  const passwordRef = useRef();
+
+  function switchAuthModeHandler() {
+    setIsLogin((prevState) => !prevState);
+  }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+
+    if (!isLogin) {
+      const enteredEmail = emailRef.current.value;
+      const enteredPassword = passwordRef.current.value;
+
+      fetch('/api/auth/signup', {
+  
+        method: 'POST',
+        body: 
+         json.stringify( ///necessário
+           {
+            email: enteredEmail,
+            password: enteredPassword
+           }
+         ) 
+        ,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+  
+      })
+      .then(
+        (res) => {
+              console.log(res.json());
+              return res.json();
+        }
+      )
+      .then(
+      (data) => {
+              console.log(data);
+      }
+      )
+      
+    }
+
+  
+}
+
+  
+
+  return (
+    <section className={classes.auth}>
+      <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
+      <form     onSubmit={
+      (event) => {
+        submitHandler(event)
+      }
+    }>
+        <div className={classes.control}>
+          <label htmlFor='email'>Your Email</label>
+          <input type='email' id='email' required ref={emailRef}/>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='password'>Your Password</label>
+          <input type='password' id='password' required  ref={passwordRef}/>
+        </div>
+        <div className={classes.actions}>
+          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          <button
+            type='button'
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? 'Create new account' : 'Login with existing account'}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
+
+export default AuthForm;
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK, ADICIONAMOS O HEADER,
+
+
+E TUDO O MAIS....
+
+
+
+
+
+
+
+---> O PROFESSOR ENTÃO DECIDE TRANSFORMAR 
+
+
+SUA FUNÇÃO EM UMA ASYNC FUNCTION, com async/await,
+
+
+
+PARA
+
+AÍ 
+
+fazer handle da response... --> 
+
+
+'response.json()',
+
+
+
+
+E AÍ 
+
+CHECAR 
+
+
+
+'if(!response.ok) {
+    throw new Error (data.message || 'Something went wrong')
+}
+
+
+
+
+
+
+
+
+
+--------------
+
+
+
+COM ISSO, CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+import { useState, useRef } from 'react';
+import classes from './auth-form.module.css';
+
+function AuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
+
+
+
+  const emailRef = useRef();
+
+  const passwordRef = useRef();
+
+  function switchAuthModeHandler() {
+    setIsLogin((prevState) => !prevState);
+  }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+
+    if (!isLogin) {
+      const enteredEmail = emailRef.current.value;
+      const enteredPassword = passwordRef.current.value;
+
+      fetch('/api/auth/signup', {
+  
+        method: 'POST',
+        body: 
+         json.stringify( ///necessário
+           {
+            email: enteredEmail,
+            password: enteredPassword
+           }
+         ) 
+        ,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+  
+      })
+      .then(
+        (res) => {
+
+                if (res.ok) {
+                  console.log(res.json());
+                  return res.json();
+                }
+             
+              return res.json();
+        }
+      )
+      .then(
+      (data) => {
+              console.log(data);
+      }
+      )
+      .catch(
+        (data) => {
+            console.log(data);
+            throw new Error(data.message || 'Something went wrong.')
+        }
+      )
+    }
+
+  
+}
+
+  
+
+  return (
+    <section className={classes.auth}>
+      <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
+      <form     onSubmit={
+      (event) => {
+        submitHandler(event)
+      }
+    }>
+        <div className={classes.control}>
+          <label htmlFor='email'>Your Email</label>
+          <input type='email' id='email' required ref={emailRef}/>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='password'>Your Password</label>
+          <input type='password' id='password' required  ref={passwordRef}/>
+        </div>
+        <div className={classes.actions}>
+          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          <button
+            type='button'
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? 'Create new account' : 'Login with existing account'}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
+
+export default AuthForm;
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE PODERÍAMOS USAR 
+
+inputChangedHandler (two way binding),
+
+
+
+MAS 
+
+QUE 
+
+ELE 
+
+
+PREFERE USAR
+
+
+useRef,
+
+
+PQ É MAIS FÁCIL.....
+
+
+
+
+
+
+
+
+
+
+---> OK, ELE ESCREVE EXATAMENTE A MESMA COISA QUE NÓS...
+
+
+
+
+--> PROFESSOR DECIDE SALVAR UM POUCO DE CÓDIGO E LÓGICA EM 
+
+'submitHandler',
+
+
+
+
+PQ DIZ QUE NÃO VAI ADICIONAR 
+
+VALIDATION AQUI...
+
+
+
+MAS ADICIONAMOS ERROR CASES PARA O 'CREATE USER',
+
+é claro....
+
+
+
+
+
+
+
+
+
+
+PROFESSOR ADMITE QUE PODERÍAMOS DAR AO USUÁRIO UM FEEDBACK MELHORA ACERCA DO QUE ESTÁ ACONTECENDO,
+
+
+
+
+MAS NÓS JÁ VIMOS ISSO ANTES NO CURSO, POR ISSO AQUI 
+
+ELE QUER
+FOCAR 
+
+NA PARTE 
+
+DA AUTENTICACAO (por isso só vamos console.loggar
+
+
+o resultado/erro no console...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> MAS PROFESSOR TAMBÉM APONTA QUE HÁ MAIS UMA COISA QUE DEVEMOS FAZER LÁ NA 'API ROUTE'..
+
+
+
+
+
+
+
+
+--> ISSO PQ NÓS ESTAMOS ENVIANDO UM POST REQUEST 
+
+por meio 
+
+
+desse código que executamos agora.... e, DE FATO,
+
+APENAS POST 
+
+REQUESTS DEVERÃO SER ACEITOS NAQUELA 
+
+
+API ROUTE 
+
+de 
+
+'api/auth/signup'....
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+if (req.method === 'POST') {
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    if (!email || !email.includes('@') || !password || !password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+   const hashedPassword = hashPassword(password);
+
+ const result = await db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+    console.log(result);
+
+    res.status(201).json(
+        {
+            message: 'Created user.'
+        }
+    )
+
+}
+   
+
+
+
+}
+
+
+
+export default handler;
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+ CERTO... SALVAMOS TUDO, ISSO DEVE FUNCIONAr...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CONSEGUI UM ERRO:
+
+
+ {message: "Invalid input - password should also be at least 7 characters long."}
+message: "Invalid input - password should also be at least 7 characters long."
+__proto__: Object
+
+
+
+
+------------------
+
+
+
+
+
+
+CONSERTEI OS ERROS...
+
+
+FICOU ASSIM:
+
+
+
+
+import { useState, useRef } from 'react';
+import classes from './auth-form.module.css';
+
+function AuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
+
+
+
+  const emailRef = useRef();
+
+  const passwordRef = useRef();
+
+  function switchAuthModeHandler() {
+    setIsLogin((prevState) => !prevState);
+  }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+
+    if (!isLogin) {
+      const enteredEmail = emailRef.current.value;
+      const enteredPassword = passwordRef.current.value;
+
+      fetch('/api/auth/signup', {
+  
+        method: 'POST',
+        body: 
+         JSON.stringify( ///necessário
+           {
+            email: enteredEmail,
+            password: enteredPassword
+           }
+         ) 
+        ,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+  
+      })
+      .then(
+        (res) => {
+                console.log(res);
+                if (res.ok) {
+                  console.log('LINE');
+                  return res.json();
+                }
+             
+              return res;
+        }
+      )
+      .catch(
+        (data) => {
+          console.log(data);
+        }
+        
+      )
+    }
+
+  
+}
+
+  
+
+  return (
+    <section className={classes.auth}>
+      <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
+      <form     onSubmit={
+      (event) => {
+        submitHandler(event)
+      }
+    }>
+        <div className={classes.control}>
+          <label htmlFor='email'>Your Email</label>
+          <input type='email' id='email' required ref={emailRef}/>
+        </div>
+        <div className={classes.control}>
+          <label htmlFor='password'>Your Password</label>
+          <input type='password' id='password' required  ref={passwordRef}/>
+        </div>
+        <div className={classes.actions}>
+          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          <button
+            type='button'
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? 'Create new account' : 'Login with existing account'}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
+
+export default AuthForm;
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+SE COLOCAMOS UM PASSWORD QUE É MT CURTO,
+
+IMEDIATAMENTE RECEBEMOS UMA RESPONSE DE CÓDIGO 
+
+422,
+
+
+com a error message de que 
+
+o password é 
+
+
+
+mt curto... --> poderíamos mostrar esse erro ao user,
+
+mas 
+
+não faremos issoaqui...
+
+
+
+
+
+
+---------> AÍ, LÁ NAS COLEÇÕES DO MONGODB,
+
+
+
+vamos ver nossa
+
+
+
+USERDATA -->
+
+
+
+E AÍ, VEREMOS 
+
+QUE 
+
+NOSSO PASSWORD 
+
+ESTARÁ COMO UM ___ OBJECT__ --> 
+
+
+E ISSO 
+
+ESTÁ __ SUPER ERRADO -__ --- >professor 
+
+
+diz que 
+foi/é culpa 
+
+
+dele,
+
+
+e que 
+
+isso não está correto... ---> a forma correta 
+
+de 
+
+nosso 'hashedPassword'
+
+
+é uma STRING SUPER LONGA, gerada aleatoriamente........
+
+
+
+
+Deve haver um jeito de consertar isso...
+
+
+
+
+
+
+
+
+
+--> se você estiver tendo problemas com o mongodb,
+
+
+assegure-se de que 
+vocÊ 
+
+
+ESTÁ 'WHITELISTING YOUR IP',
+
+LÁ 
+
+
+ no 'network access'...
+
+
+
+
+ --> PARECE QUE O PROBLEMA 
+
+
+
+ DO 
+
+
+
+ PASSWORD ESTAR COMO UM __ OBJETO__ É QUE 
+
+ NÓS ESQUECEMOS 
+
+
+ DE 
+
+ COLOCAR 
+
+ 'await'
+
+ em 
+
+
+ 'const hashedPassword = await hashPassword(password)',
+
+
+
+ JUSTAMENTE PQ ESSA FUNÇÃO QUE CRÍAMOS __ É UMA FUNÇÃO ASYNC___....
+
+
+
+ EX:
+ 
+
+
+
+
+
+
+ import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+if (req.method === 'POST') {
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    console.log(email, password.trim().length < 7)
+
+    if (!email || !email.includes('@') || !password || password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+   const hashedPassword = await hashPassword(password);  ////voce deve colocar 'await' no call dessa function, PQ ELA É UMA FUNCTION ASSÍNCRONA...
+
+ const result = await db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+       res.status(201).json(
+           {
+               message:'Created user.'
+           }
+       )
+    console.log(result);
+
+}
+   
+
+
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+OK, DEU CERTO....
+
+
+
+
+
+eis nossos password:
+
+
+
+
+"$2b$12$fCscEKQGeXO2w871z.k.7uz.rl06A8b9KlLaImgEt80IeOec1bqO2"
+
+
+
+-----------------------------
+
+
+SE esquecemos o 'await' keyword ali,
+
+
+
+nós acabamos ARMAZENANDO A ___PROMISE __ EM SI 
+
+
+
+EM VEZ 
+
+da 
+
+
+'hashed password'...
+
+
+
+
+---> CERTO, É ASSIM QUE PODEMOS CRIAR 
+
+
+
+USERS,
+
+
+
+TUDO POR CONTA PRÓPRIA,
+
+
+COM AS FERRAMENTAS QUE APRENDEMOS AO LONGO DO CURSO....
+
+
+
+
+
+  

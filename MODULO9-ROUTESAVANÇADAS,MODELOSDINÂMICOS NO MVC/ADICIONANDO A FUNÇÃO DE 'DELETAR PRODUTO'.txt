@@ -1,0 +1,850 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O APP ESTÁ FICANDO MAIS ENCORPADO...
+
+
+
+
+
+
+
+--> HÁ 2 COISAS EXTRAS QUE O PROFESSOR QUER ADICIONAR NESTE MÓDULO,
+
+
+
+ANTES DE ACABARMOS.. -----> PROFESSOR QUER 
+
+ASSEGURAR 
+
+QUE CONSIGAMOS 
+
+TAMBÉM 
+
+FAZER 
+
+O 
+
+'DELETE'
+
+DE 1 
+
+
+PRODUCT,
+
+
+
+
+
+E ELE TBM QUER 
+
+ASSEGURAR QUE 
+
+CONSIGAMOS 
+
+
+
+
+'SEE OUR ITEMS ON THE CART VIEW',
+
+
+
+E TAMBÉm 
+
+
+
+
+
+
+'REMOVE 
+
+THOSE ITEMS FROM THE CART'...
+
+
+
+
+
+
+
+
+
+
+-------> VAMOS TRABALHAR NO DELETE DE ITEMS...
+
+
+
+
+
+
+
+
+
+--> PODEMOS TENTAR POR CONTA PRÓPRIA...
+
+
+
+
+
+
+---> ADICIONAR UM MÉTODO LÁ EM 
+
+
+
+'product.js'... (o model)...
+
+
+
+
+
+
+
+-----------> CONSEGUI...
+
+
+
+
+
+
+
+
+CÓDIGOS FICARAM ASSIM:
+
+
+
+
+
+
+(método lá no meu MODEL de 'product.js'):
+
+
+
+
+
+static deleteProduct(productId) {
+
+  getProductsFromFile(
+      (products) => {
+        const existingProductIndex = products.findIndex(item => item.id === productId);
+        const updatedProducts = [...products];
+        updatedProducts.splice(existingProductIndex, 1);
+        fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        })
+    console.log('test');
+      }
+  )
+} 
+
+
+
+
+
+
+
+
+
+ROUTE:
+
+
+
+
+router.post('/delete-product', 
+
+adminController.postDeleteProduct)
+
+
+
+
+
+
+
+
+CONTROLLER:
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+    Product.deleteProduct(req.body.id);
+    console.log('TEST');
+    res.redirect('/');
+
+}
+
+
+
+
+
+
+
+VIEW (usei de novo o 'input HIDDEN' do professor):
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="POST">
+                <input type="hidden" name="id" value="<%= product.id %>"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+----> OK... ASSISTIMOS O VÍDEO DO PROFESSOR..
+
+
+
+
+
+
+
+
+
+--> QUEREMOS DELETAR NOSSOS PRODUCTS... -----> 
+
+
+
+
+
+
+
+
+
+NA VIEW DE 'product.ejs',
+
+
+
+JÁ TEMOS 
+
+
+
+
+1 BOTÃO DE 
+
+DELETE,
+
+
+este aqui,
+que está 
+
+wrappaddo em uma FORM , DE __PROPÓSITO__...
+
+
+
+ex:
+
+       <form action="/admin/delete-product" method="POST">
+              <button class="btn" type="submit">Delete</button>
+            </form>
+
+
+
+
+
+
+
+    
+    ---> ISSO VAI ENVIAR UM 
+
+
+
+
+    POST REQUEST 
+
+À ROUTE 
+
+DE 
+
+'/delete-product'...
+
+
+
+
+
+
+
+-> PRECISAMOS HANDLAR ESSA ROUTE, É UM BOM 
+
+STARTING POINT...
+
+
+
+
+
+
+
+
+--> professor escreve 
+
+
+
+'router.post('/delete-product');'
+
+
+
+
+
+
+
+
+
+
+
+--> COMO ESSE É UM __ POST REQUEST_ A UMA ROUTE, 
+
+
+NÃO PRECISAMOS 
+
+
+'ENCLOSE/ENCODE' QUALQUER 
+
+INFORMAÇÃO 
+
+
+
+
+
+NO NOSSO PATH NO URL... --->  EM VEZ DISSO ,
+
+
+
+PODEMOS 
+
+COLOCAR 
+
+ESSA 
+
+DATA 
+
+NO NOSSO 
+
+REQUEST BODY...
+
+
+
+
+
+
+--> DE VOLTA AO VIEW,
+
+
+
+PROFESSOR COLOCA OUTRO 
+
+INPUT 
+
+'HIDDEN',
+
+
+
+mais uma vez...
+
+
+ex:
+
+
+
+  <form action="/admin/delete-product" method="POST">
+            <input type="hidden" name="id" value="<%= product.id %>"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+
+
+
+
+
+
+
+
+
+---------> O VALOR SERÁ 
+
+
+'product.id',
+
+
+
+
+
+
+
+
+E 
+
+O NAME 
+
+será 
+
+'id'.... --> VAMOS EXTRAIR ESSA INFORMAÇÃO 
+
+POR NOME...
+
+
+
+
+
+
+
+
+
+
+---> OK...
+
+
+O PRÓXIMO PASSO É MEXER NO CONTROLLER...
+
+
+
+
+
+
+
+--> ADICIONAMOS UMA ACTION/CONTROLLER PARA O __dELETE DE UM PRODUCT__...
+
+
+
+
+
+--> 
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+
+
+
+
+}
+
+
+
+
+
+
+
+OK... O Q O PROFESSOR VAI QUERER FAZER AÍ?
+
+
+
+
+
+
+--> bem, ele vai 
+
+
+PEGAR O PRODUCTID,
+
+PRIMEIRAMENTE...
+
+
+
+
+EX:
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+const productId = req.body.id;
+
+}
+
+
+
+
+
+
+
+
+
+--> MAS A MAGIA DE VERDADE ACONTECERÁ NO NOSSO 
+
+
+
+MODEL DE 'product'...
+
+
+
+
+
+
+
+
+
+
+--> EU JÁ TENHO O MÉTODO 
+
+DE 
+
+'save',
+
+MAS AGORA 
+
+É HORA 
+
+DE __DELETE_ _ A PRODUCT..
+
+
+
+
+
+
+
+
+
+--> ADICIONAMOS UM MÉTODO 'delete' ali dentro... ------> 
+
+
+
+E O PROFESSOR VAI QUERER 
+
+
+
+TRANSFORMAR 
+
+ESSE 
+
+
+
+MÉTODO 
+
+
+EM 
+
+UM MÉTODO ESTÁTICO (só existirá DIRETAMENTE NA CLASS de 'Product',
+
+
+E NÃO 
+EXISTIRÁ EM SUAS INSTÂNCIAS..)
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+ele 
+escreve:
+
+
+
+
+static delete(id) {
+
+
+
+}
+
+
+
+
+
+
+
+-----> OK... PRIMEIRAMENTE,
+
+
+PRECISAMOS 
+
+
+
+
+___ 'FIND OUT WHICH PRODUCT TO REMOVE',
+
+
+
+
+
+E AÍ COPIAR O ARRAY DE PRODUCTS DA FILE (getProductsFromFile),
+
+
+
+
+
+AÍ VAI ENCONTRAR O INDEXADOR DO PRODUCT QUE ELE VAI QUERER 
+
+
+DELETAR,
+
+E AÍ 
+
+VAI 
+
+
+EDITAR 
+
+
+
+esse 
+
+'updatedProductsArray',
+
+
+
+
+RODANDO UM 
+
+
+'.splice(existingProductIndex, 1)' 
+
+
+
+
+PARA 
+
+
+
+__REMOVER__ ESSE 
+
+
+ITEM ESPECÍFICO DE NOSSO ARRAY DE PRODUCTS...
+
+
+
+o código completo, portanto, vai ficar assim:
+
+
+
+
+
+
+
+
+
+static deleteProduct(productId) {
+
+  getProductsFromFile(
+      (products) => {
+        const existingProductIndex = products.findIndex(item => item.id === productId);
+        const updatedProducts = [...products];
+        updatedProducts.splice(existingProductIndex, 1);
+        fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        })
+    console.log('test');
+      }
+  )
+} 
+
+
+
+
+
+
+-----> PROFESSOR ESCREVE UM CÓDIGO AINDA MAIS CONCISO,
+
+
+ele usa 
+
+
+'.filter()',
+
+
+PARA 
+
+FILTRAR 
+
+TODOS 
+
+
+OS 
+
+
+PRODUCTS QUE NÃO SATISFAÇAM NOSSO CRITÉRIO DE ID...
+
+
+
+ex:
+
+
+
+
+
+static deleteProduct(id) {
+
+  getProductsFromFile(
+      (products) => {
+        const updatedProducts = products.filter(prod => prod.id !== id);
+        fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        })
+      }
+  )
+} 
+
+----------------------------------
+
+
+
+
+OK.... ISSO REALMENTE FUNCIONARÁ...
+
+(meu código tbm funcionava, mas era menos óptimo...)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+  getProductsFromFile( //versão do professor (mais optimizada).
+    (products) => {
+      const updatedProducts = products.filter(prod => prod.id !== id);
+      fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+        console.log(err);
+      })
+  console.log('test');
+    }
+)
+} 
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+---> ___OK... -->  AÍ TEMOS 
+
+AQUELE 
+
+
+BLOCK DE 
+
+'err'... ------> 
+
+
+
+
+SE O NEGÓCIO, ESSA OPERAÇÃO DE 'WRITE', 
+
+NÃO DER THROW DE QUALQUER ERRO,
+
+
+___ EU VOU QUERER __ 
+
+TAMBÉM 
+
+REMOVER 
+
+AQUELE 
+
+
+PRODUCT 
+
+
+
+
+
+
+__DO CART TAMBÉM.... (pq não é lógico eu ainda ter esse product no cart SE ESSE PRODUCT NÃO EXISTIR MAIS... ) -------> 
+
+
+
+
+
+
+COMO PRÓXIMO ETAPA,
+
+
+
+
+__TRABALHAREMOS NO CART,
+
+E ASSEGURAREMOS 
+
+
+
+
+QUE 
+
+___CONSIGAMOS ___ TAMBÉM REMOVER ___ 
+
+
+ITEMS DE LÁ...  (uma funcionalidade que VAMOS PRECISAR DE QUALQUER FORMA, mesmo não pensando nesse case específico...)

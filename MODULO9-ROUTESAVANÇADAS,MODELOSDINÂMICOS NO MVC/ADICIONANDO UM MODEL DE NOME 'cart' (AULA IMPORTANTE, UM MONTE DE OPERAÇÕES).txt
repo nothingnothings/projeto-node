@@ -1,0 +1,3707 @@
+
+
+
+
+
+
+
+
+
+
+-------> AGORA VAMOS TRABALHAR COM O CART...
+
+
+
+
+
+
+
+
+--> NÃO TEMOS NENHUM MODEL DE 'cart',
+
+
+apenas 1 
+
+model de 
+
+'product'... --> devemos criar 1 
+
+arquivo 
+
+
+'cart.js'
+
+
+lá 
+
+em 
+
+'models'
+
+
+
+
+
+
+
+
+
+
+
+--> O 'CART' É BASICAMENTE UMA __ENTIDADE__ SEPARADA NO NOSSO PROJETO,
+
+POR ASSIM DIZer..
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+novamente vamos 
+
+ESCREVER O EXPORT DE UMA CLASS...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+module.exports = class Cart {
+
+
+        constructor() {
+
+        }
+
+}
+
+
+
+
+
+
+--------------------------------
+
+
+
+OK.. AGORA DEVEMOS PENSAR SOBRE __ COMO VAMOS QUERER FAZER 'MANAGE' 
+
+DESSE 
+
+CART...
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE OBVIAMENTE 
+
+VAMOS QUERER 
+
+TER 
+
+1 
+
+CART 
+
+COM 
+
+
+
+'TODOS OS PRODUCTS QUE ADICIONAMOS/QUE JOGAMOS NELE'... 
+
+
+
+
+
+
+
+
+--> E É CLARO QUE __TAMBÉM VAMOS QUERER__ 
+
+
+AGRUPAR OS 
+
+OBJECTS POR 
+
+'productId'/'id',
+
+
+
+TUDO 
+
+PARA QUE 
+
+
+CONSIGAMOS 
+
+
+__AUMENTAR/DIMINUIR SEU COUNTER 
+
+
+DE 
+
+ACORDO 
+
+
+COM 
+
+
+AS VEZES QUE 
+
+O 
+
+
+USUÁRIO OS COLOCA NO CARRINHO...
+
+
+
+
+
+
+
+
+
+------> OK..... --> PARA FAZER TUDO ISSO,
+
+
+
+
+
+O PROFESSOR PRIMEIRAMENTE CRIA UM CONSTRUCTOR.. ----> ESSE CONSTRUCTOR 
+
+VAI NOS DEIXAR CRIAR UM NOVO 
+
+'cart' object...
+
+
+
+
+
+
+--> E QUANDO ESSE OBJECT FOR CRIADO,
+
+
+VAMOS QUERER UMA PROPRIEDADE 
+
+
+
+
+de 'products',
+
+O QUAL __ DEVERÁ __ SER UM ARRAY...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+module.exports = class Cart {
+
+
+        constructor() {
+                    this.products = [];
+        }
+
+}
+
+
+
+
+
+
+
+
+--------> E DENTRO DESSE ARRAY,
+
+PROFESSOR IMAGINA QUE VAMOS TER UM OBJECT/OBJECTS,
+
+
+
+OBJECT 
+
+
+
+QUE VAI 
+
+
+
+
+
+
+TER O ID __ e também a 'quantidade' 
+
+DAQUELE DETERMINADO PRODUCT...
+
+
+
+
+
+
+
+
+----> PROFESSOR TBM DIZ QUE PODEMOS ADICIONAR UMA 
+
+
+
+__INFORMAÇÃO/PROPRIEDADE 
+
+como 
+
+'totalPrice',
+
+QUE INICIALMENTE PODE ser '0'...
+
+
+
+
+ex:
+
+
+
+
+module.exports = class Cart {
+
+
+        constructor() {
+                    this.products = [];
+                    this.totalPrice = 0;
+        }
+
+}
+
+
+
+
+
+-----------------------------
+
+
+
+
+--> E É CLARO QUE ESSE VALOR 
+
+DE 
+
+'totalPrice'
+
+DEVERÁ __ AUMENTAR PARA __ CADA PRODUCT QUE ADICIONARMOS NAQUELE 
+
+
+ARRAY 
+
+DE 
+
+'this.products'...
+
+
+
+
+
+
+
+
+
+---> CERTO.... MAS O QUE PRECISAMOS, NESSE OBJETO/constructor function/model de 'cart',
+
+
+
+_ É UMA MANEIRA __ DE FAZER 
+
+
+ADD E REMOVE 
+
+
+DE 
+
+
+PRODUCTS...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+VAMOS PRECISAR 
+
+DE 
+
+2 MÉTODOS...
+
+
+
+
+
+
+
+
+-------------> MAS QUANTO A ISSO, TEMOS 1 
+
+
+PROBLEMA:
+
+
+
+
+
+
+
+O 'CART ITSELF'
+
+
+_NÃO É UM OBJECT QUE VAMOS 
+
+ACTUALLY 'constantly recreate'... -> ISSO SIGNIFICA QUE 
+
+
+___NÓS NÃO VAMOS RECRIAR 
+
+
+
+
+NOSSO 
+
+
+
+MODEL 'CART' 
+
+A 
+
+CADA 
+
+
+
+NOVO PRODUCT QUE 
+
+ADICIONARMOS A ELE.... -------> 
+
+
+
+
+
+
+
+
+EM VEZ DE SEMPRE 'CRIAR UM NOVO CART',
+
+
+
+__VAMOS QUERER __ SEMPRE 
+
+TER 
+
+ 
+
+
+ UM ÚNICO CART,
+
+
+
+ SINGULAR... -------> 
+
+
+
+
+ SEMPRE EXISTIRÁ UM CART 
+
+
+
+ NO NOSSO APP,
+
+
+
+ E APENAS 
+
+ VAMOS QUERER 
+
+
+ FAZER 
+
+ MANAGE 
+
+ DOS 
+
+ 'PRODUCTS' 
+
+
+
+
+ QUE FICAM/SÃO ADICIONADOS AO SEU INTERIOR... (
+
+
+
+
+
+
+
+
+
+
+ )
+
+
+
+
+
+
+
+
+
+ É POR ISSO 
+
+
+
+ QUE O APPROACH QUE O PROFESSOR DECIDE SEGUIR É UM __BEM DIFERENTE.... --> 
+
+
+
+ ELE 
+
+
+
+ __NÃO VAI QUERER ESCREVER/ADICIONAR UM CONSTRUCTOR,
+
+ JUSTAMENTE 
+
+ PQ 
+
+ ___ELE NÃO VAI INSTANCIAR 
+
+
+ o 'Cart'.... ----->
+
+
+
+
+
+
+ Ex:
+
+
+ module.exports = class Cart {
+
+}
+
+
+
+
+
+
+--------------
+
+
+
+
+
+
+--> EM VEZ DISSO,
+
+
+
+O PROFESSOR ADICIONA UM MÉTODo 
+
+
+
+___ESTÁTICO__ CHAMADO DE 
+
+'addProduct'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+ module.exports = class Cart {
+
+
+        static addProduct() {
+
+        }
+
+
+}
+
+
+
+
+
+
+
+
+
+--> ESSE 
+
+
+'addProduct'
+VAI 
+
+SEMPRE 
+
+ACEITAR/EXIGIR __ O ID DO PRODUCT QUE 
+
+
+
+QUEREMOS/O USUÁRIO QUER QUE SEJA ADICIONADO AO CART...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+
+        }
+
+
+}
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+--> E O OBJETIVO, AQUI, 
+
+SERÁ 
+
+
+BASICAMENTE 
+
+
+'''FETCH THE PREVIOUS/OLD CART FROM OUR FILE''' (por enquanto),
+
+
+
+
+E AÍ 
+
+
+__ANALISAr__ SE NESSE 
+
+
+CART_ _ NÓS JÁ TEMOS AQUELE PRODUCT OU NÃO.... ('Find existing product')...
+
+
+
+
+
+
+
+
+
+---> POR FIM, VAMOS 'ADD NEW PRODUCT/INCREASE THE PRODUCT QUANTITY'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+                //fetch the previous cart
+                //analyze the cart => find existing product 
+                //add new product/increase the already existing product's quantity....
+        }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+--> É ISSO QUE PLANEJAMOS FAZER..
+
+
+
+
+
+
+
+
+
+----> E DEVEMOS __ COMEÇAR __ PELO 
+
+
+ADD  
+
+
+DA LÓGICA 
+
+
+
+'FOR FETCHING A CART FROM A FILE'...
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+PROFESSOR IMPORTA O MODULE DE FILESYSTEM LÁ 
+
+
+
+no 
+
+'cart.js'....
+
+
+
+
+TAMBÉM VAI QUERER O 'PATH'....
+
+
+eX:
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+                //fetch the previous cart
+                //analyze the cart => find existing product 
+                //add new product/increase the already existing product's quantity....
+        }
+
+
+}
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+-----> OK... AÍ 
+
+
+
+
+
+__ JÁ SABEMOS COMO NOSSO PATH DEVE SER CONSTRUÍDO... (basta ver o código de 'product.js', nosso MODEL...)
+
+
+
+
+
+
+
+
+--> O PATH SERÁ O MESMO QUE JÁ CONSTRUÍMOS EM 'product.js',
+
+
+MAS A DIFERENÇA É QUE 
+VAMOS 
+
+QUERER UM 
+
+ARQUIVO 
+
+DE 
+
+
+'cart.json',
+
+
+E NÃO 
+
+DE 
+
+
+'product.js'....
+
+
+
+
+
+-------------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+
+
+
+
+const filePath = path.join(
+    path.dirname(process.mainModule.filename),
+    'data',
+    'cart.json'
+)
+
+
+
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+                //fetch the previous cart
+                //analyze the cart => find existing product 
+                //add new product/increase the already existing product's quantity....
+        }
+
+
+}
+
+
+
+
+---------------------
+
+
+
+
+CART.JSON --> AÍ 
+
+
+
+VAMOS ARMAZENAR UM __ OBJECT__ QUE 
+
+VAI 
+
+REPRESENTAR O NOSSO 'CART'....
+
+
+
+
+
+
+
+
+
+--> E AÍ, LÁ EM BAIXO,
+
+
+
+
+em 
+
+'static addProduct(productId){}',
+
+
+PROFESSOR DIZ QUE 
+
+
+VAI 
+
+
+__USAR__ O FILESYSTEM (fs)
+
+
+PARA 
+
+
+
+
+_____FAZER __ READ DE UMA FILE.... ------> E A FILE QUE SERÁ 
+
+'READ' 
+
+
+
+
+_SERÁ JUSTAMENTE__ O ARQUIVO 'cart.js', representado por aquele 'filePath'....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+
+
+
+
+const filePath = path.join(
+    path.dirname(process.mainModule.filename),
+    'data',
+    'cart.json'
+)
+
+
+
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+                //fetch the previous cart
+                fs.readFile(p, 
+                () => {} 
+
+                )
+                //analyze the cart => find existing product 
+                //add new product/increase the already existing product's quantity....
+        }
+
+
+}
+
+
+
+------------------------------------
+
+
+
+
+E É CLARO QUE EM 'readFile'
+
+
+
+NÓS __ VAMOS RECEBER
+
+
+UM CALLBACK,
+
+um callback 
+
+em que 
+
+EU VOU OU CONSEGUIR UM ERROR ('err')
+
+OU UM FILECONTENT...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+
+
+
+
+const filePath = path.join(
+    path.dirname(process.mainModule.filename),
+    'data',
+    'cart.json'
+)
+
+
+
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+                //fetch the previous cart
+                fs.readFile(p, 
+                (err, fileContent) => {} 
+
+                )
+                //analyze the cart => find existing product 
+                //add new product/increase the already existing product's quantity....
+        }
+
+
+}
+
+
+
+-------------------------------------
+
+
+
+
+
+
+--> OK... E SE TIVERMOS UM ERROR,
+
+SABEREMOS/SABEMOS QUE 
+
+A 
+
+
+FILE __ NÃO EXISTE AINDA... --> E POR ISSO VAMOS IMITAR O CÓDIGO DE 'product.js'...
+
+
+
+
+
+
+
+O CÓDIGO DE 'product.js' ERA:
+
+
+
+
+
+
+
+
+
+
+const getProductsFromFile = (callback) => {
+
+
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    }
+
+    else {
+    callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+--> E AQUI VAMOS QUERER FAZER ALGO PARECIDO,
+
+TIPO:
+
+ module.exports = class Cart {
+
+
+        static addProduct(productId) {
+                //fetch the previous cart
+                fs.readFile(p, 
+                (err, fileContent) => {
+                    if(err) {
+                        return [];
+                    }
+                    else {
+
+                    }
+
+
+
+                } 
+
+                )
+                //analyze the cart => find existing product 
+                //add new product/increase the already existing product's quantity....
+        }
+
+
+}
+
+
+
+
+
+
+
+--> ISSO PQ SE NÓS CONSEGUIMOS UM 'error',
+
+ISSO SIGNIFICA/SIGNIFICARÁ QUE UM 
+'CART'
+
+
+
+DEVERÁ SER CREATED... --> CASO CONTRÁRIO, 
+
+SABEREMOS QUE 
+
+
+
+JÁ 
+
+TEMOS UM 'EXISTING CARD', que deverá ter ITEMS ADICIONADOS/REMOVIDOS A ELE... 
+
+
+
+
+
+
+
+
+-> OK.... MAS O PROFESSOR ESCREVE SEU CÓDIGO DE MANEIRA UM POUCO DIFERENTE...
+
+
+--> ELE DECIDE ADICIONAR UMA VARIÁVEL 'cart', que segurará 
+
+UMA PROPRIEDADE 'products', QUE 
+
+
+SEGURA UM EMPTY ARRAY... 
+
+
+
+
+
+
+
+
+ele escreve assim:
+
+
+
+fs.readFile(filePath, (err, fileContent) => {
+        
+                let cart = {products: [], totalPrice: 0}
+
+        if (!err) {
+
+        }
+
+
+})
+
+
+
+
+
+---------------------
+
+
+OBS::: ELE TAMBÉM COLOCA UM 'totalPrice',
+
+
+
+
+PQ ISSO 
+
+
+
+
+TAMBÉM É ALGO NECESSÁRIO.. ---> O PRICE INICIAL SERÁ 0, É CLARO...
+
+
+
+
+
+
+--> OK.... E ESSE CART 
+
+
+
+
+ficando como UM OBJETO 
+
+com 
+
+'products: []'
+
+
+
+
+E 
+
+'totalPrice: 0' 
+
+
+
+
+
+_SÓ FICARÁ ASSIM EM CASO DE ERROR... (quando o arquivo não existir inicialmente).... --> É POR ISSO 
+
+
+
+QUE NOSSO 
+
+BLOCK 
+
+
+DE 
+
+
+'if (!err)' 
+
+
+
+VAI EXECUTAR LÓGICA DISTINTA
+,
+
+
+
+
+__ LÓGICA EXECUTADA EM CIMA DE 'fileContent',
+
+
+ESSE parâmetro que 
+
+será 
+
+obtido 
+
+
+pela 
+
+
+CALLBACK FUNCTION ('() => {}' ) 
+
+
+
+DE 
+
+
+'readFile',
+
+CASO TUDO DÊ CERTO...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+fs.readFile(filePath, (err, fileContent) => {
+        
+                let cart = {products: [], totalPrice: 0}
+
+        if (!err) {
+
+        }
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+--> SE NÃO TIVERMOS UM ERROR,
+
+
+
+SABEMOS QUE 
+
+TEMOS 
+
+1 
+
+'EXISTING CART',
+
+um 
+
+arquivo cart já existente,
+
+
+
+
+POR ISSO NESSE 
+
+CASO VAMOS QUERER 
+
+
+
+que 
+o 
+
+
+cart 
+
+seja 
+
+igual 
+
+
+
+a 'THE PARSED FILE CONTENT' (ou seja, vamos pegar a JSON DATA do nosso arquvio e VAMOS CONVERTER EM JAVASCRIPT PARA PODER RODAR CÓDIGO EM CIMA DESSA DATA...)... ------> 
+
+
+
+É POR ISSO QUE 
+
+
+
+O PROFESSOR VAI ESCREVER:
+
+
+
+
+
+'cart = JSON.parse(fileContent);'....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+fs.readFile(filePath, (err, fileContent) => {
+        
+                let cart = {products: [], totalPrice: 0}
+
+        if (!err) {
+                cart = JSON.parse(fileContent);
+        }
+
+
+})
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+module.exports = class Cart {
+
+
+    static addProduct(productId) {
+            //fetch the previous cart
+            fs.readFile(filePath, (err, fileContent) => { //////// CÓDIGO BEM PARECIDO COM AQUELE VISTO LÁ em 'getProductsFromFile', lá no MODEL de 'product.js'...
+
+
+                let cart = {products: [], totalPrice: 0}
+
+                if(!err) { /////// CÓDIGO BEM PARECIDO COM AQUELE VISTO LÁ em 'getProductsFromFile', lá no MODEL de 'product.js'...
+                    cart = JSON.parse(fileContent);
+                }
+
+            })
+            
+            //analyze the cart => find existing product 
+            //add new product/increase the already existing product's quantity....
+    }
+
+
+}
+
+
+
+
+
+
+-----------
+
+
+
+
+
+
+
+---> CERTO.... 
+
+
+AGORA, NESSE MOMENTO AÍ,
+
+
+
+__DEPOIS __ DAQUELE 
+
+IF STATEMENT 
+
+
+De 
+
+'if(!err){}'
+,
+ 
+
+
+
+
+NÓS SABEMOS __ COM CERTEZA ABSOLUTA_ _QUE 
+
+
+JÁ TEMOS 
+
+1 CART... ------> 
+
+
+
+
+E AGORA,
+ 
+ PORTANTO,
+
+
+
+
+
+PODEMOS O ANALISAR, ANALISAR O _ CART_ E AÍ __ ADICIONAR 
+
+1 PRODUCT...
+
+
+
+
+
+('Analyze the cart => find existing product') .... 
+
+
+
+
+
+
+
+
+
+--> DEVMEOS ANALISAR O CART E 
+
+
+__ DESCOBRIR SE O PRODUCT QUE ESTAMOS TENTANDO ADDAR 
+
+__JÁ EXISTE OU NÃO...
+
+
+
+
+
+
+
+
+--> PARA ISSO, É CLARO QUE VAMOS PRECISAR DE UM 
+
+
+
+'find'...
+
+
+
+
+
+--> PARA ISSO,
+
+
+PROFESSOR VAI ESCREVER:
+
+
+
+
+'
+const existingProduct = cart.products.find(
+    (item, index) => {
+           return item.id === productId
+    }
+)
+
+'
+
+
+
+
+
+
+--> OK...... E É CLARO QUE ESSE NEGÓCIO VAI NOS RETORNAR __ OU
+
+
+
+
+
+
+
+--> CERTO... e SE ESSE NEGÓCIO VOLTAR COMO 
+
+'truthy',
+
+
+
+__VAMOS QUERER __ RODAR OUTRA LÓGICA __ de add.. 
+
+
+
+
+
+
+--> OU SEJA,
+
+PROFESSOR ESCREVE:
+
+
+
+
+if (existingProduct) {
+
+
+
+}
+
+
+
+
+
+
+
+
+
+--> SE TIVERMOS JÁ UM 'EXISTING PRODUCT' PARA AQUELE ID,
+
+SÓ VAMOS QUERER __ 
+
+
+'INCREASE THAT PRODUCT'S QUANTITY'... ------> E PARA 
+
+
+
+
+
+RODAR A LÓGICA  
+
+
+
+
+NECESSÁRIA PARA AUMENTAR ESSA QUANTITY,
+
+
+VAMOS TER QUE 
+
+
+__ASSEGURAR/CERTIFICAR __ QUE 
+
+
+CADA 
+
+
+OBJETO/MODEL 
+
+
+'product'
+
+
+
+TENHA UM 
+
+FIELD 
+
+de 
+
+'quantity'
+
+
+NO SEU INTERIOR... ----> 
+
+
+
+
+
+
+
+
+
+E SE REALMENTE TIVERMOS 
+
+
+
+
+1 PRODUCT 
+
+IGUAL NO NOSSO 
+
+__ 'CART',
+
+
+
+PROFESSOR 
+
+VAI QUERER __ CRIAR UM 
+
+
+'updatedProduct'
+
+
+
+IGUAL AO PRODUCT ANTIGO,
+
+
+MAS 
+
+
+COM UM FIELD 
+
+
+de 
+
+'quantity'
+
+
+AUMENTADO EM 1....
+
+
+
+
+
+
+ex:
+
+
+const existingProduct = cart.products.find(prod => prod.id === id);
+let updatedProduct;
+
+if (existingProduct) {
+
+    updatedProduct = {
+        ...existingProduct,
+        quantity: existingProduct.quantity++
+    }
+}
+
+
+
+
+
+
+
+
+
+
+(EU __ACHO QUE __ ESSE CÓDIGO VAI FUNCIONAR, MAS 
+
+A VERSÃO DO PROFESSOR FICOU UM POUCO DIFRENTE DA MINHA... FICOU ASSIM):
+
+
+
+
+
+
+
+
+const existingProduct = cart.products.find(prod => prod.id === id);
+let updatedProduct;
+
+if (existingProduct) {
+
+    updatedProduct = {
+        ...existingProduct
+    }
+
+    updatedProduct.quantity = updatedProduct.quantity++
+}
+
+
+
+
+
+
+
+
+
+
+(TALVEZ ISSO NÃO FUNCIONE, MINHA VERSÃO,
+ 
+ 
+ PQ 
+ 
+ 
+ EU ESTOU ACOSTUMADO COM O CÓDIGO DO REDUX/REACT... não sei se é o mesmo mecanismo, aqui...)
+
+
+
+
+
+
+
+
+
+
+ -----> ok.... INCREMENTAMOS A QUANTIDADE... --->
+  
+
+
+
+
+  MAS AGORA PRECISAMOS 
+
+
+  ESCREVER O CASE DE 'O PRODUTO AINDA NÃO EXISTIA'...
+
+
+
+  ---> nesse case,
+
+
+
+  VAMOS QUERER
+
+
+
+
+
+
+  ESCREVER 
+
+
+
+
+  '
+  
+  
+  else {
+
+  
+  updatedProduct = {
+
+  }
+
+
+
+
+  }
+
+
+
+
+
+  --> OU SEJA,
+
+
+
+  O 'updatedProduct'
+
+
+
+  __sERÁ UM NOVO OBJETO JAVASCRIPT,
+
+  OBJETO EM QUE 
+
+  VOU ADICIONAR INFO PARA AQUELE PRODUCT... ------> 
+
+
+
+
+
+  E ESSA INFO SERÁ:
+
+
+  1) o ID  
+
+
+
+
+  ex:
+
+
+  updatedProduct = {id: id }
+
+
+
+
+
+
+
+  2) E DEFINIREMOS A 'QUANTITY' COMO SENDO '1',
+
+  PQ VAMOS TER ADICIONADO SÓ 1.....
+
+
+
+
+
+  ex:
+
+
+
+
+
+    updatedProduct = {id: id,
+                        quantity: 1
+    
+     }
+
+
+
+
+
+
+
+
+------> A ÚLTIMA COISA A FAZER,  NESSE NOSSO MÉTODO 
+
+DE 
+
+'addProduct',
+
+
+
+
+_ _É UPDATAR__ O PREÇO __ 
+
+
+
+DO CART EM SI...
+
+
+
+
+
+
+----- TEMOS AQUELE 'TOTALPRICE'....
+
+
+
+
+
+O TOTAL PRICE DEVERÁ SER AUMENTADO DE ACORDO COM O PRICE DO PRODUCT QUE ADICIONAMOS... --> 
+
+
+MAS NÓS NÃO TEMOS ESSA INFO NESSE NOSSO CÓDIGO, ATÉ AGORA...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+module.exports = class Cart {
+
+
+    static addProduct(productId) {
+            //fetch the previous cart
+            fs.readFile(filePath, (err, fileContent) => { 
+
+
+                let cart = {products: [], totalPrice: 0}
+
+                if(!err) { 
+                    cart = JSON.parse(fileContent);
+                }
+            //analyze the cart => find existing product 
+
+            const existingProduct = cart.products.find(
+                (item, index) => {
+                       return item.id === productId
+                }
+            )
+                
+                  //add new product/increase the already existing product's quantity....
+
+            let updatedProduct;
+                if (existingProduct) {
+                    updatedProduct = {
+                        ...existingProduct 
+                    }
+
+                    updatedProduct.quantity = updatedProduct.quantity++;
+                } else {
+                    updatedProduct = {id: productId, 
+                                        quantity: 1}
+
+
+                }
+          
+
+      
+            })
+   
+    }
+
+
+}
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+É POR ISSO QUE VAMOS 'EXPECT' RECEBER ESSE ARGUMENTO LÁ 
+
+
+Em 
+
+
+'addProduct',
+
+PARA QUE 
+
+SEJA REPASSADO NESTE LOCAL....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = class Cart {
+
+
+    static addProduct(productId, productPrice) { 
+            //fetch the previous cart
+            fs.readFile(filePath, (err, fileContent) => { 
+
+
+                let cart = {products: [], totalPrice: 0}
+
+                if(!err) { 
+                    cart = JSON.parse(fileContent);
+                }
+            //analyze the cart => find existing product 
+
+            const existingProduct = cart.products.find(
+                (item, index) => {
+                       return item.id === productId
+                }
+            )
+                
+                  //add new product/increase the already existing product's quantity....
+
+            let updatedProduct;
+                if (existingProduct) {
+                    updatedProduct = {
+                        ...existingProduct 
+                    }
+
+                    updatedProduct.quantity = updatedProduct.quantity++;
+                } else {
+                    updatedProduct = {id: productId, 
+                                        quantity: 1}
+
+
+                }
+
+
+
+      
+            })
+   
+    }
+
+
+}
+
+
+
+
+
+
+
+-> TIPO ASSIM:
+
+
+
+
+
+    static addProduct(productId, productPrice) { ///////CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+------> AÍ, DEPOIS DO 'if/else' block,
+
+
+PROFESSOR VAI QUERER SIMPLESMENTE 
+
+
+DEFINIR 
+
+
+
+'cart.totalPrice = cart.totalPrice + productPrice;'...
+
+
+
+
+
+
+
+
+----> ISSO AÍ VAI DEFINIR/REDEFINIR O VALOR DA PROPRIEDADE 
+
+
+'totalPrice'
+
+DENTRO DESSA NOSSA VARIÁVEL 'cart'.... que é aquilo que desejamos....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = class Cart {
+
+
+    static addProduct(productId, productPrice) {
+            //fetch the previous cart
+            fs.readFile(filePath, (err, fileContent) => { //////// CÓDIGO BEM PARECIDO COM AQUELE VISTO LÁ em 'getProductsFromFile', lá no MODEL de 'product.js'...
+
+
+                let cart = {products: [], totalPrice: 0}
+
+                if(!err) { /////// CÓDIGO BEM PARECIDO COM AQUELE VISTO LÁ em 'getProductsFromFile', lá no MODEL de 'product.js'...
+                    cart = JSON.parse(fileContent);
+                }
+
+
+            const existingProduct = cart.products.find(
+                (item, index) => {
+                       return item.id === productId
+                }
+            )
+                
+                  //add new product/increase the already existing product's quantity....
+
+            let updatedProduct;
+                if (existingProduct) {
+                    updatedProduct = {
+                        ...existingProduct 
+                    }
+
+                    updatedProduct.quantity = updatedProduct.quantity++;
+
+                } else {
+                    updatedProduct = {id: productId, 
+                                        quantity: 1}
+
+
+                }
+          
+                cart.totalPrice = cart.totalPrice + productPrice;
+      
+            })
+   
+    }
+
+
+}
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+---> OK... AGORA, PORTANTO,
+
+
+
+NÓS TEREMOS:
+
+
+
+
+1) NOSSO PRODUCT ENCONTRADO
+
+
+
+
+
+2) PRODUCT ANALISADO 
+
+
+
+
+3) PRODUCT ADICIONADO/PRODUCT TEVE SUA QUANTIDADE AUMENTADA POR 1....
+
+
+
+
+
+4) PREÇO NO CART É UPDATADO A PARTIR 
+
+DESSES ADDS DE PRODUCT...
+
+(
+
+        por meio de 'productPrice' e 'totalPrice'...
+)
+
+
+
+
+
+---> AGORA SÓ PRECISAMOS 
+
+'SAVE THE CART'
+
+_ DE VOLTA AO NOSSO ARQUIVO 
+
+
+'cart.json'...
+
+
+
+
+
+
+------->  E, É CLARO, O CART DEVE AGORA TAMBÉM conter o 
+
+
+'updated product', 
+
+
+
+ISSO TAMBÉM É IMPORTANTE...
+
+
+
+
+
+
+
+
+---> PARA ISSO, PRECISAMOS DE UM CÓDIGO ALÉM DE 'cart.totalPrice = cart.totalPrice + productPrice;'...
+
+
+
+
+
+---> PRECISAMOS DE ALGO COMO 
+
+
+'cart.products = [
+
+        ...cart.products,
+        E AÍ O PRODUCT NOVO..
+]
+
+'
+
+
+
+
+
+
+--> MAS É CLARO QUE ESSE STATEMENT AÍ VAI DEPENDER 
+
+
+
+___DA COISA QUE EU VOU QUERER FAZER... ----> 
+
+
+
+SE EU VOU QUERER 
+
+
+__CRIAR 1 PRODUCT__ 
+
+
+
+QUE NÃO EXISTE AINDA NO CART (for the first time),
+
+
+
+
+
+
+AÍ EU VOU SIMPLESMENTE ADICIONAR 
+
+
+
+'updatedProduct', COMO O 
+
+
+CRIEI NO ELSE BLOCK...
+
+
+
+
+
+eX:
+
+
+
+
+
+else {
+
+        updatedProduct = {id: id, quantity: 1};
+        cart.products = [
+                ...cart.products,
+                updatedProduct
+        ]
+}
+
+
+
+
+
+--------------------------------
+
+
+
+ENTRETANTO, SE EU _JÁ TENHO 1 'EXISTING PRODUCT' ,
+
+
+
+ou seja,
+
+
+
+se ESTOU NAQUELE IF BLOCK DE 
+
+
+
+
+
+
+if (existingProduct) {
+
+        updatedProduct = {...existingProduct}
+        updatedProduct.quantity = updatedProduct.quantity + 1;
+}
+,
+
+
+
+
+__ EU NÃO VOU QUERER ___ ADICIONAR 1 NOVO PRODUCT... (vou querer 
+
+
+MANTER O ANTIGO, 
+
+E SÓ 
+
+
+DEIXAR ESSE CÓDIGO DE 'quantity + 1', que já vai ser suficiente...)
+
+
+
+
+
+
+
+
+
+EX(CÓDIGO COMPLETO):
+
+
+fs.readFile(filePath, (err, fileContent) => {
+
+
+                let cart = { products: [], totalPrice: 0};
+
+                if (!err) {
+                        cart = JSON.parse(fileContent);
+                }
+
+})
+
+
+const existingProduct = cart.products.find(prod => prod.id === id);
+
+let updatedProduct;
+
+
+if(existingProduct) {
+
+        updatedProduct = {...existingProduct};
+        updatedProduct.quantity = updatedProduct.quantity + 1;
+
+} else {
+
+        updatedProduct = { id: id, quantity: 1};
+        cart.products = [...cart.products, updatedProduct];
+}
+
+cart.totalPrice = cart.totalPrice + productPrice;
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+NESSE 
+
+
+CASE DO 'existingProduct',
+
+
+NÃO VAMOS QUERER 
+__aDICIONAR_ 1 NOVO PRODUCT,
+
+E SIM VAMOS QUERER 
+
+'REPLACE THE OLD ONE'....
+
+
+
+-> 
+
+
+
+ -------------------------
+
+
+
+
+
+
+ --> acho que ENTENDI O PROBLEMA...
+
+
+
+
+
+
+
+
+ --> ok... no CASE EM QUE _ _O PRODUCT, AQUELE PRODUCT ESPECÍFICO,
+
+ _NÃO EXISTIA ANTES __ DENTRO 
+
+
+ DE 'products',
+
+
+ estamos 
+
+ 'safe'
+
+
+ com aquele 
+
+
+
+ código do else block,
+
+ aquele 
+ código 
+ de 
+
+
+ '
+
+ else {
+         updatedProduct = {id: id, quantity: 1};
+         cart.products = [...cart.products, updatedProduct];
+ }
+
+ '
+
+
+
+
+
+
+ --> ISSO PQ 
+
+
+
+ O ARRAY de 'products' 
+
+
+AGORA, NESSE CASE AÍ,
+
+simplesmente será o 'old array' (conteúdos/products do array velho)  + 
+
+ESSE PRODUCT QUE FOI ADICIONADO...
+
+
+
+
+
+
+---------> O PROBLEMA, AQUI, É 
+
+
+O 
+
+'if(existingProduct)',
+
+
+
+código de 
+
+
+'if(existingProduct) {
+        updatedProduct = {...existingProduct};
+        updatedProduct.quantity = updatedProduct.quantity + 1;
+}
+',
+
+
+
+O CASE EM QUE 
+
+
+1 
+
+PRODUCT JÁ EXISTE... -----> ISSO PQ 
+
+
+
+
+1) a função 'addProduct' vai certamente ADICIONAR 1 a 'quantity' desse product... 
+
+
+
+1.5) MAS NO IF BLOCK DE 'existingProduct', PRECISAMOS __ ENCONTRAR 
+
+A POSITION DESSE 
+
+EXISTINGPRODUCT PARA O SUBSITUIR...
+
+
+2)  ___ PRECISAMOS __ ENCONTRAR_  A POSIÇÃO/POSITION 
+
+DESSE 
+
+'existingProduct',
+
+
+TUDO PARA QUE __eLE POSSA SER __ SUBSTITUÍDO __ PELO 
+
+
+'updatedProduct' (pq não vamos querer 2 object daquele product, e sim só 1 com uma quantity de '2'...)
+
+
+
+
+
+
+
+
+
+--> PRECISAMOS DESCOBRIR EM QUAL LOCAL/POSIÇÃO 
+
+o 
+
+
+'existingProduct' está localizado, para que 
+
+ele possa ser substituído por 'updatedProduct' ----> PARA ISSO,
+
+
+
+
+PROFESSOR 
+
+
+DIZ QUE 
+
+___VAI RECORRER AO 'INDEX'... 
+
+
+
+
+
+----> professor vai fazer coisas bem malucas....
+
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO NO MOMENTO ESTÁ ASSIM:
+
+
+
+
+'const existingProduct = cart.products.find(prod => prod.id === id);' 
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR, NO ENTANTO, 
+
+DIZ QUE DEVEMOS SUBSTITUIR ESSE '.find()" por 'findIndex()',
+
+POIS ELE 
+
+
+
+__vAI QUERER__ O INDEX DO 
+
+
+PRODUCT, ALÉM DO PRODUCT EM SI.... ----> 
+
+
+
+
+
+para isso,
+
+
+ele escreve:
+
+
+
+
+const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
+
+
+const existingProduct = cart.products[existingProductIndex];
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO, PROFESSOR TERÁ O MELHOR DOS 2 MUNDOS:
+
+
+
+
+
+ele 
+
+
+terá 
+
+O 'existingProduct' __ EM SI_,
+
+
+
+E TAMBÉM 
+
+O 
+
+
+__ SEU INDEX....
+
+
+
+
+
+
+
+
+
+-> E ESSA CONST 'existingProductIndex' AGORA NOS DEIXA USAR ESSE INDEXADOR _ PARA 
+
+
+__SUBSTITUIR __ O OBJETO 
+
+
+'existingProduct'
+
+
+
+por 
+
+'updatedProduct'....
+
+
+
+
+----------------------------
+
+
+
+
+
+EU __ACHO__ QUE O NOSSO CÓDIGO DO IF BLOCK, ENTÃO, FICARÁ ASSIM:
+
+
+
+
+
+      if (existingProduct) {
+        updatedProduct = {
+          ...existingProduct
+        };
+
+        updatedProduct.quantity = updatedProduct.quantity++; 
+        cart.products = [...cart.products]; //////////EIS O CÓDIGO EM QUESTAÕ....
+        cart.products[existingProductIndex] = updatedProduct; /////////EIS O CÓDIGO EM QUESTÃO.
+
+      }
+
+
+
+
+
+
+EX(CÓDIGO COMPLETO):
+
+
+
+
+
+
+fs.readFile(filePath, (err, fileContent) => {
+
+
+                let cart = { products: [], totalPrice: 0};
+
+                if (!err) {
+                        cart = JSON.parse(fileContent);
+                }
+
+})
+
+
+const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
+const existingProduct = cart.products[existingProductIndex];
+
+let updatedProduct;
+
+
+if(existingProduct) {
+
+        updatedProduct = {...existingProduct};
+        updatedProduct.quantity = updatedProduct.quantity + 1;
+                cart.products = [...cart.products];
+                cart.products[existingProductIndex];
+} else {
+
+        updatedProduct = { id: id, quantity: 1};
+        cart.products = [...cart.products, updatedProduct];
+}
+
+cart.totalPrice = cart.totalPrice + productPrice;
+
+
+
+return cart;
+
+
+
+
+------------------------------------------------------
+
+
+
+
+OU SEJA, O QUE INTERESSA É ISTO AQUI:
+
+
+
+
+
+
+
+
+      if (existingProduct) {
+        updatedProduct = {
+          ...existingProduct
+        };
+
+        updatedProduct.quantity = updatedProduct.quantity++; 
+        cart.products = [...cart.products]; //////////EIS O CÓDIGO EM QUESTAÕ....
+        cart.products[existingProductIndex] = updatedProduct; /////////EIS O CÓDIGO EM QUESTÃO.
+
+      }
+
+
+
+
+
+
+
+------> POR MEIO DE 
+
+
+'cart.products = [...cart.products]',
+
+
+
+O PROFESSOR COPIA COM SUCESSO 
+
+
+
+O 
+
+ARRAY VELHO (que tem nosso 'existingProduct' no seu interior...) 
+
+
+
+--> AÍ, A PARTIR 
+
+DO CÓDIGO 
+
+''' cart.products[existingProductIndex] = updatedProduct;''',
+
+
+
+
+ELE 
+
+
+'SINGLES OUT' 
+
+
+
+esse 
+
+
+'existingProduct',
+
+
+PARA ENTÃO O SUBSTITUIR PELO 
+
+'updatedProduct'...
+
+
+
+
+
+
+
+-----> como você pode ter percebido,
+
+
+
+NÓS __COPIAMOS 
+
+
+__ NOSSO VELHO ARRAY de 'cart.products'
+
+
+
+
+
+__ EM AMBOS CASES, NO IF E NO ELSE....
+
+
+
+
+---> ex:
+
+
+
+
+
+
+      if (existingProduct) {
+        updatedProduct = {
+          ...existingProduct
+        };
+
+        updatedProduct.quantity = updatedProduct.quantity++; 
+        cart.products = [...cart.products]; ///EIS O CÓDIGO EM QUESTÃO.
+        cart.products[existingProductIndex] = updatedProduct; 
+
+      } else {
+        updatedProduct = { id: productId, quantity: 1 }; 
+        cart.products = [...cart.products, ////EIS O CÓDIGO EM QUESTÃO.
+        updatedProduct];
+      }
+
+
+
+-----------------------
+
+
+
+
+
+
+
+----> OK... AGORA, COM ISSO 
+
+O 
+
+
+'updatedProduct'
+
+
+
+
+
+ACABA OU:
+
+
+
+1 )SUBSTITUÍNDO O VELHO 
+
+
+
+
+'existingProduct' (visto em 'updatedProduct = {...existingProduct}', etc etc...)
+
+
+
+
+
+
+OU 
+
+
+
+
+
+
+2) SENDO ADICIONADO __ AO NOSSO ARRAY DE 'products' (visto em 'updatedProduct = {id: id, quantity: 1}',,,)
+
+
+
+
+
+
+
+
+
+
+--> O __ PRICE TAMBÉM É UPDATADO... ('cart.totalPrice = cart.totalPrice + productPrice')...
+
+
+
+
+
+
+
+
+
+
+
+--------> AGORA, PORTANTO, PARA FECHAR A LÓGICA DE 
+
+
+
+'add()',
+
+
+
+PROFESSOR DIZ QUE 
+
+
+
+DEVEMOS 
+
+
+NÃO FAZER 'return' de coisa alguma,
+
+E SIM ___ 
+
+
+USAR __ 
+
+
+
+O 
+
+
+'fs.writeFile',
+
+
+PARA 
+
+
+
+___ENTÃO __ FAZER WRITE__ 
+
+
+DESSAS INFORMAÇÕES 
+
+
+
+
+ACERCA DOS 'products'
+
+
+EM 1 ARQUIVO NO NOSSO FILESYSTEM....
+
+
+
+
+
+
+
+
+
+--> e writeFIle 
+
+
+
+
+será escrito assim:
+
+
+
+
+
+'''
+fs.writeFile(filePath, data, () => {
+
+} )''
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER, É CLARO, 
+
+
+FAZER WRITE DO MEU 'cart'
+
+DENTRO DESSE PATH Aí....
+
+
+
+ex:
+
+
+
+
+
+'''
+fs.writeFile(filePath, cart, () => {
+
+} )''
+
+
+
+
+
+
+
+
+--> MAS OBVIAMENTE VAMOS QUERER ARMAZENAR ESSE 'cart'
+
+EM UM FORMATO DE STRING....
+
+
+
+
+
+(por meio do call de 'JSON.stringify(cart)'...)
+
+
+
+
+
+
+
+
+-> AÍ NO CALLBACK,
+
+EM QUE 
+
+EU TALVEZ RECEBA UM ERROR,
+
+
+
+professor 
+
+escreve 
+
+
+(err) => {
+
+        console.log(err);
+         
+}
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... COM ISSO, ACABAMOS... código ficou assim:
+
+
+
+
+
+
+
+
+module.exports = class Cart {
+  static addProduct(productId, productPrice) {
+    //fetch the previous cart
+    fs.readFile(filePath, (err, fileContent) => {
+    
+      let cart = { products: [], totalPrice: 0 };
+
+      if (!err) {
+       
+        cart = JSON.parse(fileContent);
+      }
+      //analyze the cart => find existing product
+
+
+
+
+
+        const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
+        const existingProduct = cart.products[existingProductIndex]; 
+
+
+      //add new product/increase the already existing product's quantity....
+
+      let updatedProduct;
+
+      if (existingProduct) {
+        updatedProduct = {
+          ...existingProduct
+        };
+
+        updatedProduct.quantity = updatedProduct.quantity++; 
+        cart.products = [...cart.products];
+        cart.products[existingProductIndex] = updatedProduct; 
+
+      } else {
+        updatedProduct = { id: productId, quantity: 1 }; 
+
+        cart.products = [...cart.products,
+        updatedProduct];
+      }
+
+      cart.totalPrice = cart.totalPrice + productPrice;
+
+    fs.writeFile(filePath, JSON.stringify(cart), 
+    (err) => {
+                console.log(err);
+
+    })
+
+
+    });
+  }
+};
+
+
+--------------------------------------
+
+
+
+
+
+COM ISSO, DEVEMOS TESTAR 
+
+
+ESSE 
+
+MÉTODo
+
+
+
+'add'...
+
+
+
+
+
+
+
+
+VAMOS AO CONTROLLER 
+
+
+de 
+
+'shop.js',
+
+
+
+
+
+E AÍ VINCULAMOS/REFERENCIAMOS ESSE MÉTODO 
+
+
+em 
+
+
+'exports.postToCart'........
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> SEU CÓDIGO, ATÉ AGORA, ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+
+  const productId = req.body.productId;
+
+
+  Cart.addProduct()
+    
+  res.redirect('/cart');
+
+}
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+OK... MAS É CLARO QUE ISSO NÃO É SUFICIENTE... --> O 
+
+
+
+
+'addProduct'
+
+
+EXIGE 2 PARÂMETROS, QUE 
+
+SÃO 
+
+
+o 
+
+'productId'
+
+e o 
+
+
+'productPrice'... --> o PRODUCT PRICE NÓS JÁ TEMOS,
+
+
+MAS 
+
+NÃO 
+
+TEMOS 
+
+O 
+
+'productPrice'... 
+-------->
+
+
+
+
+
+
+
+
+
+ E PARA QUE CONSIGAMOS ESSE PRODUCT PRICE,
+
+
+
+ PROFESSOR VAI RECORRER 
+
+ À NOSSA FUNCTION 
+
+ de 
+
+ 'findProduct'
+
+
+ LÁ  NO MODEL 
+
+ de 
+
+ 'product.js'... ----->
+
+
+
+ E ESSE MÉTODO/FUNCTION 
+
+
+ DE 
+
+ 'findProduct'
+
+
+
+
+ __EXIGE __ NOSSO __ 'productId',
+
+
+ QUE JÁ TEMOS NESSE CONTROLLER... (por meio de 'req.body.productId')....
+
+
+
+
+
+
+
+ --> MAS ELE TBM EXIGE UM CALLBACK, CALLBACK EM QUE SERÁ 
+
+
+ EXECUTADA NOSSA LÓGICA 
+
+
+ de 'Cart.add()'...
+
+
+ EX (eu escrevi assim, não sei se está certo... a questão é que 
+ O CART 
+ 
+ 
+ SALVA O PRODUCT QUE ADDO A ELE....):
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+exports.postToCart = (req, res, next) => {
+
+  const productId = req.body.productId;
+  // const productPrice = req.body.price; //não consigo adquirir essa informação dessa forma...
+
+  console.log(productId);
+
+
+    Product.findProduct(productId, 
+    
+    (product) => {
+
+      Cart.addProduct(product.id, product.price);
+      res.redirect('/cart');
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> O PROBLEMA É QUE SE EU ADDO mais 
+
+de 
+
+2 products ao cart em uma mesma sessão, meu app QUEBRA..
+
+
+
+
+
+
+
+
+--> quebra por causa de '''A:\projeto4 - NODEJS\MODULO9-ROUTESAVANÇADAS,MODELOSDINÂMICOS... (dynamic MODELS in the model view controller)\novonovoprojeto7-ROUTESDINAMICASEADVANCEDMODELS\models\cart.js:35
+        const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
+                                                                                 ^
+
+ReferenceError: id is not defined
+'''
+
+
+
+
+
+
+
+OK... CONSERTEi.
+
+
+
+
+
+
+
+OK... MAS UM PROBLEMA: A QUANTITY NÃO ESTÁ SUBINDO quando eu clico 
+
+
+para adicionar o product ao carrinho...
+
+
+
+
+
+
+
+
+
+--> o problema era ESTE CÓDIGO:
+
+
+ updatedProduct.quantity = updatedProduct.quantity + 1;
+
+
+
+
+
+
+
+
+
+
+
+ eu havia colocado 
+
+
+
+ 'updatedProduct.quantity++',
+
+
+
+ MAS ISSO 
+
+
+ __NÃO FUNCIONA__....
+
+
+
+
+
+
+
+ OK, MAS O IMPORTANTE AQUI É QUE AGORA TUDO ESTÁ FUNCIONAND...
+
+
+
+
+
+
+
+
+
+
+
+ -> NO VIDEO DO PROFESSOR, ELE ESCREVE ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+exports.postToCart = (req, res, next) => {
+
+  const productId = req.body.productId;
+  console.log(productId);
+
+
+    Product.findProduct(productId, 
+    
+    (product) => {
+
+      Cart.addProduct(product.id, product.price);
+      res.redirect('/cart');
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
+OK.... PROFESSOR FEZ EXATAMENTE A MESMA COISA QUE EU...
+
+
+
+
+
+
+
+
+PROFESSOR MOSTRA 
+
+O CONTEÚDO DE SEU ARQUIVO 
+
+
+
+'cart.json':
+
+
+
+
+
+
+
+{"products":[{"id":"0.618142789193888","quantity":2}],"totalPrice":"02525252525"}
+
+
+
+
+
+
+
+
+
+
+
+--> OK, DEU CERTO...
+
+
+
+
+
+--> PROFESSOR DIZ QUE O TOTALPRICE ESTÁ SENDO ARMAZENADO COMO UMA ___STRING.... ---> 
+
+
+
+ELE DIZ QUE ISSO É UM POUCO _ SUBOPTIMAL... (vamos ter que trabalhar nisso...)
+
+
+
+
+
+
+
+
+
+
+
+
+------> TEMOS QUE CONVERTER ESSA STRING PARA UM NUMBER, DE ALGUMA FORMA...
+
+
+
+
+
+
+
+
+
+
+-> CONSEGUI. FOI SÓ ESCREVER ASSIM:
+
+
+      cart.totalPrice = parseInt(cart.totalPrice) + parseInt(productPrice);
+
+
+
+
+
+
+
+
+
+------------------
+
+
+
+OK... A QUANTIDADE 
+
+AGORA 
+
+VAI SENDO AUMENTADA,
+
+
+E O PRICE TBM...
+
+
+
+
+
+o professor usa uma sintaxe alternativa,
+
+
+ele 
+usa 
+
+
+'+productPrice' 
+
+
+em vez disso (mas é a mesma coisa)...
+
+
+
+
+
+
+
+
+
+
+
+---> OK.... COM ESSE CART MODEL 
+
+ADICIONADO E COM ESSA FUNCTION DE 
+
+
+
+ADD 
+
+ADICIONADA,
+
+
+
+
+DEVEMOS VOLTAR AO TÓPICO DO 'ROUTING',
+
+
+
+E AÍ DEVEMOS VER __:
+
+
+
+
+
+
+
+
+
+
+X) O QUE SÃO QUERY PARAMETERS,
+
+
+E COMO ELES 
+
+NOS 
+
+AJUDAM COM O __EDIT__ DE UM PRODUCT...

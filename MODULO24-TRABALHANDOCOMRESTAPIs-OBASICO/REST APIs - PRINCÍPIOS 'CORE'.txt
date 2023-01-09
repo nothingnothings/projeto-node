@@ -1,0 +1,620 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> QUASE ACABAMOS COM A TEORIA..
+
+
+
+
+
+
+
+
+--> HÁ ALGUNS PRINCÍPIOS QUE SÃO 
+
+DEFINIDOS NA TEORIA, 
+
+E QUE 
+
+SÃO IMPORTANTES DE TERMOS EM MENTE...
+
+
+
+
+
+
+
+
+--> 2 CORE PRINCIPLES:
+
+
+
+
+DEVEM SER MANTIDOS/SEGUIDOS, QUANDO CONSTRUÍMOS REST APIs...
+
+
+
+
+
+1) 'UNIFORM INTERFACE' -->  ESSE PRINCIPLE 
+
+
+SIMPLESMENTE DITA QUE 
+
+
+SUA API __ DEVE TER__/VAI TER__ 
+
+
+'CLEARLY DEFINED API ENDPOINTS' (path + http method), 
+
+
+COM __ DATA STRUCTURES 
+
+DE 
+
+
+'request + response' ___ BEM DEFINIDAS___.... --------> EM OUTRAS PALAVRAS,
+
+
+
+
+
+'SUA API DEVE SER PREVISÍVEL' (your api should be PREDICTABLE)... -----> ALÉM DE SER PREVISÍVEL,
+
+
+
+___ SE _ POSSÍVEL, 
+
+
+
+SUA REST 
+
+API DEVE SER __ DOCUMENTADA__ E ABERTA AO PÚBLICO....
+
+
+
+
+(
+
+    OU SEJA, AS PESSOAS 'SHOULD KNOW WHICH DATA YOUR API EXPECTS',
+
+    'WHICH DATA DOES IT GIVE BACK',
+
+    E QUAIS ENDPOINTS EXISTEM....
+)
+
+
+
+
+
+
+
+------> E A COISA QUE ACONTECE QUANDO 1 REQUEST ALCANCA 1 DETERMINADO ENDPOINT  __ NÃO DEVE 'CHANGE OVER TIME'...
+
+
+
+--> ESSA COISA 'DEVE SER PREDICTABLE',
+
+
+e deve ser 'CLEARLY DEFINED'...
+
+
+
+
+
+ 
+
+2) PRINCÍPIO DAS 'STATELESS INTERACTIONS'... ----->  ISSO SERÁ __ SUPER IMPORTANTE___ 
+
+QUANDO 
+
+
+NÓS MAIS TARDE 
+
+FALARMOS 
+
+
+
+___ 'AUTHENTICATIOn'....
+
+
+
+********** QUANDO CONSTRUIMOS UMA REST API,
+
+
+
+
+O 'SERVER' E O 'CLIENT' (TOTALMENTE SEPARADOS)
+
+
+__ NÃO _ DEVERÃO __ 
+
+'STORE' 
+
+QUALQUER 
+
+
+CONNECTION HISTORY ENTRE SI,
+
+
+
+
+E __ CADA_ REQUEST___ DEVE _ SER 
+
+HANDLADO ___ SEPARADAMENTE...
+
+
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE _ COM A ESTRUTURA DAS REST APIs,
+
+
+
+
+'NO CONNECTION HISTORY IS STORED,
+
+
+
+AND __ NO SESSIONS WILL BE USED, THEREFORE...'... -------> ISSO PQ ___ CADA 'INCOMING REQUEST'
+
+
+
+
+SERÁ __ TRATADO __ COMO 
+
+
+
+SE __ NENHUM __ REQUEST __ FOI ENVIADO ANTERIORMENTE...
+
+
+
+
+
+
+
+
+
+
+
+-> ISSO SIGNIFICA QUE O SERVER 
+
+
+'HAS A LOOK AT EVERY REQUEST ON ITS OWN'... --> O SERVIDOR __ NÃO __ ARMAZENA 
+
+1 
+
+SESSION PARA 1 CLIENT,
+
+E ELE __ NÃO SE IMPORTA 
+
+
+COM O CLIENT NEM UM POUCO, NA VERDADE.... 
+
+
+
+
+
+-----> e isso, essa atitude 'CAREFREE' em relaçaõ ao CLIENT __ é outra 
+
+coisa 
+
+
+
+LEGAL __ das 
+
+
+REST APIs...
+
+
+
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE VOCê PODE 
+
+
+
+'BUILD A REST API',
+
+
+
+E AÍ 
+
+
+
+ABRIR ESSA API AO PÚBLICO.... -------> EXEMPLO CLÁSSICO 
+
+É 
+
+
+
+O GOOGLE MAPS API... -----> COM O GOOGLE MAPS API,
+
+
+
+VOCÊ 
+
+
+
+__ NÃO SE IMPORTA_ _ COM 
+
+ 
+
+
+
+ 'THE INDIVIDUAL CLIENT'... ------> A ÚNICA COISA QUE VOCÊ DIZ É:
+
+
+
+
+
+
+ '''HEY, ESSES SÃO OS ENDPOINTS QUE EU TENHO,
+
+ essa é a DATA QUE VOCê 
+
+
+ _RECEBE_ PARA CADA 1 DOS ENDPOINTS,
+
+
+
+ essa é a data QUE EU ESPERO QUE VOCÊ ENVIE,
+
+ E AÍ _ EU NÃO ME IMPORTO COM VOCÊ,, NÃO VOU 
+ 
+ 'STORE A SESSION' com/para você....''' ---------> É POR ISSO QUE 
+
+
+
+ DIZEMOS QUE 
+
+ TEMOS 
+
+ UMA 
+
+
+ 'STRONG DECOUPLING OF THE CLIENT AND THE SERVER',
+
+
+
+
+
+
+ __________ MESMO _____ EM CASOS EM QUE __ O SERVERSIDE E FRONTSIDE 
+
+
+ __SÃO EXECUTADOS_ _ EM 1 MESMO SERVER..... -------> 
+
+
+
+
+
+ PQ __ NÓS ESTAMOS _____ CONSTRUINDO NOSSA 
+
+ PRÓPRIA 
+
+
+REST API 
+
+ PARA __ NOSSO PRÓPRIO 
+
+
+ 'FRONTEND',
+
+
+
+
+
+
+ E NÓS AINDA __ 'WOULD DECOUPLE BOTH',
+
+
+
+
+ TUDO PARA QUE OS 2 TRABALHEM DE FORMA INDEPENDENTE,
+
+
+ E PARA QUE APENAS FAÇAM O 'EXCHANGE OF DATA'... -------> ISSO SIGNIFICA QUE 
+
+
+
+ TODA VEZ QUE 
+
+
+ NÓS SETTAMOS 
+
+ 1 NOVO 'ENDPOINT',
+
+
+
+  
+
+
+  __NÓS __ TEMOS QUE __ NOS ASSEGURAR __ DE QUE 
+
+  ESSE ENDPOINT 
+
+
+
+
+  ___ FUNCIONA/FUNCIONARÁ ___ DE FORMA __ INDEPENDENTE__ 
+
+
+
+
+
+
+  DE 'PRIOR REQUESTS'.... -------->  E UM PROBLEMA TÍPICO AQUI É 
+
+
+
+
+
+'AUTHENTICATIOn' ---> vamos querer 
+
+
+
+REPLICAR 
+
+
+
+AQUELE COMPORTAMENTO DE 
+
+'ONCE LOGGED IN, ALL FUTURE REQUESTS FROM THAT USER SHOULD BE IN THAT LOGGEDIN STATE'... 
+
+(
+
+    VAMOS QUERER REPLICAR ESSE COMPORTAMENTO NO 
+
+
+    'REST WORLD',
+
+
+    e o professor vai NOS MOSTRAR COMO FAZER ISSO....
+)
+
+
+
+
+
+
+
+
+
+
+----> OUTROS PRINCIPLES,
+
+MENOS IMPORTANTES,
+
+
+
+
+
+SÃO:
+
+
+
+
+
+
+
+
+
+
+3) PRINCÍPIO DO 'CACHEABLE'... ----> ISSO SIGNIFICA QUE 
+
+
+NA SUA REST API, 
+
+VOCÊ 
+
+PODERIA/ PODE ENVIAR 
+
+
+
+UNS HEADERS
+
+QUE 
+
+DIZEM AO CLIENT _ 'POR QUANTO TEMPO A RESPONSE É VÁLIDA', 
+
+ISSO 
+
+PARA QUE 
+
+O 
+
+CLIENT CONSIGA 'CACHE THE RESPONSe'.. (armazenar a response)....
+
+
+
+(
+
+
+    'SERVERS MAY SET CACHING HEADERS TO ALLOW THE CLIENT TO CACHE RESPONSES'...
+)
+
+
+
+
+
+
+
+
+
+The cacheable constraint requires that a response should implicitly 
+or explicitly label itself as cacheable or non-cacheable. If the response is
+ cacheable, the client application gets the right to reuse the response 
+ data later for equivalent requests and a specified period.
+
+
+
+(ok, é mais ou menos o 'loggedIn', se eu não estou enganado....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+4) CLIENT-SERVER SEPARATION --> MENCIONAMOS ISSO DE NOVO... ----> 'SERVER AND CLIENT ARE SEPARATED;
+CLIENT IS NOT CONCERNED WITH PERSISTENT DATA STORAGE'..
+
+
+
+
+
+
+
+
+
+
+
+---------------> esse principle 4 pensa mais sobre o DATA STORAGE... --> CLIENT E SERVER 
+
+
+
+SÕA 
+
+DECOUPLED,
+
+
+
+
+E POR ISSO O CLIENT 'SHOULD NOT WORRY ABOUT PERSISTENT DATA STORAGE, AS THE 
+
+SERVER WILL BE RESPONSIBLE FOR THIS'...
+
+
+
+
+
+
+
+
+
+
+5) PRINCÍPIO DO 'LAYERED SYSTEM'... --> ISSO SIMPLESMENTE 
+
+SIGNIFICA 
+
+
+
+
+QUE, COMO 1 CLIENT, 
+
+QUANDO 
+
+ENVIAMOS 
+
+
+1 REQUEST A UMA API,
+
+
+NÓS _ 'CANT RELY ON THAT SERVER WE SENT THE REQUEST TO __ IMMEDIATELY HANDLE 
+
+__ THE REQUEST'... --> isso pq __ O SERVER PODE, EM VEZ DISSO,
+
+
+
+FORWARDAR/REDISTRIBUIR O REQUEST __ A OUTRO SERVER...
+
+(
+
+NO FINAL DAS CONTAS, ESSE PRINCIPLE NOS ENSINA QUE 
+
+O 
+
+USER/NÓS 
+
+
+'SHOULD ONLY CARE ABOUT THE DATA WE GET BACK',
+
+
+DATA QUE 
+
+DEVE 
+
+
+SEGUIR AQUELA ESTRUTURA QUE FOI DEFINIDA POR NÓS/PELA API...
+
+
+
+
+)
+
+
+
+
+
+
+
+
+6) CODE ON DEMAND- --> ESSE PRINCIPLE APENAS DITA QUE 
+
+
+__ A REST API PODE, PARA _ CERTOS __ ENDPOINTS__, 
+
+
+'TRANSFER EXECUTABLE CODE TO THE CLIENT'...  -----> NO MUNDO REAL,
+
+VOCÊ RARAMENTE VÊ ISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS 
+
+
+
+OS PRINCÍPIOS QUE INTERESSAM É 
+
+
+O 'UNIFORM INTERFACE' 
+
+
+
+E 
+
+O 
+
+'STATELESS INTERACTIONS',
+
+
+QUE 
+
+VÃO TER SÉRIAS IMPLICAÇÕES, PRINCIPALMENTE 
+
+NO QUE DIZ RESPEITO à 'AUTHENTICATION'...

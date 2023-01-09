@@ -1,0 +1,1331 @@
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS COMEÇAR COM O REGISTER DE __ROUTES___....
+
+
+
+
+
+
+
+
+
+
+--> LÁ NO 
+
+
+
+
+
+FOLDER 'routes',
+
+
+
+AINDA TEMOS 
+
+'admin.js'
+
+
+
+e 
+'
+shop.js'....
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE ESSA É AINDA UMA BOA DIFERENCIAÇÃO...
+
+
+
+
+
+
+
+
+
+--> NA ROUTE 
+
+
+DE 
+
+
+'shop.js',
+
+
+
+
+
+ATÉ AGORA SÓ TEMOS 
+
+
+A 
+
+STARTING PAGE....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const path = require('path');
+
+
+const express = require('express');
+
+const productsController = require('../controllers/products');
+
+const router = express.Router;
+
+
+router.get('/', productsController.getProductsPage); ///SÓ ESTA ROUTE AQUI...
+
+
+
+
+module.exports = router;
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+---------> AGORA É CLARO QUE TAMBÉM VAMOS PRECISAR DE UMA ROUTE PARA 'Products' (a productList)...
+
+
+
+
+
+
+
+(E EU JÁ 
+
+HAVIA 
+
+FEITO 
+
+ISSO,
+
+
+
+MEU CÓDIGO ESTÁ ASSim:
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+
+
+const express = require('express');
+
+
+
+const rootDir = require('../util/path');
+
+
+const productsController = require('../controllers/products')
+
+const router = express.Router();
+
+
+router.get(
+  '/products',
+  productsController.getProducts
+)
+
+
+
+router.get(
+  '/cart',
+  productsController.getCartPage
+)
+
+
+router.get(
+  '/',
+
+      productsController.getStartingPage
+
+);
+
+
+
+)
+
+
+
+
+
+
+
+OU SEJA,
+
+
+EU HAVIA ADICIONADO ESSAS 2 ROUTES AÍ...
+
+
+
+
+
+
+
+
+------> É O LINK 
+
+
+DE 
+
+'/products'
+
+
+QUE 
+
+LEVA 
+
+A 
+
+ESSA ROUTE 
+DE 
+
+
+
+
+''''
+router.get(
+  '/products',
+  productsController.getProducts
+)
+''''
+
+
+
+
+
+
+--> QUE VAI NOS LEVAR AO CONTROLLER de 'getProductsPage',
+
+
+QUE AÍ 
+
+
+NOS LEVA AO VIEW 
+
+
+
+de 
+
+'product-list'....
+
+
+
+
+
+--------> A ÚNICA ROUTE QUE EU AINDA NÃO HAVIA ADICIONADO É 'checkout'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ALÉM DE SER CAPAZ DE VISITAR 
+
+A PÁGINA 
+
+'products'
+
+
+por meio 
+de 
+
+
+'/products',
+
+
+PROFESSOR DIZ QUE 
+
+
+TAMBÉM 
+
+DEVEMOS 
+
+
+
+TER UM 
+
+'SINGLE PRODUCT',
+
+
+
+
+
+
+um 'SINGLE PRODUCT' QUE __ ACTUALLY___ CONTERÁ ALGUMA 'NEW LOGIC',
+
+
+
+LÓGICA A QUE O PROFESSOR VOLTARÁ NO FUTURO... 
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE DEVEMOS FICAR COM ESSAS 
+
+GENERAL ROUTES, POR ENQUANTO...
+
+
+
+
+
+
+
+
+
+-------> É CLARO QUE PRECIASMOS DE 
+
+
+
+
+ALGUMAS 
+
+ADMIN ROUTES 
+
+ADICIONAIS,
+
+TAMBÉM...
+
+
+
+
+
+
+---> JÁ TEMOS ___ A ROUTE___ DE  'ADD PRODUCT',
+
+
+
+
+MAS FALTAM 
+
+
+AS 
+
+
+ROUTES 
+
+DE :
+
+
+
+
+
+1) edit a product 
+
+
+
+
+2) DELETE a product 
+
+
+
+3) PRODUCTS LIST ---> admin...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NA VERDADE,
+
+
+JÁ TENHO UM POUCO DAS ROUTES DO 
+
+ADMIN,
+que 
+
+
+estão assim:
+
+
+
+
+
+
+
+
+
+
+router.get('/products-list', 
+productsController.getProductsAdminPage)
+
+
+
+
+
+router.get('/add-product',
+ productsController.getAddProductPage
+);
+
+
+
+
+
+
+
+
+
+
+router.post('/add-product', 
+
+      productsController.postAddProduct
+
+);
+
+
+
+
+
+
+---------------------------
+
+
+
+
+ENTÃO SÓ FALTA O 
+
+DE 
+
+'edit'
+
+
+
+E O 
+
+
+DE 
+
+
+
+'DELETE'...
+
+
+ --> MAS É CLARO QUE 
+
+
+
+ ESSAS ROUTES NÃO VAO SER ACESSADAS 
+
+
+ PELO ADMIN/USER 
+
+
+
+ LÁ 
+
+
+
+ NA 'TOOLBAR',
+
+ e sim 
+
+ serão 
+
+ ACESSADAS
+
+
+
+NA PÁGINA 'PRODUCT-DETAIL'...
+
+
+
+
+
+
+
+
+
+
+-------> POR ENQUANTO, PROFESSOR VAI ATÉ 
+
+
+'admin.js'
+
+
+
+
+E ESCREVE 
+
+
+UMA 
+
+
+NOVA ROUTE,
+
+
+
+
+
+de 
+
+
+
+'router.get('/products', productsController.xxxx)'...
+
+
+
+
+ 
+
+
+
+
+
+
+
+ ------> AÍ ELE NOS EXPLICA QUE VAMOS PRECISAR __ DE UM CONTROLLER__ PARA ESSA ROUTE Aí...
+
+
+
+
+
+
+
+
+ --> EU JÁ ESCREVI O __ COMEÇO __ DESSE CONTROLLER,
+
+ por meio do código:
+
+
+
+
+
+ router.get(
+  '/products',
+  productsController.getProducts
+)
+
+
+
+
+
+
+
+
+
+
+--------> ___ PROFESSOR FALA DOS CONTROLLERS... --> FALA QUE 
+
+
+PODEMOS SEGUIR 
+
+'DIFERENTES APPROACHES'...
+
+
+
+
+
+
+
+
+
+
+--> ele diz que OBVIAMENTE A MAIOR PARTE DAS COISAS QUE 
+TEMOS 
+
+AQUI 
+
+SÃO 
+
+
+RELACIONADAS 
+
+
+
+COM 
+
+
+
+__PRODUCTS... ------> MAS NÓS TAMBÉM 
+
+TEMOS 
+
+
+
+
+NOVAS ROUTES,
+
+
+como 
+
+
+'checkout' 
+
+
+e 
+
+'cart' -----> E MAIS TARDE VAMOS ADICIONAR ALGO COMO 'orders'... -----> 
+
+
+
+
+
+
+E ESSAS ROUTES 
+
+
+SÃO IMPLICIATAMENTE RELACIONADAS 
+
+
+
+
+COM 'products' (pq nos ajudam a comprá-los, no final das contas),
+
+
+
+
+
+___ MAS __ NÓS TAMBÉM PODEMOS ARGUMENTAR QUE 
+
+
+
+
+DE UMA PERSPECTIVA DE LÓGICA 
+
+
+
+ELES 
+
+
+
+
+PERTENCEM 
+
+MAIS 
+
+
+À IDEIA GERAL DE 'shop'... -------> 
+
+
+
+
+
+
+
+
+
+E É EXATAMENTE POR ISSO QUE 
+
+
+
+
+O PROFESSOR PENSA QUE DEVEMOS ___ SUBDIVIDIR NOVAMENTE 
+
+
+NOSSOS CONTROLLERs;
+
+
+
+
+quer:
+
+
+
+
+
+
+1) COLOCAR 'checkout', 'cart', 'orders',products normal e 'product-detail', esses controllers, DENTRO DE UM ARQUIVO 'shop.js'...
+
+
+
+
+
+
+2) CRIAR UM __ ARQUIVO 
+
+'admin.js',
+
+
+
+
+RESPONSÁVEL PELOS CONTROLLERS __ DE NOSSO ADMIN PROPRIAMENTE DITO (
+
+    vai renderizar views como 
+
+
+    'add-product', 
+    'edit-product' 
+
+
+    e 
+
+    'product-list-admin'...
+)
+
+
+
+
+
+
+
+
+
+O ADMIN.JS 
+
+ficará tipo assim:
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+const Product = require('../models/product');
+
+exports.getAddProductPage = (req, res, next) => {
+    res.render('admin/add-product', {
+      pageTitle: 'Add Product', 
+      path: '/admin/add-product',
+      activeAddProduct: true,
+      productCSS: true,
+      formsCSS: true,
+    });
+  };
+
+
+exports.postAddProduct = (req, res, next) => {
+    const newProduct = new Product(req.body.title); 
+    newProduct.save(); 
+    res.status(302).redirect('/');
+  };
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+
+    res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page'
+    })
+}
+
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+-----> OK... E O SHOP FICOU ASSim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const Product = require('../models/product');
+
+
+
+exports.getStartingPage = (req, res, next) => {
+
+  res.render('shop/index', {
+        path: '/',
+        pageTitle: 'The Shop'
+  })
+}
+
+exports.getCheckoutPage = (req, res, next) => {
+
+
+  res.render(
+    'shop/checkout',
+  )
+}
+
+
+
+
+
+
+
+exports.getCartPage = (req, res, next) => {
+
+      res.render('shop/cart', {
+              path: '/cart',
+              pageTitle: 'Cart'
+
+      } )
+}
+
+
+
+
+exports.getProducts = (req, res, next) => {
+
+  Product.fetchAll((products) => { //é código assíncrono, no final das contas...
+
+      res.render('shop/product-list', {
+  prods: products,
+  pageTitle: 'Shop',
+  path: '/products',
+  productCSS: true,
+  activeShop: true,
+  hasProducts: products.length > 0,
+});
+
+
+  });
+
+};
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTERNATIVAMENTE, PROFESSOR ADMITE QUE __PODERÍAMOS__ 
+
+DIVIDIR 
+
+
+
+tudo 
+
+
+
+
+em 'products' e em 'shop',
+
+
+
+
+
+
+
+
+
+
+EM QUE 
+
+COISAS COMO CHECKOUT E CART FICARIAM EM 'shop'...
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... MINHA DIVISÃO ESTÁ CORRETA...
+
+
+
+
+
+
+
+-------> VAMOS PRECISAR DO MODEL 
+
+de 
+
+'Product'
+
+
+
+__ EM AMBOS CONTROLLERS... ----> 
+
+PROFESSOR 
+
+
+
+EXPLICA QUE DEVEMOS ATUALIZAR ALGUNS DE NOSSOS IMPORTS...
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ACHO QUE ESTÁ CERTO...
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+PROFESSOR COMEÇA COM:
+
+
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+
+  res.render('shop/index', {
+        path: '/',
+        pageTitle: 'The Shop'
+  })
+}
+
+
+
+
+
+
+
+
+
+----------> CERTO... -->  
+
+
+
+
+
+
+
+mas professor copia a lógica de 
+
+
+
+'product-list',
+
+
+
+
+
+__ PARA QUE ___ 
+
+
+
+SUA FUNÇÃO FIQUE IDÊNTICA 
+
+
+
+A 
+
+
+do controller 
+
+
+de 
+
+
+'Products' (Ver todos os products)...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI MANTER A MESMA LÓGICA,
+
+
+mas o que ele vai renderizar 
+
+é OTURA PÁGINA 
+
+
+
+em 
+
+
+'getStartingPage',
+
+
+
+
+
+ELE VAI RENDERIZAR O INDEX...(a view)..
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ELE ADICIONOU AS ROUTES QUE JÁ TÍNHAMOS ADICIONADO....
+
+
+
+
+
+
+
+
+
+
+
+
+-------------
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+
+
+
+
+
+
+
+ESTAMOS QUASE ACABADOS COM AS ROUTES,
+
+QUE 
+
+
+AGORA SÓ FALTA 
+
+ADICIONAR AS ROUTES 
+DE 
+
+
+'
+editProduct'
+
+
+
+
+E 
+
+
+
+'deleteProduct',
+
+
+lá EM
+
+
+'admin.js' (CONTROLLER)...
+
+
+
+
+
+
+
+
+
+
+
+------->
+
+
+
+
+
+PROFESSOR ESCREVE ALGO COMO:
+
+
+
+
+
+
+
+
+
+router.get('/product-list-admin', 
+
+
+adminController.getProductsAdminPage)
+
+
+
+
+
+
+
+
+E AÍ:
+
+
+
+
+
+
+
+
+
+ELE NÃO VAI ESCREVER ISTO:
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+
+    res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page'
+    })
+}
+
+
+
+
+
+
+
+
+
+
+E SIM ISTO:
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+    Product.fetchAll(products => {
+
+            res.render('admin/product-list-admin', {
+                prods: products
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page'
+    })
+
+    })
+
+}
+
+
+
+
+
+
+
+
+
+--> VAMOS RENDERIZAR UMA VIEW DIFERENTE,
+
+
+MAS __ É CLARO QUE A DATA SERÁ A MESMA...
+
+
+
+
+
+
+
+
+------> COM TUDO ISSO SETTADO,
+
+
+
+VOLTAMOS E RECARREGAMOS...
+
+
+
+
+
+
+--> VEMOS UMA PÁGINA BRANCA PQ AINDA NÃO HAVÍAMOS CONFIGURADO O 'getStartingPage',
+
+
+
+
+
+QUE ATÉ AGORA 
+
+É 
+
+UMA VIEW 
+
+
+VAZIA...
+
+
+
+
+
+
+
+-----> COPIAMOS O CÓDIGO 
+
+
+
+
+DO 
+
+
+'product-list.ejs',
+
+
+
+
+
+
+O MESMO CÓDIGO DE VIEW...
+
+
+
+
+
+---------------
+
+
+
+
+
+--> FORRAMOS TBM NOSSO 'CART.ejs'
+
+
+
+
+COM OS NOSSOS INCLUDES DO HEAD,
+
+
+
+NAVIGATION 
+
+
+
+E 
+
+
+
+
+END...
+
+
+
+
+
+
+
+
+
+
+----> AGORA É HORA DE TRABALHAR UM POUCO NAS VIEWS,
+
+
+
+ADICIONAR UM POUCO DE LÓGICA A ELAS...

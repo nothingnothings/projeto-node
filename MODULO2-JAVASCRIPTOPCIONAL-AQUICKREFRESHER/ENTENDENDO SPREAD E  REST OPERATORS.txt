@@ -1,0 +1,970 @@
+
+
+
+
+
+
+
+
+
+---> NO JAVASCRIPT MODERNO HÁ 2 
+
+OPERATORS 
+
+
+
+
+BEM IMPORTANTES... 
+
+
+
+
+
+
+
+
+
+
+--> É O SPREAD E O REST OPERATOR....
+
+
+
+
+
+
+
+
+-> SPREAD --> 
+
+
+
+É O QUE VAMOS USAR MAIS.... -----> 
+
+
+
+
+
+DIGAMOS QUE 
+
+
+
+VAMOS QUERER IMPLEMENTAR 
+
+1 PATTERN 
+
+EM QUE:
+
+
+
+
+VAMOS ADICIONAR 1 NOVO HOBBY 
+
+A UM 
+
+ARRAY,
+
+
+
+MAS AÍ 
+
+
+VAMOS 
+
+QUERER 
+
+
+
+COPIAR TODOS OS VALORES VELHOS + O VALOR NOVO EM UM NOVO ARRAY....
+
+
+
+
+
+
+
+
+-->  
+
+O USO DO SPREAD OPERATOR 
+
+ESTÁ
+ 
+ RELACIONADO COM 
+
+ UM 
+
+ CONCEITO CHAMADO 
+
+ 'IMMUTABILITY'.. ---> vamos 
+
+
+ querer 
+
+ deixar 
+
+ o 
+
+
+ objeto/array 
+
+
+ 
+
+ ORIGINÁRIO INTACTO NA MEMÓRIA,
+
+ E AÍ CRIAR UM NOVO, 
+
+ com os elementos 
+
+ do 
+
+ array velho + elemento novo que 
+
+ vamos querer 
+
+ adicionar agora...
+
+
+
+
+ PARA ISSO,
+
+
+ VAMOS PROVAVELMENTE ESCREVER ALGO ASSIM:
+
+
+
+
+
+
+
+ const hobbies = ['Sports', 'Cooking'];
+
+
+
+
+ const newHobbies = [
+
+     ...hobbies,
+     'BOWLING'
+ ]
+
+
+
+ ---------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ E ISSO VAI 
+
+
+ REALMENTE FUNCIONAR...
+
+
+
+
+
+
+ --> A VANTAGEM É QUE EVITAMOS 
+
+
+ PROBLEMAS
+
+
+
+ DE ALTERAÇÃO 
+
+
+ DE OBJECTS ORIGINÁRIOS.... ----> 
+
+
+
+ isso 
+
+ é 
+
+ mt bom...
+
+
+
+
+
+
+ ------> PROFESSOR MOSTRA UMA SINTAXE ALTERNATIVA:
+
+
+
+
+
+
+ PARA COPIAR UM ARRAY,
+
+
+
+ PODERÍAMOS 
+
+
+ TAMBÉM
+  
+
+  USAR 
+
+
+  ESTA TÉCNICA AQUI:
+
+
+
+
+
+
+
+
+  O USO DE 
+
+  '.slice()'...
+
+
+
+
+
+
+
+  ex:
+
+
+
+
+ const hobbies = ['Sports', 'Cooking'];
+
+
+ '''' const copiedArray = hobbies.slice();''''
+
+
+
+
+
+
+
+ --------------------------------
+
+
+
+
+
+
+ SLICE SIMPLESMENTE COPIA UM ARRAY... podemos 
+
+
+
+
+ PASSAR UM PARÂMETRO A ELE 
+
+ PARA 
+
+
+
+ __'''NARROW DOWN THE RANGE OF ELEMENTS WE WANNA COPY'',
+
+
+ e com 
+
+ nenhum argumento 
+
+ passado,
+
+ COPIAMOS O ARRAY INTEIRO...
+
+
+
+
+
+
+
+
+ -------> OK, MAS AÍ O PROFESSOR USA A MINHA SINTAXE:
+
+
+
+
+
+
+
+
+ 
+ const hobbies = ['Sports', 'Cooking'];
+
+
+
+
+ const newHobbies = [
+
+     ...hobbies,
+     'BOWLING'
+ ]
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ISSO PQ SE ESCREVESSEMOS ASSIM:
+
+'''''''
+
+
+const newHobbies = [
+    hobbies
+]
+
+
+
+
+''''',
+
+
+
+FICARÍAMOS COM UM 
+
+
+
+'NESTED ARRAY' dentro desse array, QUE NÃO É EXATAMENTE O QUE QUEREMOS....
+
+
+
+ex:
+
+
+
+
+
+
+ const hobbies = ['Sports', 'Cooking'];
+
+
+
+'''''
+
+
+ const newHobbies = [
+
+        hobbies  //////////////-----------------------> FICA ASSIM:   [[hobbies]]
+ ]
+
+
+''''
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+OK... ERA ISSO QUE ELE QUERIA NOS MOSTRAR SOBRE O 
+
+'SPREAD OPERATOR'....
+
+
+
+
+
+
+
+
+-------> O SPREAD OPERATOR FUNCIONA DA MESMA FORMA COM OBJECTS...
+
+
+
+
+
+
+
+
+
+
+OK, ALÉM DO SPREAD OPERATOR,
+
+
+
+TEMOS O 
+
+
+
+
+
+'REST OPERATOR'...
+
+
+
+
+
+
+
+
+--> O REST OPERATOR É __ ESSENCIALMENTE O __ OPOSTO__ 
+
+DO 
+
+SPREAD OPERATOR...
+
+
+
+
+(eu me lembro que a sintaxe 
+
+é 
+
+
+'...arg')
+
+
+
+
+
+
+
+
+
+
+--> professor escreve uma função,
+
+que 
+
+escreve 
+
+assim:
+
+
+
+
+
+
+const toAarray = (arg1, arg2, arg3) => {
+
+
+
+}
+
+
+
+
+
+------------------
+
+
+
+
+
+
+AÍ ELE NOS EXPLICA QUE 
+
+VAI QUERER 
+
+ESCREVER UMA FUNÇÃO QUE 
+
+
+VAI QUERER 
+
+RETORNAR 
+
+ESSES
+
+ARGUMENTOS 
+
+EM 
+
+1 ARRAY... ----> 
+
+
+
+PARA ISSO,
+
+
+PODEMOS 
+
+USAR 
+
+
+O 
+
+
+
+REST OPERATOR, teoricamente... 
+
+
+
+
+
+
+
+
+
+SE FIZÉSSEMOS ISSO __SEM ___O  SPREAD OPERATOR__, 
+
+
+eu teria de escrever assim:
+
+
+
+
+
+
+const toAarray = (arg1, arg2, arg3) => {
+
+
+
+        return [arg1, arg2, arg3];
+
+}
+
+
+
+------------------------------------------------------------
+
+
+
+
+
+E SE EU QUISESSE CONSOLE LOGGAR UMA EXECUÇAÕ DESSA FUNÇÃO,
+
+ficaria assim:
+
+
+
+
+
+
+
+
+
+
+
+const toAarray = (arg1, arg2, arg3) => {
+
+        return [arg1, arg2, arg3];
+
+}
+
+
+
+console.log(toArray(1, 2, 3));
+
+
+
+
+
+
+
+
+
+--> AÍ VEREI UM OUTPUT de '[1, 2, 3]'....
+
+
+
+
+
+
+
+--> BEM, ISSO FUNCIONA, MAS É ___ TOTALMENTE 'INFLEXÍVEL'___ -----> 
+
+
+
+
+
+É INFLEXÍVEL PQ IMAGINE 
+
+SE 
+NÓS QUISÉSSEMOS 
+
+CHAMAR 
+
+
+4 ARGUMENTOS... ---> se quiséssemos 
+
+isso,
+ 
+ mesmo passando um quarto argumento,
+
+
+ ele não seria 
+
+ registrado/computado na função...
+
+
+
+
+
+
+
+
+
+
+ --> É PARA ISSO QUE EXISTE O REST OPERATOR,
+
+
+ PODEMOS 
+
+ ESCREVER 
+
+ ALGO COMO:
+
+
+
+
+
+
+
+ const toAarray = (...arg) => {
+
+        return [arg];
+
+}
+
+
+
+console.log(toArray(1, 2, 3, 4, 5, 6, 7, 8));
+
+
+----------------------------------------------------
+
+
+
+
+SE FIZERMOS ISSO AÍ,
+ 
+
+ ESSA SINTAXE AÍ,
+
+
+
+ VAMOS 
+
+
+ CONSEGUIR UM CONSOLE.LOG 
+
+
+ DE UM ARRAY 
+
+ '[1, 2, 3, 4, 5, 6, 7, 8]',
+
+
+
+
+
+ E NOSSA FUNÇÃO TERÁ FICAOD __ BEM MAIS FLEXÍVEL (pq agora 
+ 
+ aceita 
+ 
+ 
+ ARGUMENTOS INFINITOS,
+ 
+  E VAI SEMPRE 
+  
+  
+  OS RETORNAR NAQUELE 
+  
+  ARRAY 
+  
+  ALI 
+  
+  retornado por 
+  
+  
+  'return [arg]'...) --------------> 
+
+
+
+
+  NÃO, MAS EU ERREI 
+
+
+
+  O OUTPUT 
+
+  NESSE RETURN AÍ... ----> 
+
+
+
+  isso 
+
+
+  pq 
+
+
+
+  COM ESSE FORMATO DE 
+
+
+
+''''''''''
+
+
+ const toAarray = (...arg) => {
+
+        return [arg];
+
+}
+
+
+
+console.log(toArray(1, 2, 3, 4, 5, 6, 7, ));
+
+
+'''''''''''''
+
+
+,
+
+
+
+nosso OUTPUT FICA ASSIM:
+
+
+
+
+
+[ [
+    1, 2, 3, 4,
+    5, 6, 7    
+  ] ]
+
+
+
+
+
+
+(ou seja, UM __ARRAY__ DENTRO DE UM ARRAY__....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------------
+
+
+
+
+  COM ISSO, NÃO ESTAREMOS LIMITADOS àQUELES 3 PARÂMETROS 
+
+
+  DE 
+
+  'arg1', 'arg2' e 'arg3' .... --> PODEREMOS 
+
+
+
+  ESPECIFICAR QUANTOS ARGUMENTOS QUISERMOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> MAS PARA FAZER COM QUE O RETURN SEJA REALMENTE DE UM __ARRAY_, E NÃO 
+
+  DE 
+
+  UM 'ARRAY DENTRO DE UM ARRAY',
+
+
+
+
+o RETURN DE NOSSA FUNÇÃO DEVE SER ESCRITO ASSIM (sem o '[]' envolvendo seu resultado...):
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+ const toAarray = (...arg) => {
+
+        return arg; ///////SINTAXE CORRETA.
+
+}
+
+
+
+console.log(toArray(1, 2, 3, 4, 5, 6, 7, ));
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+/////SINTAXE INCORRETA: 'return [arg]' //////// (FICARÁ O RETURN DE UM ARRAY DENTRO DE UM ARRAY...)
+
+
+
+
+EX:
+
+
+
+const toArray = (...arg) => {
+
+
+
+    return arg; ///////SINTAXE CORRETA. VAI RETORNAR UM ARRAY COM TODOS NOSSOS ARGUMENTOS, QUE É O QUE QUEREMOS...
+};
+
+
+
+console.log(toArray(1, 2, 3, 4, 5, 6, 7));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, AGORA NOSSO OUTPUT FICARÁ:
+
+
+
+
+
+
+
+
+
+[
+  1, 2, 3, 4,
+  5, 6, 7    
+]
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+PORTANTO, ATENTE PARA 
+OS 
+
+2 
+
+USOS DE '...':
+
+
+
+
+
+
+
+
+
+
+
+
+1) SPREAD OPERATOR ---> usado para 'PULL OUT PROPERTIES AND STUFF' para fora de objects/arrays...
+
+
+
+
+
+2) REST OPERATOR ----> usado para 'MERGE MULTIPLE ARGUMENTS INTO AN ARRAY' (retornado pela function), e sempre usado POR MEIO DE FUNÇÕES, colocado NO SLOT DOS ARGUMENTOS..
+
+
+
+const toArray = (...arg) => {
+    return arg; 
+};
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+PROFESSOR NÃO 
+
+VAI USAR MT O 
+
+REST OPERATOR,
+
+
+
+mas é bom saber.

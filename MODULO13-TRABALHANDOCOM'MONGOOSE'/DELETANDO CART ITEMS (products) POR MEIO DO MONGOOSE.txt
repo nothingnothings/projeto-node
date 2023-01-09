@@ -1,0 +1,507 @@
+
+
+
+
+
+
+
+
+
+AQUI PROVAVELMENTE USAREMOS AQUELE METHOD 
+
+
+de 
+
+
+
+'findByIdAndDelete()'....
+
+
+
+
+
+
+
+
+
+--> TEMOS O CONTROLLER DE 'delete',
+
+
+
+QUE TEM ESTE CÓDIGO, ATÉ AGORA:
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+
+
+
+
+
+const productId = req.body.id;
+
+console.log('TEST', 'TEST', productId, 'TEST');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-----> VAMOS QUERER USAR 
+
+
+
+
+algum método mongoose (provavelmente 'findByIdAndDelete') 
+
+PARA 
+
+
+
+REMOVER esse 'cart item' 
+
+
+de nosso cart, do cart desse user...
+
+
+
+
+
+
+
+
+
+
+--> na verdade, devo pensar um pouco...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+
+
+
+
+
+const productId = req.body.id;
+
+console.log('TEST', 'TEST', productId, 'TEST');
+
+
+
+
+
+
+
+const updatedProducts = req.user.cart.products.filter(
+    (product) => {
+                productId.toString() !== product.productId.toString()
+    }
+)
+
+
+
+req.user.cart.products = updatedProducts;
+
+
+req.user.save();
+
+
+
+
+
+
+}
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ESSE CÓDIGO AÍ __ REALMENTE FUNCIONOU___ (não precisei usar 'findByIdAndDelete()'...) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> SÓ UM DETALHE:
+
+
+aquele código de 
+
+
+'
+'
+
+
+
+
+
+exports.getCart = (req, res, next) => { 
+  
+  
+  
+  
+  //  req.user.getCart() MÉTODO MONGODB DRIVER COMUM...
+
+
+
+
+
+    req.user ///CÓDIGOS/métodos BUILTIN do mongoose....
+    .populate('cart.products.productId') //////EIS O CÓDIGO EM QUESTÃO
+    ///.execPopulate() ///OPCIONAL. antes era obrigatório, vocÊ tinha que chamar isso para poder EXECUTAR then/catch em cima do 'populate' (pq antigamente o POPULATE NÃO RETORNAVA SEMPRE UMA PROMISE, como hoje em dia...)
+    .then(
+      (user) => { ///////RESTO DO CÓDIGO CONTINUA O MESMO....
+
+            console.log(user.cart.products);
+
+
+            res.render(
+              'shop/cart', {
+
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: user.cart.products
+              }
+            )
+
+
+      }
+    )
+
+
+
+
+
+'''',
+
+
+
+
+
+
+LÁ 
+
+
+
+NO CONTROLLER 
+
+DE 
+
+
+
+'get all orders for this user',
+
+
+
+
+
+
+__ percebi um problema.... -->
+
+
+
+
+essa execução 
+
+de 
+
+'.populate()'
+
+
+
+DEMORA DEMAIS... -----> 
+
+
+
+
+como ela demora demais,
+
+
+O 
+
+
+
+
+redirect que ocorre quando clicamos em 'add to cart' 
+
+
+À essa page de 
+
+'localhost:3000/cart' 
+
+
+
+
+
+___ ACABA SENDO __ TÃO RÁPIDO QUE NOSSA DATA DO CART NÃO CARREGA, E AÍ 
+
+ACABAMOS 
+
+COM 
+
+
+aquele render 
+
+de 
+
+
+'there are no products in your cart' .... ->  E ISSO É __BEM RUIM__ PARA 
+
+
+A 
+
+USER EXPERIENCE...
+
+
+
+
+
+
+
+
+
+
+
+
+ok, mas continuando a aula do professor....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ACHO QUE ENTENDI O QUE ELE VAI FAZER... --> ele 
+
+vai 
+
+
+OUTSOURCEAR esse nosso código,
+
+vai 
+
+COLOCÁ-LO 
+
+
+em 
+
+um METHOD próprio,
+
+a parte,
+
+
+
+LÁ 
+
+
+
+NO MODEL 
+
+de 
+
+
+
+'user.js'...
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+FICARÁ ALGO ASSIM (lá em 'user.js'):
+
+
+
+
+
+
+
+
+
+
+
+
+userSchema.methods.deleteCartItem = function(productId) {
+
+
+
+  const updatedProducts = this.cart.products.filter(
+    (product) => {
+              console.log(productId.toString() !== product.productId.toString())
+              return  productId.toString() !== product.productId.toString();
+    }
+  )
+  
+  this.cart.products = updatedProducts;
+  
+  
+ return this.save().then(
+    (result) => {
+  
+  
+      console.log(result);
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> E NO NOSSO CONTROLLER, FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+
+
+
+
+
+const productId = req.body.id;
+
+// console.log('TEST', 'TEST', productId, 'TEST');
+
+
+
+req.user.deleteCartItem(productId).then(
+  
+
+  (result) => {
+
+    res.status(302).redirect('/cart');
+  }
+)
+
+
+
+}
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+---> OK... COMO O PROFESSOR ESCREVEU ISSO?
+
+
+
+
+
+
+
+
+
+ELE ESCREVEU __EXATAMENTE__ 
+
+
+DO MESMO JEITO QUE ESCREVEMOS...

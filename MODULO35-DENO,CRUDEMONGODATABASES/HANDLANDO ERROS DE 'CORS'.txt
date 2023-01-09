@@ -1,0 +1,1159 @@
+
+
+
+
+
+
+
+
+
+ENTENDENDO CORS --> 
+
+
+
+
+
+
+
+
+
+
+
+cors --> o que é o cors,
+
+
+e o que é esse problema de cors?
+
+
+
+
+
+
+
+
+
+---> JÁ VIMOS ESSE PROBLEMA 
+
+
+
+LÁ NO 
+MÓDULO 
+
+DE 
+
+REST API...
+
+
+
+
+
+
+
+
+--> CORS --> CROSS-ORIGIN RESOURCE SHARING... 
+
+
+
+
+
+
+
+
+
+
+
+--> É UM MECANISMO DE SEGURNAÇA 
+
+
+
+FORÇADO PELO BROWSER,
+
+QUE 
+ASSEGURA 
+QUE 
+
+SERVER A NÃO PODE __ SÓ ENVIAR_ UM REQUEST_ AO SERVER B 
+
+E SIMPLESMNETE pegar data desse server B (o server B tem que PERMITIR ISSO)..
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+
+
+SE VOCÊ 
+
+TIVER 
+
+1 FRONTEND APP 
+rodando 
+
+
+no server A ('some-page.com'),
+
+
+
+
+
+
+LÁ NA PORTA DE 'localhost:3000' ...
+
+
+
+
+
+
+
+
+
+
+
+
+----> AÍ TEMOS NOSSO BACKEND RODANDO NO SERVER 'localhost:8080'. . --> É O SERVER B 
+
+
+
+
+
+
+
+
+--> SERVER B,
+
+a rest api....  ------> AÍ A COMUNICAÇÃO ENTRE 
+
+
+O 
+
+
+SERVER A E O SERVER B 
+
+
+naõ será 
+
+
+possível 
+
+só com isso 
+
+(
+
+    PRECISAMOS settar os headers adequados..
+)
+
+
+
+
+
+
+
+
+
+
+---> POR DEFAULT,
+
+
+
+OS BROWSERS PREVINEM 
+
+
+
+
+
+OS METHODS DE 'get', 'post',
+
+'Patch',
+
+ ETC... --> PREVINEM ISSO SE O 
+
+ BACKEND E O FRONTEND NÃO SÃO O MESMO SERVER... ------> E AQUI, EM 'LOCALHOST',
+
+
+ ATÉ DIFERENTES 
+
+ PORTS 
+
+ implicam DIFERENTES SERVERS... (isso significa que localhost:3000 não é o mesmo que localhost:8080) 
+
+
+
+
+
+
+
+
+ ---> MAS QUEREMOS DIZER AO BROWSER QUE 
+
+ queremos permitir o acesso... 
+
+
+
+
+
+
+
+
+
+
+
+ --> PRECISAMOS COLOCAR NO BACKEND (onde armazenamos a data) 
+
+
+ uum middleware QUE 
+
+ DEFINA HEADERS NA RESPONSE QUE 
+
+ ENVIAMOS AO BROWSER,
+
+ PARA DIZER QUE 
+
+
+
+ É OK O FRONTEND RECEBER ESSA DATA, E QUE ELE DEVE PROCEDER...
+
+
+
+
+
+
+
+
+
+
+ --> ISSO TUDO É UM 'BROWSER SECURITY MECHANISM',
+
+
+ 
+
+E É EXATMAENTE POR ISSO QUE O USO DE 'POSTMAN'
+
+NÃO NOS DÁ ESSE ERRO (pq o postman não é um BROWSEr)...
+
+
+
+
+
+
+
+
+
+
+----> VOLTAMOS AO NOSSO CÓDIGO 'deno'... --> ativamos nossa extension deno,
+
+
+
+ETC ETC....
+
+
+
+
+
+
+
+
+
+
+--> OK... AÍ NO CÓDIGO 'BACKEND,'
+
+
+vamos querer 
+
+ADICIONAR UM NOVO MIDDLEWARE,
+
+
+MIDDLEWARE QUE ASSEGURA QUE TODAS AS OUTGOING RESPONSES VAO TER OS 
+
+
+
+
+
+
+HEADERS ADEQUADOS...
+
+
+
+
+
+--> PARA ISSO,
+
+
+ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+app.use(
+    (ctx, next) => {
+
+
+    }
+    
+)
+
+
+
+
+
+-------------------------
+
+
+
+
+AÍ, NESSE MIDDLEWARE,
+
+
+
+VAMOS ADQUIRIR ACESSO 
+
+AOS HEADERS da 'response,'
+
+por meio do código 
+
+'context + response + headers'....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+app.use(
+    (ctx, next) => {
+
+
+
+            ctx.response.headers
+    }
+    
+)
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+ctx.response.headers.set('')
+
+
+
+
+
+
+
+
+
+
+
+--> OK... NESSE OBJETO 'headers'
+
+
+TEMOS O MÉTODO 'set',
+
+QUE NOS DEIXA __ DEFINIR 1 NOVO HEADER NESSA 'OUTGOING RESPONSE'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... SERÃO AQUELES 3 HEADERS ESSENCIAIS, que settávamos lá no express:
+
+
+
+
+
+
+1) O HEADER QUE DIZ: 'são esses os methods permitidos'....
+
+
+
+
+2) O HEADER QUE DIZ: ''deixamos o cross-origin, de qualquer lugar''....
+
+
+
+
+
+
+
+3) O HEADER QUE DIZ 'Vamos deixar esse header de AUTHORIZATION, E ESSE HEADER DE 'CONTENT-TYPE' (para json) '...
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if(req.method === 'OPTIONS') {
+    return res.sendStatus(200); ////USAMOS ISTO APENAS __ EM PROJETOS COM 'GRAPHQL' ativado no backend... --> isso vai fazer com que OS REQUESTS DE TIPO 'OPTIONS' (disparados AUTOMATICAMENTE POR NOSSOS BROWSERS) NUNCA __ ATINJAM__ A ENDPOINT ÚNICA DO GRAPHQL (que é o que queremos, na verdade).... ---> isso evita um ERRO 405, no uso do graphql...
+  }
+  next();
+});
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+para isso, escreveremos:
+
+
+
+
+
+
+app.use(
+    (ctx, next) => {
+        ctx.response.headers.set('Access-Control-Allow-Origin', '*'); //QUALQUER OUTRO DOMAIN PODERÁ ENVIAR ESSE TIPO DE DOMAIN...
+
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS, VAMOS COLOCAR O 
+
+HEADER DE 
+
+'Allow-Methods':
+
+
+
+
+
+
+app.use(
+    (ctx, next) => {
+        ctx.response.headers.set('Access-Control-Allow-Origin', '*'); //QUALQUER OUTRO DOMAIN PODERÁ ENVIAR ESSE TIPO DE DOMAIN...
+        ctx.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); 
+          ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-Type', 'Authorization'); 
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo, vamos deixar esses TIPOS DE METHODS AÍ, NOS RQEUESTS...
+
+
+
+
+
+
+
+
+
+
+
+-> POR FIM, COLOCAMOS O 'Allow-Headers',
+
+
+QUE 
+
+
+VAI DEIXAR 
+
+
+CERTOS 
+
+HEADERS 
+
+
+
+NOS REQUESTS.. -> vamos deixar o 'Content-Type' 
+
+e O 
+
+'Authorization' (onde vai a TOKEN, quando a settarmos)...
+
+
+
+
+
+
+
+
+
+
+
+--------> PRECISAMOS DESSE 'Content-Type'
+
+para que 
+
+
+NOSSO REQUEST DE 
+
+
+
+BODY 'JSON' 
+
+
+
+
+consiga ser parseado 
+
+
+
+
+
+em OBJETOS JAVASCRIPT,  lá no backend....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR FIM, PRECISAMOS ASSEGURAR QUE O PRÓXIMO MIDDLEWARE NA LINHA DE EXECUÇÃO CONSIGA SER EXECUTADO,
+
+POR ISSO ESCREVEMOS 
+
+'next()'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+app.use(
+    (ctx, next) => {
+        ctx.response.headers.set('Access-Control-Allow-Origin', '*'); //QUALQUER OUTRO DOMAIN PODERÁ ENVIAR ESSE TIPO DE DOMAIN...
+        ctx.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); 
+          ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-Type', 'Authorization'); 
+          next();
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> MAS É CLARO QUE VAMOS PRECIASR ESCREVER 'await' 
+
+NESSE 
+
+
+
+
+'nexT()"
+
+AÍ,
+
+PQ 
+
+
+NO FRAMEWORK OAK 
+
+
+
+
+os nossos códigos NÃO SÃO EXECUTADOS 'EM ORDEM' (na ordem correta),
+
+
+PORTANTO PRECISAMOS DE 'await'
+
+PARA QUE ELE RESPEITE A ORDEM DE EXECUÇÃO CIMA-BAIXO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+// app.use((ctx, next) => { ///'ctx' SIGNIFICA 'CONTEXT'...
+//   ctx.response.body = "Hello World!"; //////ESTE MIDDLEWARE É SIMPLES DEMAIS, VAMOS QUERER USAR ALGO MAIS POTENTE/COMPLEXO PARA RESPONDER AOS REQUESTS ENVIADOS POR NOSSO 'USER'....
+// });
+
+
+
+
+
+// app.use( ////NÃO ESCREVA ASSIM.... (essa é a sintaxe EXPRESS, E NÃO O DENO)...
+//     todoRoutes
+// )
+
+
+
+app.use( ///MIDDLEWARE USADO PARA __ SOLUCIONAR O PROBLEMA __ DE 'CORS' (set de headers conferindo acesso)...
+    async (ctx, next) => {
+        ctx.response.headers.set('Access-Control-Allow-Origin', '*'); /////vamos usar isso, esse method 'set',  para __ SETTAR NOSSOS HEADERS__, headers na RESPONSe... -> por meio deste 'set', deixamos QUALQUER TIPO DE DOMAIN ENVIAR REQUESTS AO NOSSO SERVEr...
+        ctx.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); 
+        ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-Type', 'Authorization'); 
+        await next(); ////respeitará a ORDEM DE EXECUÇÃO.
+        
+    }
+)
+
+
+
+app.use(
+   async (ctx, next) => { ///QUANDO VOCÊ TEM MÚLTIPLOS MIDDLEWARES QUE FAZEM 'ASYNC STUFF', você (Ao contrário do que vemos em node) É OBRIGADO A COLOCAR 'async' no run desses middlewares, para fazer com que a ORDEM SEJA RESPEITADA ( e para que a response, nesse caso, NÃO SEJA ENVIADA _ CEDO DEMAIS_)....
+        console.log('Middleware logged');
+      await next();           ///COLOQUE ESSE 'await' em nexT() para INFORMAR O OAK _ DE QUE _ ELE __ DEVE __ ESPERAR__ O RUN DO RESTO DOS MIDDLEWARES (mais para baixo) ANTES _ DE ENVIARMOS DE VOLTA UMA RESPONSE por meio deste middleware de console.log... 
+    }
+)
+
+app.use( ////ESCREVA ASSIM (sintaxe DENO, com esse method de 'routes' dentro do seu OBJETO importado lá do seu arquivo DE ROUTES)...
+    todoRoutes.routes()
+)
+
+app.use(
+    todoRoutes.allowedMethods() ///////este middleware TAMBÉM É NECESSÁRIo....  (é um request que fará com que o OAK 'PROPERLY HANDLES INCOMING REQUESST' Às suas routes)...
+    );
+
+
+
+
+
+await app.listen({ port: 8080 });
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+COM TUDO ISSO, REINICIAMOS NOSSO APP,
+
+
+app de 'localhost:3000' --> AGORA NOSSO ERROR TERÁ SUMIDO... --> E SE CLICARMOS EM 'ADD TODO',
+
+
+
+1 TODO SERÁ ADICIONADO A NOSSA PÁGINA (frontend) e ao backend...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O ERROR TAMBÉM TERÁ SUMIDO....
+
+
+
+
+
+
+--> NOSSAS API ROUTES _ _TAMBÉM ESTÃO FUNCIONANDO__...
+
+
+
+
+
+--> OK, MAS MEUS TODOS NÃO ESTÃO APARECENDO/SENDO SALVOS NA MEMÓRIA DE NOSSO APP NODE...
+
+
+
+
+
+
+
+
+
+
+-_> ALGO ESTÁ ERRADO NO NOSSO FRONTEND...
+
+
+
+
+
+
+
+
+-> OK, AGORA OS TODOS ESTÃO SENDO ADICIONADOS (ao nosso frontend e BACKEND)......
+
+
+
+
+
+
+
+
+
+
+--> MAS QUANDO TENTO _ DELTAr__ ALGUM TODO, 
+
+RECEBO ISTO:
+
+
+
+
+--> O ERRO FOI CAUSADO POR ISTO:
+
+
+
+
+Access to fetch at 'http://localhost:8080/todos0.21451396323449234' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> cmo consertar isso?
+
+
+
+
+
+
+
+
+-_> PROVAVELMENTE É UM PROBLEMA _ NO BACKEND__...
+
+
+
+
+
+
+
+
+
+
+
+--> ERA ESTE CÓDIGO AQUI (frontend, estava faltando aquele '/' no final de 'todos'..):
+
+  const deleteTodoHandler = async (todoId) => {
+    const response = await fetch(
+      'http://localhost:8080/todos/' + todoId,
+
+      {
+        method: 'DELETE',
+      }
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, ESSES CÓDIGOS ESTÃO FUNCIONANDO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Response, Request, } from "https://deno.land/x/oak/mod.ts";
+
+
+type Todo = { ////DEFINIÇÃO DE 'TYPE'/type aliasing...
+    id: string,
+    text: string
+}
+
+
+
+
+
+interface RequestBody {
+    value: {
+        text: string
+    }
+}
+
+let todos:Todo[] = [];
+
+
+
+
+
+export const getTodos = ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+export const editTodo = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+
+
+
+    const todoId = params.todoId;
+
+    console.log(params, 'LINE');
+  
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    console.log(values.text, 'LINE2');
+
+
+  
+    const todoIndex = todos.findIndex((todo) => {
+      return todo.id === todoId;
+    });
+  
+    todos[todoIndex].text = values.text;
+
+
+    console.log(todos[todoIndex])
+    
+    response.status = 200;
+    response.body = {
+        message: 'Edited todo',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+export const createTodo =  async ( {request, response, params }: { ////async --> 'eis o código em questão'
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+}) => {
+
+
+
+        // const body = await request.body();
+
+    ///////EIS A SINTAXE EM QUESTÃO (conversão de JSON DATA em JAVASCRIPT OBJECT)....
+
+
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+    const newTodo: Todo = {
+        id: Math.random().toString(),
+        // text: request.body.text
+       text: values.text
+    }
+
+
+
+    todos.push(newTodo);
+
+    
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: todos
+    }
+
+
+}
+
+
+export const deleteTodo = ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: any
+
+
+
+
+
+}) => {
+
+
+
+    const todoId = params.todoId;
+    console.log(todoId);
+
+
+
+    const newTodos = todos.filter((todo) => {
+        console.log(todoId === todo.id);
+        return todo.id !== todoId;
+      });
+
+
+
+      todos = newTodos;
+      console.log(todos);
+
+    
+    response.status = 200;
+    response.body = {
+        message: 'DELETED TODO',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE __ NÃO ACABAMOS.. --> PRECISAMOS 
+
+AGORA 
+
+INTEGRAR O 'MONGOOSE/MONGODB'
+
+
+ao 
+
+
+
+deno...
+
+
+
+
+
+
+
+(pq nossos arquivos ainda estão sendo salvos NA MEMÓRIA DO DENO/backend, e não em uma DATABASe...)

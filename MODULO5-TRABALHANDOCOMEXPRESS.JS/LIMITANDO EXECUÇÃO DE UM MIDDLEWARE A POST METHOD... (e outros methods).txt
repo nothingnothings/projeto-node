@@ -1,0 +1,404 @@
+
+
+
+
+
+
+
+
+
+---> AGORA NÓS SOMOS CAPAZES DE PARSEAR 'INCOMING REQUESTS'
+
+
+COM A AJUDA 
+
+DO 
+
+
+TPP 
+
+de 
+
+
+'body-parser'.... ----> ESSE É UM MÉTODO BEM ÚTIL...
+
+
+
+
+
+
+
+
+--> MAS O PROBLEMA, AGORA, É QUE ESTE CÓDIGO AQUI:
+
+
+
+''''
+app.use(
+    '/product', (req, res, next) => { 
+
+                console.log(req.body);
+                res.redirect('/');
+    }
+)
+
+'''''
+
+
+SEMPRE É/VAI 
+
+SER EXECUTADO 
+
+
+
+QUANDO ENVIAREM UM REQUEST A ELE,
+
+
+__ATÉ MESMO QUANDO 
+
+SE 
+TRATAR DE 
+
+UM 
+
+'GET REQUEST' (e queremos que ele 
+
+
+
+SÓ SEJA EXECUTADO/TENHA SUA LÓGICA EXECUTADA 
+
+
+__ SE 
+
+
+
+ELE RECEBER UM REQUEST DE TIPO POST...
+)
+
+
+
+
+
+
+
+
+
+
+--------> O QUE PODEMOS FAZER? ---> PARA ISSO,
+
+
+PROFESSOR DIZ QUE 
+EM VEZ 
+
+DE USARMOS 
+
+'app.use()',
+
+
+PODEMOS USAR 
+
+
+'app.get()'... -------> PROFESSOR NOS EXPLICA QUE 
+
+
+ESSE MÉTODO 
+
+AÍ 
+
+__TEM A MESMA SINTAXE__ 
+
+
+DE 
+
+
+'app.use()' (ou seja,
+
+
+
+ELE 
+
+TAMBÉM
+
+
+é 
+ESCRITO ASSIM:
+
+
+
+'app.get( '/pathDesejado', (req, res, next) => {})'
+
+
+
+
+
+),
+
+
+
+
+
+
+
+ELE É EXATAMENTE IGUAL EM SINTAXE,
+
+MAS A __ DIFERENÇA__ É QUE 
+
+
+'IT ONLY WILL FIRE 
+
+
+
+__ FOR INCOMING _____ GET__ REQUESTS'...  ---------->
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+'GET' 
+
+
+É __ OUTRA __ FORMA DE FILTERING__ NO EXPRESSJS.... -----> 
+
+
+
+
+SÓ SERÁ DISPARADO PARA 'GET REQUESTS',
+
+de fato...
+
+(ELE FILTRA GET REQUESTS, ESSENCIALMENTE...  )
+
+
+
+
+
+
+
+
+
+
+
+------> E, ALÉM DE 'app.get()',
+
+
+
+TEMOS 
+
+
+'app.post()',
+
+
+QUE 
+
+
+FAZ 
+
+
+EXATAMENTE O QUE O NOME SUGERE;
+
+
+ELE 
+
+
+VAI 
+
+_fILTRAR_ 
+
+OS 
+
+
+
+REQUESTS__ DE TIPO 'POST'
+ 
+ QUE SÃO ENVIADOS 
+
+ AO NOSSO SERVER...
+
+
+
+
+ RESUMINDO:
+
+
+
+
+
+'app.use()' -----> ISSO É GENERALIZADO. ELE ACEITA __ QUALQUER TIPO DE REQUEST__ ÀQUELA ROUTE...
+
+
+
+
+
+
+'app.get()' --> ACEITA SOMENTE REQUESTS DE TIPO 'GET' ÀQUELA ROUTE....
+
+
+
+'app.post()' --> ACEITA SOMENTE REQUESTS DE TIPO 'POST' ÀQUELA ROUTE....
+
+
+
+
+
+
+
+
+------> ou seja,
+
+
+
+para conseguir esse efeito no nosso 
+
+'app.use()',
+
+
+professor 
+
+
+REESCREVE O CÓDIGO ASSIM:
+
+
+
+
+
+app.post( ////EIS O CÓDIGO EM QUESTÃO.
+    '/product', (req, res, next) => { 
+
+                console.log(req.body);
+                res.redirect('/');
+    }
+)
+
+
+
+
+
+
+-------------------------
+
+
+EX:
+
+
+
+
+// app.use( ///ACEITA/RECEBE __ REQUESTS__ DE TODO E QUALQUER METHOD, não se importa....
+  //app.get//// ACEITA/RECEBE APENAS REQUESTS DE METHOD 'GET', e nenhum outro....
+  app.post( ////ACEITA/RECEBE APENAS REQUESTS DE METHOD 'post', e nenhum outro... (isso nesse PATH específico...)
+  '/product', (req, res, next) => {
+      console.log(req.body);  ///feature do EXPRESSJS.... -> ver middleware de 'urlencoded', que é o que possibilita isto...
+      res.redirect('/');
+  }
+)
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+OK... PARA TESTARMOS ISSO, ESSA RESTRIÇÃO DE 'app.post()',
+
+
+O PROFESSOR 
+
+DIGITA 
+
+
+'localhost:3000/product'
+
+NA URLBAR,
+
+para 
+
+ver o que acontecia....---> ELE IMEDIATAMENTE FOI REDIRECIONADO 
+
+
+À 
+
+'localhost:3000/' -------> ISSO OCORREU PQ 
+
+
+ENVIAMOS UM REQUEST DE TIPO 'GET' 
+
+
+A 
+
+URL 
+
+DE 
+
+'/product'.... --> E MESMO COM ESSA LIMITAÇÃO ,
+
+
+
+OS REQUESTS 
+
+DE TIPO 
+
+
+'POST'
+
+
+AINDA SERÃO ACEITOS,
+
+
+
+
+JUSTAMENTE POR CAUSA DESSA GRAFIA 'app.post()'... 
+
+
+
+
+
+
+
+
+
+--> TEMOS TAMBÉM 
+
+'.patch()',
+
+
+
+'.delete()' 
+
+
+
+e 
+
+
+'put()'...  -------> PROFESSOR EXPLICA QUE 
+
+ESSES 
+
+SÃO OUTROS 
+
+'HTTP WORDS',
+
+
+mas que os veremos 
+
+MAIS TARDE, JUSTAMENTE PQ ELES 
+
+NÃO CONSEGUEM SER VISTOS/USADOS  DE DENTRO 
+
+
+DE UM 
+
+
+
+
+DOCUMENTO HTML COMUM...
+
+

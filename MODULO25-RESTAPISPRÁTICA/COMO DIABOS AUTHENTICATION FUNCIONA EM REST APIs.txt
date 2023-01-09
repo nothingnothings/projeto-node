@@ -1,0 +1,909 @@
+
+
+
+
+
+
+
+
+
+COMO AUTHENTICATION FUNCIONA EM UMA REST API?
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> BEM, 
+
+NÓS OBVIAMENTE AINDA TEMOS 
+
+O 
+
+
+
+
+__CLIENT__ (browser)
+
+
+E O SERVER...
+
+
+
+
+
+
+
+
+
+
+--> O CLIENT AINDA VAI __ ENVIAR 'AUTH DATA' 
+
+
+AO SERVER.... -----> OU SEJA,
+
+
+VAI ENVIAR COISAS COMO 
+
+
+
+O EMAIL E O PASSWORD, vamos dizer....
+
+
+
+
+
+
+
+
+
+
+
+
+----> NO APP TRADICIONAL NODEEXPRESS,
+
+
+NÓS ENTÃO FARÍAMOS __ O CHECK__ DESSA 
+
+DATA,
+
+
+
+
+
+FARÍAMOS 
+
+A COMPARAÇÃO DA DATA QUE O USER ENVIOU COM A DATA 
+
+
+QUE 
+
+
+
+
+TEMOS ARMAZENADA NO SERVER/database... ------> E SE ESSA DATA FOSSE/É VÁLIDA,
+
+
+
+__ NÓS __ ESTABELECÍAMOS/ESTABELECEMOS _ UMA __ 
+
+
+
+SESSION __ PARA 
+
+
+ESSE 
+
+
+
+User... (com a criação/armazenamento de um document 'session' na DATABASE, e então 
+
+
+O STORE DE UM 'SESSION COOKIE' 
+
+
+no browser do user,
+
+cookie 
+
+
+
+que 
+
+
+tem id 'hasheado' 
+
+
+que é identico ao id 
+
+
+
+da 
+session armazenada 
+
+
+
+na database...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+        CLIENT 
+                    ^
+|                   | 
+|(AUTH DATA)        |   (SESSION)
+|                   |
+V
+
+
+        SERVER
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+BEM, NÓS __ NÃO VAMOS _ MAIS 
+
+USAR 
+
+1 
+
+'SESSION' (1 session não será mais armazenada na database e enviada ao user),
+
+
+
+
+
+
+
+TUDO ISSO PQ __ RESTFUL APIs/rest APIS 
+
+
+
+___ SÃO __ TOTALMENTE __ 
+
+
+'STATELESS'... ---------> ISSO SIGNIFICA QUE 
+
+
+
+
+___ ESSAS APIs _ 
+
+
+NÃO SE IMPORTAM __ COM 
+
+O CLIENT,
+
+
+
+COM O USER.... -------> NÓS APRENDEMOS, ANTERIORMENTE,
+
+
+
+
+
+QUE 
+
+
+
+
+AS REST APIS tem aquele 'STRICT DECOUPLING OF SERVER AND CLIENT',
+
+
+
+E QUE 
+
+CADA __ REQUEST__ DEVE SER TRATADO 'STANDALONE'.... -----> ISSO SIGNIFICA QUE 
+
+
+__ CADA__ REQUEST__ 
+
+
+
+DEVE __ TER/VAI TER __ 
+
+
+'ALL THE DATA IT NEEDS TO AUTHENTICATE ITSELF' (sem necessidade de SESSIONS)... 
+
+
+
+
+
+
+
+
+
+-----------> COM SESSIONS,
+
+
+por outro lado,
+
+
+
+__ O SERVER __ PRECISA_ 'STORE DATA ABOUT THE CLIENT' (em uma database)... ----> OU SEJA,
+ 
+
+
+ O 
+
+
+ SERVER __ ARMAZENA DADOS DIZENDO 'THE USER IS AUTHENTICATED'.... --> JÁ O MESMO NÃO __ OCORRE COM 
+
+
+ REST APIs... ------>  
+
+
+
+
+
+ ISSO NÃO OCORRE COM APIs;
+
+
+
+
+
+
+ O SERVER __ NÃO __ VAI __ ARMAZENAR__ COISA ALGUMA __ACERCA DO 'STATE' DO CLIENT..../qualquer client -----> ISSO 
+
+
+
+
+ SIGNIFICA QUE EM _ REST APIS__ 
+
+
+
+ 'SESSIONS' 
+
+ NÃO SÃO ARMAZENADAS... ------>  ISSO SIGNIFICA QUE 
+
+
+
+
+
+ O APPROACH MOSTRADO LOGO ACIMA,
+
+
+
+
+
+ este aqui:
+
+
+
+
+
+ 
+        CLIENT 
+                    ^
+|                   | 
+|(AUTH DATA)        |   (SESSION)
+|                   |
+V
+
+
+        SERVER
+
+
+
+
+
+
+
+
+
+-------> NÃO VAI MAIS FUNCIONAR....
+
+
+
+
+
+
+
+
+
+
+-------> OK... MAS É ÓBVIO QUE A VALIDATION __ AINDA__ É 
+
+FEITA NO SERVER.... ------> NÓS AINDA VAMOS VALIDATE O USER INPUT 
+
+
+
+NO SERVER,
+
+E AINDA 
+
+
+VAMOS 
+
+'CHECK FOR THE VALIDITY' 
+
+
+
+
+
+
+
+da COMBINAÇÃO 
+
+'EMAIL + PASSWORD'...-------->  tudo isso ainda será/é feito no backend. ..... --> OK,
+
+
+MAS O QUE 
+
+MUDA,
+
+
+
+
+
+
+QUANTO À AUTHENTICATION,
+
+É QUE 
+
+QUANDO A __ VALIDATION É BEM SUCEDIDA,
+
+
+
+
+
+
+NÃO VAMOS 'AUTHENTICATE' O USER POR MEIO DE UMA SESSION,
+
+
+
+E ____ SIM ___ VAMOS_ _ RETORNAR __ AQUILO 
+
+
+QUE 
+
+
+
+CHAMAMOS DE 
+
+
+'
+TOKEN'
+
+
+
+
+AO CLIENT...  -----------------> ESSA TOKEN 
+
+
+
+
+É/SERÁ __ GERADA__ (generated)
+
+
+
+
+
+
+NO SERVER EM SI (backend, nodeexpress),
+
+
+
+
+
+E __ VAI _ ___ CONTER___ 
+
+
+
+
+UMAS INFORMAÇÕES ('some information')
+
+QUE 
+
+
+
+SÓ PODERÃO 
+
+
+
+SER__ 'VALIDATED'
+
+
+
+
+
+POR NOSSO SERVER EM SI... --------> E AÍ,
+ 
+
+
+ ESSA TOKEN 
+
+ VAI 
+
+ SER 
+
+
+
+
+
+ __ ARMAZENADA__ NO CLIENT DO USER,
+
+
+ LÁ 
+
+
+
+
+
+
+
+
+ NO 'STORAGE' 
+
+
+ DO BROWSER DO USER... (existem MECANISMOS DE STORAGE ESPECÍFICOS PARA ISSO, COMO 'localStorage' e 'sessionStorage'...)
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+ 
+                    (ARMAZENA TOKEN)
+        CLIENT  ------------------->    STORAGE (do browser do user)... 
+                    ^
+|                   | 
+|(AUTH DATA)        |   (TOKEN)
+|                   |
+V
+
+
+        SERVER
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+O CLIENT, ENTÃO,
+
+
+
+
+
+NO CASO,
+
+
+
+__ VAI PODER/VAI__ ___
+
+
+'ATTACH 
+
+THIS TOKEN'
+
+
+
+
+
+A __ TODO E CADA__ REQUEST SUBSEQUENTE 
+
+QUE 
+
+
+
+
+ELE FOR
+
+ENVIAR 
+
+
+AO SERVER...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    (ARMAZENA TOKEN)
+STORAGE       <-------------------------- CLIENT ------------------------------------------------------------> 
+                                                   ^
+                                |                   | 
+                                |(AUTH DATA)        |   (TOKEN)
+                                |                   |
+                                V
+                                                                                                                    |TOKEN ARMAZENADA É ENTÃO ENVIADA EM TODO SUBSEQUENTE REQUEST FEITO PELO USER, como forma de authorization....
+                                                                                                                    |
+                                          SERVER  -------------------------------------------------------------------|
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... ESSA 'STORED TOKEN' (no local storage do user, session storage, etc etc)
+
+
+
+É __ ENTÃO ANEXADA___ A CADA 'REQUEST'
+
+QUE 
+
+
+
+É ENVIADO PELO USER... -> E AÍ,
+
+PODEMOS 
+
+
+
+CODAR 'BLOCKS' 
+
+
+NAS NOSSAS ROUTES,
+
+
+
+
+
+FAZER COM QUE CERTOS RESOURCES/ROUTES NO NOSSO SERVER __ SÓ POSSAM SER ACESSADOS 
+
+
+
+
+__ QUANDO 
+
+FOR CONSTATADA A PRESENÇA DE UMA TOKEN VÁLIDA NO REQUEST 
+
+que 
+
+
+
+chega a nosso backend.... ------------->   
+
+
+
+
+
+
+
+
+
+É IMPORTANTE SABER QUE __ _ESSA TOKEN _ QUE FOI CRIADA __ POR AQUELE SERVER __ SÓ PODERÁ SER __ 
+
+'VALIDATED' 
+
+PELO SERVER QUE 
+
+
+
+EFETIVAMENTE A CRIOu...  ----------->  E SE __ VOCÊ 
+
+
+
+
+TENTAR __ ALTERAR __ ESSE TOKEN __ 
+
+
+
+NO FRONTEND,
+
+
+
+OU SE 
+
+VOCÊ 
+
+TENTAR 
+
+
+
+CRIAR/FAKAR ESSA 
+
+
+TOKEN,
+
+
+
+
+
+
+
+__________FAKAR QUE VOCÊ ESTÁ AUTHENTICATED,
+
+
+ISSO _ _SERÁ __ DETECTADO.... ----> SERÁ DETECTADO _ PQ 
+
+
+O 
+
+
+SERVER 
+
+USOU ___ UM CERTO ALGORITMO PARA 
+
+'GENERATE THE TOKEn',
+
+
+
+
+
+ALGORITMO QUE __ VOCê NÃO PODE/NÃO VAI CONSEGUIR FAKAR,
+
+ISSO 
+
+PQ __ VOCÊ 
+
+
+NÃO SABE QUAL É,
+
+
+
+
+
+OU VOCÊ NÃO SABE A 'PRIVATE KEY'
+
+usada 
+
+
+POR AQUELE SERVER PARA GERAR ESSA TOKEn...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ESSA TOKEN _ CONTÉM:
+
+
+
+
+
+1) JSON DATA  (é data javascript, no final das contas...)
+
+
+
+
+
++ 
+
+
+
+
+
+2) UMA ASSINATURA (assinatura que é GERADA NO SERVER EM SI)... -------> É GERADO POR MEIO DE UMA 'SPECIAL PRIVATE KEY',
+
+
+
+UMA KEY __ QUE __ SÓ __ FICA DISPONÍVEL/É DISPONÍVEL __ DENTRO 
+
+
+DO 
+
+SERVER EM SI...
+
+
+(ASSINATURA PODE SER VERIFICADA PELO SERVER, POR MEIO DE KEY SECRETA...)
+
+
+
+
++ 
+
+
+
+
+
+3) UMA 'JSON WEB TOKEN' (JWT) ------> 
+
+
+
+
+
+
+ESSA 'JSON WEB TOKEN' 
+
+
+
+É ENTÃO __ RETORNADA_ _ AO CLIENT,
+
+
+
+e A
+ 
+
+
+
+ 'SIGNATURE',
+
+
+ COMO O PROFESSOR EXPLICOU,
+
+
+
+
+
+
+ _________ SÓ PODE __ SER VERIFICADA ___ PELO __ SERVER QUE 
+
+
+
+ A CRIOU... --------> ISSO SIGNIFICA QUE 
+
+ VOCÊ 
+
+
+ NÃO CONSEGUE 
+
+ 'EDIT/CREATE'
+
+
+
+
+ A TOKEN NO CLIENT DO USER/seu client... (
+
+
+     BEM, VOCÊ PODE,
+
+     MAS 
+
+O SERVER VAI DETECTAR ESSA FUTRICAGEM,
+
+E VAI 
+
+
+
+
+TRATAR O TOKEN COMO INVÁLIDO...
+
+ )
+
+
+
+
+
+
+
+ -----> OK, É ASSIM QUE 
+
+
+
+
+ NÓS 'GENERATE THE TOKEN',
+
+
+ e é assim que 
+
+ nós fazemos 
+
+
+ AUTHENTICATION 
+
+
+ em 
+
+
+
+
+ REST APIs...
+
+
+
+
+
+
+
+
+
+ ------> NÓS TEMOS ESSA TOKEN, QUE 
+
+ PODE/CONSEGUE SER 'CHECKED BY THE SERVER',
+
+
+
+ MAS QUE 
+
+
+ NÃO PRECISA SER 
+
+ 'STORED ON THE SERVER' (em databases, por assim dizer).... --> E ISSO 
+
+
+
+ NOS DÁ UMA __ MANEIRA__ ELEGANTE __ DE 'AUTHENTICATING REQUESTS',
+
+ nesse mundo 
+
+
+ das REST API...

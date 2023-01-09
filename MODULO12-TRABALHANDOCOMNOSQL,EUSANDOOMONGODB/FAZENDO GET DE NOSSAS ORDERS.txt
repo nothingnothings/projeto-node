@@ -1,0 +1,575 @@
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE AGORA QUE CONSEGUIMOS ADICIONAR ALGUMA 
+
+
+'RELATIONAL INFORMATION' nas nossas orders,
+
+
+PODEMOS  
+
+
+
+
+
+CONSEGUIR FAZER O 'GET' DE TODAS AS ORDERS
+
+
+lá 
+
+
+
+no nosso arquivo 
+
+de 
+
+'user.js'....
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+
+
+PROFESSOR 
+
+
+ESCREVE:
+
+
+
+
+
+
+
+getOrders() {
+
+
+    const db = getDb();
+
+    return db.collection('orders').find({_id: })
+}
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS O QUE PASSAMOS 
+
+A 
+
+ESSE 
+
+
+
+
+PARÂMETRO DE 'find'? ------> 
+
+
+BEM, DEVEMOS NOS LEMBRAR QUE 
+
+ADICIONAMOS EM CADA OBJETO 
+
+'ORDER'
+
+
+
+1 
+
+
+
+
+OBJETO 'user',
+
+E DENTRO DESSE OBJETO 'user'
+
+
+TEMOS 
+1
+
+
+field de '_id',
+
+
+
+
+
+QUE PODE SER USADO AGORA... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, A QUESTÃO É QUE 
+
+
+
+
+
+
+NO MEU CÓDIGO,
+
+eu simplesmente 
+
+
+
+usei 
+
+
+
+'this._id'
+
+
+COMO 
+
+O 
+
+
+CRITÉRIO/filtro,
+
+tipo assim:
+
+
+
+
+'''return db.collection('orders').find({_id: ObjectId(this._id)})'''''
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO... MAS O PROFESSOR VAI QUERER __ fazer uma COMPARAÇÃO 
+
+ENTRE 
+
+o 
+
+
+'current user id' ('''this._id'''') 
+
+
+com 
+
+o 
+
+
+
+
+ID 
+
+
+
+ARMAZENADO DENTRO DE NOSSAS 'ORDER',
+
+lá 
+
+no field de 'user'... 
+
+(
+
+pq o formato é tipo este:
+
+
+''''''''''
+order {
+
+
+        user: {
+            _id: xxxx
+        }
+}
+'''''''''''''
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+----->  OK ....... -----> PARA FAZER ISSO, PROFESSOR DIZ QUE 
+
+
+
+VAMOS PRECISAR ADICIONAR UM 'FILTER'... ------> 
+
+
+
+
+AÍ ELE NOS EXPLICA QUE 
+
+NO MONGODB PODEMOS
+
+
+
+'CHECK NESTED PROPERTIES',
+
+
+
+
+
+basta 
+
+
+__DEFINIRMOS O 'PATH' 
+
+ATÉ ESSAS PROPERTIES... ------> 
+
+
+
+
+
+A ÚNICA COISA IMPORTANTE QUE 
+
+
+
+DEVEMOS TER EM MENTE É QUE 
+
+__DEVEMOS USAR 
+
+
+'' (quotation marks) 
+
+
+AO REDOR 
+
+
+DO PATH,
+
+
+E QUE 
+
+AÍ PODEMOS 
+
+DIZER ALGO COMOO 
+
+
+
+
+'''.find(
+
+
+    {'user._id'} 
+)
+
+
+''''''
+
+
+
+
+
+
+
+--> ISSO AÍ, NO CASO, 
+
+
+
+VAI 
+
+
+
+
+
+'LOOK FOR _ID in THE USER 
+
+
+PROPERTY, WHICH HOLDS AN EMBEDDED DOCUMENT...' -------> AÍ, NO CASO,
+
+
+
+
+PROFESSOR 
+
+
+VAI QUERER ___ COMPARAR (compare no mongodb é ESCRITO COM ':'....) 
+
+
+
+
+
+
+
+
+---> ELE VAI QUERER __ COMPARAR O '_id' dentro de 'order.user' 
+
+
+
+COM 
+
+o 
+
+
+'_id'
+
+
+QUE TEMOS DENTRO DE 'req.user'...
+
+
+
+
+
+--> A ESCRITA FICA ASSIM:
+
+
+
+
+
+
+'''''return db.collection('orders').find({'user._id': ObjectId(this._id)})'''''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AAAHHHHH AGORA VI MEU ERRO... --> olhe como estava o código de 
+
+'getOrders':
+
+
+
+
+
+
+
+
+getOrders() {
+    const db = getDb();
+
+    return db
+      .collection('orders')
+      .find({})
+      .toArray()
+      .then((orders) => {
+        console.log(orders, 'TITLE');
+        return orders;
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO VOCÊ PODE OBSERVAR, EU ESTAVA FAZENDO FETCH __ DE TODAS AS ORDERS... --> claro que isso não é ideal,
+
+pq 
+
+eu vou querer 
+
+FAZER FETCH SÓ DAS ORDERS FEITAS POR MEU USER ESPECÍFICO,
+
+eis a necessidade 
+
+
+daquela 
+
+escrita/COMPARAÇÃO de 
+
+
+
+'user._id': ObjectId(this._id)'...
+
+
+
+
+
+
+
+----------
+
+
+
+
+
+
+CERTO... --> E ISSO VAI ME DAR TODAS AS ORDERS 
+
+PARA 
+
+ESSE USER... ------> 
+
+
+
+
+
+AÍ O PROFESSOR VAI USAR O SHORTCUT 
+
+de 
+
+'.toArray()'
+
+
+para 
+
+retornar todas as orders para auqele userId, em 1 array....
+
+
+
+
+
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+
+  getOrders() {
+    const db = getDb();
+
+    return db
+      .collection('orders')
+      .find({'user._id': ObjectId(this._id)})
+      .toArray()
+      .then((orders) => {
+        console.log(orders, 'TITLE');
+        return orders;
+
+
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+CERTO, AÍ PASSAMOS ESSAS ORDERS À NOSSA VIEW DE 'orders.ejs'.....
+
+
+
+
+
+
+
+
+--> CERTo....
+
+
+
+
+
+
+
+SALVAMOS TUDO ISSO,
+
+E TUDO FUNCIONA.
+
+
+
+
+
+
+
+
+AGORA TEMOS NOSSAS ORDERS, TUDO CERTINHO...
+
+
+
+
+
+
+
+--> AGORA 
+
+TEMOS A FUNCIONALIDADE BÁSICA DO SHOP FUNCIONANDO, MAS AGORA COM MONGODB E NOSQL..
+
+
+
+
+
+
+
+
+
+
+--> HÁ JEITOS DE DEIXAR O 
+
+
+
+
+WRITE DO MONGODB MAIS FÁCIL, VEREMOS ISSO NO PRÓXIMO MÓDULO....

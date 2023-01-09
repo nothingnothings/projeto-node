@@ -1,0 +1,756 @@
+
+
+
+
+
+
+
+
+EU já havia feito isso....
+
+
+
+
+
+
+
+o código era este:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+  post
+    .save()
+    .then(() => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+          _id: new Date().toISOString,
+          creator: {
+            name: 'Max',
+          },
+          createdAt: new Date(),
+        },
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+AQUELE CÓDIGO DE 
+
+
+
+
+'const post = new Post(
+    {
+
+
+    }
+)
+
+
+
+post.save()
+'
+
+
+
+
+
+
+
+
+-> CLARO QUE EU SÓ PASSEI O 'title' 
+
+
+e 
+
+o 
+
+'content',
+
+
+
+PRECISO TAMBÉM 
+
+DE 
+
+
+'imageUrl',
+
+
+
+e talvez de 'creator'..... -----> O '_id'
+
+eu não preciso 
+
+
+pq 
+
+isso já vai ser gerado automaticamente 
+
+
+pelo mongoose....
+
+
+
+
+
+
+
+
+
+
+--------> ok... professor escreve:
+
+
+
+
+
+
+const post = new Post(
+    {
+
+        title: title,
+        content: content,
+        creator: { name: 'Max'}
+    }
+)
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR EXPLICA QUE 
+
+NÃO VAMOS PRECISAR SETTAR NENHUMA DAS PROPRIEDADES:
+
+
+
+1) '_id' ( settada AUTOMATICAMENTE PELO MONGOOSE/MONGODB)...
+
+
+
+
+
+2) 'createdAt'
+
+
+
+3) 'updatedAt'.... (ambas são criadas por meio do argumento '{timestamps: true'}' lá no model de 'Post'...)
+
+
+
+
+
+
+
+
+
+---------->  CERTO... 
+
+
+
+
+
+
+
+
+
+----> OK.... SÓ PRECISAMOS PASSAR TITLE + CONTENT + CREATOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+ESCREVEMOS 
+
+'post.save()'
+
+PARA 
+
+
+SALVAR 
+
+ESSE 
+
+POST NOSSO...
+
+
+
+
+
+
+
+
+
+const post = new Post(
+    {
+
+        title: title,
+        content: content,
+        creator: { name: 'Max'}
+    }
+)
+
+
+
+post.save().then().catch(
+
+)
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+ESCREVEMOS ESSE THEN-CATCH BLOCK
+ pq 
+
+ o 
+
+ 'post.save()'
+ VAI NOS DAR UMA PROMISE-LIKE OBJECT,
+
+
+
+ EM QUE PODEMOS 
+
+ 'catch' quaisquer 
+
+erros... --> PROFESSOR EXPLICA QUE 
+
+
+
+MAIS TARDE VAMOS ADICIONAR ERROR HANDLING DE VERDADE...
+
+
+
+
+
+
+
+
+
+-------> OK.... --> COM O RESULT, PROFESSOR VAI QUERER O CONSOLE.LOGGAR,
+
+
+E TAMBÉM QUERER ENVIAR UMA 
+
+
+RESPONSE....
+
+
+
+
+
+
+--> NA RESPONSE,
+ 
+ professor envia uma json response,
+
+ tipo assim:
+
+
+
+
+.save()
+.then(
+    (result) => {
+
+                 res.status(201).json(
+     {
+         message: 'Post created successfully!',
+         post: result
+     }
+ )
+
+
+    }
+)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+SALVAMOS TODO ESSE SERVERSIDE CODE E 
+
+
+TESTAMOS O NOSSO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------> professor enfia alguns dados... 
+
+
+
+
+
+--> o upload de images ainda não funciona, veremos isso mais tarde...
+
+
+
+
+
+
+
+
+-----> O CREATE DE NOSSO 
+
+POST __ FALHA_....
+
+
+
+
+
+
+
+
+--> observamos um error de 'Path ImageUrl is required'... 
+
+
+
+
+
+
+
+
+
+------> ISSO FAZ SENTIDO PQ NO NOSSO MODEL DEFINIMOS 
+
+
+'imageUrl' 
+
+
+
+COMO UMA PROPRIEDADE 'required'.. (
+
+
+    e não  estamos 
+
+
+
+    enfiando uma 'imageUrl'
+
+
+    dentro do nosso 
+
+    'new Post(
+        {
+
+        }
+    )',
+
+    ainda...
+
+
+)
+
+
+
+
+
+
+PROFESSOR CONSERTA ASSIM:
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: 'DUMMY', ////eis o código em questão.
+    creator: {
+      name: 'Maximillian'
+    }
+    //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+  });
+
+  post
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: result ///vai conter info sobre o post que foi armazenado na nossa database...
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+-----> ok.... ---> 
+
+
+
+
+
+
+com isso, satisfazemos os requirements de nosso model...
+
+
+
+
+
+
+
+
+------> AÍ TESTAMOS...
+
+
+
+
+
+
+
+
+
+--------> ok, post foi criado com sucesso...
+
+
+
+
+
+
+
+
+
+RECEBEMOS, NO CONSOLE.LOG do browser,
+
+
+
+
+
+este código:
+
+
+
+
+
+{title: 'AAAAAA', image: File, content: 'BBBBB'}content: "BBBBB"image: FilelastModified: 1632925158809lastModifiedDate: Wed Sep 29 2021 11:19:18 GMT-0300 (Horário Padrão de Brasília)[[Prototype]]: Objectname: "COMPROVANTE.png"size: 67003type: "image/png"webkitRelativePath: ""[[Prototype]]: Filetitle: "AAAAAA"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__() 'LINE'
+
+
+
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+OK, DEU CERTo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> vimos a data do post que 
+
+
+foi armazenado,
+
+com o 'creator',
+
+
+
+com os timestamps de 
+
+'createdAt' 
+
+
+e 
+
+
+'updatedAt'....
+
+
+(criados por 'timestamps: true')
+
+
+
+
+
+
+
+-------> também obtemos aquele '_id',
+
+
+GERADO __ AUTOMATICAMENTE PELO MONGOOSE...
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... ISSO ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+-> E NO SERVERSIDE NÃO VEMOS ERRO ALGUM, APENAS AQUELE 'CREATED OBJECT'
+
+
+sendo printado..
+
+
+
+
+
+--------> OK...
+
+
+
+
+
+
+
+--> COMO PRÓXIMA ETAPA,
+ 
+
+
+ PODEMOS TRABALHAR NO __ 'SERVE DAQUELA IMAGE' (que está armazenada no nosso serverside...)
+
+
+
+
+
+
+
+ --> E COMO ETAPA POSTERIOR A ESSA, PODEMOS 
+
+
+  TRABALHAR NO  ACCEPT DE IMAGE UPLOADS 
+
+
+
+  e no handle 
+
+
+  do 
+
+
+
+
+
+  ERROR (possíveis erros) 
+
+
+
+  NESSE 
+
+  'CREATE POST'....

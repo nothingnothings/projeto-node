@@ -1,0 +1,861 @@
+
+
+
+
+
+
+
+
+--> AGORA QUE TEMOS 
+
+
+NOSSO AUTHENTICATION FLOW 
+
+E 
+
+
+'ROUTE PROTECTION'
+
+
+no lugar,
+
+
+
+___DEVEMOS __ FALAR __ SOBRE SEGURANÇA,
+
+E SOBRE 
+
+
+
+
+____CSRF....  --------> ATAQUES 
+
+
+
+
+
+CSRF -------------> 
+
+
+
+
+
+
+
+
+
+CROSS-SITE REQUEST FORGERY ---> 
+
+
+
+O QUE É ISSO?
+
+
+
+
+
+
+
+
+------- É BASICAMENTE 
+
+
+1 
+
+
+
+
+TIPO DE PADRÃO DE ATAQUE/APPROACH EM QUE __ PESSOAS PODEM __ aBUSAR__ 
+
+
+
+SUAS SESSIONS,
+
+
+ABUSÁ-LAS 
+
+
+
+E _eNTÃO _ 
+
+
+
+
+
+
+SACANEAR/TRICK 
+
+
+
+OS 
+
+USERS 
+
+
+
+__ DO SEU APLICATIVO, E FAZER COM QUE 
+
+
+__ELES EXECUTEM __ CÓDIGO MALICIOSO....------> 
+
+
+
+
+
+
+
+
+
+
+FUNCIONA ASSIM:
+
+
+
+
+
+
+
+
+
+
+1) VOCÊ TEM 1 USER NO SEU APP... 
+
+
+
+
+
+
+
+2) AGORA VAMOS ASSUMIR QUE __ ESSE USER É UM __ VISITOR_, 
+
+
+1 
+
+VISITOR QUE 
+
+ESTÁ, 
+
+de fato, 
+
+
+'logged in'...
+
+
+
+
+
+
+
+
+
+3) AÍ VOCÊ VAI TER SEU CÓDIGO SERVERSIDE,
+
+E AÍ 
+
+SUA 
+
+DATABASE, COM A QUAL VOCê INTERAGE...
+
+
+
+
+
+
+
+
+
+---> CERTO.... ---> 
+
+
+
+
+4) AÍ O USER VAI INTERAGIR COM SEU 'FRONTEND VIEW',
+
+
+COM AS PAGES QUE VOCê RENDERIZA DE VOLTA... 
+
+
+
+
+
+
+
+
+
+5) E AÍ, VOCÊ VAI GANHAR UMA 'SESSION' 
+
+
+PARA 
+
+ESSE USER,
+
+
+
+E 
+
+AÍ É CLARO QUE VAMOS TER 
+
+
+
+'SESSION NA DATABASE' + 'COOKIE DESSA SESSION, NO BROWSER DO USER'...
+
+
+
+
+
+
+
+
+
+
+------> ok.... ------> 
+
+
+
+
+
+
+6) AÍ, É CLARO, O _ USER__ PODE FAZER COISAS QUE VOCê PERMITE NO SEU APP,
+
+
+como 
+
+
+'ENVIAR DINHEIRO PARA B',
+
+
+
+
+
+SE VOCÊ ESTIVER CONSTRUINDO UM APP DE BANCO... --> NO NOSSO CASO,
+
+
+
+1 
+
+feature possível é 
+
+'ORDER SOME PRODUCTS' ,
+
+
+com O 
+
+
+SHIPPING ADDRESS DO USER...
+
+
+
+7) OK.... -------> 
+
+
+
+
+EM UM 
+
+
+CENÁRIO 
+
+
+
+
+
+
+______ DE ATAQUE___ CSRF,
+
+
+
+O __ USER_ É 
+
+
+ENGANADO,
+
+ele é 
+
+'TRICKED ONTO A FAKE WEBSITE',
+
+
+
+
+UM SITE QUASE IGUAL AO SITE DE VERDADE EM APARÊNCIA, MAS QUE VAI DIRECIONAR OS 
+
+HTTP REQUESTS DO USER 
+
+
+A 
+
+UM 
+
+DOMÍNIO COMPLETAMENTE DIFERNTE.... ------> ISSO PODE SER FEITO,
+
+
+
+
+POR EXEMPLO,
+
+
+___ATRAVÉS___ DO SEND DE UM LINK EM 1 EMAIL...
+
+
+
+
+
+
+
+
+
+--> O SITE PODE __ SE PARECER EXATAMENTE COM O SEU,
+
+
+MAS 
+
+TECNICAMENTE É UM SITE DIFERENTE...
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... NESSE SITE PODE __ EXISTIR 1 
+
+
+LINK,
+
+
+
+1 LINK __ LEVANDO __ A SUA PAGE DE VERDADE,
+
+
+SUA 
+
+
+'REAL PAGE',
+
+
+
+MAS 
+
+__SERÁ 1 LINK QUE _ VAI 
+
+
+__EXECUTAR 'ALGUM REQUEST'__
+LÁ 
+
+
+
+
+
+NA SUA PAGE...
+
+
+
+
+
+
+
+---------> NO SITE FAKE, POR EXEMPLO,
+
+PODE-SE 
+
+TER 
+
+
+
+
+1 FORM IDÊNTICA A DO SITE NORMAL, uma form que QUANDO PREENCHIDA,
+
+
+vai 
+
+
+ENVIAR 
+
+O REQUEST 
+DO 
+
+
+USER......... ----> O PROBLEMA, AQUI,
+
+É 
+
+
+QUE 
+
+
+
+
+
+__ ESSE SITE FAKE__ NEM 
+
+
+MESMO VAI PRECISAR 
+
+
+__ 
+
+
+
+ENVIAR __ O REQUEST A 'OUTRO DOMÍNIO'/LUGAR.... --> não, ele vai PODER 
+
+
+___ENVIAR ___ o 
+
+
+
+REQUEST_ AO 
+
+
+
+
+LUGAR 'LEGIT' MESMO, 
+
+
+ao 
+
+site 
+
+DE 
+
+VERDADE,
+
+
+
+e 
+ESSE 
+
+REQUEST 
+REALMENTE 
+
+SERÁ 
+
+CONSIDERADO COMO VÁLIDO,
+
+
+POIS __ ESTARÁ__ PRESENTE, NO BROWSER DO USER,
+
+SUA 
+
+'SESSION', que garante sua 'autenticidade'... ------> ISSO SIGNIFICA QUE 
+
+
+O 
+
+
+
+
+FALSÁRIO QUE CRIA O SITE __ VAI BASICAMENTE ___ ADULTERAR O _ REQUEST__ 
+
+
+ENVIADO PELO USER, CRIADO POR AQUELA FORM FALSIFICADA,
+
+
+
+
+__ VAI ADULTERAR O 
+
+REQUEST __ 
+
+E 
+
+
+FAZER COM QUE SEJA EXECUTADO 1 CÓDIGO DISTINTO DAQUELE QUE O USER QUERIA RODAR (ex: enviar dinheiro para C em vez de B...)
+
+
+
+
+
+
+
+
+
+
+-------> OU SEJA,
+
+
+A 
+
+SESSION PARA AQUELE USER 
+
+
+
+___ VAI SER USADA NORMALMENTE,
+
+
+
+E AQUELA 
+
+DATA 'BEHIND THE SCENES',
+
+que 
+
+o 
+
+USER 
+
+NUNCA VÊ,
+
+
+
+
+AQUELE 
+
+
+CÓDIGO QUE 
+
+
+___CONFIGURA__ 
+
+
+
+
+
+O 
+
+'MONEY TRANSFERRAL' 
+
+
+
+ou a ORDER,
+
+
+
+
+_ VAI _ SER 
+
+
+CONFIGURADA/EXECUTADA 
+
+
+DE 
+
+
+UMA MANEIRA __DIVERSA DAQUELA PRETENDIDA PELO USER... ----> ESSA PARTE 
+
+
+
+AÍ 
+
+
+
+
+____ OCORRE __ DE FORMA INVISÍVEL, 
+
+
+
+É INVISÍVEL 
+
+
+AO 
+
+USER,
+
+
+
+mas 
+
+
+
+a 
+
+
+
+'VALID SESSIOn'
+
+__aCABA_ SENDO 
+
+
+
+USADA 
+
+
+
+PARA ESSA FARSA,
+
+
+PQ 
+
+
+__ O SEU SERVER AINDA CONTINUA 
+
+
+
+
+SENDO USADO/ É USADO, 
+
+
+
+E 
+
+ESSA 
+
+SESSION 
+
+
+'roubada'
+
+
+DO USER 
+
+
+
+
+_ É USADA JUSTAMENTE PARA ISSO, PARA 
+
+GANHAR ACESSO AO SEU SERVER... -----------> 
+
+
+
+
+
+
+É POR ISSO QUE 
+
+
+
+
+NOS 
+
+
+'CSRF ATTACKS'
+
+
+
+as pessoas 
+
+dizem que 
+
+
+
+
+
+
+
+'YOUR SESSION GETS STOLEn',
+
+
+
+
+PQ _ O
+
+
+
+
+ATACANTE_ BASICAMENTE__ VAI EXECUTAR__ TODO TIPO DE OPERAÇÕES 
+
+
+
+
+
+NO APLICATIVO LEGIT__ por meio da sua session, tudo 
+
+
+
+POR MEIO DAQUELE ___ 
+
+
+SITE FALSO, idêntico ao VERDADEIRO,
+
+que ele criou (mas com forms bugadas/que executam CÓDIGO DISTINTO da versão original 
+
+
+de sua página... )
+
+
+
+
+
+
+
+
+
+------> NESSE 
+
+
+
+APPROACH DE ATAQUE,
+
+
+
+
+___ VOCÊ __ ESSENCIALMENTE__ 
+
+
+
+ABUSA__ O FATO DE QUE 
+
+USERS ESTÃO 'LOGGED IN',
+
+
+
+
+__ EM QUE __ VOCÊ 
+
+
+
+
+ENGANA SEUS USERS E FAZ COM QUE ELES 
+
+
+
+
+
+FORMULEM REQUESTS __DISTINTOS__ DAQUELES QUE PRETENDIAM,
+
+
+
+E QUE 
+
+
+NEM MESMO SERÃO PERCEBIDOS POR ELES... -------> E, OBVIAMENTE,
+
+
+
+
+__ VAMOS QUERER ___ PROTEGER__ CONTRA 
+
+
+
+ESSE 
+
+ATTACK PATTERN.... --------> OK,
+
+
+
+MAS COMO PODEMOS 
+
+
+NOS PROTEGER CONTRA ESSE ATTACK PATTERN}? 
+
+
+
+
+
+
+
+
+
+
+
+-------> BEM, A IDEIA É QUE 
+
+
+__NÓS __ QUEREMOS _____ GARANTIR__ QUE 
+
+
+PESSOAS 
+
+
+
+_____________ SÓ POSSAM/SÓ SEJAM CAPAZES DE  __ USAR 
+
+
+
+
+___SUA SESSION 
+
+
+
+
+
+
+_______ SE ______ ELES ESTIVEREM ___ TRABALHANDO COM SUAS __ VIEWS,
+
+
+
+COM AS 
+
+VIEWS PRÓPRIAS 
+
+DE SEU 
+
+APP...
+
+(
+
+    ou seja,
+
+
+
+    PELAS __ VIEWS__ EFETIVAMENTE RENDERIZADAS __POR SEU APP..
+) ------------------->  VAMOS QUERER 
+
+
+ISSO 
+
+
+
+JUSTMANETE PARA QUE 
+
+NOSSA 'SESSION', A SESSION DE NOSSO APP,
+
+
+______NÃO FIQUE DISPONÍVEL/POSSA __ SER USADA 
+
+
+
+__ EM QUALQUER 
+
+
+'FAKE PAGE'
+
+
+
+
+na internet, PÁGINAS QUE 
+
+PODEM _ PARECER___ COM 
+
+
+
+NOSSAS PÁGINAS,
+
+
+
+
+
+
+
+MAS QUE  
+
+NÃO SÃO ELAS... ------->
+
+
+
+
+
+
+
+
+E PARA 
+
+
+
+ASSEGURAR __O ADD DESSA FEATURE,
+
+
+
+
+
+
+
+
+_____ VAMOS USAR AQUILO QUE 
+
+CHAMAM 
+
+DE 
+
+
+'CSRF-Token'..
+
+
+
+
+
+
+
+
+------> PROFESSOR VAI MOSTRAR COMO ISSO FUNCIONA __ NA PRÓXIMA LIÇÃO (acho que eu já estudei isso)...

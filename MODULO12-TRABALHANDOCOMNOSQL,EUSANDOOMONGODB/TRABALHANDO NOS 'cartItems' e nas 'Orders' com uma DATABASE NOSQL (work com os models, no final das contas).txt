@@ -1,0 +1,2617 @@
+
+
+
+
+
+
+
+
+
+
+----> AGORA QUE TRABALHAMOS COM OS 'PRODUCTS' E OS 'USERS',
+
+
+
+agora é 
+
+HORA DE TRABALHAR 
+
+
+
+NO 
+
+'CART' 
+
+
+
+nos 
+
+'cart items''
+
+
+
+
+MAIS UMA VEZ...
+
+
+
+
+
+
+
+
+------> CERTO..... ----> E A MANEIRA PELA QUAL 
+
+
+
+SE DÁ 
+
+
+
+A ESTRUTURA 
+
+
+'cart items' - 'cart' 
+
+
+
+___________VAI MUDAR ___ COM O MONGODB/nosql database,
+
+
+
+EM RELAÇÃO 
+
+
+
+À DATABASE SQL/mysql... -->  O PROFESSOR 
+
+
+
+VAI COMEÇAR 
+
+
+
+
+
+
+
+
+
+_____PELO MODEL DE 'CART'....-------> 
+
+
+
+
+
+QUAL É O NOSSO OBJETIVO 
+
+
+
+NO MODEL
+
+
+
+DE 
+
+CART, NO FINAL DAS CONTAS?
+
+
+
+
+
+
+
+
+
+----> PROFESSOR APONTA QUE __oBVIAMENTE_, PARA 
+
+CADA 
+
+USER QUE 
+
+TIVERMOS,
+
+
+
+__VAMOS QUERER __ ARMAZENAR_ 
+
+
+1 CART... ------->  ESSE USER, CADA USER,
+
+
+VAI 
+TER 
+
+
+1 
+
+
+CART... --> E ESSE CART VAI ENTÃO 'HOLD THE PRODUCTS'.... ------> 
+
+
+
+
+
+
+
+
+
+
+
+E ISSO, ACTUALLY, COM O MONGODB,
+
+
+
+
+É __ UM __ ÓTIMO__ LUGAR PARA 
+
+
+'EMBEDDED DOCUMENTS'.... ------->  ISSO PQ 
+
+
+
+
+
+
+
+
+
+NÓS TEMOS UMA 
+
+
+
+'STRICT ONE-TO-ONE RELATION',
+
+
+no formato da 
+
+
+relação ENTRE 
+
+
+O __USER___ E O _CART.... ---->  E COMO TEMOS ESSA 'one-to-one' relation, RELAÇÃO ESTRITA ENTRE OS 2,
+
+
+
+__NÃO HÁ 
+
+
+
+NENHUMA NECESSIDADE 
+
+
+
+
+__ DE FAZER MANAGE DESSA 'RELATION' __
+
+POR MEIO 
+
+
+
+DE UMA REFERENCE (por meio de 'cartId'/'userId', portanto)....
+
+
+
+
+
+
+
+--> EM VEZ DE USARMOS 'REFERENCES' para 
+
+managear essa relation ONE-TO-ONE,
+
+
+
+
+
+
+PODEMOS __SIMPLESMENTE __ USAR 
+
+O APPROACH 
+
+
+
+
+DO EMBED DE DOCUMENTS DENTRO DE OUTROS DOCUMENTS (provavelmente o embed de nosso 
+
+CART dentro de nosso USER),
+
+
+que 
+
+
+JÁ SERÁ SUFICIENTE PARA ESTABELECER ESSA RELATION ENTRE OS 2... (pq aí o CART VAI ESTAR __ CONTIDO_ NO USER, basicamente)...
+
+
+
+
+
+
+
+
+----> COMO __NÃO VAMOS PRECISAR DO APPROACH DE 'ids' e 'REFERENCES',
+
+
+
+PROFESSOR 
+
+
+DIZ QUE 
+
+PODEMOS IR EM FRENTE E APAGAR/DEPRECAR 
+
+
+o arquivo/model 
+
+
+de 
+
+'cart-item.js' (que foi anteriormente usado COM NOSSA DATABASE FORMATO SQL/mysql/sequelize)...
+
+
+
+
+
+
+
+
+
+
+--> renomeio o arquivo 'cart-item.js' 
+
+
+como 
+
+
+'cart-item-deprecado-sql.js'...
+
+
+
+
+
+
+
+----> O __ PROFESSOR ___ TAMBÉM__ SE LIVRA 
+
+
+DE 
+
+
+'cart',
+
+
+POIS 
+
+NOS EXPLICA QUE 
+
+VAI QUERER 
+
+REALMENTE 
+
+
+ENFIAR/CRIAR 
+
+ESSE 
+
+'CART'
+
+DENTRO 
+
+DE NOSSO 
+
+MODEL 
+'USER',
+
+representado 
+por 
+
+
+'user.js'...
+
+
+
+
+
+
+
+
+
+----> OK... VAMOS ATÉ O ARQUIVO DE 'user.js':
+
+
+
+
+
+const getDb = require('../util/database').getDb;
+
+const ObjectId = require('mongodb').ObjectId;
+
+class User {
+  constructor(username, email) {
+    this.username = username;
+    this.email = email;
+  }
+
+  save() {
+    const db = getDb();
+
+   return db.collection('users')
+      .insertOne(this)
+      .then((result) => {
+        console.log('User Created in Database');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+ static findUserById(productId) {
+    const db = getDb();
+
+    console.log(ObjectId(productId))
+    return db
+      .collection('users')
+      .findOne({
+        _id: ObjectId(productId),
+      })
+      .then((product) => {
+          console.log(product);
+        return product;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+
+module.exports = User;
+
+
+
+
+
+
+
+
+
+
+-----> AGORA, DENTRO DO MODEL DE 'user',
+
+
+O PROFESSOR ___ TAMBÉM VAI QUERER __ 
+
+
+ARMAZENAR 
+
+
+NOSSOS 
+
+
+'Cart items'... ------> A QUESTÃO AQUI, É CLARO, É 
+
+
+
+''COMO?'''
+
+
+
+
+
+
+
+
+
+----> A RESPOSTA É QUE 
+
+
+NÓS 
+
+
+
+__DEVEMOS__ 
+
+
+
+
+VER O NOSSO CONTROLLER DE 
+
+'shop.js'.... --------> 
+
+
+
+
+
+
+LÁ NÓS TEMOS 
+
+
+CÓDIGO 
+
+
+
+
+
+
+de controller 
+
+
+
+
+
+QUE 
+
+
+
+ARMAZENA 
+
+COISAS EM 1 
+
+CART... ----> isso visto em controllers como 
+
+
+'postToCart',
+
+
+
+
+que tem/tinha 
+
+este código:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  
+  
+  
+  
+  const productId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
+
+
+
+  req.user
+    .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+
+      return cart.getProducts({ where: { id: productId } }); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+    })
+    .then((products) => {
+
+      let product;
+
+      if (products.length > 0) {
+        product = products[0];
+      }
+
+
+
+      if (product) {
+
+
+        const oldQuantity = product.cartItem.quantity;
+
+
+        newQuantity = oldQuantity + 1;
+
+        
+        return fetchedCart.addProduct(product, {  ////código parecido com o de baixo, mas com um valor de QUANTITY diferente, valor que considera a EXISTÊNCIA PRÉVIA DE 1 objeto 'product' no nosso cart (reproduzido por 'cart-items'..)
+          through: {quantity: newQuantity}
+        })
+
+      } else {
+        return Product.findByPk(productId) ///executamos isto pq queremos ADICIONAR ESSE PRODUCT ESPECÍFICO, sua data, ao nosso cart....
+          .then((product) => {
+
+            console.log(fetchedCart, 'O cart em questão'); ///este 'addProduct' aqui de baixo é bem bugado, professor passou 'product' como seu parâmetro, e ele não dá erro, realmente aceita esse parâmetro....
+            return fetchedCart.addProduct(product, {
+              through: { quantity: newQuantity },
+            }); ///ver anotações em 'adicionando novos products ao nosso cart', ou a aula '163' do professor....
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+
+    })
+    .then(() => {
+      res.redirect('/cart');
+    })
+    .catch();
+};
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+NESSAS LINHAS DE CÓDIGO,
+
+
+
+NÓS EXECUTÁVAMOS 
+
+
+
+
+
+1) getCart --> para conseguir o CART EM SI..
+
+
+
+
+
+
+2) 'cart.getProducts()' --> para conseguir os PRODUCTS da table 'cart-items' associadas a esse cart....
+
+
+
+ 
+ 3) updatávamos essa table de 'cart-items' com novos cart-items, ou editávamos 1 record e aumentávamos seu valor, se esse cart-item específico já existia...
+
+
+
+
+
+
+ 4) SALVÁVAMOS TUDO DE VOLTA NA NOSSA DATABASE....
+
+
+
+
+
+
+
+
+
+
+ ----> E PODEMOS 
+
+ FAZER TUDO ISSO,
+
+
+ COM A AJUDA 
+
+
+ DO 
+
+
+ NOSSO MODEL 
+
+ DE 
+
+ 'user.js'...
+
+
+
+
+
+
+
+
+ ------> LÁ 
+
+
+
+ em 
+
+ 'user.js',
+
+
+
+ EM 
+
+
+
+
+ 1 GIVEN OBJETO 'User',
+
+
+
+
+ EM VEZ 
+
+ DE 
+
+
+
+
+
+ __TERMOS_ APENAS __ 
+ 'save()',
+
+
+
+ VAMOS QUERER 
+
+
+ ADICIONAR UM 
+
+
+
+ OUTRO MÉTODO, MÉTODO NOVO,
+
+
+ chamado 
+ de 
+
+
+
+ 'addToCart() {}'....
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+ const getDb = require('../util/database').getDb;
+
+const ObjectId = require('mongodb').ObjectId;
+
+class User {
+  constructor(username, email) {
+    this.username = username;
+    this.email = email;
+  }
+
+  save() {
+    const db = getDb();
+
+   return db.collection('users')
+      .insertOne(this)
+      .then((result) => {
+        console.log('User Created in Database');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+    addToCart() {
+
+
+    }
+
+
+
+
+
+ static findUserById(productId) {
+    const db = getDb();
+
+    console.log(ObjectId(productId))
+    return db
+      .collection('users')
+      .findOne({
+        _id: ObjectId(productId),
+      })
+      .then((product) => {
+          console.log(product);
+        return product;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+
+module.exports = User;
+
+
+
+
+
+
+
+
+
+
+
+----------> AÍ, DENTRO DESSe 'addToCart',
+
+
+PROVAVELMENTE 
+
+
+
+
+
+VAMOS COLOCAR/ESPERAR 
+
+1 PARÂMETRO DE 
+
+'product'... -----> É 1 
+
+
+___PRODUCT___ QUE 
+
+VOU QUERER 
+
+ADICIONAR/ACRESCENTAR
+ 
+ AO 
+
+ 'cart'
+
+
+ VINCULADO A ESSE USER,
+
+ É CLARO...
+
+
+
+
+
+
+
+
+ ---------> ESSENCIALMENTE,
+
+
+
+ é EXATAMENTE O QUE 
+
+
+
+
+ FIZEMOS/FAZÍAMOS LÁ EM 
+
+ 'shop.js',
+
+ com 
+ O
+
+
+ CONTROLLER 
+
+ de 
+
+ 'postToCart'
+
+
+ QUE executava aquele código sql/sequelize...
+
+
+
+
+
+
+
+
+ ----> isso pq lá nesse controller,
+
+ a primeira coisa que 
+
+
+
+pegávamos era o 
+
+__ID__ DO PRODCUT,
+
+
+
+por meio de 
+
+
+'const productId = req.body.productId',
+
+
+
+
+PARA _ ENTÃO CHECARMOS SE ELE JÁ EXISTIA NA DATABASE,
+
+PARA ENTÃO 
+
+
+'ADD IT TO THE CART'...
+
+
+
+
+
+
+
+
+
+-----> ok.... o professor, no caso desse model 
+
+
+de 
+
+'user.js'
+
+
+
+NA VERSÃO NOSQL,
+
+
+
+___VAI__ QUERER 
+
+PEGAR O 
+
+
+__'product'
+
+INTEIRO 
+
+
+COMO PARÂMETRO 
+
+de 
+
+'addToCart()',
+
+
+OU SEJA,
+
+
+MAIS 
+DO QUE 
+
+SEU 
+
+
+'id'.. (pq o professor vai querer 
+
+
+TRABALHAR COM EMBEDDING DE DATA/OBJECTS/DOCUMENTS,
+
+
+E NÃO 
+
+
+
+REFERENCES, como fazíamos no SQL e também 
+
+fizemos um pouco no NOSQL, na aula passada de 'armazenando users na nossa database'..)
+
+
+
+
+
+
+
+
+
+
+-----> OK..
+
+
+
+
+
+
+ELE VAI ESCREVENDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+addToCart(product) {
+
+
+
+
+}
+
+
+
+
+
+
+
+
+-----> OK... AÍ, DENTRO de 'addToCart',
+
+
+O PROFESSOR 
+
+
+PODE 
+
+TER __ TODA A LÓGICA ___ DE QUE 
+ELE PRECISA 
+
+
+__PARA 
+
+
+
+
+______DESCOBRIR SE 
+
+AQUELE 
+
+ITEM 
+
+JÁ 
+
+EXISTE DENTRO DO CART( para então decidir se 
+ELE VAI 
+
+QUERER 
+
+APENAS 
+
+AUMENTAR O 
+
+VALOR DO FIELD 'quantity' nesse '''CARTITEM''',
+ 
+ 
+ OU SE ENTÃO 
+ 
+ VAI QUERER 
+ 
+ 
+ 
+ CRIAR UM ENTIRELY NEW 
+
+ cart item object/document...
+ )
+
+
+
+
+
+
+
+
+ ----> OK... E PARA ENTENDER COMO ISSO __ TUDO __ FUNCIONA,
+
+
+
+ VOCÊ 
+
+
+ ____NÃO PODE ____ SE ESQUECER __  __ QUE 
+
+
+
+ 'addToCart()',
+
+
+ esse método aí de 'user.js',
+
+
+
+
+
+ _________VAI SER CHAMADO ___ 
+
+
+
+
+ EM 
+
+
+ 1 
+
+
+ OBJETO 
+
+ 'User'............ (e não em 1 product, e não em 1 cart... em 1 USER, realmente)...
+
+
+
+
+
+
+
+
+ -----> E ESSE OBJECT 
+
+
+
+
+ ___ 'USER' 
+
+ VAI ENTÃO SER __ CRIADO _ COM 
+
+
+ 'DATA WE FETCHED FROM THE DATABASe', com 
+
+
+ a ajuda 
+ daquele 
+
+
+ método 
+
+
+
+
+
+ 'findById' LÁ NO MODEL de 'user.js' mesmo,
+
+
+ aquele 
+
+ código 
+ de 
+
+
+
+ ''
+
+
+
+
+
+
+
+ 
+ static findUserById(userId) {
+    const db = getDb();
+
+    console.log(ObjectId(userId))
+    return db
+      .collection('users')
+      .findOne({
+        _id: ObjectId(userId),
+      })
+      .then((user) => {
+          console.log(user);
+        return user;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+  '''''
+
+
+
+
+
+
+
+
+
+ 
+  ----> CERTO... ISSO PQ NESSE CÓDIGO NÓS VAMOS RETORNAR 1 USER,
+
+  lá naquela 
+  linha de 
+
+'''''
+      .then((user) => {
+          console.log(user);
+        return user;
+      })
+
+
+'''''
+
+
+
+
+
+
+
+OK....
+
+PORTANTO,
+
+
+
+__PRECISAMOS 
+
+
+
+NOS TORNAR 
+
+CAPAZES 
+
+DE 
+
+'ACCEPT MORE DATA'
+
+
+
+NO NOSSO CONSTRUCTOR 
+
+de 
+
+'User',
+
+TUDO PARA QUE 
+
+CONSIGAMOS 
+
+
+
+
+____ARMAZENAR 
+
+
+
+1 OBJECT COMO 
+
+
+
+''''CART'''', 
+
+1 cart de verdade,
+
+
+
+DENTRO 
+
+
+DO NOSSO OBJETO USER...
+
+
+
+
+
+
+
+
+
+----> E FAREMOS ISSO POR MEIO DE UM CÓDIGO COMO:
+
+
+
+
+
+
+class User {
+
+            constructor(username, email, cart) {
+
+                this.name = username;
+                this.email;
+                this.cart = cart;
+
+
+            }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-----------> OK.... ---> ISSO NOS DEIXARÁ 
+
+ARMAZENAR 
+
+1
+
+
+'cart'
+
+
+
+NO NOSSO 
+
+OBJETO 
+JAVASCRIPT 
+
+DE 
+'
+User',
+
+essencialmente... (e aí vmos usar esse objeto 'cart' com nossos inúmeros métodos dentro de 'user.js', esse model...)
+
+
+
+
+
+
+
+
+
+-------> OK..... ----> AÍ PODEREMOS ARMAZENAR O 'CART' nesse nosso objeto 
+
+javascript 
+
+
+'User'......... E ESSE OBJETO 'cart'
+
+TAMBÉM 
+
+
+
+
+_SERÁ BASEADO _ NA DATA__ QUE 
+
+ARMAZENAMOS LÁ NA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+----> OK... AGORA PODEMOS ASSUMIR QUE 
+
+TEREMOS 
+
+UMA 
+
+PROPRIEDADE 
+
+
+de 
+
+'cart'
+
+DENTRO DE NOSSO USER... ---------> AGORA 
+
+
+SÓ TEMOS 
+
+QUE 
+
+
+
+
+_________CHECAR__ 
+
+SE AQUELE 
+
+'
+GIVEN CART'
+
+
+
+JÁ POSSUI 
+
+
+__ 1 
+
+DETERMINADO 
+
+'PRODUCT' 
+
+
+
+OU NÃO...
+
+
+
+
+
+
+
+
+
+
+
+-----> para isso,
+
+
+
+
+PROVAVELMENTE 
+
+
+
+teremos que 
+
+adicionar alguma lógica 
+
+em 
+
+
+'addToCart(product) {
+
+
+}',
+
+
+
+esse nosso MÉTODo que 
+
+Não será estático.... (vai existir DENTRO DE CADA OBJETO 'User')...
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+-----> PROVAVELMENTE TEREMOS QUE IMPORTAR 
+
+
+'const getDb = require('../util/database').getDb',
+
+
+
+
+
+
+
+PARA ENTÃO 
+
+
+executar 
+
+
+códigos 
+
+como 
+
+
+
+'addToCart(product) {
+
+    const db = getDb();
+
+db.collection('users').findOne({
+
+
+        _id: this._id
+
+
+  })
+  .then(
+      (user) => {
+
+        const foundProduct = user.cart.find(
+                (product) => {
+                        return product === product
+                }
+            )
+
+    
+    if(!foundProduct) {
+
+        const newProduct = product;
+            user.cart.insertOne(
+                product
+            )
+            .then(
+
+            )
+
+    } else {
+
+
+
+    }
+
+      }
+  )
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ ALGO ASSIM... 
+
+
+MAS NÃO SEI SE ESTÁ CERTO...;
+
+
+
+
+
+
+
+
+
+
+
+-> CONTINUANDO A AULA DO PROFESSOR:
+
+
+
+
+
+
+
+
+
+o professor nos explica que 
+
+
+o 
+
+
+
+
+object 'cart'
+
+vai 
+
+ser um object 
+QUE PROVAVELMENTE 
+
+
+TERÁ ESTE FORMATO:
+
+
+
+
+
+
+
+
+cart: {
+
+
+
+    products: [ { quantity: xxx}, {}, {} ],
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-------> OK..... ASSUMINDO QUE NOSSO FORMATO SERÁ ASSIM,
+
+
+
+professor inicia o código de 
+
+
+'addToCart(product) {
+
+
+}'
+
+
+
+
+
+
+
+
+
+
+
+
+ASSIM:
+
+
+
+
+
+
+
+
+addToCart(product) {
+
+
+    const cartProduct = this.cart.products.findIndex();
+}
+
+
+
+
+
+
+
+
+
+
+--> eu estranhei esse código aí... --> pq 
+
+ele 
+
+não vai NEM 
+
+USAR 
+
+o 
+
+
+'getDb()'
+
+PARA 
+
+EXECUTAR 
+
+
+CÓDIGO DE FETCH NA NOSSA DATABASE... -----> não, mas isso faz total sentido.... --> 
+
+
+
+
+como 
+
+o 
+
+
+objeto 'cart'
+
+vai existir DENTRO DO NOSSO OBJETO 
+
+'User',
+
+
+
+
+
+
+__NÓS PODEMOS SIMPLESMENTE 
+
+
+EXECUTAR OPERAÇÕES 
+
+
+
+referenciando-o diretamente....
+
+
+
+
+
+
+
+----> é por isso que o professor vai querer usar/criar uma 
+
+
+constante 
+
+
+
+'cartProduct',
+
+
+
+
+que 
+
+
+será 
+
+
+
+'this.cart.items.findIndex()' -----> COM ISSO,
+
+PROFESSOR 
+
+
+VAI QUERER 
+
+O INDEXADOR 
+
+EXATO 
+
+
+DESSE ITEM que vamos querer 
+
+adicionar/updatar no cart.... 
+
+
+
+
+
+
+
+------> e aí, como parâmetro de 'findIndex()',
+
+ele 
+
+
+coloca 
+
+uma comparison 
+
+
+entre 
+
+
+o 
+
+'product._id' 
+
+
+
+e o 
+
+
+
+
+'p_id' (product que temos nesse array em 'cart'....)
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+addToCart(product) {
+
+
+    const cartProduct = this.cart.products.findIndex(
+
+        (p) => {
+            return p._id === product._id;
+        }
+
+
+    );
+}
+
+
+
+
+
+
+
+
+
+
+---> CERTO... COM ISSO, 
+
+O 
+
+'cartProduct' vai ser OU _UM INDEX,
+
+
+
+OU '-1' ( se esse index/product NÃO EXISTIR, se não existir um product equivalente 
+
+a esse 
+
+aí, com esse '_id'...)
+
+
+
+
+
+
+
+
+
+
+----> A PARTIR DISSO, TEREMOS QUE CHECAR QUAL É A __QUANTITY___ DESSE CARTITEM 
+
+ESPECÍFICO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... VAMOS ADICIONAR O CÓDIGO, AGORA, 
+
+
+
+DE ADD O PRODUCT ( ou seja, case de 'findIndex' e 'cartProduct' ficarem com valor de '-1'...)
+
+
+
+
+
+
+
+
+
+
+-------> ok... -> PROFESSOR CRIA UMA CONSTANTE,
+
+
+de nome 
+
+
+'updatedCart'....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const updatedCart = {} 
+
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE OBJETO, professor diz que teremos uma propriedade 
+
+de 
+
+'products'...
+
+
+
+
+
+--> ESSA PROPRIEDADE 
+
+
+
+será um __ ARRAY,
+
+array em que 
+
+
+PROFESSOR VAI 
+
+INCLUIR 
+
+nosso 
+
+'product'.... 
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const updatedCart = {products: [product]};
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO.... MAS PROFESSOR NOS EXPLICA QUE NÃO VAI QUERER 
+
+ADICIONAR 
+
+NOSSO 
+
+'product' de forma SOLTA AÍ... --> não, isso pq 
+
+
+ELE __ VAI QUERER __ ADICIONAR UM 
+
+FIELD 
+DE 
+
+'quantity'
+
+
+A ESSE 
+
+
+objeto 'product'....
+
+
+
+
+
+
+
+-----> por isso,
+
+
+ele provavelmente vai escrever algo como:
+
+(ESSA ESCRITA É MINHA, NÃO SEI SE ESTÁ CERTA...)
+
+
+
+
+addToCart(product) {
+
+
+
+
+    const updatedCart = {
+
+        products: [
+            ...this.cart.products,
+            {
+                ...product, 
+                quantity: 1
+            }
+        ]
+
+
+    }
+
+
+
+
+
+}
+
+
+
+
+
+
+-----> OK... MAS PROFESSOR CITA EXATAMENTE ESSE NOSSO APPROACH AÍ,
+
+
+pelo menos a parte de 
+
+
+'{
+    ...product,
+    quantity: 1
+}
+'
+
+
+(NÃO SEI SE A PARTE de '...this.cart.products' está correta ou não...)
+
+
+
+
+
+
+
+------> ok........
+
+
+
+ISSO VAI CRIAR UM 
+
+OBJECT 
+
+
+
+'cart',
+
+QUE 
+
+
+NOSSO 
+
+CASO SERÁ 
+UM ARRAY 
+
+COM APENAS 1 OBJECT...
+
+
+
+
+
+
+
+
+
+
+--> E AGORA, PROFESSOR VAI QUERER __ UPDATAR___ NOSSO 
+
+
+OBJETO 'user'
+
+PARA QUE 
+
+ELE PASSE A ARMAZENAR ESSE 'updatedCart'
+
+NO LUGAR__ DESSE 
+
+'cart' antigo...
+
+
+
+
+
+
+
+
+
+---> PARA ISSO, AGORA ELE REALMENTE 
+
+VAI OBTER ACESSO À DATABASE 
+
+'mongoDB'
+por meio de 
+
+
+'getDb()',
+
+o  clássico,
+
+
+E AÍ 
+
+
+
+vai escrever:
+
+
+
+
+
+
+
+addToCart(product) {
+
+
+
+
+    const updatedCart = {
+
+        products: [
+            ...this.cart.products,
+            {
+                ...product, 
+                quantity: 1
+            }
+        ]
+
+
+    }
+
+
+
+
+const db = getDb();
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+--> AÍ ELE VAI QUERER 'reach out' 
+
+à COLLECTION DE USERS,
+
+para 
+
+aí 
+executar 
+
+
+'insertOne'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+addToCart(product) {
+
+
+
+
+    const updatedCart = {
+
+        products: [
+            ...this.cart.products,
+            {
+                ...product, 
+                quantity: 1
+            }
+        ]
+
+
+    }
+
+
+
+
+const db = getDb();
+
+
+
+
+db.collection('users').insertOne(updatedCart)
+.then(
+    (result) => { console.log('ADDED PRODUCT TO CART!')}
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+
+}
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+-------> OK, MAS ESSE MEU CÓDIGO FICOU ___TODO ERRADO__..........
+
+
+
+
+
+
+
+
+----> FICOU TODO ERRADO PQ O QUE O PROFESSOR VAI FAZER É 
+
+
+executar 
+
+
+
+'db.collection('users').updateOne()',
+
+
+___JUSTAMENTE PQ ELE VAI QUERER __ UPDATAR O ___ CONTEÚDO/objeto 
+
+'cart'
+
+
+
+__DENTRO DO __ NOSSO USER, e nada mais do que isso.... ----> 
+
+
+
+
+
+
+PORTANTO, 
+
+nosso código 
+
+
+
+vai começar assim:
+
+
+
+
+
+
+
+
+addToCart(product) {
+
+
+
+
+    const updatedCart = {
+
+        products: [
+            ...this.cart.products,
+            {
+                ...product, 
+                quantity: 1
+            }
+        ]
+
+
+    }
+
+
+
+
+const db = getDb();
+
+
+
+
+db.collection('users').updateOne() //////EIS A MUDANÇA EM QUESTÃO.
+.then(
+    (result) => { console.log('ADDED PRODUCT TO CART!')}
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+
+}
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+------> OK... MAS PARA ___ENCONTRARMOS __ NOSSO 
+
+
+USER ESPECÍFICO, O USER A SER UPDATADO,
+
+
+
+VAMOS PRECISAR __ DE 1 ID, O ID DO USER.... ---> 
+
+
+
+
+para isso,
+
+
+
+
+
+______vAMOS PRECISAR__ QUE 
+
+
+
+CADA 
+
+
+
+OBJETO 'user' NOSSO 
+
+
+__REALMENTE __ POSSUA__ 
+
+um field 
+
+de 
+
+'_id',
+
+
+POR ISSO O PROFESSOR 
+
+ALTERA O CONSTRUCOTR DE 'User' para que 
+
+ele 
+
+
+passe 
+
+a ter 
+
+esse field específico... (só não sei como esse id será definido, ainda...)
+
+
+
+
+
+
+
+
+EX:
+
+
+class User {
+
+            constructor(username, email, cart, id) {
+
+                        this.name = username;
+                        this.email = email;
+                        this.cart = cart;
+                        this._id = id; /////EIS O CÓDIGO EM QUESTÃO
+
+
+
+            }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+CONTIUNANDO, O CÓDIGO COMPLETO, ATÉ AGORA, FICA ASSIM:
+
+
+
+
+
+
+
+               constructor(username, email, cart, id) {
+
+                        this.name = username;
+                        this.email = email;
+                        this.cart = cart;
+                        this._id = id; /////EIS O CÓDIGO EM QUESTÃO
+
+
+
+            }
+
+
+
+
+  addToCart(product) {
+
+
+
+    const updatedCart = {
+      products: [
+        ...this.cart.products,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ],
+    };
+
+    const db = getDb();
+
+
+
+    db.collection('users').updateOne({_id: ObjectId(this._id)}, updatedCart )
+    .then(
+        (result) => { console.log('ADDED PRODUCT TO CART!')}
+    )
+    .catch(
+        (err) => {
+            console.log(err);
+        }
+    )
+    
+  }
+
+
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+---> OK... MAS EU ERREI O CÓDIGO do segundo parâmetro... --> eu não posso 
+
+só 
+
+settar
+ 
+
+ 'updatedCart',
+
+
+ EU PRECISO 
+
+ ESCREVER 
+
+ AQUELA 
+
+ LINGUAGEM/SINTAXE 
+
+ ESPECIAL 
+
+ DO 
+
+ MONGODB,
+
+
+
+ escrever isto:
+
+
+
+
+ {
+
+
+$set: {
+
+        cart: updatedCart
+
+}
+
+
+
+ }
+
+
+
+
+
+
+
+
+
+
+ --> OK, VOU SIMPLESMENTE QUERER UPDATAR O 
+
+
+ 'cart',
+
+  e nada mais....
+
+
+
+--------------------------
+
+
+
+
+
+
+
+OK......... O PROFESSOR 
+
+
+
+
+AGORA FALA A PARTE IMPORTANTE:
+
+
+esse 'update'
+
+
+NÃO VAI FAZER 'MERGE'
+
+
+dos elementos/objetos 'product' 
+
+
+
+COM OS OBJETOs/elementos antigos... --> o array 
+
+NOVO NÃO SERÁ MERGEADO COM O ANTIGO AUTOMATICAMENTE,
+
+E SIM 
+
+
+ocorrerá 
+
+
+um 'overwrite' do velho pelo novo.... ------> 
+
+
+
+
+
+
+
+VAMOS SIMPLESMENTE 'OVERWRITE THE OLD CART WITH THE NEW CART'... -> e é exatamente 
+por isso que 
+
+eu acho que é 
+
+
+necessário o uso do spread operator em 
+
+
+'...this.user.cart'...
+
+
+
+
+
+
+
+
+
+OK... O CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  addToCart(product) {
+    const updatedCart = {
+      products: [
+        ...this.cart.products,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ],
+    };
+
+    const db = getDb();
+
+   return db.collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        {
+          ///é o 'update object', que vai updatar esse objeto 'user' específico, especificamente seu field/objeto 'cart'....
+
+          $set: {
+            cart: updatedCart,
+          },
+        }
+      )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+
+  ------------------ 
+
+
+
+
+
+
+  OK, AGORA NOSSO CART VAI TER ESSE 'CART ITEM'/PRODUCT ADICIONADO A SI...
+
+
+
+
+
+
+
+  --> É CLARO QUE O CASE DE 'RAISE QUANTITY' ainda não funciona, 
+
+  mas o que interessa é que 
+
+
+
+  A FUNCIONALIDADE BÁSICA DE 'add to cart' agora está funcionando/deve funcionar....

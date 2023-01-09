@@ -1,0 +1,1717 @@
+
+
+
+
+
+
+
+
+
+
+TALVEZ EU TENHA QUE USAR O MULTER, COM ESSA GRAPHQL API, 
+
+
+
+nos resolvers... (não tenho certeza)...
+
+
+
+
+
+
+
+
+
+
+COMEÇO O WRITE DO MEU SCHEMA ASSIM:
+
+
+
+
+
+input UserPostInputData {
+      title: String!
+      content: String!
+      imageUrl: String!
+      
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData)
+}
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+mas o problema é a 'imageUrl',
+
+pq 
+
+
+
+
+ela NÃO VAI SER (EXATAMENTE) UM INPUT TYPE POR PARTE DO USER... (é mais como se ela fosse um COLATERAL, e não algo inputtado por ele)...
+
+
+
+
+
+
+
+
+
+
+ACHO QUE AQUILO ESTAVA ERRADO... O CORRETO SERIA/É ISTO:
+
+
+input UserPostInputData {
+      title: String!
+      description: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): Post!
+}
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+ISSO PQ O QUE VAMOS RETORNAR/QUEREMOS RETORNAR, COM ESSE CREATE DO POST,
+
+
+é 
+
+
+1 
+
+'POSt' (para que ele seja inserido no nosso frontend, na interface do usuário)....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+input UserPostInputData {
+      title: String!
+      description: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): Post!
+}
+
+
+
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+OK... AGORA SÓ PRECISAMOS ESCREVER UM POUCO DESSA LÓGICA,
+
+lá 
+
+
+
+no RESOLVEr.js, 
+
+
+
+
+
+
+em um novo method, de nome 'createPost'...
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+CÓDIGO DO RESOLVER METHOD FICOU + OU - ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     createPost: async function(args, req) {    
+
+        const errors = [];
+
+
+        if (validator.isEmpty(args.title)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'Please insert a valid title'})
+        }
+
+
+        if (validator.isEmpty(args.content)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Please input valid content'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+        
+
+
+        const post = new Post({
+            title: args.title,
+            content: args.content,
+            imageUrl: req.file.path, ///talvez o mesmo funcionamento do Multer?
+            creator: {
+                userId: req.userId ///extraído do TOKEN, que vai ter ficado armazenado no request object....
+            },
+            //updatedAt e createdAt vão ser criados/addados __ AUTOMATICAMENTE PELO MONGOOSE, por conta de 'timestamps: true'. Mesma coisa com '_id' desse post....
+        })
+
+        const savedPost = await post.save();
+
+
+
+        
+     const user = await User.findOne({ _id: req.userId });
+
+
+        user.posts.push(
+            {
+                postId: ObjectId(post._id),
+              }
+        );
+
+    const savedUser = await user.save();s
+
+        return {
+            post: {
+                ...savedPost._doc
+            },
+            creator: {
+                _id: savedUser._id,
+                name: savedUser.name
+            }
+        }
+
+
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+E O CÓDIGO DO SCHEMA FICOU + OU - ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+
+type PostData {
+      post: Post!
+      creator: Creator!
+}
+
+type Creator {
+      _id: ID!
+      name: String!
+
+}
+
+type User {
+   _id: ID!
+   name: String!
+   email: String!
+   password: String
+   status: String!
+   posts: [Post!]!
+}
+
+
+type AuthData {
+      userId: String!
+      token: String!
+}
+
+
+input UserInputData {
+      email: String!
+      name: String!
+      password: String!
+}
+
+input UserPostInputData {
+      title: String!
+      description: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): PostData!
+}
+
+
+
+type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+}
+
+
+
+ schema {
+             mutation: RootMutation
+             query: RootQuery
+ }
+
+`
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(COMO VOCÊ PODE VER, EU ADICIONEI MAIS ALGUNS 'types', como 'Creator'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo... mas uma coisa que está faltando é um 'MULTEr',
+
+
+
+ou um MULTI-PART form 
+
+
+
+
+manager 
+
+que 
+
+
+consiga 
+
+
+
+FAZER HANDLE DAS NOSSAS IMAGES QUE SÃO UPLODADAS... (conto que fiquem armazenadas em 'req.file', mas não sei se funciona exatamente da mesma forma em uma GRAPHQL api)...
+
+
+
+
+
+
+
+
+
+
+
+TOUCHE... --> PROFESSOR FALA:
+
+
+
+
+'POR ENQUANTO, VOU ADICIONAR POSTS __ SEM UMA IMAGE DE VERDADE'... ---> ISSO 
+
+PQ 
+
+
+O 
+
+
+'IMAGE UPLOAD'
+
+
+
+É ALGO QUE 
+
+
+
+
+
+__ VAMOS __ FAZER MANAGE DE FORMA__  DIFERENTE, NO GRAPHQL.... --------->
+
+
+
+
+
+
+
+
+
+isso significa que por enquanto, para 1 
+
+
+
+POST,
+
+
+TEREMOS 
+
+SÓ 
+
+
+
+O 
+
+'TITLE'
+
+E 
+
+O 
+
+'CONTENT'....
+
+
+
+
+--------------------------
+
+
+
+
+
+
+--> VAMOS TER UM 'DUMMY TEXT' __ PARA A IMAGEURL.... E UM ATTACHED USER.... 
+
+
+
+
+
+
+
+
+
+--> CLARO QUE VOCÊ PODE TENTAR ADICIONAR ISSO POR CONTA PRÓPRIA,
+
+A FUNCIONALIDADE DA IMAGE,
+
+
+
+
+MAS 
+
+
+
+
+
+o professor diz que vai consertar conosco, mais tarde....
+
+
+
+
+
+
+
+
+---> CERTO... ---> VAMOS COMEÇAR COM 
+
+
+
+
+
+
+
+NOSSO BACKEND,
+
+
+COM NOSSO SCHEMA....
+
+
+
+
+
+
+
+
+
+
+--> professor adiciona 
+
+
+UM NOVO 
+
+MUTATION,
+
+
+de 
+
+'createPost()'...
+
+
+
+
+
+
+--> TAMBÉM VAI CRIAR UM NOVO 'INPUT', de 'PostInputData'....
+
+
+
+
+
+input PostInputData {
+
+
+
+}
+
+
+
+
+
+
+type RootMutation {
+    createUser(userInput: UserInputData): User!
+    createPost()
+}
+
+
+
+
+
+-------------------------
+
+
+
+DENTRO DESSE 'POST',
+
+
+VAMOS COLOCAR TUDO DE QUE PRECISAMOS PARA CREATE UM NOVO POST....
+
+
+
+
+
+
+
+
+--> vamos colocar um TITLE 
+
+e um 
+
+CONTENT,
+
+
+AMBOS SERÃO STRINGS...
+
+
+
+
+
+
+
+
+
+--> VAMOS COLOCAR, TAMBÉM, UMA IMAGEURL,
+
+
+mas é claro que 
+
+ELA 
+
+SERÁ UMA 
+
+
+
+'DUMMY STRING'....
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+input PostInputData {
+
+    title: String!
+    content: String!
+    imageUrl: String!
+}
+
+
+
+
+
+
+type RootMutation {
+    createUser(userInput: UserInputData): User!
+    createPost()
+}
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+o professor EXPLICA QUE O 'USER' É ALGO que podemos _ EXTRAIR__ DA 'TOKEN',
+
+
+
+que vai ter ficado 
+
+
+ANEXADAA 
+
+AO OBJETO 'request'
+
+
+de nosso 
+
+
+
+app...
+
+
+
+
+
+
+
+--> JÁ O IMAGE UPLOAD É ALGO QUE VAMOS HANDLAR DE FORMA DIFERENTE,
+
+MAIS TARDE...
+
+
+
+
+
+
+
+
+
+
+----> OK.... PROFESSOR EDITA O MUTATION PARA FICAR ASSIM:
+
+
+
+
+
+
+input PostInputData {
+
+    title: String!
+    content: String!
+    imageUrl: String!
+}
+
+
+
+
+
+
+type RootMutation {
+    createUser(userInput: UserInputData): User!
+    createPost(postInput: PostInputData): Post!
+}
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+--> POR ENQUANTO, O PROFESSOR VAI FAZER RETURN DAQUELE 
+
+
+
+TYPE DE 
+
+'Post',
+
+aqui....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ok..... ------------> COM ISSO,
+
+PODEMOS 
+
+ACTUALLY __ JÁ __ 
+
+'MOVE ON' 
+
+
+
+
+PARA OS NOSSOS RESOLVERS,
+
+
+
+
+E AÍ ADICIONAR UM NOVO RESOLVER,
+
+DE NOME 
+
+'CREATEPOST'...
+
+
+
+
+
+
+
+
+
+--> ok...
+
+
+
+PROFESSOR ESCREVE EXATAMENTE O QUE ESCREVEMOS:
+
+
+
+
+
+
+createPost: async function(args, req) {
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-> POR ENQUANTO, PROFESSOR PEDE QUE 
+
+APENAS 
+
+CRIEMOS 
+
+
+
+UM DUMMY POST,
+
+
+com a data que 
+já conseguimos receber (title e content)...
+
+
+
+
+
+--> CLARO, TAMBÉM VAMOS 'VALIDATE'
+
+esse input...
+
+
+
+
+
+
+
+--> NO MEU CÓDIGO, HAVIA FICADO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+  createPost: async function(args, req) {    
+
+        const errors = [];
+
+
+        if (validator.isEmpty(args.title)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'Please insert a valid title'})
+        }
+
+
+        if (validator.isEmpty(args.content)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Please input valid content'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+        
+
+
+        const post = new Post({
+            title: args.title,
+            content: args.content,
+            imageUrl: req.file.path, ///talvez o mesmo funcionamento do Multer?
+            creator: {
+                userId: req.userId ///extraído do TOKEN, que vai ter ficado armazenado no request object....
+            },
+            //updatedAt e createdAt vão ser criados/addados __ AUTOMATICAMENTE PELO MONGOOSE, por conta de 'timestamps: true'. Mesma coisa com '_id' desse post....
+        })
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+OK... PROFESSOR VAI FAZER A MESMA COISA, VAI CRIAR UM 
+
+
+ARRAY DE 'errors',
+
+
+
+VAZIO... --> 
+
+
+
+AÍ ELE 
+
+VAI 
+
+CHECAR 
+
+SE 
+
+O 
+INPUT DOS 
+
+NEGÓCIOS ESTÃO VAZIOS... (tanto o title como o content)...
+
+
+
+
+
+
+--> PROFESSOR TAMBÉM VAI COLOCAR UM MINIMUM LENGTH DE 5 
+
+
+CHARACTERS, ETC ETC....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+     createPost: async function(args, req) {    
+
+        const errors = [];
+
+
+        if (validator.isEmpty(args.userInput.title) || !validator.isLength(args.userInput.title, {min: 6})) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'Please insert a valid title, with more than 6 characters.'})
+        }
+
+
+        if (validator.isEmpty(args.userInput.content) || !validator.isLength(args.userInput.content, {min: 6})) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Please input valid content, with more than 6 characters.'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+        
+
+
+
+
+
+
+
+
+
+
+
+OK... SERÁ ISSO, POR ENQUNATO...
+
+
+
+
+
+
+
+
+
+
+
+-----> COM ISSO NO LUGAR,
+
+
+
+
+O PROFESSOR VAI 
+
+MANTER 
+
+O 
+
+CÓDIGO QUE TEMOS LÁ EM CIMA,
+
+
+
+
+
+E AÍ 
+
+COLOCA  
+
+AQUELE ERROR THROWER GENÉRICO DE 
+
+
+
+''
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+
+'',
+
+
+
+VAI FAZER 
+
+THROW DE UM ERROR SE TIVERMOS QUAISQUER 'VALIDATION ERRORS'...
+
+
+
+
+
+
+
+
+-----> SE PASSAMOS POR ESSE IF BLOCK,
+
+
+sabemos
+
+QUE 
+
+
+NOSSO INPUT É VALID,
+
+
+
+e aí vamos QUERER CREATE A NEW POST....
+
+
+
+
+
+
+
+
+-_> PARA ISSO,
+
+
+EVENTUALMENTE PRECISAREMOS DE UM 'USER' (antes, pegávamos isso de 'req.userId'... talvez façamos o mesmo agora, pois nós DE FATO ainda temos aquele argumento de 'req' nesse method)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR IMPORTA O MODEL MONGOOSE de 'Post',
+
+
+tudo certo...
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR 
+
+
+VAI QUERER USAR ASYNC/AWAIT DE NOVO,
+
+POIS É BEM MELHOR....
+
+
+
+
+
+
+
+
+aí ele escreve:
+
+
+
+
+const post = new Post(
+    {
+        title: args.postInput.title,
+        content: args.postInput.content,
+        imageUrl: postInput.imageUrl
+    }
+)
+
+
+
+
+-----------------------------
+
+
+
+
+ELE DIZ QUE 
+
+NÃO VAI COLOCAR O 'USER' aqui (Aquele creator)
+
+
+
+justamente
+ 
+ PQ 
+
+ ELE NÃO É CAPAZ DE FAZER 'RETRIEVE' 
+
+ DELE AINDA...
+
+
+
+
+
+
+
+
+
+ -_> AÍ ELE ESCREVE:
+
+
+
+
+
+ const post = new Post(
+    {
+        title: args.postInput.title,
+        content: args.postInput.content,
+        imageUrl: postInput.imageUrl
+    }
+)
+
+
+
+const savedPost = await post.save();
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE EVENTUALMENTE ELE VAI TER QUE EXECUTAR AQUELE CÓDIGO DE 
+
+
+
+'user.posts.push()',
+
+
+
+
+
+ASSIM QUE ELE FOR CAPAZ DE 'RETRIEVE THE USER'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR ENQUANTO, ELE VAI SÓ __ RETORNAR__ A RESPONSE,
+
+
+
+
+por meio 
+
+
+do write 
+
+de 
+
+
+
+'{
+
+    ...savedPost._doc, 
+    _id: savedPost._id.toString() ////EU HAVIA ESQUECIDO DE ESCREVER ISTO.... --> precisamos __ CONVERTER NOSSO ID EM UMA STRING, para que ele NÃO SEJA UM OBJETo, não seja retornado como um OBJETO...
+}
+
+'
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+CERTO... MAS AQUI FICAMOS COM UM __ NOVO PROBLEMA....
+
+
+
+
+
+
+O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+        return {
+            post: {
+                ...savedPost._doc,
+                _id: savedPost._id.toString() //para evitar o return do id do post NA FORMA DE UM OBJETO....
+            },
+            creator: {
+                _id: savedUser._id.toString(),
+                name: savedUser.name
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS NAQUELE 'post',
+
+PRECISAMOS 
+
+
+__OVERWRITTAR__ MAIS 
+
+UMA PROPRIEDADE 
+
+ALÉM DE 
+
+'_id',
+
+que será as propriedades 
+
+
+de 
+
+
+'createdAt'
+
+
+
+e 
+
+'updatedAt',
+
+
+
+
+
+PQ __ ESSES NEGÓCIOS SEMPRE SÃO ARMAZENADOS COMO 'DATE TYPES',
+
+
+
+
+
+E ESSE FORMATO DE __ DATA_ _NÃO É RECONHECIDO PELO GRAPHQL 
+
+COMO UMA 
+
+
+'VALID STRING' (String!) no 
+
+SCHEMA... -->
+
+
+É POR ISSO QUE 
+
+O 
+
+PROFESSOR 
+VAI 
+
+EXECUTAR 
+
+O METHOD 
+
+DE 
+
+
+
+
+
+'''savedPost.createdAt.toISOString() ''''
+
+
+
+
+
+
+
+
+--> VAMOS CONVERTER NESSA 'ISOString()'....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+        return {
+            post: {
+                ...savedPost._doc,
+                _id: savedPost._id.toString(), //para evitar o return do id do post NA FORMA DE UM OBJETO, vamos OVERWRITTAR O VALOR DESSE ID OBJETO POR SUA FORMA 'string'....
+                createdAt: savedPost.createdAt.toISOString(), //mesma coisa; o formato 'DATE TYPE', usado pelo mongoose, NÃO É RECONHECIDO PELA GRAPHQL API __ COMO __ SENDO UMA VALID STRING (String!), por isso temos que o converter por meio de 'toISOString()'...
+                updatedAt: savedPost.updatedAt.toISOString(),
+            },
+            creator: {
+                _id: savedUser._id.toString(),
+                name: savedUser.name
+            }
+        }
+
+
+     }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+------------------> COM ISSO,
+
+
+ESSA É A DATA QUE 
+
+VAMOS QUERER 
+
+RETORNAR 
+
+QUANDO UM NOVO 
+
+POST 
+
+
+FOR ADICIONADO....
+
+
+
+
+
+
+
+
+
+
+--> POR ENQUANTO,
+
+NÃO VAMOS CHECAR,
+
+
+
+nesse 
+
+
+
+
+
+RESOLVER METHOD (E em qualquer outro METHOD de nossos resolvers)
+
+
+
+SE 
+
+O
+ _ USER 
+
+ ESTÁ 
+
+ 'AUTHENTICATED' (
+
+     não estamos fazendo CHECK pela 
+
+     PRESENÇA DA TOKEN (JWT)
+
+
+
+
+     no browser do user,
+
+
+     MAS ISSO É ALGO QUE FAREMOS NO FUTURO....
+ )
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... TEMOS ESSE 'createPost'
+
+
+
+RESOLVER METHOD ADICIONADO PARA ESSA MUTATION RESPECTIVA....
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS 
+
+EXPERIMENTAR ISSO NA 
+
+
+
+'graphiQL'....
+
+
+
+
+
+
+
+
+--> 
+
+
+
+
+ESCREVEMOS:
+
+
+
+
+mutation {
+
+    createPost(postInput: {title: "Test", content: "Test", imageUrl: "Someurl"})
+}
+
+
+
+-----------------------
+
+
+
+
+
+A PARTIR DESSA MUTATION,
+
+
+
+VAMOS QUERER 
+
+DE VOLTA,
+
+
+A TÍTULO DE TESTE,
+
+
+
+
+o '_id'
+
+
+e o 
+
+'title'
+
+DESSE POST...
+
+
+
+EX:
+
+
+
+
+
+
+
+mutation {
+
+    createPost(postInput: {title: "Test", content: "Test", imageUrl: "Someurl"}) {
+
+        _id
+        title
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+---> VAMOS RECEBER 'Invalid input',
+
+POIS 
+
+O 
+
+TITLE 
+E 
+
+ O CONTENT SÃO MT PEQUENOS.... (só 4 caracteres)...
+
+
+
+
+ AUMENTAMOS, E AÍ TESTAMOS DE NOVO...
+
+
+
+
+
+
+
+
+
+
+ ---> RECEBEMOS OUTRO ERRO, UM QUE FAZ SENTIDO:
+
+
+
+
+
+ 'message: 
+
+ Post validation failed:  creator: Path 'creator' is REQUIRED....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> É UM ERRO DA DATABASE,
+
+ dizendo 
+
+ que 
+ 'CREATOR IS MISSING'... ------> MAS A MUTATION EM GERAL ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> O PRÓXIMO PASSO É FAZER 'VALIDATE' 
+ DESSA 
+ TOKEN 
+
+ QUE 
+
+ PRECISAMOS 
+
+
+ 
+
+ QUE SEJA 
+
+ ENVIADA 
+
+ NO REQUEST 
+
+ DE 
+
+ QUALQUER FORMA (JWT .... json web token)...,
+
+
+
+ E AÍ 
+
+
+ __ QUE 
+
+
+TAMBÉM CONSIGAMOS EXTRAIR O 'userId' (o user, consequentemetne) ,
+
+
+
+PARA QUE CONSIGAMOS 
+
+
+CONECTAR 'POSTS E USERS'.... ---> 
+
+
+
+
+DEPOIS DISSO,
+
+CONECTAREMOS NOSSO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,462 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOLTAMOS AO NOSSO PROJETO DA LOJA....
+
+
+
+
+
+
+
+
+--> FIQUE 'LOGGED OUT',
+
+
+
+
+e 
+
+
+
+aí 
+
+
+
+
+
+
+
+
+VEJA AS DIFERENÇAS 
+
+
+
+QUE O PROFESSOR COLOCOU....
+
+
+
+
+
+
+
+
+-------> PROFESSOR ADICIONOU MAIS 1 LINK 
+
+
+
+A NOSSA NAVBAR,
+
+
+
+com um 
+link 
+
+de 
+
+'SIGNUP',
+
+
+
+
+
+
+
+
+
+E SE CLICAMOS 
+
+NESSE NEGÓCIO,
+
+
+
+
+
+__ TAMBÉM __ CARREGAMOS UMA PAGE DE 
+
+'SIGNUP'...
+
+
+
+
+
+
+
+
+
+------------> OK... 
+
+
+VAMOS TENTAR FAZER ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+
+------> É A PA´GINA DE 'signup.ejs',
+
+
+
+
+
+
+que ele adicionou...
+
+
+
+
+
+
+
+
+------> TAMBÉM ADICIONOU 2 NOVAS ROUTES,
+
+
+
+1 
+
+
+ROUTE DE 
+
+'get' 
+
+
+
+NA PÁGINA DE SIGNUP,
+
+
+E 
+
+OUTRA 
+
+
+ROUTE,
+ 
+
+ DE POST, 
+
+ nessa mesma page...
+
+
+
+
+
+
+
+
+
+
+
+ O VIEW DA PAGE FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+            <form class="login-form" action="/signup" method="POST">
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <div class="form-control">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="confirmPassword">
+                </div>
+                <button class="btn" type="submit">Signup</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------
+
+
+
+
+
+
+AGORA FALTA AJUSTAR 
+
+
+A 
+
+'NAVIGATION'...
+
+
+
+
+
+
+
+
+O VIEW FICOU TIPO ASSIM::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) {  %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+  <%  if (!isLoggedIn) { %>
+    <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+        <li class="main-header__item">
+          <a href="/signup" class="<%= path === '/signup' ? 'active' : '' %>">Signup</a>
+      </li>
+  <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      <% } %>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="mobile-nav__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="mobile-nav__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+      <li class="mobile-nav__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+      <li class="mobile-nav__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+      <li class="mobile-nav__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      <li class="mobile-nav__item">
+        <form action="/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+      </li>
+  <%  }  else { %>
+    <li class="mobile-nav__item">
+      <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+  </li>
+  <li class="mobile-nav__item">
+    <a href="/signup" class="<%= path === '/signup' ? 'active' : '' %>">Signup</a>
+</li>
+  <% } %>
+      </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+OK... O QUE FALTA, AGORA?
+
+
+
+
+
+
+falta ajustar o 
+
+CONTROLLER do get da page 
+
+de 
+
+'signup'....
+
+
+
+
+
+
+
+
+
+OK.... DEU CERTO.
+
+
+
+
+
+
+
+
+
+
+
+------>  eu nunca havia trabalhado com 'confirm password',
+
+
+
+
+mas vou ver como é isso....
+
+
+
+
+
+
+
+
+
+--> AGORA PRECISAMOS DE UMA MANEIRA DE 'SIGNUP' 
+
+DOS USERS...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS IMPLEMENTAR 
+
+
+
+O FULL 'AUTH FLOW'
+
+
+NESSE MÓDULO....
+
+
+
+
+
+
+
+
+
+VAMOS:
+
+
+
+
+
+
+
+1) __ FAZER UMA MANEIRA __ DE 'CREATE USERS'...
+
+
+
+
+
+
+
+
+2) AÍ VAMOS FAZER  UMA MANEIRA DE 'LOGIN' E 'LOGOUT'....
+
+
+
+
+
+
+
+
+3) AÍ VAMOS USAR __ A INFO ACERCA DO LOGIN/LOGOUT de 
+
+1 user 
+
+
+EM 
+
+TODAS NOSSAS VIEWS... 
+
+
+
+
+4) VAMOS PROTEGER __ NOSSAS ROUTES_  NO SERVERSIDE, TBM... (isso é necessário)....
+
+
+(
+
+    proteger contra o type manual de nossas urls....
+)
+
+
+
+
+
+
+
+
+--> VAMOS VER O __USER SIGNUP__ NA PRÓXIMA AULA....

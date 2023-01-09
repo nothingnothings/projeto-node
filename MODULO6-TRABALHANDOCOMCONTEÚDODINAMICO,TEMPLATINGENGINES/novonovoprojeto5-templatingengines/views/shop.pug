@@ -1,0 +1,107 @@
+extends layouts/main-layout.pug
+
+block styles
+    link(rel="stylesheet", href="/css/product.css")
+
+block content
+             if prods.length > 0
+                .grid 
+                    each product in prods
+                        article.card.product-item 
+                            header.card__header 
+                                h1.product__title #{product.title}
+                            .card__image 
+                                img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                            .card__content 
+                                h2.product__price #{product.price}
+                                p.product__description #{product.desc}
+                            .card__actions 
+                                button.btn Add to Cart
+             else
+               h1 No Products
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//- doctype html
+//- html(lang="en")
+//-     head
+//-         meta(charset="UTF-8")
+//-         meta(http-equiv="X-UA-Compatible", content="IE=edge")
+//-         meta(name="viewport", content="width=device-width, initial-scale=1.0")
+//-         title #{docTitle}
+//-         link(rel="stylesheet", href="/css/main.css")
+//-         link(rel="stylesheet", href="/css/product.css")
+//-     body 
+//-         header.main-header 
+//-             nav.main-header__nav 
+//-                 ul.main-header__item-list 
+//-                     li.main-header__item 
+//-                         a.active(href="/") Shop
+//-                     li.main-header__item 
+//-                         a(href="/admin/add-product") Add Product
+//-         main
+//-           if prods.length > 0
+//-             .grid 
+//-                 each product in prods
+//-                     article.card.product-item 
+//-                         header.card__header 
+//-                             h1.product__title #{product.title}
+//-                         .card__image 
+//-                             img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+//-                         .card__content 
+//-                             h2.product__price #{product.price}
+//-                             p.product__description #{product.desc}
+//-                         .card__actions 
+//-                             button.btn Add to Cart
+//-           else
+//-             h1 No Products
+
+        
+
+            //-main VERSÃO HARDCODADA
+        //-     .grid 
+        //-         each product in prods
+        //-         article.card.product-item 
+        //-             header.card__header 
+        //-                 h1.product__title A Chair
+        //-             .card__image 
+        //-                 img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+        //-             .card__content 
+        //-                 h2.product__price $19.99
+        //-                 p.product__description A very interesting book about so many events
+        //-             .card__actions 
+        //-                 button.btn Add to Cart
+
+
+
+
+
+
+
+
+//- A FEATURE BÁSICA DAS TEMPLATING ENGINES É O OUTPUT  DE CONTEÚDO DINÂMICO 
+        //- ''''title Document''''' //CÓDIGO __ NORMAL__, html SEM SER DINÂMICO...
+//-  '''' title #{docTitle}'''' ------> EXEMPLO DE OUTPUT DE CONTEÚDO DINÂMICO (passado lá em 'res.render('shop.pug', {docTitle: 'Shop'}' ....')
+
+
+        //- header(class="main-header") sintaxe extensa disso... não use, use 'header.main-header' (NOME DO ELEMENTO, seguido dA CLASSE DELE, separados por '.'...)
+            -//
+            nav 
+                ul 
+                    li 
+                    li 
+                
+//- OBS: PARA COMEÇAR A ESCREVER ARQUIVOS PUG, VOCÊ PODE FAZER A MESMA COISA QUE VOCÊ FAZ 
+//- COM HTML, É SÓ DIGITAR 'html:5' PARA PEGAR UM ESQUELETO INICIAL DE UM ARQUIVO PUG de html 5....

@@ -1,0 +1,1215 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA SER CAPAZ DE REUTILIZAR 1 MESMO 
+
+OBJETO 
+
+
+
+
+
+'io' (
+
+
+
+    objeto que é 
+
+
+
+    'const = require('socket.io')(server)'
+
+
+),
+
+
+
+
+
+OBJETO QUE __ FAZ MANAGE_ DA MESMA CONNECTION QUE 
+
+ESTÁ 
+
+EXPOSTA 
+
+
+AO USER/BACKEND,
+
+
+
+
+
+
+
+
+
+NÓS ___ DEVEMOS __ CRIAR UM __ NOVO ARQUIVO... -> o nome do arquivo será 
+
+
+
+'socket.js' .... --> DENTRO DESSE ARQUIVO,
+
+
+
+
+PROFESSOR VAI CRIAR UMA NOVA VARIÁVEL,
+
+
+DE NOME 
+
+
+
+'io'... 
+
+
+
+
+
+
+
+
+
+
+
+-_> DEPOIS DISSO,
+
+
+PROFESSOR USA A SINTAXE de 
+
+
+
+'module.exports = {}' 
+
+
+
+
+
+
+
+
+
+
+___ PARA __ EXPORTAR___ 1 OBJETO...
+
+
+
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+
+let io;
+
+
+module.exports = {
+
+
+}
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+DENTRO DESSE OBJETO, PROFESSOR VAI DEFINIR 
+
+
+2 METHODS/FUNCTIONS... --> 
+
+
+
+
+
+1) O MÉTODO 'init'...  ------> SEU VALOR __ SERÁ __ UMA FUNÇÃO__, arrow function... -----> ESSA FUNCTION VAI RECEBER O 'httpServer' COMO ARGUMENTO, e aí __ no FUNCTION BODY ___ VAMOS QUERER ___ FAZER 'REQUIRE' DO socket.io (package), E VAI PASSAR AQUELE 'httpServer' COMO PARÂMETRO DO EXECUTE DESSE 'require' (na verdade, dessa FUNCTION QUE FOI IMPORTADA POR MEIO DE 'require')....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+let io;
+
+
+
+module.exports = {
+
+    init: httpServer => {
+        require('socket.io')(httpServer) ///////////EIS O CÓDIGO EM QUESTÃO.
+    }
+}
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+let io;
+
+
+
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {
+
+        require('socket.io')(httpServer);
+    }
+
+
+}
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+------> É CLARO QUE 
+
+ESSE '(httpServer) => {
+    io = require('socket.io')(httpServer)
+}
+'
+
+
+
+
+
+__ VAI TER UM __ RESULTADO___..... -----> O RESULTAOD VAI SER __ o OBJETO 'io',
+
+
+
+
+
+QUE __ VOU ARMAZENAR EM UMA CONST DE MESMO NOME....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+let io;
+
+
+
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {
+
+const io = require('socket.io')(httpServer);
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+let io;
+
+
+
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {
+
+     io = require('socket.io')(httpServer);
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+------------> POR FIM, PROFESSOR EXPLICA QUE PODEMOS FAZER __ RETURN__ DESSE io,
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+let io; 
+
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {
+
+     io = require('socket.io')(httpServer);
+    return io;
+    }
+
+
+}
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+let io;
+
+
+
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {
+
+            io = require('socket.io')(httpServer);
+            return io;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+------> AGORA, LÁ EM 
+
+
+'app.js',
+
+
+POSSO SUBSTITUIR A 
+
+SINTAXE de 
+
+
+
+'const io = require('socket.io)(server)'
+
+
+
+
+POR 
+
+
+
+'const io = require('./socket')(server)' , 
+
+
+
+PARA QUE 
+
+SEJA 
+
+POSSÍVEL
+ 
+ EXTRAIR ESSA FUNCTION/METHOD especial de 
+
+ 'io' 
+
+
+ lá 
+
+ daquele arquivo 
+
+
+ 'socket.js'....
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ const io = require('./socket')(server,  
+
+            { 
+              cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+                credentials: true
+            }
+          }
+
+    )
+            io.on('connection', (socket) => {  
+
+              console.log('Client connected'); 
+           
+            }) 
+
+
+
+
+
+-------------------------------------
+
+
+POR FIM,
+ 
+ PROFESSOR DIZ QUE PODEMOS SIMPLESMNETE CHAMAR 
+
+
+
+ '.init()'
+
+ SOBRE ESSE 
+
+
+ 'require('./socket')',
+
+
+
+
+
+
+
+
+
+
+ PARA QUE 
+
+ SEJA 
+
+ TRIGGADA AQUELA FUNÇAÕ DE 
+
+
+
+
+     init: httpServer => {
+
+            io = require('socket.io')(httpServer);
+            return io;
+
+    }
+
+
+
+
+
+
+
+----> ENTRETANTO, VAMOS MANTER AQUELE CÓDIGO/CALL DO PARÂMETRO 'server',
+
+
+
+PQ 
+
+
+
+
+o 'init()'
+
+
+VAI CUIDAR 
+
+
+DO 
+
+'actual server' do desenvolvedor....
+
+ 
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+ mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ////AQUI, VAMOS __ ARMAZENAR__ NOSSO SERVIDOR (o app nodeexpress em si) EM UMA CONST DE NOME 'server', QUE VAI SER USADA NAQUELE CALL DE 'socket.io' ali embaixo (pq o protocolo WEBSOCKETS 'builds upon' o protocolo HTTP, que é o default dos browsers/app nodeexpress)...
+    // const io = require('socket.io')(server,  /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+            
+    
+    
+    const io = require('./socket').init(httpServer); ///AQUI, NESSA VERSÃO DA SINTAXE, IMPORTAMOS O 'io' LÁ DE NOSSO ARQUIVO 'socket', para que seja POSSÍVEL REUTILIZAR ESSE 'io' EM VÁRIOS LUGARES DE NOSSO CÓDIGO... (nos controllers, no caso)....
+    ///você deve usar seu 'server' (o app nodeexpress na totalidde) como ARGUMENTO DO CALL DESSE 'require('socket.io')'....
+            //É ISSO QUE VAI DEFINIR NOSSA 'websockets connection'...
+    
+
+            { ////SEGUNDO PARÂMETRO.... necessário para EVITAR _ ERROS _ DE CORS... (sim, também precisamos fazer handle do cors NO NOSSO CANAL 'WEBSOCKETS', além do http...)
+              cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+                credentials: true
+            }
+          }
+
+    )
+
+            io.on('connection', (socket) => {  ////'.on()' é o método do SOCKET.IO __ que __dEFINE EVENT LISTENERS, TRIGGADOS POR DETERMINADAS COISAS.... (como 'connections', nesse nosso exemplo)...
+              /// o segundo parâmetro SEMPRE SERÁ UMA CALLBACK FUNCTION, function que recebe o ARGUMENTO 'socket' (que será A ACTUAL CONNECTION, A WEBSOCKETS CONNECTION ENTRE CLIENT E SERVER)....
+
+              console.log('Client connected'); ////não veremos, 'out of the box',  esse 'client connected' no console... --> mas pq?  ------> PQ PRECISAMOS QUE _ _SEJA ESTABELECIDA/TENTEADA __ UM 'WEBSOCKET REQUEST', lá do BROWSERSIDE, disparado do browserside, PARA QUE ESSE CÓDIGO de 'io.on('connection')', esse eventListener aí, __ SEJA __ TRIGGADO_... (e para que seja feito aquele console.log...)
+           
+            }) 
+
+
+            //'io.on()' --> É UM LISTENER... -> NO CASO DE 'connections', vamos FAZER COM QUE ESSE CÓDIGO DO SEGUNDO PARÂMETRO SEJA EXECUTADO __ SEMPRE QUE _UMA NOVA CONNECTION (feita por um client) FOR ESTABELECIDA AO NOSSO NODEEXPRESS APP...
+
+
+            ///'socket' --> é o client/conexão ao client, objeto que representa essa conexão...
+        
+        
+          }) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          --------> MAS É CLARO QUE 
+
+          LÁ 
+
+
+          NO CÓDIGO DE 
+
+
+
+          'socket.js'
+
+
+          FALTOU UMA DAS FUNÇÕES... ------> 
+
+
+
+
+
+
+
+
+
+
+          A OUTRA FUNÇÃO/METHOD, É CLARO,
+
+
+
+          SERÁ 'OUTRO KEY-VALUE PAIR'
+
+
+
+          naquele 
+
+
+          objeto 
+
+
+
+'socket'
+
+QUE 
+
+VOU __ EXPOR __... 
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    const server = app.listen(8080); ////AQUI, VAMOS __ ARMAZENAR__ NOSSO SERVIDOR (o app nodeexpress em si) EM UMA CONST DE NOME 'server', QUE VAI SER USADA NAQUELE CALL DE 'socket.io' ali embaixo (pq o protocolo WEBSOCKETS 'builds upon' o protocolo HTTP, que é o default dos browsers/app nodeexpress)...
+    // const io = require('socket.io')(server,  /////////IMPORT LOCAL DESSA PACKAGE QUE FAZ MANAGE DE 'WEBSOCKETS CHANNELS'....
+            
+    
+    
+    const io = require('./socket').init(server, ///AQUI, NESSA VERSÃO DA SINTAXE, IMPORTAMOS O 'io' LÁ DE NOSSO ARQUIVO 'socket', para que seja POSSÍVEL REUTILIZAR ESSE 'io' EM VÁRIOS LUGARES DE NOSSO CÓDIGO... (nos controllers, no caso)....
+    ///você deve usar seu 'server' (o app nodeexpress na totalidde) como ARGUMENTO DO CALL DESSE 'require('socket.io')'....
+            //É ISSO QUE VAI DEFINIR NOSSA 'websockets connection'...
+    
+
+            { ////SEGUNDO PARÂMETRO.... necessário para EVITAR _ ERROS _ DE CORS... (sim, também precisamos fazer handle do cors NO NOSSO CANAL 'WEBSOCKETS', além do http...)
+              cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+                credentials: true
+            }
+          }
+        
+    )
+            io.on('connection', (socket) => {  ////'.on()' é o método do SOCKET.IO __ que __dEFINE EVENT LISTENERS, TRIGGADOS POR DETERMINADAS COISAS.... (como 'connections', nesse nosso exemplo)...
+              /// o segundo parâmetro SEMPRE SERÁ UMA CALLBACK FUNCTION, function que recebe o ARGUMENTO 'socket' (que será A ACTUAL CONNECTION, A WEBSOCKETS CONNECTION ENTRE CLIENT E SERVER)....
+
+              console.log('Client connected'); ////não veremos, 'out of the box',  esse 'client connected' no console... --> mas pq?  ------> PQ PRECISAMOS QUE _ _SEJA ESTABELECIDA/TENTEADA __ UM 'WEBSOCKET REQUEST', lá do BROWSERSIDE, disparado do browserside, PARA QUE ESSE CÓDIGO de 'io.on('connection')', esse eventListener aí, __ SEJA __ TRIGGADO_... (e para que seja feito aquele console.log...)
+           
+            }) 
+
+
+            //'io.on()' --> É UM LISTENER... -> NO CASO DE 'connections', vamos FAZER COM QUE ESSE CÓDIGO DO SEGUNDO PARÂMETRO SEJA EXECUTADO __ SEMPRE QUE _UMA NOVA CONNECTION (feita por um client) FOR ESTABELECIDA AO NOSSO NODEEXPRESS APP...
+
+
+            ///'socket' --> é o client/conexão ao client, objeto que representa essa conexão...
+        
+        
+          }) 
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+--> '.init()',
+
+PORTANTO,
+
+
+ainda 'expects to get that server' como parâemtro... 
+
+
+
+
+
+
+
+
+É A SEGUNDA FUNÇÃO/KEY VALUE PAIr...
+
+
+
+
+
+
+  -----> NO CASO, PARA ADICIONAR OUTRO KEY VALUE PAIR/FUNCTION,
+
+  escrevemos assim:
+
+
+
+
+
+
+
+
+
+'getIo()'... ----->  PROFESSOR DIZ QUE 
+
+O 
+
+
+
+NOME PODE SER QUALQUER UM (exatamente como 'init()'),
+
+ 
+
+
+
+ E DENTRO 
+
+
+ DA FUNCTION QUE SERVE COMO SEU VALOR _ O PROFESOR __ NÃO VAI ESPERAR QUAISQUER
+
+ ARGUMENTOS NESSA FUNÇÃO,
+
+
+
+
+
+
+
+
+ MAS VAI __ CHECAR___ SE 
+
+ o 
+
+
+'io'
+
+
+
+REALMENTE NÃO EXISTE.... (
+
+
+    ou seja,
+
+    VAI CHECAR SE A VARIÁVEL 
+
+
+    'let io' 
+
+    ESTÁ COMO UNDEFINED...
+)
+
+
+
+
+
+
+---> SE A VARIÁVEL 'io' estiver como UNDEFINED,
+
+
+PROFESSOR VAI FAZER O THROW DE UM NOVO ERROR,
+
+
+
+
+
+ERRO de 
+
+
+'Socket.io not initialized'....
+
+
+
+
+
+
+
+
+
+-->  SE PASSArmos 
+
+
+POR ESSE BLOCK DE 'if(!io)',
+
+SABEMOS QUE 'io' FOi initalizado, POR ISSO
+
+VAMOS QUERER SÓ 
+
+
+RETORNAR ESSE 
+
+
+
+FAZEMOS RETURN de 'io',
+
+
+
+
+E AÍ ESTAMOS FAZENDO __ MANAGE__ DA CONNECTION 'WEBSOCKETS'
+
+
+
+
+NESSE PRÓPRIO ARQUIVO DE 
+
+
+'socket.js'... -------->
+
+
+
+
+
+
+
+também adicionmos um IF CHECK.. --> se payload/body do reQUEST 
+
+
+
+NAO TIVER O 'io',
+
+
+
+
+
+VAMOS QUERER PARAR E   FAZER 'thow ' DE UM NVO ERRO.
+
+
+
+
+
+
+
+
+
+
+
+EX
+
+
+
+
+
+
+
+GetIo(postId) {
+    if(!io) 
+
+
+    throw new Error('Socket.io not initialized!');
+
+}
+
+
+
+
+return io;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ISSO FEITO,
+
+
+
+PODEMOS 
+
+
+___ INTERAGIR__ COM O 'IO'
+
+
+
+
+EM TODOS NOSSOS CONTROLLERS, EM TODAS NOSSAS ROUTES,
+
+
+NÃO ESTANDO ELE MAIS ___ VINCULADO/LIMITADO __A EXISTIR  NO 'app.js'..... 
+
+
+
+
+
+
+
+
+
+
+
+--> NO CONTROLLER DE 'feed.js'
+
+
+
+VAMOS PRECISAR 
+
+
+
+INTERAGIR 
+
+
+COM O 
+
+'IO',
+
+
+é por isso que escrevemos essa lógica 
+de export....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+let io;
+
+
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {
+
+            io = require('socket.io')(httpServer);
+            return io;
+
+    },
+
+    getIo: () => { //não vamos esperar quaisquer argumentos...
+        if (!io) {
+            throw new Error('Socket.io not initiazlized');
+        }
+
+        return io;
+    }
+
+
+     
+
+
+}
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+a conexão está sendo manageada no arquivo de 'socket.js',
+
+essencialmente....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> se 'io' não estiver como DEFINED no nosso flow do runtime,
+
+
+
+
+vamos querer retornar aquele 'socket.io is not initialized'...
+
+
+
+
+
+
+
+--> se ele já estiver defined,
+
+vamos só querer O RETORNAR... (
+
+
+  isso naquela 
+
+
+
+
+  função/méotdo 
+
+
+  de 
+
+
+
+
+  'getIo: () => {
+
+    if(!io) {
+
+      throw new Error('Socket.io is not initialized);
+
+
+    }
+
+    return io;
+  }
+
+
+  '''
+)
+
+
+
+
+
+
+
+
+
+
+------> AGORA VAMOS QUERER USAR 
+
+
+
+ESSE OBJETO, ESPECIFICAMENTE 
+
+
+
+
+
+algo como 
+
+
+
+'require('./socket).getIo()',
+
+
+
+
+
+
+PARA ___ CONSEGUIRMOS ESSE 
+
+
+
+OBJETO/CONEXÃO 'io' 
+
+
+EM __ OUTROS LUGARES 
+
+
+DE 
+
+NOSSO CÓDIGO,
+
+
+como 
+
+
+NO CONTROLLER 
+
+DE 
+
+'feed.js',
+
+NAQUELE 
+
+C
+ONTROLLER 
+
+de 
+
+
+'createPost'....
+
+
+
+
+
+
+
+
+
+--> VAMOS CONTINUAR COM ISSO, NA PRÓXIMA AULA....

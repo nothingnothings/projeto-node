@@ -1,0 +1,657 @@
+
+
+
+
+
+
+
+
+--------> NÓS ADICIONAMOS MIDDLEWARES,
+
+E NOSSO CÓDIGO ESTÁ ASSIM:
+
+
+
+const http = require('http');
+
+const express = require('express'); ///necessário.
+
+
+const app = express(); /////necessário.
+
+
+
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        console.log('test; IN THE MIDDLEWARE');
+
+        next(); /////EIS O CÓDIGO EM QUESTÃO. 'ALLOWS THE REQUEST TO REACH THE NEXT MIDDLEWARE IN LINE, WHICH IS THE MIDDLEWARE/APP.USE BELOW THIS ONE....'
+    }
+)
+
+
+app.use( 
+    (req, res, next) => {
+
+        console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+
+
+    }
+)
+
+
+
+
+
+
+const server = http.createServer(app); ////app ---> é a constante que temos logo acima (sim, o expressJS, quando armazenado em uma CONST, fica com um formato parecido com o de um REQUESTHANDLER, parecido com um '(req, res) => {}')
+
+
+server.listen(3000);
+
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+O PROFESSOR NOS EXPLICOU QUE 
+
+MIDDLEWARES SÃO UM CONCEITO CRUCIAL DO FRAMEWORK EXPRESSJS,
+
+
+
+E QUE 
+
+
+NÓS DEVEMOS CHAMAR 'NEXT()'
+
+
+se 
+
+NÓS NÃO ENVIARMOS UMA RESPONSE EM UM BLOCK,
+
+
+pq se não o fizermos,
+
+o request 
+
+
+vai 
+
+só 'morrer' E NÃO VAI CONTINUAR 
+
+
+
+NO  PRÓXIMO MIDDLEWARE...
+
+
+
+
+
+
+
+
+
+
+--> NO 
+
+
+SEGUNDO MIDDLEWARE DE NOSSO CÓDIGO,
+
+temos este código:
+
+
+app.use( 
+    (req, res, next) => {
+
+        console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+
+
+    }
+)
+
+
+
+
+
+
+--------> 
+
+COMO NÃO TEMOS NENHUM 
+
+
+'next()'
+
+
+ou 
+
+'res.send()',
+
+
+NOSSO REQUEST 
+
+MORRE/MORRERIA ALI...
+
+
+
+
+
+
+
+
+
+
+
+-------> E NÃO TEMOS NENHUM OUTRO MIDDLEWARE 'IN THE LINE'... -------->
+
+
+
+
+
+
+O PROFESSOR EXPLICA QUE O EXPRESSJS _NÃO 'SENDS A DEFAULT RESPONSE',
+
+
+ou qualquer coisa do gênero... --> É POR ISSO QUE 
+
+DEVEMOS 
+
+
+ENVIAR UMA 
+
+RESPONSE 
+
+
+
+
+ALI NESSE SEGUNDO BLOCK.... -----> 
+
+
+
+
+
+POR ISSO O PROFESSOR VAI USAR O OBJETO 
+
+
+'res',
+
+
+
+E AÍ 
+
+AGORA O SEND DE RESPONSE 
+
+
+SE TORNA MAIS FÁCIL, GRAÇAS AO 
+
+
+EXPRESSJS... --------> 
+
+
+
+
+
+
+
+
+
+
+AGORA, EM VEZ DE __ SETTAR __ UM HEADER (que ainda é algo que podemos fazer, se quisermos)
+
+
+
+OU 
+
+
+
+SETTAR UM 
+
+'res.write()' (QUE AINDA PODEMOS FAZER, SE QUISERMOS),
+
+
+
+
+
+(OU SEJA, AINDA PODEMOS ENVIAR RESPONSES EXATAMENTE COMO ANTES,
+
+POR MEIO DE MÉTODOS RUINS COMO ESSES ANTIGOES.. )
+
+
+
+
+
+--> mas além desses métodos aí, clássicos do nodejs,
+
+
+
+HÁ UMA NOVA UTILITY FUNCTION QUE PODEMOS USAR ...
+
+
+É 
+
+
+
+A UTILITY FUNCTION 
+
+DE 
+
+
+'.send()' ----------> O SEND 
+
+
+NOS DEIXA 
+
+ENVIAR UMA RESPONSE ... -----> na verdade,
+
+
+
+
+
+o 
+
+'send' é especial PQ NOS DEIXA ANEXAR UM BODY___ A ESSA RESPONSE,
+
+
+
+BODY QUE É DE 'TYPE: ANY'...
+
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR MENCIONA ALGUMAS DAS COISAS QUE ESSE 
+
+OBJETO 
+
+'body' na response PODERIA SER:
+
+
+
+
+
+------> PODERÍAMOS ENVIAR 
+
+
+'GOOD OLD 
+
+
+HTML CODE',
+
+
+como 
+
+
+
+'<h1>Hello</h1>'....
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+ex:
+
+
+
+
+app.use(
+    (req, res, next) => {       
+                console.log('TEST');
+
+                res.send('<h1>Hello!</h1>');
+
+
+    }
+)
+
+
+
+
+
+
+
+
+
+
+------> BTW, SE VOCÊ 
+
+INSPECIONAR 
+
+ESSA RESPONSE 
+
+LÁ 
+
+
+
+
+NA ABA NETWORK, NO CHROME,
+
+
+VOCÊ 
+
+VERÁ 
+
+
+
+QUE 
+
+
+_NO ARQUIVO RESPONSE QUE VOCê RECEBEU VOCÊ 
+
+
+
+TERÁ 
+
+
+'HEADERS'
+
+
+como 
+
+'Content-Type: text/html'... ------> 
+
+
+
+
+ESSE HEADER 
+
+__ FOI AUTOMATICAMENTE SETTADO PELO 
+
+
+
+
+
+EXPRESSJS (o que é beeeeem conveniente, pq 
+
+
+
+
+nos poupa de ter de escrever 
+
+
+
+'
+res.writeHead(
+    {
+    }
+)
+'
+
+)
+
+
+
+
+
+
+
+
+--> ESSA É OUTRA FEATURE PROVIDENCIADA PELO EXPRESSJS...... ----> 
+
+
+
+
+
+
+O MÉTODO 
+
+'send()',
+
+POR DEFAULT,
+
+
+
+quando enviamos texto/html,
+
+
+VAI SIMPLESMENTE 
+
+DEFINIR 
+
+AUTOMATICAMENTE 
+
+O 
+
+CONTENT-TYPE COMO O TIPO CORRETO...
+
+
+
+
+
+----------> é claro que VOCÊ AINDA PODE SETTAR HEADERS ADICIONAIS, OPCIONAIS,
+
+por meio 
+
+de 
+'res.setHead' /'res.setHeader()',
+
+
+
+
+
+
+
+O QUE SIGNIFICA QUE VOCÊ SEMPRE PODE, SE QUISER,
+
+OVERWRITE O 
+
+DEFAULT 
+
+
+
+DO EXPRESSJS,
+
+
+
+mas 
+
+
+você 
+
+também pode confiar 
+
+nesse default.......
+
+(o default é 'text/html'....)
+
+
+
+
+
+
+
+
+
+
+----> 
+ 
+ OK... OUTRA COISA QUE PODEMOS PERCEBER 
+
+ É 
+
+ QUE 
+ NÃO 
+
+ TEMOS 
+
+ MAIS 
+
+ UM 'DYING INCOMING REQUEST' 
+
+
+ no nosso código... -----> ISSO GRAÇAS 
+
+
+
+ AO 
+
+
+ 'res.send('<h1>Hello!</h1>')',
+
+
+
+
+ QUE REALMENTE 
+
+
+ ENVIOU UMA RESPONSE A PARTIR DO 
+
+
+ INCOMING REQUEST,
+
+
+
+ E QUE 
+
+ TERMINOU 
+
+o 'ciclo' ... ----->  
+
+
+
+
+
+
+
+
+
+
+
+CERTO... E AQUI, É CLARO, PERCEBE-SE QUE 
+
+
+
+USAMOS 
+
+O 
+
+'send()' 
+
+
+PARA 
+
+ENVIAR NOSSA DATA... ---> e esse 'send()'
+
+É 
+
+BEM MAIS FÁCIL/CONVENIENTE DO QUE 
+
+TER QUE 
+USAR 
+
+
+TODA 
+AQUELA NÓIA 
+
+DOS 
+
+
+'CHUNKS'... --------> E ISSO SERÁ PARTICULARMENTE MAIS 
+
+FÁCIL 
+
+
+
+QUANDO COMEÇARMOS A ENVIAR DE VOLTA (sending back)
+
+
+
+__ ARQUIVOS DE VERDADE (real files),
+
+
+OU O __ CONTEÚDO DE ARQUIVOS___.... (algo que 
+
+
+AINDA NÃO FIZEMOS).....
+
+
+
+
+
+
+
+
+
+AINDA NÃO FIZEMOS ISSO 
+
+DE ENVIAR 
+
+
+
+O CONTEÚDO DE ARQUIVOS POR MEIO DE 'SEND()',
+
+
+mas por enquanto 
+
+
+DEVEMOS ENTENDER POR COMPLETO 
+
+
+
+esse 
+
+
+'BASIC MIDDLEWARE CONCEPT',
+
+
+
+EM QUE VOCÊ ADICIONA FUNÇÕES QUE SÃO 'HOOKED INTO THIS FUNNEL THROUGH WHICH THE 
+
+REQUEST GOES',
+
+e aí 
+
+
+
+VOCÊ OU TEM:
+
+
+
+
+1) NEXT PARA ALCANÇAR O PRÓXIMO MIDDLEWARE 
+
+
+
+2) VOCÊ TEM 'res', a response  PARA ENVIAR A RESPONSE E NÃO FAZER MAIS NADA... (TAMBÉM EVITA OS MIDDLEWARES SUBSEQUENTES, age como um 'AUSENTE O NEXT'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ok, viajamos de middleware para middleware, top to bottom,
+
+chamando 'NEXT'.... 

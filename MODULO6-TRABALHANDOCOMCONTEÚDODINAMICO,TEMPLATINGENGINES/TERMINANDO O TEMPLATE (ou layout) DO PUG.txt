@@ -1,0 +1,1013 @@
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS ASSEGURAR QUE ESSA 
+
+CLASS 
+
+DE 
+
+'active' 
+
+
+
+__ FIQUE __ SETTADA__ NO LINK CERTO (ou seja, a depender DA PÁGINA EM QUE ESTAMOS, NO APp...)
+
+
+
+
+
+
+
+
+-------> PARA ISSO,
+
+PROFESSOR 
+
+VAI ATÉ 
+
+
+NOSSO ARQUIVO 
+
+DE 
+
+'ROUTE'
+
+
+de 
+
+
+
+
+'admin.js',
+
+
+
+PQ 
+ESTAMOS 
+
+TRABALHANDO COM A PÁGNIA 
+
+
+'add-product.pug', no momento....
+
+
+
+
+
+
+
+
+----> OK.... LÁ 
+
+
+
+NESSE ARQUIVO,
+
+
+temos
+
+
+AQUELA ROUTE QUE FAZ O SERVE 
+
+
+DE NOSSA PÁGINA 
+
+de 
+
+
+'add-product' 
+
+AO USUÁRIO,
+
+
+
+AQUELA ROUTE DE GET 
+
+
+
+ESCRITA ASSIM:
+
+
+
+
+
+
+
+
+router.get('/add-product', (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product'}); 
+
+});
+
+
+
+
+
+
+
+---------------------------
+
+
+OK....
+
+
+
+
+
+
+
+
+
+CERTO... TEMOS ESSA ROUTE AÍ... --> E VAMOS QUERER 
+
+RETORNAR UM NOVO FIELD NAQUELE 
+
+OBJETO 
+
+'data'
+
+QUE RETORNAMOS 
+
+POR MEIO 
+
+de 
+
+
+'res.render()',
+
+
+QUE SERÁ ENFIADO 
+
+
+
+NOS NOSSOS 
+
+'TEMPLATES', nossos arquivos 
+
+'.pug'...
+
+
+
+
+
+
+
+
+
+--> O FIELD QUE O PROFESSOR VAI QUERER SETTAR É UM FIELD 
+
+de 
+
+'path',
+O QUAL 
+
+
+SETTARÁ/SETTA 
+
+
+
+
+COMO SENDO IGUAL 
+
+
+
+
+a 
+
+'/admin/add-product'... 
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+router.get('/add-product', (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product', path: '/admin/add-product'}); 
+
+});
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+ENTÃO ELE NOS EXPLICA QUE PODEMOS SETTAR ESSA KEY COMO QUALQUER VALOR QUE DESEJARMOS (ela 
+
+
+não precisa OBRIGATORIAMENTE MATCHEAR 
+O 
+
+path de 
+
+'/admin/add-product' que 
+
+essa 
+
+
+ROUTE de 
+
+'get' tem...
+
+
+
+) ------> CERTO.... AGORA NÓS 
+
+
+REALMENTE 
+
+PASSAMOS ESSE PATH HARDCODADO A NOSSA VIEW... --> fazemos isso 
+
+
+PARA QUE 
+
+A 
+
+VIEW/ARQUIVO PUG 
+
+'GETS TO FIND OUT 
+
+FOR WHICH PATH THIS VIEW WAS LOADED'.... -------> CERTO... 
+
+
+
+
+E LÁ 
+
+
+EM 
+
+'main-layout.pug',
+
+
+
+NÓS __ CERTAMENTE__ VAMOS 
+
+
+
+__CONSEGUIR__ ESSE 'path', essa 
+
+PROPRIEDADE 
+
+'path'... ------> 
+
+
+
+
+
+E AÍ, AGORA,
+
+
+PROFESSOR DIZ QUE PODEREMOS FAZER ALGO INTERESSANTE 
+
+NESSE 
+
+'main-layout.pug',
+
+
+
+DE CÓDIGO:
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+        block content
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+A COISA INTERESSANTE É PROVAVELMENTE UMA DEFINIÇAÕ __DINÂMICA __ DO STYLE __ DE 
+
+
+
+
+NOSSOS __ LINKS ___ A PARTIR __ 
+
+
+
+DO VALOR 
+
+DESSA PROPRIEDADE 
+
+'path' QUE 
+
+NOSSAS ROUTES/CÓDIGO EXECUTADO NAS NOSSAS ROUTES, 
+
+NESSE 
+
+
+'res.render(xxx, yyy)'
+
+
+vai passar...
+
+
+
+
+
+
+
+
+
+-----------> BEM, O PROFESSOR RESUME QUE 
+
+
+__ NÓS _ SABEMOS__ QUE 
+
+VAMOS QUERER 
+
+
+
+ADICIONAR 
+
+
+
+
+
+
+UMA CLASSE/A CLASSE 
+DE 
+
+'
+active 
+
+
+
+AO 
+
+
+'a(href="/admin/add-product")Add Product'
+
+
+
+______________ SE O PATH (e o path é simplesmente uma VARIÁVEL QUE ACABA 'PASSED INTO THE PAGE') 
+
+
+
+
+___ FOR SIMPLESMENTE  ESSE de 
+
+
+'/admin/add-product',
+
+AQUELE 
+
+
+VALOR QUE HARDCODAMOS 
+
+no arquivo 
+
+'admin.js',
+
+
+NO 
+
+
+
+ROUTER.GET('/add-product)',
+
+
+
+
+NESSA ROUTE AÍ....
+
+
+
+
+(como visto 
+
+
+em 
+
+
+'''
+router.get('/add-product', (req, res, next) => {
+  res.render('add-product', {pageTitle: 'Add Product', path: '/admin/add-product'}); 
+
+});
+
+
+'''
+
+
+
+
+)
+
+
+
+
+
+
+---------> CERTO.... A PARTIR DESSA 'PIECE OF DATA',
+O PROFESSOR 
+
+VAI 
+
+
+
+ADICIONAR UMA CLASS CONDICIONALMENTE...
+
+
+
+
+--------> PARA ISSO,
+
+
+
+
+
+__ PROFESSOR 
+
+VAI 
+
+ESCREVEr 
+
+
+
+
+'a(href=xxxx, class=....) Add Product '''',
+
+
+
+ELE VAI ESCREVER ALGO NESSA CLASS AÍ...
+
+
+
+
+
+
+------> DENTRO DESSA 
+
+'class',
+
+VAMOS TER ALGUM 
+
+
+CÓDIGO javascript,
+
+
+CÓDIGO JAVASCRIPT QUE SIMPLESMNETE
+
+
+
+
+VAMOS 
+
+
+
+ENCOBRIR COM PARÊNTESES....
+
+
+
+Ex:
+
+
+
+
+class=() --------> 
+
+AÍ, 
+
+
+DENTRO 
+
+
+DESSE ATTRIBUTE 
+
+DE 
+
+'class',
+
+
+VAMOS 
+
+COLOCAR 
+
+
+'path', aquela variável que definimos antes...
+
+
+
+
+
+
+EX:
+
+
+a(href="/admin/add-product", class=(path)) Add Product 
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+certo...
+
+
+
+dentro do () VAMOS COLOCAR CÓDIGO 
+
+JAVASCRIPT.... ----> 
+
+
+
+
+
+vamos 'check' 
+
+
+'''' SE PATH  __ for igual a '/admin/add-product', ''''' (PQ AÍ SABEREI QUE A PÁGINA EM QUE ESTOU É 'add-product', e não 'shop'/ ('/')..),
+
+
+
+
+
+SE ESSE FOR O CASE, VOU QUERER RENDERIZAR/TER __'active' COMO 
+
+CLASS AQUI,
+
+
+CASO CONTRÁRIO,
+ 
+
+ VOU QUERER UMA EMPTY STRING (ou seja, basicamente 'no class' definida nesse negócio...)
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product" class=(path === '/admin/add-product' ? 'active' : '')) Add Product
+        block content
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+E É CLARO QUE VAMOS FAZER A MESMA COISA 
+
+
+COM O OUTRO LINK,
+
+COM O LINK 
+
+DE 
+
+'SHOP'....
+
+
+
+
+
+
+--> vai ficar assim:
+
+
+
+
+a(href="/" class=(path === '/' ? 'active' : '')) Shop
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+ html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product" class=(path === '/admin/add-product' ? 'active' : '')) Add Product
+        block content
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/" class=(path === '/' ? 'active' : '')) Shop
+                    li.main-header__item
+                        a(href="/admin/add-product" class=(path === '/admin/add-product' ? 'active' : '')) Add Product
+        block content
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... AGORA NOSSA CLASS DE 'active' NOS LINKS, quando estivermos nas pages corretas,
+
+
+VAI __ REALMENTE__ SER ATIVADA CORRETAMENTE... (accordingly, DE ACORDO _ COM __ O 'path' passado NAQUELA ROUTE ESPECÍFICA QUE ESTÁ SERVINDO O ARQUIVO PUG/html...)
+
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+CERTO... ISSO REALMENTE FUNCIONOU.
+
+
+
+Este approach é realmente bem útil....
+
+
+
+
+
+
+
+
+---> MAS O PROFESSOR DIZ QUE HÁ UMA COISA QUE ELE ESQUECEU,
+
+QUE 
+
+
+
+FOI 
+
+O __TITLe__ 
+
+para 
+
+
+
+as nossas 'pages'/arquivos 
+
+
+PUGS,
+
+QUE TAMBÉM DEVE SER DINÂMICO...
+
+
+
+
+EX:
+
+
+title Page not Found -------> ISSO DEVE SER ALTERADO, DEVE SER DINÂMICO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, VAMOS USAR AQUELA SINTAXE DE ' #{}' ....
+
+
+
+
+
+EX:
+
+
+
+
+
+
+res.render('shop', {prods: products, pageTitle: 'Shop', path: '/'});  ------> ESCREVO ISSO LÁ NO MEU ARQUIVO 'route' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PARA ENTÃO USAR ISTO LÁ NO MEU LAYOUT CONVENIENTE DO PUG ---->       title #{pageTitle}
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        //- title Page not Found
+        title #{pageTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/" class=(path === '/' ? 'active' : '')) Shop
+                    li.main-header__item
+                        a(href="/admin/add-product" class=(path === '/admin/add-product' ? 'active' : '')) Add Product
+        block content
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+CERTO... isso realmente funcionou.
+
+
+
+
+
+
+
+
+
+TBM AQUI:
+
+
+
+
+app.use(
+  (req, res, next) => {
+
+      res.status(404).render('404', {pageTitle: 'Page not Found'});
+ 
+    } 
+)
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+--> OK, SÓ DEVEMOS ASSEGURAR QUE CADA 'RENDER FUNCTION' PASSA 
+
+
+UMA PROPRIEDADE 
+
+
+DE 
+
+'pageTitle',
+
+tipo aqui:
+
+
+
+
+
+res.render('shop', {prods: products, pageTitle: 'Shop', path: '/'});
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+Certo, nossos titles nas abas também estão sendo alterados, agora....
+
+
+
+
+
+
+
+----> VOCÊ PODE FAZER BEM MAIS COISAS COM O PUG,
+
+
+
+
+se você quer saber mais,
+
+
+LEIA OS DOCS DELE....
+
+
+
+
+
+
+
+
+--> VIMOS O 
+
+BÁSICO DE 
+
+COMO TEMPLATING ENGINES FUNCIONAM,
+
+
+E COMO PODEMOS 
+
+
+AS UTILIZAR PARA OUTPUTTAR CONTEÚDO DINÂMICO 
+
+
+NOS NOSSOS 'VIEWS' (a partir de arquivos 'pug', por exemplo...)

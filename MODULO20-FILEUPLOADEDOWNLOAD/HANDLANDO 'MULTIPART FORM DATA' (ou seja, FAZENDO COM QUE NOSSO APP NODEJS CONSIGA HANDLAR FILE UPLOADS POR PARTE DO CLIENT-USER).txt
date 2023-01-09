@@ -1,0 +1,1827 @@
+
+
+
+
+
+
+
+
+
+
+
+--->  ADICIONAMOS NOSSO FILE PICKER 
+
+LÁ 
+
+
+
+
+NA NOSSA VIEW DE 
+'edit-product',
+
+
+
+
+COMO VISTO NESTE CÓDIGO:
+
+
+
+
+
+
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required  
+                name="image" 
+                id="image" 
+                
+                
+                >
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS TRABALHAR NO BACKEND,
+
+PRECISAMOS FAZER NOSSO APP 
+
+SER 
+
+
+CAPAZ 
+
+DE 
+
+ACEITAR/HANDLAR 
+
+
+FILE UPLOADS 
+
+
+
+POR 
+
+PARTE 
+
+DO CLIENT.... (a essa route de 'edit-product', de tipo post...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA TRABALHAR NO BACKEND,
+
+
+VAMOS ATÉ NOSSO 
+
+CONTROLLER 
+DE 
+
+'ADMIN.JS',
+
+
+
+que 
+
+
+É ONDE 
+
+NÓS 
+
+HANDLAMOS 
+A 
+
+CRIAÇÃO DE PRODUCTS...
+
+
+
+
+
+
+
+
+
+
+
+---------> VAMOS VER O 'EDIT' DE PRODUCTS, com as images uploadadas,
+
+mais 
+
+TARDE, MAS POR ENQUANTO VAMOS FOCAR 
+
+NO 
+
+
+'ADD A PRODUCT'...
+
+
+
+
+
+
+
+
+
+-----> TEMOS O CÓDIGO DE 
+
+
+
+'exports.postAddProduct',
+
+QUE É ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl,
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        error.httpStatusCode = 500;
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> O QUE INTERESSA, AGORA, É QUE 
+
+O 
+
+PROFESSOR HAVIA RENOMEADO, lá na view,
+
+
+'imageUrl' para 'image'...
+
+
+
+
+
+
+
+
+
+
+--. POR ISSO VAMOS ALTERAR NOSSO CÓDIGO,
+
+
+colocar 
+
+
+
+
+'const image = req.body.image',
+
+
+
+e aí 
+
+
+alterar as subsequentes referencias a essa const, no nosso código...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl; ///versão que ainda usava urls..
+  const image = req.body.image; ////versão que usa o FILE UPLOAD de uma IMAGE...
+  const price = req.body.price;
+  const description = req.body.description;
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      // imageUrl: imageUrl,
+      image: image,
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        error.httpStatusCode = 500;
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK... FIZ ESSA ALTERAÇÃO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> se agora submittarmos esse negócio,
+
+
+
+
+vamos 
+
+
+
+ganhar 
+
+
+'please input a valid url' ... --> ISSO OCORRE PQ 
+
+
+LÁ 
+
+
+
+
+
+
+
+NAS NOSSAS ROUTES,
+
+
+
+LÁ 
+
+
+
+EM 
+
+'admin.js'( arquivo route)
+
+
+
+
+
+
+TEMOS 
+
+
+
+
+
+CÓDIGOS COMO 
+
+
+
+'''
+
+
+
+
+
+
+
+router.post(
+  '/add-product',
+  authCheckerAndRedirecter,
+
+  check('title')
+    // .isAlpha()
+    .isString()
+    .withMessage('Products must contain only letters.')
+    .trim()
+    .custom((value, { req }) => {
+      ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+      console.log(value);
+      return Product.findOne({ title: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen title already exists, please choose another one.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+  check('imageUrl')
+    .isURL()
+    .withMessage('Please input a valid URL')
+    .trim()
+    .custom((value, { req }) => {
+      ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+      console.log(value);
+      return Product.findOne({ imageUrl: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen imageUrl already exists, please type another url.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+  check('price')
+    // .isNumeric()
+    .isFloat({ min: 1 })
+    .withMessage('Price must be a number, and must be greater than 0.')
+    .isDecimal({ force_decimal: true, decimal_digits: 2 })
+    .withMessage('Price must include cents.')
+    .toFloat(),
+
+  check('description')
+    .isAlpha()
+    .withMessage('Your description must contain only letters'),
+
+  adminController.postAddProduct
+  // (req, res, next) => {
+
+  //   admin.push(
+  //     {title: req.body.title}
+  //   )
+  //   console.log(admin);
+  //   res.status(302).redirect('/');
+  // }
+);
+
+
+
+
+
+''''''',
+
+
+
+
+
+
+
+
+
+
+
+AQUELES 
+
+
+CÓDIGOS DE VALIDATION DE NOSSO INPUT...
+
+
+
+
+
+
+
+
+
+--------> VAMOS TER QUE TIRAR ALGUNS DESSES CHECKS DE 
+
+VALIDATION,
+
+como 
+
+
+'body('imageUrl').isUrl()'  
+
+
+
+(NÃO TEMOS MAIS 
+
+
+ESSE 
+
+
+
+'imageUrl', que agora é 'image', e também 
+
+A 
+
+image NÃO SERÁ MAIS UMA URL..)
+
+
+
+
+
+
+
+
+
+
+
+--> ALTEREI, E FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+  check('image')
+    .trim()
+    .custom((value, { req }) => {
+      return Product.findOne({ imageUrl: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen image already exists, please upload another image'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+
+
+
+
+    -----------------------
+
+
+
+
+
+
+
+
+OK, TIRADOS TODOS OS VALIDATORS QUE ESTAVAM NOS INCOMODANDO,
+
+
+
+
+
+SE TENTARMOS 
+
+
+
+ENVIAR A IMAGE MAIS UMA VEZ,
+VAMOS 
+
+
+
+
+
+GANHAR UM __ ERRO _ SIMPLES,
+
+
+VAMOS GANHAR 
+
+
+
+'Some Error Occurred!
+
+
+
+we are working on fixing this, sorry for the inconvenience'
+
+
+
+
+
+---> ISSO SIGNIFICA QUE 
+
+NOSSA PAGE 
+
+DE 
+
+
+500 FOI TRIGGADA...
+
+
+(erro genérico) ----> GANHAMOS UM ERROR, O QUE SIGNIFICA QUE O ERROR HANDLING ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+-----> O ERRO QUE ESTAMOS RECEBENDO, EXPLICA O PROFESSOR, DERIVA DO FATO DE QUE 
+
+
+SIMPLESMENTE NÃO ESTAMOS CONSEGUINDO  EXTRAIR NOSSA IMAGE CORRETAMENTE... -------> 
+
+
+
+
+
+
+
+
+O PROFESSOR PODE __ NOS MOSTRAR__ ESSE ERROR__ 
+
+
+
+POR MEIO DO CONSOLE.LOG 
+
+de 
+
+
+
+
+
+'image'
+
+
+LÁ 
+
+EM 
+
+'postAddProduct'..
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl; ///versão que ainda usava urls..
+  const image = req.body.image; ////versão que usa o FILE UPLOAD de uma IMAGE...
+  console.log(image); ////////EIS O CÓDIGO EM QUESTÃO.
+  const price = req.body.price;
+  const description = req.body.description;
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      // imageUrl: imageUrl,
+      image: image,
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        error.httpStatusCode = 500;
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+--> DE FATO,
+
+SE CONSOLE.LOGGARMOS ESSA IMAGE,
+
+A ÚNICA COISA QUE VEMOS, NO TERMINAL,
+
+
+É 
+
+PRINTS COMO 
+
+
+
+
+
+
+
+
+'chair.jpg' ---------> ISSO INDICA QUE NOSSA IMAGE 'FOI UPLOADADA', MAS SÓ O SEU FILENAME FOI UPLOADADO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NA VERSÃO DO PROFESSOR, _ _NADA __ FOI _CONSOLE.LOGGADO... ---> ELE EXPLICA QUE NADA FOI CONSOLE.LOGGADO 
+
+
+
+JUSTAMENTE 
+
+PQ __ FALHAMOS EM EXTRAIR __ QUALQUER COISA (qualquer  coisa msm) 
+
+
+
+DESSE 
+
+REQUEST BODY... ----------> OK, MAS 
+
+
+
+
+
+PQ ISSO?
+
+
+
+
+PQ FALHAMOS EM EXTRAIR 
+
+
+ESSA IMAGE DO REQUEST BODY? ----------> BEM, DEVEMOS 
+
+
+TER 
+
+
+EM MENTE 
+
+
+
+UMA COISA QUE APRENDEMOS 
+
+
+LÁ NO INÍCIO DO 
+
+
+CURSO,
+
+
+
+algo sobre EXTRAIR O CONTEÚDO 
+
+
+
+
+
+DE NOSSOS INCOMING REQUESTS... ------> PARA EXTRAIR
+
+
+
+
+O CONTEÚDO DE NOSSOS INCOMING REQUESTS,
+
+
+VOCÊ 
+
+DEVE 
+
+SE 
+
+LEMBRAR QUE 
+
+
+HAVÍAMOS __ SETTADO__ 1 
+
+MIDDLEWARE 
+
+LÁ 
+
+EM 
+
+
+'app.js',
+
+
+
+
+
+
+
+
+
+aquele middleware 
+
+
+
+
+ESPECIAL 
+
+
+DE 
+
+'bodyParser',
+
+
+VISTO EM 
+
+
+''
+
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+
+
+
+''''
+
+
+
+
+
+
+
+
+--------> ESTÁVAMOS USANDO ESSE MIDDLEWARE DE 'bodyParser'... ------> BEM, E ESSE MIDDLEWARE 
+
+
+
+__USA/EXPÕE__ UM PUNHADO DE DIFERENTES 'PARSERS';
+
+
+
+
+
+
+__________ E NÓS __ ESTAMOS USANDO O PARSER 
+
+
+
+de 
+
+'urlencoded'... 
+
+
+
+
+
+
+--> EXISTEM OUTROS, COMO 
+
+
+
+
+'.json' e '.part'...
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE ESTAMOS USANDO O '.urlencoded',
+
+ 
+
+....
+
+
+
+--> O PROFESSOR NOS EXPLICA QUE 'urlencoded data' É __ BASICAMENTE 
+
+'TEXT DATA'...
+
+
+
+
+-----> ISSO SIGNIFICA QUE ESSE NEGÓCIO __SEMPRE__ ESTÁ/ESTAVA __ PARSEANDO __ O UPLOAD 
+
+DE 
+
+FORMS/FILES/ETC  ___COMO __ TEXTo.... -->  
+
+
+
+
+
+
+
+
+
+EM OUTRAS PALAVRAS, SE UMA 
+
+FORM É 
+
+
+SUBMITTADA __ SÓ COM 'TEXT FIELDS',
+
+
+
+E SEM UMA 'FILE',
+
+
+
+
+NÃO INTERESSA SE ESSES TEXT FIELDS ARMAZENAM 1 NUMBER, UMA URL OU 
+
+PLAIN TEXT,
+
+
+
+
+___ TODOS ESSES INPUT __ FIELDS, SEUS VALORES,
+ 
+ SÃO 
+
+ ENCODADOS 
+
+
+ 'IN TEXT'
+
+ QUANDO 
+
+ FOREM SUBMITTADOS, tudo graças ao 'bodyParser.urlencoded()'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK, ESSE É O FORMATO 'URLENCODED'... 
+
+
+
+
+
+
+
+
+-----> E, NA VERDADE, 
+
+
+PODEMOS CONSTATAR ISSO.... 
+
+
+
+
+
+
+
+--> professor abre o DEVTOOLS,
+
+
+aba network,
+
+
+
+
+
+
+E AÍ __ 
+
+
+
+ELE _ 
+
+CLICA EM 'SUBMIT' de novo...
+
+
+
+
+
+
+
+
+
+
+------> VAMOS VER 1 REQUEST DE 
+
+
+
+'add-product' 
+
+
+
+LÁ 
+
+
+NA ABA NETWORK... --> será um request 
+
+
+
+
+
+DE STATUS 500 (internal server error),
+
+
+
+
+
+
+
+ESSE FAILING REQUEST,
+
+
+SE DERMOS UMA OLHADA EM SEUS HEADERS,
+
+
+
+
+
+
+
+VAMOS VER QUE 
+
+O 
+
+
+
+
+
+seu header 
+
+
+'Content-Type' 
+
+
+ESTARÁ COMO 
+
+
+'application/x-www-form-urlencoded'...
+
+
+
+
+
+
+
+
+
+
+
+--------------> OK....... -------> ISSO SIGNIFICA BASICAMENTE QUE 
+
+
+
+__ ELE TENTOU __ COLOCAR 'ALL DATA' 
+
+
+
+EM UM FORMATO 'TEXT' 
+
+LÁ 
+
+
+NO SEU 
+
+
+'form body'..... --------> ISSO PODE SER 
+
+VISTO LÁ 
+
+
+EMBAIXO 
+
+
+nessa aba do request, 
+
+lá em 
+
+
+
+'Form Data: 
+
+
+title: Test
+image: 
+price: 12 
+description: dfasfds 
+csrf: 12hasashsahth1029h9gdhpgdhfiah12
+'
+
+
+
+
+----------> SÓ A IMAGE ESTÁ VAZIA, PQ ELA ESTÁ COMO 'INVALID'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO MEU CASE, FICOU ASSIM:
+
+
+
+
+
+
+
+
+_csrf: es1CGf0F-qvNSUbFbRjuF83-nGfYHBe2dh8o
+title: aaskpkaspakasps
+image: b5324f6f-5a5d-492e-9d70-12e1050e08f0.jfif
+description: asasasasas
+price: 50.00
+
+
+
+
+
+
+
+
+
+(ou seja, só o NOME da image foi armazenado...)
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+--> MAS O QUE INTERESSA, AQUI, É QUE 
+
+
+'IT COULDNT EXTRACT OUR FILE AS TEXT'... ----> ISSO ACONTECEU JUSTAMENTE PQ 
+
+
+
+UMA 
+
+
+FILE 
+é 
+
+
+SEMPRE 
+
+'BINARY DATA'... ------> FILES SEMPRE SÃO 'BINARY DATA'... --> E POR CONTA DISSO/CULPA DISSO,
+
+
+
+
+
+POR CAUSA DESSA 'FAILING EXTRACTING',
+
+
+
+
+
+__SOMOS OBRIGADOS __ A __ PARSEAR__ ESSES FILES__ DE 'IMAGE' 
+
+
+DE 
+
+
+FORMA DIFERENTE.... ------->   ISSO PQ 
+
+
+
+
+
+
+esse 
+
+
+'bodyParser.urlencoded' 
+
+QUE 
+
+ESTAMOS USANDO, AQUI,
+
+
+
+
+__ NÃO _ INCLUI NENHUM PARSER__ QUE CONSIGA __ 
+
+
+também
+
+'HANDLE FILE DATA' 
+
+
+
+
+
+
+
+
+
+
+
+----------> OK... ISSO SIGNIFICA QUE 
+
+
+___ PRECISAMOS DE UM NOVO PACKAGE,
+
+1 PACKAGE PARA 
+
+PARSEAR 
+
+FILE UPLOADS (de images, por exemplo)
+
+
+
+
+
+FEITOS PELO USUÁRIO AO NOSSO NODEJS EXPRESS SERVER....
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSOR QUITA O SERVER E INSTALA 
+
+A 
+
+PACKAGE 
+
+
+de 
+
+
+
+'multer'...
+
+
+
+
+
+
+
+
+
+
+npm install --save multer.... 
+
+
+
+
+
+
+
+
+
+
+
+--> MULTER É OUTRA TPP (third party package)...
+
+
+
+
+
+
+
+Multer is a node.js middleware for handling multipart/form-data, 
+
+which is primarily used for uploading files. It is written on top of busboy for maximum efficiency.
+
+
+
+NOTE: Multer will not process any form which is not multipart (multipart/form-data).
+
+
+Weekly Downloads
+2.938.195
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+------>  ESSA PACKAGE VAI PARSEAR E PROCURAR 'FILE UPLOADS' 
+
+ 
+
+NOS SEUS REQUESTS.... ----> ISSO SIGNIFIC QUE 
+
+
+
+ESSA PACKAGE 
+
+
+
+É CAPAZ DE TAMBÉM 'HANDLE FILE REQUESTS'.... NA VERDADE, ELA É CAPAZ DE 
+
+
+HANDLE 'REQUESTS WITH MIXED DATA' (tanto data de tipo TEXT como FILE DATA....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------> ENTRETANTO, NÓS AINDA VAMOS MANTER 'bodyParser.urlencoded',
+
+
+
+PQ _ NÓS __ AINDA ___ TEMOS ___ LUGARES DE NOSSO CÓDIGO COMO A 'SIGNUP FORM',
+
+
+EM QUE 
+
+
+___NÃO TEMOS NENHUM 'FILE UPLOAD/FILE DATA' enfiada (submittada) na form,
+
+
+
+
+
+lugares em que 
+
+
+TEMOS O SUBMIT DE APENAS 'URLENCODED DATA',
+
+
+
+
+MAS AGORA 
+
+
+
+REALMENTE VAMOS TER QUE 
+
+USAR 
+
+ESSA PACKAGE 
+
+
+BOA 
+
+DE 
+
+
+
+'multer',
+
+ 
+
+
+
+ PQ VAMOS TER QUE USAR UM ENCODING DIFERENTE... --->  E ISSO, O USO DESSE ENCODING DIFERENTE,
+
+
+ VAI COMEÇAR
+
+
+ POR 
+
+ NOSSA 
+
+
+ FORM 
+
+ DE 
+
+
+ EDIT/ADD PRODUCT...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> DE VOLTA à VIEW DE PRODUCT,
+
+
+ O PROFESSOR VAI 
+
+ MUDAR UM POUCO MAIS AQUELA FORM que abrange todos os fields...
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    </head>
+    <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+    <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
+        <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" required name="title" id="title" value="<% if(editing) { %><%= prod.title %><% } %>">
+            </div>
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required  
+                name="image" 
+                id="image" 
+                
+                
+                >
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text"  required rows="5" name="description" id="description" ><% if(editing) { %><%=prod.description%><% } %></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number"  step=".01" required name="price" id="price" value="<% if(editing) { %><%= prod.price %><% } %>">
+            </div>
+            <% if (editing) { %>
+                <input type="hidden" value="<%= prod._id %>" name="id" required >
+                <% } %>
+            <button type="submit" class="btn"><%= editing ? 'Edit Product': 'Add Product' %></button>
+
+        </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+---------> ESTA FORM AQUI:
+
+
+
+
+ <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
+
+
+
+
+
+
+
+
+
+ ------> NESSA TAG AÍ,
+
+ ALÉM 
+
+
+ DAQUELA 
+
+ CLASS 
+
+ e 
+
+ A 
+
+ 'action' ('/path') ,
+
+
+O PROFESSOR TAMBÉM VAI QUERER __ ADICIONAR UM FIELD 
+EXTRA,
+
+
+O FIELD 
+
+DE 
+
+
+'enctype',
+
+
+
+(ENCRIPTION TYPE),
+
+
+
+O QUAL ELE 
+
+SETTARÁ 
+
+COMO 
+
+
+
+'multipart/form-data', 
+
+
+
+
+
+O TIPO DE 
+
+
+DATA __ USADO/PARSEADO/SUPORTADO __ PELO 
+
+
+
+
+'multer'....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+    <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
+
+
+
+
+
+
+    ------------------------------
+
+
+
+
+
+
+    ok....  -----> 
+
+
+    PROFESSOR NOS DEIXA OUTRO DETALHE:
+
+
+
+
+
+TIPOS DE 'enctype':
+
+
+
+
+
+
+
+
+1) 'application/x-www-form-urlencoded' ------> ESSE É O __fORMATO __ DEFAULT__ DAS FORMS... é o que é compreendido por 'bodyParser.urlencoded'....
+
+
+
+
+
+2) 'multipart/form-data' ---> ESSE É O FORMATO COMPREENDIDO PELO 'multer' -----> é o formato que deixa você MISTURAR inputs de type TEXT e 'file' em UMA MESMA FORM...
+
+
+
+
+
+
+
+
+
+
+
+------>MULTIPART/FORM-DATA --->  ISSO, NO NOSSO VIEW, VAI BASICAMENTE 
+
+
+
+'TELL THE SERVER THAT OUR 
+
+REQUEST WILL NOT CONTAIN PLAIN TEXT,
+
+
+BUT WILL CONTAIN ___ MIXED DATA (text + binary data, FILES...) '
+
+
+
+
+
+
+
+
+
+--> MULTER, O PACKAGE QUE RECÉM INSTALAMOS,
+
+
+VAI 
+
+
+FICAR PROCURANDO POR REQUESTS COM ESSE TYPE de 'multipart/form-data',
+
+
+E AÍ 
+
+
+__ VAI SER CAPAZ __ DE PARSEAR __ TANTO O TEXT COMO O ARQUIVO...
+
+
+
+
+
+
+
+
+
+----> OK... É ISSO QUE VAMOS PRECISAR, AQUI...
+
+
+
+
+
+
+
+
+
+
+---> COM TUDO ISSO PREPARADO, DEVEMOS __USAR__ O MULTER, NA PRÓXIMA LIÇÃO...

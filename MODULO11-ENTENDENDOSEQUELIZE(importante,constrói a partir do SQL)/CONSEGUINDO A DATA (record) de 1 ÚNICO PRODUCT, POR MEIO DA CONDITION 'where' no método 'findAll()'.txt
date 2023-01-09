@@ -1,0 +1,1150 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR EXPLICA QUE É HORA DE 
+
+'RETRIEVE A SINGLE product'
+
+quando 
+
+clicarmos 
+
+em 
+
+
+'view details' em um product...
+
+
+
+ERRO: parece que 
+
+
+
+MINHA DATABASE 
+
+
+MYSQL NÃO ESTÁ RODANDO.... (foi fechada, por algum motivo...)
+
+
+
+
+
+
+
+
+
+
+CONSEGUI.... --> A DATABASE PODE SER INICIADA ASSIM:
+
+
+
+
+
+71
+
+If you have already installed MySQL on a windows machine make sure it is running as a service.. You can do that by
+
+Start --> services --> MySQL(ver) --> Right-Click --> Start
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+OK... TENTEI 
+
+
+
+
+
+
+EXECUTAR 
+
+ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+const productId = req.params.productId;
+
+
+
+Product.findAll(
+  {where: {id: productId}}
+)
+.then(
+  (product) => {
+
+                    res.render('shop/product-detail', {
+      pageTitle: product.title,
+      path: '/products',
+      product: product
+    });
+
+
+  }
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+}
+
+
+
+
+,
+
+
+
+
+
+MAS 
+
+
+RECEBI ESTA MENSAGEM:
+
+
+
+
+
+
+
+Executing (default): SELECT `id`, `title`, `price`, `imageUrl`, `description`, `createdAt`, `updatedAt` FROM `products` AS `product`;
+
+
+
+Executing (default): SELECT `id`, `title`, `price`, `imageUrl`,
+
+ `description`, `createdAt`, `updatedAt` FROM `products` AS `product`
+ 
+ 
+  WHERE `product`.`id` = '2';
+
+
+
+
+
+
+
+
+
+
+
+  E AÍ,
+
+  RECEBI UMA PÁGINA 
+
+
+
+  EM BRANCO,
+
+
+
+
+  sem nenhum valor nos campos html...
+
+
+
+
+
+
+
+
+
+
+  --> PARECE QUE 
+
+
+  ESSE 
+
+
+  OUTPUT 
+
+  DEU ERRADO 
+
+
+
+  JUSTAMNETE 
+
+  PQ 
+
+
+  MINHA DATA (o 'product')
+
+  FOI RETRIEVADO ASSIM:
+
+
+
+
+
+
+
+  [
+  product {
+    dataValues: {
+      id: 1,
+      title: 'ASASASASAS',
+      price: 21212121,
+      imageUrl: 'ASASASASASAS',
+      description: '21asaasas',
+      createdAt: 2021-10-11T21:27:29.000Z,
+      updatedAt: 2021-10-11T21:27:29.000Z
+    },
+    _previousDataValues: {
+      id: 1,
+      title: 'ASASASASAS',
+      price: 21212121,
+      imageUrl: 'ASASASASASAS',
+      description: '21asaasas',
+      createdAt: 2021-10-11T21:27:29.000Z,
+      updatedAt: 2021-10-11T21:27:29.000Z
+    },
+    _changed: Set(0) {},
+    _options: {
+      isNewRecord: false,
+      _schema: null,
+      _schemaDelimiter: '',
+      raw: true,
+      attributes: [Array]
+    },
+    isNewRecord: false
+  }
+]
+
+
+
+
+
+
+
+-----> E DESSE GRANDE ARRAY DE COISAS, 
+
+
+provavelmente 
+
+terei de escrever algo como:
+
+
+
+product[0].dataValues
+
+
+
+
+
+
+
+
+
+
+
+
+.....CERTO... ISSO DEU _MEIO CERTO__.... --> eu 
+
+consegui 
+
+os 
+
+valores 
+
+
+
+que eu queria outputtados na página, mas recebi um erro estranho no console:
+
+
+
+
+TypeError: Cannot read property 'dataValues' of undefined
+    at A:\projeto4 - NODEJS\MODULO11-ENTENDENDOSEQUELIZE(importante,constrói a partir do SQL, 
+SQL QUERIES)\NOVONOVOPROJETO8-TRABALHANDOCOMDATABASESQL\controllers\shop.js:203:38
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> OK, É HORA DE VER O CÓDIGO DO PROFESSOR SOBRE ISSO...
+
+
+
+
+
+
+
+
+
+--> ELE DIZ QUE CONSEGUIMOS 
+
+O 
+
+
+'const prodId = req.params.productId'...
+
+
+
+
+
+
+
+
+------> MAS AÍ, O PROFESSOR DIZ QUE 
+
+
+TEMOS 
+
+
+1 MÉTODO 
+
+ESPECIAL
+ 
+
+
+
+ DO 
+
+
+
+
+
+
+ 'sequelize'
+
+ PARA 
+
+ ENCONTRAR 
+
+
+ 1 
+
+
+
+ RECORD POR ID... -----> 
+
+
+
+
+
+
+ É O MÉTODO 
+
+ 'Model.findById()'...
+
+
+
+
+
+
+
+
+ (E VAMOS USÁ-LO NO LUGAR DE 'findAll({where: {id: productId}})' )
+
+
+
+
+
+
+
+
+
+
+ ----> NO CASO ,
+
+
+
+
+ __O PROFESSOR VAI ESCREVER 
+
+
+
+
+
+
+
+
+
+ 'Product.findById(productId)
+ .
+
+then(
+  (product) => {
+
+
+        res.render(
+          product: product, 
+
+          pageTitle: product.title,
+
+          path: '/products',
+        )
+  }
+)',
+
+
+
+
+
+
+
+E AÍ VAI FICAR ALGO ASSIM:
+
+
+
+
+  const productId = req.params.productId;
+
+  Product.findById(productId)
+    .then((product) => {
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+
+
+
+
+
+
+--> EU ESCREVO ISSO AÍ,
+
+
+MAS RECEBO ESTE ERRO:
+
+
+
+Product.findById is not a function
+
+
+
+
+
+
+
+
+
+
+----->  With Sequelize v5, findById() 
+
+was replaced by findByPk(). Replace findById using
+
+
+ findByPk and everything should work fine. You can find query doc here
+
+
+
+https://sequelize.org/master/manual/model-querying-finders.html
+
+
+
+
+
+
+
+
+--> OK, É SÓ USAR 
+
+'findByPk'
+
+
+no lugar 
+
+
+
+
+dessa sintaxe...
+
+
+
+
+ex:
+
+
+
+  const productId = req.params.productId;
+
+  Product.findByPk(productId) /////////EIS O CÓDIGO EM QUESTÃO.
+    .then((product) => {
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+-------------------
+
+
+
+
+
+
+
+
+---> OK... FUNCIONOU...
+
+
+
+MAS AINDA ESTOU RECEBENDO UM ERRO:
+
+
+
+
+TypeError: Cannot read property 'title' of null
+    at A:\projeto4 - NODEJS\MODULO11-ENTENDENDOSEQUELIZE(importante,constrói a partir do SQL, 
+SQL QUERIES)\NOVONOVOPROJETO8-TRABALHANDOCOMDATABASESQL\controllers\shop.js:189:28
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+----> HMM MEU CÓDIGO ASYNC (de fetch desse product na database)
+
+
+
+ESTÁ SENDO RODADO 
+
+
+
+
+2x, novamente... já vi esse erro antes..
+
+
+
+
+
+
+
+
+-> CONSERTO COM ISTO AQUI:
+
+
+
+
+
+
+--> ACHEI COMO CONSERTAR:
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+  const productId = req.params.productId;
+
+  Product.findProduct(productId, (product) => {
+
+    if(!product) {  ////conserta o problema de 'product.title' is undefined...
+      return;
+    }
+    res.render('shop/product-detail', {
+      pageTitle: product.title,
+      path: '/products',
+      product: product
+    });
+  });
+
+
+
+
+
+
+
+  --------------------------
+
+
+
+
+
+
+
+
+  OK... CONTINUANDO.... AGORA 
+
+
+  VEREMOS 
+
+  OS 
+
+
+  DETAILS, TUDO CERTINHO....
+
+
+
+
+
+
+
+
+  -------> 
+
+
+  --------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+  professor coloca uma 
+
+
+  class 
+
+  na image 
+
+
+  de 
+
+
+
+  '.image {
+
+    height: 20rem;
+  }
+
+
+
+
+
+  .image img {
+
+
+    height: 100%;
+  }
+
+
+
+
+
+
+
+  ----------------- AGORA PODEMOS RETRIEVAR 
+
+
+
+
+
+
+
+  1 PRODUCT, JUSTAMENTE POR MEIO DESSE CÓDIGO DE 
+
+
+  '
+
+   Product.findByPk(productId)
+  .then((product) => {
+
+
+      if(!product) {
+        return;
+      }
+
+    res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+    ''' 
+
+
+
+
+
+
+
+
+
+
+
+    --> MAS O PROFESSOR ___ TAMBÉM QUER NOS MOSTRAR UMA SINTAXE ALTERNATIVA,
+
+
+
+    A SINTAXE 
+
+
+
+    DE
+
+
+
+
+    '.findAll()', acho...
+
+
+
+
+
+
+
+
+
+
+
+
+    --> PROFESSOR VAI NOS MOSTRAR COMO PODEMOS USAR O 'findAll()'
+
+    para 
+
+    ENCONTRAR
+
+
+
+    esse product com esse id específico...
+
+
+
+
+
+
+
+
+
+
+
+
+    ---> PROFESSOR 
+
+
+
+    ESCREVE 
+
+
+
+
+
+
+    Product.findAll(
+      {
+        where: {
+
+        }
+      }
+    )
+
+
+
+
+
+
+
+
+
+    --> VOCÊ VAI DEFINIR ESSE OBJETO COM ESSA 
+
+    KEY
+     
+     DE 
+
+
+
+     'where',
+
+
+     E AÍ 
+
+     DENTRO 
+
+     DESSE 
+
+
+     'where', dentro do seu valor,
+
+     VOCÊ 
+
+     TERÁ 
+
+
+
+     ' A RICH QUERY LANGUAGE'/RICH AMOUNT OF OPTIONS 
+
+
+     QUE 
+
+
+
+     VOCÊ 
+
+
+     PODE 
+
+
+     USAR 
+
+
+     PARA CONFIGURAR O OBJECT QUE VOCÊ VAI QUERER 
+
+
+
+     RETRIEVAR.. -->  para 
+
+
+    
+
+    ver alguns dos attributes,
+
+    vocÊ 
+
+    vê os docs do sequelize,
+    particularmente 
+
+    a seção 
+
+    de 
+
+    'queryinh'....
+
+
+
+
+
+
+
+    ------> VOCÊ PODE RETRIEVAR SÓ O TITLE, POR EXEMPLO, etc....
+
+
+
+
+
+
+    -- VOCÊ PODE 
+
+
+
+
+    USAR 
+
+    O 
+
+    'findAll()'
+
+
+    NA SUA FORMA BASE, EM QUE 
+
+    VOCÊ VAI RETRIEVAR 
+
+
+
+
+    UM 
+
+
+
+    RECORD QUE TENHA EXATAMENTE AQUELE VALOR NAQUELE FIELD ESPECÍFICO...
+
+
+
+
+
+    ex:
+
+
+
+
+
+    Post.findAll(
+      {
+        where: {
+          id: productId
+        }
+      }
+    )
+
+
+
+
+
+
+
+
+
+    --> MAS É CLARO QUE VOCÊ PODE USAR TAMBÉM OPERATORS, PARA CHECAR 
+
+
+
+    COM 
+
+
+  CONDITIONS,
+
+
+
+  coisas como 'maior/menor do que',
+
+
+  Etc:
+
+
+
+
+  
+
+    Post.findAll(
+      {
+        where: {
+          id: productId > 5 
+        }
+      }
+    )
+
+
+
+
+
+
+
+    vai retrievar TODOS OS 
+
+
+
+    RECORDS EM QUE 
+
+
+
+
+    TEMOS 
+
+    'productId' MAIOR 
+
+    DO QUE 
+    5...
+
+
+
+
+
+
+
+
+
+--> O IMPORTANTE DE RESSALTAR, AQUI, NO ENTANTO,
+
+
+É QUE 
+
+
+
+'.findAll()'
+
+
+VAI _ SEMPRE NOS RETRIEVAR__ 1 ARRAY __ DE PRODUCTS...
+
+
+
+
+
+
+
+
+
+--> POR ISSO,
+
+AQUI VAMOS 
+
+RECEBER ALGO ASSIM:
+
+
+
+
+
+
+[
+  {productEscolhido}
+]
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, MESMO QUE CONSIGAMOS APENAS 1 OBJECT COM ESSE CÓDIGO DE QUERYING,
+
+
+
+ele 
+
+
+
+AINDA __ FICARÁ WRAPPADO __ EM UM ARRAY, ARRAY QUE 
+TEREMOS 
+
+QUE 
+MANIPULAR PARA 
+
+
+ENCAIXAR 
+
+NAQUELE 
+
+
+'res.render()',
+
+nesse nosso exemplo de 
+
+
+'show product detail'...
+
+
+
+
+
+
+
+
+--> VAMOS MANIPULAR ISSO NO THEN BLOCK,
+
+
+É CALRO:
+
+
+
+
+
+
+    Post.findAll(
+      {
+        where: {
+          id: productId > 5 
+        }
+      }
+    )
+    .then 
+    (
+      (products) => {
+          res.render(
+            'shop/product-detail', {
+              product: products[0],
+              pageTitle: products[0].title,
+              path: '/products'
+            }
+          )
+        }
+    )
+
+
+
+
+
+------------
+
+
+
+CERTO, E ISSO FUNCIONA...
+
+
+
+
+NESSE CASE ESPECÍFICO,
+
+
+É PREFERÍVEL USAR 
+
+'findById'
+
+em vez 
+
+de 
+
+
+'findAll' 
+
+
+(mas 
+
+
+se você tiver queries mais avançadas, use 
+
+
+'findAll' com 
+
+
+
+
+O OBJETO CONFIGURADOR NO SEU PARâMETRO....)

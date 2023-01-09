@@ -1,0 +1,1012 @@
+
+
+
+
+
+
+
+
+
+
+-------> AGORA QUE APRENDEMOS SOBRE 
+
+
+
+__COMO __ ADICIONAR VALIDATORS,
+
+
+
+DEVEMOS 
+
+
+ENFIAR 
+
+MAIS 
+
+DELES 
+
+
+NOS NOSSOS INPUT FIELDS 
+
+da page 
+
+de 
+
+'signup'...
+
+
+
+
+
+
+
+
+
+
+--> POR EXEMPLO,
+
+
+O PROFESSOR QUER ASSEGURAR QUE 
+
+
+
+
+NOSSO 
+
+'PASSWORD'
+
+SEJA 
+
+__ PELO MENOS 
+
+'SIX CHARACTERS LONG'.... ------->  PARA ISSO,
+
+
+
+
+VAMOS __PRECISAR __ ADICIONAR ___ OUTRO MIDDLEWARE 
+
+
+
+
+
+À NOSSA ROUTE de 
+
+
+'router.post('/signup')',
+
+DESSA 
+
+VEZ 
+
+
+
+UMA MIDDLEWARE 
+
+
+
+
+QUE FARÁ UM CHECK DE 
+
+
+'password',
+
+tipo 
+
+
+
+'check('password')'...
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+    check('password').isLength()
+  authController.postSignup
+);
+
+
+
+
+
+
+
+
+
+
+
+--> TIPO ASSIM, CREIO EU:
+
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+
+ check('password').isLength({min: 6}),
+  authController.postSignup
+);
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+OU SEJA, 
+
+
+
+TEMOS 
+
+
+
+1 
+
+
+
+OBJETO CONFIG que define 
+
+
+'min: 6'... 
+
+
+
+
+
+
+
+
+
+
+------> MAS ANTES DISSO,
+
+
+PROFESSOR NOS EXPLICA QUE PODEMOS FAZER ALGO QUE É OPCIONAL,
+
+
+
+
+mas que é bom... --> PODEMOS WRAPPAR__ NOSSOS 
+
+
+
+'MIDDLEWARES' de 'VALIDATION' (esses checks)
+
+
+
+___EM 
+
+1 ARRAY... 1 WRAPPING ARRAY....
+
+
+
+
+
+
+-------> ISSO É BOM PQ DEIXA NOSSOS 
+
+
+'CHECKS'
+
+
+
+KINDOF AGRUPADOS,
+
+
+E ISSO DEIXA 1 POUQUINHO MAIS FÁCIL DE LER....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+router.post(
+  '/signup',
+  [
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+
+ check('password').isLength({min: 6})
+
+  ],
+  authController.postSignup
+);
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA, POR EXEMPLO,
+
+VOCê/QUAQLUER UM VAI SABER QUE 
+
+
+
+''
+  [
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+
+ check('password').isLength({min: 6})
+
+  ],
+
+  ''
+
+
+
+  esse BLOCK AÍ É 
+
+  'ALL ABOUT VALIDATION'...
+
+
+
+
+
+
+
+
+
+----> CERTO... --> E EM VEZ DE 'CHECK', podemos usar OUTRA 
+
+FUNCTION,
+
+
+
+UMA FUNCTION QUE NÃO 'CHECK'....
+
+
+
+
+
+
+
+
+
+--> isso pq 
+
+
+
+o 'check()' vai sempre checar: 
+
+
+1) O BODY 
+
+2) OS PARAMETERS 
+
+
+3) OS QUERY PARAMETERS 
+
+
+
+
+
+
+
+
+
+
+-> MAS EM VEZ DE USAR ESSE 'check()',  que é ''''GERAL''''',
+
+
+PODEMOS 
+
+
+
+USAR 
+
+
+
+os métodos alternativos 
+
+
+
+'body()', 'param()' ou 
+
+
+'query()', ou 'cookie()', ou 'header()', 
+
+
+QUE 
+
+
+
+__ VÃO CHECAR SÓ ESSES LUGARES PARTICULARES 
+
+
+
+PELA 
+
+
+EXISTÊNCIA DO SEU 'value' do input field do user...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> E É POR ISSO QUE O PROFESSOR NOS DIZ, AGORA, QUE PODEMOS USAR 
+
+
+'body()' em vez de 'check()', nesse nosso caso específico, pq 
+
+
+ESTAMOS 
+
+
+REALMENTE 
+
+SÓ PASSANOD 1 VALUE DE 1 INPUT FIELD no 'body' de nosso request, 
+
+nesse case...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+
+ check('password').isLength({min: 6}),
+////poderíamos escrever 'body('password').isLength({min: 6})  EM VEZ DE 'check()''
+  authController.postSignup
+);
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+body('password').isLength({min: 6}) -----------> ISSO VAI FAZER 
+
+
+COM QUE 
+
+
+O 
+
+
+VALUE DE 
+
+'PASSWORD'
+
+
+
+
+seja buscado __ APENAS ___ NO BODY__ DO REQUEST,
+
+e em 
+
+
+mais nenhum outro lugar...
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE SE 
+
+EXISTISSE 1 'password value' 
+
+
+NOS HEADERS,
+
+
+ESSE METHOD NÃO IRIA SE IMPORTAR COM ELE...
+
+
+
+
+
+
+
+
+
+
+
+-----> OK..... --> ESTAMOS CHECANDO
+
+
+PELO 
+
+PASSWORD 
+
+
+NO BODY.... --> 
+
+
+
+
+AÍ O PROFESSOR 
+
+
+ESCREVE 
+
+
+
+
+
+
+
+1 VALIDATOR DE 
+
+
+
+'isLength({min: 6})'
+
+
+
+
+
+
+----------------------
+
+
+
+VOCê TBM PODE DEFINIR UMA MAX LENGTH,
+
+
+
+
+
+de 10, por exemplo...
+
+
+
+
+
+
+
+-----> O PROFESSOR __ TAMBÉM __ ADICIONA MAIS 1 
+
+
+
+___ VALIDATOR,
+
+QUE 
+
+
+É 
+O 
+
+VALIDATOR DE 
+
+'.isAlphaNumeric()',
+
+PARA __ 
+
+PERMITIR __ APENAS NUMBERS E NORMAL CHARACTERS NO NOSSO PASSWORD...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+ check('password').isLength({min: 6}).isAlphanumeric(), //EIS O CÓDIGO EM QUESTÃO.
+  authController.postSignup
+);
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+E AÍ O PROFESSOR NOS EXPLICA, NOVAMENTE,
+
+
+QUE 
+
+
+SE 
+
+NÃO ADICIONARMOS 
+
+
+
+'.withMessage()'
+
+
+
+DEPOIS 
+DE 
+
+
+NOSSOS VALIDATORS,
+
+
+NÓS VAMOS ACABAR COM AQUELA 'MENSAGEM DEFAULT' 
+
+
+DE 
+
+ERRO,
+
+que é 
+
+
+'invalid value'... ---------->
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... --> MAS TALVEZ VOCÊ QUEIRA USAR UMA 'DEFAULT MESSAGE FOR ALL VALIDATORS',
+
+
+
+
+__MAS VOCÊ ___ NÃO QUER (nessa hipótese) 
+
+
+TER QUE 
+
+
+__REPETIR __ 
+
+
+'withMessage()',
+
+
+
+essa 
+
+sintaxe cansada,
+
+
+APÓS TODO E CADA 
+
+
+VALIDATOR... ------->    
+
+
+
+
+
+VOCÊ NÃO GOSTARIA DE TER QUE ESCREVER ALGO ASSIM, POR EXEMPLO:
+
+
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+  check('email') ///MIDDLEWARE... é um middleware de 'express-validator', usado para VALIDATE OUR USER INPUT... --> ele vai checar se aquele input field de 'email' (que pode existir OU NO REQUEST BODY, OU NOS QUERY PARAMS, OU NOS COOKIES, OU NOS HEADERS ) __ É REALMENTE 1 EMAIL, SE ELE PODE SER CONSIDERADO 1 'EMAIL' (por isso o method chainado de 'isEmail()'.... OBS::: ESSE METHOD de 'isXXXX()' É OBRIGATÓRIO.....)
+    .isEmail(), ///ESSE MIDDLEWARE de 'check()' DEVE SER USADO JUNTO DE 'validationResult', lá no arquivo CONTROLLER de 'auth.js' (é lá que temos esse 'validationResult', TAMBÉM IMPORTADO de 'express-validator'....) //withMessage() é usado para __ SUBSTITUIR objetos 'normais' de 'erros' obtidos com 'check().isXXX()' PELA __ STRING QUE VOCÊ PASSOU para dentro dele... (no caso, essa string de 'please enter a valid email')...
+
+
+ check('password')
+ .isLength({min: 6})
+ .withMessage('please input a password that has more than 6 characters')
+ .isAlphanumeric()
+  .withMessage('please input a password that has more than 6 characters')
+ 
+ 
+ , //EIS O CÓDIGO EM QUESTÃO.
+  authController.postSignup
+);
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+VOCÊ NÃO VAI QUERER TER QUE REPETIR ESSA MESSAGE VÁRIAS VEZES, que nem um otário,
+
+
+
+
+
+POR ISSO 
+
+
+ EXISTE UMA FEATURE 
+
+
+
+
+
+
+ que você usa 
+
+
+ SE 
+
+ VOCÊ QUER 
+
+
+ APLICAR UMA MESMA 
+
+ 'ERROR MESSAGE'
+
+
+ A 
+
+
+
+ TODOS OS VALIDATORS.... ----> SE VOCÊ QUISER FAZER ISSO,
+
+
+
+ BASTA VOCÊ 
+ PEGAR 
+
+
+ A 
+ MESSAGE QUE VOCÊ QUER QUE ATUE COMO UM 'DEFAULT'
+
+ PARA 
+
+ ESSE 
+
+
+ CHECK DESSE INPUT ESPECÍFICO E 
+
+ ADICIONAR 
+
+
+ __COMO __ SEGUNDO PARÂMETRO 
+
+
+ da 
+
+ função
+  
+
+
+  check/body/param/header/cookie 
+  que 
+
+  você estiver usando...
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+  check('email') 
+    .isEmail(), 
+
+
+ check('password', 
+ 'Your password has to be made of only letters and numbers, and of more than 6 characters.'). ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS... 
+ .isLength({min: 6})
+ .isAlphanumeric()
+ 
+ 
+ , //EIS O CÓDIGO EM QUESTÃO.
+  authController.postSignup
+);
+
+
+
+
+
+
+-----------------------
+
+
+
+CERTO...  FUNCIONOU....
+
+
+
+AGORA ESSE NEGÓCIO 
+
+
+
+
+
+
+
+VAI SER 
+
+USADO COMO UM 'DEFAULT ERROR MESSAGE' PARA TODOS OS VALIDATORS VINCULADOS 
+
+A 
+
+'check()'....
+
+
+---------------------------
+
+
+
+
+
+
+
+
+----> OK.... ------> MAS O PROFESSOR COMENTA 
+
+QUE 
+
+
+
+
+SÓ OS CHECKS DE 'isLength' de 5 caracteres 
+
+
+E 
+
+
+
+
+ISALPHANUMERIC 
+
+
+
+
+são 
+
+
+
+MT 
+
+
+
+SOLTOS,
+
+
+
+
+
+
+você vai querer TER PASSWORDS MAIS LONGOS,
+
+
+
+
+
+____ E É CLARO QUE VAI QUERER PERMITIR SPECIAL CHARACTERS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, SALVAMOS TUDO ISSO 
+
+
+
+
+
+E AÍ __ PODEMOS __ 
+
+
+
+
+DIGITAR ALGO NOS NOSSOS FIELDS.... 
+
+
+
+
+
+
+
+-----> AÍ SE DIGITARMOS BOSTA no field de password, 
+
+
+
+
+VAMOS GANHAR 
+
+AQUELA MENSAGEM 
+
+DEFAULT DE ERRO...
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+------> ok.... AGORA PRECISAMOS FAZER A FEATURE DE 'CONFIRM PASSWORD' FUNCIONAR 
+
+
+NO 
+
+SERVERSIDE....
+
+
+
+
+
+
+---------------
+
+
+
+
+
+
+
+
+ESSES SÃO MAIS EXEMPLOS DE VALIDATION,
+ 
+
+
+ E 
+
+
+ DE 
+
+ COMO 
+
+
+
+ ADICIONAR MÚLTIPLOS CHECKS PARA 
+
+
+ O MESMO REQUEST...
+
+
+
+
+
+
+
+
+
+ --> NA PRÓXIMA LIÇÃO APRNEDERMOS 
+
+
+
+ SOBRE COMO 
+
+ 'CHECK OUR PASSWORDS FOR EQUALITY'...

@@ -1,0 +1,1779 @@
+
+
+
+
+
+DEVEMOS COMEÇAR COM O ADD DE NOSSA PRÓPRIA LÓGICA.... --> 
+
+
+PQ 
+
+
+
+COMO 
+
+
+O PROFESSOR NOS DISSE,
+
+
+O NEXTAUTH __NÃO VAI FAZER ___ TUDO PARA NÓS AQUI,
+
+
+QUANDO OPTARMOS POR 'WRITE OUR OWN AUTH SYSTEM, WITH OUR 
+OWN USER ACCOUNTS'... 
+
+
+
+
+
+
+
+
+
+------> É POR ISSO QUE ANTES MESMO DE USARMOS NEXT-AUTH PARA QUALQUER COISA,
+
+
+VAMOS PRECISAR ADICIONAR A LÓGICA PARA 'CREATE USERS'...
+
+
+
+---> ISSO PQ O NEXT-AUTH PODE NOS AJUDAR COM:
+
+
+
+
+1) AUTHENTICATING THOSE USERS 
+
+
+
+2) GETTING THE TOKEN FOR THOSE USERS 
+
+
+
+
+
+
+
+
+MAS PARA FAZER O __cREATE__ DESSES __ USERS em si,
+
+
+
+NÓS PRECISAMOS TRAZER NOSSA PRÓPRIA LÓGICA...
+
+
+
+
+
+--> PROFESSOR INICIALIZA O DEV SERVER 
+
+
+
+E AÍ CRIA UMA API ROUTE...
+
+
+
+
+
+--> CRIA A API ROUTE 
+NO FOLDER DE 'API'...
+
+
+
+
+
+-------> ESSA ROUTE VAI 'GETS A REQUEST'
+
+
+com um EMAIL E UM PASSWORD,
+
+que 
+
+SERÃO 
+
+
+
+
+__ENVIADOS__ DA PÁGINA DE 'LOGIN',
+
+SE NÓS 
+
+ESTIVERMOS CRIANDO UMA NOVA CONTA.... --->  E 
+
+
+ESSA API ROUTE VAI SER USADA PARA '''STORE THAT USER''''
+
+
+
+
+
+
+
+E NÓS, DE NOVO, VAMOS USAR O MONGODB PARA 
+
+FAZER 
+
+
+
+STORE DA USERDATA....
+
+
+(mas vocÊ pode usar QUALQUER DATABASE DE SUA ESCOLHA,
+
+não precisa ser o mongodb...) ------> 
+
+
+
+
+MONGODB ATLAS é ótimo de usar, e de graça,
+
+e fácil de usar com javascript...
+
+
+
+
+----> ADICIONAMOS UMA API ROUTE 
+
+
+de 
+
+
+'auth',
+
+
+
+E DENTRO 
+
+
+DELA 
+
+CRIAMOS UM 'signup.js' --> ISSO 
+
+VAI CRIAR UMA ROUTE DE 
+
+
+'localhost:3000/auth/signup'
+
+
+NO NOSSO PROJETO...
+
+
+
+
+
+
+
+---> DENTRO DISSO, PROFESSOR ESCREVE SUA 
+
+'HANDLER FUNCTION',
+
+a qual será responsável POR __ CRIAR __ UM NOVO USER__....   
+
+
+
+
+
+
+
+
+
+FORMATO É ESTE:
+
+
+
+const handler = (req, res) => {
+
+
+    
+}
+
+export handler;
+
+
+
+
+
+
+
+
+--------> DENTRO DESSE NEGÓCIO, QUEREMOS NOS CONECTAR 
+
+A DATABASE DO MONGODB,
+
+E 
+AÍ 
+
+'STORE THE INCOMING USER DATA'... -> 
+
+
+para isso,
+
+
+PROFESSOR 
+
+
+
+VAI QUITTAR O DEVSERVER E INSTALAR A PACKAGE 
+
+DO MONGODB...
+
+
+
+
+
+ 
+AI VAMOS PRECISAR DA MONGODB PACKAGE 
+
+PARA NOS CONECTAR COM SUCESSO A 
+
+DATABASE 
+
+do mongodb...
+
+
+
+
+
+CERTO.... 
+
+VAMOS
+
+CONVERSAR
+
+
+
+COM ESSA DATABASE, NA VERDADE,
+
+
+POR MEIO DE MÚLTIPLAS FUNÇÕES,
+
+
+
+
+
+MULTIPLAS API ROUTES, NO FUTURO,
+
+
+
+POR ISSO
+
+O PROFESSOR 
+
+
+VAI CRIAR UM FOLDER DE 'helpers',
+
+
+EM QUE 
+
+COLOCARÁ 
+
+NOSSOS 'UTIL'...
+
+
+
+
+
+
+
+
+
+
+
+
+HELPERS > db-util.js
+
+
+
+
+
+
+
+
+
+
+
+
+----> ESSE ARQUIVO VAI NOS AJUDAR COM O ESTABLISH DE UMA CONNECTION E ASSIM POR DINATE....
+
+
+  
+
+
+
+
+
+
+
+PROFESSOR COMECA ASSIM:
+
+
+
+
+
+
+import { MongoClient } from 'mongodb';
+
+
+
+
+
+
+export const connectDatabase = async () => {
+
+
+
+}
+
+
+
+
+NESSA FUNCAO, VAMOS USAR 'MONGOCLIENT'
+
+para 
+
+CHAMAR AQUELE MÉTODO 
+
+'connect',
+
+
+
+AÍ VAMOS PASSAR NOSSA 'CONNECTION STRING'... --> a string com a qual/pela qual 
+
+
+NOS CONECTAREMOS A DATABASE.... ---------> 
+
+
+
+
+PARA O MONGODB,
+
+
+NÓS CONSEGUIMOS AQUELA STRING LÁ NO SEU SITE,
+
+em 
+'Connect'....
+
+
+
+
+
+
+
+
+ESTA STRING AQUI:
+
+
+
+
+mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+OK, VAMOS ARMAZENAR NO CLUSTER0,
+
+
+
+
+EM ALGUMA COLLECTION ESPECÍFICA.... ----> 
+
+
+
+
+talvez uma collection de 'auth-demo'....
+
+
+
+-----------------------------------------------------
+
+
+
+
+USERNAME E PASSWORD FICAM EM '''DATABASE ACCESS'''....
+
+
+
+
+
+
+ok, colocamos o password, tudo normal...
+
+
+
+
+
+
+
+
+
+--> AÍ COLOCAMOS ESSA LONGA STRING NO NOSSO 'connect'
+
+
+
+da função 'connectDatabase'....
+
+
+
+
+EX:
+
+
+
+
+
+
+import { MongoClient } from 'mongodb';
+
+
+
+
+
+const connectToDatabase = async () => {
+
+
+ const client = MongoClient.connect('mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/auth-demo?retryWrites=true&w=majority')
+}
+
+
+-----------------------------------------------
+
+
+
+
+
+É CLARO QUE ESSE CONNECT NO FUTURO PODE EVENTUALMENTE __ FALHAR__, 
+
+mas 
+
+
+VAMOS
+
+IGNORAR ISSO, POR ENQUANTO,
+
+
+E AÍ 
+
+ESCREVER UM return 
+
+de 
+
+'client'
+
+ao final dessa funçõa....
+
+
+
+
+EX:
+
+
+
+import { MongoClient } from 'mongodb';
+
+
+
+
+
+export const connectDatabase = async () => {
+
+
+ const client = await MongoClient.connect('mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/auth-demo?retryWrites=true&w=majority')
+}
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+OK,, QUANDO ALGUÉM CHAMAR 'connectDatabase',
+
+ESSA PESSOA
+
+
+VAI AUTOMATICAMENTE 
+
+RECEBER UM 'MONGODB CLIENT',
+
+uma CONEXÃO
+
+
+AO CLIENT DO MONGODB....
+
+
+
+
+
+--> OK,  O PROFESSOR ENTÃO EXPORTA 
+
+
+
+ESSA FUNÇÃO ASSÍNCRONA PARA FORA DESSE ARQUIVO,
+
+
+JUSTAMENTE PARA QUE 
+
+ELA 
+POSSA 
+
+SER UTILIZADA 
+
+
+
+NA API ROUTE 
+
+DE 
+
+'signup.js'...
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+OK.... 
+
+AÍ 
+
+TEMOS ESTE CÓDIGO AQUI:
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+
+
+
+
+
+const handler = async (req, res) => {
+
+   const client = await connectToDatabase();
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+--------------------------------------
+
+
+
+NELE,
+
+
+NÓS ACABAMOS NOS CONECTANDO AO CLIENT... -------->
+
+
+
+
+
+AÍ, PARA TER ACESSO __A DATABASE__ NO CLIENT,
+
+
+PROFESSOR 
+
+
+ESCREVE 
+
+'const db = client.db()'...
+
+
+
+
+
+
+-->   AGORA QUE TEMOS ACESSO A ESSA DATABASE,
+
+
+
+VAMOS QUERER 
+
+1) CRIAR UM USER 
+
+
+2) ARMAZENAR ESSE USER EM ALGUMA 'COLLECTION' NAQUELA DATABASE...
+
+
+
+
+
+
+
+
+---> PQ, como você aprendeu  mais cedo nocurso,
+
+
+
+o 
+
+
+mongodb funciona com COLLECTIONS,
+
+
+em que
+1 singleuser SERIA UM DOCUMENT nessa collection... 
+
+
+
+
+
+
+
+
+
+--> NÓS ADQUIRIMOS ACESSO A UMA 
+
+COLLECTION AINDA 
+
+
+NÃO EXISTENTE 
+
+POR MEIO
+
+
+deste código:
+
+
+
+db.collection('users');
+
+
+
+
+
+
+--> OK, PARA CONSEGUIR A 'SUBMITTED USER DATA',
+
+
+
+
+PRECISAMOS A EXTRAIR DO OBJETO 'REQUEST'
+
+
+
+OBTIDO POR ESSA API ROUTE,
+
+representado 
+por 
+
+'req'....
+
+--> E VAMOS ARMAZENAR ISSO, ESSE USER,
+
+EM UMA COLLECTION 
+
+DE  nome 
+'users'...
+
+
+
+EX:
+
+
+
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+
+
+
+
+
+const handler = async (req, res) => {
+
+   const client = await connectToDatabase();
+
+
+
+   const db = client.db();  ////necessário...
+
+
+
+
+
+   db.collection('users')
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+  
+  ------------------------------------------
+
+
+
+
+
+
+
+  provavelmente vamos querer extrair o user 
+
+
+
+
+  com tipo 
+
+
+  'const user = req.body'...
+
+
+
+
+
+
+
+
+
+
+
+MAS PROFESSOR FAZ DIFERENTE,
+
+
+ELE ESCREVE ASSIM:
+
+
+
+
+const data = req.body;
+
+
+
+const { email, password } = data;
+
+
+
+
+------------------------------------------
+
+
+
+
+
+FICARÁ ASSIM:
+
+
+
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+
+
+
+
+
+const handler = async (req, res) => {
+
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+
+
+
+   const client = await connectToDatabase();
+
+
+
+   const db = client.db();  ////necessário...
+
+
+    db.collection('users');
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+OK, MAS COM ISSO, É ÓBVIO QUE PRECISAMOS NOS ASSEGURAR, NO FUTURO,
+
+QUE 
+
+ESSE 'BODY' 
+
+
+DO NOSSO REQUEST 
+
+REALMENTE CONTENHA as propriedades 
+
+
+'email' 
+
+
+
+e 
+
+
+'password'
+
+
+em seu body... ---> iSSO LÁ 
+
+
+
+NA 
+
+'AUTHFORM',
+
+
+
+
+
+NO REQUEST QUE EFETIVAMENTE ENVIAREMOS à API ROUTE... 
+
+
+
+
+
+
+
+
+
+--> OK,... E AGORA QUE TEMOS O EMAIL E PASSWORD, VAMOS QUERER OS __ VALIDAR-__ ----> 
+
+
+
+VAMOS QUERER CHECAR SE NÓS 
+
+NÃO ESTAMOS ARMAZENANDO DADOS INVÁLIDOS...
+
+
+
+
+
+
+---> OU SEJA
+,
+
+
+
+
+
+
+' SE NÃO TIVERMOS 
+
+EMAIL,
+
+
+ou 
+
+
+SE 
+
+
+EMAIL NÃO INCLUIR '@',
+
+
+OU 
+SE 
+
+TIVER WHITESPACE,
+
+
+
+OU UMA LENGTH 
+
+
+DO PASSWORD MENOR DO QUE 7,
+
+
+
+SE TIVERMOS 
+
+
+
+
+QUALQUER UMA DESSAS HIPÓTESES,
+
+PROFESSOR
+VAI QUERER 
+
+'RETURN'
+
+
+PARA CESSAR 
+
+
+A 
+
+EXECUÇÃO DA FUNÇÃO, junto do send 
+
+de 
+
+UMA RESPONSE (res.status.json)
+
+
+
+EM QUE 
+
+DIZ, COM UMA 'message',
+
+
+'INVALID INPUT'...
+
+
+
+
+Ex:
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+
+
+
+
+
+const handler = async (req, res) => {
+
+
+
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    if (!email || !email.includes('@') || !password || !password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+
+
+   const db = client.db();  ////necessário...
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+CERTO... PQ É ESSE O OUTPUT QUE VAMOS QUERER 
+
+SE 
+
+RECEBERMOS ALGUM 'INVALID INPUT'...
+
+
+
+
+
+
+------> E SE PASSARMOS POR ESSE IF CHECK,
+
+SABEREMOS QUE TEMOS 
+
+
+
+UM 'VALID INPUT',
+
+
+que vamos querer ARMAZENAR NA NOSSA COLLECTION... --> POR ISSO,
+
+
+
+PROFESSOR
+
+VAI USAR 
+
+O 
+
+MÉTODO 
+
+
+'.insertOne(
+    {
+        email: email,
+        password: password
+    }
+)
+
+''
+
+
+
+
+
+CERTO, VAMOS QUERER ARMAZENAR 1 OBJETO ASSIM, ESSE É O NOSSO USER... --> 
+
+
+MAS QUANTO AO 'PASSWORD',
+
+
+HÁ ALGO QUE DEVEMOS TER EM MENTE,
+
+ALGO QUE DEVEMOS FAZER... ----------> NÓS __NUNCA__ DEVEMOS 
+
+ARMAZENAR 
+
+
+O 
+
+PASSWORD ASSIM, DE FORMA 'PLAIN',
+
+NO NOSSO SERVIDOR...----->  ISSO PQ 
+
+
+
+SE NOSSA 
+
+DATABASE 
+
+
+
+EM ALGUM MOMENTO  FICAR 'COMPROMISED', SEJA POR UM 
+
+
+EMPLOYEE OU POR UM INTRUSO,
+
+
+
+AÍ TODAS NOSSAS USER CREDENTIALS SERIAM 
+
+UTILIZÁVEIS 
+
+DESSA FORMA AÍ,
+
+
+
+plain and simple.... --> 
+
+
+é
+
+PORISSO 
+
+
+
+QUE 
+
+É UMA BEST PRACTICE,
+
+E 
+
+STRONGLY RECOMMENDED,
+
+
+
+QUE você
+
+__NÃO__ 'STORE PLAIN PASSWORDS'
+
+
+em uma database,
+
+dessa forma aí,
+
+
+
+
+E SIM QUE VOCê __ oS ENCRIPTE___, 
+
+
+
+
+ENCRIPTE DE FORMA QUE __     NÃO POSSAM 
+
+
+
+SER DECRIPTADOS... (e nós 
+
+vamos continuar sendo capazes de os verificar, maistarde,
+
+
+por parte do servidor ,)  --> MAS ESSENCIALMENTE,
+
+QUEREMOS 
+
+ASSEGURAR QUE
+
+CONSIGAMOS
+
+
+ARMAZENA PASSWORDS '
+
+IN AN ENCRYPTED FORM'...
+
+
+
+
+
+
+
+---> PARA ENCRYPTAR 
+PASSWORDS,
+
+
+
+
+PODEMOS INSTALAR OUTRA PACKAGE ÚTIL NO NOSSO PROJETO,
+
+
+
+O 
+
+
+'BCRYPT.JS'
+
+
+
+ele roda 'npm install bcrypt'...  
+
+
+
+
+
+
+
+
+
+--> ESSA É UMA PACKAGE QUE NOS AJUDA A ENCRIPTAR PASSWORDS/qualquer 
+
+tipo de data... 
+
+
+
+
+
+
+
+
+--> PROFESSOR INICIA O DEVSERVER,
+
+
+e agora 
+
+
+
+
+
+ELE CRIA UM NOVO ARQUIVO 
+
+EM 
+
+'helpers',
+
+
+
+
+'auth.js',,
+
+
+QUE 
+
+VAI SEGURAR 
+
+NOSSOS UTILITY METHODS RELACIONADOS A AUTHENTICATIOn....
+
+
+
+
+s--->
+
+
+
+
+DENTRO DESSE ARQUIVO, PROFESSOR 
+
+
+IMPORTA 
+
+O 
+
+
+
+
+pacote 
+
+'hash'
+
+LÁ DO
+'bcrypt.js'....
+
+
+
+
+
+EX:
+
+
+import { hash } from 'bcrypt';
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+AÍ,
+
+ELE VAI QUERER IMPORTAR UMA ASYNC FUNCTION
+
+
+
+CHAMADA DE 'HASHPASSWORd'...
+
+
+
+
+
+ex:
+
+
+
+export  const hashPassword = async() => {
+
+}
+
+
+
+
+
+
+--> ESSA FUNÇÃO VAI 'TAKE THE ORIGINAL PLAIN TEXT PASSWORD AS INPUT'....
+
+
+
+
+EX:
+
+
+
+export  const hashPassword = async(password) => {
+    
+}
+
+
+
+
+
+
+
+
+E AÍ, LÁ DENTRO,
+
+
+
+PROFESSOR VAI CHAMAR O MÉTODO 
+
+'hash()' , E VAI PASSAR NOSSO 'PASSWORD'
+
+
+
+
+COMO PARâMETRO... --------> 
+
+
+
+
+EX:
+
+
+
+
+
+export  const hashPassword = async(password) => {
+    
+
+    hash(password) /////EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+---------------------------------------
+
+
+O SEGUNDO PARâMETRO É UM __NÚMERO__ -----> É 
+
+
+'THE NUMBER OF SALTING ROUNDS',
+
+
+que, no final das contas,
+
+
+VAI __INFLUENCIAR __ O QUÃO FORTE ESSE PASSWORD SERÁ...
+
+
+EX:
+
+
+
+
+With "salt round" they actually mean the cost factor. 
+The cost factor controls how much time is needed to 
+calculate a single BCrypt hash. The higher the cost factor,
+ the more hashing rounds are done. Increasing the cost factor
+  by 1 doubles the necessary time.
+
+
+
+
+------------------------------------
+
+
+
+AQUI, UM VALOR DE 12 É CONSIDERADO SAFE.... -->  QUANTO MAIS ALTO O NÚMERO, 
+
+
+mais tempo essa função 'hash()'
+
+
+vai demorar... --> e quão menor for o número, mais INSEGURO SERÁ 
+
+SEU OUTPUT....
+
+
+
+
+12 É UM VALOR OK....
+
+
+
+
+
+
+
+
+
+
+---> CERTO... e 'hash' também vai RETORNAR UMA PROMISE,
+
+UMA PROMISE QUE, CASO 'RESOLVED',
+
+
+
+EVENTUALMENTE VAI NOS __DAR__ AQUELE 'ENCRYPTED PASSWORD'....
+
+
+
+
+
+
+
+---------> É POR ISSO QUE O PROFESSOR 
+
+
+VAI ESCREVER
+
+
+'const hashedPassword = await hash(password, 12)'
+
+
+
+, E DEPOIS VAI RETORNAR ESSE VALOR NA NOSSA FUNÇÃO ASSÍNCRONA 
+
+DE 
+
+'hashPassword'....
+
+
+
+EX:
+
+
+
+
+
+
+export  const hashPassword = async(password) => {
+    
+
+  const hashedPassword = await hash(password, 12);
+
+
+
+
+
+
+  return hashedPassword;
+}
+
+
+
+
+
+
+----------------------
+
+
+
+AÍ, O QUE VAMOS FAZER É PROVAVELMENTE USAR ESSA FUNÇÃO 
+
+LÁ 
+
+
+
+em 
+
+
+'signup.js'...
+
+
+
+
+
+--> VAMOS QUERER 'CREATE A HASHED PASSWORD' 
+
+e então 
+
+
+ARMAZENAR ISSO NA NOSSA COLLECTION...
+
+
+TIPO ASSIM:
+
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    if (!email || !email.includes('@') || !password || !password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+   const hashedPassword = hashPassword(password);
+
+   db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+AGORA SÓ FALTA ESCREVER UMA RESPONSE DE SUCCESS (201),
+
+
+
+SINALIZANDO QUE O USER FOI ARMAZENADO...
+
+
+
+
+
+
+--> TAMBÉM FALTOU O 'await'
+
+
+desse 'db.collection',
+
+PQ
+ESSA FUNÇÃO SEMPRE VAI NOS RETORNAR UMA ___PROMISE___.... -------->
+
+
+
+O RESULTADO DESSA PROMISE, POR SUA VEZ,
+
+NOS DÁ 
+
+
+ACESSO 
+
+A COISAS COMO 
+
+'the automatically generated userId'...
+
+
+
+
+COM ISSO,
+
+
+
+COM ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    if (!email || !email.includes('@') || !password || !password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+   const hashedPassword = hashPassword(password);
+
+const result = await db.collection('users').insertOne( ////ESTE CÓDIGO AQUI
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ESTAREMOS ARMAZENANDO UM USER NA NOSSA DATABASE,
+
+
+e
+ por isso o professor 
+
+
+ vai
+ 
+
+ escrever uma SUCCESS RESPONSE,
+
+
+
+
+ TIPO ASSIM:
+
+
+
+ res.status(200).json(
+     {
+         message: 'Created user.'
+     }
+ )
+
+
+
+
+
+
+
+ -----------------------------------------
+
+
+
+
+ PROFESSOR AFIRMA QUE NÃO VAI FOCAR NO ERROR HANDLING AQUI,
+
+ e que vai querer focar 
+
+ nas partes
+  
+
+  QUE 
+
+  SÃO 
+  RELACIONADAS 
+
+
+  AO 
+  'USER CREATION',
+
+
+  nesse caso...--> PORTANTO,
+
+
+
+  agora devemos
+
+
+  ser capazes de testar 
+
+  esse store de usuário...
+
+
+  ---> vamos testar se conseguimos enviar um request 
+
+
+  a 
+
+  essa api route...
+

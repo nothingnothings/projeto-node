@@ -1,0 +1,1809 @@
+
+
+
+
+
+--> NA AULA ANTERIOR,
+
+
+
+
+ADICIONAMOS VALIDATION 
+
+
+
+AOS NOSSOS RESOLVERS, por meio da package 
+
+'validator'...
+
+
+
+
+
+
+
+--> com a package 'validator',
+
+
+ADICIONAMOS A LÓGICA DE VALIDATE DE NOSSOS INPUTS __ LÁ __ NOS RESOLVERS,
+
+e não em arquivos 'route' (como fazíamos com NODEEXPRESS apps, tanto clássicos como REST API...)
+
+
+
+
+
+
+
+
+
+-->  O NOSSO CÓDIGO DE 'createUser',
+
+
+
+COM CÓDIGO DE VALIDATION (if checks, com o package de 'validator')
+
+HAVIA FICADO ASSIM:
+
+
+
+
+
+
+    createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+
+        if (validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is too short!'})
+        }
+        
+
+        if(errors.length > 0 ) {
+            const error = new Error(errors[0].message); ///vai retornar a 'message' property NO PRIMEIRO 'error' object no nosso array.... (assim entregamos mais information acerca do validation error ao useR).... ---> esse código dá mais info que o throw GENÉRICO do professor...
+            // const error = new Error('Invalid input'); ///throw genérico de error, se for constatado QUALQUER ERRO DE INPUT, nas hipóteses acima....
+            throw error;
+        }
+
+
+
+
+
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+         
+        //  const user = await new User(
+            const user = new User( ///talvez esse '''await'''' não seja necessário, com essa INSTANCIAÇÃO...
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+
+
+
+
+         return { ///devemos seguir o SCHEMA de 'createUser', que demanda QUE SEJA RETORNADO UM OBJETO 'User' COM UM DETERMINADO __ LAYOUT__...
+             ...savedUser._doc, /////'._doc' FAZ COM QUE TODAS AS PROPRIEDADES/DATA __ 'REAL' DESSE DOCUMENT SEJAM __ RETORNADAS (ou seja, DEIXAMOS DE LADO A 'METADATA' DESSE DOCUMENT, QUE SERÁ INÚTIL PARA __ O FIM DE 'RETURN SOME DATA TO THE USER; RETURN THE DATA OF THE USER THAT WAS CREATED, TO THE USER'...)
+                _id: savedUser._id.toString(), ///esse field LÁ NO NOSSO 'TYPE' DE USER, LÁ NO SCHEMA DO GRAPHQL, está como 'STRING', por isso precisamos CONVERTER ESSE _id de valor 'ObjectId()', LÁ DA DATABASe_, PARA UM FORMATO __ 'string'....
+
+            }
+     
+
+        // return 'String';
+     
+     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> SE VOCÊ 
+
+
+TENTAR 
+
+ENVIAR, NO REQUEST BODY,
+
+UMA QUERY 
+QUE 
+
+TENHA 
+
+
+INPUT DATA DO USER 
+
+QUE 
+
+SEJA __ INVÁLIDA (como um password com MENOS DO Q 6 CARACTERES),
+s
+
+
+
+
+AÍ VOCê 
+
+VAI 
+
+RECEBER 
+
+
+UMA 
+
+
+RESPONSE 
+
+
+
+tipo assim:
+
+
+{
+
+    "errors": [
+        {"message": 'Invalid Input."}
+    ],
+    path: ["createUser"]
+    ],
+
+
+    "data" null
+}
+
+
+
+
+
+
+
+
+
+
+-> 'NULL' NA DATA QUE 
+
+RECEBEMOS DE VOLTA.... -> MAS 
+
+TEMOS UM ARRAY 
+
+
+DE 'errors',
+
+COM __ TODAS _ __ OS ERRORS QUE ELE ARMAZENOU...
+
+
+
+
+
+
+
+
+-_> SE ABRIRMOS A ABA 'network',
+
+VAMOS VER QUE 
+
+
+
+
+
+NA __ RESPONSE NÓS RECEBEMOS UM STATUS CODE DE 500 AUTOMATICAMENTE... ---> ISSO É NICE, CLARO, MAS 
+
+
+ÀS VEZES VOCê VAI QUERER 
+
+'SET SOME MORE DETAILED INFORMATION'.... --> ENTRETANTO,
+
+
+
+
+VOCê __ NÃO PODE 'ADD YOUR OWN STATUS CODE',
+
+
+
+
+
+MAS __ PODEMOS__, POR OUTRO LADO_,
+
+
+
+'ADICIONAR MAIS INFO AOS ERRORS QUE RETORNAMOS'.... -->  PARA FAZER ISSO,
+
+
+
+
+
+VOCÊ 
+
+DEVE IR 
+
+
+ATÉ 
+
+O 
+
+SEU 
+
+
+ARQUIVO 
+
+'app.js'
+
+
+DO BACKEND,
+
+
+
+e LÁ 
+
+NAQUELE MIDDLEWARE 
+
+
+EM QUE 
+
+VOCÊ 
+
+CONFIGURA 
+
+
+O  
+
+
+
+SET/DEFINIÇÃO 
+
+
+
+DO SCHEMA,
+
+RESOLVER 
+
+
+e 
+
+'graphiql' (ferramenta do GRAPHQL, api usada para TESTAR SEU ENDPOINT GRAPHQL E SUAS QUERIES GRAPHQL),
+
+
+
+
+
+
+
+
+
+
+
+-----> O LOCAL É ESTE:
+
+
+
+
+////ESTE MIDDLEWARE TAMBÉM __ É O LOCAL__ EM QUE __ VAMOS FAZER 'TEST' DOS NOSSOS QUERIES/MUTATIONS/SUBSCRIPTIONS, que são executados por meio daqueles resolvers/methods nos resolvers do arquivo 'resolvers.js'... --> VER PROPRIEDADE 'graphiql'... 
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+}
+)); 
+
+
+
+
+
+
+
+
+
+
+
+
+-_> NESTE LOCAL AÍ,
+
+
+
+
+
+NESSE 
+
+'app.use()',
+
+
+
+
+NAQUELE 
+
+
+ARGUMENTO-OBJETO de 
+
+'graphqlHTTP',
+
+
+
+VOCê PODE 
+ADICIONAR 
+
+
+
+
+
+_____ OUTRO __ 'CONFIGURATION OBJECT' em uma 
+
+
+
+__KEY__,
+
+
+
+
+KEY CHAMADA 
+DE 
+
+'formatError'... 
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  
+
+{ 
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, 
+
+
+  formatError ///EIS O CÓDIGO EM QUESTÃO.
+}
+)); 
+
+
+
+
+-----------------------
+
+
+
+
+
+
+---> ESSE 'formatError()' 
+
+
+ACTUALLY ___ É UM ___ METHOD_, 
+
+
+
+METHOD 
+
+
+que __ RECEBE__ 
+
+O 
+
+OBJETO 
+
+'err' como PARÂMETRO,
+
+
+
+
+'err' QUE __ É DETECTADO __ AUTOMATICAMENTE PELO GRAPHQL.... -->  E AÍ,
+
+
+
+ESSE METHOD 
+
+
+''ALLOWS YOU TO RETURN YOUR OWN FORMAT'''....->  
+
+
+
+
+
+
+
+
+
+
+(
+
+
+    OBS: SE VOCÊ SÓ MANTEM 
+
+    'return err',
+
+    VOCê __ MANTÉM O __ FORMATO __ DEFAULT,
+
+    QUE 
+
+    É 
+
+    EXATAMENE 
+
+
+    o 
+
+    formato que havíamos visto 
+
+    antes,
+
+    aquele 
+
+
+    formato de 
+
+
+
+    ''''''
+
+
+    {
+
+    "errors": [
+        {"message": 'Invalid Input."}
+    ],
+    path: ["createUser"]
+    ],
+
+
+    "data" null
+}
+
+
+
+
+
+''''''
+
+
+    
+)
+
+
+
+
+
+
+
+
+
+
+
+EX( do default RETURN DE ERRORS):
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  
+
+{ 
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, 
+
+
+  formatError(
+      err
+  ) {
+      return err;
+  }
+}
+)); 
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+MAS É CLARO QUE PODEMOS ADICIONAR __ UM POUCO DE LÓGICA__ PARA _ MUDAR__ ESSE COMPORTAMENTO...
+
+
+
+
+
+
+
+
+--> professor remove o 'return err;',
+
+
+E AÍ 
+
+DEIXA 
+
+um 
+
+
+'if check()'...
+
+
+
+
+
+
+
+
+
+----> 'IF ()' ....
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+formatError(err) {
+    if () {
+
+    }
+}
+
+
+
+
+
+
+----------------------
+
+
+
+NO CASO,
+
+PROFESSOR 
+
+
+
+
+EXEMPLIFICA USANDO 
+
+A PROPRIEDADE 
+
+'.originalError',
+
+
+DENTRO 
+
+DESSE OBJETO 'error':
+
+
+
+
+
+
+
+
+formatError(err) {
+    if (!err.originalError) {
+
+    }
+}
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+--> OK... ' SE NÃO TIVERMOS ESSE ORIGINAL ERROR'....
+
+
+
+
+
+
+
+
+
+--> 'originalError',
+
+
+NO CASO,
+
+
+É __ DETECTADO/ARMAZENADO NO OBJETO 'err'
+
+
+QUANDO __O GRAPHQL 
+
+
+__ DETECTA__ UM ERRO 
+
+
+
+
+
+___ 'THROWN' NO SEU CÓDIGO,
+
+
+tanto por você como outros third party packages...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+formatError(err) {
+    if (!err.originalError) {
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+---------> ISSO SIGNIFICA QUE SE VOCÊ TIVER UM ERRO TÉCNICO,
+
+
+
+COMO UM  
+
+'MISSING CHARACTER'
+
+
+
+NO SEU QUERY OU QUALQUER OUTRA COISA,
+
+
+
+
+AÍ _ NÓS _ NÃO VAMOS _ TER/ENCONTRAR_ _ESSE 'originalError'
+
+
+armazenado 
+
+
+
+no objeto 'err'... (ou seja, só ERRORS DEFINIDOS POR NÓS VÃO SER ARMAZENADOS NESSE LOCAL/PROPRIEDADE)...
+
+
+
+
+
+
+
+
+
+
+
+
+-> CASO 
+
+NOSSO ERRO NÃO SEJA ORIGINAL/SETTADO POR NÓS,
+
+VAMOS QUERER 
+
+SIMPLESMENTE 
+
+RETORNAR 
+
+ESSE 
+
+ERROR 
+
+
+
+DO 
+
+'graphQL'
+
+,
+
+
+que PROVAVELMENTE É UM ERRO TÉCNICO...
+
+
+
+
+
+
+
+
+
+--> MAS SE NÓS _- REALMENTE_ TIVERMOS 
+
+1 
+
+'ORIGINAL ERROR',
+
+
+AÍ 
+
+
+
+
+ 
+
+ VAMOS PODER___ EXTRAIR __ AS 
+
+ INFORMAÇÕES ÚTEIS DELE... -->  VAMOS QUERER EXTRAIR ESSAS INFORMAÇÕES PARA QUE 
+
+ ELAS 
+
+ POSSAM 
+
+
+ SER USADAS 
+ EM OUTROS LUGARES DE NOSSO APP...
+
+
+
+
+
+
+
+
+
+ -> OK... VAMOS QUERER EXTRAIR ESSA DATA... -_> MAS COMO FAREMOS ISSO?
+
+
+
+
+
+
+
+
+
+
+---> não sei... .--> mas o professor 
+
+diz que 
+
+
+
+PODEMOS __ 
+
+
+
+ADICIONAR __ MAIS 
+
+
+COISAS 
+
+
+NOS 
+
+
+NOSSOS 
+
+'errors'
+
+LÁ 
+
+
+
+NOS 
+
+
+'RESOLVERS',
+
+
+
+
+LÁ 
+
+NOS NOSSOS METHODS, como 'createUser'....
+
+
+
+
+
+
+
+
+
+-> PODEMOS 
+
+
+
+
+escrever algo como:
+
+
+
+
+
+if(errors.length > 0) {
+
+    const error = new Error('Invalid input.');
+    error.data = errors; ///ESTE CÓDIGO EM QUESTÃo...
+    throw error;
+}
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+PODEMOS __ ADICIONAR __ 
+
+
+UM 
+
+
+ARRAY DE NOME 'data',
+
+EM QUE 
+
+
+COLOCAMOS 
+
+NOSSOS ERRORS... ----> nesses errors,
+
+
+cada 
+
+
+1 deles terá 
+
+
+uma propriedade 
+
+'message',
+
+
+EM QUE 
+
+TEREMOS 
+
+
+NOSSA 'VALIDATION ERROR MESSAGE'...
+
+
+
+
+
+
+
+
+
+
+-----> CERTo.... 
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+        if(errors.length > 0 ) {
+            // const error = new Error(errors[0].message); ///vai retornar a 'message' property NO PRIMEIRO 'error' object no nosso array.... (assim entregamos mais information acerca do validation error ao useR).... ---> esse código dá mais info que o throw GENÉRICO do professor...
+            // const error = new Error('Invalid input'); ///throw genérico de error, se for constatado QUALQUER ERRO DE INPUT, nas hipóteses acima....
+            
+                const error = new Error('Invalid input!');
+                error.data = errors; ///vamos armazenar o ARRAY DOS ERROS DE VALIDATION DO NOSSO RUNTIME nessa propriedade de 'data', se quisermos... (na verdade, podemos armazenar o QUE QUISERMOS, essa é só uma recomendação)...
+                
+            
+            throw error;
+        }
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+O PROFESSOR TAMBÉM EXPLICA QUE PODEMOS 
+
+DEFINIR _ 
+
+
+
+UMA PROPRIEDAE 
+
+de 
+
+'code',
+
+
+
+
+
+
+
+
+-> ELE NOS EXPLICA QUE 
+
+
+ESSA PROPRIEDADE DE 'code' é opcional como todo o resto,
+
+e que 
+
+
+EU 
+PODERIA 
+
+
+ATÉ 
+
+MESMO 
+
+
+'USE MY OWN CODING SYSTEM'... --> PROFESSOR 
+
+EXPLICA QUE 
+
+
+NÃO É OBRIGATÓRIO O USO DE HTTP STATUS CODES AQUI.... -------> 
+
+
+
+
+
+
+E AGORA,
+
+EM 
+
+'app.js',
+
+
+
+
+
+
+PODEMOS, POR FIM,
+
+
+RETRIEVAR 
+
+TODAS 
+
+ESSAS PROPRIEDADES 
+
+
+
+LÁ 
+
+
+
+
+DE DENTRO 
+
+
+
+DA PROPRIEDADE 
+
+
+
+'originalError'...
+
+
+
+
+
+
+
+
+para retrievar essa data,
+
+
+escrevemos 
+
+
+
+
+'const data = err.originalError.data;' ...
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  
+
+{ 
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, 
+
+
+  formatError(err) {
+
+
+
+      if (!err.originalError) {
+              return err;
+      }
+
+            const data = err.originalError.data; ///EXEMPLO DE COMO PODEMOS RETRIEVAR DATA DE NOSSOS OBJETOS 'ERROR', no nosso runtime....
+  }
+}
+)); 
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+OK... MAS PROFESSOR DIZ QUE 
+
+
+
+
+ESSE 
+
+
+'err.originalError.data'
+
+
+PODERÁ ESTAR COMO 
+
+'UNDEFINED'
+
+PARA 
+
+OS 
+
+ERRORS QUE CRIARMOS EM QUE __ NÃO DEFINIMOS ESSAS PROPRIEDADES, 
+
+
+
+
+apesar de isso ser OK...
+
+(não há problema em não conseguir esse objeto/propriedade 'data' em 'originalError'....)
+
+
+
+
+
+
+--------> o que podemos fazer É PUXAR A PROPRIEDADE 
+
+'message'
+
+
+lá de dentro do objeto 'err',
+
+
+
+PQ __ ESSA PROPRIEDADE, SIM, 
+
+JÁ 
+
+É 
+
+'PULLED OUT AUTOMATICALLY BY GRAPHQL'...
+
+
+
+
+
+
+
+
+
+
+
+--> EX:
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  
+
+{ 
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, 
+
+
+  formatError(err) {
+
+
+
+      if (!err.originalError) {
+              return err;
+      }
+
+            const data = err.originalError.data; ///EXEMPLO DE COMO PODEMOS RETRIEVAR DATA DE NOSSOS OBJETOS 'ERROR', no nosso runtime....
+
+            const message = err.message; ///EIS O CÓDIGO EM QUESTÃO.
+  }
+}
+)); 
+
+
+
+
+
+
+
+
+
+
+
+E SE ESSA PROPRIEDADE de 'message'
+
+ESTIVER COMO 'UNDEFINED',
+
+POR ALGUMA RAZÃO,
+
+
+podemos 
+
+
+USAR 
+O 
+
+CÓDIGO DE FALLBACK (||) 
+
+
+DE 
+
+
+
+
+'An error occurred.'...
+
+
+
+EX:
+
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  
+
+{ 
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, 
+
+
+  formatError(err) {
+
+
+
+      if (!err.originalError) {
+              return err;
+      }
+
+            const data = err.originalError.data; ///EXEMPLO DE COMO PODEMOS RETRIEVAR DATA DE NOSSOS OBJETOS 'ERROR', no nosso runtime....
+
+            const message = err.message || 'An error occurred.'; ///EIS O CÓDIGO EM QUESTÃO.
+  }
+}
+)); 
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+POR FIM, 
+
+PODEMOS TAMBÉM OBTER o 'code'
+
+definido lá 
+
+
+em 
+
+
+'err.originalError.code'...
+
+
+
+
+
+
+--> POR FIM, 
+
+PROFESSOR DEFINE O VALOR DEFAULT/FALLBACK desse 'code' como sendo de '500'....
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+
+  formatError(err) { /////USADO PARA _ SETTAR__ O ERROR HANDLING DE SEU APP... --> você define, aqui, QUAIS INFOS ADICIONAIS DEVEM SER RETORNADAS __ nas suas messages de error, ao user que usa seu app... (que envia requests com bodies forrados de queries)...
+      
+
+
+    if (!err.originalError) { //propriedade que SÓ EXISTIRÁ SE O ERRO que acontecer no seu código __ FOI REALMENTE SETTADO/DEFINIDO POR VOCÊ (ou seja, TECHNICAL ERRORS, como uma LETRA OU SÍMBOLO FALTANDO, esses NÃO CONTAM como 'originalErrors', pq são erros padronizados, antigos...)
+          //caso nenhum erro ORIGINAL seja encontrado, VAMOS QUERER _ RETORNAR __ O ERRO __ DO GRAPHQL em si, erro TÉCNICO OU WHATVER... por isso 'return err'...
+
+          return err;
+    }
+      //caso NENHUM ERRO ORIGINAL/MAN-MADE FOR ENCONTRADO, vamos querer __EXTRAIR __ A DATA_ DESSE 'originalError', para que ELA SEJA USADA EM OUTROS LUGARES DE NOSSO APP...
+      //essa data, no caso, é settada em CADA UM DE NOSSOS MÉTOODS NOS 'RESOLVERS'.... (ver arquivo 'resolver.js', e CÓDIGO DE INPUT VALIDATION, com os throws dos errors)...
+      
+      const data = err.originalError.data; ///EXEMPLO DE COMO PODEMOS RETRIEVAR DATA DE NOSSOS OBJETOS 'ERROR', no nosso runtime....
+
+      const message = err.message || 'An error occurred.'; 
+
+
+      const code = err.originalError.code || 500; 
+
+
+    // return err; ///ESTE É O VALOR DEFAULT, que faz com que seja gerado aquele objeto de 'error response' DEFAULT, com 'path', 'errors: []' (array), 'message' e 'data'...
+  }
+
+}
+)); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO...
+
+
+AGORA COM ESSA 'data',
+
+'message' 
+
+
+e 
+
+'code'
+
+
+'PULLED OUT',
+
+
+
+
+O PROFESSOR EXPLICA QUE 
+
+
+ELE PODE FINALMENTE 
+
+
+'RETURN MY OWN ERROR OBJECT 
+
+in this middleware'...  --> 
+
+
+
+NESSE OBJETO 
+
+DE 
+
+ERROR,
+
+
+
+ELE 
+
+
+
+VAI 
+QUERER 
+
+
+
+
+ter um formato de 
+
+
+
+'{
+
+
+
+    message: message,  //UMA MESSAGE, EXATAMENTE COMO TÍNHAMOS NA ERROR MESSAGE ORIGINAL..
+    status: code, /// VAI CONTER O NÚMERO DAQUELA PROPRIEDADE 'code' definida em CADA ERROR, de cada METHOD...
+    data: data   ///VAI CONTER A DATA EM SI, que no caso, É O NOSSO __ ARRAY___ DE ERRORS...
+
+}
+
+'
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+
+  formatError(err) { /////USADO PARA _ SETTAR__ O ERROR HANDLING DE SEU APP... --> você define, aqui, QUAIS INFOS ADICIONAIS DEVEM SER RETORNADAS __ nas suas messages de error, ao user que usa seu app... (que envia requests com bodies forrados de queries)...
+      
+
+
+    if (!err.originalError) { //propriedade que SÓ EXISTIRÁ SE O ERRO que acontecer no seu código __ FOI REALMENTE SETTADO/DEFINIDO POR VOCÊ (ou seja, TECHNICAL ERRORS, como uma LETRA OU SÍMBOLO FALTANDO, esses NÃO CONTAM como 'originalErrors', pq são erros padronizados, antigos...)
+          //caso nenhum erro ORIGINAL seja encontrado, VAMOS QUERER _ RETORNAR __ O ERRO __ DO GRAPHQL em si, erro TÉCNICO OU WHATVER... por isso 'return err'...
+
+          return err;
+    }
+      //caso NENHUM ERRO ORIGINAL/MAN-MADE FOR ENCONTRADO, vamos querer __EXTRAIR __ A DATA_ DESSE 'originalError', para que ELA SEJA USADA EM OUTROS LUGARES DE NOSSO APP...
+      //essa data, no caso, é settada em CADA UM DE NOSSOS MÉTOODS NOS 'RESOLVERS'.... (ver arquivo 'resolver.js', e CÓDIGO DE INPUT VALIDATION, com os throws dos errors)...
+      
+      const data = err.originalError.data; ///EXEMPLO DE COMO PODEMOS RETRIEVAR DATA DE NOSSOS OBJETOS 'ERROR', no nosso runtime....
+
+      const message = err.message || 'An error occurred.'; 
+
+
+      const code = err.originalError.code || 500; 
+
+
+
+      return {
+          message: message, 
+          status: code,
+          data: data
+      }
+
+
+    // return err; ///ESTE É O VALOR DEFAULT, que faz com que seja gerado aquele objeto de 'error response' DEFAULT, com 'path', 'errors: []' (array), 'message' e 'data'...
+  }
+
+}
+)); 
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+
+  formatError(err) { /////USADO PARA _ SETTAR__ O ERROR HANDLING DE SEU APP... --> você define, aqui, QUAIS INFOS ADICIONAIS DEVEM SER RETORNADAS __ nas suas messages de error, ao user que usa seu app... (que envia requests com bodies forrados de queries)...
+      
+
+
+    if (!err.originalError) { //propriedade que SÓ EXISTIRÁ SE O ERRO que acontecer no seu código __ FOI REALMENTE SETTADO/DEFINIDO POR VOCÊ (ou seja, TECHNICAL ERRORS, como uma LETRA OU SÍMBOLO FALTANDO, esses NÃO CONTAM como 'originalErrors', pq são erros padronizados, antigos...)
+          //caso nenhum erro ORIGINAL seja encontrado, VAMOS QUERER _ RETORNAR __ O ERRO __ DO GRAPHQL em si, erro TÉCNICO OU WHATVER... por isso 'return err'...
+
+          return err;
+    }
+      //caso NENHUM ERRO ORIGINAL/MAN-MADE FOR ENCONTRADO, vamos querer __EXTRAIR __ A DATA_ DESSE 'originalError', para que ELA SEJA USADA EM OUTROS LUGARES DE NOSSO APP...
+      //essa data, no caso, é settada em CADA UM DE NOSSOS MÉTOODS NOS 'RESOLVERS'.... (ver arquivo 'resolver.js', e CÓDIGO DE INPUT VALIDATION, com os throws dos errors)...
+      
+      const data = err.originalError.data; ///EXEMPLO DE COMO PODEMOS RETRIEVAR DATA DE NOSSOS OBJETOS 'ERROR', no nosso runtime....
+
+      const message = err.message || 'An error occurred.'; 
+
+
+      const code = err.originalError.code || 500; 
+
+
+      return { ///AQUI VAMOS _ _RETORNAR A DATA QUE QUISERMOS, É REALMENTE 'CUSTOM ERROR HANDLING'... ---> o professor gosta de retornar a MESSAGE DE ERRO EM SI, o 'código' de erro que settamos em cada um dos error, nos method do resolver.js, E A 'DATA' QUE SETTAMOS EM CADA UM DESSES METHOD, mesma coisa (no caso, a data, aqui, é o ARRAY DE ERRORS que ocorreram durante o runtime, o que é uma informação pertinente....) 
+        message: message,
+        status: code,
+        data: data
+      }
+
+
+    // return err; ///ESTE É O VALOR DEFAULT, que faz com que seja gerado aquele objeto de 'error response' DEFAULT, com 'path', 'errors: []' (array), 'message' e 'data'...
+  }
+
+}
+)); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, COM TUDO ISSO 
+
+
+
+
+SALVO, PODEMOS TESTAR __ ESSE NOSSO 'INPUT VALIDATION' E 'ERROR HANDLING'
+
+lá 
+
+
+no 
+
+
+API 
+
+do 
+
+
+graphiql,
+
+
+
+tudo por meio 
+
+
+do endereço 
+
+'localhost:8080/graphql'....
+
+
+
+
+---------------------------
+PROFESSOR DIZ QUE 
+
+
+IMEDIATAMENTE PODEMOS VER A DIFERENÇA,
+
+
+PQ 
+
+
+A ESTRUTURA 
+
+DO
+
+
+NOSSO 
+
+
+ERROR 
+
+
+de validation ficou assim:
+
+
+
+EX:
+
+
+
+{
+  "errors": [
+    {
+      "message": "Invalid input!",
+      "status": 422,
+      "data": [
+        {
+          "message": "E-mail is invalid!"
+        },
+        {
+          "message": "Password is too short!"
+        }
+      ]
+    }
+  ],
+  "data": null
+}
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+AGORA VOCÊ PODE VER QUE 
+
+CONSEGUIMOS AQUELE FIELD de 'status', de 422... (esse field não estava aí anteriormente)...
+
+
+
+
+
+--> E AGORA, EM 'data', 
+
+__ TEMOS __ 
+
+
+
+O ARRAY __ DE ERRORS__ OCORRIDOS _ DURANTE __ O VALIDATION..
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO,
+
+
+PERCEBEMOS UMA MENSAGEM/AVISO 
+
+no terminal:
+
+
+
+
+`formatError` is deprecated and replaced by `customFormatErrorFn`. It will be removed in version 1.0.0.
+
+
+
+
+
+vou ter que trocar essa função, portanto...
+
+
+
+
+
+
+
+
+
+--> certo.. fiz essa substituição... não vi nenhuma mudança...

@@ -1,0 +1,901 @@
+
+
+
+
+
+
+
+
+---->  NA ÚLTIMA LIÇÃO,
+
+
+
+
+ESCREVEMOS NOSSO PRIMEIRO 
+
+
+
+SERVER NODEJS...
+
+
+
+
+
+
+
+
+seu código:
+
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req);
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----------------------------------
+
+
+
+
+ ESSE SERVER AINDA NÃO FAZ TUDO QUE QUEREOMS... --> ELE AINDA NÃO FAZ RETURN DE UMA RESPONSE,
+
+
+ POR EXEMPLO;
+
+
+
+
+ CONTUDO,
+
+
+
+ ELE nos mostra a generalidade 
+
+
+
+ DE 
+
+ CRIAR 
+
+
+
+ SERVERSIDE CODE COM O NODEJS,
+
+
+
+
+ e também como 
+
+
+
+ CRIAR NOSSOS PRÓPRIOS SERVERS....
+
+
+
+
+
+
+
+
+
+
+------> DEVEMOS ENTENDER O FLOW DO QUE ACONTECEU LÁ:
+
+
+
+
+
+
+1) executamos nosso arquivo com 'node app.js' ---> ISSO INICIOU O NOSSO SCRIPT, BASICAMENTE....
+
+
+
+
+a) startou o script 
+
+
+
+
+b) o nodeJS __ PARSEOU O NOSSO CÓDIGO, REGISTROU AS VARIÁVEIS E FUNÇÕES, e assim por diante....
+
+
+
+c) nodeJS começou a EXECUTAR NOSSO CÓDIGO.... ---> MAS AÍ, UMA COISA IMPORTANTE ACONTECEU:
+                                                                NÓS  __NUNCA___ 'EXITAMOS' 
+                                                                O NOSSO PROGRAMA._____ -------->
+
+
+
+
+
+A RAZÃO PARA NUNCA 
+
+TERMOS 
+
+
+SAÍDO/EXITADO DA EXECUTION
+
+
+É UM CONCEITO 
+
+
+IMPORTANTE NO NODEJS CHAMADO DE 
+
+
+'EVENT LOOP'...  --------> ISSO/ESSE CONCEITO É BASICAMENTE UM 'LOOP PROCESS' QUE 
+
+É 
+
+
+'MANAGED BY NODEJS',
+
+
+
+E QUE 
+
+
+continua 'RUNNING'
+
+
+__ DESDE QUE ___ EXISTA TRABALHO PARA FAZER ('keeps running as long as theres work to do'....).
+
+
+
+
+--> O NOSSO PROCESSO/EVENT LOOP 
+
+
+________ CONTINUA RODANDO ___ DESDE QUE AINDA EXISTAM 
+
+
+'EVENT LISTENERS' REGISTRADOS.......... -------> e 1 EVENT LISTENER 
+
+
+QUE 
+
+
+NÓS 'DO REGISTERED' 
+
+
+
+E NUNCA 
+
+'UNREGISTERED' 
+
+
+
+FOI AQUELE 
+
+
+
+CÓDIGO DE 
+
+
+
+''''''''''
+
+
+
+const server = http.createServer(
+        (req, res) => {
+                console.log(req);
+        }
+)
+
+
+
+
+,
+
+
+
+ AQUELE 
+
+
+
+'incoming request listener' QUE 
+
+
+
+SETTAMOS/PASSAMOS COMO PARTE 
+
+DE 
+
+
+'createServer()'... -------> NÓS PASSAMOS UMA FUNÇÃO 
+
+AO 
+
+
+'CREATESERVER',
+
+
+
+
+e essa function QUE PASSAMOS É 'BASICALLY AN ONGOING EVENT LISTENER',
+
+
+
+
+um 
+
+
+EVENT LISTENER QUE DEIXAMOS DE 'UNREGISTER'... ---> e não devemos o fazer,
+
+
+
+
+JUSTAMENTE PQ NOSSO SERVER DEVE 
+
+'STAY UP AND RUNNING'...
+
+
+
+
+
+
+
+-------> OK... ISSO SIGNIFICA QUE NOSSO NODE APP É __ BASICALLY__ MANAGED_ __
+
+
+
+POR ESSE EVENT LOOP; todo nosso código é manageado por isso....
+
+
+
+
+
+---> E, COMO O PROFESSOR MENCIONOU,
+
+
+
+
+O NODEJS USA 
+
+ESSE 
+
+'EVENT-DRIVEN APPROACH'
+
+
+para 
+
+todos os tipos de coisa,
+
+
+
+até mesmo 
+
+coisas 
+
+ALÉM 
+
+
+DE 
+
+MANAGE 
+
+DESSE 'SERVER' (mas é claro que 
+
+esse manage do server é uma parte CRUCIAL do nodejs..)
+
+
+
+
+
+
+
+
+
+
+
+-------> VOCÊ VERÁ ESSE EVENT-DRIVEN APPROACH/EVENT LOOP UM MONTE AO LONGO DO CURSO....
+
+
+
+--------> DEPOIS, QUANDO ACESSARMOS UMA DATABASE,
+
+
+
+
+você verá que 
+
+LÁ NÓS TAMBÉM 
+
+
+ 
+
+ BASICALLY 
+
+
+
+ ___ENVIAMOS__ AQUELE 
+
+
+
+request de 'please insert some data',
+
+
+e AÍ 
+
+
+REGISTRAMOS 
+
+ALGUMA 
+
+
+FUNCTION QUE DEVE/DEVERÁ SER EXECUTADAA QUANDO 
+
+
+O EVENT estiver 'done'....
+
+
+
+
+
+
+
+------> E O NODEJS USA ESSE PADRÃO DE  'EVENTS' JUSTAMENTE 
+
+
+__PQ__ ELE CONTINUA USANDO 
+
+O PADRÃO DO JAVASCRIPT,
+
+
+ELE 
+
+EXECUTA 
+
+
+'SINGLE THREADED JAVASCRIPT'...
+
+
+
+
+--------> OK.... --> MAS SE CRIAMOS UM SERVER COM NODEJS,
+
+é claro que 
+
+ELE DEVERÁ SER CAPAZ DE 
+
+fazer handle de milhares, centenas de milhares de incoming requests... ---------> 
+
+
+
+
+E 
+
+
+SE 
+
+O NODEJS 
+
+
+SEMPRE 
+
+TIVESSE 
+
+
+DE 
+
+'PAUSAR'
+ 
+
+ E ENTÃO 
+
+ FAZER ALGO COM 
+
+
+ UM REQUEST,
+
+
+
+ ISSO NÃO SERIA ALGO MT BOM... ------> POR ISSO ELE USA ESSE CONCEITO DE EVENT LOOP,
+
+
+
+em que 
+
+
+ELE, NO FINAL DAS CONTAS,
+
+
+
+SEMPRE 
+
+
+'KEEPS ON RUNNING',
+
+
+e em que 
+
+
+___APENAS__ EXECUTA_ _ CÓDIGO__ QUANDO 
+
+
+'''A CERTAIN EVENT OCCURS''... ---> 
+
+
+ELE FAZ ISSO 
+
+PARA 
+
+QUE 
+
+ELE 
+
+ESTEJA 
+
+
+'ALWAYS AVAILABLE'... ---------------> E VOCÊ PODE PENSAR:
+
+
+
+
+
+'''''ok, mas se eu recebo 2 incoming requests, 
+
+ele precisa handlar 2 events'''''' -------> BEM, COMO O NODEJS 
+
+É 
+
+SUPER RÁPIDO 
+
+
+em handlar esses requests; 
+
+
+
+
+E, POR TRÁS DAS CENAS,
+
+
+ELE ___ FAZ___ UM 'MULTI-THREADING'
+
+
+
+
+por meio do 
+
+'LEVERAGING' do operating system em que está sendo executado ---------> 
+
+
+
+MAS 
+A 
+
+
+
+QUESTÃO É QUE 
+
+
+ESSE 
+
+EVENT LOOP 
+é 
+
+
+UM 
+
+'CORE THING' 
+
+
+
+
+QUE 
+
+DEVEMOS 
+
+
+TER EM MENTE -->  DEVEMOS ENTENDER QUE 
+
+O 
+
+
+NODEJS 
+
+ 
+É COMPOSTO POR UM 
+
+
+
+'ONGOING EVENT LOOP',
+
+
+que continua 
+
+
+rodando 
+
+
+
+AS LONG AS THERES EVENT LISTENERS -->  E ___ O 'createServer()'
+
+
+
+
+JUSTAMENTE CRIA UM EVENT LISTNEER __ QUE NUNCA ACABA___......
+
+
+
+
+
+
+
+---------> MAS CASO VOCÊ EVENTUALMENTE ___ EXITASSE/SAÍSSE DA 
+
+
+EXECUÇÃO DO EVENT LOOP,
+
+por coisas 
+
+
+como 
+
+
+
+'process.exit()',
+
+
+
+
+
+
+
+___ O SERVIDOR IRIA ___ ACABAR___...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2)  process.exit()
+
+
+
+
+
+
+
+
+
+
+--> SE ESCREVERMOS ISSO EM ALGUMA LINHA DO NOSSO CÓDIGO,
+
+
+ELE
+
+__ VAI __ ACABAR/FECHAR __ O SERVIDOR NAQUELE 'CASE'/pedaço da execução....
+
+
+
+
+
+
+
+PROFESSOR MOSTRA ISSO 
+
+
+POR MEIO 
+
+
+
+DESSE CÓDIGO (add de 'process.exit()' logo depois de nosso console.log....):
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req);
+                        process.exit();  ////////EIS O CÓDIGO EM QUESTÃO.
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+ --------------------------
+
+
+
+
+
+
+ ---> FEITO ISSO,
+
+
+ VEREMOS 
+
+ QUE 
+
+
+ NOSSO 
+
+ SERVER 
+
+ VAI 
+
+ ACEITAR 
+
+ NOSSO INCOMING REQUEST.... ------>  E ESSE SERVER VAI ___ CONTINUAR___ RODANDO __ ATÉ 
+
+
+ QUE 
+
+
+ RECEBA NOSSO INCOMING REQUEST___ ----> quando 
+
+
+ EFETIVAMENTE 
+
+
+ RECEBER 
+ NOSSO 
+
+ 'INCOMING REQUEST',
+
+
+
+
+ ele vai 
+
+
+
+ 1) CONSOLE.LOGGAR O OBJETO 'request' 
+
+
+
+
+ 2) __EXITAR__ O 'PROCESS'...
+
+
+
+
+(veremos isso pq 
+
+
+nosso 
+
+terminal vai 
+parar 
+
+
+
+de ficar 
+
+'ongoing', a linha 
+
+
+vai voltar ao comportamento normal...
+
+)
+
+
+
+
+ ------------------------------
+
+
+
+
+
+
+
+ -------> OK... MAS TIPICAMENTE__ VOCÊ __ NÃO VAI QUERER __ EXECUTAR__ ISSO NO SEU CÓDIGO__ ----->
+
+
+
+
+
+ISSO PQ 
+
+
+SE VOCÊ QUITAR A EXECUÇÃO DO PROCESSO COM 
+
+
+'process.exit()',
+
+
+__ PESSOAS NÃO SERÃO 
+
+
+MAIS CAPAZES _ DE 'REACH YOUR WEBPAGE'....
+
+
+
+
+
+EX:
+
+const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        console.log(req);
+        //process.exit(); ///fecha nosso webserver, TERMINA O 'ONGOING EVENT LOOP'/execução de nosso servidor (vai parar de receber requests, pois terminamos o MAIN PROCESS que continha o eventListener que fazia listen aos REQUESTS) ------> este recurso é raramente usado, pois se usarmos 'process.exit()', PARAMOS DE RECEBER INCOMING REQUESTS, E O SERVER PARA DE FUNCIONAR...
+}) 
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+---> process.exit() -----> BASICAMENTE 'HARD EXITS'
+
+O NOSSO 
+
+EVENT LOOP,
+
+
+
+
+e, portanto,
+
+
+
+o
+
+
+PROGRAMA PARA DE FUNCIONAR,
+
+
+__ pq 
+
+
+NÃO HAVIA MAIS TRABALHO A FAZER... --> nodejs 
+
+
+VIU 
+QUE 
+
+
+NÃO 
+
+
+TINHA MAIS NADA A FAZER,
+
+POR ISSO 
+
+FECHOU O PROGRAMA E DEVOLVEU O CONTROLE A NÓS.... 
+
+
+
+
+
+
+
+
+
+
+---> É ASSIM QUE CRIAMOS UM SERVER/EXECUTAMOS 
+
+
+UM 
+
+ARQUIVO 
+
+
+NODEJS,
+
+
+
+
+E o que o nodejs 
+
+faz por trás das cenas...
+
+
+
+
+
+
+
+--> AGORA DEVEMOS TRABALHAR COM OS OBJETOS 
+
+'REQUEST' 
+
+
+E 
+
+'RESPONSE'
+
+
+naquela
+ 
+
+
+ ANONYMOUS FUNCTION 
+
+
+
+ que enfiamos 
+
+ em 
+
+
+ 'http.createServer(() => {})'...
+
+
+
+Want to quit your running Node.js server?
+
+You can always do that by pressing CTRL + C in the terminal/ command
+ prompt window where you started your server (i.e. where you ran node app.js).
+
+

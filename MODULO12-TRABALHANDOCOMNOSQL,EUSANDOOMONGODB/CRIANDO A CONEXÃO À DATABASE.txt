@@ -1,0 +1,1181 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> NÓS NOS CONECTAMOS AO MONGODB... --> POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        callback(client);
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+module.exports = mongoConnect;
+
+
+
+
+
+
+
+
+
+E ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+
+const mongoConnect = require('./util/database');
+
+
+// const sequelize = require('./util/database');  //uso de databases SQL...
+
+// const Product = require('./models/product'); //uso de databases SQL
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const OrderItem = require('./models/order-item');
+// const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  // User.findByPk(1)
+
+  //   .then((user) => {
+  //     req.user = user;
+
+  //     console.log(req.user), 'LINE';
+  //     next();
+  //   })
+
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+});
+
+// Product.belongsTo( //uso de databases SQL
+//   User,
+
+//   {
+//     constraints: true,
+//     onDelete: 'CASCADE',
+//   }
+// );
+// User.hasMany(Product);
+
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+
+// User.hasMany(Order);
+// Order.belongsTo(User);
+
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+// sequelize //uso de databases SQL
+//   .sync()
+//   .then((result) => {
+//     return User.findByPk(1);
+//   })
+//   .then((user) => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+
+//     return user;
+//   })
+//   .then((user) => {
+//     return user.createCart();
+//   })
+//   .then((cart) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+
+
+
+mongoConnect(   ///uso de databases NOSQL....
+
+
+
+  (client) => { //callback function.... examinar arquivo de 'database.js', no folder 'util'...
+
+    console.log(client);
+    app.listen(3000);
+  }
+
+); 
+
+
+
+
+
+
+
+
+
+
+ISSO É NICE,
+
+MAS ISSO TAMBÉM SIGNIFICA 
+
+
+
+QUE 
+
+
+NÃO PODEMOS FAZER COISA ALGUMA POR ENQUANTO,
+
+PQ 
+
+O 
+
+
+RESTO DO CÓDIGO QUEBROU POR ESTAR USANDO 
+'SEQUELIZE' E UMA DATABASE SQL...
+
+
+
+
+
+
+
+COMO PRÓXIMO PASSO,
+
+DEVEMOS 
+
+'READICIONAR'
+
+
+
+
+AS ROUTES 
+
+DE 
+
+'
+ADMIN'...
+
+
+
+
+
+
+--> AGORA SE OLHARMOS O CONTROLLER DE 'admin',
+
+VEREMOS QUE 
+
+
+
+
+AINDA ESTAMOS UASNDO 
+
+O 
+
+MODEL 
+DE 
+
+'Product'... --> 
+
+
+E ESSE 
+
+MODEL 
+
+AINDA ESTÁ USANDO 
+SEQUELIZE...
+
+
+
+
+
+
+
+-------> O CÓDIGO DE DEFINIÇÃO DESSE MODEL SEQUELIZE ERA:
+
+
+
+
+
+// const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+const { Sequelize } = require('sequelize');
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+const Product = sequelize.define('product', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+
+  title: Sequelize.STRING, ////shorthand do DEFINE visto logo acima... (com esse shorthand, definimos apenas o TYPE daquele field, sem definir mais nada acerca das características que esse field deve ter....)
+
+  price: {
+    type: Sequelize.DOUBLE, ///CASAS DECIMAIS... considera '0.99', etc...
+    allowNull: false, ////_IMPOSSIBILITA O WRITE DE VALORES NULOS.... produto sempre deverá custar alguma coias....
+  },
+
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... ----> 
+
+
+
+
+AGORA ISSO É ALGO QUE 
+
+__NÃO FAREMOS MAIS.... ---> COMO AGORA VAMOS QUERER USAR O MONGODB,
+
+PRECISAMOS DESCARTAR ESSE CÓDIGO...
+
+
+
+
+
+
+
+
+--> PARA FAZER ISSO,
+
+
+O PROFESSOR 
+
+
+REMOVE OS IMPORTS 
+
+DE 
+
+''''
+
+const { Sequelize } = require('sequelize');
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+'
+'''
+
+
+
+
+--> AGORA, EM VEZ DISSO,
+
+
+
+O PROFESSOR VAI QUERER 
+
+
+__CRIAR UMA CLASS__ NOVINHA,
+ 
+ PQ 
+
+
+ ELE 
+
+ VAI QUERER 
+
+ CRIAR 
+
+
+ SEU PRÓPRIO 'MODEL' MAIS UMA VEZ....
+
+
+
+
+
+
+ --> ISSO É ALGO QUE 
+
+
+
+ JÁ FIZEMOS ANTES,
+
+ NO MÓDULO 
+
+ DE 'PURE MYSQL' (sem o SEQUELIZE)...
+
+
+
+
+
+
+
+
+ --> O CÓDIGO FICA ALGO COMO:
+
+
+
+
+
+
+
+
+class Product {
+
+
+
+
+}
+
+
+
+
+
+
+module.exports = Product;
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+DENTRO DESSA CLASS,
+
+
+NOVAMENTE TEREMOS UM CONSTRUCTOR,
+
+
+
+E NESSE CONSTRUCOTR 
+
+ 
+
+ eu vou querer 
+
+ ARMAZENAR 
+
+
+
+
+
+'title',
+
+'price',
+
+'imagEuRL'
+
+
+E 
+
+'DESCRIPTIION'
+
+
+DE UM 
+
+PRODUCT,
+
+quando ele for criado...
+
+
+
+
+É POR ISSO QUE ESCREVO:
+
+
+
+
+
+
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+
+}
+
+
+
+
+
+
+module.exports = Product;
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+OK.... AGORA PODEMOS 'CREATE A NEW PRODUCT'
+
+
+em javascript...
+
+
+
+
+
+
+
+--> PODEMOS CRIAR UM NOVO 'OBJECT',
+
+o qual 
+
+seguirá 
+
+
+
+
+esse FORMATO  DEFINIDO NESSE CONSTRUCTOR....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+
+}
+
+
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+-----> E AGORA,
+
+
+
+PARA ___ SALVAR__ 
+
+
+ESSE 
+
+
+
+OBJETO 
+
+
+'Product'
+
+
+NA NOSSA DATABASE,
+
+
+
+
+
+
+O PROFESSOR ADICIONA UM MÉTODO 
+
+
+DE 
+
+'save()'
+
+
+DENTRO 
+
+
+DESSA CLASS...
+
+(exatamente como fizemos no PASSADO, COM AUQELE 
+
+CÓDIGO QUE 
+
+USAVA 
+
+O FILESYSTEM 
+
+
+DA MÁQUINA QUE RODAVA/RODA  O NODEJS/EXPRESS...
+
+
+
+)
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+
+
+
+save() {
+
+
+}
+
+}
+
+
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+-----> OK .... TEMOS ESSE MÉTODO AÍ,
+
+
+ 
+
+ VAMOS TER 
+
+
+
+ 
+
+ ESSA FUNÇÃO AÍ,
+ QUE PODERÁ 
+
+ SER CHAMADA 
+
+ NOS 
+
+ OBJECTS 
+
+ INSTANCIADOS A PARTIR 
+
+ DESSA 
+
+ 'CLASS'... --> E AQUI, EM 'save()',
+
+
+ VOU QUERER:
+
+
+
+
+
+
+
+
+
+
+
+ 1) 'CONNECT TO MONGODB'
+
+
+
+
+
+ 2) SAVE MEU PRODUCT NO MONGODB...
+
+
+
+
+
+
+
+
+
+
+
+ -----> PARA FAZER ISSO,
+
+ PARA 
+
+ SER 
+
+ CAPAZ 
+
+ DE 
+
+ 'CONNECT' 
+
+
+ NOSSO APP 
+
+ NODE AO 
+
+ MONGODB,
+
+
+ PRIMEIRAMENTE
+
+
+
+ VAMOS TER QUE IMPORTAR 
+
+
+
+
+ AQUELE MÉTODO/FUNÇÃO DE 
+
+
+ 'mongoConnect()',
+
+ LÁ 
+
+
+
+ DO 
+ 'database.js'....
+
+
+
+
+
+
+ ex:
+
+
+
+
+ const mongoConnect = require('../util/database');
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+save() {
+
+
+}
+
+}
+
+
+
+module.exports = Product;
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const mongoConnect = require('../util/database');
+
+
+
+
+class Product {
+    constructor(title, price, imageUrl, description) {
+
+
+      this.title = title;
+      this.price = price;
+      this.imageUrl = imageUrl;
+      this.description = description;
+    }
+
+
+
+    save() {
+
+
+        mongoConnect
+
+    }
+
+}
+
+
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ok.....
+
+
+
+
+
+
+
+LEMBRE-SE DO CÓDIGO DE 'mongoConnect':
+
+
+
+
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+// export const connectDatabase = async (url) => {
+//   const client = await MongoClient.connect(url);
+//   return client;
+// };
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+    //   (result) => {
+
+    (client) => {
+        callback(client);
+    }
+                // console.log('Connected');
+      
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OU SEJA,
+
+ISSO 
+
+VAI 
+BASICAMENTE 
+
+NOS RETORNAR 
+
+ O 
+
+ 'MONGOCLIENT',
+
+ o qual 
+ poderemos/podeoms 
+
+ usar 
+
+
+ PARA 
+
+ INTERAGIR 
+
+ COM A NOSSA DATABASE....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ENTRETANTO,
+
+
+
+
+ SE FIZÉSSEMOS ISSO,
+
+
+
+SE 
+
+
+
+TIVÉSSEMOS DE CHAMAR 
+
+'mongoConnect()'
+
+
+EM TODA E QUALQUER 
+
+
+
+OPERAÇÃO/método 
+
+
+
+EM QUE 
+
+INTERAGÍSSEMOS COM A DATABASE NOSQL,
+
+
+TERÍAMOS 
+
+DE CHAMAR 
+
+ESSE 
+
+NEGÓCIO 
+
+
+TROCENTAS MIL VEZES,
+
+pq 
+
+sempre 
+
+vamos 
+
+ter que 
+
+'connectToDatabase'
+
+
+ANTES 
+
+DE 
+
+FAZER 
+
+QUALQUER 
+
+
+
+COISA 
+
+
+
+com esse database... --> E OUTRO PROBLEMA 
+
+
+SERÁ/SERIA
+ 
+ QUE 
+
+
+ A 
+
+
+ 'CONNECTION'
+
+
+ 
+
+ OBTIDA POR MEIO DESSE METHOD 
+
+
+ __NEM MESMO __ 
+
+ SERIA 
+
+ DESLIGADA __ 
+
+ DEPOIS 
+
+ DA 
+
+ OPERATION,
+
+
+ POR ISSO 
+
+
+
+ ____ ESSE NÃO É UM __ BOM 
+
+
+ JEITO __ DE 
+
+ CONECTAR__ 
+
+
+ ___ NOSSO APP AO MONGODB... -----> ISSO PQ VAMOS QUERER 
+
+
+
+
+
+NOS CONECTAR E INTERAGIR COM O MONGODB ___ __ PARTINDO DE DIFERNTES __ 
+
+LUGARES DE NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+---> OU SEJA,
+
+
+SERIA BEM MELHOR SE __ FOSSEMOS CAPAZES DE 'MANAGE ONE/A SINGLE CONNECTION IN OUR DATABASE',
+
+
+
+
+e aí 
+
+
+
+__ SIMPLESMENTE 'RETURN ACCESS' 
+
+ao client,
+
+
+
+CLIENT __ QUE SETTAMOS/SETTAREMOS/SETTARÍAMOS __APENAS 1 VEZ,
+
+
+
+
+
+
+
+ou então 
+
+
+retornar acesso a TODOS OS LOCAIS NO NOSSO APP QUE PRECISAM DESSE ACCESS.. ---> 
+
+
+E PARA FAZER 
+ISSO,
+
+DEVEMOS VER A PRÓXIMA LIÇÃO...
+
+
+
+
+(PROVAVELMENTE ELE VAI ESTABELECER UMA 'CONEXÃO GERAL' ao mongoDb lá no APP.JS, para então 
+
+
+SÓ RODAR 
+
+
+CÓDIGOS 
+
+COMO 
+
+
+'db.findOne({id: xxxx})',
+
+
+
+DENTRO DOS CONTROLLERS, DE ACORDO COM O QUE QUISERMOS...
+
+
+
+
+)

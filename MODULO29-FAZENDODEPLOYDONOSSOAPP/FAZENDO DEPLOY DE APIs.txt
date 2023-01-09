@@ -1,0 +1,478 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA TEMOS UMA 'RUNNING APPLICATION',
+
+
+
+LÁ NO 
+
+
+LINK DE 
+
+
+''https://novoprojeto29.herokuapp.com/''' 
+
+
+
+
+
+
+
+
+
+
+
+--> É ASSIM QUE DEPLOYAMOS ALGO COM O HEROKU...
+
+
+
+
+
+
+
+
+
+
+--> HEROKU É SÓ 1 DE VÁRIOS HOSTING PROVIDERS....
+
+
+
+
+
+
+
+
+
+--> CHEQUE A DOCUMENTAÇÃO DOS DIFERENTES HOSTING PROVIDERS, ETC ETC...
+
+
+
+
+
+
+
+
+
+
+--> DIFERENTES HOSTING PROVIDERS POSSUEM 
+
+
+DIFERENTES 
+
+
+
+MÉTODOS, ETC ETC,
+
+
+
+
+
+
+
+
+MAS ALGUMAS COISAS SEMPRE ACONTECEM DA MESMA FORMA... --> VOCÊ SEMPRE 
+
+VAI 
+
+PRECISAR 
+
+
+
+
+PASSAR SEU CÓDIGO NODE AO SERVER,
+E SEMPRE 
+
+VAI 
+
+TER QUE 
+
+PASSAR SUAS ENVIRONMENT VARIABLES
+
+
+
+A ELE...
+
+
+
+
+
+
+
+
+
+
+-----> é claro QUE 
+
+
+ESSE FOI NOSSO APP SHOOP ((o clássico, com RENDER DE VIEWS NO BACKEND....))
+
+
+
+
+
+
+
+--> NÃO FOI A GRAPHQL API, NEM A 'REST API'... -> MAS O PROFESSOR NÃO VAI NOS MOSTRAR 
+
+DEPLOYMENT VIDEOS PARA ESSAS APIs,
+
+
+
+
+
+
+
+
+
+ISSO PQ O DEPLOYMENT DESSAS APIs 
+
+
+__ NÃO DIFERE 
+
+
+
+DA MANEIRA DE DEPLOYAR 
+
+
+
+
+
+
+
+ESTE NOSSO 'APP CLÁSSICO BACKEND' aqui.... -------> 
+
+
+
+
+
+
+
+COM O DEPLOY DESSAS APIs '''especiais'',
+
+
+
+
+NÓS AINDA TEMOS UM 'NORMAL NODE SERVER',
+
+
+POR ISSO 
+
+
+
+PODEMOS O DEPLOYAR __ EXATAMENTE __ DA MESMA FORMA QUE DEPLOYAMOS ESTE APP CLÁSSICO AGORA...
+
+
+
+
+
+
+
+
+--> A ÚNICA COISA QUE VAI DIFERIR É QUE 
+
+
+NÃO É MAIS POSSÍVEL CLICAR NAQUELA OPÇÃO 'open app',
+
+PQ _ NÃO EXISTIRÁ 'APP VISUAL' em questãO.. ------> 
+
+
+
+
+
+NÃO TEREMOS 'SERVER-SIDE RENDERED VIEWS'... ---->  
+
+
+
+
+
+TEREMOS UMA API 
+
+
+RUNNING, EM QUE 
+
+
+
+
+PODEOMS ENVIAR REQUESTS A ELA,
+
+
+
+
+
+E A ÚNICA DIFERENÇA É QUE 
+
+VAMOS TER QUE HOSTEAR NOSSO 
+
+
+FRONTEND EM OUTRO HOSTING PROVIDER/OUTRO BACKEND,
+
+
+
+E AÍ 
+
+VAMOS TER QUE AJUSTAR O CÓDIGO FRONTEND PARA 
+
+QUE 
+
+SEJAM ENVIADOS 
+
+
+
+
+
+REQUESTS ___ 
+
+
+A ESSE BACKEND API  QUE ESTAREMOS HOSTEANDO NO HEROKU.... -> DEIXAREMOS DE USAR 'LOCALHOST', no caso....
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS TROCAR as coisas de 
+
+'fetch('http://localhost:8080/graphql')',
+
+
+POR EXEMPLO,
+
+
+POR 
+
+
+
+fetch('https://novoprojeto29.herokuapp.com/graphql')
+
+
+
+
+
+
+
+
+
+, ETC ETC... --> 
+
+MAS ESSA 
+
+SERÁ 
+
+A ÚNICA DIFERENÇA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E AÍ, 
+
+DE QUALQUER FORMA,
+
+
+O MOBILE APP/FRONTEND APP _ VAI SER DEPLOYADO __ DE FORMA DIFERENTE, DE QUALQUER JEITO.... --> 
+
+
+
+
+
+UM MOBILE APP É SEMPRE ENVIADO AOS SEUS USERS 
+
+
+ATRAVÉS DE 'APP STORES';
+
+
+
+
+
+
+JÁ FRONTEND APPS, como react apps,
+
+
+
+__ SÃO TIPICAMENTE DEPLOYADOS COMO UMA 'STATIC APPLICATION' (por meio de coisas como FIREBASE)... -->
+
+
+
+
+E ISSO É ALGO QUE 
+
+PODEMOS APRENDER NO CURSO DE REACT DO PROFESSOR (que eu já assisti)....
+
+
+
+
+
+
+
+
+
+
+
+------> TAMBÉM TEMOS OS CURSOS DE ANGULAR E VUE.JS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ SIMPLESMENTE 
+
+
+
+CONSTRÓI/BUILD O PROJETO 'react'
+
+POR MEIO 
+
+DO SCRIPT DE 
+
+
+'npm run build' (
+
+
+
+    ou então por scripts de coisas como NEXTJS
+),
+
+
+
+
+
+
+
+
+
+E AÍ ___ ISSO VAI 'SPIT OUT'
+
+um novo FOLDER COM 
+
+O CÓDIGO 
+TODO OPTIMIZADO..... -------> 
+
+
+
+(folder de 'build') --> VOCÊ 
+VAI PEGAR 
+
+ESSE FOLDER DE 
+
+
+
+'build',
+
+SEUS CONTEÚDOS,
+E VAI 
+
+
+
+
+
+ENVIAR A UM HOSTING PROVIDER COMO 
+
+
+
+
+'AWS S3' ,
+
+
+OU ENTÃO 
+
+'firebase',
+
+PARA ENTÃO 
+
+
+SERVIR SEU APP 
+
+
+
+
+EM UM PROVIDER TOTALMENTE DESCONECTADO DO SEU 
+
+
+
+
+SERVE FEITO NO HEROKU/OUTRO PROVIDER... (
+
+
+    DECOUPLED FRONTEND AND BACKEND...
+)
+
+
+
+
+
+CERTO.... 
+
+
+AGORA TUDO FAZ MAIS SENTIDO... 
+
+
+
+
+
+
+
+
+Attached, you find the source code for this section.
+
+When using my source code, make sure to run npm install in the extracted folder!
+
+Useful resources:
+
+Herokus Docs: https://devcenter.heroku.com/categories/reference
+
+Deploying SPAs (like our React App): https://medium.com/@baphemot/understanding-react-deployment-5a717d4378fd
+
+Alternative Hosting Providers:
+
+Amazon Web Services: https://aws.amazon.com/getting-started/projects/deploy-nodejs-web-app/
+
+DigitalOcean: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04
+
+And of course everything Google yields on "nodejs hosting"
+
+
+
+
