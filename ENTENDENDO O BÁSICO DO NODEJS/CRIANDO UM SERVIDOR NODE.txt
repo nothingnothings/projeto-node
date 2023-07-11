@@ -1,0 +1,2966 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... DE VOLTA AO IDE,
+
+
+
+
+
+
+críamos um arquivo de nosso projeto....
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR CRIA UM NOVO ARQUIVo,
+
+
+
+E aí 
+
+
+
+esse arquivo 
+
+
+
+terá 
+
+GERALMENTE 
+
+UM 
+
+NOME 
+
+
+DE 
+
+
+
+
+
+'server.js'
+
+
+ou 
+
+'app.js'...
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO PQ ELA SERÁ A 'ROOT FILE' QUE COMPORÁ
+ 
+
+
+
+
+ SEU APLICATIVO 
+
+ NODEJS... ------> 
+
+
+
+
+
+ É 
+
+ O CÓDIGO 
+
+
+ QUE 
+ SERÁ 
+
+ EXECUTADO 'IN A COMPUTER IN THE CLOUD'....
+
+
+
+
+
+
+
+
+
+ -------> NESSE ARQUIVO,
+
+ PROFESSOR 
+
+ VAI QUERER 
+
+ CRIAR UM SERVER POR MEIO DO NODEJS... ---------> 
+
+
+
+
+
+
+
+
+
+ ATÉ AGORA,
+
+
+
+
+
+ NO PRIMEIRO MÓDULO,
+
+ SÓ VIMOS 
+
+ COMO 
+
+ TRABALHAR COM O FILE SYSTEM...
+
+
+
+
+
+
+
+
+
+
+
+ --->OK, COMO 
+
+
+ SPIN UP SUCH A SERVER?
+
+
+
+
+
+
+
+
+
+ ----> PRIMEIRAMENTE,
+
+
+ PROFESSOR DIZ QUE DEVEMOS 
+
+ 'IMPORT 
+
+ SOME FUNCTIONALITY'...
+
+
+
+
+
+
+ ----> ISSO PQ O JAVASCRIPT (TANTO CLIENT COMO SERVERSIDE) 
+
+
+
+
+
+
+tem um monte 
+
+de 
+
+funcionalidades que 
+
+podemos 
+
+usar globalmente,
+ out of the box,
+
+
+
+
+ MAS 
+
+
+ __ A MAIOR PARTE __ DAS 
+
+
+ FUNCIONALIDADES__ 
+
+
+
+ __ NAO FICAM DISPONÍVEIS POR DEFAULT,
+
+
+ JUSTAMENTE 
+
+ PARA 
+
+ NÃO POLUIR
+  
+
+  NOSSO 
+
+
+
+
+  WORKSPACE/global namespace 
+
+
+
+  COM 
+
+
+  TODAS 
+
+  ESSAS 
+
+  RESERVED KEYWORDS,
+
+
+  mas 
+
+  também 
+
+  PARA 
+
+  DEIXAR 
+
+
+
+  BEM ÓBVIO DE QUAIS 
+
+
+
+
+
+  FUNCIONALIDADES_
+
+
+
+  CADA 
+
+  ARQUIVO DEPENDE.... -------->
+   
+
+
+
+
+
+   É CLARO QUE 
+
+   HÁ 
+
+   UM MONTE DE 
+
+   CORE MODULES QUE 
+
+
+
+
+
+
+SÃO INTRODUZIDOS JUNTO DO NODEJS... 
+
+
+
+
+
+
+
+
+
+-------> ALGUNS DELES SÃO:
+
+
+
+
+
+
+
+
+
+1) path (já usei) --> nos ajuda a CONSTRUIR __ PATHS__ A ARQUIVOS NO NOSSO FILESYSTEM, QUE FUNCIONAM EM QUALQUER OPERATING SYSTEM (isso pq o windows, linux e mac usam DIFERENTES FORMATOS DE PATHS...)
+
+
+
+2) fs (já usei) ---> file system...
+
+
+
+
+3) HTTP 
+
+
+4) HTTPS 
+
+
+
+
+
+5) OS  ---> NOS AJUDA A FAZER MANAGE DE 'OPERATING SYSTEM RELEVANT INFORMATIOn' e assim por diante....
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+3) HTTP 
+
+
+
+
+4) HTTPS 
+
+
+
+
+
+
+
+--> ESSES 
+
+
+SÃ o
+
+
+
+MT ÚTEIS 
+
+QUANDO 
+
+O ASSUNTO 
+
+É 
+
+O 
+
+CREATE 
+
+DE UM 
+
+SERVER
+
+
+
+E 
+
+
+
+
+O 
+TRABALHO COM 
+
+
+
+HTTP 
+
+REQUESTS 
+
+AND RESPONSES.... 
+
+
+
+
+
+
+
+
+
+
+
+-------> E, DE FATO,
+
+
+HTTP 
+
+ NOS AJUDA 
+
+ COM 
+
+ O LAUNCH 
+
+
+ DE UM 
+
+ SERVER,
+
+
+ OU, TAMBÉM COM OUTRAS TAKS COMO 
+
+
+ O __ SEND __ 
+
+ DE REQUESTS__... --------> ISSO PQ 
+
+
+
+
+ UM NODE ___ APP __ TAMBÉM __ É CAPAZ __ 
+
+
+
+
+ DE ENVIAR UM ___ HTTP REQUEST_ ___ A OUTRO SERVER____ ....>>>> VOCÊ PODE 
+
+
+ TER MÚLTIPLOS SERVERS 
+
+
+
+ SE COMUNICANDO, UM COM O OUTRO...
+
+
+
+
+
+
+
+
+
+
+ --> POR EXEMPLO,
+
+
+
+ VOCÊ PODERIA/PODE ENVIAR UM REQUEST 
+
+
+ À API 
+
+ DO GOOGLE MAPS 
+
+ PARA 
+
+
+ ___ENVIAR ALGUMAS __ COORDINATES__,
+
+
+ E AÍ 
+
+ VAI 
+
+ GET BACK UM 
+
+
+
+'ADDRESS' (eu já fiz isso, uma vez)...
+
+
+
+
+
+
+
+
+----> OK, MAS ESSE É SÓ UM EXEMPLO....
+
+
+  
+
+
+
+
+
+
+---> VAMOS FOCAR NO ASPECTO DO 'LAUNCH A SERVER'....
+
+
+
+
+
+
+
+
+
+
+
+
+4) ---> HTTPS ---> JÁ O HTTPS É ÚTIL QUANDO QUEREMOS 
+
+
+FAZER 
+
+'LAUNCH' 
+
+
+DE 
+
+UM 
+
+SERVER __ SSL ___ (server com criptografia...) --> server 
+
+
+em que 
+
+TODA A DATA QUE É TRANSFERIDA É __ENCRIPTADA__ (algo que veremos no FINAL DO CURSO)...
+
+
+
+
+
+
+
+
+
+----> OK, 
+
+VAMOS VER 
+
+
+ESSE MÓDULO 
+
+DE HTTP...
+
+
+
+
+
+
+
+
+
+----> ANTES DE MAIS NADA,
+
+PRECISAMOS __IMPORTAR__ _ESSE MÓDULO...
+
+
+
+
+
+
+
+
+-----> BASICAMENTE,
+
+
+PRECISAMOS ASSEGURAR QUE 
+CONSEGUIMOS 
+
+
+
+USAR 
+
+FEATURES 
+
+DESSE MÓDULO 
+
+HTTP,
+
+
+QUE 
+VEM COM 
+
+
+O 
+
+NODEJS.... -----> 
+
+
+
+
+MESMO 
+
+
+
+SENDO PARTE DO NODEJS,
+
+
+
+ele 
+
+não 
+
+
+
+É INCORPORADO AO NOSSO ARQUIVO POR DEFAULT...
+
+
+
+
+
+
+
+--> PRECISAMOS 
+
+IMPORTAR ESSA FUNCIONALIDADE NO NOSSO ARQUIVO PARA QUE POSSAMOS A UTILIZAR....
+
+
+
+
+
+
+
+
+
+
+
+----> fazemos isso por meio da 
+
+
+
+
+sintaxe 
+
+
+
+
+
+de imports 
+
+
+
+
+
+
+
+
+DO NODEJS,
+
+
+que é 
+
+aquela 
+
+
+
+'const xxx = require('xxxx');'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NODE MODULE IMPORT... 
+
+
+
+
+
+
+
+---> PROFESSOR EXPLICA QUE PODERÍAMOS USAR UMA 'VAR',
+
+mas que geralmente 
+
+
+vamos usar 
+
+uma 
+
+'const',
+
+
+pq nunca vamos querer 
+
+
+
+ALTERAR 
+
+ESSE IMPORT...
+
+
+
+
+
+
+--> você 
+
+
+GERALMENTE 
+
+
+DEFINE O NOME DA CONST COMO SENDO EQUIVALEnte ao 
+
+
+
+nome 
+
+
+do modulo que você vai importar...
+
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');' 
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+'require' ---> É A KEYWORD 
+
+
+
+EXPOSTA PELO NODEJS 
+
+GLOBALMENTE.... ------> ESSA É A FORMA PELA QUAL VOCÊ IMPORTA ARQUIVOS 
+
+
+NO NODEJS....
+
+
+
+
+
+
+
+-------> DENTRO DO (),
+
+
+
+
+
+
+VOCÊ PODE OU COLOCAR 
+
+UM 
+
+PATH A UM OUTRO ARQUIVO (construído com 'path', geralmente) ----> PROFESSOR 
+
+
+
+EXPLICA QUE SOMOS CAPAZES DE IMPORTAR NOSSOS PRÓPRIOS ARQUIVOS JAVASCRIPT 
+
+por meio 
+desse 'require()',
+
+mas que não vamos fazer isso agora....
+
+
+
+
+
+
+
+
+
+
+
+------> OU, ENTÃO,
+
+
+SE VOCÊ NÃO TEM 1 PATH A UM 
+
+DE SEUS ARQUIVOS,
+
+
+
+VOCÊ PODE IMPORTAR 1 
+
+'CORE MODULE',
+
+
+COMO 
+
+'HTTP'... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+BTW,
+ 
+
+ UM PATH 
+
+ A UM 
+
+ DE SEUS ARQUIVOS 
+
+
+ ___SEMPRE__ DEVE COMEÇAR COM 
+
+ './' 
+
+
+
+ ou 
+
+ '/',
+
+
+ SE ESSE 
+
+ PATH 
+
+ FOR UM 
+
+ 'ABSOLUTE PATH'...
+
+
+
+
+
+
+
+
+(PATHS 
+
+
+COM 
+
+
+'./' SÃO CHAMADOS 
+
+DE 
+
+'RELATIVE PATHS',
+
+
+
+pq 
+
+são CONSTRUÍDOS 
+
+A PARTIR
+ 
+DO 
+
+FOLDER EM QUE ESSE SEU 
+
+ARQUIVO 
+
+RESIDE ATUALMENTE...)
+
+
+
+
+
+
+
+---> ou seja,
+
+
+se você 
+
+escrevesse:
+
+
+'const http = require('./http'),'
+
+
+
+ISSO 
+
+
+FARIA
+ 
+
+ COM QUE 
+
+
+ FOSSE PROCURADO UM ARQUIVO 
+
+ 'http' 
+
+
+ DENTRO 
+ DESSE MESMO FOLDER 
+ DE 
+
+ 'app.js'...
+
+
+
+
+
+
+
+
+
+
+
+ ---> BTW,
+
+
+
+
+
+
+ A SINTAXE DE IMPORTS 
+
+
+
+ DO 
+
+
+
+ NODEJS É PARECIDA COM O DO ES6;
+
+
+
+
+ELE 
+
+
+
+COLOCA 
+
+'.js'
+
+AUTOMATICAMENTE NO FINAL DO SEU ARQUIVO, 
+
+SE VOCÊ 
+
+O 
+
+ESCREVE 
+
+'solto' 
+
+
+ex:
+
+
+
+'const http = require('component');'  (ISSO AQUI IMPORTARIA 
+
+
+'component.js'...)
+
+
+
+----------------------------
+
+
+
+
+VOCÊ PODE DEIXAR ESSE '.js' no final, mas é algo opcional...
+
+
+
+
+
+
+
+-------> OK... SE VOCÊ OMITIR 
+
+
+'/' no final,
+
+
+
+
+ELE NÃO VAI PROCURAR POR UMA 
+
+'LOCAL FILE',
+
+
+E SIM 
+
+VAI 
+
+
+__SEMPRE __ PROCURAR_ _POR UM 
+
+
+
+
+'GLOBAL MODULE'
+
+
+
+com nome 
+
+de 
+
+'http'.... -------> E UM MODULE DESSES EXISTE, NO NOSSO CASO,
+
+PQ 
+
+
+
+
+UM MODULE CHAMADO 
+
+DE 
+
+'HTTP' REALMENTE EXISTE...
+
+
+(nodejs ships with it)...
+
+
+
+
+
+
+
+
+
+
+->OK,
+
+
+ESCREVEMOS ESSE MÓDULO 
+
+assim:
+
+
+
+
+
+const http = require('http');
+
+
+
+---------------------------------
+
+
+
+
+
+PARA ACESSAR 
+
+
+
+
+FUNCIONALIDADES 
+
+
+
+DENTRO 
+
+
+DESSE 
+
+
+
+MODULO/OBJETO 
+
+
+'http',
+
+
+VOCÊ 
+
+
+USA 
+
+
+A 
+
+DOT NOTATION,
+
+
+ 
+
+
+
+
+
+
+ SE VOCÊ DIGITAR ISSO,
+
+
+
+ o IDE TE MOSTRA TODAS AS FUNÇÕES/PROPRIEDADES/MÉTODOS 
+
+
+ dentro 
+
+
+ de 
+
+ 'http'....
+
+
+
+
+
+
+
+ ----------> 
+
+
+
+
+ o objeto HTTP 
+
+
+
+
+ __ TEM UM MONTE __ DE FIELDS_ E METHODS QUE 
+
+ PODEMOS __  
+
+
+ EXECUTAR.... 
+
+
+
+
+
+
+
+
+
+
+ ------> UM DOS MÉTODOS MAIS IMPORTANTES 
+
+ É 
+
+ O 
+
+
+ 'createServer()'....
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ 
+const http = require('http');
+
+
+http.createServer();
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+COMO O NOME SUGERE,
+
+ESSE MÉTODO 
+
+É UM MÉTODO 
+
+CRUCIAL
+
+
+
+
+QUANDO QUEREMOS CRIAR UM SERVER...
+
+
+
+
+
+
+-------> E 'createServer()'
+
+
+
+
+ACTUALLY 
+
+
+
+___ RECEBE__ UM PARÂMETRO,
+
+
+PARÂMETRO QUE 
+
+
+É 
+UM 
+
+
+'REQUEST LISTENER'... ---------> 
+
+
+
+
+ 
+
+
+
+
+ '''''REQUEST LISTENER'''''' ----> É SIMPLESMENTE 
+
+
+
+ UMA ___ FUNCTION ___ QUE 
+
+ SERÁ 
+
+
+
+
+ ___ EXECUTADA ___ 'FOR EACH AND EVERY INCOMING REQUEST'...
+
+
+
+
+
+
+
+ -------> 
+
+
+
+
+
+ EX:
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+
+
+
+// http.createServer(); //////FUNÇÃO MAIS IMPORTANTE PARA A CRIAÇÃO DE UM SERVIDOR NODEJS (duh)
+
+
+
+
+
+http.createServer(); ///////ESSA FUNÇÃO ACEITA/EXIGE UM PARÂMETRO QUE É UM  ''''REQUEST LISTENER'''' ---> ESSA FUNÇÃO-PARÂMETRO SERÁ EXECUTADA 'FOR EACH AND EVERY INCOMING REQUEST' que atinge o servidor.... (poderíamos, por exemplo, implementar um 'contador de visitas' no servidor, por meio dessa função...)
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+PROFESSOR 
+
+DIZ QUE 
+
+DEVEMOS CRIAR UMA 
+
+FUNÇÃO 
+
+DESSAS, 
+
+UMA 
+
+
+FUNÇÃO 
+
+
+'REQUEST LISTENER'...
+
+
+
+
+
+
+----> PARA ISSO, CRÍAMOS UMA NOVA CONSTANTE (professor usa 
+a 
+
+FUNCTION KEYWORD, mas eu prefiro usar AS ARROW FUNCTIONS...)
+
+
+
+
+
+
+
+
+
+
+EU ESCREVO TIPO ASSIM:
+
+
+
+
+
+
+
+
+const reqListener = () => {
+
+
+}
+
+-------------------------
+
+
+
+
+
+
+
+CERTO... E ESSA FUNÇÃO 
+
+
+__ VAI EXIGIR/ACEITAR ___ 
+
+
+2 
+
+ARGUMENTOS... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+SE VOCÊ 
+
+
+
+PASSAR O MOUSE EM CIMA DESSA FUNÇÃO, NO IDE,
+
+vocÊ 
+
+
+
+VERÁ 
+
+
+QUE 
+
+
+O PRIMEIRO PARÂMETRO 
+
+
+SERÁ 
+
+
+
+SEMPRE 
+
+UM 
+
+'request',
+
+
+REQUEST 
+
+QUE SERÁ 
+
+DE 
+
+TIPO 
+
+
+'IncomingMessage',
+
+
+
+
+
+
+
+
+E 
+
+O SEGUNDO PARÂMETRO 
+
+SERÁ 
+
+
+SEMPRE 
+
+UM 
+
+'response',
+
+
+
+RESPONSE QUE SERÁ DE TIPO 
+
+
+'ServerResponse'....
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+request: 'IncomingMessage',
+
+
+
+response: 'ServerResponse'
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESUMINDO: 
+
+
+NODEJS 
+
+
+
+AUTOMATICAMENTE 
+
+
+
+
+NOS DÁ OBJETOS QUE REPRESENTAM 
+
+O 
+
+
+'INCOMING REQUEST' 
+
+
+
+E 
+
+
+'OUTGOING RESPONSE'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PODEMOS USAR ESSE INCOMING REQUEST 
+
+
+
+
+
+PARA 
+
+'READ DATA' 
+
+vinda desse request,
+
+
+
+
+E 
+
+NOS 
+
+DÁ 
+
+
+ESSE 
+
+OBJETO 
+
+'RESPONSE',
+
+ 
+
+
+
+ QUE 
+
+ NOS 
+
+ DEIXA 
+
+ RETORNAR UMA 
+
+ RESPONSE 
+
+
+
+
+ à PESSOA QUE NOS ENVIOU AQUELE REQUEST...  
+
+
+
+
+
+
+
+
+
+
+ -----> OK, 
+
+
+
+ VAMOS 
+
+ TER QUE 
+
+ 'ACCEPT' ESSES ARGUMENTS 
+
+
+ DENTRO 
+
+ DA 
+
+ FUNÇÃO 
+
+
+ 'reqListener'... -----> 
+
+
+
+
+
+
+ E VOCÊ PODE NOMEAR OS PARÂMETROS 
+
+ DE 
+
+ 'REQLISTNEER'
+
+
+ COMO VOCÊ QUISER,
+
+
+ MAS 
+
+ VOCê 
+
+
+ DEVE TER EM MENTE 
+ QUE 
+ O PRIMEIRO 
+
+ OBJETO 
+
+ VAI CONTER 
+
+ DATA 
+
+ SOBRE 
+
+ A 
+
+ REQUEST, E O SEGUNDO VAI TE AJUDAR 
+
+
+
+
+ A 
+
+ ENVIAR 
+
+
+ A 
+ RESPONSE...
+
+
+
+
+
+
+
+
+ ------> CÓDIGO FICA ASSIM:
+
+
+
+
+----------------------------------------
+
+
+
+ const http = require('http');
+
+
+ 
+
+ const reqListener = (req, res) => {
+
+ }
+
+
+
+
+ http.createServer();
+
+
+
+
+ ---------------------------------
+
+
+
+ OK, 
+
+ ESSA É UMA FUNÇÃO,
+
+
+ FUNÇÃO 
+
+
+
+ CUJA REFERENCE 
+
+
+ VAMOS 
+
+ PASSAR 
+
+ ÀQUELE 
+
+
+ 'createServer()',
+
+
+
+
+ COMO PARÂMETRO.... ------> E NÓS ___ NÃO VAMOS EXECUTAR__ ESSA FUNÇÃO 
+
+
+
+ dentro 
+
+ de 
+
+ 'createServer',
+
+
+ JUSTAMENTE PQ 
+
+
+ ELA (a 'reqListener)'
+
+
+
+ É 
+
+
+ UMA 
+
+
+ ___CALLBACK__ FUNCTION___ (será chamada quando 
+ 
+ 
+ acabar seu código assíncrono, tipo isso....)
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+  const http = require('http');
+
+
+ 
+
+ const reqListener = (req, res) => {
+
+ }
+
+
+
+
+ http.createServer(reqListener);
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+ESSE É O FORMATO.
+
+
+VOCÊ DEVE PASSAR 
+
+
+
+SUA FUNÇÃO INTERNA ASSIM PQ 
+
+
+
+__ISSO AÍ __ VAI DIZER 
+
+
+AO 
+
+
+'createServer()'
+
+
+
+
+
+'HEY,
+
+ 
+ POR FAVOR 
+
+
+
+ ____ PROCURE__ POR UMA FUNÇÃO COM ESTE NOME, 
+
+ E AÍ 
+
+
+ __ EXECUTE__ ESSA FUNÇÃO 
+
+ 'reqListener' 'FOR EVERY INCOMING REQUEST'... -------> 
+
+
+
+
+
+
+ E É ISSO 
+
+
+ QUE 
+
+ NÓS TEREMOS SETTADO/VAMOS SETTAR....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> OK, ISSO SIGNIFICA QUE 
+
+ ESSA FUNÇÃO 
+
+
+ 'reqListener'
+
+
+ vai rodar __ FOR EVERY REQUEST THAT REACHES OUR SERVER....
+
+
+
+
+
+ EX:
+
+
+
+
+
+const http = require('http');
+
+// http.createServer(); //////FUNÇÃO MAIS IMPORTANTE PARA A CRIAÇÃO DE UM SERVIDOR NODEJS (duh)
+
+const reqListener = (req, res) => {
+  ///objetos que representam A REQUEST que chega ao server e a RESPONSE que vamos enviar para fora dele....
+};
+
+http.createServer(reqListener); ///////ESSA FUNÇÃO ACEITA/EXIGE UM PARÂMETRO QUE É UM  ''''REQUEST LISTENER'''' ---> ESSA FUNÇÃO-PARÂMETRO SERÁ EXECUTADA 'FOR EACH AND EVERY INCOMING REQUEST' que atinge o servidor.... (poderíamos, por exemplo, implementar um 'contador de visitas' no servidor, por meio dessa função...)
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+OK.... 'FOR EVERY REQUEST THAT REACHES OUR SERVER'... --> E ESSE 
+
+SERVER 
+
+VAI 
+
+SER INICIADO 
+
+
+QUANDO CHAMAMOS 
+
+
+
+
+
+
+'createServer()'... ------> OU ___ ''''QUASE'''''_____, DIZ O PROFESSOR ---> 
+
+
+
+
+
+
+
+O professor voltará 
+
+a 
+isso daqui a pouco...
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR DIZ QUE 
+
+
+ESSA É 
+
+__ UMA MANEIRA___ DE COMEÇAR NOSSO SERVER (essa sintaxe aí, que escrevemos)...
+
+
+
+
+
+
+
+
+
+
+---------> ENTRETANTO,
+
+NÃO PRECISAMOS 
+
+
+
+__CRIAR __ EXPLICITAMENTE UMA FUNÇÃO DESSAS, UMA FUNÇÃO 
+
+
+de 
+
+'reqListener'....
+
+
+
+
+
+
+
+
+--------> EM VEZ 
+
+DE 
+
+ESCREVER 
+
+
+
+ESSE 
+
+
+'reqListener',
+
+
+
+
+PODEMOS__ 
+
+
+
+SIMPLESMENTE 
+
+UTILIZAR 
+
+
+
+UMA 
+
+ANONYMOUS FUNCTION ( '() => {}' ),
+
+
+
+
+
+ANONYMOUS FUNCTION DENTRO 
+
+
+DE 
+
+'createServer()'....
+
+
+
+ex:
+
+
+
+
+
+http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+
+})
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+OK, CRÍAMOS UMA FUNCTION SEM NOME,
+
+E POR ISSO 
+
+
+
+SEU NOME É 
+
+'ANONYMOUS FUNCTION'...
+
+
+
+
+
+
+----> ESSA FUNÇÃO AINDA CONSEGUE A MESMA COISA DE ANTES,
+
+
+
+ELA AINDA SERÁ EXECUTADA 
+
+
+TODA 
+
+
+E QUALQUER VEZ EM QUE 
+
+UM REQUEST ATINGIR O NOSSO 
+
+SERVER...
+
+
+
+
+
+
+----> ESSA É UMA 
+
+
+'EVENT DRIVEN ARCHITECTURE'
+
+
+
+_ QUE O NODEJS __ USA UM MONTE___ ----------> VOCÊ 
+
+TRABALHA/TRABALHARÁ 
+
+MT 
+
+COM CODE SNIPPETS 
+
+
+EM 
+
+
+QUE 
+
+
+
+
+VOCÊ 
+
+
+
+DIZ AO NODE 
+
+
+'
+'''SE X ACONTECER, FAÇA 
+
+Y....''''
+
+
+
+
+
+
+
+
+-----> NESSE CASO,
+
+
+
+
+''''SE UM __ REQUEST____ CHEGAR,
+
+POR FAVOR EXECUTE___ ESTA FUNÇÃO___''''...
+
+
+
+---------------------------
+
+
+
+
+
+
+--> É CLARO QUE PODEMOS USAR 
+
+NEXT-GEN JAVASCRIPT SYNTAX AQUI,
+
+
+
+
+podemos 
+
+escrever o código que eu usei...
+
+
+
+
+
+
+
+ARROW FUNCTIONS, YADDA YADDA YADDA...
+
+
+
+---------------------------
+
+
+
+
+
+
+
+OK, 
+
+
+ESSA É NOSSA 
+
+
+CALLBACK FUNCTION DE 
+
+'CREATE SERVER',
+
+
+basicamente.... ---> ELA É 
+
+CHAMADA 
+
+
+
+PELO 
+
+NODEJS 
+
+SEMPRE QUE 
+
+UM 
+
+REQUEST 
+
+ALCANÇA 
+O NOSSO 
+
+SERVER...
+
+
+
+
+
+
+
+--> POR ENQUANTO, O PROFESSOR VAI 
+
+SIMPLESMENTE 
+
+'CONSOLE.LOG'
+
+
+
+o objeto 
+
+'req'
+
+
+para 
+
+ver o que 
+
+existe dentro dele...
+
+
+
+
+
+ex:
+
+
+
+
+
+http.createServer((req, res) => { 
+
+
+        console.log(req);
+})
+
+
+
+
+
+--------------------------
+
+
+
+
+executamos nosso código com 'node app.js',
+
+
+
+E AÍ VEMOS O OUTPUT 
+
+NO NOSSO 
+SERVER...
+
+--------------------------
+
+
+OK, MAS QUANDO EXECUTAMOS 
+
+
+
+
+NOSSO ARQUIVO,
+
+
+
+NADA É OUTPUTTADO NO 
+
+TERMINAL....
+
+
+
+
+
+
+
+--------> NÃO FEZ NADA... --> NÃO FEZ NADA JUSTAMENTE PQ 
+
+
+__ NENHUM REQUEST__ ATINGIU O NOSSO SERVER.... ---------> 
+
+
+
+
+
+MAS 
+
+NÓS ___ NEM SABEMOS __ '''EM QUE LUGAR ESTÁ O SERVER''',
+
+
+
+E MUITO MENOS QUAL 'ADDRESS' ELE TEM, NO MOMENTO...
+
+
+
+
+
+
+
+------> BEM, 1 COISA IMPORTANTE ESTÁ FALTANDO, AQUI... -----> 
+
+
+
+
+
+
+ESSE MÉTODO 
+
+DE 
+
+'createServer()'
+
+
+
+_______aCTUALLY____ RETORNA ___ UM SERVER__.... -----------> 
+
+
+
+  
+
+  POR RETORNAR UM ___ SERVER__ PRECISAMOS 
+
+  O 
+
+
+
+  ____ARMAZENAR__ EM UMA 
+
+
+  NOVA VARIABLE/CONSTANT___ ----> 
+
+
+
+
+
+  E O PROFESSOR 
+
+
+  VAI 
+
+
+
+
+  USAR UMA CONSTANTE PQ ELE NUNCA VAI OVERWRITTAR
+   
+
+   O 
+
+   SERVIDOR (ele só vai 
+   
+   criar o server 
+   1 única vez,
+   
+   e nunca 
+   
+   mais 
+   
+   vai 
+   
+   alterar 
+   
+   seu valor....)
+
+
+
+
+
+
+
+
+
+   ---> OK ,
+
+
+
+
+
+   POR ISSO O PROFESSOR ESCREVE ASSIM:
+
+
+
+   
+const server = http.createServer((req, res) => {
+        console.log(req);
+})
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+PODEMOS 
+
+USAR 
+
+
+
+
+essa const 
+
+'server'
+
+
+QUE 
+
+ESTÁ COM NOSSO SERVER ARMAZENADO 
+
+
+
+__ PARA ___ EXECUTAR__ ALGO COM ELE___...  -----> 
+
+
+COM 
+
+A 
+DOT NOTATION,
+
+
+
+
+
+VEMOS UM MONTE DE MÉTODOS QUE PODEMOS CHAMAR,
+
+
+DENTRE 
+
+ELES 
+
+
+'.listen()'...
+
+
+
+
+
+
+
+
+-------> '.listen()' ----> É OUTRO MÉTODO 
+
+MT IMPORTANTE... 
+
+
+
+
+
+
+
+
+----> '.listen()' -------> O LISTEN INICIA UM PROCESSO 
+
+EM QUE 
+
+O 
+
+
+NODEJS 
+
+
+
+
+
+'WILL NOT IMMEDIATELY EXIT OUR SCRIPT', 
+
+
+
+e sim 
+
+em que 
+
+
+
+NODEJS 
+
+
+
+vai, em vez disso,
+
+
+'KEEP THIS RUNNING',
+
+
+
+KEEP 
+
+
+O APLICATIVO/SERVIDOR 
+
+RODANDO,
+
+
+
+PARA 
+
+FAZER 
+
+'LISTEN' AOS REQUESTS....
+
+
+
+
+
+server.listen(); ///////OUTRO CÓDIGO __ ESSENCIAL__ PARA MANTER/CRIAR NOSSO SERVER NODEJS... ---> isso aqui vai fazer 'LISTEN' por requests, e é o que vai DEIXAR NOSSO SERVER ABERTO A REQUESTS...
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+o listen,
+
+
+POR SUA VEZ,
+
+
+
+
+
+
+__aCEITA__ ALGUNS ARGUMENTOS.... ----> 
+
+
+
+SÃO 
+
+ARGUMENTOS 
+
+
+____ OPCIONAIS____ -------> 
+
+
+
+
+
+DENTRE ELES,
+
+
+
+TEMOS:
+
+
+
+
+
+
+1o argumento ==== É A 'PORT' EM QUE VOCÊ VAI QUERER 'LISTEN TO'...
+
+
+
+OBS:::: EM PRODUCTION, VOCÊ TIPICAMENTE NÃO PREENCHERÁ 
+        ESSE PARÂMETRO; VOCÊ O DEIXARÁ EM BRANCO, E AÍ ELE VAI 
+        ''TAKE THE DEFAULT OF PORT 80''''....
+
+
+
+
+
+EX:
+
+
+
+
+
+server.listen(); /// EM PRODUCTION, VOCÊ TIPICAMENTE DEIXA ESSE NEGÓCIO EM BRANCO, para que ELE 'TAKE THE DEFAULT OF PORT 80'...
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+MAS EM 
+
+
+MODO 
+
+DE 
+
+'DEVELOPMENT',
+
+NÓS TIPICAMENTE 
+
+VAMOS QUERER 
+
+USAR 
+
+UM PORT DIFERENTE... 
+
+
+
+
+
+
+
+2o parâmetro ----> VOCÊ PODE DEFINIR UM 'HOSTNAME' (ou seja, o NOME DA MÁQUINA EM QUE ESSE 
+ARQUIVO/SERVER ESTARÁ RODANDO...)
+
+
+
+
+
+
+
+---------> NA NOSSA MÁQUINA,
+
+
+O DEFAULT de 'hostname' É 'localhost'... ------> 
+
+
+
+
+
+
+
+
+------> A PORT QUE VOCÊ FREQUENTEMENTE USARÁ/USA 
+
+
+NO MODO DE DEVELOPMENT É 
+
+A 
+
+PORT 
+
+
+'3000'... -----> POR ISSO VAMOS USÁ-LA..
+
+
+
+ex:
+
+
+server.listen(3000);
+
+
+
+
+
+
+
+
+----------------------------
+
+
+VOCÊ PODE USAR QUALQUER PORTA QUE VOCÊ QUISER,
+
+
+
+
+MAS 
+
+
+AS PORTAS 
+
+'1000'
+SÃO 
+
+TIPICAMENTE BEM SAFE....
+ 
+
+ ---------------------------
+
+
+
+
+
+
+ E AGORA,
+
+
+ SE VOCÊ REINICIAR SEU SERVER,
+
+ VOCÊ 
+
+
+ VERÁ 
+
+ UMA 
+
+ COISA BEM IMPORTANTE... -----> NO NOSSO TERMINAL,
+
+
+
+
+ PERCEBEMOS 
+
+
+
+ QUE NOSSAS LINHAS VÃO FICAR 'TRAVADAS'---> isso acontece/aconteceu 
+
+ PQ 
+
+
+
+ ____ NOSSO 
+
+ TERMINAL 
+
+ 'DIDNT FINISH FILE EXECUTION' --> isso 
+
+
+
+ PQ 
+
+
+
+
+ O 'LISTEN' 
+
+
+ VAI 
+
+ DEIXAR O SERVER LIGADO,
+
+ vai ser UM 
+
+ 'ONGOING PROCESS',
+
+
+
+ 'ONGOING LOOPING PROCESS'...
+
+
+
+
+
+ UM LOOPING PROCESS EM QUE 
+ ISSO 
+
+ AQUI 
+
+ VAI CONTINUAR 
+
+ 'LISTENING FOR REQUESTS'.... 
+
+
+
+
+
+
+
+
+ ----> PODEMOS VER ISSO EM AÇÃO 
+
+ SE 
+
+ ENTRARMOS NO BROWSER 
+
+ E 
+
+ ESCREVERMOS 
+
+
+
+ 'localhost:3000' ... --> SE FIZERMOS ISSO,
+
+
+ veremos 
+
+ QUE NO TERMINAL 
+
+ VEREMOS UM OUTPUT 
+
+
+ GIGANTE (
+
+     que 
+     será 
+
+     o 
+
+
+     OBJETO 'request' LOGGADO NO CONSOLE...
+ )
+
+
+
+
+
+
+ ---------------------------
+
+
+
+
+
+
+
+
+
+ O request é um objeto grandão... --> vamos o analisar ao longo das próximas aulas..
+
+
+
+
+
+
+
+
+ MAS A QUESTÃO, AQUI, É QUE 
+
+
+
+ AS LINHAS 
+
+
+
+--------------------------------------
+
+
+
+
+ const http = require('http');
+
+
+
+
+
+ const server = http.createServer(
+         (req, res) => {
+
+                        console.log(req);
+         }
+ )
+
+
+
+
+
+ server.listen(3000);
+
+
+
+
+ ----------------------------------
+
+
+
+
+ JÁ TE DÃO UM SERVER FUNCIONAL/QUASE 
+
+
+ FULLY FUNCTIONAL.... ---------> 
+
+
+
+
+
+
+ E É ASSIM QUE 
+
+
+ CRÍAMOS 
+
+
+
+ SERVIDORES 
+
+ NO 
+
+
+ NODEJS.... ------>  isso pode parecer difícil de entender;
+
+
+
+
+
+
+ foi difícil para o professor quando ele aprendeu...
+
+
+
+
+
+
+
+ ----------> PROFESSOR DIZ QUE ISSO PODE PARECER DIFÍCIL QUANDO VOCê 
+
+
+
+ VEM 
+
+ DE UM CONTEXTO 
+
+
+ DE PHP ---> pq no php, não fazemos 'WRITE YOUR OWN SERVER'...
+
+
+
+
+
+
+
+
+
+ ------> o write de nosso PRÓPRIO SERVER, COM  O NODEJS,
+
+
+ PODE PARECER ALGO SUPER COMPLEXO.... -------> BEM, NÃO É 
+
+
+
+
+ TÃO COMPLEXO ASSIM, NO FINAL DAS CONTAS,
+  
+
+  'ITS JUST THIS FEW LINES'... ------->
+
+
+
+
+  E, AGORA EM DIANTE,
+
+
+
+
+
+A ÚNICA COISA NO QUE TEMOS QUE NOS FOCAR É 
+
+
+'DO SOMETHING MEANINGFUL WITH THE REQUEST 
+
+AND - IMPORT - SENDING BACK A RESPONSE'...
+
+
+
+
+
+
+
+
+
+
+--> vamos fazer uma análise detalhada NAS PRÓXIMAS AULAS...

@@ -1,0 +1,596 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR CRIA UMA CONTA DO MONGODB,
+
+
+
+
+etc etc...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE EXISTE UMA SOLUÇÃO 'LOCALLY RUN'... (um programa e tals, que setta 
+
+um 
+
+servidor/database mongodb)........
+
+
+
+
+
+--> MAS ELE DIZ QUE NÃO DEVEMOS BAIXAR ESSA VERSÃO,E SIM QUE 
+
+DEVEMOS USAR 
+
+O 
+
+
+MONGODB ATLAS,
+
+QUE É 
+
+A SOLUÇÃO 
+
+
+'CLOUD-BASED',
+
+
+
+
+QUE É BEM MAIS REALISTA.... ----------> 
+
+
+
+
+
+
+
+A SOLUÇÃO CLOUD É O ENVIRONMENT MAIS REALISTA,
+É O QUE 
+
+USAMOS 
+
+PARA 
+
+PRODUCTIon,
+
+
+e tudo mais...
+
+
+
+
+
+
+
+
+---> OK....  -------> MONGODB ATLAS... --> É DE GRAÇA--->
+
+
+
+
+FAZEMOS SIGNUP, TUDO MAIS...
+
+
+
+
+
+
+
+
+------> OK.... AÍ PRECISAMOS INSTALAR O MONGODB 
+
+
+NO NOSSO PROJECT.....
+
+
+
+
+
+--> CRIE UM NOVO CLUSTER,
+
+
+ETC ETC... -----> 
+
+
+
+
+AÍ ESCOLHA 
+
+AWS,
+
+
+
+
+
+NORTH VIRGINIA 
+
+
+
+
+
+
+-> CLUSTER --> É UMA DATABASE/MÚLTIPLAS DATABASES 
+
+RODANDO EM 1 SERVIDOR...
+
+
+
+
+
+
+
+
+--------> ESCOLHA UMA REGION EM QUE 
+
+
+
+UM FREE TIER ESTEJA DISPONÍVEL... 
+
+
+
+
+
+---> MONGODB USA AWS/AZURE/GOOGLE POR TRÁS DAS CENAS,
+
+
+
+
+MAS VOCê NÃO TEM QUE SE PREOCUPAR COM ISSO....
+
+
+
+
+
+
+--> ok.... escolha um 
+
+
+
+tier de cluster,
+
+escolha M0.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> DEIXE TODOS OS DEFAULTS,
+
+
+
+MUDE O CLUSTER NAME SE QUISER,
+
+
+e aí 
+
+
+
+VOCÊ CRIARÁ UM NOVO CLUSTER... -->  AÍ VOCÊ PODERÁ USAR 
+
+ESSE CLUSTER 
+
+COMO SEU 
+
+BACKEND....
+
+
+
+
+
+
+
+
+---> ENQUANTO ISSO ESTÁ SENDO SETTADO,
+
+
+
+VOCÊ PODE/DEVE 
+
+CLICAR EM 
+
+
+'SECURITY'....
+
+
+
+
+
+
+
+--> AÍ, LÁ EM SECURITY,
+
+VOCÊ VAI CRIAR 
+UM 
+
+
+'MONGODB USER',
+
+
+
+
+PARA QUE VOCÊ CONSIGA CONECTAR SEU APP 
+
+NODEJS(EXPRESS)
+
+
+AO MONGODB....
+
+
+
+
+
+
+
+
+-----> OK.... --> ADICIONE UM NOVO USER,
+
+
+
+
+AÍ __COLOQUE PERMISSÃO DE 
+
+'READ E WRITE TO ANY DATABASE'... (essa é a opção MAIS 
+
+
+REALISTA, mt mais do que 'atlas admin', PQ 
+
+ESSE USER 
+
+
+
+DEPOIS 
+
+
+
+TERÁ 
+
+O ROLE ASSUMIDO 
+
+POR 
+
+
+NOSSO 
+
+'NODE APP',
+
+PQ 
+
+
+___ELE 
+
+
+
+TERÁ O 
+
+DIREITO/PRERROGATIVA DE 'READ E WRITE' 
+
+NOSSAS DATABASES,
+
+
+MAS NÃO DE 
+
+'ADMINISTRATE THEM'...
+
+
+
+
+) ----> ISSO PQ ''''DATABASE ADMINISTRATION''''' É ALGO QUE 
+
+
+
+__NÃO É FEITO POR MEIO DO NODEJS,
+
+E SIM 
+É 
+
+FEITO 
+
+
+
+
+PELAS MÃOS DO 'DATABASE ADMIN'... (E não o nosso app)...
+
+
+
+Database administration is the function of
+ managing and maintaining database management systems 
+ (DBMS) software. Mainstream DBMS software such as Oracle, IBM DB2 
+ and Microsoft SQL Server need ongoing management. As such, corporations 
+ that use DBMS software often hire specialized information technology personnel
+  called database administrators or DBAs.
+
+
+
+
+---------------------
+
+
+
+
+
+--> CRIE UM NOVO PASSWORD,
+
+SALVE ESSE PASSWORD,
+
+PQ VOCÊ VAI PRECISAR DELE MAIS TARDE...
+
+
+
+
+
+
+--> AÍ VOCê TERÁ 
+
+
+'IP WHITELIST'... --> você verá 
+
+TODOS 
+
+OS 
+
+IP ADDRESSES 
+
+
+CUJA CONEXÃO SERÁ PERMITIDA AO SEU SERVER MONGODB... -----> 
+
+
+
+
+
+
+UMA COISA QUE 
+
+DEVEMOS FAZER É ADICIONAR 1 
+
+NOVO IP ADDRESS,
+
+
+e aí 
+
+
+ADICIONAR 
+O SEU 'LOCAL IP ADDRESS',
+
+
+
+
+__ 
+
+ISSO PROVISORIAMENTE,
+
+PQ 
+
+__VAMOS 
+
+QUERER__ TESTAR__ ESSA 
+
+
+MONGODB 
+
+DATABASE 
+
+
+
+
+__LOCALMENTE ANTES ___ DE 
+
+
+
+
+FAZER DEPLOY NA INTERNET 
+
+
+
+(QUANDO VOCÊ FIZER 
+
+DEPLOY DO SEU APP 
+
+NA INTERNET,
+
+
+
+
+VOCÊ COLOCARÁ APENAS O IP 
+
+
+
+DO 
+
+
+'NODE SERVER', DA MÁQUINA QUE ESTÁ RODANDO SEU NODE SERVER,
+
+QUE 
+
+SERÁ 
+
+A ÚNICA MÁQUINA COM ACESSO a 
+
+ESSE 
+
+DATABASE... 
+) ----->  e é claro que 
+
+
+essa máquina/nodeAPP 
+
+
+vai 
+
+ser fornecida pela pessoa que 
+
+
+te pediu o serviço,
+e não 
+
+será o pc que você utiliza em casa, etc...
+
+
+
+
+
+
+-------> OK, MAS _ AGORA VOCÊ _ PODE USAR 
+APENAS 
+
+O 
+
+SEU LOCAL 
+
+
+IP ADDRESS,
+
+
+
+O QUE 
+
+É ÓTIMO,
+ 
+ PQ 
+
+
+
+ IMPEDE 
+
+
+ QUALQUER ACESSO EXTERNO A SUA DATABASE,
+
+
+ ela fica locked down,
+
+ locked down 
+
+
+
+
+ TANTO DE UMA PERSPECTIVA DE USER (login, password, etc)... COMO PERSPECTIVA DE 
+
+ IP...
+
+
+
+
+
+
+
+
+
+
+ ----> OK..... TERMINADO ISSO,
+
+ TEMOS NOSSO CLUSTER,
+
+
+
+ podemos 
+
+nos conectar AO 
+
+NOSSO SERVIDOR/DATABASE MONGODB 
+
+
+LÁ DE DENTRO DO NOSSO 
+
+APP 
+
+NODE/EXPRESS...
+
+
+
+
+
+
+
+
+-----> PARA ISSO 
+
+
+
+VAMOS 
+
+CLICAR EM 'connect',
+
+E AÍ 
+
+
+
+TEREMOS 
+
+
+
+UM CONNECTION METHOD.... ---> 
+
+AÍ 
+
+
+
+
+
+
+TEREMOS AUQELA 
+
+URL 
+
+
+ESPECIAL,
+
+
+
+de 
+
+'mongodb+srv://madblorga:<PASSWORD>@cluster0-asjosjao'....
+
+
+
+
+
+
+
+
+--> VAMOS PRECISAR 
+
+DESSA URL,
+
+MAS ANTES DISSO
+
+VAMOS 
+
+INSTALAR 
+
+NOSSO 
+
+DRIVER 
+
+
+do nodejs....

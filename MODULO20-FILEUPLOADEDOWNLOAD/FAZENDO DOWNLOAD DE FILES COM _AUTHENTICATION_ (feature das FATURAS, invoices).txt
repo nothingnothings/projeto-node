@@ -1,0 +1,2105 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... 
+
+
+
+
+
+
+--> FAZER O SERVE DE IMAGES DE FORMA __ESTÁTICA__, 
+
+por meio 
+
+de 
+
+
+''
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
+
+'''
+
+
+
+
+É __ FINE___, 
+
+
+
+MAS 
+
+
+NÓS 
+
+NEM SEMPRE VAMOS QUERER 
+
+
+EXIBIR 
+
+ALGUNS 
+
+
+
+DOCUMENTOS/IMAGES __ 
+
+
+ESTATICAMENTE __ A TODOS __ 
+
+
+
+OS 
+USUÁRIOS 
+
+DE 
+
+NOSSOS APP...
+
+
+
+
+
+
+
+
+
+
+
+--> EXISTIRÃO CASOS EM QUE __ VAMOS QUERER 'DIVIDIR' OS DOCUMENTOS,
+
+
+
+VAMOS QUERER __ QUE _ APENAS_ _ ALGUNS SELETOS __ USUÁRIOS (ou, nesse caso, apenas 1 usuário)
+
+
+
+CONSIGA 
+
+TER 1 DOCUMENT SERVIDO ESTATICAMENTE A SI..
+
+
+
+
+
+
+
+
+
+
+
+------------------> PROFESSOR DIZ QUE NÃO VAMOS QUERER SERVIR ESTATICAMENTE UMA IMAGE, NESSE CASO AQUI...
+
+
+
+
+
+
+
+
+
+--> nesse caso, vamos querer FAZER SERVE DE UM 'INVOICE' (fatura),
+
+
+
+
+E ESSE INVOICE __ DEVE__ FICAR DISPONÍVEL APENAS A MIM, USUÁRIO 
+
+
+
+DO APP...
+
+
+
+
+
+
+
+
+
+
+-------> PARA ISSO,
+ 
+
+
+ DEVEMOS __ _COMEÇAR COM UM 'DUMMY INVOICE'...
+
+
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO, PROFESSOR CRIA UM __ NOVO FOLDER__ (root) de nosso app....,
+
+
+
+
+ de nome 'invoices' (vou usar o folder 'faturas'...)
+
+
+
+
+
+
+
+
+--------> E O PROFESSOR DIZ QUE PREPAROU UM SIMPLES PDF 
+
+,
+
+
+
+
+é 
+
+
+só um arquivo 
+
+chamado de 'fatura.pdf',
+
+
+
+
+com um 
+
+
+
+
+texto de 
+
+
+
+'Invoice 
+
+
+
+Item 1 - $ 9.99 
+
+
+Total: $ 9.99
+
+
+
+
+
+
+
+--------------------------
+
+
+
+certo.... 
+
+
+
+
+
+
+
+
+
+CONSEGUI CRIAR ESSE PDF COM O FOXIT...
+
+
+
+
+
+
+
+
+-> professor diz que mais tarde seremos capazes de GERAR ESSE PDF DINAMICAMENTE (mas agora não)...
+
+
+
+
+
+
+
+
+
+
+------> MAS AGORA VAMOS QUERER SERVIR 
+
+ESSE 
+
+
+
+
+PDF __ DINAMICAMENTE__, APENAS 
+
+A 
+
+
+
+
+
+
+1 DE NOSSOS USERS, O USER A QUE ELE ESTIVER VINCULADO (a que essa order estiver vinculada)...
+
+
+
+
+
+
+
+
+
+
+--------> OBVIAMENTE,
+
+
+PODERÍAMOS (de forma errada) DEIXAR _ 
+
+
+NOSSO FOLDER DE 'faturas'
+
+
+___STATICALLY ACCESSIBLE__,
+
+
+
+
+MAS NÃO É ISSO QUE O PROFESSOR QUER FAZER...
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR QUER, PRIMEIRAMENTE,
+
+
+TRABALHAR NA VIEW DE 
+
+
+
+'orders',
+
+PARA QUE 
+
+
+CONSIGAMOS 
+
+
+
+OBTER 1 LINK 
+
+A 
+
+ESSA 
+
+'FATURA'...
+
+
+
+
+
+
+
+-------> PARA ISSO,
+
+
+
+
+
+em cada 
+
+
+LIST ITEM para nossas orders,
+
+
+VAMOS QUERER ADICIONAR UMA 
+
+
+
+ANCHOR TAG DIZENDO 'fatura',
+
+
+E QUE DEVERÁ 
+
+APONTAR 
+
+
+À FATURA CORRESPONDENTE A ESSA ORDER...
+
+
+
+
+
+
+
+
+----> ajustei os estilos da página de 'orders', para que ficasse menos feia....
+
+
+
+
+
+
+
+
+
+-------> e agora também temos o link para a fatura...
+
+
+
+
+
+
+
+
+
+-----> MAS QUEREMOS SER CAPAZES DE CLICAR NESSE LINK E BAIXAR O 'INVOICE'...
+
+
+
+
+
+
+
+
+
+--. MAS COMO PODEMOS FAZER ISSO?
+
+
+
+
+
+
+
+---> BEM, COMO __ NÓS __ QUEREMOS __ 
+
+
+
+FAZER HANDLE 
+
+DESSE 
+
+LINK __ DE FORMA __ PRIVADA __ (só aquele user específico poderá 
+
+acessar 
+
+
+esse 
+
+link
+
+),
+
+
+
+
+
+PROFESSOR DIZ QUE PRECISAMOS __ SETTAR__ NOSSA PRÓPRIA 'ROUTE' 
+
+
+PARA 
+
+
+__tRABALHAR __ COM 
+
+'INVOICES'..
+
+
+
+
+
+
+
+
+
+-------> vai ser uma route de GET,
+
+
+
+uma route de get que 
+
+existirá provavelmente 
+
+
+no arquivo route de 
+
+'shop.js'...
+
+
+
+
+
+
+
+
+--------> precisamos de uma route dessas para ENTÃO CHECAR 
+
+
+
+POR COISAS 
+
+COMO 
+
+'IS USER AUTHENTICATED',
+
+
+e assim por diante...
+
+
+
+
+
+
+
+------> E É CLARO QUE 
+
+
+NOSSO LINK 
+
+em 
+
+'fatura' (anchor tag)
+
+
+DEVERÁ SER UM LINK DINÂMICO...
+
+
+
+
+
+
+
+
+
+
+--. PARA COMEÇAR, O PROFESSOR 
+
+
+
+
+
+VAI ATÉ 'shop.js'
+
+
+
+E ENTÃO ADICIONA UMA NOVA ROUTE,
+
+
+
+de path 
+
+
+
+'/orders/:orderId'...
+
+
+
+
+
+
+
+
+
+
+
+(ESSA SERÁ A PARTE __ DINÂMICA__ DE NOSSA URL)...
+
+
+
+
+
+
+
+vai ficando tipo assim:
+
+
+
+
+
+
+router.get('/orders/:orderId');
+
+
+
+
+
+
+
+
+
+
+
+
+----------> DEPOIS DISSO, VAMOS USAR AQUELE 
+
+
+
+'authCheckerAndRedirecter',
+
+
+
+
+
+
+
+MAS NÃO SÓ ISSO, vamos precisar __ DE OUTR__ 'CHECKER', outro middleware 
+
+
+QUE 
+
+
+___ VAI CHECAR__ 
+
+
+SE É REALMENTE 
+
+
+
+
+O USER DAQUELA ORDER QUE ESTÁ ACESSANDO ESSA FATURA....
+
+
+
+
+
+
+
+
+
+
+--> nossas faturas serão geradas dinamicamente com nomes 
+
+como 
+
+
+
+
+
+'fatura' + '-' + 'idDaOrder'....
+
+
+
+
+
+
+ex:
+
+
+
+
+fatura-61966d050dd562509c7febe7
+
+
+
+
+
+------------------------------
+
+
+
+
+
+QUEREMOS QUE ESSE SEJA O RESULTADO FINAL....
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+ok, a route continua sendo 
+
+
+'router.get('/orders/:orderId')';
+
+
+
+
+
+
+
+
+
+
+
+-------> AÍ O PROFESSOR ADICIONA A PROTEÇÃO DO authCheckerAndRedirecter
+
+
+
+ex:
+
+
+
+
+router.get('/orders/:orderId', authCheckerAndRedirecter, shopController.);
+
+
+
+
+
+
+
+
+-------> AÍ PROFESSOR DECIDE QUE 
+
+ELE 
+
+
+VAI 
+
+TER UM NOVO CONTROLLER, UM CONTROLLER DE 
+
+'getFatura'...
+
+
+
+
+router.get('/orders/:orderId', authCheckerAndRedirecter, shopController.getFatura);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... LÁ NO CONTROLLER DE 'shop.js'
+
+
+ADICIONAMOS ESSE CONTROLLER...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+
+
+
+  
+}
+
+
+
+
+
+
+---------------------------------------
+
+
+
+OK... 
+
+
+NESSE CONTROLLER É QUE TEREMOS TODA A MÁGICA DE 
+
+SERVE 
+
+
+
+de nosso pdf...
+
+
+
+
+
+
+
+
+--> PARA RETORNAR NOSSO ARQUIVO, PRIMEIRAMENTE VAMOS PRECISAR ___ 
+
+
+
+DA 
+
+
+'orderId'
+
+QUE __ SERÁ_ __ EXTRAÍDA_ __
+
+
+DE NOSSA 
+
+URL....( do path da url)....
+
+
+
+
+
+
+isso pq havíamos escrito isto:
+
+
+
+
+router.get('/orders/:orderId', authCheckerAndRedirecter, shopController.);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> é por isso que o professor escreve 
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+
+
+
+            const orderId = req.params.orderId;
+
+  
+}
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... ISSO VAI NOS DAR A PARTE '/:orderId' de nossa url....
+
+
+
+
+
+
+
+essa parte aí, encodada na url...
+
+
+
+
+
+
+
+
+
+
+certo... agora eu tenho ESSE ORDER ID... ------> 
+
+
+
+
+O PRÓXIMO PASSO É __ USAR 
+
+
+
+
+
+
+
+
+'Order.findById({_id: orderId})' 
+
+
+
+
+
+
+----> FAZEMOS ISSO __ PARA ENCONTRAR/VERIFICAR __ SE EXISTE UMA ORDER COM ESSE ID....
+
+
+
+
+
+
+
+
+provavelmente o código fica assim:
+
+
+
+
+
+Order.findById({_id: orderId})
+.then(
+
+    (order) => {
+
+
+        if (!order) {
+
+            return res.status(404).render(
+                        '/orders',  {
+
+
+                            errorMessage: 'No invoice found for that order'
+                        }
+            )
+        }
+    }
+)
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+CERTO... esse é o case de 'NÃO EXISTE NENHUMA FATURA PARA ESSA ORDER'... caso passemos por esse case,
+
+
+
+vamos querer __ PROCURAR/VERIFICAR___ SE O 'userId' na ORDER QUE ENCONTRAMOS __ CORRESPONDE AO 
+
+
+'req.user._id' DO CARA QUE ESTÁ USANDO NOSSO APP...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+const orderId = req.params.orderId;
+
+
+Order.findById({_id: orderId})
+.then(
+
+    (order) => {
+
+
+        if (!order) {
+
+            return res.status(404).render(
+                        '/orders',  {
+
+
+                            errorMessage: 'No invoice found for that order'
+                        }
+            )
+        } else {
+
+                if(order.user.userId.toString() !== req.user._id) {
+                                            return res.status(404).render(
+                                                    '/orders',  {
+
+
+                                      errorMessage: 'No invoice found for that order'
+                                                     }
+                                          )
+                                             }
+            
+            else {
+
+
+                return A FATURA..
+            }
+
+
+        }
+    }
+)
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+certo.... mas como conseguimos 'RETURN A FATURA'? 
+
+
+
+
+
+
+-------> para isso, professor explica que vamos precisar do __ NOME__ da fatura...
+
+
+
+como sabemos _O  PADRÃO___ DE NOMENCLATURA DAS 
+
+
+FATURAS (pq somos nós que inventamos, inventamos aquilo de 
+            'fatura' + '-' + 'idDaOrder'....  )
+
+
+
+
+
+
+
+    ,
+
+
+
+
+
+    ESCREVEMOS ALGO ASSIM:
+
+
+
+
+
+
+const invoiceName = 'fatura-' + orderId + '.pdf'; 
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+E VAI FICANDO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const orderId = req.params.orderId;
+const invoiceName = 'invoice-' + orderId + '.pdf';
+
+
+Order.findById({_id: orderId})
+.then(
+
+    (order) => {
+
+
+        if (!order) {
+
+            return res.status(404).render(
+                        '/orders',  {
+
+
+                            errorMessage: 'No invoice found for that order'
+                        }
+            )
+        } else {
+
+                if(order.user.userId.toString() !== req.user._id) {
+                                            return res.status(404).render(
+                                                    '/orders',  {
+
+
+                                      errorMessage: 'No invoice found for that order'
+                                                     }
+                                          )
+                                             }
+            else {
+
+
+                return A FATURA..
+            }
+
+
+        }
+    }
+)
+
+
+
+
+
+
+-----------------------------
+
+
+
+CERTO... 
+
+
+AGORA SÓ NOS RESTA 
+
+
+RETORNAR 
+
+
+ESSA FATURA, DE ALGUMA FORMA...
+
+
+
+
+
+
+
+
+
+------> COMO PODEMOS RETORNAR ESSE ARQUIVO? -----> BEM, É CLARO QUE 
+
+
+COM A AJUDA _ DO FILESYSTEM 
+
+DO 
+
+NODE....
+(
+
+
+    pacote 
+
+
+    'const fs = require('fs');'
+
+
+)
+
+
+
+
+
+
+
+
+
+CERTO.... VAMOS USAR O FILESYSTEM DO NODE... aquelas funções ASYNC 
+
+
+que fazem READ...
+
+
+
+
+
+
+
+
+
+--> professor escreve 
+
+
+
+
+
+
+
+
+
+'const fs = require('fs');' 
+
+
+
+
+
+
+
+---------------------
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  Order.findById({ _id: orderId }).then((order) => {
+    if (!order) {
+      return res.status(404).render('/orders', {
+        errorMessage: 'No invoice found for that order',
+      });
+    } else {
+      if (order.user.userId.toString() !== req.user._id) {
+        return res.status(404).render('/orders', {
+          errorMessage: 'Your user has not made that order. ',
+        });
+      } else {
+        return; ///
+      }
+    }
+  });
+};
+
+
+
+
+
+-----------------------
+
+
+
+CERTo....
+
+
+eu pensei em 'read Files',
+
+
+
+e o professor 
+
+
+diz que 
+
+
+
+é algo em que poderíamos pensar, nesse caso....
+
+
+
+
+
+------------->  ok... usamos 
+
+
+
+
+
+'readFile'
+
+PARA __ LER___ UMA FILE __ DE NOSSO FILESYSTEM....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ALGO TIPO ASSIM, CREIO EU:
+
+
+
+
+
+
+const path = require('path');
+
+
+
+
+
+
+
+const pdfPath = path.join(__dirname, 'faturas');
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => { ////EIS O CÓDIGO EM QUESTÃO.
+      if(err) {
+        throw err;
+      }
+
+  })
+
+  Order.findById({ _id: orderId }).then((order) => {
+    if (!order) {
+      return res.status(404).render('/orders', {
+        errorMessage: 'No invoice found for that order',
+      });
+    } else {
+      if (order.user.userId.toString() !== req.user._id) {
+        return res.status(404).render('/orders', {
+          errorMessage: 'No invoice found for that order',
+        });
+      } else {
+        return; ///
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+--> ok, mas o problema é que 
+
+
+ESSE código de readFile vai nos retornar uma STREAM, eu acho....
+
+
+
+
+
+
+
+-----> ok.... a parte do path eu acertei... é o return 
+
+
+
+da data que eu não sei exatamente como fazer...
+
+
+
+
+
+
+
+o callback 
+
+
+vai ficar tipo assim:
+
+
+
+
+
+
+
+(err, data) => {
+
+
+
+}
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE A 'DATA' VAI SER NO FORMATO DE UM __BUFFER_.... 
+
+
+
+
+
+
+
+
+
+-----> É CLARO QUE SE TIVERMOS UM ERRO, VMAOS QUERER DAR___ NEXt__ NESSE ERROR (e não throw... essa parte eu errei)...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => { ////EIS O CÓDIGO EM QUESTÃO.
+      if(err) {
+       return next(err);
+      }
+
+  })
+
+  Order.findById({ _id: orderId }).then((order) => {
+    if (!order) {
+      return res.status(404).render('/orders', {
+        errorMessage: 'No invoice found for that order',
+      });
+    } else {
+      if (order.user.userId.toString() !== req.user._id) {
+        return res.status(404).render('/orders', {
+          errorMessage: 'No invoice found for that order',
+        });
+      } else {
+        return; ///
+      }
+    }
+  });
+};
+
+
+---------------------------------
+
+
+
+
+
+FAZEMOS ISSO PARA QUE 
+
+'THE DEFAULT ERROR HANDLING MIDDLEWARE CAN TAKE OVER'...
+
+
+
+
+
+
+
+
+--> CASO CONTRÁRIO, SE NÃO TIVERMOS  ESSE ERROR,
+
+
+'
+data'
+
+
+SERÁ REALMENTE NOSSA 'FILE'... --> É POR ISSO QUE 
+
+
+O 
+
+
+PROFESSOR 
+
+VAI 
+
+ESCREVER 
+
+
+
+'res.send()' 
+
+
+
+(SEND --> FUNCTION PROVIDENCIADA PELO MIDDLEWARE DE 'EXPRESSJS')...
+
+
+
+(pelo que eu me lembre, o express já faz 
+
+a conversão 
+
+
+da file, por meio dos buffers, automaticamente... (sem toda aquela lenga-lenga...))
+
+
+
+
+
+
+
+
+
+'res.send(data)'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  Order.findById({ _id: orderId }).then((order) => {
+    if (!order) {
+      return res.status(404).render('/orders', {
+        errorMessage: 'No invoice found for that order',
+      });
+    } else {
+      if (order.user.userId.toString() !== req.user._id) {
+        return res.status(404).render('/orders', {
+          errorMessage: 'No invoice found for that order',
+        });
+      } else {
+
+
+                
+  return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => { 
+      if(err) {
+       return next(err);
+      } else {
+
+          return res.send(data); ////EIS O CÓDIGO EM QUESTÃO.
+      }
+
+  })
+
+
+      } 
+    }
+  });
+};
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+DEVEMOS VER SE ISSO FUNCIONA....
+
+
+
+
+
+
+
+
+
+
+
+
+------> MAS ANTES DISSO, PRECISAMOS EDITAR A ANCHORTAG DA 'fatura' LÁ NA NOSSA VIEW,
+
+
+PARA QUE 
+
+
+
+
+ela aponte para 
+
+
+'/orders/:orderId'....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/orders.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul class="orders">
+ <% orders.forEach(order => { %>
+     <li class="orders__item">
+        <h1>Order # <%= order._id %></h1>
+        <ul class="orders__products">
+          <% order.products.forEach(product => { %>
+
+            <li class="orders__products-item">
+              
+              <span>Product:</span> <%= product.product.title %> (<%= product.quantity %>)
+              <p><span>Price:</span> $<%= product.product.price %></h1>
+              <p><a href="/orders/:orderId">Fatura</a></p>
+            
+            </li>
+
+        <%  }) %>
+        <h2>Total Price: $<%= order.totalPrice %></h1>
+        </ul>
+
+     </li>
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+--> GANHEI 1 ERROR:
+
+
+
+CastError: Cast to ObjectId failed for value "{ _id: ':orderId' }" (type Object) at path "_id" for model "Order"     
+    at model.Query.exec (A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\node_modules\mongoose\lib\query.js:4545:21)
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONSERTEI ESSE ERRO, E AGORA MEU CÓDIGO ESTÁ FICANDO ASSIm:
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+    if (err) {
+      // throw err; //código errado
+      return next(err); ///código certo. Vai ativar nosso default error handling middleware (erro 500).
+    }
+  });
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id) {
+        req.flash('error', 'Your user was not responsible for that order.')
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            return res.send(data); ////EIS O CÓDIGO EM QUESTÃO.
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+mas esse flash NÃO ESTÁ FUNCIONANDO, AINDA....
+
+
+
+
+
+
+
+
+
+
+
+--> agora esta funcionando; o código ficou assim:
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+    if (err) {
+      // throw err; //código errado
+      return next(err); ///código certo. Vai ativar nosso default error handling middleware (erro 500).
+    }
+  });
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id) {
+        console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            return res.send(data); ////EIS O CÓDIGO EM QUESTÃO.
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+  ///'req.user' realmente é o código correto PARA __ CHAMAR_ OS 'METHODS MONGOOSE' aqui, e __ NAÕ 'req.ses
+  // req.user ///CÓDIGOS/métodos BUILTIN do mongoose.... vamos querer eles, vamos querer o MELHOR DOS 2 MUNDOS (as SESSIONS para identificar nossos users/dividir a data __ E ___ TAMBÉM__ O objeto/model 'user' COM TODOS OS METHODS DO MONGODB __ dentro desse objeto 'user' no nosso request... é exatamenete por isso que estamos usando 'req.user' neste local...)
+
+  //req.session.user //NÃO USE ESTE CÓDIGO (pq se você usar, estará __ TENTANDO CHAMAR '.populate()' EM 1 OBJETO __ QUE __ NÃO TEM/NÃO TERÁ ___ OS METHODS MÁGICOS DO MONGOOSE, justamente pq __ SE TRATA APENAS DE 1 SIMPLES 'SESSION' com alguam data chata de 'user' ARMAZENADA NO SEU MEIO, o que signfiica que __ NAÕ TERÁ/NÃO TEM OS __ METHODS MONGOOSE DE QUE TANTO PRECISAMOS, dentro de si...)
+
+  let message = req.flash('error');
+
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
+
+  console.log(req.user._id);
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+
+
+
+  Order.find({ user: { userId: req.user._id } })
+    // .populate('cart.products.productId')
+    .populate('products.product')
+    .then((orders) => {
+      console.log(orders, 'THE ORDERS');
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      orders.forEach((order) => {
+        console.log(order, 'LINE');
+
+        order.products.forEach((product) => {
+          console.log(product, 'LINE2');
+        });
+
+        // order.totalPrice = order.cart.products
+        order.totalPrice = order.products
+          .map(
+            ////define o TOTAL PRICE de cada order...
+            (product) => {
+              console.log(product, 'LINE3');
+              // return product.productId.price * product.quantity;
+              return product.product.price * product.quantity;
+            }
+          )
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0);
+      });
+
+      res.render('shop/orders', {
+        pageTitle: 'Your Orders',
+        orders: orders,
+        path: '/orders',
+        // errorMessage: null,
+        errorMessage: message,
+        validationErrors: validationErrors
+        // isLoggedIn: isLoggedIn
+        // isLoggedIn: req.session.isLoggedIn
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Certo... mas eu ainda não estou conseguindo carregar aquela página 
+
+  da fatura...
+
+
+
+
+
+  Devo examinar o código...
+
+
+
+
+
+
+  ok.... consegui...
+
+
+
+  era um 
+
+  'toString()' 
+
+  que estava faltando....
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+  exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+
+  fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+    if (err) {
+      // throw err; //código errado
+      return next(err); ///código certo. Vai ativar nosso default error handling middleware (erro 500).
+    }
+  });
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        console.log(req.user._id, 'LINE5125');
+        console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            return res.send(data); ////EIS O CÓDIGO EM QUESTÃO.
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA 
+
+
+
+
+ESTOU RECEBENDO UM ARQUIVO (baixando um arquivo) quando clico em 'Fatura'....
+
+
+
+
+
+
+
+
+
+
+
+--> o único problema é que isso aí É UM ARQUIVO SEM EXTENSÃO (.pdf, etc),
+
+
+
+ou seja,
+
+não é um pdf....
+
+
+
+
+
+bizarro....
+
+
+
+
+
+
+
+--> mas ele é realmente nosso arquivo .pdf, só 
+
+está bugado mesmo, está sem o '.pdf'...
+
+
+
+
+
+
+
+
+
+--> vou ver o vídeo do professor, ver o que ele fala sobre isso...
+
+
+
+
+
+
+
+
+
+
+
+--> ELE DIZ QUE 
+
+
+
+
+
+
+ESSA NÃO FOI A FORMA MAIS CONVENIENTE DE BAIXAR ESSE ARQUIVo..
+
+
+
+
+
+
+
+PROBLEMAS DE NOSSO APPROACH:
+
+
+
+
+
+
+
+1) ficamos com um FILE NAME ESTRANHO__..
+
+
+
+
+
+
+
+2) NOSSO ARQUIVO FICOU SEM A EXTENSÃO '.pdf' (ou qualquer outra extensão, por assim dizer... não serão só arquivos pdf... )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PODEMOS MELHORAR ISSO, E MELHORAREMOS,
+
+
+
+NA PRÓXIMA AULA,
+
+AULA DE 
+
+
+
+
+
+'SETTING FILE TYPE HEADERS'...

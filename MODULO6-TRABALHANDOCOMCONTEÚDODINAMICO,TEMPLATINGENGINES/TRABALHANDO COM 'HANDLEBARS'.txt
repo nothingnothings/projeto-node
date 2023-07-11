@@ -1,0 +1,985 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> NÓS DEMOS UMA OLHADA BEM APROFUNDADA NA TEMPLATING ENGINE DO PUG....
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR NOS EXPLICOU A LÓGICA CORE DAS TEMPLATING ENGINES... 
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA SEREMOS MAIS RÁPIDOS COM AS OUTRAS 2 ENGINES,
+
+PQ 
+
+JÁ VIMOS OS CONCEITOS BÁSICOS....
+
+
+
+
+
+
+
+
+----> OK... AGORA O HANDLEBARS:
+
+
+
+
+
+O HANDLEBARS 
+
+
+
+
+NÃO SEGUE UM APPROACH TÃO MINIMALISTA COMO O DO PUG,
+
+
+
+
+
+
+
+ISSO PQ ELE USA 
+
+
+__HTML NORMAL__, HTML NORMAL MISTURADO COM 'SOME TEMPLATING LOGIC' (as handlebars)...
+
+
+
+
+
+
+
+
+---------> DEVEMOS USAR 'HANDLEBARS'... -->
+
+
+
+
+PARA 
+
+ISSO, 
+
+
+
+PRECISAMOS 
+
+IR 
+
+ATÉ 
+
+'app.js'
+
+
+
+E ENTÃO TROCAR NOSSA VIEW ENGINE...
+
+
+
+
+
+
+
+-------> PROFESSOR DIZ QUE JÁ INSTALAMOS 
+
+
+
+'
+EXPRESS-HANDLEBARS',
+
+
+
+
+MAS ELE EXPLICA QUE 
+
+ESSE 
+
+É UM PACKAGE QUE __ NÃO É 'AUTO-INSTALLED' 
+
+PELO 
+
+EXPRESSJS.... ------> ISSO QUER 
+
+DIZER QUE 
+
+
+PRECISAMOS DIZER, MANUALMENTE,
+
+AO 
+
+EXPRESSJS 
+
+
+QUE 
+
+EXISTE 
+
+UMA 
+
+ENGINE 
+
+'EXPRESS-HANDLEBARS'
+
+disponível a ele...
+
+
+
+
+
+
+
+
+
+
+----------> ANTES DE MAIS NADA, 
+
+
+PRECISAMOS __ IMPORTAR__ 
+
+
+
+ESSE 
+'express-handlebars'
+
+
+
+
+
+
+NO MAIN FILE DE NOSSO APP,
+
+no caso,
+
+
+
+NO 'app.js'...
+
+
+
+
+
+
+
+
+
+--> professor vai o importar com 
+
+
+'const expressHbs = require('express-handlebars');'
+
+
+
+
+
+
+
+
+
+---> AGORA ISSO ESTARÁ IMPORTADO NO NOSSO ARQUIVO,
+
+
+E AGORA 
+
+
+PRECISAMOS DIZER AO EXPRESSJS 
+
+QUE 
+
+ISSO EXISTE, E QUE ISSO É UMA ENGINE...
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+PROFESSOR VAI USAR UM MÉTODO QUE NÃO 
+
+USAMOS ATÉ AGORA (e que é diferente de 'app.set()', que usamos com o pug, para settar o pug como engine e para SETTAR o folder 'views' como o local DE NOSSAS VIEWS (o que era o DEFAULT)...)
+
+
+
+
+
+
+
+
+
+------->
+
+VAMOS USAR 
+
+'app.engine()',
+
+
+MÉTODO QUE É USADO NOS CASOS EM QUE 
+
+
+
+A TEMPLATING ENGINE QUE VAMOS QUERER USAR ''IS NOT BUILTIN IN EXPRESS'''....
+
+
+
+
+
+
+
+-----> COMO O 'express-handlebars'
+
+NÃO É BUILTIN NO EXPRESS,
+
+
+
+TEMOS QUE USAR ISSO AÍ... (o pug, por sua vez, é builtin, e por isso não precisamos usar esse método...).
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+app.engine() -------> PARA REGISTRAR 
+
+
+
+O EXPRESS-HANDLEBARS,
+
+
+PRECISAMOS 
+
+DEFINIR UM 
+
+'NAME' 
+
+PARA 
+
+a
+
+
+NOSSA ENGINE... -----> E VOCÊ PODE USAR QUALQUER NOME QUE VOCÊ QUISER,
+
+apesar de que é melhor você NÃO USAR UM 
+
+
+
+NOME QUE CLASHE COM AS 'BUILT-IN ENGINES' (no final deste módulo temos um link sobre isso)... 
+
+
+
+
+
+
+
+--> HANDLEBARS É O NOME CLÁSSICO PARA ESSE PACOTE,
+
+POR ISSO O PROFESSOR O UTILIZARÁ...
+
+
+
+
+
+
+
+----> DEPOIS DISSO,
+
+PROFESSOR 
+
+
+DIZ QUE DEVEMOS 
+
+
+PASSAR COMO ARGUMENTO 'THE ACTUAL TOOL' que deverá ser utilizada para esse name de 
+
+'handlebars'.. ------> COMO ESSA TOOL,
+
+VAMOS 
+
+
+PASSAR 
+
+'expressHbs', AQUELE OBJETO/IMPORT que conseguimos por meio do require de 'express-handlebars'...
+
+
+
+
+
+
+
+
+
+
+
+---> e 'expressHbs',
+
+
+NO FINAL DAS CONTAS,
+
+É __ UMA FUNÇÃO,
+
+FUNÇÃO QUE DEVEMOS CHAMAR 
+
+com 
+
+
+'()'....
+
+
+
+
+ex:
+
+
+const expressHbs = require('express-handlebars');
+
+app.engine('handlebars', expressHbs());
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+^^^ESSA FUNÇÃO 'expressHbs()'
+
+
+VAI BASICAMENTE __INICIALIZAR ESSA ENGINE__>...
+
+
+
+
+
+
+
+
+
+
+-----> OK... ESSA FUNÇÃO VAI RETORNAR 'THE INITIALIZED VIEW ENGINE',
+
+
+QUE PODEMOS ASSIGNAR A ESSE OBJETO 'engine'...
+
+
+
+
+
+----->  É CLARO QUE SÓ ESSE CÓDIGO AÍ NÃO VAI BASTAR... --> 
+
+
+
+
+
+TAMBÉM TEMOS QUE ESCREVEr 
+
+
+
+'app.set('view engine', 'handlebars'); ', __ CÓDIGO BEM PARECIDO COM AQUELE DE SETUP DO PUG (que era 'app.set('view engine', 'pug'))' ....
+
+
+
+
+
+
+
+
+
+
+
+-----> EX:
+
+
+
+
+
+//////VERSÃO DE IMPORT DO __HANDLEBARS__ (templating engine RIVAL DO PUG....)
+// app.engine('handlebars', expressHbs());
+// app.set('view engine', 'handlebars');
+
+
+
+
+
+
+
+
+
+
+
+
+-> COM ISSO,
+
+
+
+ESTAMOS 'GOOD TO GO'..
+
+
+
+
+
+
+
+--> AGORA PODEMOS USAR 
+
+
+HANDLEBARS NO NOSSO CÓDIGO...
+
+
+
+
+
+
+---> OK, MAS COMO USAMOS/ESCREVEMOS TEMPLATES 'HANDLEBARS'?
+
+
+
+
+
+
+
+
+
+
+
+--> COMEÇAMOS PELA PÁGINA DE ERRO 404...
+
+
+
+
+
+
+
+
+---> PROFESSOR CRIA UMA PÁGINA 
+
+
+'404.handlebars',
+
+
+PQ 
+
+ESSE 
+
+É 
+
+
+A NAMING CONVENTION DO HANDLEBARS,
+
+seus arquivos são 
+
+
+
+escritos assim...
+
+
+
+
+
+
+
+
+
+
+------> OBS: o nome de seu arquivo 'handlebars' 
+
+DEPENDE DO QUE VOCÊ SETTOU 
+
+NESSAS 
+
+2 LINHAS:
+
+
+
+
+'app.engine('handlebars', expressHbs());
+app.set('view engine', 'handlebars');' 
+
+
+
+
+
+
+
+
+
+
+-> SE VOCÊ COLOCASSE, POR EXEMPLO,
+
+
+isto:
+
+
+
+
+
+'app.engine('pudim', expressHbs());
+app.set('view engine', 'pudim');' 
+
+
+
+
+
+
+VOCÊ SERIA OBRIGADO A NOMEAR SEUS ARQUIVOS TEMPLATE DO HANDLEBARS 
+
+como
+
+
+
+'404.pudim'... 
+
+
+
+
+
+
+
+ou então 
+
+
+'404.hbs',
+
+
+
+
+etc etc...
+
+
+
+
+
+
+
+
+
+----> CERTO...
+
+
+
+
+
+COM ISSO REGISTRADO,
+
+
+DEVEMOS 
+
+
+
+COPIAR O 
+
+ 
+
+
+CÓDIGO HTML NORMAL DA PÁGINA 404
+
+
+
+E COLAR 
+
+NESSE ARQUIVO 
+
+
+
+'.hbs'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+404.hbs
+
+
+
+
+
+
+
+
+
+
+-----> EX:
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not Found</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+-> O HBS USA 
+
+
+NORMAL HTML,
+
+
+COM UMA CUSTOM SYNTAX...
+
+
+
+
+
+
+
+
+
+
+-----> CERTO.... NESSE ARQUIVO,
+
+
+PROFESSOR QUER,
+ 
+ COMO EXEMPLO,
+
+
+ OUTPUTTAR 
+
+
+
+ AQUELE 
+
+
+ 'title' (em que temos 'Page not Found')
+
+
+ DINAMICAMENTE...
+  
+
+
+
+
+
+
+
+
+
+  -----> devemos ter em mente que 
+
+  LÁ 
+
+
+
+
+  NO 
+
+
+  'app.js',
+
+
+  EM QUE ESTAMOS 
+
+  PASSANDO A PÁGINA/TEMPLATE 404
+
+
+
+
+
+  por meio daquele 
+
+  código 
+
+
+  de 
+
+
+  ''
+
+
+
+
+  app.use(
+  (req, res, next) => {
+
+      res.status(404).render('404', {pageTitle: 'Page not Found'});
+ 
+    } 
+)
+
+,
+
+
+
+
+
+
+
+ESSE CÓDIGO AÍ ESTÁ USANDO UM DE NOSSOS ARQUIVOS 'pug',
+
+E NÃO ESSE 'HANDLEBARS' 
+
+aí... 
+
+
+
+
+
+
+---->  BEM... MAS O PROFESSOR NOS FALA ALGO IMPORTANTE:
+
+
+
+A FORMA PELA QUAL VOCÊ 
+
+
+'ADD DATA INTO TEMPLATES' ( esse segundo parâmetro em '.render(xxx, yyy)' )
+
+
+
+
+
+__NUNCA MUDA__, INDEPENDENTEMENTE DA 
+
+
+
+TEMPLATING ENGINE QUE VOCÊ ESTIVER USANDO (não importa se for pug, ejs ou handlebars....)
+
+
+
+
+
+
+
+
+------> É SEMPRE ESSE MESMO TIPO DE 'FLOW',
+
+
+UM OBJETO 
+
+
+COM KEY-VALUE PAIRS,
+
+
+em que 
+
+
+AS 
+
+KEYS 
+
+
+
+FICAM DISPONÍVEIS NO TEMPLATE...  (a ÚNICA COISA QUE MUDA 
+
+É 
+
+a 
+
+__MANEIRa_ PELA QUAL VOCÊ USA ESSA DATA, em cada templating engine/arquivo template... )
+
+
+
+
+
+
+
+
+
+
+--> E EM 'HANDLEBARS',
+
+
+
+NÓS OUTPUTTAMOS 
+
+um valor dinâmico como essa key de 'pageTitle'
+
+
+POR MEIO 
+
+
+
+
+DA SINTAXE DAS DOUBLE CURLY BRACES (handlebars...)
+
+
+
+
+
+
+ex:
+
+
+
+
+<title> {{pageTitle}} </title>
+
+
+
+
+-----------------------
+
+
+SALVAMOS NOSSO CÓDIGO E RECARREGAMOS A PÁGINA...
+
+
+
+
+(AGORA ESTAREMOS USANDO ESSES ARQUIVOS '.hbs'/'handlebars' PQ 
+
+O 
+
+SETTAMOS 
+
+
+NAQUELAS 
+
+
+LINHAS  DE 
+
+
+''''
+//////VERSÃO DE IMPORT DO __HANDLEBARS__ (templating engine RIVAL DO PUG....)
+// app.engine('hbs', expressHbs());
+// app.set('view engine', 'hbs');
+
+
+'''
+
+
+
+
+
+)
+
+
+
+
+
+
+
+----> E ESSE DOUBLE CURLY BRACES REALMENTE VAI OUTPUTTAR NOSSO CONTEÚDO DINÂMICO, NOSSA KEY 
+
+
+DE 
+
+'pageTitle'... (os double curly braces foram substituídos PELO CONTEÚDO QUE QUERÍAMOS RENDERIZAR, dinâmico...)
+
+
+
+
+
+
+
+
+
+
+---> SE VOCÊ ESTIVER SE SENTINDO CONFIANTE,
+
+
+VOCê 
+
+
+__ PODE __ IR EM FRENTE __ E 
+
+
+
+
+
+SUBSTITUIR/TRANSFORMAR 
+
+
+
+AS PÁGINAS HTML 
+
+
+COMUNS DE NOSSO PROJETO 
+
+
+
+COM 
+
+
+
+VERSÕES 
+
+
+HANDLEBARS DELAS...
+
+
+
+
+(só pule a parte do 'layout', pq é mais complexa... veremos isso depois...)

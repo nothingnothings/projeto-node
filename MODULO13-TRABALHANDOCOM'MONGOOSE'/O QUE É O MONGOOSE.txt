@@ -1,0 +1,613 @@
+
+
+
+
+
+
+
+
+
+
+O QUE É O MONGOOSE? 
+
+
+
+
+
+
+
+
+
+-------> O MONGOOSE É UM 
+
+
+'ODM' 
+
+
+
+(''' OBJECT DOCUMENT MAPPING LIBRARY'''...)
+            ^^^^
+
+
+
+
+
+
+
+
+
+
+JÁ O SEQUELIZE É UM 'ORM' ('''''Object Relational Mapping Library'''') 
+
+
+
+
+
+
+
+
+
+
+
+
+-_> É UM ODM ------->  
+
+
+
+
+
+
+e um 
+
+
+'odm'
+
+
+É 
+
+
+ALGO BEM SIMILAR 
+
+A UM 
+
+'ORM' (object relational mapping library),
+
+
+
+
+
+E A DIFERNEÇA
+ 
+
+
+
+ ENTRE OS 2,
+ É 
+
+
+
+ CLARO,
+
+
+
+
+
+
+__ É APENAS QUE O 
+
+'MONGODB'
+
+
+
+NÃO É UMA 
+
+'RELATIONAL DATABASE',
+
+
+E SIM 
+
+
+É 
+
+UM 
+
+'DOCUMENT DATABASE',
+
+
+
+
+
+por isso a diferença 
+
+
+nos nomes....
+
+
+
+
+
+
+
+
+
+--> O MONGOOSE PENSA EM 'DOCUMENTS',
+
+E É POR ISSO 
+
+QUE O NOME É 
+
+
+'ODM'...
+
+
+
+
+
+
+
+
+
+--> A IDEIA, AQUI, NO ENTANTO, é a MESMA DO SEQUELIZE...
+
+
+
+
+
+
+
+
+
+
+--> nós vamos ter/temos no nosso 
+
+
+projeto 
+
+
+
+uma 
+
+
+DATA/ENTIDADE....
+
+
+
+
+
+
+
+
+
+
+--> digamos um user,
+
+com este formato:
+
+
+
+
+
+
+User 
+
+*name 
+*age 
+*email 
+*password 
+
+
+
+
+
+
+
+
+
+------> AÍ, VAMOS QUERER __ SALVAR___ ESSE USER,
+
+SALVAR ESSE USER EM UMA 
+
+COLLECTION,
+
+em 1 
+
+database...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> VAMOS QUERER __ MAPPEAR___ NOSSO JAVASCRIPT OBJECT A UM DOCUMENT EM 1 COLLECITON,
+
+
+para 
+
+fazer com que ele fique tipo assim:
+
+
+
+
+
+
+
+
+---
+users |
+-----
+
+ID     name      age   password
+1      'Max'    28    'dsdg312'
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+ 
+
+ --> E É CLARO QUE PODERÍAMOS/PODEMOS ESCREVER A QUERY PARA ISSO 
+
+ POR CONTA PRÓPRIA,
+
+ ESCREVER 
+
+ ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+ db.collection('users').insertOne({name: 'Max', age: 28, password: 'dsdg312'}),
+
+
+
+
+
+
+
+
+
+ É __EXATAMENTE ISSO QUE FIZEMOS NO ÚLTIMO MÓDULO__....
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS É CLARO QUE SERIA BEM MELHOR SE PUDÉSSEMOS FOCAR __ NOS 
+
+
+
+ NOSSOS OBJECTS E NA NOSSA DATA,
+
+
+
+
+
+ e aí 
+
+
+
+
+
+
+VER COMO NOSSA 
+
+DATA 
+
+DEVERÁ SE PARECER 
+
+
+NA 
+
+DATABASE,
+
+para então trabalhar com ela.... 
+
+
+
+
+isso realmente seria melhor...
+
+
+
+
+
+
+
+
+
+
+
+
+-> COM A SINTAXE DO MONGOOSE,
+
+FICARÍAMOS COM ALGO ASSIM:
+
+
+
+
+
+''''''''''''''''''''''''''''''
+
+const user = User.create({name: 'Max', age: 28, password: 'dsdg312'})
+
+
+''''''''''''''''''
+
+
+
+
+
+
+------> 
+
+
+
+E ESSA SINTAXE QUE 
+
+VEMOS ALI EM CIMA,
+
+
+essa linha aí,
+
+
+
+_NÃO É NEM 
+
+
+
+MESMO A SINTAXE FINAL DO MONGOOSE, QUE É AINDA MAIS ABREVIADA... -----> NÓS PODEMOS 
+
+
+
+USAR O MONGOOSE DE UMA 
+MANEIRA UM POUCO DIFERENTE DAQUELA QUE VEMOS 
+
+ALI EM CIMA... -----> 
+
+
+
+
+
+
+
+
+
+
+
+MAS MESMO ESSA VERSÃO 'POBRE' 
+
+
+da sintaxe mongoose já é bem mais 
+
+concisa do que a versão/sintaxe NORMAL do mongodb...
+
+
+
+
+
+
+
+
+-----> MONGOOSE, EXATAMENTE COMO O SEQUELIZE,
+
+
+
+nos deixa 
+
+
+
+____DEFINIR MODELS__,
+
+
+MODELS COM OS QUAIS TRABALHAMSO,
+
+
+
+
+
+E AÍ 
+
+TODAS 
+
+AS 
+
+QUERIES 
+
+SÃO FEITAS 
+
+
+POR TRÁS DAS CENAS.... ------> mas é claro que isso 
+
+
+não significa 
+
+
+
+que 
+
+
+
+
+não podemos influenciar essas queries, mudar algumas coisas nelas...
+
+
+
+
+
+
+
+
+--> OS CONCEITOS CORE DO MONGODB 
+
+
+é que 
+
+
+
+nós trabalhamos com:
+
+
+
+
+
+
+
+
+
+
+1) SCHEMAS E MODELS.... ---> ex: 'User', 'Product'.... 
+
+
+--> NESSES MODELS DEFINIMOS COMO NOSSA DATA DEVE SE PARECER...
+
+
+
+ex:
+
+User, Product...
+
+
+
+
+2) INSTANCES --> nas instances nós __INSTANCIAMOS NOSSOS MODELS,
+
+
+ou seja,
+
+CRIAMOS OBJETOS JAVASCRIPT VERDADEIROS __ QUE SÃO __ BASEADOS __NAS 
+
+NOSSAS BLUEPRINTS/MODELS... 
+
+(  
+
+
+ex:
+
+
+const user = new User();
+
+
+)
+
+
+
+
+
+3) DEPOIS, SETTADOS ESSES 2 
+
+
+
+NEGÓCIOS, OS 
+
+
+MODELS E AS INSTANCES DESSES MODELS,
+
+
+
+__PODEMOS __ EXECUTAR _ QUERIES__, queries mongodb...
+
+
+
+
+
+
+
+
+
+escrevemos queries tipo assim:
+
+
+
+User.find();
+
+
+
+
+
+
+
+---> PODEMOS 
+
+
+
+
+FAZER QUERY DE NOSSA DATABASE,
+
+
+MAS 
+
+DESSA VEZ COM O MONGOOSE,
+
+
+COM 
+
+OS 
+VÁRIOS 
+
+HELPERS QUE 
+
+
+ELE NOS DÁ,
+
+
+
+com 
+
+'syntactical 
+
+sugar'
+
+
+e tudo mais...
+
+
+
+
+
+
+
+
+---------> OK.... ---> ESSA É A IDEIA POR TRÁS DO MONGOOSE,
+
+MT
+ 
+
+ PARECIDA COM A DE SEQUELIZE...
+
+
+
+
+
+
+
+
+
+
+ --> OK, VAMOS O ADICIONAR AO NOSSO PROJETO E VER O QUE PODEMOS FAZER COM ELE...

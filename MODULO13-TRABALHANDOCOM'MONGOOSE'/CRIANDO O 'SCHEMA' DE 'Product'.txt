@@ -1,0 +1,1699 @@
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK, É HORA DE CONSERTAR NOSSO CÓDIGO E FAZER 
+
+ COM QUE 
+
+ ELE 
+
+ FUNCIONE DE NOVO... 
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO, 
+
+
+
+ ANTES 
+
+
+
+
+
+ DE MAIS NADA,
+
+ PROFESSOR ADMITE QUE 
+
+
+
+
+ VAI USAR O COMPASS DE NOVO... ------> 
+
+
+
+
+ E LÁ NO COMPASS VAMOS QUERER 
+
+
+ LIMPAR 
+
+ 
+
+
+ TUDO DAS DATABASES,
+
+ tudo 
+
+ para que 
+
+ CONSIGAMOS 
+
+
+ 'START FROM SCRATCH' 
+
+
+
+
+
+
+
+
+
+
+
+ ---------> CERTO... ----> ESSAS DATABASES VÃO SER CREATED ON THE FLY, NOVAMENTE,
+ QUANDO 
+
+ COMEÇARMOS 
+ A INSERIR DATA...
+
+
+
+
+
+
+
+
+
+ --->   DELETAMOS 
+
+
+ CADA 
+
+ COLLECTION INDIVIDUALENTE,
+
+ até 
+
+
+
+ se livrar da database de 
+
+ 'shop'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> CERTO, VAMOS COMEÇAR DO 0....
+
+
+
+
+
+
+
+
+
+
+
+ ---> O PRIMEIRO PASSO É CONSEGUIR 
+
+ 'CREATE PRODUCTS'...
+
+
+
+
+
+
+
+
+
+ --> POR ENQUANTO, 
+
+
+ 'PRODUCTS'
+
+
+ vao 
+
+
+
+usar 
+
+
+
+
+DATA SUPER SIMPLES,
+
+
+DATA QUE 
+
+NÃO LEVA 
+
+EM CONSIDERAÇÃO 
+
+
+O 
+
+
+'user',
+
+
+
+
+
+E QUE SERÃO 
+
+ADICIONADOS 
+
+
+
+
+
+
+DE FORMA SIMPLES,
+
+
+PELO 
+
+
+CONTROLLER 
+
+DE 
+
+'addProduct'...
+
+
+
+
+
+
+
+
+
+
+-------->  PROFESSOR VAI ATÉ O MODEL DE 
+
+
+'product.js'
+
+
+
+
+
+
+E ENTÃO 
+
+
+
+
+
+
+ESCREVE isto:
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+
+
+
+
+
+
+
+
+ISSO PQ 
+
+ELE 
+
+PRECISA DESSE IMPORT DO 
+
+'MONGOOSE'
+
+para 
+
+
+fazer 
+
+
+as operações/escrever as operações...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+
+
+PROFESSOR VAI __ CRIAR UMA NOVA CONSTANTE_,
+
+
+CHAMADA 
+
+DE 
+
+
+'Schema' (com um S maiúsuculo)...
+
+
+
+
+
+--> PROFESSOR, NO VALOR ARMAZENADO NESSA CONSTANTE,
+
+
+
+
+
+vai usar 
+
+
+
+
+
+
+ALGO DO 
+
+OBJETO 'mongoose' que fora importado,
+
+
+
+
+
+
+
+QUE É  O CONSTRUCTOR 
+
+de 
+nome 
+'Schema'...
+
+
+
+
+
+
+
+EX:
+
+
+ 
+
+
+
+
+const mongoose = require('mongoose');
+
+
+
+
+const Schema = mongoose.Schema;
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR NOS EXPLICA QUE 
+
+ESSE 
+
+
+
+
+'.Schema'
+
+
+
+VAI __NOS DEIXAR 
+
+
+
+__cRIAR NOVOS SCHEMAS... -------> 
+
+
+
+
+
+E AQUI,
+
+NO CASO,
+
+O PROFESSOR
+
+VAI QUERER 
+
+CRIAR 
+
+
+1 NOVO 
+
+SCHEMA,
+
+
+
+
+
+
+
+por meio da escrita 
+
+
+de 
+
+
+
+
+
+'const productSchema = new Schema(); '
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+ELE VAI CRIAR UM NOVO 'SCHEMA' 
+
+
+__POR MEIO _ DA INSTANTIATION 
+
+DO 
+
+
+OBJETO 
+
+'Schema' 
+
+
+QUE ESCREVEMOS LOGO ACIMA...
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+
+const productSchema = new Schema(); //////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+---> E ISSO, ESSA ESCRITA AÍ,
+
+É 
+
+'JUST HOW MONGOOSE WORKS'.... ---------> 
+
+
+
+
+
+
+
+E A ESSE 
+
+CONSTRUCTOR 
+
+
+
+
+
+
+
+__vAMOS PASSAR 1 OBJETO JAVASCRIPT.... ----> 
+
+
+E É 
+
+
+
+
+
+
+
+
+_________NESSE OBJETO JAVASCRIPT ___ QUE 
+
+VOCÊ 
+
+VAI 
+
+DEFINIR 
+
+
+COMO 
+
+SEU 
+
+PRODUCT/PRODUCTS 
+
+
+DEVEM 
+
+SE 
+PARECER... (por isso é um SCHEMA; é quase a mesma coisa que fizemos lá na database SQL, com o sequelize e com a DEFINIÇÃO DOS NOSSOS FIELDS E VALORES NOS FIELDS...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+
+const productSchema = new Schema(
+    {
+                                ////É AQUI QUE VOCÊ VAI DEFINIR COMO O PRODUCT DEVERÁ SE PARECER, COMO DEVERÁ SER SEU 'DATA SCHEMA', o data schema de um product...
+
+    }
+)
+
+
+
+
+
+
+
+
+
+
+--------> OK.... VAMOS SETTAR UM BLUEPRINT ASSIM... --> 
+
+
+
+
+
+
+
+DENTRO DESSE OBJECT,
+
+
+vocÊ vai 
+
+
+
+DEFINIR 
+
+
+1 'schema'
+
+POR 
+
+MEIO 
+
+DO 
+
+WRITE 
+
+DE 
+
+SIMPLES 
+
+
+'KEY-VALUE' pairs....
+
+
+
+
+
+
+
+
+
+--> POR EXEMPLO,
+
+
+VAMOS ESCREVER QUE 
+
+
+
+
+NOSSO PRODUCT TERÁ UM 
+
+'title',
+
+
+
+POR ISSO ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+
+const productSchema = new Schema(
+    {
+        title                
+
+    }
+)
+
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+E É CLARO QUE AQUI VOCÊ 
+
+
+__ VAI DEFINIR MAIS DO QUE AS 'KEYS' QUE 
+
+SEU 
+
+
+DOCUMENT/OBJECT TERÁ,
+
+MAS __ TAMBÉM __ O 
+
+
+
+_____tYPE__ QUE CADA KEY DEVERÁ TER,
+
+
+
+e isso __É IMPORTANTE...
+
+
+
+
+
+
+------------> E O TYPE QUE VOU QUERER DEFINIR,
+
+
+nesse 
+
+field/propriedade 
+
+de 
+
+'title',
+
+
+
+É 
+
+
+
+'String'...
+
+
+
+
+
+
+
+
+
+POR ISSO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+
+const productSchema = new Schema(
+    {
+        title: String             
+
+    }
+)
+
+
+
+------------------------------------------
+
+
+
+
+
+'String' É 
+
+
+
+UM OBJETO 
+
+DEFAULT JAVASCRIPT,
+
+
+
+E É EXATAMENTE POR ISSO QUE 
+
+PODEMOS 
+
+O UTILIZAR AQUI....
+
+
+
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+
+  }
+)
+
+
+
+
+
+
+
+
+
+
+---------> OK.... COM ISSO,
+
+TEREI 
+
+
+CRIADO 
+
+
+1 
+
+SCHEMA 
+
+PARA 
+
+' OBJECT'
+
+
+
+COM QUE 
+
+SEREI CAPAZ DE 
+
+TRABALHAR NO FUTURO,
+
+
+O QUAL 
+
+
+
+DEVERÁ TER 
+
+
+
+1 TITLE, 
+
+
+que 
+
+
+
+será um field que 
+
+CONTE´RA
+ 
+
+
+ _UMA __ STRING__..... -------> 
+
+
+
+
+
+
+
+
+ OK.......  MAS IMPORTANTE:
+
+
+
+
+
+
+
+
+NO MÓDULO DE 'mongoDB',
+
+que 
+
+assistimos anteriormente,
+
+O PROFESSOR 
+
+
+
+DISSE QUE 
+
+
+'O MONGODB É 
+
+SCHEMALESS'... --------> 
+
+
+
+
+
+
+SE ELE É 
+
+
+'SCHEMALESS',
+
+
+
+pq 
+
+
+
+__DIABOS AGORA ESTAMOS CRIANDO E USANDO SCHEMASS? -------> UÉ,
+
+
+
+
+
+A IDEIA 
+
+
+
+É 
+
+
+SIMPLESMENTE UMA 
+
+DE QUE 
+
+
+
+___ EMBORa__ NÓS TENHAMOS __ ESSA FLEXIBILIDADE,
+
+
+
+FLEXIBILIDADE 
+
+DE NÃO 
+
+
+
+
+ESTARMOS/NÃO SERMOS 
+
+RESTRITOS 
+
+A UM SCHEMA PRÉ-DEFINIDO,
+
+
+
+NÓS __ FREQUENTEMENTE_ TEREMOS 
+
+
+
+
+1 
+
+ESTRUTURA 
+
+
+NA NOSSA DATABASE 
+
+
+COM A QUAL 
+
+
+
+____TRABALHAREMOS UM MONTE,
+
+
+em 1 determinado projeto... ------> E É EXATAMENTE 
+
+POR ISSO 
+
+QUE 
+O MONGOOSE 
+
+
+
+
+__QUER NOS DAR A VANTAGEM 
+
+
+
+
+
+
+__ DE FOCAR __ APENAS NA NOSSA 'DATA',
+
+mas 
+
+
+
+
+__ PARA ISSO__,
+
+ELE 
+
+
+__''PRECISA SABER''''
+
+COMO 
+
+SUA 
+
+
+DATA 
+
+DEVE 
+
+SE 
+
+PARECER.... ------------> E, PORTANTO,
+
+
+
+NÓS DEFINIMOS 
+
+
+
+1 
+
+
+SCHEMA DESSES 
+
+PARA 
+
+
+
+
+__DEFINIR _A 
+
+STRUCTURE QUE 
+NOSSA 
+
+DATA DEVE SEGUIR... --> MAS, MAIS IMPORTANTE DO QUE ISSO,
+
+
+
+
+
+
+
+_______NÓS AINDA PODEMOS_ DEVIATE/DESVIAR 
+
+
+
+
+DESSE 
+
+SCHEMA AÍ,
+
+
+
+
+
+dessa pré-definição/restrição.... --> ISSO SIGNIFICA QUE
+
+
+
+
+
+PODERÍAMOS 
+
+
+ATÉ 
+
+
+TRABALHAR 
+
+
+__COM 1 PRODUCT 
+
+E 
+
+CRIAR 
+
+
+
+
+
+_1 NOVO PRODUCT__, 
+
+
+
+
+
+
+__ E AÍ O SALVAR NA DATABASE,
+
+
+ 
+
+ TUDO SEM SETTAR 1 TITLE NESSE PRODUCT.... -------> ISSO PQ 
+
+
+
+
+
+NÓS ___AINDA VAMOS TER a 
+
+
+FLEXIBILIDADE 
+
+
+
+__ de 
+
+não 
+
+
+____FORÇAR___ ESSE 'SCHEMA' 
+
+
+
+'GUELA ABAIXO'...
+
+
+
+
+
+
+
+
+
+
+--> MAS O QUE _PODEMOS FAZEr_,
+
+
+
+
+
+
+
+ALÉM DE TER ESSA FLEXIBILIDADE AÍ,
+
+
+
+
+
+
+É __ PASSAR 
+
+
+1 OBJETO ({})
+
+
+
+
+em 
+
+
+vez 
+
+
+
+
+dessa simples definição
+
+
+
+de um type como 
+
+'String',
+
+
+
+PARA ___ ENTÃO __ SETTAR 
+
+
+
+
+uma propriedade 
+
+de 
+
+'type',
+
+QUE 
+
+
+
+AÍ PODERIA SER SETTADA COMO SENDO UMA STRING,
+
+
+
+
+E ENTÃO SETTAR 
+
+'
+required' 
+COMO 
+
+
+
+
+'true'... (
+
+
+
+    ISSO É, NA VERDADE,
+
+    UMA 
+
+    MANEIRA __ MAIS COMPLEXA/ELABORADA __ DE 
+
+    CONFIGURAR O VALOR 
+
+    PARA 
+
+    UMA DETERMINADA KEY...
+)
+
+
+
+
+
+
+O CÓDIGO FICA COM ESTE FORMATO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const productSchema = new Schema(
+  {         
+
+
+    title: {
+
+
+        type: String, 
+        required: true ///////EIS O CÓDIGO EM QUESTÃO.
+    }
+
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--------> COM ISSO,
+
+
+
+TEREMOS DITO: 
+
+
+
+'''BEM, O TYPE DISSO REALMENTE DEVERÁ SER UMA STRING,
+
+
+MAS DESSA VEZ __ DEVE SER __ OBRIGATORIAMENTE UMA STRING,
+PQ DEFINMOS EXPLICITAMENTE AQUELE 'true' no 'REQUIRED:'''''
+
+
+
+
+
+
+
+
+
+
+
+--> E AGORA,
+
+
+NO CASO,
+
+NÓS REALMENTE 
+
+
+
+DESISTIMOS DE CERTO GRAU DE FLEXIBILIDADE QUE TÍNHAMOS ANTERIORMENTE..
+
+
+
+
+---> AÍ, FORÇAMOS 
+TODOS NOSSOS 
+
+
+OBJECTS A TER ESSE TITLE aí..., esse field de 'title'...
+
+
+
+
+
+
+
+
+
+
+-> MAS NO FINAL DAS CONTAS,
+
+NO NOSSO APP,
+
+
+
+
+TODO 
+
+
+
+
+
+PRODUCT DE FATO TERÁ DE TER 
+
+1 
+
+
+'title',
+
+ 
+
+ PQ 
+
+ SENÃO 
+
+
+
+ VAMOS NOS DEPARAR COM ERROs... 
+
+ (
+
+
+     1 exemplo 
+
+     disso é o show dos titles nos nossos views,
+
+
+
+     que 
+
+
+     vão dar erro se não tivermos esses 'title'...
+ )
+
+
+
+
+
+
+
+
+ --> É POR ISSO QUE 
+
+
+
+ TER 
+
+ ALGUM TIPO DE 
+
+ 'SCHEMA'
+
+
+ FAZ 
+
+ SENTIDO,
+
+ ainda que 
+
+ 
+
+ 
+ tenhamos essa flexibilidade 
+
+ para 
+
+
+ 'deviate'/desviar 
+
+
+ em relação 
+
+ a esse schema..... -------> E ISSO 
+
+
+
+ REALMENTE 
+
+
+
+
+ ___ DEPENDE__ DE NOSSO APLICATIVO,
+
+
+alguns 
+
+
+apps 
+
+PRECISAM DE TODA ESSA FLEXIBILIDADE,
+
+
+
+
+
+
+
+
+OUTROS NÃO, OUTROS VÃO QUERER UMA ESTRUTURA MAIS RÍGIDA..... ----> 
+
+
+
+em casos que 
+
+essa rigidez é boa,
+
+
+O MONGOOSE TE AJUDA,
+
+POR MEIO DA DEFINIÇÃO 
+
+DESSES SCHEMAS....
+
+
+
+
+
+
+
+
+
+-------> OK... 
+
+
+FALAMOS UM MONTE SOBRE SCHEMAS,
+
+
+MAS É 
+BOM ENTENDER PQ 
+
+
+É LEGAL TRABALHAR COM ELAS...
+
+
+
+
+
+
+
+--> É UMA DECISÃO DELIBERADA DE 
+
+'GIVE AWAY FLEXIBILITY'
+
+
+
+ 
+ PARA GANHAR ALGUMAS VANTAGENS NO SEU LGUAR..
+
+
+
+
+
+
+
+
+ --> É CLARO QUE 
+
+ 1 PRODUCT 
+ TEM 
+
+ MAIS 
+
+ do 
+
+ q 
+
+ 1 
+
+
+ title,
+
+
+ ele também 
+
+ TEM 
+ 1 price,
+
+ e tudo isso é required...
+
+
+
+
+
+
+
+ Ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+const productSchema = new Schema(
+  {         
+
+
+    title: {
+
+
+        type: String, 
+        required: true ///////EIS O CÓDIGO EM QUESTÃO.
+    },
+
+    price: {
+
+        type: Number,
+        required: true
+    }
+
+  }
+)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: yes,
+      type: String
+    },
+
+    price: {
+      required: yes,
+      type: Number
+    },
+
+
+    description: {
+      required: yes,
+      type: String
+    },
+
+    imageUrl: {
+      required: yes,
+      type: String
+    }
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> OK, ESSE VAI SER ESSENCIALMENTE O MEU 'PRODUCT SCHEMA'... -----> 
+
+
+
+ESSA É BASICAMENTE UMA 'DESCRIPTION'
+
+de como 
+
+
+__UM PRODUCT, ESSE DOCUMENT AÍ,
+
+
+DEVE SE PARECER...
+
+
+
+
+
+
+
+----->  VOCÊ DEVE  TER PERCEBIDO QUE O PROFESSOR __NÃO ADICIONOU__ '_id'
+
+
+
+
+COMo 
+
+field 
+
+desse 
+
+document.... -> ISSO PQ 
+
+
+
+
+ESSE FIELD AINDA SERÁ ADICIONADO AUTOMATICMAENTE 
+
+
+
+
+
+COMO UM 'objectId(xxxxx)', 
+pelo mongoDB...
+
+
+
+
+
+--------> JÁ O 'userId',
+
+
+QUE TÍNHAMOS NO CÓDIGO ANTERIOR, É ALGO QUE ADICIONAREMOS __ MAIS TARDE___>..
+
+
+
+
+
+
+
+
+--> OK, AGORA TEMOS ESSE PRODUCT SCHEMA 
+
+DEFINIDO... ------> A PRÓXIMA ETAPA,
+
+
+
+NO CASO,
+
+
+É 
+
+CRIAR 
+
+1 
+
+'''MODEL''' ___ COM BASE__ NESSE SCHEMA
+
+
+E ENTÃO 
+
+
+
+
+___ CRIAR__ 
+
+
+
+
+1 OBJETO COM BASE NESSE 'MODEL',
+
+para 
+
+
+então trabalhar com 
+
+
+
+
+esse OBJETO...

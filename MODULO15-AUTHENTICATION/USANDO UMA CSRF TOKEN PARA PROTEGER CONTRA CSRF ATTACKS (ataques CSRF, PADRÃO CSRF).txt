@@ -1,0 +1,2736 @@
+
+
+
+
+
+
+
+
+
+----> OK... PROTEÇÃO 
+
+'CSRF'
+
+
+
+
+
+(CROSS SITE REQUEST FORGERY)
+
+
+
+
+É 
+
+
+
+
+UMA COISA IMPORTANTE... -----------> E PARA __ SUPORTAR__ ISSO,
+
+
+PARA __ 
+
+
+ADICIONAR__ 
+
+
+ESSA 
+
+
+PROTEÇÃO AO NOSSO APP,
+
+
+
+
+__ NÓS VAMOS _QUITTAR_ NOSSO SERVER
+ 
+
+
+
+ E ENTAÕ ___INSTALAR__ OUTRA 
+
+
+ PACKAGE...
+
+
+
+
+
+
+
+
+
+
+
+ ------> VAMOS INSTALAR 
+
+
+  A PACKAGE DE 
+
+
+
+
+  'csurf'...
+
+
+
+
+
+
+
+
+  --> 
+
+
+
+  npm install --save csurf....
+
+
+
+
+
+
+
+
+
+
+
+  -------> PROFESSOR NOS EXPLICA QUE 
+
+
+
+
+
+
+  __ ESSA É UMA PACAKGE PARA O NODE EXPRESS 
+
+
+
+
+
+
+
+
+  __ QUE __ NOS DEIXA ___ GERAR ESSENCIALMENTE UMA 
+
+
+  'CSRF TOKEN'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> TOKENS ==== SIGNIFICA, BASICAMENTE, UM __sTRING VALUE__ QUE PODEMOS 
+
+
+'EMBED' 
+
+
+NAS 
+
+___NOSSAS FORMS (dentro de NOSSAS __PAGES__ ) 
+
+
+______PARA__ TODO __E CADA__ REQUEST___ 
+
+QUE 
+
+
+
+FAÇA/FAZ ALGO 
+
+
+
+
+__ NO BACKEND, __ALGO __ QUE __ ACABE 'CHANGING THE USER STATE'... --->  em suma,
+
+
+
+QUALQUER 
+
+
+
+
+
+COISA COMO 
+
+
+'O ORDER DE SOMETHING',
+
+
+
+
+
+
+
+OU __''QUALQUER COISA QUE FAZ ALGUMA COISA SENSITIVE'',
+
+
+
+
+
+QUALQUER 
+
+
+
+OPERAÇÃO QUE 
+
+
+FAZ ALGO _QUE QUEREMOS PROTEGER CONTRA ATAQUES... --------> 
+
+
+
+
+
+
+
+
+
+
+PARA CONSEGUIR ESSE EFEITO,
+
+
+__PODEMOS INCLUIR UMA DESSAS TOKENS, TOKENS CSRF,
+
+
+
+
+
+_____NAS NOSSAS VIEWS__..... ------->  E AÍ,
+
+LÁ 
+
+
+
+NO ___sERVEr__, 
+
+
+
+
+essa 
+
+package de 
+
+
+
+
+'csurf'
+
+
+
+
+__________VAI CHECAR___ 
+
+
+SE 
+
+O 
+
+
+'INCOMING REQUEST'__ 
+
+
+
+
+
+TEM 
+
+
+
+ESSA TOKEN, UMA TOKEN DESSAS __ VÁLIDA__ no seu interior.... -----> OK ,MAS COMO 
+
+
+
+ISSO 
+
+PODE/VAI 
+
+
+
+NOS PROTEGER??????? ------------> BEM, 
+
+
+OS 
+
+
+SITES__ FAKE___ 
+
+
+
+PODEM REALMENTE ___ MANDAR 1 REQUEST__ AO 
+
+SEU 
+
+BACKEND,
+
+
+
+
+___ E AÍ ___ ELES PODERIAM/PODEM _____TEORICAMENTE_ USAR 
+
+
+
+A SESSION DO USER,
+
+sim,
+
+
+
+__MAS O PROBLEMA É QUE __NOS REQUESTS__ EM 
+
+SI ____ 
+
+
+FALTARÁ ESSA 'TOKEN', ___ 
+
+
+
+
+
+E 
+
+
+OS HACKERS__ NÃO PODEM SIMPLESMENTE 'GUESS THIS TOKEN',
+
+
+
+
+
+__ JUSTAMENTE PQ ESSA 
+
+TOKEN 
+É 
+
+UM 
+
+'HASHED VALUE',
+
+
+
+
+
+
+______ E __ APENAS 1 ÚNICO VALUE É 
+
+'VALID',
+
+
+é claro.... --> E É __ A PACKAGE DE 
+
+
+
+'csurf', 
+
+
+
+
+_____QUE ______RODA_  NO SERVER_, 
+
+
+
+QUE ___ DETERMINA __ 
+
+
+
+
+SE 
+
+1 DETERMINADO TOKEN É 'VALID' OU NÃO... --------> OK, ISSO SIGNIFICA QUE 
+
+
+__ELES NÃO PODEM 
+
+ADIVINHAR 
+
+
+A TOKEN,
+
+
+
+__ E TBM ___ QUE 
+
+
+
+
+________ELES NÃO PODEM/NÃO VAO CONSEGUIR _______ ROUBAR__ 1 
+
+TOKEN,
+
+
+
+
+__ISSO PQ __ CADA 
+
+
+'NEW TOKEN' 
+
+
+
+
+
+
+É ___ GERADA ________aUTOMATICAMENTE_ _  ________ PARA __ 
+
+
+
+
+CADA ___ PAGE QUE SEU APP RENDERIZA....
+
+
+
+
+
+
+
+
+
+
+
+-->OK .... ESSA PACKAGE PARECE ___ REALMENTE __________MUITO ÚTIL__....
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM A PACKAGE INSTALADA,
+
+
+
+
+VAMOS 
+
+
+
+
+RETOMAR A EXECUÇAÕ 
+
+com 
+
+'npm start'
+
+
+
+
+
+
+__ E ENTÃO A UTILIZAR...
+
+
+
+
+
+
+
+
+
+
+
+--> COMO USAMOS 
+
+'csurf'?
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> DEVEMOS IMPORTAR 
+
+ESSA 
+
+PACKAGE LÁ NO NOSSO ROOT FILE,
+
+
+
+file de 'app.js'...
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS IMPORTAR 
+
+A PACKAGE...
+
+
+
+
+
+
+
+-----> 
+
+professor coloca um nome de 
+'csrf'
+
+
+na cONSTANTE QUE 
+
+SEGURARÁ 
+O 
+
+VALOR DESSA PACKAGE..
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const csrf = require('csrf'); 
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR APONTA QUE 
+
+
+
+
+
+
+
+COMO 
+
+
+O ATTACK PATTERN É 'csrf',
+
+
+ELE 
+
+SEMPRE 
+
+
+USA 
+
+
+
+
+o nome 'csrf'
+
+
+
+nessa constante...
+
+
+
+
+
+
+
+
+
+
+
+-------> OK...... --> AÍ, POR MEIO DESSA CONSTANT/PACOTE,
+
+
+
+
+PODEMOS _ 
+
+
+
+
+
+__ 'CREATE A NEW CONSTANT'
+
+
+
+
+
+EM QUE __ VAMOS __INICIALIZAR ESSE PACOTE, VOCÊ PODERIA DIZER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK....
+
+
+
+
+
+
+
+
+
+------> O professor vai escrever:
+
+
+
+
+
+
+
+const csrf = require('csrf'); 
+
+
+
+
+const csrfProtection = ...;
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+NESSA CONST AÍ,
+
+
+ELE VAI ___EXECUTAR__ O 'csrf',
+
+
+tipo assim:
+
+
+
+
+
+
+
+ex:
+
+
+
+
+const csrf = require('csrf'); 
+
+
+
+
+const csrfProtection = csrf();
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+---> NESSE EXECUTE 
+
+
+
+DESSA CONSTANTE,
+
+
+
+
+PROFESSOR EXPLICA QUE PODEMOS 
+
+
+
+PASSAR 
+
+1
+ 
+ OBJETO ({})
+
+
+ CONFIG...
+
+
+
+
+
+
+
+
+
+ -------------> NESSE OBJETO CONFIG, PODEMOS 
+
+
+
+ DEFINIR ALGUMAS COISAS....  -------> 
+
+
+
+
+
+
+
+
+
+
+ VOCÊ PODE CONFIGURAR:
+
+
+
+ 1)  vocÊ pode ______ definir que __ VOCê_ QUER 
+
+
+ ______ARMAZENAR O 'SECRET' que é/será usado 
+
+
+
+ __PARA __ ASSIGNAR SEUS ___ TOKENS/HASHEAR SEUS TOKENS (mesma coisa)  _____ 
+
+
+__ NO COOKIE__, EM VEZ DE NA 'SESSION'...   
+
+
+(
+essa é a versão alternativa, a VERSÃO _ DEFAULt___ SEMPRE FOI/É 
+
+A 
+
+DE 
+
+
+__aRMAZENAR ESSE 'SECRET'
+
+LÁ 
+
+NA SESSIOn....
+
+
+
+
+)
+
+
+
+
+
+
+
+
+--> PODERÍAMOS ARMAZENAR ESSE 'SECRET'
+
+
+
+NO COOKIE,
+
+mas aqui o professor vai PREFERIR 
+
+
+
+
+O STORE 
+
+NA 
+
+'SESSION', que é o DEFAULT....
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR APONTA QUE __ NÃO PRECISAMOS __ 
+
+DEFINIR __ MAIS 
+
+
+NENHUM DOS OUTROS VALORES/KEYS__ NESSE OBJETO,
+
+
+
+
+e que 
+
+
+
+___ VOCÊ ___ PODE DIVAR 
+
+
+
+NOS DOCS OFICIAIS 
+
+
+
+DESSA PACKAGE PARA APRENDER MAIS,
+
+
+mas 
+
+
+ELE 
+
+ADMITE QUE 
+
+AS 
+
+'DEFAULT SETTINGS'
+
+
+VÃO FUNCIONAR FINE...
+
+
+
+
+
+
+
+
+
+------> OK... --> nosso código ficou assim:
+
+
+
+
+
+
+
+
+const csrf = require('csrf'); 
+
+
+
+
+const csrfProtection = csrf();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO, AGORA TEMOS __ ESSE 'CSRF PROTECTION MIDDLEWARE' 
+
+
+
+
+__ ADICIONADO_... ----> E AGORA SÓ __ NOS __ RESTA__ USAR ___ 
+
+
+ESSE 
+
+
+
+
+
+NEGÓCIO __ AÍ _ COMO 
+
+
+1 MIDDLEWARE,
+
+no nosso projeto...
+
+
+
+
+
+
+
+
+
+
+------>  O LOCAL EM QUE O USER VAI ESCREVER O __ USO___ DESSE MIDDLEWARE___ SERÁ ______aPÓS__ 
+
+
+O INITIALIZE __ DE 
+
+NOSSA SESSION,
+
+ou seja,
+
+
+
+__DEPOIS __
+
+
+DO CÓDIGO DO MIDDLEWARE DA SESSION, que é:
+
+
+
+
+
+'''
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', 
+
+      resave: false, 
+      saveUninitialized: false, 
+      store: store,
+    }
+  )
+);
+
+
+
+
+
+
+
+
+
+
+''''''
+
+
+
+
+
+
+
+
+OU SEJA, VAMOS QUERER __ INICIALIZAR __ 
+
+
+ESSA NOSSA 
+
+'csrf protection' __ APÓS___ 
+
+
+A INICIALIZAÇÃO 
+
+
+DE NOSSA 
+
+
+
+SESSION,
+
+
+
+
+JUSTAMENTE PQ 
+
+O 
+
+
+'CSRF'
+
+
+__ VAI __ USAR__ ESSA SESSION 
+
+
+
+para 
+
+
+
+
+REALIZAR SUAS OPERAÇÕES....
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE O PROFESSOR VAI QUERER __ ESCREVER 
+
+
+1 MIDDLEWARE USANDO 'csrfProtection'
+
+__APÓS__ ESSE CÓDIGO DO MIDDLEWARE QUE DEFINE/INICIALIZA NOSSA SESSION...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', 
+
+      resave: false, 
+      saveUninitialized: false, 
+      store: store,
+    }
+  )
+);
+
+
+app.use(csrfProtection); /////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+EX(código completo):
+
+
+
+
+
+
+
+
+
+
+
+const csrfProtection = csrf(
+  // { //OBJETO CONFIG É OPCIONAL, configura DETALHES como 'ONDE DEVEMOS GUARDAR NOSSO CSRF TOKEN' (o default é NA SESSION, no serverside, mas é possível GUARDAR ESSE VALOR EM COOKIES)
+
+  // } //SÓ ESTE CÓDIGO NÃO BASTA... ainda precisamos _ INICIALIZAR ESSe 'csrfProtection', o que é visto LOGO EMBAIXO, depois do CÓDIGO DE INICIALIZAÇÃO/DEFINIÇAO DE NOSSAS 'session'... ( e esse 'csrfProtection()' SEMPRE DEVE SER _ EXECUTADO__ APÓS ___ A DEFINIÇÃO/INICIALIZAÇÃO DE NOSSA SESSION)
+); 
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    {
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, 
+      saveUninitialized: false, 
+      store: store, 
+    }
+  )
+);
+
+
+
+app.use(csrfProtection); //////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+-----> OK....
+
+
+
+'app.use(csrfProtection)' ---> VAMOS QUERER __ EXECUTAr__ BASICAMENTE 
+
+
+A 
+
+CONSTANT QUE 
+
+
+SEGURA 
+
+
+
+
+
+
+NOSSO MIDDLEWARE RECÉM CRIADO DE 
+
+
+
+'csrf()'.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK.... 
+
+
+
+
+
+
+
+AGORA, COM ISSO,
+
+
+
+o 
+
+
+'csrfProtection'
+
+
+
+
+
+ESTÁ 
+
+'
+GENERALLY ENABLED'... 
+
+
+
+
+
+(simples assim...)
+
+
+
+
+
+
+------> MAS NÓS AINDA PRECISAMOS _______ ADICIONAR UM NEGÓCINHO ESPECIAL 
+
+NAS NOSSAS 
+
+
+__VIEWS_ PARA 
+
+SERMOS __ACTUALLY___ CAPAZES __ DE 
+
+
+
+
+UTILIZAR O CSRF TOKEN. .... ------> 
+
+
+
+
+
+
+
+
+
+
+
+
+OK....... MAS POR ENQUANTO, SE SALVARMOS TUDO ISSO E VOLTARMOS AO NOSSO APP,
+
+
+
+RECARREGARMOS NOSSO APP,
+
+
+
+
+INICIALMENTE
+ 
+
+
+
+ ELE VAI FUNCIONAR,
+
+
+ ATÉ 
+
+ CONSEGUIRMOS 
+
+ 1 
+
+ ERRO DE 
+
+
+
+ 'invalid csrf token'... ------>  E ISSO 
+
+
+
+
+JÁ 
+
+
+ESTÁ 
+
+BASICAMENTE 
+
+NOS DIZENDO/MOSTRANDO A 
+
+
+COISA QUE 
+
+
+
+__tEMOS QUE FAZER,
+
+EM 
+
+GERAL... --------> 
+
+
+
+
+
+
+
+
+
+
+
+PRECISAMOS, EM OUTRAS PALAVRAS,
+
+
+
+
+
+
+
+ANEXAR O 
+
+
+
+CSRF TOKEN EM ALGUM LUGAR DE NOSSO APP....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+
+
+
+ESSE ERRO OCORREU 
+
+PQ __  
+
+
+
+
+
+NOSSA 
+
+ACTION DE 'LOGOUT'
+
+
+é, 
+
+NO FINAL DAS CONTAS (actually),
+
+
+
+
+__ UM __ 
+
+
+
+
+
+__REQUEST_ DE TIPO POST....
+
+
+
+
+
+
+
+
+--> COMO VISTO NO CÓDIGO DE SEU CONTROLLER:
+
+
+
+
+
+exports.postLogout = (req, res, next) => {
+  req.session.destroy(
+    ///////'.destroy()' em cima do objeto 'session' no OBJETO REQUEST daquele user específico... -----> 'destroy()' É UM METHOD EM 'session' PROVIDENCIADO __ PELO PACKAGE DE 'express-session'... ---> ELE ___ VAI ___dESTRUIR__ A SESSION CORRESPONDENTE __ AO 'SESSION COOKIE' do user que ENVIOU ESSE REQUEST de 'logout'.... (aí, com isso, VAMOS ACABAR DESTRUINDO ___TANTO O SESSION COOKIE EM NOSSOS BROWSERS/BROWSERS DOS USERS__ COMO ___ TAMBÉM __ A SESSION ARMAZENADA_ LÁ NA NOSSA DATABASE, na collection de 'sessions'...)
+    () => {
+      console.log('Destroyed Session in Your Database');
+      res.redirect('/'); 
+    }
+  );
+};
+
+
+
+
+
+
+
+--------------------> 
+
+
+
+
+
+
+
+
+
+
+--------> CERTO... AÍ O PROFESSOR NOS EXPLICA QUE __ PARA __ TODOS 
+
+
+
+
+REQUESTS__ QUE 
+
+NÃO SEJAM DE TIPO 'GET'... (pq nos request de tipo get NÓS __ NÃO ALTERAMOS DADOS, n como nos REQUESTS DE TIPO 'post'),
+
+
+
+
+ESSA PACKAGE DE 
+
+
+
+
+'csurf'
+
+
+__ VAI PROCURAR__ PELA EXISTÊNCIA __ DE 
+
+
+UMA 
+
+
+
+_________CSRF TOKEN________....... ------->  MAIS PRECISAMENTE,
+
+
+__ESSA PACKAGe_ _VAI 
+
+
+PROCURAR__ PELA 
+
+
+EXIStÊNCIA 
+
+DE 
+
+
+
+UMA 'CSRF TOKEN'/csrf tokens 
+
+
+
+
+
+____NAS SUAS VIEWS__... ---> 
+
+
+
+
+VAI PROCURAR 
+ISSO 
+
+
+NAS SUAS VIEWS,
+
+E NO 
+
+
+'REQUEST BODY'... ---------> 
+
+
+
+
+E PARA ASSEGURAR 
+
+
+
+
+
+QUE UMA TOKEN REALMENTE 
+
+ESTEJA 
+
+
+
+NO REQUEST BODY,
+
+
+
+
+NÓS __ ANTES DE MAIS NADA __ PRECISAMOS ___ ASSEGURAR___ QUE 
+
+
+
+
+NÓS 
+
+
+
+
+TEMOS _ ESSA 
+
+
+
+_____tOKEN__ DISPONÍVEL NAS NOSSAS VIEWS...
+
+
+
+
+
+
+
+
+
+
+-> PARA FAZER ISSO,
+
+
+
+PRECISMAOS __ 
+
+PASSAR 
+
+DATA__ 
+
+
+
+
+PARA DENTRO DE NOSSAS VIEWS... ----> PROFESSOR 
+
+
+
+
+
+
+
+
+DÁ UM EXEMPLO:
+
+
+
+
+
+
+
+
+DIGAMOS QUE ESTAMOS NA STARTING PAGE,
+
+
+a page 
+
+de 
+
+
+'index'..
+
+
+
+
+
+
+
+
+
+-------> ESSA PAGE É RENDERIZADA __ POR MEIO DE UM GET REQUEST, POR ISSO NÃO DÁ ERRO..
+
+
+
+
+
+
+
+
+------> O CÓDIGO DESSA PAGE, SEU CONTROLLER, É:
+
+
+
+
+
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: req.session.isLoggedIn
+
+  });
+};
+
+
+
+
+
+
+
+
+
+----->  PARA ___ACESSAR__ OUTRAS PAGES DE NOSSO APP A PARTIR __DESSA AÍ __ 
+
+
+
+E __ NÃO OBTERMOS ESSE ERRO DE 
+
+'invalid csrf token',
+
+
+
+PROFESSOR __APONTA QUE __ VAMOS TER QUE __ PASSAR 
+
+
+
+
+'csrfToken'
+
+
+
+
+
+
+___ COMO KEY__  
+
+
+
+nesse objeto data desse 'res.render'... 
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR VAI COMEÇAR ASSIM:
+
+
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: req.session.isLoggedIn,
+    csrfToken: ...
+
+  });
+};
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE PODERÍAMOS ESCOLHER OUTRO NOME, MAS QUE ESSE AÍ ESTÁ BOM...
+
+
+
+
+
+
+
+
+--> OK... MAS A QUESTÃO É QUE __ VAMOS QUERER __ PEGAR O 'csrfToken'
+
+LÁ 
+
+
+
+
+de 
+
+
+
+
+
+'req.csrfToken()' ----------> OU SEJA,
+
+
+
+
+___ A PACKAGE__ DE 
+
+
+
+
+'csurf'
+
+
+
+___ VAI ADICIONAR UM METHOD DE 
+
+
+
+'.csrfToken()'
+
+
+
+LÁ 
+
+
+
+NO INTERIOR _ DE NOSSO OBJETO 'REQUESt'...( objeto request do USER)...
+
+
+
+
+
+
+
+
+
+
+
+------> ESSE MÉTODO É PROVIDENCIADO PELO MIDDLEWARE 
+
+do 
+
+'csurf' que recém adicionamos...
+
+
+
+
+
+
+-------> O CÓDIGO, PORTANTO, VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: req.session.isLoggedIn,
+    csrfToken: req.csrfToken() ////////EIS O CÓDIGO EM QUESTÃO.
+
+  });
+};
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+--> ISSO, 
+
+
+esse 
+
+'req.csrfToken()',
+
+
+
+_ VAI __ GERAR__ 
+
+1 
+
+TOKEN CSRF,
+
+E AÍ 
+
+__VAI A ARMAZENAR 
+
+NESSA 
+
+
+constante de 
+
+'csrfToken', que 
+
+PODERÁ SER USADA 
+
+
+NA NOSSA VIEW 
+
+de 
+
+
+'shop/index',
+
+NESSE CASO AÍ.... -------> OK... 
+
+
+
+
+
+
+
+
+---> MAS COMO PODEMOS USAR ISSO NA NOSSA VIEW? ------> PROFESSOR 
+
+
+DIZ QUE 
+
+PODERÍAMOS/PODEMOS USAR __ ESSA 
+
+TOKEN 
+
+
+LÁ 
+
+EM 
+
+
+'navigation.ejs' (arquivo da TOOLBAR, compartilhado),
+
+
+
+
+
+
+
+
+EM QUE 
+
+TEMOS 
+
+
+A NOSSA ___ FORM__ DO 
+
+
+BOTÃO __ DE 'LOGOUT', por exemplo....
+
+
+
+
+
+
+
+
+
+-> FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: req.session.isLoggedIn,
+    csrfToken: req.csrfToken()
+
+  });
+};
+
+
+
+
+------------------------------
+
+
+
+
+
+
+CERTO.... 
+
+
+
+
+
+
+
+ESSA NOVA PIECE OF INFORMATION __ É IMPORTANTE,
+
+
+E É OBTIDA LÁ 
+
+
+DO 
+
+'request',
+
+
+por meio desse method de 'csrfToken()'...  
+
+
+
+
+
+
+
+
+
+
+--> OK... COMO PODEMOS USAR ISSO NA VIEW? 
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXEMPLIFICA QUE PODEMOS USAR ISSO 
+
+
+LÁ 
+
+
+
+NO 'NAVIGATION.EJS' (pq isso VAI SER USADO EM TODA E CADA PÁGINA DE NOSSO APP)....
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ, NA NAVIGATION, TEMOS O SEGUINTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) {  %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+  <%  if (!isLoggedIn) { %>
+    <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+        <li class="main-header__item">
+          <a href="/signup" class="<%= path === '/signup' ? 'active' : '' %>">Signup</a>
+      </li>
+  <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      <% } %>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="mobile-nav__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="mobile-nav__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+      <li class="mobile-nav__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+      <li class="mobile-nav__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+      <li class="mobile-nav__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      <li class="mobile-nav__item">
+        <form action="/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+      </li>
+  <%  }  else { %>
+    <li class="mobile-nav__item">
+      <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+  </li>
+  <li class="mobile-nav__item">
+    <a href="/signup" class="<%= path === '/signup' ? 'active' : '' %>">Signup</a>
+</li>
+  <% } %>
+      </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> DENTRO DESSE LOCAL,
+
+
+
+
+_ VAMOS _ ADICIONAR UM _ _INPUT __ DE TYPE 'hidden',
+
+LÁ 
+
+
+
+NA FORM QUE REVESTE O BUTTON DE 'LOGOUT',
+
+
+
+PARA __ QUE ENTÃO __ CONSIGAMOS __ 
+
+
+ENVIAR 
+
+_NOSSA TOKEN_ COMO 
+
+PARTE __ 
+
+
+
+DO REQUEST 
+
+
+
+
+
+que será vinculado ao controller de 'exports.logout = (req, res, next) => {}'...
+
+
+
+
+-------------
+
+
+
+
+
+
+NOSSA VIEW FICARÁ TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+    <% if (isLoggedIn) { %>
+      <li class="mobile-nav__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+      <li class="mobile-nav__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+      <li class="mobile-nav__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+      <li class="mobile-nav__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      <li class="mobile-nav__item">
+        <form action="/logout" method="POST">
+            <input type="hidden" value="<%= csrfToken %>" >
+            <button type="submit">Logout</button>
+        </form>
+      </li>
+
+
+
+
+
+  
+  -------------------------save
+
+
+  OU SEJA,
+
+
+
+  VAMOS 
+
+
+
+  __ESCREVER AQUELA LINHA DE 
+
+
+
+  '''            <input type="hidden" value="<%= csrfToken %>" >'''''
+
+
+
+
+
+
+
+
+
+
+
+  ------> E VAMOS ESTAR USANDO, nesse código do view ali em cima,
+
+
+
+  O FIELD de 'csrfToken' PASSADO 
+
+
+  COMO DATA A NOSSA VIEW DE 'index',
+
+
+  simplesmente:
+
+
+
+
+  exports.getStartingPage = (req, res, next) => {
+
+
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: req.session.isLoggedIn,
+    csrfToken: req.csrfToken() //////EIS O CÓDIGO EM QUESTÃO.
+
+  });
+};
+
+
+
+
+
+
+--------------------------
+
+
+
+
+COM ISSO,
+
+
+SE SALVAMOS 
+
+
+NOSSA PAGE,
+
+
+DEVEMOS __ 
+
+
+
+INSPECIONAR__ 
+
+
+
+NOSSO 
+
+
+BOTÃO DE 'LOGOUT'... -------->
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... -----> AGORA, QUANDO CLICARMOS NO 
+
+
+
+
+
+BOTÃO DE 'logout',
+
+
+
+QUANDO O INSPECIONARMOS,
+
+
+
+
+
+VAMOS 
+
+
+CONSTATAR QUE 
+
+
+
+seu 
+
+elemento 
+
+estará, lá no html,
+
+
+
++ ou - assim:
+
+
+
+
+<input type="hidden" value="saisahjiwjqoi2120r91hj9hpxzohfophhpo">',
+
+
+
+
+
+
+
+
+
+SINAL 
+
+
+
+QUE ESSE NOSSO PROCESSO FUNCIONOU... -------> ESSA TOKEN AÍ SERÁ __ JUSTAMENTE __ 
+
+A TOKEN __ QUE 
+
+
+FOI GERADA 
+
+PELA 
+
+PACKAGE DE 
+
+
+
+'csurf'...
+
+
+
+
+
+
+
+
+
+-------> AINDA ASSIM, MESMO COM TODO ESSE SETUP,
+
+
+
+SE 
+
+
+CLICARMOS EM 'LOGOUT' AGORA,
+
+
+_______NÓS __ AINDA VAMOS __ rECEBER 1 ERRO.... ------> PQ ISSO? ------> É 
+
+
+PQ ___ PRECISAMOS __ MANIPULAR___ 
+
+
+
+ESSA TOKEN 
+
+
+LÁ 
+
+
+
+NO NOSSO CONTROLLER de 
+
+
+
+'exports.postLogin',
+
+lá 
+
+
+
+em 
+
+
+'auth.js',
+
+
+OBVIAMENTE... ----------> A RAZÃO PARA ISSO, DIZ O PROFESSOR, ____ É QUE 
+
+
+
+O 
+
+PACKAGE DE 
+
+'csurf'
+
+_____NÃO SABE/NÃO TEM COMO __sABER 
+
+
+QUE 
+
+
+esse 
+
+
+
+'INPUT DE TIPO HIDDEN'
+
+
+
+__ CONTÉM __ O NOSSO TOKEN... CSRF... --> NÃO, EM VEZ DISSO,
+
+
+ELE 
+
+SÓ SABE ___ QUE EXISTE 1 INPUT __ SEM NOME __ 
+
+
+
+
+COM UM VALOR GOZADO na nossa view... ('ITS JUST A HIDDEN INPUT WITHOUT A NAME'....) ------------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+E É __ EXATAMENTE ___ POR ISSO QUE _ _TEMOS QUE _ DAR 1 NOME 
+
+
+
+A ESSE INPUT ELEMENT DE TIPO 'HIDDEN'.... -----------> E, __MUITO IMPORTANTE___,
+
+
+
+
+O 
+
+
+
+__ 'name'
+
+__ DESSE INPUT FIELD __ DEVE, OBRIGATORIAMENTE,
+
+
+SER 
+
+
+
+
+
+'_csrf',
+
+
+
+COM __UM 
+
+UNDERSCORE NO INÍCIO...
+
+
+
+
+
+
+
+
+---------->  DEVEMOS ADICIONAR ESSE NOME ESPECÍFICO __ PQ 
+
+__ A PACKAGE___ QUE INSTALAMOS, O 'CSURF',
+
+
+
+__vAI PROCURAR__ EXATAMENTE POR ESSE NAME....
+
+
+
+ 
+
+
+
+
+É POR ISSO QUE 
+
+
+NOSSO CÓDIGO VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) {  %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+  <%  if (!isLoggedIn) { %>
+    <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+        <li class="main-header__item">
+          <a href="/signup" class="<%= path === '/signup' ? 'active' : '' %>">Signup</a>
+      </li>
+  <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+             <input type="hidden" value="<%= csrfToken %>" name="_csrf" > ////////EIS O CÓDIGO EM QUESTÃO.
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      <% } %>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="mobile-nav__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="mobile-nav__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+      <li class="mobile-nav__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+      <li class="mobile-nav__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+      <li class="mobile-nav__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      <li class="mobile-nav__item">
+        <form action="/logout" method="POST">
+          <input type="hidden" value="<%= csrfToken %>" name="_csrf" > ////////EIS O CÓDIGO EM QUESTÃO.
+            <button type="submit">Logout</button>
+        </form>
+      </li>
+  <%  }  else { %>
+    <li class="mobile-nav__item">
+      <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+  </li>
+  <li class="mobile-nav__item">
+    <a href="/signup" class="<%= path === '/signup' ? 'active' : '' %>">Signup</a>
+</li>
+  <% } %>
+      </ul>
+    </nav>
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+COM ISSO,
+
+SE AGORA 
+
+
+___RECARREGARMOS ___ NOSSA VIEW__ E CLICARMOS EM 'LOGOUT',
+
+
+
+
+
+__O  NEGÓCIO VAI FUNCIONAR certinho,
+
+
+vai funcionar 
+
+
+AGORA 
+
+__ PQ _O PACKAGE__ 
+
+
+VAI 
+
+
+SER 
+
+
+
+CAPAZ __ DE 
+
+EXTRAIR
+
+
+
+
+AQUELE 
+
+'CSRF TOKEN' 
+
+
+contido dentro do nosso request enviado a 'router.post('/logout)'... -------> ESSE PACKAGE 
+
+
+
+TBM 
+
+
+___dESCOBRE QUE __ O CSRF TOKEN USADO É __ VÁLIDO,
+
+
+E AÍ 
+
+
+NOS DEIXA PROSSEGUIR EM RAZÃO DISSO...
+
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE 
+
+
+
+___AGORA __ NÃO É __ SÓ A PRESENÇA DA 'SESSION' QUE 
+
+
+
+
+IMPORTA,
+
+MAS __ TAMBÉM__ A EXISTÊNCIA _ DESSA 
+
+
+
+
+'TOKEN',
+ESSA 
+
+
+__CSRF TOKEN... -------------> E PROFESSOR ___ NOS EXPLICA QUE ____PODEMOS/PODERÍAMOS __ ADICIONAR 
+
+
+
+__ ESSE CÓDIGO/TOKEN __ A TODAS NOSSAS FUNCTIONS 
+
+
+
+DE RENDER,
+
+
+___ PQ NÓS __ CERTAMENTE__ VAMOS PRECISAR _ __
+
+
+
+DESSA TOKEN __ EM TODAS NOSSAS ROUTES.. ----> MAS isso 
+
+
+
+
+
+
+
+__________sERIA __________________BEEEEEEEEEEM CUMBERSOME____________....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> É POR __ ISSO __ QUE 
+O 
+
+PROFESSOR__ QUER NOS MOSTRAR UMA MANEIRA __MAIS FÁCIL __ DE 
+
+FAZER 
+
+
+'GET' 
+
+DE 
+
+DATA COMO ESSA (tokens),
+
+
+
+
+
+__ UMA MANEIRA __ DE CONSEGUIR __ 
+
+
+A 
+
+DATA 
+DE 
+SUA 
+
+
+__TOKEN _________EM CADA PÁGINAZINHA DE SEU APP.........
+
+
+
+
+
+
+
+
+(
+
+
+
+  E PROFESSOR __tBM QUER TE MOSTRAR A MESMA COIAS COM 
+
+
+  A 'SESSION', com 
+
+
+  aquela propriedade 
+
+  de 
+
+
+  'isAuthenticated'
+
+  DA SESSION,
+
+  QUE 
+
+  ELE 
+  DIZ QUE 
+
+  TBM PODE SER 
+
+
+  ENFIADA _ EM TODA __ E QUALQUER PAGE DE NOSSO APP...
+)
+
+
+
+
+eX(código atual, __CUMBERSOME___):
+
+
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: editMode,
+    isLoggedIn: req.session.isLoggedIn ///FUNCIONAL, MAS CUMBERSOME.
+    csrfToken: req.csrfToken() ///////FUNCIONAL, MAS CUMBERSOME...
+
+  });
+};
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+OK... VAMOS VER COMO CONSEGUIR DATA 
+
+
+COMO 
+
+
+'isLoggedIn' (faz parte da session) 
+
+
+E 
+
+'csrfToken'
+
+
+__ EM CADA _ 1 DE NOSSAS ROUTES, 
+
+
+
+
+_ E NÃO SÓ EM ALGUMAS...

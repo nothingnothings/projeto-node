@@ -1,0 +1,1049 @@
+
+
+
+
+
+
+
+
+VAMOS TENTAR FAZER ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> LOGO DE CARA, ENCONTRAMOS UM PROBLEMA:
+
+
+
+
+NOSSOS 
+
+BUTTON DE 'VIEW'
+
+
+SÃO, NA VERDADE,
+
+__LINKS__,
+
+
+links que conduzem 
+
+Àquele velho 
+
+
+
+endpoint dinâmico de nosso app (com 'localhost:8080/posts/:postId', ou algo assim)....
+
+
+
+
+
+
+
+
+
+--> como agora 
+
+
+
+VAMOS __ USAR __ O GRAPHQL __ E SEU 'ENDPOINT ÚNICO' ( de 'localhost:8080/graphql', DE TIPO POST),
+
+
+
+PRECISAMOS ADAPTAR NOSSO COMPONENT 
+
+'Post', no frontend,
+
+para uqe 
+
+
+ESSE 
+
+BUTTON CONDUZA A UMA URL/PATH DIFERENTE...
+
+
+
+
+
+
+
+
+
+
+--> É ESTE CÓDIGO AQUI,
+
+LÁ EM 'App.js':
+
+
+
+
+
+          <Route
+            path="/:postId"
+            render={(props) => (
+              <SinglePostPage
+                {...props}
+                userId={this.state.userId}
+                token={this.state.token}
+              />
+            )}
+          />
+          <Redirect to="/" />
+
+
+    
+------------------------------------
+
+
+
+
+
+temos que trocar esse 'path="/postId'....
+
+
+
+
+
+
+
+
+
+
+
+
+---> OU NÃO.... --> 
+
+TEMOS TAMBÉM O 'PAGE COMPONENT' 
+
+de 
+
+
+'SinglePostPage',
+
+
+
+
+QUE É ESTE:
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(
+      `http://localhost:8080/feed/post/${postId}`,
+
+      {
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+      }
+    )
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          image: data.post.imageUrl,
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image
+            contain
+            imageUrl={`http://localhost:8080/${this.state.image}`}
+          />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> temos que trocar aquele fetch, é claro.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO ESTAVA FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  getPost: async function (args, req) {
+    const postId = args.postId;
+
+    const singlePost = await Post.findOne({ _id: ObjectId(postId) }).populate('creator.userId')
+
+    if (!singlePost) {
+      const error = new Error('Could not find post.');
+      error.code = 404;
+      throw error;
+    }
+
+    return {
+        title: singlePost.title,
+        imageUrl: singlePost.imageUrl,
+        content: singlePost.content,
+        createdAt: singlePost.createdAt.toISOString(),
+        creator: {
+            name: singlePost.creator.userId.name
+        }
+    };
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> é claro que recebi um erro:
+
+
+
+
+
+
+  SyntaxError: Unexpected token o in JSON at position 1
+    at JSON.parse (<anonymous>)
+    at parse (A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\node_modules\body-parser\lib\types\json.js:89:19)
+    at A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\node_modules\body-parser\lib\read.js:121:18
+    at invokeCallback (A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\node_modules\raw-body\index.js:224:16)
+    at done (A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\node_modules\raw-body\index.js:213:7)
+    at IncomingMessage.onEnd (A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\node_modules\raw-body\index.js:273:7)
+    at IncomingMessage.emit (node:events:402:35)
+    at endReadableNT (node:internal/streams/readable:1343:12)
+    at processTicksAndRejections (node:internal/process/task_queues:83:21) {
+  expose: true,
+  statusCode: 400,
+  status: 400,
+  body: '[object Object]',
+  type: 'entity.parse.failed'
+
+
+
+
+  --> ENTENDI...
+
+
+
+  HAVIA ESQUECIDO DE PARSEAR 
+
+  MEU REQUEST BODY:
+
+        body: JSON.stringify(graphqlQuery)
+
+
+
+
+
+--> o erro sumiu, mas AINDA NÃO ESTOU RECEBENDO A DATA QUE DESEJO....
+
+
+
+
+
+
+
+
+
+--> esqueci a string em 'postId',
+
+lá na query....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSEGUI.... CO´DIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+
+    const graphqlQuery = {
+
+
+      query: `
+      {
+        getPost(postId: "${postId}") {
+                title
+                content
+                imageUrl
+                creator {
+                  name
+                }
+                createdAt
+              }
+      }
+      `
+    }
+
+
+    fetch(
+      // `http://localhost:8080/feed/post/${postId}`, //versão rest api de nosso código...
+      `http://localhost:8080/graphql` //versão graphql....
+,
+      {
+        method: 'POST', //versão graphql
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+          'Content-Type': 'application/json' ///versao graphql, precisamos disso....
+        },
+
+        body: JSON.stringify(graphqlQuery)
+      }
+    )
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+
+        console.log(data);
+        this.setState({
+          // title: data.post.title,
+          // author: data.post.creator.name,
+          // date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          // image: data.post.imageUrl,
+          // content: data.post.content,
+
+          title: data.data.getPost.title,
+          author: data.data.getPost.creator.name,
+          date: new Date(data.data.getPost.createdAt).toLocaleDateString('en-US'),
+          image: data.data.getPost.imageUrl,
+          content: data.data.getPost.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image
+            contain
+            imageUrl={`http://localhost:8080/${this.state.image}`}
+          />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> O MEU RESOLVER FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  getPost: async function (args, req) {
+    const postId = args.postId;
+
+    const singlePost = await Post.findOne({ _id: ObjectId(postId) }).populate('creator.userId')
+
+    if (!singlePost) {
+      const error = new Error('Could not find post.');
+      error.code = 404;
+      throw error;
+    }
+
+    return {
+        title: singlePost.title,
+        imageUrl: singlePost.imageUrl,
+        content: singlePost.content,
+        createdAt: singlePost.createdAt.toISOString(),
+        creator: {
+            name: singlePost.creator.userId.name
+        }
+    };
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -->> O MEU SCHEMA FICOU ASSIM:
+
+
+
+
+
+
+
+
+  type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+      getCreationStatus(userId: String!, postId: String!): PostAuth
+      getPost(postId: String!): SinglePostData!
+}
+
+
+
+
+e assim:
+
+
+
+type SinglePostData {
+      imageUrl: String!
+      title: String!
+      content: String!
+      creator: Creator!
+      createdAt: String!
+}
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+CERTO.... AGORA DEVO VER A AULA DO PROFESSOR....
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+--> professor começa pelo schema...
+
+
+
+
+
+
+
+
+
+
+
+--> ele vai no 'RootQuery',
+
+E AÍ ESCREVe 
+
+
+uma query...
+
+
+
+
+
+
+
+
+
+
+post(postId:  )
+
+
+
+
+
+
+
+
+
+
+
+---> AÍ ELE FEZ ALGO QUE __ EU NÃO FIZ.... --> ELE ESCREVEU 'ID!' em vez de 'String', o que faz sentido.... ('ID!' são considerados IDENTIFICADORES...)
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+      getCreationStatus(userId: ID!, postId: ID!): PostAuth
+      getPost(postId: ID!): SinglePostData!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... AÍ ELE 
+
+
+
+VAI ATÉ RESOLVERS,
+
+
+EM QUE 
+
+ESCREVE UM NOVO RESOVLER....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+escreve assim:
+
+
+
+
+
+
+
+
+
+
+
+
+getPost: async function(args, req) {
+
+
+if(!req.isAuth) {
+
+    const error = new Error('Not authenticated!');
+    error.code = 401;
+    throw.error;
+
+}
+
+
+
+
+const post = await Post.findById(id).populate('creator');
+
+if (!post) {
+    const error = new Error('No post found!');
+    error.code = 404;
+}
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+--> SE PASSAMOS POR ESSES IF CHECKS,
+
+
+saberemos que 
+
+vamos
+
+
+ter 
+
+obtido 1 post.... ---> 
+
+
+
+aí o professor 
+
+vai escrever um código que ficou DIFERENTE DO MEU....
+
+
+
+
+
+
+
+
+
+--> ele vai escrever isto:
+
+
+
+
+
+
+return {
+    ...post._doc,
+    _id: post._id.toString(), //isso pq ele quer OVERWRITTAR O '_id' com formato inválido, do mongodb, retornado aqui...   
+    createdAt: post.createdAt.toISOString()
+}
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+---> VAMOS ATÉ A PAGE DE SINGLEPOST,
+
+
+
+
+E AÍ O PROFESSOR 
+
+
+
+
+
+EDITA O REQUEST FEITO COM A FETCH API...
+
+
+
+
+
+
+
+----> ele escreve exatamente o que eu escrevi:
+
+
+
+
+
+
+
+ fetch(
+      // `http://localhost:8080/feed/post/${postId}`, //versão rest api de nosso código...
+      `http://localhost:8080/graphql` //versão graphql....
+,
+      {
+        method: 'POST', //versão graphql
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+          'Content-Type': 'application/json' ///versao graphql, precisamos disso....
+        },
+
+        body: JSON.stringify(graphqlQuery)
+      }
+    )
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+aí professor específica as coisas que ele quer, 
+
+
+no return dessa query....
+
+
+
+ex:
+
+
+
+
+
+
+`
+      {
+        getPost(postId: "${postId}") {
+                title
+                content
+                imageUrl
+                creator {
+                  name
+                }
+                createdAt
+              }
+      }
+      `
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ----------> COM ISSO,
+
+
+
+     estamos no caminho.... --> professor remove alguns dos if checks de error handling que temos logo abaixo..
+
+
+
+
+
+
+
+
+
+     --> remove isto:
+
+
+
+             if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+
+
+
+
+
+
+
+
+
+
+,
+
+
+PQ 
+
+
+
+
+O HANDLING DO ERRO NÃO VAI FUNCIONAR aqui... ----> VAMOS QUERER HANDLAR O ERRO _ SOMENTE _ APÓS __ 
+
+
+
+PARSEARMOS A 'RESPONSE DATA'
+
+dessa query...
+
+
+
+
+É POR ISSO QUE O PROFESSOR ESCREVE ISTO:
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+      .then((res) => {
+
+        return res.json();
+      })
+      .then((data) => {
+
+        console.log(data);
+        if (data.errors) {
+          throw new Error('Post fetch has failed.');
+        }
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+aí o professor ajeita o acesso da data em 'this.setState()',
+
+
+coisa padrão...
+
+
+
+
+
+
+ok... tudo está funcionando.... 
+
+
+
+
+
+
+
+O QUE ESTÁ FALTANDO É 
+
+
+A POSSIBLIDADE DE 
+
+'EDIT' E 
+
+'DELETE'
+
+
+POSTS,
+
+e também o USER STATUS... -------> veremos isso na próxima aula....
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1753 @@
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR QUER CONCLUIR ESSE REFRESHER MODULE COM 
+
+
+
+OUTRO CORE CONCEPT,
+
+
+
+
+
+que é 
+
+o 
+
+
+TRABALHO COM ASYNC CODE...
+
+
+
+
+
+
+
+
+
+
+----> DEVEMOS ENTENDER O QUE É O ASYNC CODE...
+
+
+
+
+
+
+
+--> professor 
+
+
+DEFINE UM 
+
+
+'setTimeout()'....
+
+
+
+
+
+ELE DEFINE UMA ARROW FUNCTIONN ANÔNIMA QUE SERÁ EXECUTADA APÓS 
+
+2 SEGUNDOS...
+
+
+
+ex:
+
+
+
+
+
+setTimeout(
+    () => {
+        console.log('Timer is done!');
+    },
+
+    2000
+)
+
+
+
+--------------------------------
+
+
+
+
+
+
+--> ISSO É ASYNC CODE PQ __ ELE NÃO TERMINA ___ IMEDIATAMENTE,
+ 
+
+ NÃO 
+
+ É EXECUTADO IMEDIATAMENTE...
+
+
+
+
+
+
+
+
+
+
+ ----> code snippets normais,
+
+ como 
+
+
+ 'console.log('Hello')'
+
+
+
+ e 
+
+
+ 'console.log('Hi');',
+
+
+
+
+
+
+
+
+ SERÃO 
+
+ EXECUTADOS IMEDIATAMENTE (vão executar 
+ 
+ 
+ ANTES 
+ 
+ 
+ DO 
+ 
+ 'setTimeout()',
+ 
+ 
+ 
+
+ que só executará dps de 2 segundos) ...
+
+
+
+
+
+ ----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ JAVASCRIPT EM GERAL E O 'NODEJS'  ________NÃO BLOQUEIAM__ ('block')
+
+
+
+
+ SUA EXECUÇÃO 
+
+ DE CÓDIGO,
+
+
+ NÃO BLOQUEIAM O CÓDIGO, NÃO VÃO ESPERAR PELA 
+
+
+
+ EXECUÇÃO DAQUELE ASYNC CODE... -------> E, DE FATO,
+
+
+
+ AQUI 
+
+
+
+
+ A JAVASCRIPT ENGINE 
+
+
+ VAI 
+
+
+ 'RECOGNIZE'
+
+
+ ESSA 
+
+
+  
+
+
+  'CALLBACK FUNCTIOn' (
+
+
+
+      que é 
+
+      '() => {
+          console.log('Timer is done');
+
+      }
+      '
+  )
+
+
+
+
+
+
+
+
+
+  CALLBACK FUNCTION ------> SÃO CHAMADAS ASSIM PQ 
+
+  ELAS 
+
+  'SHOULD CALL BACK LATER, ONCE THEY ARE DONE'... ------> OU SEJA,
+
+
+
+  VAI 
+
+  'CALL BACK LATER',
+
+
+
+
+  QUANDO O SEU TIMER TIVER ACABADO... 
+
+
+
+
+
+
+
+
+
+
+
+
+  ----->  é por isso que no nosso console veremos 
+
+
+
+  1) hello 
+
+
+  2) hi 
+
+
+
+  3) Timer is Done...
+
+
+
+
+
+
+
+
+
+
+  --> E ESSE É UM CONCEITO QUE VOCê __ DEVE __ COMPREENDER__ NO JAVASCRIPT,
+
+
+
+  E ESPECIALMENTE 
+
+  NO NODE...
+
+
+
+
+
+
+
+
+
+
+  ----------> QUANDO TRABALHAMOS COM ASYNC CODE,
+
+
+
+
+  TEMOS MÚLTIPLAS TECHNIQUES 
+
+  PARA 
+
+  HANDLÁ-LO.... ------>
+
+
+
+
+
+
+
+  A CALLBACK FUNCTION É 
+
+
+
+  A MANEIRA MAIS 
+
+
+
+
+  __OLDSCHOOL,
+
+  É A MANEIRA MAIS VELHA,
+
+  e 
+
+  a veremos 
+
+  com bastante frequência,
+
+
+
+
+  PRINCIPALMENTE NO NODEJS...
+
+
+
+
+
+
+
+
+
+  --------> E NÃO HÁ NADA DE ERRADO EM USAR A 
+
+
+  'CALLBACK FUNCTION'.... -----> 
+
+
+
+
+  MAS 
+
+  VOCÊ VAI SE DEPARAR COM UM PROBLEMA 
+
+  SE 
+
+  VOCÊ 
+
+  TIVER UM MONTE 
+
+
+  DE 
+
+  'DEPENDING ASYNC OPERATIONS'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PARA MOSTRAR ISSO,
+
+PROFESSOR 
+
+CRIA __OUTRA FUNÇÃO_,, ALÉM DESSE TIMER,
+
+
+que 
+
+
+ele 
+
+então 
+
+CHAMA 
+
+DE 
+
+'fetchData = () => {
+
+}
+
+'
+
+
+
+
+
+ELE TAMBÉM VAI ESCREVER OUTRO TIMER NESSA FUNÇÃO,
+
+
+
+
+
+pq 
+
+
+
+
+vamos fazer isso de veradde ao longo do curso...
+
+
+
+
+só quer simular 
+
+o fetch 
+
+de 
+dados... (que é async)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ELE ESCREVE 
+
+
+
+
+
+UM OUTRO TIMER,
+
+
+
+timer de 
+
+
+1.5 segundos... ----> 
+
+
+
+
+
+ex:
+
+
+
+const fetchData = () => {
+
+
+    setTimeout( 
+        () => {
+
+        },
+        1500
+    )
+}
+
+
+
+
+
+
+
+
+
+-------> BEM, DENTRO DE ESSA 
+
+'FETCHDATA',
+
+
+O PROFESSOR 
+
+DIZ QUE 
+
+ELE VAI PRECISAR 
+
+DE ALGUMA MANEIRA 
+
+DE 
+
+'DO SOMETHING'
+ 
+ quando esse inner timer tiver acabado... ------> 
+
+
+
+
+ PARA ISSO,
+
+
+ O PROFESSOR 
+
+
+
+ VAI 
+
+
+ ESCREVER 
+
+
+
+ UM PARÂMETRO 
+
+
+ 'callback'
+
+
+ NESSA FUNÇÃO.... ---->
+
+
+
+ ELE CHAMA 
+
+ ESSE PARÂMETRO 
+
+ DE 
+
+ 'CALLBACK'
+
+
+ justamnete 
+
+ pq 
+ esse 
+
+
+ argumento 
+
+ SERÁ UMA FUNCTION 
+
+
+ QUE 
+
+
+ ELE 
+
+
+ VAI 
+
+
+
+ EVENTUALMENTE CHAMAR DENTRO DA INNER FUNCTION DE 
+
+ 'fetchData()'
+
+
+
+ ___ DEPOIS __ QUE 
+
+
+ O 
+
+
+ TIMER DELA TIVER ACABADO...
+
+
+
+ tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ const fetchData = callback => {
+
+
+    setTimeout( 
+        () => {
+            callback('Done');
+        },
+        1500
+    )
+}
+
+
+
+------------------------------------------
+
+
+
+
+
+
+E ELE VAI PASSAR 
+
+
+'Done'
+
+como VALUE/PARÂMETRO 
+dessa 
+
+callback function...
+
+
+
+
+
+
+
+
+--> PARA COMPLICAR AINDA MAIS AS COISAS,
+
+O PROFESSOR 
+
+
+
+VAI CHAMAR ESSA FUNÇÃO 
+
+DE 
+
+'fetchData()'
+
+
+DENTRO 
+
+DAQUELE CALL 
+
+DE 
+
+'setTimeout()'
+
+
+ NO CONTEXTO GLOBAL DE NOSSO ARQUIVO....
+
+
+
+ ex:
+
+
+
+
+
+
+
+ 
+ const fetchData = callback => {
+
+
+    setTimeout( 
+        () => {
+            callback('Done');
+        },
+        1500
+    )
+}
+
+
+
+
+
+
+setTimeout(
+    () => {
+            console.log('Timer is done!');
+
+            fetchData(
+                () => { 
+
+                }
+            )
+    },
+
+    2000
+
+)
+
+
+
+
+
+
+------------------------
+
+
+
+OK,
+ 
+
+
+ E É CLARO QUE VAMOS TER QUE 
+
+ PASSAR 
+
+ UMA CALLBACK FUNCTION COMO PARÂMETRO 
+
+ DESSE 
+
+ 'FETCHDATA' ---->
+
+
+
+
+
+
+
+
+
+
+
+  const fetchData = callback => {
+
+
+    setTimeout( 
+        () => {
+            callback('Done');
+        },
+        1500
+    )
+}
+
+
+
+
+
+
+setTimeout(
+    () => {
+            console.log('Timer is done!');
+
+            fetchData(
+                () => { ///argumento 'callback' lá em 'fetchData'...
+
+                }
+            )
+    },
+
+    2000
+
+)
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+--> E AQUELA STRING de 'Done!' lá em 
+
+
+'callback()', chamado com aquele timer lá em 
+
+'fetchData()',
+
+
+
+VAI 
+
+
+SER 
+
+
+USADA/REPRESENTADA 
+
+
+nesse parâmetro 
+
+
+de 
+
+'fetchData()',
+
+
+
+tipo assim:
+
+
+
+
+
+
+  const fetchData = callback => {
+
+
+    setTimeout( 
+        () => {
+            callback('Done');
+        },
+        1500
+    )
+}
+
+
+
+
+
+
+setTimeout(
+    () => {
+            console.log('Timer is done!');
+
+            fetchData(
+                (text) => {  ////EIS O CÓDIGO EM QUESTÃO.
+
+                        console.log(text);
+                }
+            )
+    },
+
+    2000
+
+)
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+PROFESSOR ADMITE QUE ISTO PODE PARECER CONFUSO:
+
+
+
+
+
+ele explica que 
+
+
+AQUI ELE ESTÁ CRIANDO SUA PRÓPRIA FUNÇÕA,
+
+
+
+'fetchData()',
+
+
+
+
+
+
+QUE 
+
+
+recebe um 'callback',
+
+
+
+RECEBE ESSE CALLBACK 
+
+
+
+PARA QUE 
+
+
+__ELE POSSA __
+
+
+EXECUTAR UMA FUNÇÃO 
+
+(a função de 
+
+
+'text => console.log(text)' )
+
+
+
+
+
+ASSIM QUE 
+
+
+ESSE INNER TIMER DE '1500'
+
+
+TIVER ACABADO...
+
+
+
+
+
+
+
+
+
+
+-----> EXECUTAMOS NOSSO CÓDIGO.... ---> 
+
+
+
+
+
+DEMORAMOS 2 segundos para outputtar 
+
+'Timer is Done,'
+
+
+
+E DEPOIS 
+
+
+
+
+mais 
+
+1.5 segundos para 
+
+outputtar 
+
+'Done!'...
+
+
+---------------
+
+
+
+
+
+
+
+
+
+-------> ou seja,
+
+
+SE TIVERMOS 
+
+UM MONTE DE 
+
+'NESTED ASYNC CALLS',
+
+
+como 
+
+temos 
+
+aqui,
+
+
+
+
+
+__NESTED CALLS EM QUE 
+
+VAMOS 
+
+'DEEPER AND DEEPER' 
+
+
+
+
+
+
+em uma perspectiva de callbacks,
+
+
+
+
+COMEÇA A FICAR BEM CONFUSO...
+
+
+
+
+
+
+
+
+--------------------------> É POR ISSO QUE TEMOS UM CONCEITO/FEATURE 
+
+CHAMADA 
+
+DE 
+
+'PROMISES',
+
+que 
+
+são usadas 
+
+PARA 
+
+
+
+
+ALIVIAR 
+
+
+ESSE PROBLEMA DAS CALLBACK FUNCTIONS...
+
+
+
+
+
+
+-------> PROFESSOR NOS EXPLICA QUE 
+
+
+
+AS PACKAGES DO NODEJS 
+
+frequentemetne 
+
+USAM PROMISES,
+
+
+MAS 
+
+elas 
+
+__USAM PROMISES __ POR NÓS/PARA NÓS___,
+
+
+por 
+
+isso 
+
+
+a sintaxe 
+
+
+
+das promises 
+é 
+
+raramente utilizada/escrita 
+
+
+por nós mesmos...
+
+
+
+
+
+
+
+
+
+
+
+--------> AINDA É BOM SABER A SINTAXE DAS PROMISES.... ----> 
+
+
+
+
+
+
+VOCê CRIA UMA PROMISE 
+
+
+por meio 
+
+da 
+
+sintaxe 
+
+
+
+
+
+
+
+'const promise = new Promise()',
+
+
+
+
+
+
+
+
+'new '=== USADO PARA CRIAR UM NOVO OBJETO, A PARTIR 
+
+
+
+E UM __CONSTRUCTOR__.... ---->
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONSTRUCTOR FUNCTIONS ===> CORE FEATURE EM JAVASCRIPT...
+
+
+
+
+
+
+------> 
+
+
+
+OK,
+
+
+VOCÊ ESCREVE 
+
+
+
+
+'const promise = new Promise()';
+
+
+
+
+
+
+
+
+
+------> E ESSE 'NEW pROMISE()'
+
+
+
+
+TAMBÉM
+
+EXIGE UMA 
+
+
+CALLBACK FUNCTION COMO PARÂMETRO,
+
+
+
+
+
+
+
+UMA CALLBACK FUNCTION QUE 
+
+
+
+ACEITA/EXIGE 
+
+
+
+
+2 ARGUMENTOS,
+
+
+
+RESOLVE E REJECT,
+
+
+
+
+
+
+E O PRIMEIRO 
+
+
+'COMPLETES THE PROMISE SUCCESSFULLY',
+
+
+
+enquanto que 
+
+
+
+
+o segundo A REJEITA (
+
+
+
+
+    O QUE É PRATICAMENTE 
+
+    'THROW AN ERROR'...
+)
+
+
+
+
+
+
+
+
+
+------------> ok.......
+
+
+
+
+AÍ VOCê VAI ESCREVER O SEU 
+
+CÓDIGO 
+
+PRINCIPAL DENTRO DO BODY DA CALLBACK FUNCTION DA PROMISE QUE VOCÊ VAI CRIAR...
+
+
+
+
+ex:
+
+
+
+
+
+
+const fetchData = callback => {
+
+    const promise = new Promise(
+        (resolve, reject) => {
+
+
+                    setTimeout(
+                        () => {
+                            callback('Done!');
+                        },
+                        1500 
+                    )
+        }
+    )
+}
+
+
+
+
+
+
+
+
+
+
+-----> ISSO FEITO (raramente voce terá de escrever essa sintaxe).... ------> 
+
+
+
+
+
+DENTRO DAQUELE CALLBACK AGORA TEMOS 
+
+
+NOSSA 
+
+
+
+PRÓPRIA FUNÇÃO,
+
+
+a 
+
+função 
+
+de 
+
+'setTimeout()' -------->
+
+
+
+O 
+
+
+
+'setTimeout()' INFELIZMENTE 
+
+
+NÃO NOS 
+
+DÁ 
+
+UMA 
+
+'PROMISE API',
+
+
+POR ISSO 
+
+NÓS 
+
+
+SOMOS OBRIGADOS A USAR 
+
+UM CALLBACK COM ELE....
+
+
+
+
+
+
+
+
+
+
+------------> mas agora, dentro de 
+
+'fetchData()',
+
+
+
+SABEMOS QUE 
+
+__NÃO PRECISAMOS __ MAIS USAR UMA 'CALLBACK FUNCTIOn'
+
+
+
+como PARÂMETRO,
+
+
+
+
+podemos 
+
+tirar o parâmetro e deixar assim:
+
+
+
+
+
+
+
+const fetchData = () => {
+
+    const promise = new Promise(
+        (resolve, reject) => {
+
+
+                    setTimeout(
+                        () => {
+                            callback('Done!');
+                        },
+                        1500 
+                    )
+        }
+    )
+}
+
+-----------------------------------------------
+
+
+
+
+
+e para COMPLETAR 
+
+O USO DESSA PROMISE/CRIAÇÃO DESSA PROMISE,
+
+devemos 
+
+
+CHAMAR 
+
+
+'resolve('Done!');'
+
+
+NO LUGAR 
+
+DAQUELE 
+
+'callback('Done!'),
+
+
+
+
+PQ 
+
+
+
+'RESOLVE'
+
+FARÁ 
+
+COM QUE 
+
+
+NOSSA PROMISE 
+
+SEJA 
+
+'RESOLVED'
+
+E 
+RETORNE 
+
+
+
+O VALOR 
+
+DE 
+
+'Done' 
+
+
+(a função 'fetchData()', portanto, vai nos RETORNAR o valor de 'Done' DEPOIS DE 1.5 segundos...)
+
+
+
+
+
+PARA COMPLETAR ESSA FUNÇÃO,
+
+devemos 
+
+APENAS 
+
+FAZER 
+
+RETURN 
+
+DE 
+
+NOSSA PROMISE,
+
+
+cujo resultado/processo está armazenado dentro de 'const promise'...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const fetchData = () => {
+
+    const promise = new Promise(
+        (resolve, reject) => {
+
+
+                    setTimeout(
+                        () => {
+                            resolve('Done!'); ////////eis o código em questão.
+                        },
+                        1500 
+                    )
+        }
+    )
+
+    return promise; ///EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+MAS NÃO É SÓ ISSO....
+
+
+
+
+O PROFESSOR 
+
+
+
+
+ALTERA o código 
+
+
+
+de 'setTimeout()'
+
+
+
+
+global de nosso código,
+
+para que fique assim:
+
+
+
+
+
+
+setTimeout(
+    () => {
+
+
+        console.log('Timer is done!');
+
+        fetchData().then(
+
+        )
+    },
+
+
+
+    2000
+)
+
+
+
+
+
+
+
+----------------
+
+
+ELE, PORTNATO, 
+
+
+ESCREVE UM 
+
+'.then()' block,
+
+QUE É USADO COM PROMISESE 
+
+E QUE 
+
+NOS DEIXA 
+
+
+
+DEFINIR A CALLBACK FUNCTION QUE DEVERÁ 
+
+SER 
+
+EXECUTADA 
+
+
+
+
+UMA VEZ QUE A PROMISE TENHA SIDO 'RESOLVED'... 
+
+
+
+EX:
+
+
+
+
+
+
+setTimeout(
+    () => {
+
+
+        console.log('Timer is done!');
+
+        fetchData().then(
+                text => {
+                    console.log(text);
+                }
+        )
+    },
+
+
+
+    2000
+)
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+PROFESSOR DIZ QUE A VANTAGEM DAS PROMISES 
+
+E 
+
+DOS 
+
+
+THEN BLOCKS 
+
+
+
+
+fica manifesta nessa sintaxe:
+
+
+
+
+
+
+setTimeout(
+    () => {
+
+
+        console.log('Timer is done!');
+        fetchData()
+        .then(
+                text => {
+                    console.log(text);
+                    return fetchData();
+                })
+        .then(
+            text2 => {
+                console.log(text2);
+            }
+        )
+    },
+    2000
+)
+
+
+
+
+
+
+
+
+
+-----> ou seja,
+
+
+PODEMOS 
+
+
+
+COMBAR 
+
+
+
+
+
+THEN BLOCKS,
+
+
+cada 
+
+1 
+
+se referindo 
+
+ao 
+
+
+
+
+VALOR RETORNADO 
+
+PELO 
+
+THEN BLOCK ANTERIOR...
+
+
+
+
+---------------
+
+
+
+
+
+
+
+
+
+-------------> vamos usar várias vezes essa sintaxe ao longo deste curso,
+
+
+aí as coisas ficarão mais claras....
+
+
+
+
+
+
+
+
+---> HÁ TBM OUTRA MANEIRA 
+
+DE 
+
+
+FAZER HANDLE DE TUDO ISSO,
+
+QUE 
+é 
+O ASYNC/AWAIT,
+
+sintaxe mais 
+
+moderna 
+
+de async code 
+
+
+
+
+
+--> TEREMOS SÓ 
+
+
+1 
+
+
+MÓDULO SOBRE ISSO,
+ 
+ MAIS TARDE....
+
+
+
+
+
+
+
+
+ --> ASYNC CODE você 
+
+ deve entender....
+
+
+
+
+
+
+
+ ------> TEMOS UM MONTE DE ASYNC EVENTS 
+
+ no nodejs...
+
+
+
+ --> PROFESSOR VAI 
+
+ EXPLICAR PROMISES DE NOVO, tbm...

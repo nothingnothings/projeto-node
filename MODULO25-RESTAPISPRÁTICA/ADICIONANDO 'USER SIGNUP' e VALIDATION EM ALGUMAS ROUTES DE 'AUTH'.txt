@@ -1,0 +1,2061 @@
+
+
+
+
+
+
+
+
+
+
+
+-------> BEM, O PROFESSOR CRIA UM NOVO CONTROLLER FILE,
+
+'auth.js',
+
+
+QUE TERÁ RELAÇÃO COM A LÓGICA DE AUTHENTICATION DOS USERS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DALI,
+
+
+
+ELE PRIMEIRAMENTE 
+
+
+IMPORTA 
+
+
+O MODEL DE 'user'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+const User = require('../models/user');
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+VAMOS PRECISAR DE 2 ACTIONS, AQUI:
+
+
+1) SIGN USER UP
+
+
+
+
+
+2) SIGN USER IN (login)...
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR ENTÃO ESCREVE O CÓDIGO CLÁSSICO
+
+
+
+
+
+
+
+exports.signup = (req, res, next) => {
+
+
+    
+}
+
+
+
+EX:
+
+
+
+const Post = require("../models/post");
+
+exports.signup = (req, res, next) => {};
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ BEM, VAMOS QUERER CRIAR 1 NOVO USER NA DATABASE...
+
+
+
+
+
+
+
+
+
+
+ vamos precisar, portanto:
+
+
+
+
+ 1) DO EMAIL DO USER 
+
+
+
+ 2) PASSWORD DO USER 
+
+
+ 3) NAME DO USER 
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+o 'email' dele vamos obter por meio de 
+
+
+'req.body.email' (será enviado por meio do BODY do request0...)
+
+
+
+
+
+
+
+
+--> O NAME DO USER 
+
+será extraído de 
+
+'req.body.user',
+
+
+
+
+
+
+
+
+E O PASSWORD SERÁ EXTRAÍDO 
+
+DE 
+
+'req.body.password'...
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+const Post = require("../models/post");
+
+exports.signup = (req, res, next) => {
+
+    const email = req.body.email;
+    const name = req.body.name;
+    const password = req.body.password
+
+
+
+};
+
+
+
+----------------------------------------
+
+
+
+
+
+É CLARO QUE PRECISAMOS ENFIAR ISSO AÍ NO NOSSO REQUEST DE TIPO 
+
+'put',
+
+
+LÁ 
+
+
+
+
+NO 
+
+
+
+FRONTEND...
+
+
+
+
+
+
+
+
+--> POR ISSO VAMOS ATÉ O FRONTEND,
+
+
+LÁ 
+
+
+
+
+
+NAS PAGES de 'auth'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO ESTÁ LÁ EM 
+
+'
+App.js' (Frontend),
+
+
+
+E 
+
+É 
+
+ESTE AQUI,
+
+ESTE MÉTODO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('URL')
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+bem,
+
+devemos colocar aquela url de 
+
+'http://localhost:8080/auth/signup',
+
+
+
+E AÍ DEFINIR O METHOD COMO 'PUT'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('http://localhost:8080/auth/signup', {
+
+
+                method: 'PUT',
+                body: JSON.stringify(
+                    {
+                        email: xxx,
+                        password: yyyy,
+                        name: zzzz
+                    }
+                )
+
+        
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+-> É CLARO QUE ESSES VALORES SERÃo 
+
+'authData.name',
+
+
+authData.password',
+
+
+
+'authData.email'...
+
+
+
+
+EX:
+
+
+
+
+
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('http://localhost:8080/auth/signup', {
+
+
+                method: 'PUT',
+                body: JSON.stringify(
+                    {
+                        email: authData.email,
+                        password: authData.password,
+                        name: authData.name
+                    }
+                )
+
+        
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... SÓ ESQUECI DE COLOCAR ESSE CONTROLLER NA ROUTE DE 
+
+
+'router.put('/signup')'....
+
+
+
+
+
+EX:
+
+
+
+
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch("http://localhost:8080/auth/signup", {
+      method: "PUT",
+      body: JSON.stringify({
+        email: authData.email,
+        password: authData.password,
+        name: authData.name,
+      }),
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            "Validation failed. Make sure the email address is unused."
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Creating a user failed!");
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace("/"); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+  ------------------------------
+
+
+
+
+
+
+
+
+
+
+  OK, MAS AÍ O PROFESSOR FALA DO 'CHECK DO EXPRESS-VALIDATOR'...
+
+
+
+
+
+
+
+
+
+
+
+  --> É POR ISSO QUE EU VOU TER QUE IMPORTAR AQUELE 
+
+
+
+  ''''''''''
+
+
+  const {body } = require('express-validator');
+
+
+
+
+
+  LÁ 
+
+
+
+
+  NO 
+
+  ARQUIVO 
+
+
+  routes  
+
+  de 
+
+
+  'auth.js'...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+ const express = require('express');
+
+const router = express.Router();
+
+
+const authController = require('../controllers/auth');
+
+
+const { body } = require('express-validator');
+
+
+// router.post('/signup', );
+
+
+
+
+router.put('/signup', authController.signup );
+
+// router.post('/login', );
+
+
+router.get('/status/:userId', )
+
+
+///EDIT STATUS 
+
+// router.patch('/status/:userId', )
+
+
+
+
+module.exports = router;
+
+
+
+
+
+--------------------------------
+
+
+CERTO,
+
+AÍ 
+
+NO SIGNUP O PROFESSOR VAI ADICIONAR UM 
+
+
+'ARRAY DE VALIDATION',
+
+
+
+checando 
+
+por 
+
+
+cada 
+
+
+1 dos input fields...
+
+
+
+
+
+
+vai ser provavelmente 
+aquela 
+
+coisa clássica....
+
+
+
+
+
+
+
+
+
+
+router.put(
+  "/signup",
+  [
+    body("email").isEmail().withMessage("Inputted email is not valid"),
+    body("name")
+      .isLength({ min: 7 })
+      .withMessage("Your name has to have at least 7 characters.")
+      .isString()
+      .withMessage("Invalid name."),
+  ],
+
+  authController.signup
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ALÉM DESSES CHECKS SIMPLES,
+
+
+professor diz que 
+
+PODEMOS 
+
+
+USAR UM CUSTOM VALIDATOR,
+
+
+
+VALIDATOR ASYNC,
+
+PARA 
+
+CHECAR NA NOSSA DATABASE 
+SE 
+
+O 
+
+
+USER 
+Q
+UE 
+
+O
+
+
+CARA ESTÁ TENTANDO INPUTTAR 
+
+
+JÁ 
+
+EXISTE OU NÃO NA DATABASE...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+VAMOS TER QUE USAR AQUELA SINTAXE BIZARRA...
+
+
+
+
+
+TIPO ALGO ASSIM:
+
+
+
+
+ex:
+
+
+
+
+
+.custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return Post.findOne({ title: value }).then((post) => {
+          console.log(post);
+          if (post) {
+            console.log(post, 'LINE');
+            return Promise.reject(
+              'A post with the chosen title already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CLARO QUE PRECISAMOS ADAPTAR UM POUCO AO NOSSO CASE DO 'user':
+
+
+
+
+
+.custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, 'LINE');
+            return Promise.reject(
+              'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+)
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+router.put(
+  "/signup",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Inputted email is not valid")
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, "LINE");
+            return Promise.reject(
+                'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      }),
+    body("name")
+      .isLength({ min: 7 })
+      .withMessage("Your name has to have at least 7 characters.")
+      .isString()
+      .withMessage("Invalid name."),
+  ],
+
+  authController.signup
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+ok....
+
+
+
+
+MAS PROFESSOR EXPLICA QUE TAMBÉM VAI QUERER VALIDAR OUTROS FIELDS 
+
+
+DO 
+
+
+BODY 
+
+DESSE REQUEST DE TIPO 'put'.....
+
+
+
+
+
+
+
+
+
+--> MAS O PROFESSOR TAMBÉM DIZ QUE PRECISAMOS colocar auqele 
+
+
+
+'.normalizeEmail()'...
+
+
+,
+
+
+para fazer com que 
+
+
+
+
+
+AS LETRAS MAIÚSCULAS E MINÚSCULAS NELE FIQUEM 
+
+
+
+IGUAIS (sem diferenciação de uppercase e lowercase)....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+    body('email')
+      .isEmail()
+      .withMessage('Inputted email is not valid')
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, 'LINE');
+            return Promise.reject(
+              'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      })
+      .normalizeEmail() ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+  -------------------------------
+
+
+
+
+
+
+
+
+
+
+-_> certo....
+
+
+
+MAS AGORA VAMOS VALIDATE O 'PASSWORD'..
+
+
+
+
+
+
+
+
+--> O PASSWORD DEVERÁ SER 
+
+'trimmed' ('.trim()')',
+
+
+
+E AÍ 
+
+
+DEVERÁ TER UMA LENGTH DE 6 CARACTERES,
+ 
+ ETC ETC...
+
+
+
+
+
+
+
+
+ -----> vamos colocar tbm outro  check,
+
+
+ DESSA VEZ PARA O 'name',
+
+
+ TBM 
+
+
+  
+  VAMOS TRIMMAR,
+
+
+  E TBM 
+
+
+  VAMOS QUERER 
+
+  QUE 
+
+  O 
+
+
+  NAME 
+
+
+  seja 
+
+  '.isEmpty()'  (ou seja, QUE __ ELE NÃO SEJA __ VAZIO... seu valor não pode ser EM BRANCO)...
+
+
+
+
+(
+
+
+  para isso, escreva 
+
+
+  '.not()
+  .isEmpty()'
+  ....
+
+
+
+)
+
+
+
+
+
+
+  ex:
+
+
+
+
+
+
+
+
+
+
+router.put(
+  '/signup',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Inputted email is not valid')
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, 'LINE');
+            return Promise.reject(
+              'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      })
+      .normalizeEmail(), ///vai fazer com que não exista diferenciação entre LOWER e UPPERCASE....
+    body('password')
+      .trim()
+      .isLength({ min: 7 })
+      .withMessage('Your password has to have at least 7 characters.')
+      .not()
+      .isEmpty()
+      .withMessage('You must input a password'),
+    body('name')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Your name has to have at least 6 characters.')
+      .isString()
+      .withMessage('Invalid name.')
+      .not()
+      .isEmpty()
+      .withMessage('You must input a name'),
+  ],
+
+  authController.signup
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TIPO ASSIM, BASICAMENTE...
+
+
+
+
+
+
+
+
+--> por alguma razão, nosso 
+
+error 
+
+do 
+
+
+'custom validator'
+
+
+
+
+
+
+__ SE CONSERTOU __ SOZINHO.... 
+
+
+
+
+
+
+----> não sei qual foi a razão disso...
+
+
+
+
+
+
+
+
+--> OK, MAS AGORA TEMOS ESSA LÓGICA DE VALIDATION JÁ 
+
+
+ADICIONADA....
+
+
+
+
+
+
+
+
+------> PROFESSOR IMPORTA O CONTROLLER para conseguir o signup,
+
+
+
+mas 
+
+
+já 
+
+
+fizemos isso....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.put(
+  '/signup',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Inputted email is not valid')
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, 'LINE');
+            return Promise.reject(
+              'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      })
+      .normalizeEmail(), ///vai fazer com que não exista diferenciação entre LOWER e UPPERCASE....
+    body('password')
+      .trim()
+      .isLength({ min: 7 })
+      .withMessage('Your password has to have at least 7 characters.')
+      .not()
+      .isEmpty()
+      .withMessage('You must input a password'),
+    body('name')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Your name has to have at least 6 characters.')
+      .isString()
+      .withMessage('Invalid name.')
+      .not()
+      .isEmpty()
+      .withMessage('You must input a name'),
+  ],
+
+  authController.signup
+);
+
+
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+OK.... VALIDATION FOI ADDADA... --> agora,
+
+lá 
+
+
+
+
+NO AUTHCONTROLLER, (arquivo 'auth.js')
+
+
+VAMOS QUERER 
+
+
+_COLECIONAR__ QUAISUQER 
+
+
+
+
+
+'validation errors'
+
+
+
+QUE 
+
+TALVEZ 
+
+TENHAM SURGIDO DURANTE O SEND DE NOSSO REQUEST...
+
+
+
+
+
+
+
+
+
+--> para isso,
+
+vamos usar a clássica package do express-validator,
+
+
+a 
+
+'validationResult'....
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+const { validationResult } = require('express-validator');
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+AÍ VAMOS USAR ESSA FUNÇÃO LÁ DENTRO DE 'exports.signup'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... AÍ O PROFESSOR VAI COMEÇAR ESCREVENDO AQUELA LÓGICA DE SEMPRE...:
+
+
+
+
+
+
+
+
+
+
+
+const User = require('../models/user');
+
+const { validationResult } = require('express-validator');
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+};
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+vamos querer armazenar os errors nessa const aí,
+
+
+
+e aí 
+
+CHECAR 
+
+
+SE 
+
+ESSA CONST ESTÁ PREENCHIDA,
+
+por meio daquele if check... -> 
+
+
+
+
+SE EXISTIREM ERRORS 
+
+
+durante 
+
+o upload de nosso request,
+
+vamos querer 
+
+rodar uma lógica específica 
+
+
+de 
+
+error handling....
+
+
+
+
+
+
+--> antigamente,
+
+
+nos nossos projeots,
+
+
+
+a lógica era esta:
+
+
+
+
+
+
+ const errors = validationResult(req); 
+
+
+  const validationErrors = errors.array();
+
+
+
+
+
+
+
+  if(!errors.isEmpty()) { 
+              return res.status(422).render(
+                        
+          
+                          'auth/login', { 
+                            pageTitle: 'Login',
+                            path: 'auth/login',
+                            errorMessage: errors.array()[0].msg,////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                    
+                            oldInput: {   ///usado para MANTER OS VALORES/INPUTS que o user enfiou nos input fields antes de tomar uma message de error na cara e ser redirecionado...
+                                
+                              email: email, 
+                              password: password,
+                            } ,
+                   
+                            validationErrors: validationErrors ///USADO PARA RENDERIZAR CONDICIONALMENTE BORDAS VERMELHAS NOS NOSSOS INPUT FIELDS, quando for constatado algum PROBLEMA NO INPUT DIGITADO PELO USER...           
+                          
+                          
+                          }
+          
+              ); 
+          
+            }
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+AQUI, NO CASO, VAMOS QUERER 
+
+
+ESCREVER UMA LÓGICA ALTERNATIVA....
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+----> ok.... mas como o profesosr faz?
+
+
+
+
+
+
+
+
+
+
+
+
+ele escreve:
+
+
+
+
+ const errors = validationResult(req); 
+
+
+if (!errors.isEmpty()) {
+
+
+
+  const error = new Error('Validation failed');
+}
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+
+ELE VAI __cRIAR 1 NOVO ERROR,
+
+ERROR EM QUE
+ VAI DIZER QUE 
+
+ A VALIDATION FALHOU....
+
+
+
+
+
+
+
+
+
+ -----> E AÍ VAMOS DEFINIR UM STATUS CODE DE 422(invalid input),
+
+
+ E AÍ __ 
+
+ O PROFESOR 
+
+
+
+ DIZ QUE 
+
+ VAI ADICIONAR UMA 
+
+
+NOVA PROPRIEDADE,
+
+de 
+
+nome 'data',
+
+
+
+EM QUE 
+
+VAMOS COLOCAR O ARRAY DE ERRORS... 
+
+
+ex:
+
+
+
+
+
+
+
+ const errors = validationResult(req); 
+
+
+if (!errors.isEmpty()) {
+
+  const error = new Error('Validation failed');
+
+  error.statusCode = 422;
+  error.data = errors.array(); //EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+
+
+
+
+ E AÍ __ 
+
+
+
+ VAMOS 
+
+
+
+ DAR THROW__ NESSE ERROR,
+
+
+ para que 
+
+
+
+
+ ELE 
+
+ SEJA 
+
+
+ CAPTURADO 
+
+
+
+ por nosso 
+
+
+
+ middleware 
+
+
+
+ ESPECIAL DE ERROR HANDLING DO EXPRESS, 
+
+ que é este:
+
+
+
+ app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500; ///COM ESSA SINTAXE, DEFINIMOS '500' por default.... será o default caso nenhum status code tiver sido definido anteriormente, no objeto 'erro'...
+  const message = error.message; ////'message' é uma propriedade QUE SEMPRE EXISTE NOS OBJETOS 'error'... é a mensagem que você escreve tipo em 'new Error('Mensagem escrita')' ....
+
+  res.status(status).json(
+    ///RESPOSTA PADRONIZADA...
+    {
+      message: message,
+    }
+  );
+});
+
+
+
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+ const errors = validationResult(req); 
+
+
+if (!errors.isEmpty()) {
+
+  const error = new Error('Validation failed');
+
+  error.statusCode = 422;
+  error.data = errors.array(); //EIS O CÓDIGO EM QUESTÃO.
+  throw error; /////EIS O C´DIGO EM QUESTÕA.
+}
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+LÁ NA NOSSA MAIN ERROR HANDLING FUNCTION, em 'app.js',
+
+
+
+
+NO BACKEND,
+
+
+
+
+PROFESSOR 
+DIZ QUE 
+
+SÓ VAMOS TER QUE CODAR UM AJUSTEZINHO, PARA 
+
+
+QUE 
+
+SEJA 
+
+POSSÍVEL
+
+RETRIEVAR 
+
+ESSA 
+
+DATA 
+
+acerca 
+
+do 
+
+'ARRAY DE ERRORS' (contido em 'errors.array()')
+
+
+
+(
+  vamos querer enviar essa data de volta ao USER,
+
+  em uma key de 'data',
+
+
+  EM CASO DE ERRO/errors...
+)
+
+
+
+
+
+
+ex:
+
+
+
+
+
+ app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500; ///COM ESSA SINTAXE, DEFINIMOS '500' por default.... será o default caso nenhum status code tiver sido definido anteriormente, no objeto 'erro'...
+  const message = error.message; ////'message' é uma propriedade QUE SEMPRE EXISTE NOS OBJETOS 'error'... é a mensagem que você escreve tipo em 'new Error('Mensagem escrita')' ....
+  const data = error.data; ////////////EIS O CÓDIGO EM QUESTÃO.
+  res.status(status).json(
+    ///RESPOSTA PADRONIZADA...
+    {
+      message: message,
+      data: data ////////EIS O CÓDIGO EM QUESTÃO.
+    }
+  );
+});
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+^^^^ ISSO É TOTALMENTE OPCIONAL,
+
+MAS TE MOSTRA COMO VOCÊ PODE 
+
+'KEEP YOR ORIGINAL ERRORS'
+
+e então passar esses errors aos users... (no frontend)...
+
+
+
+
+
+
+
+
+
+
+
+
+-> OK... ISSO QUER DIZER QUE 
+
+AGORA ESTAMOS 
+
+
+FAZENDO ESSA VALIDATION...
+
+
+
+
+
+
+--> E SE PASSAMOS POR ESSE IF CHECK DE 
+
+
+
+'if(!errors.isEmpty)',
+
+
+SABEMOS 
+
+
+
+
+
+QUE TODA A DATA NECESSÁRIA,
+
+
+o 'email' 
+
+
+'name' 
+
+
+e 
+
+'password'
+
+
+VÁLIDOS --> ISSO SIGNIFICA QUE 
+
+
+PODEMOS COMEÇAR A ARMAZENAR 
+
+
+
+
+
+
+
+
+
+
+ESSE USER NA NOSSA DATABASE..
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE __ HÁ PARTES/TRECHOS __ DO 
+
+MÓDULO 
+
+
+DE 
+
+AUTHENTICATION 
+
+
+__ QUE AINDA __ INTERESSAM ___ 
+
+
+NESSA 
+
+PARTE DE NOSSO CURSO... 
+
+
+
+
+
+
+
+
+
+
+
+-------> UMA DAS PARTES QUE IMPORTA:
+
+
+
+*** devemos ___ ENCRIPTAR_ _ O PASSWORD__ SUBMITTADO PELO USER...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE VAMOS PRECISAR DE 
+
+'bcryptjs',
+
+
+
+PARA 
+
+ENCRYPTAR ESSE NEGÓCIO E ENTÃO O ARMAZENAR NO SERVER...
+
+
+
+
+
+
+
+-- >VEREMOS ISSO NA PRÓXIMA AULA....

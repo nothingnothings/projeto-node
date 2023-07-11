@@ -1,0 +1,1872 @@
+
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA QUE ESTUDAMOS 'PUG' E 'HANDLEBARS',
+
+
+DUAS 
+
+
+
+
+TEMPLATING ENGINES BEM FAMOSAS (e se você quiser saber mais sobre elas, leia seus docs...)
+
+
+
+
+
+
+
+----> AGORA O PROFESSOR QUER 
+
+
+MOSTRAR 
+
+
+
+
+
+
+A TEMPLATING ENGINE FAVORITA DELE,
+
+A ENGINE 
+
+QUE USAREMOS 
+
+
+NO RESTO DO NOSSO CURSO...
+
+
+
+
+
+--> É O EJS....
+
+
+
+
+
+
+
+
+
+
+
+
+-------> EJS --> É UMA TEMPLATING ENGINE 
+
+QUE 
+
+
+É 
+
+____ QUE NEM O PUG.... ---> OU SEJA,
+
+
+É 
+
+
+SUPORTADA 
+
+
+'OUT OF THE BOX' (
+
+
+    isso significa que 
+
+    NÃO PRECISAMOS 
+
+
+    DE UM IMPORT E SETUP POR MEIO DE LINHAS COMO 
+
+    ESTAS:
+
+
+''''''''''''''''''
+    const expressHbs = require('express-handlebars);
+    
+    app.engine('hbs')
+'''''''''''''''
+
+
+
+, CASO DO HANDLEBARS... (que não é builtin...)
+)
+
+
+
+
+
+
+------------------- 
+
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+NÃO PRECISAMOS REGISTRAR A ENGINE COMO FIZEMOS COM 
+
+O 'HANDLEBARS'...,
+
+
+nem precisamos de um import... 
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE O EJS TEM UMA SINTAXE MT BOA,
+
+
+
+
+__ QUE TEM UMA BOA MISTURA ENTRE 
+
+AS FUNCIONALIDADES EXTRAS DO 
+
+
+PUG (isso quanto ao CÓDIGO JAVASCRIPT POSSÍVEL nos templates, E NÃO A SINTAXE HTML REDUZIDA...) -----------> 
+
+
+
+
+
+
+ISSO SIGNIFICA, EM OUTRAS PALAVRAS,
+
+QUE 
+O 
+
+
+'EJS'
+
+É 
+
+CAPAZ, SIM, 
+
+DE EXECUTAR 
+
+
+LÓGICA, 
+
+lógica 
+
+
+como 
+
+
+
+'if prods.length > 0' (vista LÁ NO PUG) 
+
+
+
+
+
+
+
+
+É CAPAZ DE RODAR IF STATEMENTS E FOR LOOPS, exatamente como o pug... -------> 
+
+
+
+
+
+
+
+NESSE QUESITO, É MELHOR DO QUE O 
+
+
+'HANDLEBARS',
+
+PQ O HANDLEBARS _NÃO É CAPAZ DE RODAR ESSAS LÓGICAS (prefere delegar essas tarefas ao EXPRESSJS)....
+
+
+
+
+
+-------------> OK... O EJS 
+
+É 
+
+CAPAZ DE FAZER ISSO...... ----> E MESMO ASSIM,
+
+
+
+O 
+
+
+EJS 
+
+
+__ É CAPAZ DE RODAR___ JAVASCRIPT NORMAL,
+
+
+exatamente como o handlebars,
+
+
+o que 
+
+o 
+
+professor prefere... 
+
+
+
+
+
+------> PARA SETTAR O EJS,
+
+
+professor escreve (lá em 'app.js'):
+
+
+
+
+app.set('view engine', 'ejs');
+
+
+
+
+
+-------> PROFESSOR VAI CONTINUAR COM O EJS... ----> 
+
+
+
+
+
+
+
+VAMOS COMEÇAR COM A PÁGINA DE ERRO 404 
+
+DE NOVO...
+
+
+
+
+
+
+--> CRÍAMOS UM ARQUIVO 
+
+
+'404.ejs'...
+
+
+
+
+
+
+
+
+--> PEGAMOS O CÓDIGO HTML DA PÁGINA DE ERRO 404...
+
+
+ex:
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not Found</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+-----> CERTO.... 
+
+
+AGORA TEMOS ESSE SETUP...
+
+
+
+
+
+
+
+
+--> O PROFESSOR IMEDIATAMENTE NOS CONTA QUE __ O EJS __ NÃO SUPORTA 
+
+
+LAYOUTS COMO 
+
+O 
+
+
+PUG E O HANDLEBARS.... ------> ENTRETANTO, 
+
+
+
+PROFESSOR ADMITE QUE 
+
+
+
+___eXISTEM__ SOLUÇÕES 
+
+'TO ADD AT LEAST SOME KIND OF REUSABILITY OF CERTAIN BUILDING BLOCKS'....
+
+
+
+
+
+
+
+
+
+-----> OK... MAS VAMOS COMEÇAR PELO BUILD 
+
+
+
+DE NOSSA PAGE '.ejs'...
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+
+COM O HANDLEBARS,
+
+NÓS USÁVAMOS/USAMOS 
+
+
+'{{}}' 
+
+PARA 
+
+OUTPUTTAR 
+
+CONTEÚDO DINÂMICO...
+
+
+
+
+
+
+
+
+
+--> JÁ NO PUG, NÓS USÁVAMOS '#{}'...
+
+
+
+
+
+
+
+
+
+--> NO EJS,
+
+
+USAMOS A SINTAXE MAIS BIZARRA DOS 3...
+
+
+
+usamos 
+
+
+
+
+
+
+'<'
+
+
+
+DEPOis 
+
+
+
+UMA PERCENTAGE...
+
+
+
+
+ex:
+
+
+
+'<%' ,
+
+
+
+POR FIM,
+
+ 
+
+ __SE SÓ QUEREMOS 
+
+
+
+ 'OUTPUT A VALUE'
+
+ NO LUGAR 
+
+ EM QUE 
+
+ ESTAMOS 
+
+
+ POSICIONANDO ESTE PLACEHOLDER,
+
+
+
+
+ NÓS ADICIONAMOS UM SIMPLES 
+
+ '=' DEPOIS DO PERCENTAGE,
+
+
+
+ E AÍ 
+
+ FECHAMOS 
+
+ ISSO COM 
+
+
+ um 
+
+
+ '%>'...
+
+
+
+
+ FICA TIPO
+
+
+
+ <%= ASSIM %>
+
+
+
+
+
+
+ -------------------------
+
+
+
+
+
+
+
+
+ ESSA É A SINTAXE... ----> AÍ, DENTRO DESSE SLOT,
+
+
+ PODEMOS 
+
+
+
+ 'OUTPUT DATA WHICH OUR TEMPLATE RECEIVES'...
+
+
+
+
+
+
+
+ --> E EXATAMENTE COMO ANTES,
+
+
+ O MÉTODO QUE USAMOS PARA OUTPUTTAR/INSERIR 
+
+ DATA 
+
+ NESSE NEGÓCIO __NÃO MUDOU__...
+
+
+
+
+ ex:
+
+
+
+
+
+ res.render('TEMPLATEPAGEQUEVOCÊQUER', {datadatadata: xxxxxx})
+
+
+
+
+
+
+
+
+
+ --> PARA DEMONSTRAR ISSO,
+
+ PROFESSOR 
+
+ ESCREVE:
+
+
+
+
+ <%= pageTitle %> ....
+
+
+
+
+
+
+ EX:
+
+
+
+
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> <%= pageTitle %> </title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+ 
+
+ CERTO... ATÉ AÍ, TUDO BEM...
+
+
+
+
+
+
+ EX:
+
+
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/" >Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main><h1>Page not found, please<a href="/">&nbsp;return to the Home Page</a></h1></main>
+</body>
+</html>
+
+
+
+
+
+
+
+--> E ISSO AÍ AINDA VAI FUNCIONAR...
+
+
+
+
+
+
+
+
+
+
+---> AINDA VAI FUNCIONAR, E PODEMOS TESTAR NOSSO APP... ----> 
+
+
+
+
+
+
+
+NOSSA PÁGINA 
+
+
+
+DE 
+
+'NOT FOUND' 
+
+
+
+SERÁ RENDERIZADA PELO EJS,
+
+
+sem problemas...
+
+
+
+
+
+
+
+
+
+-> O ÚNICO PROBLEMA É QUE NOSSO IDE 
+
+
+MOSTRA 
+
+A SINTAXE DO EJS COMO 
+
+
+_ERRADA__...
+
+
+
+(mas isso ainda está funcionando....)
+
+
+
+
+
+
+
+
+
+---> OK... INSTALEI UMA EXTENSÃO QUE CONSERTOU ESSE PROBLEMA, NÃO 
+
+TENHO MAIS 
+
+INDICAÇÕES DE 'CÓDIGO ERRADO'...
+
+
+
+
+
+
+
+
+-------> ok...
+
+
+
+
+
+DEVEMOS 
+
+
+
+CONVERTER AS OUTRAS PAGES...
+
+
+
+
+
+
+--> CONVERTER O 
+
+
+
+
+
+
+
+
+add-product,
+
+criar um arquivo 
+
+
+add-product.ejs...
+
+----------------------------
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/">Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product" class="active">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+</body>
+</html>
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+OK... MAS É CLARO QUE A PARTE MAIS INTERESSANTE É O ARQUIVO 
+
+'shop.html',
+
+
+PQ É LÁ QUE VAMOS PRECISAR DE UM __ IF STATEMENT_ E DE UM LOOP....
+
+
+
+
+
+
+LEMBRE-SE DO CÓDIGO DO PUG:
+
+
+
+ 
+ extends layouts/main-layout.pug
+
+block styles
+    link(rel="stylesheet", href="/css/product.css")
+
+block content
+             if prods.length > 0
+                .grid 
+                    each product in prods
+                        article.card.product-item 
+                            header.card__header 
+                                h1.product__title #{product.title}
+                            .card__image 
+                                img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                            .card__content 
+                                h2.product__price #{product.price}
+                                p.product__description #{product.desc}
+                            .card__actions 
+                                button.btn Add to Cart
+             else
+               h1 No Products
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+COPÍAMOS O CÓDIGO HTML DESSA PAGE 
+
+PARA 
+
+DENTRO 
+
+DESSE ARQUIVO 
+
+
+'shop.ejs',
+
+
+
+
+
+e aí começamos a editar....
+
+
+
+
+
+
+
+
+
+------>> CERTO... SÓ VAMOS QUERER OUTPUTTAR NOSSA 'GRID' SE REALMENTE TIVERMOS ALGUNS 'PRODUCTS'... naquela data de products....
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+
+      <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+PARA CONSEGUIR ADICIONAR UM IF STATEMENT NESSE CÓDIGO/ARQUIVo,
+
+
+
+
+
+__TEMOS QUE O POSICIONAR DE FORMA UM POUCO DIFERENTE...
+
+
+
+
+
+--> vamos 
+
+
+
+
+
+escrever 
+
+
+'<%' 
+
+DE NOVO,
+
+
+MAS DESSA VEZ ___ SEM UM 
+
+'='
+
+
+DEPOIS 
+
+DE 
+
+'<%'....
+
+
+(ISSO PQ ___ NÃO VAMOS OUTPUTTAR UM VALOR DIRETAMENTE AQUI, E SIM ESCREVEREMOS UM 'STATEMENT'...)
+
+
+
+
+
+
+
+
+
+
+-------> EM VEZ DISSO, VAMOS QUERER 'ENCLOSE' um 
+
+pedação de nosso código/block of code... 
+
+
+
+
+
+
+
+
+
+--> e é por isso que o professor escreve:
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        <%  %>
+      <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+----------------------------
+
+
+
+E A PARTE LEGAL DO 
+
+EJS 
+
+
+É 
+
+QUE 
+
+DENTRO 
+
+
+DE 
+
+
+'<% %>' 
+
+
+
+VOCê _ PODE (E DEVE) 
+
+
+ESCREVER 
+
+'VANILLA JAVASCRIPT CODE'...
+
+
+
+
+
+
+
+
+
+------> BEM, NÓS SABEMOS QUE VAMOS CONSEGUIR 
+
+
+uma key de 'prods' 
+
+
+
+
+QUANDO ESSE TEMPLATE FOR RENDERIZADO,
+
+tudo 
+
+graças 
+
+
+
+
+àquela key 'prods' 
+
+naquele 
+
+
+'res.render()'
+
+
+NA ROUTE 
+
+DE 
+
+'get' 
+
+
+DE '/' (no expressJS), 
+
+
+
+
+
+
+
+
+
+
+
+----> É POR ISSO QUE O QUE PODEMOS FAZER, DENTRO DESSE WRAPPER,
+
+É ESCREVER 
+
+' NORMAL JAVASCRIPT IF STATEMENT',
+
+
+
+
+tipo 
+
+
+<% if () %>,
+
+
+
+
+
+
+E AÍ SIMPLESMENTE 
+
+DIZER 
+
+
+
+' if(prods.length > 0 )''''
+
+
+
+
+
+
+
+
+---> MAS O ESTRANHO É O QUE VEM DEPOIS....
+
+
+
+VOCÊ 
+
+VAI 
+
+
+ESCREVER EXATAMENTE ISTO:
+
+
+
+
+<% if (prods.length > 0) { %> 
+
+
+
+
+
+
+
+
+(OU SEJA, VAI DEIXAR ABERTO ESSE '{' ),
+
+
+
+
+
+PARA ENTAÕ 
+
+
+ENVELOPAR TODO 
+
+AQUELE 
+
+CÓDIGO QUE VEM DEPOIS...
+
+
+
+ex:
+
+
+
+
+
+
+<main>
+<% if (prods.length > 0) { %> 
+     <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+
+
+
+
+
+
+-----------------------------
+
+
+
+POR FIM, VOCÊ VAI FECHAR ESSE '{' 
+
+
+QUE VOCÊ DEIXOU ABERTO NAQUELA MARCAÇÃO DINÂMICA,
+
+
+
+
+
+por meio de '<% } %>' ....
+
+
+
+
+ex:
+
+
+
+
+
+<main>
+<% if (prods.length > 0) { %> 
+     <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+    <% } %> ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+OU SEJA, É QUASE COMO SE VOCÊ TIVESSE ESCRITO 
+
+
+
+'if (prods.length > 0 ) {
+    HTML CODE.... (que você inseriu aqui dentro...)
+}'
+
+
+
+
+
+
+
+
+
+--> É PARECIDO COM O REACT, NO FINAL DAS CONTAS...
+
+
+
+
+
+--------------------------
+
+
+
+--> PROFESSOR ACHA QUE ISSO É BEM STRAIGHTFORWRAD,
+
+
+
+E BEM FÁCIL DE ENTENDER....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        <% if (prods.length > 0) { %>
+      <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+        <% } %>
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+E PROFESSOR EXPLICA QUE 
+
+É _ CLARO__ QUE PODEMOS TAMBÉM COMBINAR ISSO COM 
+
+OUTRAS 
+
+COISAS DINÂMICAS/códigos javascripts,
+
+
+
+COMO 
+
+FOR LOOPS....
+
+
+
+
+
+
+
+
+
+--> TAMBÉM 
+
+ELE DIZ QUE PODEMOS USAR UM 
+
+ELSE BLOCK...
+
+
+
+
+
+
+
+--> ex:
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        <% if (prods.length > 0) { %>
+      <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }
+                
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+E ISSO REALMENTE FUNCIONARÁ... (bem parecido com renders condicionais de jsx no react...)
+
+
+
+
+
+
+
+
+
+
+----> OK.... PROFESOR DIZ QUE PODEMOS COMBINAR 
+
+
+ESSE 'IF-ELSE' blocks 
+
+
+
+com UM FOR LOOP...... --->
+ 
+
+
+
+
+
+
+
+OK, VAMOS QUERER LOOPAR PELOS PRODUCTS E ENTÃO OUTPUTTAR DATA...
+
+
+
+
+
+
+
+
+
+---> PARA ISSO, DEVEMOS SIMPLESMENTE ESCREVER A LÓGICA JAVASCRIPT VANILLA PARA LOOPAR 
+
+
+
+POR DENTRO DO ARRAY 
+
+
+
+DE 
+
+'products'....
+
+
+
+
+
+professor escreve:
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        <% if (prods.length > 0) { %>
+      <div class="grid">
+        <%  %>
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }
+                
+    </main>
+  </body>
+</html>
+
+
+
+
+-------------------
+
+
+
+dentro daquele 
+
+
+
+<% %>,
+
+
+
+PROFESSOR DIZ QUE PODERÍAMOS OPTAR POR 1 DE VÁRIAS SOLUÇÕES...
+
+
+
+
+
+
+ELE DIZ QUE PODERÍAMOS 
+RODAR 
+
+
+'prods.forEach()',
+
+
+PARA USAR ESSA 
+
+FUNÇÃO 
+
+'forEach',
+
+
+ 
+
+ OU ENTÃO  
+
+
+
+ usar um FOR LOOP COMUM.....
+
+
+
+ tipo 
+
+
+
+ 'for (let product of prods) {
+
+
+
+   ...
+ }
+
+
+ '
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+ <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        <% if (prods.length > 0) { %>
+      <div class="grid">
+        <% for (let product of prods) {  %>
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+            <% } %>
+    </div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }
+                
+    </main>
+  </body>
+</html>
+
+
+
+
+
+-------------------------
+
+
+
+
+EX:
+
+
+
+       <% for (let product of prods) {  %>
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+            <% } %>
+
+
+
+
+
+
+
+É CLARO QUE ISSO AÍ VAI FUNCIONAR, BASTA QUE 
+
+ESCREVAMOS 
+
+
+
+NOSSOS VALORES 
+
+DINÂMICOS,
+
+TIPO ASSIM:
+
+
+
+
+
+       <% for (let product of prods) {  %>
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title"><%= product.title %></h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price"><%= product.price =></h2>
+                <p class="product__description"><%= product.desc %></p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+            <% } %>
+
+----------------------------------------------
+
+
+TIPO ASSIM....
+
+
+
+
+
+
+
+--> OK... O PROFESSOR DIZ QUE PREFERE O EJS 
+
+PQ 
+
+
+
+ELE PREFERE ESSA FLEXIBILIDADE DE SER CAPAZ DE __ ESCREVER__ ALGUM CÓDIGO JAVASCRIPT 
+
+QUANDO NECESSÁRIO, mesmo sendo no template... ----> E ISSO AÍ 
+
+
+
+
+NOS DÁ UMA SINTAXE 
+
+
+QUE 
+
+MISTURA 
+
+
+
+__HTML COM JAVASCRIPT (professor prefere isso, em vez daquela sintaxe mínima que o PUG nos oferece...)
+
+
+
+
+
+--> MAS VOCÊ PODE USAR QUALQUER APPROACH QUE VOCÊ QUISER...

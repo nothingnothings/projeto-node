@@ -1,0 +1,1716 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------->  NAS ÚLTIMAS LIÇÕES, O PROFESSOR 
+
+ADICIONOU ALGUNS STYLES A NOSSAS PÁGINAS...
+
+
+
+
+
+
+
+---> DEVEMOS PEGAR 
+ESSES 
+
+3 
+
+ARQUIVOS HTML 
+
+E SUBSTITUIR 
+
+
+NOSSOS VIEWS EXISTENTES COM ELES... --> isso pq 
+
+
+
+
+O PROFESSOR TBM ADICIONOU ALGUMAS 
+
+
+
+CSS CLASSES 
+
+
+AOS 
+
+ELEMENTOS HTML...
+
+
+
+
+
+
+
+
+
+
+
+------> MAS ESTE CURSO É SOBRE A LÓGICA DO NODEJS.... 
+
+
+
+
+
+
+
+
+
+
+-> 1 PROBLEMA QUE TEMOS, AGORA, NO ENTANTO,
+
+É QUE 
+
+
+
+'ALL THE STYLES ARE DEFINED 
+
+
+IN THE HTML FILES'... -----> E O PROFESSOR QUER 
+
+
+JUSTAMENTE 
+
+USAR 
+
+'EXTERNAL CSS FILES'... -->  MAS O PROBLEMA, AGORA, É QUE 
+
+NO MOMENTO 
+
+NÃO CONSEGUIMOS 
+
+AS IMPORTAR 
+
+COM FACILIDADE...
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS DEVEMOS VER COMO TEORICAMENTE GOSTARÍAMOS DE FAZER ISSO...
+
+
+ 
+
+
+
+
+
+
+ --> TIPICAMENTE VOCÊ TERÁ ALGUNS ARQUIVOS CSS ___ EM ALGUM LUGAR DO SEU PROJETO__...
+
+
+
+
+
+ --> E AÍ VOCÊ TIPICAMENTE 'WOULD POINT AT THEM'
+
+
+ quando seu app fosse SERVED...
+
+
+
+
+
+
+
+
+
+ --> BEM, E, DE FATO ,VOCÊ 
+
+
+
+ ___PODE CRIAR UM NOVO  SUBFOLDER E O CHAMAR 
+
+
+
+ DA COISA QUE VOCÊ QUISER,
+
+ mas 
+
+ a 
+
+
+ ___CONVENÇÃO__ É 
+
+
+ CHAMÁ-LO 
+
+ DE 
+
+
+ 'public'...  ---> ISSO PQ ESSE NOME 
+
+
+
+ INDICA UM FOLDER 
+
+ QUE 
+
+
+ 'WILL ALWAYS BE EXPOSED TO THE PUBLIC CROWD/PUBLIC',
+
+
+
+ ou seja,
+
+ CONTEÚDO QUE NÃO PRECISA DE NENHUMA 
+
+ PERMISSÃO 
+ ESPECIAL 
+
+ PARA SER ACESSADO... -----> 
+
+
+ E ISSO É IMPORTANTE:
+
+
+
+ TODOS OS ARQUIVOS 
+
+ QUE 
+
+ VOCÊ TEM AQUI NO 'ROOT' DO SEU PROJETO 
+
+
+
+
+___ _______NÃO SÃO ACESSÍVEIS___ AOS SEUS USERS... ----> 
+
+
+
+
+
+toda a lógica/código dentro 
+
+de 
+
+
+'routes', 
+
+
+
+também 
+
+o folder 
+
+'util' 
+
+
+e o 'APP.JS' em si, 
+
+
+que starta nosso 
+
+
+APP NODE... ---------> 
+
+
+
+
+
+ISSO SIGNIFICA QUE SE VOCÊ LOQUEAR E TENTAR ESCREVER 
+
+
+'localhost:3000/views/shop.html',
+
+
+
+
+VOCê GANHARÁ 
+UM 
+
+
+
+'PAGE NOT FOUND',
+
+
+
+pq 
+
+
+
+
+SUA URL 
+
+SERÁ 
+
+SÓ 
+
+CAPTADA 
+
+PELO 
+
+EXPRESSJS, 
+
+QUE 
+
+TENTARÁ 
+
+'FIND A ROUTE THAT MATCHES THIS'.... --->  __VAI TENTAR ___ ENCONTRAR UMA ROUTE 
+
+
+
+
+EM 
+
+
+'app.js'
+
+
+E NAS NOSSAS ROUTES, PRIMEIRAMENTE... --> 
+
+
+
+COMO 
+
+
+
+
+ELE NÃO ENCONTRA ESSAS FILES/routes,
+
+
+
+ELE 
+
+NÃO TE DÁ ACESSO A 
+
+
+
+'path.js'/'admin.js'/'shop.js'.... ------> 
+
+
+
+
+
+
+
+OU SEJA,
+
+NÃO PODEMOS ACESSAR O FILE SYSTEM DO SERVIDOR A PARTIR 
+
+
+DO 
+
+
+
+BROWSER.........--------> 
+
+
+
+
+
+
+
+
+
+
+
+MAS AGORA, NA VERDADE,
+
+
+
+O PROFESSOR 
+
+QUER 
+
+FAZER UMA EXCEÇÃO... --> 
+
+
+
+
+
+O PROFESSOR VAI QUERER __ QUE 'JUST SOME REQUESTS'
+
+
+___ CONSIGAM___ REACHAR/ALCANÇAR 
+
+
+__ O FILE SYSTEM do servidor ... --->  
+
+
+
+
+
+
+
+
+
+
+
+
+NO FINAL DAS CONTAS, O QUE O PROFESSOR VAI QUERER 
+
+
+
+
+É 
+
+QUE 
+
+LÁ 
+
+
+EM 
+
+'shop.html'
+
+tenhamos 
+um 
+
+link 
+
+
+
+
+como 
+
+
+'<link rel="stylesheet" href="/css/main.css" />' 
+
+
+
+
+
+
+
+----> e minha imaginação, aqui, é 
+
+que 
+
+
+NÓS VAMOS TER 
+
+
+UM FOLDER DE 'css' em 'public',
+
+
+com um 
+
+ARQUIVO 
+
+'main.css'
+
+
+
+
+___ DENTRO DELE.... ---> E ESSE SERÁ 
+
+O 
+
+ARQUIVO QUE EU VOU QUERER 
+
+
+'serve'
+
+POR MEIO 
+
+DE UM CÓDIGO COMO 
+
+
+
+
+'<link rel="stylesheet" href="/css/main.css" />'  
+
+
+
+
+
+
+
+
+------> MAS AGORA, NO MOMENTO, 
+
+ISSO __ NÃO FUNCIONARIA/NÃO FUNCIONA ---> 
+
+
+
+
+
+MAS 
+
+__VAMOS PEGAR__ ESSE CÓDIGO DE STYLE QUE 
+
+TEMOS NA TAG STYLE,
+
+este código aqui:
+
+
+
+
+
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+
+
+      main {
+          padding: 1.5rem;
+      }
+
+      .main-header {
+          padding: 0 1.5rem;
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .main-header__item {
+        margin: 0 1rem;
+        /* padding: 25px; */
+        padding: 0;
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: black;
+      }
+
+      .main-header__item a:hover,
+        .main-header__item a:active,
+        .main-header__item a.active {
+            color: #9f2fc4;
+        }
+
+
+    </style>
+
+
+
+
+
+
+
+
+
+
+
+    E VAMOS 
+
+
+    MOVÊ-LO PARA DENTRO 
+
+    DE 
+
+    'main.css'... ----> 
+
+
+
+
+
+
+    EX:
+
+
+
+
+        <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+
+
+      main {
+          padding: 1.5rem;
+      }
+
+      .main-header {
+          padding: 0 1.5rem;
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .main-header__item {
+        margin: 0 1rem;
+        /* padding: 25px; */
+        padding: 0;
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: black;
+      }
+
+      .main-header__item a:hover,
+        .main-header__item a:active,
+        .main-header__item a.active {
+            color: #9f2fc4;
+        }
+
+
+    </style>
+
+
+
+
+    -----------------------------
+
+
+
+
+
+
+
+
+
+
+--> VAMOS PEGAR O CODE 
+
+
+DE STYLE 
+
+
+
+
+de 
+
+'shop.html'
+
+
+E VAMOS COLOCAR NESSE ARQUIVO AÍ 
+
+
+
+PQ NÓS O USAMOS EM GERAL NAS OUTRAS PÁGINAS...
+
+
+
+
+
+
+
+------> ok... obviamente,
+
+ se agora 
+
+
+ EU SALVAR E RECARREGAR MINHA MAIN PAGE,
+
+ VEREI QUE 
+
+
+ 'ALL THE STYLE IS GONE NOW'...
+
+
+
+
+
+
+
+
+ -------> ESTARÁ 
+
+ GONE 
+
+ pq 
+
+ este código aqui:
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/public/css/main.css"></link>
+    <title>Shop</title>
+    <style>
+
+
+
+
+
+
+
+
+
+NÃO 
+
+
+
+
+VAI 
+
+IMPORTÁ-LO,
+
+NÃO VAI IMPORTAR PQ 
+
+ESSE 
+
+ARQUIVO 
+
+'main.css'
+
+
+NÃO SERÁ 
+
+ENCONTRADO 
+
+
+
+
+__ POR NOSSO APP/página HTML --> E ISSO ACONTECE/ACONTECERÁ 
+
+
+
+JUSTAMENTE 
+
+PQ 
+
+
+O FILE SYSTEM de nosso server NÃO PODE SER ACESSADO/NÃO CONSEGUE SER ACESSADO 
+
+
+
+
+___ POR NOSSA PÁGINA HTML....
+
+
+
+
+
+---->  OK... --> ISSO NUNCA VAI FUNCIONAR..
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR 'IMPORTAR'/ aplicar/CARREGAR UM CÓDIGO CSS 
+
+EM UMA 
+
+PAGE HTML 
+
+
+
+
+SERVIDA POR NÓS ,
+
+PRECISAMOS 
+
+
+DE UMA 
+
+PACKAGE
+ 
+ OFERECIDA 
+
+
+
+ PELO EXPRESSJS 
+
+
+ A NÓS... ----> 
+
+
+
+
+
+ ___ NÓS PRECISAMOS SER CAPAZES DE 'SERVE FILES STATICALLY'... -------> 
+
+
+
+
+
+ E 
+
+ 'SERVE FILES STATICALLY'
+
+
+
+
+ SIMPLESMENTE SIGNIFICA 
+
+ '
+ '''NOT HANDLED BY THE EXPRESS ROUTER OR OTHER MIDDLEWARE''',
+
+
+
+
+
+ MAS EM VEZ DISSO 
+
+ 'DIRECTLY FORWARDED TO THE FILE SYSTEM'... --->  E PARA ISSO,
+
+
+ PARA 
+
+
+
+ CONSEGUIR FAZER ISSO,
+
+
+ PRECISAMOS 
+
+
+ REGISTRAR __ _UM NOVO MIDDLEWARE__ COM 
+
+
+
+ 'app.use()'.... ---->
+
+
+
+ VAMOS 
+
+ ESCREVER 
+
+ ESSE 
+
+ MIDDLEWARE 
+
+ LÁ 
+
+
+ em 
+
+ 'app.js'... ------> 
+
+
+
+
+
+
+
+
+
+
+
+ --> E AÍ O PROFESSOR QUE 
+
+
+
+ ESSE É UM MIDDLEWARE/COISA QUE 
+
+
+ O 
+
+
+
+ ____EXPRESSJS 
+
+ 'SHIPS WITH'... -----> 
+
+
+ É POR ISSO 
+
+ QUE 
+
+ VAMOS PODER USAR O 'OBJETO EXPRESS'
+
+
+ em si,
+
+
+
+ vamos poder usar 
+
+
+
+ 'app.use(express.xxxx)'...
+
+
+
+
+
+
+
+
+ --> 
+
+
+
+
+ E AÍ DENTRO DESSE OBJETO VAMOS QUERER 
+
+ ACESSAR 
+
+
+
+ UM MÉTODO CHAMADO DE 
+
+ 'STATIC'...
+
+
+
+
+
+
+ --> 
+
+ ex:
+
+
+
+''''  app.use(express.static); '''''''
+
+
+
+
+
+
+
+
+
+E O IDE/visual studio code nos diz:
+
+
+
+
+
+'THIS IS A BUILTIN MIDDLEWARE-FUNCTION IN EXPRESS. IT SERVES STATIC FILES AND 
+
+IS BASED ON SERVE-STATIC'... 
+
+
+
+
+
+
+---> ELE FAZ SERVE DE 'STATIC FILES'... -----> 
+
+
+
+ok..
+
+
+vamos escrever:
+
+
+
+
+
+app.use(express.static());
+
+
+
+
+
+
+
+
+
+---> E AGORA, COMO PARÂMETRO, SÓ VAMOS TER QUE 'PASS IN ' 
+
+
+UM PATH 
+
+AO FOLDER 
+
+
+
+QUE VAMOS QUERER 
+
+'SERVE STATICALLY'... -> 
+
+
+
+É ESSENCIALMENTE 
+
+
+
+
+
+O PATH AO FOLDER QUE ___ REALMENTE QUEREMOS 'SERVE STATICALLY'...
+
+
+
+
+
+
+
+
+
+
+-----> BASICAMENTE,
+
+
+É UM FOLDER A QUE VOCÊ VAI QUERER 
+
+DAR 
+
+
+'READ-ACESS'... -----> pessoas vão poder LER ESSE FOLDER LIVREMENTE DE SEUS BROWSERS...
+
+
+
+
+
+--> SERÁ SÓ 'READ-ACCESS' (isso pode parecer pouco,
+
+
+MAS 
+
+É 
+
+
+BEM MAIS DO QUE NÓS USUALMENTE RECEBEMOS, QUANDO 
+
+
+
+USAMOS UM BROWSER/ACESSAMOS UM SERVER...
+
+
+
+)
+
+
+
+
+
+-----> OK... SÓ READ ACCESS... --> aí aqui, de novo,
+
+
+ 
+
+ PODEMOS CONSTRUIR UM PATH POR MEIO 
+
+
+ DO 
+
+ MÉTODO 
+
+
+
+ 'path.join(__dirname, 'public')' ....  ----> 
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ ''''''' app.use(express.static(path.join(__dirname, 'public'))); ''''''''''''
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> __ GARANTIMOS READ-ACCESS __ A 
+
+
+ ESSE 
+
+
+ __FOLDER 'PUBLIC' 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+COM ISSO, COM ESSE SIMPLES MIDDLEWARE,
+
+USERS 
+
+DEVERÃO/CONSEGUIRÃO 
+
+SER CAPAZES 
+
+
+DE ACESSAR O 
+
+FOLDER 
+
+'PUBLIC' 
+
+
+NO ROOT FOLDER....
+
+
+
+
+----------------
+
+
+
+
+
+
+
+--->  O NEGÓCIO AINDA NÃO VAI FUNCIONAR... --> A RAZÃO PARA ISSO É 
+
+QUE 
+O 
+
+
+PATH 
+
+
+de 
+
+
+'localhost:3000/public/css/main.css'
+
+
+
+___,
+
+ COM ESSE 
+
+ 'public'
+
+ NO INÍCIO__, 
+
+
+ ESTÁ ___ ERRADO___... --> PARA CORRIGIR ESSE PROBLEMA,
+
+ DEVEMOS 
+
+
+ IR 
+
+ ATÉ 
+
+
+ O 
+
+ CÓDIGO HTML 
+
+ DE 
+
+ 'shop.html'
+
+
+
+
+
+ E ALTERAR ESTE CÓDIGO AQUI:
+
+
+
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <title>Shop</title>
+
+
+
+
+
+
+
+--------> DEVEMOS ALTERAR AQUELE 
+
+
+'''  <link rel="stylesheet" href="/public/css/main.css"></link>''' ,
+
+
+
+DEVEMOS 
+
+
+
+TIRAR 
+
+AQUELE 
+
+
+'/public/' DO INÍCIO,
+
+
+DEIXAR
+ 
+ SÓ 
+
+
+
+ '/css/main.css',
+
+
+ PQ AQUI DEVEMOS ____ 'FINGIR' (ACT) 
+
+
+
+
+ COMO ___ SE __ JÁ ESTIVÉSSEMOS _ DENTRO 
+
+
+
+ DO 
+
+
+ FOLDER DE 'public' (pq realmente já estaremos, 
+ 
+ 
+ estaremos 
+ 
+ DEVIDO 
+ 
+ 
+ ÀQUELA FEATURE/COISA 
+ 
+ do 
+ 
+ 
+
+ MIDDLEWARE 
+
+
+
+ de 
+ 
+ 
+ ' ''''''''
+ 
+ app.use(express.static(path.join(__dirname, 'public')));
+
+
+''''''
+ )
+
+
+
+
+
+
+
+ ---> OK, FICOU ASSIM:
+
+
+
+
+
+
+
+     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <title>Shop</title>
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+FICARÁ ASSIM:
+
+
+
+<link rel="stylesheet" href="/css/main.css"></link>
+
+
+
+
+
+
+
+
+
+
+OK, AGORA NOSSO ARQUIVO CSS REALMENTE ESTÁ/ESTARÁ SENDO IMPORTADO...
+
+
+
+
+
+
+
+
+
+
+ELE VEM POR MEIO DE UM STATUS CODE DE 304...
+
+
+'A 304 Not Modified message is an HTTP response status code
+
+indicating that the requested resource has not been modified since the previous transmission,
+ so there is no need to retransmit the requested resource to the client.
+
+'
+
+
+
+
+
+------------------------------
+
+
+
+
+ 
+ ---> DEVEMOS AGIR COMO SE JÁ ESTIVÉSSEMOS NO FOLDER 
+
+
+ 'public' ....  ---> ELE VAI PEGAR QUALQUER REQUEST QUE 
+
+ TENTA 
+
+ ENCONTRAR 
+
+
+ ALGUM ARQUIVO 
+
+
+
+
+ '.css' 
+
+
+'.js',
+
+
+
+SE TIVERMOS ALGUM DESSES REQUESTS,
+
+
+
+
+ELE VAI 
+
+AUTOMATICAMENTE 'FORWARDAR' 
+
+ESSE REQUEST 
+
+
+
+
+AO __ FOLDER DE 'public',
+
+tudo graças a este código aqui:
+
+
+''''''''''''''''
+
+
+app.use(express.static(path.join(__dirname, 'public'))); 
+
+
+'''''''''''''''
+
+
+
+
+--> é por isso que o 
+
+'/public/' 
+É 
+
+STRIPPED OUT of that 
+
+
+'href="/css/main.css
+"
+
+
+'
+
+
+
+
+
+
+,
+
+
+PQ 
+
+É 
+
+NESSE LUGAR QUE 
+
+
+FILE REQUESTS SERÃO 'FORWARDED TO'... ----> OK,
+
+
+AGORA 
+
+
+
+AQUELE 
+
+
+ARQUIVO 
+
+'main.css'
+
+
+em 
+
+
+'/public/css/main.css'
+
+
+PODE SER ENCONTRADO JUSTAMENTE 
+
+PQ 
+
+
+
+AGORA ESSE PATH PÔDE SER 
+
+RESOLVED 
+
+
+
+
+por meio da combinação 
+
+de 
+
+
+
+'<link rel="stylesheet" href="/css/main.css">'  +  app.use(express.static(path.join(__dirname, 'public'))); 
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+-------> BTW, VOCÊ PODERIA __ REGISTRAR 'MULTIPLE STATIC FOLDERS',
+
+
+
+O QUE FARÁ COM QUE 
+
+O 
+
+REQUEST 
+
+SEJA FUNNELADO 
+
+PELOS 
+
+MIDDLEWARES
+
+ATÉ 
+
+QUE 
+
+
+__ELE 
+
+
+
+
+'HAS A FIRST HIT FOR THE FILE ITS LOOKING FOR'... 
+
+
+
+(ou seja,
+
+poderíamos 
+
+
+fazer tipo assim:
+
+
+
+app.use(express.static(path.join(__dirname, 'public'))); 
+app.use(express.static(path.join(__dirname, 'publics'))); 
+
+)
+
+
+
+
+
+
+---------> MAS AQUI O PROFESSOR SÓ VAI SIMPLESMENTE USAR O 
+
+FOLDER DE 'public'...
+
+
+
+
+
+
+
+
+
+------> 
+
+
+
+
+OK... ADICIONAMOS ESSE CÓDIGO DE 
+
+import/carregamento de '<link rel>'
+
+EM TODAS NOSSAS PAGES.....
+
+
+
+
+
+
+-------------
+
+
+
+ok.. agora testamos.... --> OK, TUDO ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+--> É ASSIM QUE IMPORTAMOS/FAZEMOS 
+
+SERVE 
+
+
+DE 
+
+ARQUIVOS 
+
+CSS 
+
+
+COM 
+
+
+
+
+O NODEJS/EXPRESSJS,
+
+
+
+APPS 
+
+
+
+
+EXPRESSJS 
+
+__PUROS___  
+
+
+
+
+
+
+
+
+
+----> E É ASSIM, BASICAMENTE, QUE PODEMOS 
+
+'SERVE FILES STATICALLY'... ----> E É CLARO QUE VOCÊ NÃO ESTÁ LIMITADO 
+
+ÀPENAS 
+
+
+__ A ARQUIVOS __ DE STYLE (stylesheets),
+
+
+
+
+
+
+
+
+TAMBÉM NÃO ESTÁ LIMITADO A ARQUIVOS 
+
+
+JAVASCRIPT... ---> VOCÊ PODE 
+
+
+FAZER SERVE DE IMAGES E OUTROS ARQUIVOS TBM...
+
+
+
+
+
+
+
+
+---> ESSA É A ÚLTIMA 'IMPORTANT PIECE', por enquanto... --> É ASSIM QUE 
+
+
+PODEMOS SERVIR CONTEÚDO 
+
+
+
+__STATICALLY__.... 
+
+
+
+(
+
+    
+
+ E 
+
+ 'SERVE FILES STATICALLY'
+
+
+
+
+ SIMPLESMENTE SIGNIFICA 
+
+ '
+ '''NOT HANDLED BY THE EXPRESS ROUTER OR OTHER MIDDLEWARE''',
+
+
+
+
+
+ MAS EM VEZ DISSO 
+
+ 'DIRECTLY FORWARDED TO THE FILE SYSTEM'... --->  E PARA ISSO,
+
+
+ PARA 
+
+
+
+)
+
+
+
+
+
+
+
+
+---> NOS PRÓXIMOS MÓDULOS, VEREMOS 
+
+
+COMO FAZER __ ALGO 
+
+DE VERDADE COM AQUELA USER DATA QUE SUBMITTAMOS POR NOSSA FORM,
+
+E TAMBÉM 
+
+VEREMOS 
+
+OUTRO 
+
+CONCEITO MT IMPORTANTE,
+
+
+O CONCEITO  DE 
+
+
+'TEMPLATES',
+
+
+
+__ QUE É UM CONCEITO QUE VAI NOS DEIXAR__ TRANSFORMAR NOSSO CÓDIGO 
+
+HTML HARDCODADO (que não tem nenhum ELEMENNTO DINÂMICO ) 
+
+
+
+EM __ _ELEMENTOS__ MAIS DINÂMICOS__,
+
+
+EM QUE 
+
+
+PODEMOS 
+
+'INJECT DATA THAT WE HAVE IN __ OUR JAVASCRIPT CODE,
+
+IN THE HTML TEMPLATES WE RETURN TO THE USERS.... ''__ ------->  
+
+
+É ALGO BEM IMPORTANTE QUE VEREMOS NOS PRÓXIMOS MÓDULOS...
+
+

@@ -1,0 +1,586 @@
+
+
+
+--> CRÍAMOS UM FOLDER VAZIO,
+
+E AÍ 
+
+
+VAMOS 
+
+ESCREVER 
+
+CÓDIGO DENO 
+
+
+
+
+NO INTERIOR...
+
+
+
+
+
+
+
+
+
+
+
+
+---> NÃO É BOM 
+
+
+VER ESSE MÓDULO DO NADA,
+
+É 
+
+MELHOR 
+
+VER 
+
+TODAS AS AULAS 
+
+
+DO 
+
+NODE,
+
+
+PARA 
+
+
+
+
+
+QUE 
+
+
+
+
+SEJA POSSÍVEL ENTENDER TODAS AS NUANCES DO DENO.... 
+
+O PROFESSOR 
+
+VAI
+
+ENSINAR DENO 
+PARA 
+
+PESSOAS QUE 
+
+JÁ 
+
+SABEM 
+
+ESCREVER 
+
+CÓDIGO 
+
+NODE...
+
+
+
+
+
+
+
+
+
+
+
+--> SE VOCê JÁ VIU O MÓDULO TYPESCRIPT ANTES DESTE AQUI,
+
+
+TAMBÉM
+
+SERÁ
+
+BEM ÚTIL...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS ESCREVER NOSSO PRIMEIRO CÓDIGO DENO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CABE A NÓS DECIDIR SE QUEREMOS ESCREVER 
+
+
+ESSE CÓDIGO COM JAVASCRIPT OU TYPESCRIPT...
+
+
+
+
+
+
+
+
+
+
+--> MAS COMO O DENO TEM ESSE COMPILER TYPESCRIPT BUILTIN ,
+
+
+
+DEEVMOS 
+
+
+ESCREVER UM POUCO DE TYPESCRIPT CODE COM ELE...
+
+
+
+
+
+
+
+
+
+--> OK ,O PROFESSOR CRIA 1 ARQUIVO 'app.ts'
+
+
+
+
+
+DENTRO 
+
+DO NOSSO FOLDER..
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> nosso primeiro CÓDIGO DENO BÁSICO 
+
+
+vai 
+
+
+
+
+
+ser um código que quase poderíamos rodar com node 
+
+javascript tbm...
+
+
+
+
+
+
+
+
+
+
+
+
+--> professor escreve:
+
+
+
+
+
+
+
+
+
+
+
+
+let message: string; 
+
+
+
+
+
+
+message = 'Hi there!';
+
+
+
+
+
+
+
+
+console.log(message);
+
+
+
+
+
+
+
+
+
+
+
+--> BASICAMENTE ESTIPULAMOS QUE ESSA MESSAGE SEMPRE SERÁ DE TYPE 'string'
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE PODERÍAMOS TER 'MERGED' essas 2 
+
+
+linhas de código em 1 só,
+
+
+
+mas  O PROFESSOR QUER NOS MOSTRAR QUE __ PODEMOS__ USAR __ FEATURES__ TYPESCRIPT AQUI...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+let message: string = 'Hi there!';
+
+
+
+
+
+
+console.log(message);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK... EU COLOQUEI SÓ 1 LINHA, PQ SOU RADICAL....
+
+
+
+
+
+
+
+
+
+
+--> OK.. MAS ESSE N É UM FANCY APP,
+
+N É UM WEBSERVER,
+
+MAS 
+
+SERÁ UM CÓDIGO QUE PODEMOS/PODEREMOS EXECUTAR 
+
+
+
+COM O DENO..
+
+
+
+
+
+
+
+
+
+
+
+--------> COM ISSO TUDO SALVO,
+
+PODEMOS ABRIR O TERMINAL... --> usamos o do IDE,
+
+
+e aí 
+
+
+
+EXECUTAMOS NOSSO 'app.ts'
+
+
+
+COM O DENO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK .... --> MAS AÍ EU RECEBI 1 ERRO:
+
+
+
+
+
+
+
+
+
+deno : O termo 'deno' não é reconhecido como nome de cmdlet, função, 
+arquivo de script ou programa operável. Verifique a grafia do nome ou, se  
+um caminho tiver sido incluído, veja se o caminho está correto e tente     
+novamente.
+No linha:1 caractere:1
++ deno run app.ts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> POR ALGUMA RAZÃO, O DENO NÃO ESTÁ INSTALADO NESSE FOLDEr...
+
+
+
+
+
+
+
+
+
+--> tento instalar de forma autonoma...
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS VOCE NAO VAI ESCREVER 
+
+
+'deno app.ts',
+
+
+E SIM 
+
+'deno run app.ts' (um pouco diferente do node)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS QUANDO EXECUTO 
+
+
+O 
+
+
+
+DENO,
+
+
+JÁ VEJO ALGUMAS DIFERENCAS:
+
+
+
+1) ele compila o código typescript em javascript...
+
+
+
+
+
+
+
+2) a V8 ENGINE do google já vai em frente  
+
+
+E __ EXECUTA__ O CÓDIGO JAVASCRIPT E JÁ PRINTA 'HI THERE'....
+
+
+
+
+
+
+
+
+
+
+
+
+-> ISSO FUNCIONA.... -->
+
+
+E SE 
+
+VOCE 
+
+
+RESETTAR 
+
+
+
+O CÓDIGO,
+VOCE 
+
+VERA QUE 
+
+ELE 
+
+NAO 
+
+VAI COMPILAR DNV... --> MAS ISSO ACONTECE 
+
+
+
+JUSTAMENTE PQ 
+ELE CACHEIA AS MUDANCAS/STATUS DO SEU CÓDIGO,
+
+O 
+
+QUE 
+
+
+FAZ COM QUE 
+
+ELE NÃO COMPILE DESNECESSARIAMENTE (nao detectará nenhuma mudança que necessite esse re-compile0...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo... o run do deno FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ANTES DE RODARMOS UM WEBSERVER COM O DENO,
+
+
+DEVEMOS 
+
+
+VER AS FEATURES QUE TEMOS COM O DENO...
+
+
+
+
+
+
+
+
+
+
+--. DEVEMOS ANALISAR SE HÁ ALGUM EQUIVALENTE DE 'CORE MODULES ' (do node)
+
+
+COM 
+
+O 
+
+__DENO___ (uma alternativa DENO para isso)...
+
+

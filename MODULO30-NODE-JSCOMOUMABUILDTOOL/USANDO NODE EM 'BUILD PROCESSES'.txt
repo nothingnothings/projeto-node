@@ -1,0 +1,673 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUEREMOS 
+
+ACABAR COM 'OPTIMIZED CODE' --> e isso é bem mais importante em PROJETOS FRONTEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> NPM É ÚTIL PQ PODEMOS INSTALAR PACKAGES/MANAGEAR NOSSO PROJETO COM AQUEEL ARQUIVO 
+
+
+'package.json', 
+
+
+
+
+
+
+E PODEMOS INSTALAR 
+
+PACKAGES 
+
+QUE RODAM NOS BROWSERS TAMBÉM... 
+
+
+
+
+
+
+
+
+
+
+
+
+-------> NÃO VAMOS INSTALAR EXPRESS NO CÓDIGO FRONTEND,
+
+
+pq isso nunca vai rodar no frontend...
+
+
+
+
+
+
+
+
+
+
+
+--> PODEMOS IR INSTALANDO ESSES ARQUIVOS,
+
+
+e aí 
+
+podemos 
+
+
+
+
+
+
+
+
+codar código react, etc etc, com 
+
+IMPORT SYNTAX 
+
+DO 
+
+
+
+REACT (es6- es7)
+,
+
+
+
+
+INSTALAMOS 
+
+AS PACKAGES,
+
+
+E AÍ 
+
+
+
+
+
+VAMOS EXECUTAR OS SCRIPTS DO 
+
+'react-scripts',
+
+
+
+
+
+aqueles 
+
+scripts 
+
+
+de 
+
+
+
+
+
+
+
+
+
+'start',
+
+
+
+
+'build',
+
+'test',
+
+
+'eject'
+,
+
+
+
+etc...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> SE PROCURARMOS NO NODE_MODULES O PACKAGE DE 'react-scripts',
+
+
+
+
+
+PODEMOS ENCONTRAR ALGUNS ARQUIVOS 
+
+
+
+
+
+
+importantes em 
+
+'scripts'... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> OUTRO DETALHE:
+
+
+
+EM CADA __ PACKAGE__ QUE SHIPPAMOS/DESENVOLVEDORES SHIPPAM,
+
+
+
+
+TAMBÉM 
+
+
+É NECESSÁRIO COLOCAR UMA 'PACKAGE.JSON' file....
+
+
+
+
+
+
+--> ISSO PQ QUANDO VOCÊ COMPARTILHA UMA PACAKGE, VOCÊ PRECISA DISSO;
+
+VOCÊ PRECISA 
+
+
+ADICIONAR UM POUCO DE INFORMAÇÃO EXTRA A ESSE ARQUIVO (como as dependencies dessa própria package, etc etC)...
+
+
+
+
+
+
+
+
+
+
+--------> PODEMOS ENCONTRAR TUDO SOBRE O CREATE E SHARE DE PACKAGES LÁ NOS DOCS 
+
+
+DO 
+
+
+NPM...
+
+
+
+
+
+
+--> BEM.... LÁ EM 
+
+
+'react-scripts,'
+
+
+
+
+ENCONTRAMOS NA PASTA 'bin'
+
+
+O 
+
+
+ENTRYPOINT QUE É ACTUALLY EXECUTADO.... (
+
+    é o arquivo 
+
+    'react-scripts.js'... ---> 
+
+
+
+
+
+    ESSE É O CÓDIGO QUE É EXECUTADO....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+A PARTE IMPORTANTE, AQUI, É QUE ESSE 
+
+
+
+arquivo de 
+
+
+'react-scripts.js'
+
+
+É 
+
+
+QUE 
+
+__ ELE VAI __ SER EXECUTADO _ PELOO __ NODEJS.... --> ELE VAI SER EXECUTADO PELO NODEEJS 
+
+
+
+PQ 
+
+A 
+IDEIA 
+
+
+POR TRÁS ___ DE 'BUILD WORKFLOWS' É JUSTAMENTE QUE 
+
+
+
+
+ELES RODAM __ NO SEU COMPUTADOR_ ____ ANTES__ 
+
+
+DE 
+
+
+
+SEU CÓDIGO SER DEPLOYADO POR VOCê/UPLOADAR O SEU CÓDIGO OPTIMIZADO A UM SERVER..
+
+
+
+
+
+
+
+
+
+-> ISSO SIGNIFICA QUE 
+ESSE 
+
+
+CÓDIGO 
+de 
+'react-scripts'
+
+
+NÃO VAI RODAR NO BROWSER OU COISA DO GÊNERO,
+
+E SIM 
+
+VAI 
+
+RODAR NA SUA MÁQUINA,
+
+
+
+vai ser rodado pelo 
+
+NODEJS.... 
+
+
+
+
+
+
+
+
+
+--------> isso também 
+é assim pq 
+
+ESSE 
+
+SCRIPT 
+
+
+
+
+DE react-scripts 
+
+VAI 
+
+
+
+
+KICK OFF OUTROS CODES/SCRIPTS,
+
+QUE 
+
+VÃO 
+
+KICKSTART OUTROS CODES,
+
+
+
+CODES QUE TAMBÉM VÃO TRABALHAR 
+
+COM 
+
+SEU 
+
+
+LOCAL FILE SYSTEM....
+
+
+
+
+
+
+POR EXEMPLO... --> NO FOLDER DE 'scripts' do 'react-scripts' 
+
+
+
+
+
+
+
+É POSSÍVEL 
+
+
+VER 
+
+OUTRAS COISAS QUE 
+
+ELE 
+
+
+FAZ TAMBÉM....  -----> OS SCRIPTS DESSE PACKAGE SÃO BEM COMPLEXOS,
+
+POIS 
+USAM 
+
+O 
+
+
+WEBPACK,
+
+
+
+QUE É 
+
+
+USADO 
+
+
+
+PESADAMENTE EM FRONTEND DEVELOPMENT PARA COMPILAR 
+
+
+
+SEUS NEXT-GEN FILES,
+
+
+
+para que 
+
+as 
+features 
+
+sejam
+ 
+
+
+ usadas corretamente.... (ferramentas como BABEL)....
+
+
+
+
+
+
+
+
+
+
+
+ ---------> MAS O IMPORTANTE É QUE 
+
+
+
+ LÁ 
+
+ NESSE 'react-scripts'
+
+
+ ESTAMOS USANDO 
+
+
+ NODEJS/pensamos em executar esse arquivo com NODEJS,
+
+
+
+ justmaente por causa da 
+ SINTAXE DE IMPORTS QUE 
+
+ É 
+
+ UTILIZADA AQUI...
+
+
+ (
+
+
+     ex:
+
+
+
+     const webpack = require('webpack');
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+ ---------> CERTO... E NÓS ESTAMOS CARREGANDO DIFERENTES PACKAGES AQUI,
+
+
+
+
+
+ PACAKGES QUE TAMBÉM VÃO PEGAR NOSSO 'LOCAL SOURCE CODE '( no folder de 'source'),
+
+
+ QUE 
+
+ VÃO OS PARSEAR ,
+
+
+
+ PUXAR O CONTEÚDO NESSES ARQUIVOS,
+
+ COMPILAR 
+
+ TUDO EM 1
+
+
+ ARQUIVO ,
+
+
+
+
+ e aí 
+
+ optimizar o máximo possível... (
+
+
+     rewrite our code in a way that works in older browsers...
+
+
+
+
+
+ )
+
+
+
+
+
+
+
+
+
+
+
+ O CONTEÚDO SERÁ TRANSFORMADO PARA RODAR EM BROWSERS ANTIGOS.... -----> TUDO ISSO É FEITO POR UM PUNHADO DE PACKAGES 
+ QUE 
+
+
+ SÃO 
+ EXECUTADOS POR TRÁS DAS CENAS.... --> e o código dessas packages é executado por meio do nodejs...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> é importante entender que 
+
+
+ VOCê PDOE USAR O NODEJS 
+
+
+
+ PARA _ EXECUTAR__ QUALQUER CÓDIGO JAVASCRIPT (que use features node ) NA SUA MÁQUINA... --> 
+
+
+
+ e também, que portanto,
+
+
+
+ pode ser usado 
+
+ para 
+
+
+ RODAR UTILITY SCRIPTS.... --> os utility scripts,
+
+
+
+
+ no caso de nosso projeto,
+
+
+ PEGAM NOSSO SOURCE CODE E O TRANSFORMAM, CONFORME 
+
+ DEFINIMOS 
+
+
+ PELAS PACKAGES QUE INSTALAMSO...
+
+
+
+
+
+
+
+
+
+
+ ---> ESSA É UMA ÁREA IMPORTANTE DO NODEJS...
+
+
+
+
+
+
+
+
+
+
+
+ -------> MUITO DE NOSSO CONHECIMENTO SERÁ ÚTIL PARA O TRABALHO COM NODEJS,
+
+
+
+ mas 
+
+ há mt mais coisas... ----> TEM QUE SABER SOBRE COMO TRABALHAR COM ARQUIVOS,
+
+
+
+ COMO MANAGEAR LARGE CHUNKS DE DATA,
+
+ ETC ETC...
+
+
+
+
+
+
+--> npm é 
+
+
+
+bom de ser estudado...
+
+
+
+
+
+
+--> SE VOCÊ QUER APRENDER SOBRE COMO DISTRIBUIR SUAS PACKAGES, LEIA OS DOCS DO NPM....

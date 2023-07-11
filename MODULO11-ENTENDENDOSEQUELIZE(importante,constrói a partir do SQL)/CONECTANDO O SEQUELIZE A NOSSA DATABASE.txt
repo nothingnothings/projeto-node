@@ -1,0 +1,1115 @@
+ 
+
+
+
+
+
+
+
+
+
+
+
+ DE VOLTA AO NOSSO PROJETO, PRIMEIRAMENTE VAMOS TER QUE 
+
+ INSTALAR O 
+
+
+
+ SEQUELIZE...
+
+  
+
+
+
+
+
+
+
+
+--> VAMOS RODAR 'npm install --save sequelize'....
+
+
+
+
+
+
+--> ISSO PQ É UMA PRODUCTION DEPENDENCY;
+
+
+
+É UMA CORE DEPENDENCY DO NOSSO PROJETO... 
+
+
+
+
+
+
+
+
+
+
+
+----> IMPORTANTE!!!! ---> O SEQUELIZE___ REQUER 
+
+
+
+QUE VOCÊ 
+
+JÁ TENHA INSTALADO NO SEU PROJETO AQUELA PACKAGE 
+
+DE 
+'mysql2'....
+
+
+
+
+-> E ELE PRECISA QUE ESSA PACKAGE 
+
+JA´
+
+
+ESTEJA 
+
+IMPORTADA 
+
+
+NO SEU APP.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PRECISAMOS QUE NOSSO PACKAGE.JSON FIQUE ASSIM:
+
+
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.4",
+    "mysql2": "^2.3.0",
+    "pug": "^3.0.2",
+    "sequelize": "^6.7.0"
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> OK.... AGORA, COM ELE ,
+
+
+  PODEMOS FAZER ALGUMAS COISAS 
+
+  LEGAIS....
+
+
+
+
+
+
+
+
+  --> A PRIMEIRA COISA QUE DEVEMOS FAZER É CRIAR UM 
+
+
+  'MODEL'
+
+
+  COM O SEQUELIZE....
+
+
+
+
+
+
+
+
+  --> ALÉM DE CRIAR UM 'MODEL' COM O SEQUELIZE,
+
+  TAMBÉM 
+
+  PRECISAMOS___ 
+
+
+
+  CONECTAR NOSSO APP À DATABASE, é claro...
+
+
+
+
+
+
+
+
+
+
+  ------> PORTANTO, O PRIMEIRO PASSO É 
+
+  CONECTAR ___ 
+
+
+
+  O APLICATIVO NODE/SEQUELIZE 
+
+
+
+  __ à DATABASE SQL,
+
+
+  por meio 
+  do 
+
+  WORKBENCH...
+
+
+
+
+
+
+
+
+  ---------------->  PARA FAZER ISSO,
+
+
+
+
+  O PROFESSOR VAI ATÉ O WORKBENCH E ENTÃO __ DELETA___ 
+
+
+
+  A TABLE 
+
+  DE 
+  'products'
+
+
+
+
+
+  em 'node-complete'.... -----> para fazê-lo, 
+
+
+
+  professor clicou o botão direito 
+
+  e 
+
+  aí 
+
+  'DROP TABLE'
+
+
+
+  nessa table específica...
+
+
+
+
+
+
+
+
+
+
+
+  --> O PROFESSOR 
+
+  FEZ ISSO 
+
+
+
+  PQ AGORA ELE VAI QUERER 
+
+
+  USAR 
+  O 
+
+  'SEQUELIZE'
+
+  PARA MANAGEAR NOSSAS TABLES....
+
+
+
+
+
+
+--> COM ISSO,
+
+
+
+
+
+
+ELE __ 
+
+VAI QUERER __ IR ATÉ 
+
+ 
+ O ARQUIVO 
+
+
+ de 
+
+
+
+ 'database.js',
+
+
+ no nosso folder de 'util'....
+
+
+
+
+
+
+
+
+
+ --> AGORA O PROFESSOR VAI QUERER __ 
+
+ ESCREVER 
+
+ ALGO EM 
+
+ 'database.js'
+
+
+ PARA 
+
+ CONSEGUIR 
+
+
+ CONECTAR 
+
+ NOSSO 
+
+
+ APP/SEQUELIZE AO 
+
+ DATABASE....
+
+
+
+
+
+ ex (CÓDIGO ATUAL):
+
+
+
+
+
+
+
+
+const mysql = require('mysql2');
+
+
+
+
+
+const pool = mysql.createPool( ////sempre use 'createPool', e nunca 'createConnection()' (pq createConnection VAI CRIAR APENAS 1 CONNECTION PARA 1 QUERY, INDIVIDUAL, ENQUANTO 'createPool' VAI CRIAR UMA POOL QUE MANAGEARÁ MÚLTIPLAS QUERIES, em múltiplas connections...)
+    { ////nesse objeto config parâmetro, colocamos INFORMAÇÕES ACERCA DA DATABASE ENGINE (o host) QUE ESTAMOS USANDO...
+        host: 'localhost',
+        database: 'node-complete-course', ///necessário. (especifica QUAL 'DATABASE SERVER' ('schema', em outras palavras) dentro de nossa DATABASE GERAL __QUEREMOS __ TARGETTAR COM OS REQUESTS FEITOS A PARTIR DESSE OBJETO 'pool'...)
+        user: 'root', ///necessário
+        password: 'K4tsuhir00ht0m0' //necessário
+    }
+);
+
+
+
+
+module.exports = pool.promise(); //sempre exporte sua 'POOL/DATABASE' assim... --> vocÊ precisa exportar assim para QUE VOCÊ CONSIGA __ TRABALHAR COM DATABASES __ USANDO __ promises (.then() e .catch() blocks..)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> O PROFESSOR EXPLICA QUE O SEQUELIZE 
+
+
+
+SE UTILIZA 
+
+DE 
+
+
+'mysql2',
+
+
+POR TRÁS DAS CENAS... -----> PORTANTO, 
+
+  
+
+  SEQUELIZE 
+
+
+
+
+  VAI 
+
+
+
+  REALMENTE 
+
+
+
+  FAZER/ESCREVER ALGO COMO ISTO:
+
+
+  const mysql = require('mysql2');
+
+
+
+
+
+const pool = mysql.createPool( 
+    {
+        host: 'localhost',
+        database: 'node-complete-course', 
+        user: 'root',
+        password: 'K4tsuhir00ht0m0' 
+    }
+);
+
+
+
+
+module.exports = pool.promise(); //sempre exporte sua 'POOL/DATABASE' assim... --> vocÊ precisa exportar assim para QUE VOCÊ CONSIGA __ TRABALHAR COM DATABASES __ USANDO __ promises (.then() e .catch() blocks..)
+
+
+
+
+
+
+
+
+
+POR TRÁS DAS CENAS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE _ NÓS NÃO VAMOS ESCREVER ESSE CÓDIGO BÁSICO AÍ....
+
+
+
+
+
+
+
+--> EM VEZ DISSO,
+
+
+NÓS VAMOS __iMPORTAR __ O SEQUELIZE
+
+NESSE ARQUIVO 
+
+'database.js',
+
+
+
+
+
+VAMOS IMPORTAR 
+
+E ENTÃO 
+O ARMAZENAR 
+
+EM UMA CONSTANTE 
+
+de nome 
+
+
+'Sequelize' (com inicial MAIÚSCULA...)
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE 
+
+ELE VAI 
+
+IMPORTAR 
+
+
+ESSE PACOTE 
+
+COM 
+
+
+_uma letra inicial MAIÚSCULA PQ 
+
+
+
+__ 
+
+
+ESSE PACOTE É UMA CONSTRUCTOR FUNCTION,
+
+ E ESSA É SUA CONVENÇÃO...
+
+
+
+
+
+
+
+
+ OK...
+
+
+
+
+
+ ISSO FEITO,
+
+ PROFESSOR VAI CRIAR UMA NOVA INSTÂNCIA DE SEQUELIZE,
+
+
+
+ por meio 
+
+
+
+ do 
+
+ call 
+
+ de 
+
+
+
+
+
+
+'new Sequelize()';
+
+
+
+
+
+
+ex:
+
+
+
+
+const Sequelize = require('sequelize');
+
+
+const sequelize = new Sequelize();
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> É EVIDENTE QUE 
+
+
+
+NÃO BASTA 
+
+ESCREVERMOS 
+
+só 
+
+
+''
+const sequelize = new Sequelize();'''
+
+
+
+
+
+
+
+--> NÃO, PQ 
+
+
+
+ESSA CONSTRUCTOR FUNCTION DE 'new SEQUELIZE'
+
+
+
+__REQUER_ ALGUMAS OPTIONS COMO PARÂMETRo...
+
+
+
+
+
+
+
+---------> PARA CONFIGURAR COM ALGUMAS OPÇÕES,
+
+
+
+professor explica que 
+
+
+devemos 
+
+
+definir:
+
+
+
+1) the DATABASE NAME,
+
+
+2) O USERNAME QUE CONECTA A ELE 
+
+
+3) o password....
+
+
+--------------------------
+
+
+
+
+
+--> A PRIMEIRA COISA QUE VAMOS ESCREVER 
+
+É 
+
+o 
+
+
+'schema name' (a 'subdatabase'/minidatabase...)
+
+
+DA DATABASE A QUE VAMOS QUERER CONECTAR 
+
+
+
+
+
+
+
+
+
+
+---> NO CAso,
+
+
+
+
+VAMOS QUERER 
+
+
+CONECTAR 
+
+
+À 
+
+database/schema name 
+
+de 
+
+
+'node-complete-course',
+
+
+
+DEPOIS 
+
+
+VAI 
+
+ESCREVER 
+
+
+
+'root' (é o username)
+
+
+
+
+E ENTÃO O password 
+
+
+
+
+QUE VOCÊ DEFINIU NO SETUP DE SUA DATABASE GERAL/APLICATIVO MYSQL...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+
+const sequelize = new Sequelize('node-complete-course', 'root', 'K4tsuhir00ht0m0');
+
+
+
+
+
+
+
+
+
+---> TAMBÉM PODEMOS PASSAR 
+
+
+1 
+
+QUARTO ARGUMENTO,
+
+
+
+O ARGUMENTO 
+
+
+
+__'OPTIONS',
+
+
+
+
+EM QUE 
+
+PODEMOS 
+
+
+
+
+__ VER __  
+QUE PODEMOS 
+
+
+DEFINIR UM MONTE 
+
+
+DE 
+
+
+NEGÓCIOS 
+
+
+
+
+nesse 4o parâmetro... (coisas como 'benchmark', 'database', 'define', 'host', etc etc....)
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+
+const sequelize = new Sequelize('node-complete-course', 'root', 'K4tsuhir00ht0m0', {});
+
+
+
+
+
+------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEMOS, DENTRO DESSE OBJETO 'CONFIG',
+
+
+
+
+algo como 
+
+'dialect',
+
+
+QUE 
+
+É 
+UMA PROPRIEDADE 
+
+QUE 
+
+
+TE POSSIBILITA 
+
+__DEIXAR__ BEM CLARO QUE __ VAMOS 
+
+QUERER 
+
+NOS CONECTARMOS 
+
+
+
+_A UMA DATABASE __ MYSQL ------>  ISSO PQ 
+
+
+
+__ DIFERENTES DATABASES SQL 
+
+USAM 
+
+SINTAXES 1 PCO DIFERENTES... --------> E 
+
+
+
+VOCÊ 
+
+
+
+PODE 
+
+
+MERGULHAR NOS DOCS 
+
+
+
+OFICIAIS 
+
+DOS 
+
+DATABASES 
+
+ESPECÍFICOS...
+
+
+
+
+
+
+
+
+
+--------> VOCÊ PODE 
+
+
+LER OS DOCS DO SEQUELIZE PARA APRENDER TUDO SOBRE ESSAS DIFERENTES SINTAXES, DOS 
+
+DIFERENTES 
+
+
+
+TIPOS 
+
+DE 
+
+
+'SQL DATABASES'....
+
+
+
+
+
+--> DEPOIS DISSO,
+
+
+
+
+TEMOS 
+
+O 
+
+'host'....... -----> PROFESSOR 
+
+
+
+EXPLICA QUE 
+
+POR DEFAULT
+ 
+
+
+
+ESSE FIELD É DEFINIDO COMO 
+
+'localhost',
+
+MAS QUE 
+
+ELE 
+
+VAI 
+
+
+
+__DEFINIR __ EXPLICITAMENTE COO 'localhost',
+
+só por hábito...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); ///ESTAS 2 LINHAS (o sequelize em si) VAI RODAR __ IMPLICITAMENTE (por trás das cenas) AQUELAS LINHAS DE CÓDIGO QUE VEMOS LOGO ACIMA...
+
+
+const sequelize = new Sequelize('node-complete', 'root', 'K4tsuhir00ht0m0', {
+
+    dialect: 'mysql',
+    host: 'localhost'
+
+});
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+COM ISSO ,
+
+
+ESTAMOS CRIANDO UM NOVO OBJETO 
+
+'SEQUELIZE',
+
+
+
+
+
+OBJETO QUE VAI AUTOMATICAMENTE SE CONECTAR 
+
+
+
+
+à DATABASE SQL.... ----------> na verdade,
+
+
+
+
+
+
+ELE ___ VAI _ SETTAR__ AUTOMATICAMENTE/IMPLICITAMENTE UMA 
+
+
+
+CONNECTION POOL AO NOSSO DATABASE SQL,
+
+
+exatamente como havíamos escrito, assim:
+
+
+
+
+
+
+  const mysql = require('mysql2');
+
+
+
+
+
+const pool = mysql.createPool( 
+    {
+        host: 'localhost',
+        database: 'node-complete-course', 
+        user: 'root',
+        password: 'K4tsuhir00ht0m0' 
+    }
+);
+
+
+
+
+module.exports = pool.promise(); //sempre exporte sua 'POOL/DATABASE' assim... --> vocÊ precisa exportar assim para QUE VOCÊ CONSIGA __ TRABALHAR COM DATABASES __ USANDO __ promises (.then() e .catch() blocks..)
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA VAMOS EXPORTAR 
+
+
+ESSE NOSSO OBJETO 
+
+
+'sequelize',
+
+QUE É 
+
+ESSENCIALMENTE 
+
+
+A 
+
+'DATABASE CONNECTION POOL'.... 
+
+
+
+
+
+
+
+
+
+--> OK, AGORA ESTAREMOS 
+
+EXPORTANDO 
+
+NOSSA CONNECTION POOL,
+
+MAS AGORA 
+
+__ MANAGEADA 
+
+PELO SEQUELIZE,
+
+QUE NOS DÁ UM MONTE DE 
+
+
+
+FEATURES ÚTEIS....
+
+
+
+
+
+
+
+
+---> AGORA QUE JÁ SETTAMOS A CONEXÃO AO NOSSO 
+
+
+
+DATABASE SQL,
+
+
+DEVEMOS 
+
+TRABALHAR COM OS 
+
+
+NOSSOS 
+
+
+'SEQUELIZE MODELS'...

@@ -1,0 +1,528 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE 
+
+
+
+O SEU CÓDIGO ATUAL 
+
+
+
+__ PODE __ SER 
+
+
+MELHORADO...
+
+
+
+
+CÓDIGO ATUAL DO PROFESSOR É ESTE:
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    return res.status(400).json({ message: "Passwords don't match!" });
+  }
+
+  User.findOne({ email: email }) 
+    .then((user) => {
+      if (user) {
+
+        return res.redirect('/signup');
+      } else {
+       return bcrypt.hash(password, 12) 
+        
+        .then((hashedPassword) => {
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: {
+              products: [],
+            },
+          });
+          return user.save(); 
+        });
+     
+     
+      }
+    })
+    .then((result) => {
+      res.redirect('/login');
+    });
+};
+
+
+
+
+
+
+
+
+
+-----> ELE DIZ QUE 
+
+
+
+AQUELE 
+
+
+REDIRECT NO CASE DE 
+
+
+'user já existe com esse email 
+
+lá na database',
+
+
+
+
+__ 
+
+VAI _ FUNCIONAR MSM... (está correto);
+
+
+
+----> 
+
+
+
+ESSE REDIRECT REALMENTE __ VAI FUNCIONAR__, MAS 1 PROBLEMA AQUI É 
+
+
+
+__ QUE__ AQUELE 
+
+ __ THEN BLOCK SUBSEQUENTE,
+
+
+ AQUELE 
+
+
+ THEN BLOCK de 
+
+
+
+
+'''''
+   .then((hashedPassword) => {
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: {
+              products: [],
+            },
+          });
+          return user.save(); 
+        })
+      .then(
+        (result) => {
+          res.redirect('/login');
+        }
+      )
+
+
+
+  ''
+
+
+  __AINDA VAI SER EXECUTADO... -----> ISSO 
+  PQ 
+
+
+
+  __ É ASSIM QUE _ PROMISES FUNCIONAM...  (vao sendo executados os 'then()' blocks 1 POR 1....)
+
+
+
+
+
+
+
+
+
+
+  ---------> ISSO SIGNIFICA QUE ESSE 
+
+  'LOCAL IF BLOCK' 
+
+  termina 
+
+
+sua própria execuçaõ, SIM,
+
+
+
+MAS __ O 'OVERALL CODE EXECUTION'
+
+
+de 
+
+
+'User.findOne()'
+
+
+
+__ NÃO VAI TER ACABADO/NÃO VAI ACABAR,
+
+
+
+___MESMO __ COM ESSE 
+
+RETURN DE 'redirect'.. ----------->  E É EXATAMENTE 
+
+POR ISSO 
+
+
+QUE 
+
+
+RECEBEMOS 
+
+AQUELE 
+
+
+
+ERRO, no terminal,
+
+de 
+
+
+'password is required'
+
+
+
+QUANDO 
+
+USAMOS 
+
+
+1 
+
+'EXISTING EMAIL'... ----> o  'hashedPassword'
+
+
+
+VAI FICAR 
+
+
+UNDEFINED 
+
+PQ 
+
+NÓS 
+
+
+
+ 
+ NUNCA VAMOS TER ALCANÇADO A FUNÇÃO DE 
+
+ 'bcrypt.hash()', JUSTAMENTE 
+
+
+
+ POR CAUSA DO CÓDIGO DE 
+
+
+
+
+
+ 'res.redirect()'
+
+
+ anterior a ele, naquele if block.......
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> E SE VOCÊ QUER __ RESOLVER ESSE PROBLEMA,
+
+
+
+ O QUE VOCÊ PODE FAZER, DIZ O PROFESSOR,
+
+
+
+
+
+ É __ PEGAR__ AQUELE CÓDIGO DE 
+
+
+
+ ''
+
+   .then((hashedPassword) => {
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: {
+              products: [],
+            },
+          });
+          return user.save(); 
+        })
+      .then(
+        (result) => {
+          res.redirect('/login');
+        }
+      )
+
+
+
+''
+
+
+
+
+
+
+
+
+
+E __ ACTUALLY__ O 
+
+CHAINAR 
+
+
+
+__ DENTRO ___ DO __PRIMEIRO THEN BLOCK,
+
+
+o 
+
+then block de 
+
+'user'....
+
+
+
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    return res.status(400).json({ message: "Passwords don't match!" });
+  }
+
+  User.findOne({ email: email }) 
+    .then((user) => {
+      if (user) {
+
+        return res.redirect('/signup');
+      } else {
+       return bcrypt.hash(password, 12) 
+         
+        .then((hashedPassword) => { /////PROFESSOR FEZ ISTO AQUI...
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: {
+              products: [],
+            },
+          });
+          return user.save(); 
+        });
+      }
+    })
+    .then((result) => {
+      res.redirect('/login');
+    });
+};
+
+
+
+
+
+
+
+-------- 
+
+OK, ISSO SIGNIFICA QUE 
+
+PROFESSOR FEZ EXATAMENTE O QUE EU FIZ,
+
+
+ele 
+
+
+ESCREVEU ' A NESTED PROMISE',
+
+
+em vez 
+
+
+de 
+
+
+1 PROMISE CHAIN COM MÚLTIPLOS BLOCOS 
+
+
+DE 
+
+
+'then()'... ( que é o que TÍNHNAMOS ANTES...)
+
+
+
+
+
+
+--> A ÚNICA COISA QUE MUDAREMOS É AQUELE 
+
+
+
+'then block'
+
+FINAL,
+
+QUE REDIRECIONA PARA '/login'...
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    return res.status(400).json({ message: "Passwords don't match!" });
+  }
+
+  User.findOne({ email: email }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        return res
+          .status(400)
+          .json({
+            message:
+              'An user with that email already exists, please use a different email address.',
+          });
+      } else {
+       return bcrypt.hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+        
+        .then((hashedPassword) => {
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: {
+              products: [],
+            },
+          });
+          return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+        })
+        .then((result) => { ///////EIS O CÓDIGO EM QUESTÃO.
+          res.redirect('/login');
+        });
+      }
+    })
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+};
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+CERTO... ISSO 
+
+
+
+FUNCIONOU,
+
+
+E É UM 
+'TINY IMPROVEMENT'
+
+QUE 
+
+
+FAZ BASTANTE SENTIDO...

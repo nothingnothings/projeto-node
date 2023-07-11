@@ -1,0 +1,1931 @@
+
+
+
+
+
+
+
+
+
+
+----> OK... AGORA QUE SABEMOS UM MONTE SOBRE SESSIONS,
+
+
+
+
+
+PROFESSOR DIZ QUE É NECESSÁRIO 
+
+
+CONSERTAR ALGUMAS COISAS, BEM RAPIDINHO...
+
+
+
+
+
+
+
+
+
+-----> TEMOS 
+
+
+1 PROBLEMA COM AS 
+
+PAGES 
+
+DE 
+
+'orders'
+
+
+
+
+E 
+
+
+
+'CART',
+
+
+
+
+ERROS 
+
+de 
+
+
+
+'_id' is UNDEFINED...
+
+
+
+
+
+
+
+
+
+(CANNOT READ PROPERTY _id of undefined..)
+
+
+
+
+SÃO ALGUNS PROBLEMINHAS...
+
+
+
+
+
+
+
+
+
+
+----> O PROBLEMA,
+ É CLARO ,
+
+  
+
+
+É QUE 
+
+
+
+___ SEM __ UMA 'VALID SESSION' 
+
+
+
+(
+
+
+
+
+    E NÓS REALMENTE __ NÃO TEREMOS 
+
+    1
+
+    VALID SESSION ___ DEPOIS QUE 
+
+
+    A DESTRUIRMOS POR MEIO 
+
+    DE 
+
+
+
+    'postLogout',
+
+
+
+
+
+),
+
+
+
+
+
+
+
+
+
+QUANDO OCORREU/OCORRER ESSE 'DESTROY',
+
+
+TODOS 
+
+ESSES 
+
+METHODS/ACTIONS 
+
+
+
+
+EM QUE EU 
+
+FAÇO 
+
+'reach out to my user',
+
+
+
+
+
+
+
+
+FAÇO REACH OUT PARA 
+
+
+
+____FAZER 'FETCH' 
+
+
+DE MINHAS ORDERS 
+
+E 
+
+CART,
+
+
+
+
+ESSAS OPERAÇÕES TODAS VÃO FALHAR...(
+
+
+
+    lá 
+
+
+
+    em 
+
+
+    '
+
+    exports.getOrdersPage = (req, res, next) => {
+  Order.find({ userId: req.user._id })
+    // .populate('cart.products.productId')
+    .populate('products.product')
+    .then((orders) => {
+      console.log(orders);
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      orders.forEach((order) => {
+        console.log(order, 'LINE');
+
+            order.products.forEach(
+              (product) => {
+                console.log(product, 'LINE2');
+              }
+            )
+
+        // order.totalPrice = order.cart.products
+        order.totalPrice = order.products
+          .map(
+            ////define o TOTAL PRICE de cada order...
+            (product) => {
+                console.log(product, 'LINE3');
+              // return product.productId.price * product.quantity;
+              return product.product.price * product.quantity;
+            }
+          )
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0);
+      });
+
+
+
+      res.render('shop/orders', {
+        pageTitle: 'Your Orders',
+        orders: orders,
+        path: '/orders',
+        // isLoggedIn: isLoggedIn
+        isLoggedIn: req.session.isLoggedIn
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+    ''',
+
+
+
+    POR EXEMPLO....
+)
+
+
+
+
+
+
+
+
+
+
+-> OK, MAS 
+
+
+COMO CONSERTAR ISSO?
+
+
+
+
+
+
+
+
+
+
+--> BEM, 1 PROBLEMA É QUE NOSSO FRONTEND ESTÁ __ UMA BOSTA___.... --> 
+
+O 
+
+FRONTEND 
+
+
+DEVE 
+
+REFLETIR 
+
+
+
+
+
+
+AS COISAS QUE SOMOS CAPAZES DE FAZER COM A 'AUTH' 
+
+ATUAL DO USER.... ------> 
+
+
+
+
+OU SEJA,
+
+DEVEMOS 
+
+FAZER 'SHOW'
+
+
+
+__APENAS__ DAS COISAS 
+
+
+
+COM QUE 
+
+PODEMOS ACTUALLY INTERAGIR....
+
+
+(
+
+    isso pq, por enquanto,
+
+
+
+
+
+    OS 
+
+
+
+    BUTTONS 
+
+    DE 
+
+    'orders',
+
+
+    'cart' 
+
+
+
+    e 
+
+
+
+    'add to cart'
+
+    NÃO ESTÃO FUNCIONANDO....
+)
+
+
+
+
+
+
+
+
+-----> OK ....... 
+
+
+
+
+
+
+
+PARA ISSO,
+
+
+
+
+O PROFESSOR VAI VOLTAR 
+
+AOS VIEWS,
+
+
+
+
+E AÍ VAI COMEÇAR PELA 
+
+
+'navigation.ejs' (nossa toolbar)... -----> LÁ, 
+
+
+ELE
+
+ VAI FAZER COM QUE 
+
+
+ 'login e logout'
+
+
+
+
+
+APAREÇAM 
+
+QUANDO 
+
+
+
+ISSO FIZER SENTIDO (logout quando user estiver 'logged in', e 'login' quando user não estiver authenticated....)
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+OK... 
+
+
+
+
+Vou tentar fazer esse RENDER CONDICIONAL por conta própria....
+
+
+
+
+
+
+
+--> temos nossa view DE 
+
+
+
+'navigation.ejs',
+
+
+
+COM 
+
+
+
+OS LINKS DE 
+
+'login' e 'logout'....
+
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+OK, CONSEGUI... 
+
+
+ALTEREI O VIEW,
+
+FOI BEM SIMPLES...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+
+      </ul>
+      <ul class="main-header__item-list">
+    
+  <%  if (!isLoggedIn) { %>
+    
+    <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+  
+  <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      <% } %>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav_item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="mobile-nav_item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+        <li class="mobile-nav_item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="mobile-nav_item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+        <%  if (!isLoggedIn) { %>
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+        <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+        <% } %>
+      </ul>
+    </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+MAS TBM PRECISAMOS SUMIR COM AQUELE 
+
+
+'add to cart'
+
+
+NOS NOSSOS 
+
+
+
+PRODUCTS,
+
+quando 
+
+O USER NÃO ESTIVER 
+
+'auhtenticated'... (quando inexistir 'isLogged' em 1 SESSION COOKIE, no browser do user)...
+
+
+
+
+
+
+
+
+
+
+--> EDITEI MEU VIEW DE NOVO.. --> 
+
+
+
+EX:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+
+
+        </div>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----> ok...
+
+
+
+O RESTO DAS COISAS SERÃO VISTAS NO 
+
+MODULE DE 
+
+
+'AUTHENTICATION'...
+
+
+
+
+
+
+
+
+
+
+----> OUTRA COISA QUE O PROFESSOR FEZ:
+
+
+
+
+
+
+'ORDERS' 
+
+
+e 
+
+
+'CART'
+
+
+
+
+__ SÓ DEVEM APARECER __ PARA O USER 
+
+QUE 
+
+
+ESTÁ 
+
+'AUTHENTICATED',
+
+
+na nossa 'navigation.ejs,'
+
+
+POR ISSO 
+
+
+VAMOS 
+
+COLOCAR UM IF CHECK de 'isLoggedIn' 
+
+
+NELES TBM...
+
+
+
+
+--------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+    
+  <%  if (!isLoggedIn) { %>
+    
+    <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+  
+  <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      <% } %>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav_item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="mobile-nav_item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="mobile-nav_item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="mobile-nav_item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+
+      </ul>
+      <ul class="main-header__item-list">
+        <%  if (!isLoggedIn) { %>
+        <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+        <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+        <% } %>
+      </ul>
+    </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ok... mas agora tenho UM PROBLEMINHA.... é um problema 
+
+
+de 
+
+
+USER AUTHENTICATION.... ----> quando ocorre 
+
+
+
+A __ CRIAÇÃO__ DA SESSION TANTO NA DATABASE como no 
+
+
+
+
+BROWSERSIDE, por meio do session cookie,
+
+
+
+
+
+NÓS 
+
+
+NÃO CONSEGUIMOS ACESSAR 
+
+
+A 
+
+
+
+VERSÕA 
+
+'USER' 
+
+
+
+de nossa 
+
+
+toolbar 
+
+
+
+DIRETAMENTE... (
+
+  ou seja,
+
+  parece que 
+
+  O 
+
+
+  SESSION COOKIE ou whatever 
+
+
+
+  NÃO__ ACABA CARREGADO ___ 
+  A TEMPO, quando acontece 
+
+  aquele redirect de 
+
+  'res.redirect('/')' --------> 
+
+
+
+
+
+  SERIA LEGAL SE EXISTISSE UMA OPÇÃO PARA FAZER O 
+
+
+  REDIRECT 'esperar' 
+
+
+  PELA 'ATIVAÇÃO' DESSE COOKIE DENTRO DO BROWSER DO USER,
+
+
+  tudo para que 
+
+
+
+
+
+  O USER N TIVESSE QUE __RECARREGAR__ A PÁGINA PARA VER A DIFERENÇA 
+
+
+  NA 
+
+  TOOLBAR.. (sinalizando que 'YOU ARE AUTHENTICATED'...).
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> bem, o código de 'postLogin',
+
+
+NO CASO, É ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+      User.findById('6178c60a90464c24983b0847') 
+      .then(
+        (user) => {
+        req.session.isLoggedIn = true;
+      req.session.user = user; 
+
+      res.redirect('/');
+
+
+
+
+
+        }
+      )
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-> talvez seja um problema COM 
+
+O __ 
+
+
+
+VIEW DE 
+
+'navigation.ejs'
+
+
+EM SI... (talvez carregue o 'isLoggedIn' MT TARDE NO FLOW DE NOSSO APP...)
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+CONSERTEI.... O FIX FOI BEM IDIOTA, MAS FUNCIONOU...
+
+
+
+
+
+EU SÓ FUI LÁ EM 
+
+
+FRENTE E ADICIONEI 1 THEN BLOCK ADICIONAL COM O REDIRECT(
+
+
+
+ex:
+
+      .then(
+        (result) => {
+          res.redirect('/');
+        }
+      )
+
+
+
+
+
+
+),
+
+dps 
+
+do 
+
+THEN BLOCK QUE SETTA A SESSION, lá em 
+
+'postLogin'...
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+      User.findById('6178c60a90464c24983b0847') 
+      .then(
+        (user) => {
+        req.session.isLoggedIn = true;
+      req.session.user = user;
+
+
+        }
+      )
+      .then(
+        (result) => {
+
+          res.redirect('/');
+        }
+      )
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+ok, isso realmente funcionou, agora 
+
+quando 
+
+é 
+
+
+carregada
+
+
+
+outra page por meio do 'res.redirect('/')',
+
+O COOKIE 
+
+JÁ ESTARÁ NO LUGAR,
+
+
+
+e pronto para ser usado (por meio desse run de código ASYNC com THEN BLOCKS...)
+
+
+
+
+
+
+----------------------
+
+
+
+
+certo....
+
+
+
+
+
+
+
+AJUSTEI 1 POUCO MAIS O CSS DA PÁGINA...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+  <%  }  else { %>
+      <div></div>
+  <% } %>
+    <% if (isLoggedIn) {  %>
+        <li class="main-header__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+        <li class="main-header__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+        <li class="main-header__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+   <% } else { %> 
+    <div></div>
+   <% } %>
+        <li class="main-header__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+      </ul>
+      <ul class="main-header__item-list">
+    
+  <%  if (!isLoggedIn) { %>
+    
+    <li class="main-header__item">
+            <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+        </li>
+  
+  <% } else { %> 
+        <li class="main-header__item">
+          <form action="/logout" method="POST">
+              <button type="submit">Logout</button>
+          </form>
+        </li>
+      <% } %>
+      </ul>
+    </nav>
+  </header>
+    <nav class="mobile-nav">
+      <ul class="mobile-nav__item-list">
+        <li class="mobile-nav__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="mobile-nav__item"><a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="mobile-nav__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+      <li class="mobile-nav__item"><a href="/admin/product-list-admin" class="<%= path === '/admin/products-list' ? 'active' : '' %>">Admin Products</a></li>
+      <li class="mobile-nav__item"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
+      <li class="mobile-nav__item"><a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a></li>
+      <li class="mobile-nav__item">
+        <form action="/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+      </li>
+  <%  }  else { %>
+    <li class="mobile-nav__item">
+      <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+  </li>
+  <% } %>
+      </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO... MAS O PROBLEMA É QUE 
+
+
+
+
+
+AINDA EXISTE AQUELE 
+
+
+
+
+INCONVENIENTE 
+
+
+
+DE 
+
+
+O 
+
+
+'SESSION COOKIE'
+
+
+não ser aplicado ao 
+
+'navigation.ejs'
+
+
+
+NO MOMENTO EM QUE SOMOS REDIRECIONADOS A 'index'.... ("res.redirect('/')'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> MAS MESMO COM O SET DE UM 
+
+
+TIMER ('setTimeout()' ),
+
+
+
+
+
+
+O 
+
+
+NEGÓCIO AINDA NÃO FUNCIONA...
+
+
+
+
+
+
+
+--> qual pode ser a solução?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ainda não descobri a soluçaõ...
+
+
+
+
+
+
+
+
+--> QUANTO AOS BUTTON DE 'ADD TO CART',
+
+
+
+ELES AINDA NÃO ESTÃO FUNCIONANDO... 
+
+
+
+_--> ESTOU RECEBENDO __ ESTE __ ERRO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+TypeError: Cannot read property 'addToCart' of undefined
+    at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\controllers\shop.js:524:23 
+    at runMicrotasks (<anonymous>)
+
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+---> VEREMOS A SOLUÇAÕ PARA ESSE ERRO __NA PRÓXIMA AULA,
+
+DIZ O PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+--> ENCONTREI ESTA SOLUÇÃO NO 
+
+
+STACKOVERFLOW:
+
+
+
+
+You could put your redirect inside a callback after the session is saved e.g:
+
+...
+
+// Set 'req.session.user' as cookie
+req.session.user = userObj;
+req.session.save(function(err) {
+  // session saved
+  res.redirect('/')
+})
+
+...
+
+
+
+
+
+
+
+
+
+
+
+--> MESMO COM ESTE CÓDIGO AQUI:
+
+
+
+            req.session.user.save( //talvez funcione....
+              () => { //callback function, vai redirecionar APENAS o 'SAVE' da session na DATABASE ter ocorrido, e apenas A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+                res.redirect('/');
+              }
+            )
+
+
+
+
+
+      ,
+
+
+
+
+
+
+
+
+
+      DENTRO DESSE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+
+  
+exports.postLogin = (req, res, next) => {
+
+
+    
+      User.findById('6178c60a90464c24983b0847') //todos os códigos abaixo SÃO NECESSÁRIOS para armazenar nossa SESSION DATA (uma 'ENTRY' de SESSION, em 'sessions') LÁ NA NOSSA DATABASE... --> essas linhas TAMBÉM VÃO CRIAR 1 'session cookie' no browser do user, AUTOMATICAMENTE.... (e esse session cookie terá um id HASHEADO que corresponderá AO ID da SESSION ARMAZENADA NA DATABASE, tbm por meio deste código aqui....)
+      .then(
+        (user) => {
+
+
+
+                  // req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+                                    
+        // res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...) -----> MAS ESSE É UM 'SESSION COOKIE' __POBRE___; VOCÊ NÃO DEVE SETTAR COOKIES MANUALMENTE, ASSIM, __QUASE NUNCA__... --> PREFIRA USAR PACKAGES como 'express-session', PACKAGES QUE ___ FAZEM O STORE DE COOKIES __ PARA VOCê, automaticamente....
+        req.session.isLoggedIn = true; //MANEIRA ___ LEGIT__ de SETTAR 1 SESSION COOKIE no browser de seu user... --> é claro que esse approach aí REQUER QUE VOCÊ TENHA A PACKAGE DE 'express-session' JÁ INSTALADA no seu projeto.... (pq só assim o objeto 'session' no objeto 'request' passa a existir)....
+        // ^^^ por meio desse código, FAZEMOS __ O STORE__ DE NOSSA 'SESSION': 1) NA MEMORY DO SEU NODE APP (runtime); 2) NO BROWSER DO USUÁRIO, EM UM COOKIE... (por isso o nome 'session cookie', que é uma SESSION ARMAZENADA DENTRO DE 1 COOKIE.... e esse cookie terá o 'SESSIONID' HASHEADo/encriptado, ao passo que o SERVER/database terá A SESSIONID __ORIGINAL/pura... e esses 2 ids serão MATCHEADOS para identificar o user como AUTOR/correspondente Àquela session...) 
+      req.session.user = user; ////vai definir nossa USER DATA lá na SESSION armazenada na database... (essa será a 'SENSITIVE DATA' armazenada no server...)
+
+
+        ///mas esse approach da MEMORY é HORRÍVEL, PQ É MT MELHOR ARMAZENAR SUA SESSION EM UMA __ DATABASE, por meio de packages como 'connect-mongodb-session'... --> para armazenar em uma DATABASE, como o mongodb, você deve SETTAR o uso dessa database lá naquele MIDDLEWARE DEFINIDOR DA SESsion, aquele 'app.use(session({store: store}))', LÁ NO APP.JS...
+        // res.setHeader('Set-Cookie', 'loggedIn=true; Expires='); ///com 'Expires', você define QUANTO TEMPO ESSE COOKIE VAI DURAR, NO MÁXIMO (aí ele vai ser removido SE ESSE TEMPO PAASSAR, ou se você FECHAR O BROWSER)... --> AS DATES DEFINIDAS COM ESSE 'Expires=' __DEVEM SEGUIR __ O FORMATO 'HTTP DATE'..
+      // res.setHeader('Set-Cookie', 'loggedIn=true; Max-age=10'); ///faz a mesma coisa que o CONFIG do cookie de cima, estabelece um TEMPO limite de duração para o cookie.... -->> entretanto, a diferença é que com 'Max-Age', nós definimos o TEMPO EM __ SEGUNDOS_ QUE ESSE COOKIE DEVERÁ DURAR...
+      // res.setHeader('Set-Cookie', 'loggedIn=true; Domain=google'); //USADO ___ NO TRACKING__ DE SEUS USERS/VOCê.... --> o domain a que É ENVIADO 1 COOKIE nem sempre precisa ser o mesmo domain QUE O PRODUZIU... (conluio entre empresas, que fazem acordos para te TRACKAR... ---> cookie produzido em 1 site pode acabar SENDO ENVIADO a DESTINO/DOMAIN distinto, como o google e seus servidores.....)
+      // res.setHeader('Set-Cookie', 'loggedIn=true; Secure'); ///SECURE faz com que seu cookie NÃO SEJA SETTADO NO BROWSER do user SE FOR CONSTATADO QUE A PAGE que produz esse cookie NÃO ESTÁ SENDO SERVIDA EM UM FORMATO HTTPS (http secure)...
+      // res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly'); ///IMPORTANTE MECANISMO DE SEGURANÇA,  constatado na coluna 'HTTP' (V) da aba 'application', no google devtools --> ESSE ATTRIBUTE no cookie FAZ COM QUE SEJA __ IMPOSSÍVEL __ ALGUÉM USAR 'CLIENTSIDE JAVASCRIPT' para __ALTERAR O VALOR DESSE COOKIE ESPECÍFICO... --> É MUITO IMPORTANTE E UTILIZADO NO COMBATE A CROSS-SITE SCRIPTING ATTACKS, QUE AMEAÇAM NOSSO SERVER...
+
+
+
+            req.session.user.save( //talvez funcione....
+              () => { //callback function, vai redirecionar APENAS o 'SAVE' da session na DATABASE ter ocorrido, e apenas A SESSION COOKIE CORRESPONDENTE ter sido criada no browser de seu user...
+                res.redirect('/');
+              }
+            )
+
+
+        }
+      )
+
+
+
+,
+
+
+
+
+
+
+
+
+
+
+
+
+
+NÓS __ AINDA FICAMOS 
+
+
+
+
+COM ESSE PROBLEMA... (
+
+
+  Às vezes o 
+
+
+ a session acaba sendo aplicada na page a que 
+
+ fomos redirecionados,
+
+ às vezes não...
+)
+
+
+
+
+
+
+
+--> PROFESSOR, NA AULA 'TWO TINY IMPROVEMENTS',
+
+
+
+__FALA ESPECIFICAMENTE DISSO.. 
+
+
+
+(
+
+
+  'YOU MIGHT END UP 
+
+  IN A SCENARIO WHERE AFTER LOGGING IN __ THE __ VIEW 
+
+  WONT UPDATE ACCORDINGLY'...
+) -------> 
+
+
+
+A RAZÃO 
+
+PARA ISSO,
+
+
+EXPLICA O PROFESSOR,
+
+
+É QUE 
+
+
+
+
+NO 'auth.js',
+
+
+
+QUANDO 
+
+
+TEMOS AQUELE CÓDIGO DE 
+
+
+
+
+''
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  User.findById('asaisaaishaishai')
+  .then(
+    (user) => {
+
+
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      res.redirect('/');
+    }
+  )
+}
+
+''
+,
+
+
+
+NESSE CÓDIGO AÍ,
+
+
+
+EM QUE __ SETTAMOS NOSSA SESSION LÁ NO SERVER E O SESSION COOKIE NO BROWSER DO USER,
+
+
+
+
+
+
+NESSE CÓDIGO, QUANDO OCORRE O 'REDIRECT',
+
+
+ESSE 
+
+'res.redirect('/')',
+
+esse 
+
+
+SEND DESSA RESPONSE,
+
+
+
+
+
+__ ISSO FAZ COM QUE O MIDDLEWARE DE 'session'
+
+
+
+
+VÁ EM FRENTE E ENTÃO 
+
+
+'CREATE THAT SESSION', lá no mongodb,
+O  
+
+
+QUE SIGNIFICA QUE 
+
+
+__ELE __ VAI __wRITAR__ ESSA SESSION LÁ NO MONGODB.... (pq 
+
+estamos usando o MONGODB PARA 
+
+ARMAZENAR NOSSAS SESSIONS, É O NOSSO 'SESSION STORE'...) --------> 
+
+
+E AÍ ELE 
+
+SETTA 
+
+O 
+
+COOKIE 
+
+
+NO BROWSER DO USER... ---------> E O PROBLEMA QUE ENFRENTAMOS, AQUI,
+
+É UQE 
+
+O 
+
+
+__WRITE__ DE DATA COMO 'sessions' EM 
+
+
+1 DATABASE COMO O 'MONGODB'
+
+
+___ PODE__ LEVAR__ ALGUNS 
+
+
+MILISSEGUNDOS,
+
+
+ou até MESMO __MAIS TEMPO,
+
+
+DEPENDENDO DA VELOCIDADE DE SUA CONEXÃO... ------> 
+
+
+
+
+O REDIRECT, ENTRETANTO,
+
+
+É _ DISPARADO___ DE FORMA ___ INDEPENDENTE__ 
+
+DO 
+
+STORE 
+
+DESSA 
+
+SESSION NO DATABASE,
+
+
+E É __eXATAMENTE___ POR ISSO QUE 
+
+
+
+
+PODEM OCORRER CASOS EM QUE 
+
+
+'YOU REDIRECT TOO EARLY'... -------> PARA CONSERTAR ISSO,
+
+DIZ O PROFESSOR,
+
+
+PARA 
+
+
+
+'MAKE SURE THAT YOUR SESSION HAS BEEN SET',
+
+
+
+
+
+
+
+
+__VOCÊ __ PODE ___ 
+
+
+
+
+USAR___ O 'req.session.save()'
+
+
+E ENTÃO ___ 
+
+
+
+EXECUTAR 
+
+
+'res.redirect('/')' 
+
+
+
+
+
+SÓ 
+
+
+
+NA SUA 
+
+CALLBACK FUNCTION INTERNA... (Que é executada ___ APÓS O 'save()' dessa session na database)...
+
+
+
+
+
+
+
+
+
+--> (OK.. EU HAVIA FEITO ISSO ANTES, MAS NÃO TINHA FUNCIONADO... será que foi só algo que fiz de errado?)
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ___________NORMALMENTE__ VOCÊ NÃO PRECISA CHAMAR 
+
+
+'.save()'
+
+
+PARA 
+
+__SALVAR__ 
+
+
+
+
+sessions COM o 'express-session',
+
+
+
+MAS QUE 
+
+
+__ÀS VEZES EXISTIRÃO 
+
+CENÁRIOS EM QUE 
+
+
+
+VOCÊ 
+
+
+___ PRECISA __ DA __CERTEZa___ DE QUE __ 
+
+SUA 
+
+SESSION FOI 'CREATED'
+
+
+
+__ANTES___ DE CONTINUAR COM ALGUM OUTRO PROCESSO (como um REDIRECT, nesse caso)... --------> 
+
+
+
+ISSo 
+
+
+
+PQ 
+
+
+
+
+VAMOS 
+
+PASSAR 
+
+
+'() => {
+
+  res.redirect('/')
+}
+
+
+
+
+
+
+OK........ 
+
+
+AÍ O PROFESSOR NOS ASSEGURA QUE NOSSA SESSION SERÁ 'CREATED ON TIME'
+
+
+
+
+para __ esse redirect aí...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  User.findById('asaisaaishaishai')
+  .then(
+    (user) => {
+
+
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      req.session.save(
+        () => {
+                   res.redirect('/');
+        } 
+      )
+ 
+    }
+  )
+}
+
+----------------------------
+
+
+
+
+
+ok... O PROFESSOR DIZ QUE _ FUNCIONA__,
+
+
+
+
+
+ENTÃO __ VOU CONFIAR....
+
+
+
+ 
+
+
+
+
+ ----> PROFESSOR APONTA QUE __ NORMALMENTE NÃO PRECISAMOS CHAMAR ESSE 'req.session.save()',
+
+
+
+ ___ MAS QUE ___ VAMOS TER QUE CHAMAR SE PRECISARMOS DESSA 'GUARANTEE',
+
+QUE TIPICAMENTE É 
+
+NECESSÁRIO NAS HIPÓTESES EM QUE VOCÊ QUER 
+
+
+'REDIRECT',
+
+pq 
+
+nesses 
+
+cenários o 
+
+REDIRECT VAI DISPARAR 
+
+
+__DE FORMA __ INDEPENDENTE__ EM RELAÇÃO AO SAVE DA SESSION, o que pode acarretar
+
+
+
+
+
+EM __ CASOS EM QUE __ SUA PAGE ACABA SENDO RENDERIZADA __ ANTES __ DA SESSION SER EFETIVAEMNTE 
+
+
+
+UPDATADA 
+
+NO SERVER E SALVA
+
+NA DATABASE....
+
+(isso 
+é algo que 
+
+
+
+devemos ter em mente, e é por isso que o professor nos mostrou esse method.....)

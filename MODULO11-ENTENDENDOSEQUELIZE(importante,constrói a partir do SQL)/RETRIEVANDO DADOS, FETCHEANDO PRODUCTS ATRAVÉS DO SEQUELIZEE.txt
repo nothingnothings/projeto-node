@@ -1,0 +1,712 @@
+
+
+
+
+
+
+
+
+
+
+------>  COM A CRIAÇÕA DE UM PRODUCT,
+
+
+AGORA 
+
+É 
+
+HORA 
+
+DE 
+
+VER COMO 
+
+RETRIEVAR 
+
+
+
+
+
+
+__ OS PRODUCTS __ DE NOSSA 
+
+DATABASE SQL TAMBÉM...
+
+
+
+
+
+
+
+
+
+
+_> PARA ISSO,
+
+
+VAMOS 
+ATÉ 
+
+
+O 
+
+
+
+
+
+
+CONTROLLER 
+
+
+DE 
+
+'SHOP.JS',
+
+
+em que 
+
+
+TEMOS 
+
+AQUELE 
+
+CONTROLLER 
+
+de 
+
+'getProductsPage'... 
+
+
+
+
+
+
+
+
+
+----> SERIA NICE SE PUDÉSSEMOS CONSEGUIR NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO ATUAL ESTÁ ASSIM:
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+   Product.fetchAll(
+   )
+   .then(
+    ([rows, fieldData]) => { 
+      res.render('shop/product-list', {
+prods: rows, 
+pageTitle: 'Shop',
+path: '/products',
+productCSS: true,
+activeShop: true,
+hasProducts: rows[0].length > 0,
+});
+})
+};
+
+
+
+
+
+
+
+
+
+
+
+E ESSE CÓDIGO FUNCIONA/ESTAVA FUNCIONANDO, 
+
+MAS 
+
+ESTAVA FUNCIONANDO ___ SEM A AJUDA DO SEQUELIZE... (por causa do método 'fetchAll', que estava usando SQL QUERIES VANILLA)...
+
+
+
+
+
+--> AGORA É HORA 
+
+
+
+DE IMPLEMENTAR O SEQUELIZE, USAR O SEQUELIZE PARA RODAR 
+
+NOSSAS 
+
+SQL QUERIES....
+
+
+
+
+
+
+OU SEJA,
+
+VAMOS TER QUE 
+
+ESCREVER UM NOVO 'fetchAll'...
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => { 
+
+
+  
+};
+
+
+
+
+
+
+
+
+
+O APPROACH __BEEEM ANTIGAO,
+
+AQUELE 
+
+
+EM QUE 
+
+__fAZÍAMOS RETRIEVE __ DE TODOS OS PRODUCTS, TODOS OS PRODUCTS PARA ENTÃO 
+
+
+FETCHEAR APENAS 
+1 
+
+DENTRO DA DATABASE,
+
+
+
+
+
+ESSE APPROACH NÃO VAI MAIS FUNCIONAR....
+
+
+
+
+
+
+
+
+--> NÃO VAI FUNCIONAR 
+PQ 
+
+
+
+
+
+
+__ O NOSSO 
+
+
+
+MODEL de 'Product' É AGORA UM 'SEQUELIZE MODEL',
+
+
+
+por causa 
+
+da package 
+
+do 
+
+sequelize,
+
+
+
+tudo 
+
+devido 
+
+à 
+
+
+'const Product = sequelize.define('product')' ..
+
+
+
+
+
+
+
+
+
+
+-------> E NÓS, DE FATO ,
+
+
+
+
+NÃO TEMOS NENHUM MÉTODO 
+
+'.fetchAll()'
+
+
+dentro 
+
+DESSE MODEL 
+
+SEQUELIZE, NATIVAMENTE....
+
+
+
+
+
+
+
+--> MAS É CLARO QUE 
+
+OS 
+
+
+MODELS DO SEQUELIZE POSSUEM DEZENAS 
+
+
+__ 
+
+DE MÉTODOS_ __ 
+
+PARA 
+
+FETCHEAR 
+
+DADOS...
+
+
+
+
+
+
+
+
+
+
+
+------> E EM VEZ DE 'fetchAll()',
+
+
+
+os models 
+
+SEQUELIZE 
+
+POSSUEM 
+
+
+
+'findAll()',
+
+QUE 
+
+ESSENCIALMENTE 
+
+TE 
+
+DÃO/RETRIEVAM 
+
+
+
+
+TODOS OS RECORDS PARA ESSE MODEL...
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+
+    Product.findAll();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... MAS 
+
+'findAll()',
+
+como 
+
+
+VOCÊ PODE IMAGINAR,
+
+
+É 
+
+UM MÉTODO 
+
+QUE 
+
+TAMBÉM 
+
+
+NOS 
+
+DÁ DE VOLTA UMA __PROMISE__,
+
+
+
+
+
+UMA 
+
+PROMISE 
+
+EM QUE 
+PODEMOS 
+
+USAR 
+
+
+THEN E CATCH...
+
+
+
+
+
+
+---> 'findAll()',
+
+
+
+
+
+BTW,
+
+TAMBÉM 
+
+PODE 
+
+SER CONFIGURADO COM ALGUMAS ___OPTIONS_.... --------> 
+
+
+
+
+
+
+
+PODEMOS 
+
+PASSAR OPTIONS DENTRO DO SLOT DO PARÂMETRO,
+
+
+e 
+
+AQUI 
+
+
+
+
+
+
+PODEMOS DEFINIR COISAS COMO 
+
+'WHERE'
+
+conditions (''''quero apenas os records com tal e tal field igual a xxxx''''...),
+
+
+
+
+
+
+PARA __ ENTÃO ___ RESTRINGIR OS TIPOS DE DATA QUE VAMOS QUERER 
+
+
+RETRIEVAR... --> E 
+
+
+
+HÁ MAIS 
+DETALHES
+ 
+
+ SOBRE 
+
+ AS OPÇÕES 
+
+ POSSÍVEIS 
+
+ DE 
+
+ O QUE ESCREVER 
+
+ NESSE SLOT 
+
+ __LÁ NOS DOCS OFICIAIS 
+
+ DO SEQUELIZE...
+
+
+
+
+  
+
+
+
+ ----->  QUANDO FORMOS FETCHEAR ' A SINGLE PRODUCT',
+
+ vamos ver 
+
+ alguns exemplos 
+
+ de 
+
+
+
+ escrita de 
+ 'WHERE' dentro 
+
+
+ desse 
+
+
+ negócio...
+
+
+ que ficaria tipo 
+
+
+
+ ''''''Product.findAll({where: }).then().catch()'''''''''''
+
+
+
+
+
+ EX:
+
+
+
+ exports.getProductsPage = (req, res, next) => { 
+
+
+  
+
+  Product.findAll().then().catch(); //////DENTRO DO 'THEN BLOCK' vamos ter os nossos products, essencialmente...
+};
+
+
+
+
+
+
+
+
+--> DENTRO DO THEN BLOCK TEREMOS NOSSOS PRODUCTS, essencialmenet...
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+É POR ISSO QUE VAMOS FAZER O RENDER 
+
+
+DE 
+
+NOSSA PAGE/VIEW _ DENTRO __ DESSE 
+
+
+THEN BLOCK,
+
+
+que 
+
+vai usar 
+
+
+
+
+'products',
+
+
+a coisa/records 
+
+
+retrievados 
+
+
+__ LÁ 
+
+
+DA NOSSA TABLE NA NOSSA DATABASE...
+
+
+
+
+---------------------------
+
+
+
+
+CERTO... E ISSO FUNCIONOU:
+
+
+
+
+exports.getProductsPage = (req, res, next) => { 
+
+
+
+  Product.findAll().then(
+                  //////DENTRO DO 'THEN BLOCK' vamos ter os nossos products, essencialmente...
+(products) => {
+     res.render('shop/product-list', {
+          prods: products,
+          pageTitle: 'Shop',
+          path: '/products',
+          productCSS: true,
+          activeShop: true,
+          hasProducts: products.length > 0,
+        });
+}
+
+  ).catch(); 
+};
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+OK... ISSO VAI REALMENTE FUNCIONAR...
+
+
+
+
+
+
+OBS: 
+
+
+
+AS DATABASES SQL NÃO TRABALHAM COM JSON NATIVAMENTE,
+
+
+MAS VOCÊ PODE USAR __JSON __ COM ELAS...
+
+
+
+
+
+--------------------------------------------------
+
+
+
+SQL Server can import the contents of JSON files,
+
+
+ parse it by using the OPENJSON or JSON_VALUE functions,
+ 
+  and load it into tables
+
+
+
+------------------------------
+
+
+
+
+
+
+--> OK, ISSO SIGNIFICA QUE NÃO PRECISAMOS USAR 
+
+
+'JSON.parse(xxxx)'
+
+PARA 
+
+PARSEAR
+ 
+ NOSSOS 
+
+ VALORES/RECORDS 
+
+
+ RETORNADOS 
+
+ LA 
+
+ DE NOSSAS TABLES...
+
+
+
+
+
+
+
+ ---> PROFESSOR EXPLICA QUE ESSA JÁ É 
+
+ ' A BIG STEP FORWARD'....
+ 
+
+
+
+
+
+ --> COMO PRÓXIMA ETAPA,
+
+
+ PROFESSOR 
+
+
+
+ VAI NOS MOSTRAR COMO RETRIEVAR 1 ÚNICO PRODUCT, POR MEIO DE 
+
+'ID'....
+
+(e por meio do parâmetro de '.findAll()'...)

@@ -1,0 +1,4140 @@
+
+
+
+
+
+
+
+
+--> NA ÚLTIMA AULA,
+PROFESSOR 
+
+FALOU DA 
+
+NECESSIDADE (exatametne como em APPS CLÁSSICOS NODEEXPRESS)
+
+
+
+DE ___ ENCRIPTAr__ oS PASSWORDS__ SUBMITTADOS __ POR NOSSOS USERS....
+
+
+
+
+
+
+
+
+(
+
+    para então os armazenar na database...
+)
+
+
+
+
+
+
+
+
+
+--> PARA ARMAZENAR 
+
+
+O PASSWORD NA NOSSA DATABASE,
+
+DEVEMOS O HASHEAR,
+
+TUDO PARA QUE 
+
+SE ALGUÉM 
+
+
+
+
+CONSEGUIR ACESSO 
+
+À NOSSA DATABASE,
+
+
+
+
+
+
+
+O PASSWORD 
+
+
+
+NÃO 
+
+
+
+FICA ARMAZNEADO COMO 'PLAIN TEXT'....
+
+
+
+
+ 
+
+ --> LÁ EM 'auth.js',
+
+
+ O PROFESSOR IMPORTA A PACKAGE DE 'bcryptjs' (que precismos INSTALAR NO NOSSO PROJETO)...
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+ ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+
+
+ const User = require('../models/user');
+
+const { validationResult } = require('express-validator');
+
+const { hash, compare } = require('bcryptjs');
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> VAMOS PRECISAR DESSA 
+
+
+
+FUNÇÃO DE 'hash',
+
+e dessa 
+
+outra, de 'compare'...  (para quando 
+
+FOR NECESSÁRIO 
+
+VERIFICAR SE O PASSWORD INPUTTADO PELO USER É REALMENTE 
+
+O 
+PASSWORD QUE 
+
+TEMOS 
+
+
+ARMAZENADO, DE FORMA HASHEADA, NA NOSSA DATABASE...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo... 
+
+
+
+
+
+-- >vamos manipular esse password 
+
+
+inputtado pelo user....
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+ const User = require('../models/user');
+
+const { validationResult } = require('express-validator');
+
+const { hash, compare } = require('bcryptjs');
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+
+  hash(password, 12)
+  .then(
+      (hashedPassword) => {
+
+          const user = new User(
+              {
+                  email: email,
+                  name: name,
+                  password: hashedPassword
+              }
+
+
+        user.save();
+          )
+      }
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+          if(!err.statusCode) {
+              err.statusCode = 500;
+              next(err);
+          }
+      }
+  )
+
+};
+
+
+
+
+
+
+TIPO ALGO ASSIM... --> ISSO VAI CRIAR 1 'user'
+
+
+
+DOCUMENT 
+LÁ 
+
+
+NA NOSSA DATABASE...
+
+
+
+---------------------
+
+
+
+
+É CLARO QUE FALTOU O SEND 
+
+
+
+
+DE 
+
+
+
+JSON DATA AO USUÁRIO, por meio de uma response..
+
+
+
+
+
+--> devemos fazer isso DENTRO DO THEN BLOCK 
+
+
+subsequente ao 'user.save()'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+ const User = require('../models/user');
+
+const { validationResult } = require('express-validator');
+
+const { hash, compare } = require('bcryptjs');
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+
+  hash(password, 12)
+  .then(
+      (hashedPassword) => {
+
+          const user = new User(
+              {
+                  email: email,
+                  name: name,
+                  password: hashedPassword
+              }
+
+
+        user.save()
+        .then(
+            (result) => {
+                console.log(result);
+                res.status(201).json(
+                    {
+                        message: 'User was created successfully!',
+                        result: result
+                    }
+                )
+            }
+        )
+          )
+      }
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+          if(!err.statusCode) {
+              err.statusCode = 500;
+              next(err);
+          }
+      }
+  )
+
+};
+
+
+
+
+
+
+-------------------------
+
+
+ALGO ASSIM.....
+
+
+
+
+
+
+
+EX(meu código):
+
+
+
+
+
+
+
+
+
+
+
+const User = require('../models/user');
+
+const { validationResult } = require('express-validator');
+
+const { hash, compare } = require('bcryptjs');
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      user.save().then((result) => {
+        console.log(result);
+        res.status(201).json({
+          message: 'User was created successfully!',
+          result: result,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+           next(err);
+    });
+};
+
+
+
+
+
+
+
+-----------------------
+
+
+
+CERTO.... ERA ISSO MESMO... PROFESSOR ESCREVE QUASE EXATAMENTE O MESMO CÓDIGO...
+
+
+
+
+
+
+
+MAS FALTARAM ALGUNS FIELDS NESSE DOCUMENT DE 'user'... --> FALTOU O 
+
+'status',
+
+
+e também os POSTS... 
+
+
+
+
+
+
+
+
+
+
+
+-->  O PROFESSOR ENTÃO FAZ UMA MARACUTAIA LÁ 
+
+
+EM 
+
+
+
+
+'user.js' (model arquivo)...
+
+
+
+
+
+
+
+
+--> ELE TROCA O 'required' 
+
+
+em 
+'status'
+
+PARA QUE 
+
+FIQUE 
+
+
+
+
+
+UMA KEY DE 
+
+
+'default: 'I am new!' 
+
+
+
+-------->  POR MEIO DISSO,
+
+
+__TODO _ NOVO USER __ COMEÇARÁ COM ESSE STATUS GOZADO DE 'I am new',
+
+
+E NÃO 
+PRECISAMOS 
+
+INSTANCIAR/CRIAR CADA DOCUMENT 'USER'
+
+
+
+com essa 
+
+propriedade de 'status'
+
+sempre settada (como faremos agora...)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+   //// required: true,
+   default: 'I am new!'
+  },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+OK...
+
+
+
+
+
+
+
+ISSO É BEM INTERESSANTE (E conveniente)...
+
+
+
+
+
+
+
+
+--> OK, 
+
+COM 
+
+
+O 
+
+'status' fora do caminho,
+
+
+só precisamos armazenar o:
+
+
+1) EMAIL 
+
+
+2) HASHED PASSWORD 
+
+
+
+3) NAME...
+
+
+
+
+
+
+
+
+
+--> é por isso que o código fica assmi:
+
+
+
+
+
+
+
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      user.save().then((result) => {
+        console.log(result);
+        res.status(201).json({
+          message: 'User was created successfully!',
+          result: result,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+CERTO... --> mas uma parte do código ficou diferente, no código do professor.... --> 
+
+
+ele 
+
+RETORNOU auqele 
+
+'user.save()',
+
+PARA QUE 
+
+
+ENTÃO FOSSE POSSÍVEL
+ 
+ ADICIONAR OUTRO THEN BLOCK,
+
+
+ THEN BLOCK EM QUE 
+
+
+
+ RETORNAMOS AQUELA RESPONSE DE 
+
+ 'Post criado com sucesso'...
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+ 
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      return user.save()
+    })
+    .then((result) => { //EIS O CÓDIGO EM QUESTÃO....
+        console.log(result);
+        res.status(201).json({
+          message: 'User was created successfully!',
+          result: result,
+        });
+      });
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      return user.save(); ///retornamos para usar o then block subsequente....
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'User was created successfully!',
+        result: result,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+CERTO.... --> mas 
+
+
+o professor também retornou uma response um pouco diferente... 
+
+
+
+
+em vez de retornar 
+
+'result: result',
+
+
+
+ELE RETORNOU 
+
+'userId: result._id' (data mais específica....)
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+OK.... 
+
+
+FICOU ASSIM:
+
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      return user.save(); ///retornamos para usar o then block subsequente....
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'User was created successfully!',
+        userId: result._id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA VER O RESULTADO DISSO NO NOSSO APP,
+
+PRECISMAOS FAZER ALGUNS AJUSTES NO FRONTEND CODE...
+
+
+
+
+
+
+
+--> VAMOS ATÉ O 
+
+'App.js' 
+
+
+do frontend... -----> 
+
+
+
+ 
+PROFESSOR EXPLICA QUE DEVEMOS FAZER 2 COISAS:
+
+
+
+
+
+1) DEFINIR A 'url' do request corretamente....
+
+
+
+
+
+
+2) DEFINIR ___ QUE O USER __ VAI COMEÇAR EM UM 'UNAUTHENTICATED STATE'... (
+
+  pq atualmente NOSSO CÓDIGO COMEÇA CONSIDERANDO 
+
+
+
+  'WE ARE ALREADY AUTHENTICATED',
+
+  mas 
+
+  isso 
+
+  não será verdade no código 'DE VERDADE'/production...
+)
+
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+ 
+ TEMOS O MÉTOOD DE 'signupHandler',
+
+ que é este:
+
+
+
+
+
+
+
+
+
+
+
+
+   signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+
+    method: 'PUT',
+    body: JSON.stringify(
+      {
+        name: authData.name,
+        email: authData.email,
+        password: authData.password
+      }
+    )
+
+
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+  --------------------------------
+
+
+
+
+
+
+
+
+  CERTO....
+   
+
+
+   o 
+
+   '1' já foi feito,
+
+   pq 
+
+   já coloquei aquela url ali...
+
+
+
+--> eu havia definido o método 
+
+
+como 'PUT',
+
+como você pode observar...
+
+
+   -----------------
+
+
+
+
+
+
+
+
+--> MAS ESSA COISA DO 'START AS UNAUTH'
+
+
+é 
+
+algo que vamos ter que mexer no frontend...
+
+
+
+
+
+no campo da url,
+
+
+
+professor 
+
+ESCREVE 
+
+
+
+ fetch('http://localhost:8080/auth/signup', {
+
+
+
+
+
+
+
+
+
+   ------------------------
+
+
+
+
+
+
+
+
+   ISSO FARÁ COM QUE ATINJAMOS A ROUTE DE 
+
+
+
+   'router.put()'... 
+
+
+
+
+
+
+
+
+
+   -----> CERTO... ----> definimos um 
+
+
+   PUT REQUEST 
+
+
+
+
+
+   no backend,
+
+
+   POR ISSO 
+   PRECISAMOS 
+
+   DE 
+
+
+   1 
+
+
+
+   SEGUNDO PARÂMETRO NESSE CALL DE 'fetch()',
+
+
+
+
+   ARGUMENTO QUE SERÁ 
+
+
+
+   1 objeto  
+
+   tipo assim:
+
+
+   {
+
+     method: 'PUT',
+     body: JSON.stringify(
+       {
+         ...
+       }
+     )
+   }
+
+
+
+
+
+
+
+
+
+
+  --> É CLARO QUE 
+
+  ESSA DATA VAI SER DE TIPO 'application/json',
+
+
+
+  POR ISSO __PRECISAMOS ADICIONAR HEADERS,
+
+  TUDO PARA QUE 
+  ISSO 
+
+  SEJA 
+
+  PARSEADO CORRETAMENTE PELO NOSSO BACKEND...
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+    signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+
+    method: 'PUT',
+    body: JSON.stringify(
+      {
+        name: authData.name,
+        email: authData.email,
+        password: authData.password
+      }
+    ),
+    headers: {
+      'Content-Type': 'application/json' ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+    }
+
+
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+OK...
+ 
+
+ content-type 
+
+
+
+ de 
+
+
+ tipo 'application/json',....
+
+
+
+
+
+
+
+
+
+ ------> OK... AÍ USAMOS JSON.stringify()
+  
+  PARA 
+
+  CONVERTER 
+  1 
+
+  OBJETO JAVASCRIPT EM JSON...
+
+
+
+
+
+
+
+
+
+  --> aí escrevemos aquele código cookie cutter ali....
+
+
+
+
+
+
+  ex:
+
+
+
+      body: JSON.stringify(
+      {
+        name: authData.name,
+        email: authData.email,
+        password: authData.password
+      }
+    ),
+
+
+
+--------------------------------
+
+
+
+
+
+OK... ------> AÍ TUDO ISSO ESTARÁ __ PASSADO _ AO NOSSO 
+BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA CONSEGUIRMOS 'START AS UNAUTH' no nosso app,
+
+
+DEVEMOS 
+
+IR ATÉ 
+
+
+
+'state',
+
+
+LÁ NO 
+COMPONENT 
+
+DE 
+
+
+'App.js',
+
+
+E AÍ __ TROCAR___ 
+
+
+
+
+
+
+o 
+
+
+'isAuth'
+
+PARA __ FALSE (pq agora ainda está como 'true')...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+import React, { Component, Fragment } from 'react';
+
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+
+import Layout from './components/Layout/Layout';
+
+import Backdrop from './components/Backdrop/Backdrop';
+
+import Toolbar from './components/Toolbar/Toolbar';
+
+import MainNavigation from './components/Navigation/MainNavigation/MainNavigation';
+
+import MobileNavigation from './components/Navigation/MobileNavigation/MobileNavigation';
+
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
+
+import FeedPage from './pages/Feed/Feed'; ////page component....
+
+import SinglePostPage from './pages/Feed/SinglePost/SinglePost'; //page component (props repassados a ela, como METHODS...)
+
+import LoginPage from './pages/Auth/Login'; ///page component
+
+import SignupPage from './pages/Auth/Signup'; //page component
+
+import './App.css';
+
+class App extends Component {
+  state = {
+    ////state INICIAL de nosso app...
+    showBackdrop: false,
+    showMobileNav: false,
+    // isAuth: true,
+    isAuth: false,
+    token: null,
+    userId: null,
+    authLoading: false,
+    error: null,
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    const expiryDate = localStorage.getItem('expiryDate');
+
+    if (!token || !expiryDate) {
+      return;
+    }
+
+    if (new Date(expiryDate) <= new Date()) {
+      this.logoutHandler();
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    const remainingMilliseconds =
+      new Date(expiryDate).getTime() - new Date().getTime();
+    this.setState({ isAuth: true, token: token, userId: userId });
+    this.setAutoLogout(remainingMilliseconds);
+  }
+
+  mobileNavHandler = (isOpen) => {
+    this.setState({ showMobileNav: isOpen, showBackdrop: isOpen });
+  };
+
+  backdropClickHandler = () => {
+    this.setState({ showMobileNav: false, showBackdrop: false, error: null });
+  };
+
+  logoutHandler = () => {
+    this.setState({ isAuth: false, token: null });
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiryDate');
+    localStorage.removeItem('userId');
+  };
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('URL')
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  setAutoLogout = (milliseconds) => {
+    setTimeout(() => {
+      this.logoutHandler();
+    }, milliseconds);
+  };
+
+  errorHandler = () => {
+    this.setState({ error: null });
+  };
+
+  render() {
+    let routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={(props) => (
+            <LoginPage
+              {...props} //usado para OBTER OS 'ROUTING-RELATED PROPS'... (para fzer coisas como REDIRECTS...)
+              onLogin={this.loginHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          exact
+          render={(props) => (
+            <SignupPage
+              {...props}
+              onLogin={this.signupHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+    if (this.state.isAuth) {
+      routes = (
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <FeedPage userId={this.state.userId} token={this.state.token} />
+            )}
+          />
+          <Route
+            path="/:postId"
+            render={(props) => (
+              <SinglePostPage
+                {...props}
+                userId={this.state.userId}
+                token={this.state.token}
+              />
+            )}
+          />
+          <Redirect to="/" />
+        </Switch>
+      );
+    }
+
+    return (
+      <Fragment>
+        {this.state.showBackdrop && (
+          <Backdrop onClick={this.backdropClickHandler} />
+        )}
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <Layout
+          header={
+            <Toolbar>
+              <MainNavigation
+                onOpenMobileNav={this.mobileNavHandler.bind(this, true)}
+                onLogout={this.logoutHandler}
+                isAuth={this.state.isAuth}
+              />
+            </Toolbar>
+          }
+          mobileNav={
+            <MobileNavigation
+              open={this.state.showMobileNav}
+              mobile
+              onChooseItem={this.mobileNavHandler.bind(this, false)}
+              onLogout={this.logoutHandler}
+              isAuth={this.state.isAuth}
+            />
+          }
+        />
+        {routes}
+      </Fragment>
+    );
+  }
+}
+
+export default withRouter(App);
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+OK... AGORA VAMOS ESTAR 'UNAUTHENTICATED'....  ----> SE FIZERMOS ISSO,
+
+AGORA 
+
+
+
+
+QUANDO 
+
+
+
+
+
+RECARREGARMOS NOSSO APP,
+
+
+
+AUTOMATICAMENTE
+
+ENTRAREMOS 
+
+
+NA PAGE 
+
+DE 
+
+'SIGNUP'....
+
+
+
+
+
+
+
+
+
+
+
+--> OK... AÍ O PROFESSOR CRIA UM USER QUALQUER,
+
+
+
+
+com qualquer name....
+
+
+
+
+
+
+--> PROFESSOR INPUTTA UM 'VALID PASSWORD',
+
+
+etc etc...
+
+
+
+
+
+
+--> hm... vou querer implementar um 'confirm password',
+
+só para avacalhar....
+
+
+
+
+
+
+
+
+---> para isso, preciso alterar primeiramente o FRONTEND.... -> aquele page component 
+
+de 
+
+
+
+'Signup.js'...
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+-------> CONSEGUI NO 
+
+
+FRONTEND....
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Input from '../../components/Form/Input/Input';
+import Button from '../../components/Button/Button';
+
+import { required, length, email, isEqualToPassword } from '../../util/validators';
+
+import Auth from './Auth';
+
+class Signup extends Component {
+  state = {
+    signupForm: {
+      email: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, email],
+      },
+      password: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, length({ min: 5 })],
+      },
+      confirmPassword: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isEqualToPassword],
+      },
+
+      name: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required],
+      },
+      formIsValid: false,
+    },
+  };
+
+  inputChangedHandler = (input, value) => {
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.signupForm[input].validators) {
+        isValid = isValid && validator(value, this.state.signupForm.password.value);
+      }
+
+      const updatedForm = {
+        ...prevState.signupForm,
+        [input]: {
+          ...prevState.signupForm[input],
+          valid: isValid,
+          value: value,
+        },
+      };
+
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+
+      return {
+        signupForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+  };
+
+  inputBlurHandler = (input) => {
+    this.setState((prevState) => {
+      return {
+        signupForm: {
+          ...prevState.signupForm,
+          [input]: {
+            ...prevState.signupForm[input],
+            touched: true,
+          },
+        },
+      };
+    });
+  };
+
+  render() {
+    return (
+      <Auth>
+        <form
+          onSubmit={(event) => {
+            return this.props.onLogin(event, {
+              email: this.state.signupForm.email.value,
+              password: this.state.signupForm.password.value,
+            });
+          }}
+        >
+          <Input
+            id="email"
+            label="Your E-Mail"
+            type="email"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'email')}
+            value={this.state.signupForm['email'].value}
+            valid={this.state.signupForm['email'].valid}
+            touched={this.state.signupForm['email'].touched}
+          />
+          <Input
+            id="name"
+            label="Your name"
+            type="text"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'name')}
+            value={this.state.signupForm['name'].value}
+            valid={this.state.signupForm['name'].valid}
+            touched={this.state.signupForm['name'].touched}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'password')}
+            value={this.state.signupForm['password'].value}
+            valid={this.state.signupForm['password'].valid}
+            touched={this.state.signupForm['password'].touched}
+          />
+          {(!this.state.signupForm.confirmPassword.valid && this.state.signupForm.confirmPassword.touched) && (<p>Passwords do not match.</p>)}
+            <Input
+            id="confirmPassword"
+            label="confirm Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'confirmPassword')}
+            value={this.state.signupForm['confirmPassword'].value}
+            valid={this.state.signupForm['confirmPassword'].valid}
+            touched={this.state.signupForm['confirmPassword'].touched}
+          />
+          <Button design="raised" type="submit" loading={this.props.loading}>
+            signup
+          </Button>
+        </form>
+      </Auth>
+    );
+  }
+}
+
+export default Signup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> eu me utilizei daquelas utility functions que o professor providenciou, lá em 'util':
+
+
+
+
+export const isEqualToPassword = (value, originalPassword) => {
+  let isValid = true;
+  if (value !== originalPassword) {
+    console.log('INVALID');
+    isValid = false;
+  } else {
+    console.log('TEST');
+    return isValid;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> POR MEIO DESSE MEU CÓDIGO,
+
+quando 
+
+
+o user 
+
+
+
+começa a escrever o password 
+
+
+e então 
+
+NÃO DEIXA 
+
+
+
+O 'PASSWORD' 
+
+E 
+'
+CONFIRM PASSWORD' 
+
+iguais,
+
+
+o background 
+
+
+
+do input field FICA VERMELHO,
+
+e um <p> 
+aparece 
+
+dizendo 
+
+'Passwords do not match'...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Input from '../../components/Form/Input/Input';
+import Button from '../../components/Button/Button';
+
+import { required, length, email, isEqualToPassword } from '../../util/validators';
+
+import Auth from './Auth';
+
+class Signup extends Component {
+  state = {
+    signupForm: {
+      email: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, email],
+      },
+      password: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, length({ min: 5 })],
+      },
+      confirmPassword: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isEqualToPassword],
+      },
+
+      name: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required],
+      },
+      formIsValid: false,
+    },
+  };
+
+  inputChangedHandler = (input, value) => {
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.signupForm[input].validators) {
+        isValid = isValid && validator(value, this.state.signupForm.password.value);
+      }
+
+      const updatedForm = {
+        ...prevState.signupForm,
+        [input]: {
+          ...prevState.signupForm[input],
+          valid: isValid,
+          value: value,
+        },
+      };
+
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+
+      return {
+        signupForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+  };
+
+  inputBlurHandler = (input) => {
+    this.setState((prevState) => {
+      return {
+        signupForm: {
+          ...prevState.signupForm,
+          [input]: {
+            ...prevState.signupForm[input],
+            touched: true,
+          },
+        },
+      };
+    });
+  };
+
+  render() {
+    return (
+      <Auth>
+        <form
+          onSubmit={(event) => {
+            return this.props.onLogin(event, {
+              email: this.state.signupForm.email.value,
+              password: this.state.signupForm.password.value,
+            });
+          }}
+        >
+          <Input
+            id="email"
+            label="Your E-Mail"
+            type="email"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'email')}
+            value={this.state.signupForm['email'].value}
+            valid={this.state.signupForm['email'].valid}
+            touched={this.state.signupForm['email'].touched}
+          />
+          <Input
+            id="name"
+            label="Your name"
+            type="text"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'name')}
+            value={this.state.signupForm['name'].value}
+            valid={this.state.signupForm['name'].valid}
+            touched={this.state.signupForm['name'].touched}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'password')}
+            value={this.state.signupForm['password'].value}
+            valid={this.state.signupForm['password'].valid}
+            touched={this.state.signupForm['password'].touched}
+          />
+          
+            <Input
+            id="confirmPassword"
+            label="confirm Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'confirmPassword')}
+            value={this.state.signupForm['confirmPassword'].value}
+            valid={this.state.signupForm['confirmPassword'].valid}
+            touched={this.state.signupForm['confirmPassword'].touched}
+          />
+          {(!this.state.signupForm.confirmPassword.valid && this.state.signupForm.confirmPassword.touched) && (<p style={{color: '#3b0062' }}>Passwords do not match.</p>)}
+          <Button design="raised" type="submit" loading={this.props.loading}>
+            signup
+          </Button>
+        </form>
+      </Auth>
+    );
+  }
+}
+
+export default Signup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> na verdade,
+
+
+meu 
+
+
+
+
+código de 
+
+
+
+validation browserside está um lixo... --> o botão de 'signup' NÃO DEVE FUNCIONAR 
+
+
+
+SE 
+
+
+
+
+ALGUM DOS INPUT FIELDS ESTIVER COMO 'invalid'... isso é lógico.
+
+
+
+
+
+
+
+
+
+
+
+----------------> AGORA SÓ FALTA ADICIONAR ISSO NO SERVERSIDE, QUE É ONDE IMPORTA...
+
+
+
+
+
+
+
+
+--> preciso desses styles, essencialmente:
+
+
+
+
+
+
+
+.button:disabled {
+  background: #ccc;
+  color: #888888;
+  cursor: not-allowed;
+  border: #ccc;
+  box-shadow: none;
+}
+
+.button:disabled:hover,
+.button:disabled:active {
+  background: #ccc;
+  color: #888888;
+  border: #ccc;
+}
+
+
+
+
+
+
+
+
+
+
+
+---> o botão precisa ficar DESABILITADO quando essa hipótese acontecer....
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Input from '../../components/Form/Input/Input';
+import Button from '../../components/Button/Button';
+
+import {
+  required,
+  length,
+  email,
+  isEqualToPassword,
+  isLetter,
+} from '../../util/validators';
+
+import Auth from './Auth';
+
+class Signup extends Component {
+  state = {
+    signupForm: {
+      email: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, email],
+      },
+      password: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, length({ min: 5 })],
+      },
+      confirmPassword: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isEqualToPassword],
+      },
+
+      name: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isLetter],
+      },
+      formIsValid: false,
+    },
+  };
+
+  inputChangedHandler = (input, value) => {
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.signupForm[input].validators) {
+        isValid =
+          isValid && validator(value, this.state.signupForm.password.value);
+      }
+
+      const updatedForm = {
+        ...prevState.signupForm,
+        [input]: {
+          ...prevState.signupForm[input],
+          valid: isValid,
+          value: value,
+        },
+      };
+
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+
+      return {
+        signupForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+  };
+
+  inputBlurHandler = (input) => {
+    this.setState((prevState) => {
+      return {
+        signupForm: {
+          ...prevState.signupForm,
+          [input]: {
+            ...prevState.signupForm[input],
+            touched: true,
+          },
+        },
+      };
+    });
+  };
+
+  render() {
+    return (
+      <Auth>
+        <form
+          onSubmit={(event) => {
+            return this.props.onLogin(event, {
+              email: this.state.signupForm.email.value,
+              password: this.state.signupForm.password.value,
+            });
+          }}
+        >
+          <Input
+            id="email"
+            label="Your E-Mail"
+            type="email"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'email')}
+            value={this.state.signupForm['email'].value}
+            valid={this.state.signupForm['email'].valid}
+            touched={this.state.signupForm['email'].touched}
+          />
+          <Input
+            id="name"
+            label="Your name"
+            type="text"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'name')}
+            value={this.state.signupForm['name'].value}
+            valid={this.state.signupForm['name'].valid}
+            touched={this.state.signupForm['name'].touched}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'password')}
+            value={this.state.signupForm['password'].value}
+            valid={this.state.signupForm['password'].valid}
+            touched={this.state.signupForm['password'].touched}
+          />
+
+          <Input
+            id="confirmPassword"
+            label="confirm Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'confirmPassword')}
+            value={this.state.signupForm['confirmPassword'].value}
+            valid={this.state.signupForm['confirmPassword'].valid}
+            touched={this.state.signupForm['confirmPassword'].touched}
+          />
+          {!this.state.signupForm.confirmPassword.valid &&
+            this.state.signupForm.confirmPassword.touched && (
+              <p style={{ color: '#3b0062' }}>Passwords do not match.</p>
+            )}
+          <Button
+            design="raised"
+            type="submit"
+            loading={this.props.loading}
+            disabled={
+              !this.state.signupForm.confirmPassword.valid ||
+              !this.state.signupForm.password.valid ||
+              !this.state.signupForm.name.valid ||
+              !this.state.signupForm.email.valid
+            }
+          >
+            signup
+          </Button>
+        </form>
+      </Auth>
+    );
+  }
+}
+
+export default Signup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FUNCIONA/FUNCIONOU...
+
+
+
+E ficou realmente muito bom...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Input from '../../components/Form/Input/Input';
+import Button from '../../components/Button/Button';
+
+import {
+  required,
+  length,
+  email,
+  isEqualToPassword,
+  isLetter,
+} from '../../util/validators';
+
+import Auth from './Auth';
+
+class Signup extends Component {
+  state = {
+    signupForm: {
+      email: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, email],
+      },
+      password: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, length({ min: 7 })],
+      },
+      confirmPassword: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isEqualToPassword],
+      },
+
+      name: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isLetter, length({min: 6})],
+      },
+      formIsValid: false,
+    },
+  };
+
+  inputChangedHandler = (input, value) => {
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.signupForm[input].validators) {
+        isValid =
+          isValid && validator(value, this.state.signupForm.password.value);
+      }
+
+      const updatedForm = {
+        ...prevState.signupForm,
+        [input]: {
+          ...prevState.signupForm[input],
+          valid: isValid,
+          value: value,
+        },
+      };
+
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+
+      return {
+        signupForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+  };
+
+  inputBlurHandler = (input) => {
+    this.setState((prevState) => {
+      return {
+        signupForm: {
+          ...prevState.signupForm,
+          [input]: {
+            ...prevState.signupForm[input],
+            touched: true,
+          },
+        },
+      };
+    });
+  };
+
+  render() {
+    return (
+      <Auth>
+        <form
+          onSubmit={(event) => {
+            return this.props.onLogin(event, {
+              email: this.state.signupForm.email.value,
+              password: this.state.signupForm.password.value,
+            });
+          }}
+        >
+          <Input
+            id="email"
+            label="Your E-Mail"
+            type="email"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'email')}
+            value={this.state.signupForm['email'].value}
+            valid={this.state.signupForm['email'].valid}
+            touched={this.state.signupForm['email'].touched}
+          />
+          <Input
+            id="name"
+            label="Your name"
+            type="text"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'name')}
+            value={this.state.signupForm['name'].value}
+            valid={this.state.signupForm['name'].valid}
+            touched={this.state.signupForm['name'].touched}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'password')}
+            value={this.state.signupForm['password'].value}
+            valid={this.state.signupForm['password'].valid}
+            touched={this.state.signupForm['password'].touched}
+          />
+
+          <Input
+            id="confirmPassword"
+            label="confirm Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'confirmPassword')}
+            value={this.state.signupForm['confirmPassword'].value}
+            valid={this.state.signupForm['confirmPassword'].valid}
+            touched={this.state.signupForm['confirmPassword'].touched}
+          />
+          {!this.state.signupForm.confirmPassword.valid &&
+            this.state.signupForm.confirmPassword.touched && (
+              <p style={{ color: '#3b0062' }}>Passwords do not match.</p>
+            )}
+          <Button
+            design="raised"
+            type="submit"
+            loading={this.props.loading}
+            disabled={
+              !this.state.signupForm.confirmPassword.valid ||
+              !this.state.signupForm.password.valid ||
+              !this.state.signupForm.name.valid ||
+              !this.state.signupForm.email.valid
+            }
+          >
+            signup
+          </Button>
+        </form>
+      </Auth>
+    );
+  }
+}
+
+export default Signup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+AGORA SÓ TENHO QUE 
+
+ADICIONAR 
+
+
+VALIDATION 
+
+CORRESPONDENTE 
+
+lá 
+
+
+NO SERVERSIDE,
+
+PARA 
+
+ESSE 
+
+'confirmPassword'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> O CÓDIGO QUE EU HAVIA USADO, NO PASSADO,
+
+PARA 
+
+FAZER 
+
+
+ESSA VALIDATION DO 
+
+'CONFIRM PASSWORD DEVE SER IGUAL AO PASSWORD'
+
+
+foi ESTE,
+
+LÁ 
+
+
+
+NA ROUTE DE 'auth.js' (USO DE UM CUSTOM VALIDATOR...):
+
+
+
+
+
+
+ body(
+      'password',
+      'Your password has to be made of only letters and numbers, and of 6 or more characters.'
+    ) ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS...
+      .isLength({ min: 6 })
+      .isAlphanumeric()
+      .trim(), ////VAI REMOVER TODOS OS WHITE SPACES DO PASSWORD inputtado...
+    // body('confirmPassword').equals(req.body.password).withMessage('Passwords do not match.') /////APPROACH QUE NÃO FUNCIONA/NÃO FUNCIONARÁ. --> DEVEMOS USAR O APPROACH DO 'cusotm validator' visto logo abaixo...
+
+    body('confirmPassword')
+      .custom(
+        ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, { req, loc, path }) => {
+          if (value !== req.body.password) {
+            console.log('ENTERED');
+            throw new Error('Passwords do not match.');
+          } else {
+            console.log(value, req.body.confirmPassword);
+            console.log('TEST');
+            return true;
+          }
+        }
+      )
+      .trim(),
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE TAMBÉM VAMOS TER QUE COLOCAR ESSE 'confirmPassword'
+
+
+
+no nosso REQUEST BODY,
+
+
+caso contrário esse código todo não funcionará...
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+para isso, vou ter que 
+
+ir 
+
+
+até 
+
+
+o 
+
+
+
+'Signup.js',
+
+
+onde tenho aquele CALL 
+
+de 
+
+
+
+
+'this.props.onLogin()' ( que é, na verdade, 'signupHandler', lá em 'App.js') 
+
+
+
+com 
+
+o pass 
+
+
+dos valores dos input fields... 
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Input from '../../components/Form/Input/Input';
+import Button from '../../components/Button/Button';
+
+import {
+  required,
+  length,
+  email,
+  isEqualToPassword,
+  isLetter,
+} from '../../util/validators';
+
+import Auth from './Auth';
+
+class Signup extends Component {
+  state = {
+    signupForm: {
+      email: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, email],
+      },
+      password: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, length({ min: 7 })],
+      },
+      confirmPassword: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isEqualToPassword],
+      },
+
+      name: {
+        value: '',
+        valid: false,
+        touched: false,
+        validators: [required, isLetter, length({min: 6})],
+      },
+      formIsValid: false,
+    },
+  };
+
+  inputChangedHandler = (input, value) => {
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.signupForm[input].validators) {
+        isValid =
+          isValid && validator(value, this.state.signupForm.password.value);
+      }
+
+      const updatedForm = {
+        ...prevState.signupForm,
+        [input]: {
+          ...prevState.signupForm[input],
+          valid: isValid,
+          value: value,
+        },
+      };
+
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+
+      return {
+        signupForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+  };
+
+  inputBlurHandler = (input) => {
+    this.setState((prevState) => {
+      return {
+        signupForm: {
+          ...prevState.signupForm,
+          [input]: {
+            ...prevState.signupForm[input],
+            touched: true,
+          },
+        },
+      };
+    });
+  };
+
+  render() {
+    return (
+      <Auth>
+        <form
+          onSubmit={(event) => {
+            return this.props.onLogin(event, {
+              email: this.state.signupForm.email.value,
+              password: this.state.signupForm.password.value,
+              name: this.state.signupForm.name.value,
+              confirmPassword: this.state.signupForm.confirmPassword.value
+            });
+          }}
+        >
+          <Input
+            id="email"
+            label="Your E-Mail"
+            type="email"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'email')}
+            value={this.state.signupForm['email'].value}
+            valid={this.state.signupForm['email'].valid}
+            touched={this.state.signupForm['email'].touched}
+          />
+          <Input
+            id="name"
+            label="Your name"
+            type="text"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'name')}
+            value={this.state.signupForm['name'].value}
+            valid={this.state.signupForm['name'].valid}
+            touched={this.state.signupForm['name'].touched}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'password')}
+            value={this.state.signupForm['password'].value}
+            valid={this.state.signupForm['password'].valid}
+            touched={this.state.signupForm['password'].touched}
+          />
+
+          <Input
+            id="confirmPassword"
+            label="confirm Password"
+            type="password"
+            control="input"
+            onChange={this.inputChangedHandler}
+            onBlur={this.inputBlurHandler.bind(this, 'confirmPassword')}
+            value={this.state.signupForm['confirmPassword'].value}
+            valid={this.state.signupForm['confirmPassword'].valid}
+            touched={this.state.signupForm['confirmPassword'].touched}
+          />
+          {!this.state.signupForm.confirmPassword.valid &&
+            this.state.signupForm.confirmPassword.touched && (
+              <p style={{ color: '#3b0062' }}>Passwords do not match.</p>
+            )}
+          <Button
+            design="raised"
+            type="submit"
+            loading={this.props.loading}
+            disabled={
+              !this.state.signupForm.confirmPassword.valid ||
+              !this.state.signupForm.password.valid ||
+              !this.state.signupForm.name.valid ||
+              !this.state.signupForm.email.valid
+            }
+          >
+            signup
+          </Button>
+        </form>
+      </Auth>
+    );
+  }
+}
+
+export default Signup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAIS PROPRIAMENTE ESTE TRECHO:
+
+
+
+  render() {
+    return (
+      <Auth>
+        <form
+          onSubmit={(event) => {
+            return this.props.onLogin(event, {
+              email: this.state.signupForm.email.value,
+              password: this.state.signupForm.password.value,
+              name: this.state.signupForm.name.value,
+              confirmPassword: this.state.signupForm.confirmPassword.value
+            });
+          }}
+        >
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OK, AGORA TENHO QUE IR ATÉ 
+
+  'signupHandler',
+
+
+
+  e aí 
+
+
+  escrever isto:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  import React, { Component, Fragment } from 'react';
+
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+
+import Layout from './components/Layout/Layout';
+
+import Backdrop from './components/Backdrop/Backdrop';
+
+import Toolbar from './components/Toolbar/Toolbar';
+
+import MainNavigation from './components/Navigation/MainNavigation/MainNavigation';
+
+import MobileNavigation from './components/Navigation/MobileNavigation/MobileNavigation';
+
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
+
+import FeedPage from './pages/Feed/Feed'; ////page component....
+
+import SinglePostPage from './pages/Feed/SinglePost/SinglePost'; //page component (props repassados a ela, como METHODS...)
+
+import LoginPage from './pages/Auth/Login'; ///page component
+
+import SignupPage from './pages/Auth/Signup'; //page component
+
+import './App.css';
+
+class App extends Component {
+  state = {
+    ////state INICIAL de nosso app...
+    showBackdrop: false,
+    showMobileNav: false,
+    // isAuth: true,
+    isAuth: false,
+    token: null,
+    userId: null,
+    authLoading: false,
+    error: null,
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    const expiryDate = localStorage.getItem('expiryDate');
+
+    if (!token || !expiryDate) {
+      return;
+    }
+
+    if (new Date(expiryDate) <= new Date()) {
+      this.logoutHandler();
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    const remainingMilliseconds =
+      new Date(expiryDate).getTime() - new Date().getTime();
+    this.setState({ isAuth: true, token: token, userId: userId });
+    this.setAutoLogout(remainingMilliseconds);
+  }
+
+  mobileNavHandler = (isOpen) => {
+    this.setState({ showMobileNav: isOpen, showBackdrop: isOpen });
+  };
+
+  backdropClickHandler = () => {
+    this.setState({ showMobileNav: false, showBackdrop: false, error: null });
+  };
+
+  logoutHandler = () => {
+    this.setState({ isAuth: false, token: null });
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiryDate');
+    localStorage.removeItem('userId');
+  };
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('URL')
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  setAutoLogout = (milliseconds) => {
+    setTimeout(() => {
+      this.logoutHandler();
+    }, milliseconds);
+  };
+
+  errorHandler = () => {
+    this.setState({ error: null });
+  };
+
+  render() {
+    let routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={(props) => (
+            <LoginPage
+              {...props} //usado para OBTER OS 'ROUTING-RELATED PROPS'... (para fzer coisas como REDIRECTS...)
+              onLogin={this.loginHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          exact
+          render={(props) => (
+            <SignupPage
+              {...props}
+              onLogin={this.signupHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+    if (this.state.isAuth) {
+      routes = (
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <FeedPage userId={this.state.userId} token={this.state.token} />
+            )}
+          />
+          <Route
+            path="/:postId"
+            render={(props) => (
+              <SinglePostPage
+                {...props}
+                userId={this.state.userId}
+                token={this.state.token}
+              />
+            )}
+          />
+          <Redirect to="/" />
+        </Switch>
+      );
+    }
+
+    return (
+      <Fragment>
+        {this.state.showBackdrop && (
+          <Backdrop onClick={this.backdropClickHandler} />
+        )}
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <Layout
+          header={
+            <Toolbar>
+              <MainNavigation
+                onOpenMobileNav={this.mobileNavHandler.bind(this, true)}
+                onLogout={this.logoutHandler}
+                isAuth={this.state.isAuth}
+              />
+            </Toolbar>
+          }
+          mobileNav={
+            <MobileNavigation
+              open={this.state.showMobileNav}
+              mobile
+              onChooseItem={this.mobileNavHandler.bind(this, false)}
+              onLogout={this.logoutHandler}
+              isAuth={this.state.isAuth}
+            />
+          }
+        />
+        {routes}
+      </Fragment>
+    );
+  }
+}
+
+export default withRouter(App);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAIS PROPRIAMNETE,
+
+
+
+ESTE TRECHO:
+
+
+
+
+
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+
+
+
+
+
+
+--> OK, AGORA ESTAMOS REPASSANDO O 'confirmPassword'
+
+
+AO NOSSO BACKEND... 
+
+
+
+
+
+
+
+
+
+--> o confirm password é então CHECADO 
+
+
+
+LÁ NAQUELES VALIDATORS DA ROUTE DE 
+
+'auth.js',
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+router.put(
+  '/signup',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Inputted email is not valid')
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return User.findOne({ email: value }).then((user) => {
+          console.log(user);
+          if (user) {
+            console.log(user, 'LINE');
+            return Promise.reject(
+              'An user with the chosen email already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      })
+      .normalizeEmail(), ///vai fazer com que não exista diferenciação entre LOWER e UPPERCASE....
+    body('password')
+      .trim()
+      .isLength({ min: 7 })
+      .withMessage('Your password has to have at least 7 characters.')
+      .not()
+      .isEmpty()
+      .withMessage('You must input a password'),
+    body('confirmPassword')
+      .custom(
+        ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, { req, loc, path }) => {
+          if (value !== req.body.password) {
+            console.log('ENTERED');
+            throw new Error('Passwords do not match.');
+          } else {
+            return true;
+          }
+        }
+      )
+      .trim(),
+    body('name')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Your name has to have at least 6 characters.')
+      .isString()
+      .withMessage('Invalid name.')
+      .not()
+      .isEmpty()
+      .withMessage('You must input a name'),
+  ],
+
+  authController.signup
+);
+
+
+
+
+
+
+
+
+
+
+----------> OU SEJA,
+
+USAMOS 
+
+AQUELE 
+
+
+
+CUSTOM VALIDATOR 
+
+
+ALI...
+
+
+
+
+
+
+
+
+de código:
+
+
+
+
+
+
+
+    body('confirmPassword')
+      .custom(
+        ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, { req, loc, path }) => {
+          if (value !== req.body.password) {
+            console.log('ENTERED');
+            throw new Error('Passwords do not match.');
+          } else {
+            return true;
+          }
+        }
+      )
+      .trim(),
+
+
+
+
+
+
+      --------------------
+
+
+
+
+
+
+
+
+      certo... até aí, tudo bem...
+
+
+
+
+
+
+
+
+  --> COLOQUEI UM MONTE DE INFO, E AÍ TENTEI CRIAR 1 USER...
+
+
+
+
+
+
+
+
+
+  --> O USER FOI CRIADO COM SUCESSO, FICOU ASSIM:
+
+
+
+  {
+    "_id": {
+        "$oid": "61aeeb546972df7b3b2905fa"
+    },
+    "name": "Arthur",
+    "email": "madblorga@hotmail.com",
+    "password": "$2a$12$rPC.SNqa/VSozlGIHk6hOOdTfYPgX9GshuQNNQGB83yP1lgvbPhFi",
+    "status": "I am new!",
+    "posts": [],
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+
+
+
+certo... só a user interface ainda está meio shoddy...
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO DO CONTROLLER DE SIGNUP, NO MOMENTO, ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      return user.save(); ///retornamos para usar o then block subsequente....
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'User was created successfully!',
+        userId: result._id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ou seja,
+
+só retornamos uma response com 'User was created successfully' 
+
+
+
+e 
+
+
+um 'userId'... 
+
+
+
+
+
+
+
+-----> já 
+
+
+
+
+no 
+
+
+
+código frontend,
+
+
+temos isto:
+
+
+
+
+
+
+
+
+
+
+
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+  -----------------------------------
+
+
+
+
+
+
+
+
+
+  OK... MAS JÁ FOI UM BOM PROGRESSo...
+
+
+
+
+
+
+
+
+  vou testar,
+
+  ver 
+
+
+
+
+se 
+
+
+
+
+a hipótese 
+
+de 
+
+'ESSE EMAIL JÁ ESTÁ EM USO '
+
+
+
+
+funciona...
+
+
+
+
+
+
+
+
+
+
+--> FUNCIONA, SIM...
+
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+
+
+
+
+
+Professor recebe 
+
+
+
+
+
+um ERRO grave... --> ele diz que 
+
+no código dele a data não está sendo passada AT ALL 
+
+
+ao backend... ------> AÍ ELE 
+
+
+
+PERCEBE QUE 
+
+NENHUM REUQEST 
+
+
+PAYLOAD 
+
+FOI ADICIONADO 
+
+AO 
+
+
+REQUEST... -----> 
+
+
+
+LA´
+
+
+EM 
+
+
+'App.js',
+
+
+
+
+
+NO LOCAL EM QUE ELE EXTRAIU/EXTRAIU 
+
+
+'authData.email,
+
+
+etc etc'
+
+
+
+
+
+ELE 
+
+
+EXPLICA QUE 
+
+TUDO ISSO 
+
+
+AÍ 
+
+DEVE 
+
+SER 
+
+
+
+
+
+
+'authData.signupForm.email.value',
+
+
+
+
+
+
+e a mesma coisa para os outros fields..
+
+
+
+
+
+
+
+
+
+
+
+
+oK, MAS NO MEU 
+
+CÓDIGO EU NÃO ESTAVA RECEBENDO ESSE PROBLEMA/ERRO.... 
+
+
+
+
+
+
+
+
+
+------> OK.... 
+
+
+
+
+
+
+
+O QUE INTERESSA É QUE 
+
+
+
+
+
+NOSSO USER FOI CRIADO COM SUCESSO...
+
+
+
+
+
+
+
+
+-------> ok, tudo isso está funcionando...
+
+
+
+
+
+
+
+nossos users estão com 'starting status de 
+
+'I am new',
+
+
+
+E 
+
+
+
+
+NÃO TEMOS POST ALGUM ('posts: []' ) --------> AGORA PODEMOS 
+
+
+
+FINALMENTE 
+
+VER 
+
+A 
+
+
+'PARTE INTERESSANTE',
+
+
+
+
+QUE 
+
+É 
+
+o 
+
+
+
+APPROACH 
+
+DE 
+
+
+'LOGGING USERS IN'... --------> ISSO PQ CONFORME O PROFESSOR 
+
+
+MENCIONOU ANTERIORMENTE,
+
+
+
+
+A MANEIRA 
+
+DE 
+
+'LOG USERS IN' 
+
+
+
+
+EM 
+
+APPS REST nodeexpress 
+
+
+
+É RADICALMENTE DISTINTA 
+
+
+
+
+DO LOGIN 
+
+
+
+
+de users 
+
+
+EM APPS TRADICIONAIS NODEEXPRESS... -----------> A AUTHENTICATION VAI FUNCIONAR DE FORMA DIFERENTE.... 

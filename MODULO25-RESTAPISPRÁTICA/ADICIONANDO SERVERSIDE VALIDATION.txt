@@ -1,0 +1,1162 @@
+
+
+
+
+
+
+
+
+
+
+VOU TENTAR FAZER ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+
+--> TENHO QUE INSTALAR O EXPRESS-VALIDATOR COM 
+
+'npm install --save express-validator'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> isso feito, preciso usar esse validator lá nos MEUS ARQUIVOS DE 'routes',
+
+
+pq é 
+
+lá que ele importa....
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+const { body, check } = require('express-validator');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> MEU CÓDIGO ROUTE DE 'feed.js'
+
+está assim, por enquanto:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+const { body, check } = require('express-validator');
+
+
+
+const feedController = require('../controllers/feed');
+
+
+//GET /feed/posts
+router.get('/posts', feedController.getPosts);
+
+//POST /feed/post
+router.post('/post', feedController.createPost);
+
+//PATCH /feed/post 
+
+// router.patch('/post', feedController.editPost);
+
+
+//GET  /feed/post/:postId
+
+// router.get('/post', feedController.getSinglePost);
+
+
+//DELETE /feed/post/:postId
+
+// router.delete('/post', feedController.deletePost);
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+---> só preciso enfiar os checks, agora, no meio 
+
+
+
+
+dos middlewares das routes...
+
+
+
+
+
+
+
+
+
+
+--> TIPO ALGO ASSIM:
+
+
+
+
+
+
+
+
+
+
+router.post('/post', 
+
+
+body(
+    'title'
+)
+.isString()
+.withMessage('Post Titles must contain only letters.')
+.trim()
+.custom((value, { req }) => {
+    ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+    console.log(value);
+    return Post.findOne({ title: value }).then((post) => {
+      console.log(post);
+      if (post) {
+        console.log(post, 'LINE');
+        return Promise.reject(
+          'A post with the chosen title already exists, please choose another one.'
+        );
+      } else {
+        return value;
+      }
+    });
+  })
+,
+
+body(
+    'content'
+)
+.isLength({min: 6})
+
+.trim(),
+feedController.createPost);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+mas ainda acho que faltou algo.... faltou algo no 
+
+backend... 
+
+
+
+
+--> provavelmente nos controllers, faltou algo do express-validator lá....
+
+
+
+
+
+
+
+
+
+
+
+
+--> É ISTO AQUI:
+
+const { validationResult } = require('express-validator');
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... professor escreve exatamente aquilo que havíamos escrito....
+
+
+
+
+
+
+
+'const { check, body } = require('express-validator');' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> CHECK ---> CHECA OS QUERYPARAMS,
+
+HEADERS, ETC... 
+
+
+
+
+
+
+
+
+
+--> mas vamos querer checar só o BODY....
+
+
+
+
+
+
+
+
+--> VALIDATION FAZ SENTIDO NA POST ROUTE, E NÃO NA GET ROUTE...
+
+
+
+
+
+
+
+
+
+---> ok...
+ 
+
+
+
+
+
+
+
+
+
+
+
+ -----------> DEVEMOS ESPELHAR O VALIDATION DO NOSSO SERVERSIDE DE ACORDO COM O QUE O PROFESSOR ESCREVEU 
+
+
+ NO BROWSERSIDE/FRONTEND.....
+
+
+
+
+ O VALIDATION DO SERVERSIDE PODE SER ENCONTRADO EM 
+
+ 'FeedEdit.js':
+
+
+
+
+
+
+ const POST_FORM = {
+  title: {
+    value: '',
+    valid: false,
+    touched: false,
+    validators: [required, length({ min: 5 })],
+  },
+  image: {
+    value: '',
+    valid: false,
+    touched: false,
+    validators: [required],
+  },
+
+  content: {
+    value: '',
+    valid: false,
+    touched: false,
+    validators: [required, length({ min: 5 })],
+  },
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO VOCÊ PODE VER,
+
+
+ESSE FIELD DE 'title'
+
+deve ser 'NOT EMPTY' (required)
+
+
+
+E 
+
+
+ter uma length MÍNIMA DE '5'...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+router.post('/post', 
+[
+body(
+    'title'
+)
+.trim()
+.isLength({min: 5})
+.withMessage('Title should be more than 6 characters long.')
+.isString()
+.withMessage('Post Titles must contain only letters.')
+
+.custom((value, { req }) => {
+    ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+    console.log(value);
+    return Post.findOne({ title: value }).then((post) => {
+      console.log(post);
+      if (post) {
+        console.log(post, 'LINE');
+        return Promise.reject(
+          'A post with the chosen title already exists, please choose another one.'
+        );
+      } else {
+        return value;
+      }
+    });
+  })
+,
+
+body(
+    'content'
+)
+.isLength({min: 5})
+.withMessage('Content should be more than 6 characters long.')
+.trim()
+],
+feedController.createPost);
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+OK... 
+
+
+
+A VALIDATION FUNCIONA ___ EXATAMENTE __ DA MESMA FORMA que 
+
+funciona em 
+
+
+NODEEXPRESS APPS comuns (rest apis vs apps comuns, ambos possuem o mesmo approach de validation, serverside validation...)
+
+
+
+
+
+
+
+
+--> OK... COM ISSO,
+
+
+
+ADICIONAMOS ESSAS '2 VALIDATION STEPS'...
+
+
+
+
+
+
+
+
+
+
+
+--> OK... --> AGORA DEVEMOS 
+
+IMPLEMENTAR UMA LÓGICA 
+
+
+'TO SEND AN ERROR IF OUR SERVERSIDE VALIDATION LOGIC IS NOT MET'... (
+
+
+    ou seja,
+
+    por meio de 
+
+
+    '
+
+    const { validationResult } = require('express-validator');
+
+    '
+
+
+
+    nos nossos controllers...
+)
+
+
+
+
+
+
+
+
+
+
+----------> ok... -> 
+
+
+
+PROFESSOR ESCREVE 
+
+
+
+
+'const { validationResult } = require('express-validator')' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... COM ESSA FUNÇÃO,
+
+em 
+
+'createPost',
+
+
+
+
+
+
+
+
+
+professor escreve uma NOVA CONSTSANTE DE 'errors',
+
+
+E AÍ 
+
+
+
+ELE 
+
+
+EXECUTA 
+
+esse 
+
+'validationResult(req)'
+
+
+
+
+(PASSA O REQUEST COMO SEU PARÂMETRO...)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const Post = require('../models/post');
+
+
+const {validationResult} = require('express-validator');
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'Second Post',
+        content: 'This is the second post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+    ],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+          _id: new Date().toISOString,
+          creator: {
+            name: 'Max'
+          },
+          createdAt: new Date()
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+
+  const errors = validationResult(req); -------> ISSO VAI AUTOMATICAMENTE 
+
+
+
+  RETORNAR QUAISQUER ERROS 
+
+  QUE 
+
+  ESSA PACKAGE Do 'express-validator'
+   
+
+
+
+   encontrou naqueles nossos inputs de 
+
+   'content' e 'title'...
+
+
+
+
+
+
+
+
+   --> 
+
+
+   OK....
+
+
+
+   AÍ FAZEMOS AQUELES CHECKS CLÁSSICOS:
+
+
+
+   'if(
+       !errors.isEmpty()
+   )
+   '
+
+
+
+( OU SEJA, SE ERRORS NÃO ESTIVER VAZIO, 
+
+
+)
+
+
+
+
+
+
+
+,
+
+
+
+
+SE ISSO FOR VERDADE, TEMOS ERRORS 
+
+NA NOSSA DATA/INPUT.... --> SE ISSO FOR VERDADE,
+
+
+VOU QUERER 
+
+RETORNAR UMA RESPONSE COM 
+
+
+
+STATUS CODE  DE '422' (INVALID INPUT por parte do user...),
+
+
+
+
+
+
+
+
+
+'VALIDATION FAILED STATUS CODE',
+
+
+
+E AÍ 
+
+VAMOS ENVIAR UMA JSON DATA... --> TALVEZ COM UMA 
+
+
+MESSAGE DE 
+
+
+
+'Validation Failed, entered data is incorrect'...
+
+
+
+
+
+(VAMOS USAR ESSA MESSAGE NO NOSSO FRONTEND, PARA DISPLAYAR AO USER, ETC ETC...)
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const Post = require('../models/post');
+
+
+const {validationResult} = require('express-validator');
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'Second Post',
+        content: 'This is the second post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+    ],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+
+if(!errors.isEmpty()) {
+
+
+    return res.status(422).json({message: 'Validation failed, entered data is incorrect.'})
+}
+
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+
+
+  post.save().then(
+    () => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+          _id: new Date().toISOString,
+          creator: {
+            name: 'Max'
+          },
+          createdAt: new Date()
+        },
+      });
+    }
+  )
+  .catch(
+      (err) => {
+        console.log(err);
+      }
+  )
+
+
+};
+
+
+
+-------------------------
+
+
+
+
+
+
+
+PROFESSOR TAMBÉM DIZ QUE PODEMOS 
+
+
+
+
+ENUMERAR OS ERROS QUE ACONTECERAM 
+
+
+
+NA VALIDATION,
+
+
+
+
+
+nessa resposta json...
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+'errors: errors.array()' 
+
+
+
+
+
+( OU SEJA,
+
+
+CITAMOS ESSA CONST DE 'errors' e então usamos o método '.array()' PARA EXTRAIR 
+
+ESSES ERRORS EM 1 ARRAY DE ERRORS...)
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) { //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    return res
+      .status(422)
+      .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  }
+
+  const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+  const content = req.body.content;
+
+  console.log(title, content);
+
+  console.log(req.body);
+
+  console.log('REQUEST RECEIVED');
+
+  const post = new Post({
+    title: title,
+    content: content,
+  });
+
+  post
+    .save()
+    .then(() => {
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: {
+          title: title,
+          content: content,
+          // id: new Date().toISOString,
+          _id: new Date().toISOString,
+          creator: {
+            name: 'Max',
+          },
+          createdAt: new Date(),
+        },
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+--> OK... GRAÇAS AO NOSSO 'CLIENTISDE VALIDATION'
+
+
+com nossas regras corretas,
+
+
+
+
+
+NÓS NÃO PODEMOS 
+
+
+REPRODUZIR ISSO NO 
+
+
+
+
+
+
+FRONTEND... MAS PROFESSOR MANIPULA ALGUNS VALORES,
+
+
+SÓ PARA 
+
+TESTAR 
+
+
+ESSA FEATURE 
+
+DO 
+
+RETURN DA RESPONSE DE '422'...
+
+
+
+
+
+
+
+
+
+--------> AO CRIAR UM MISMATCH DE SERVER E BROWSERSIDE VALIDATION,
+
+PROFESSOR RECEBE 1 ERRO DE 
+
+
+'Creating or editing a post failed' 
+
+
+
+no 
+
+FRONTEND, em 1 modal (isso pq ele tentou criar um post com APENAS 3 CARACTERES, O QUE É INVÁLIDO NO SERVERSIDE...)
+
+
+
+
+--> ELE EXPLICA QUE 
+
+
+ESSA É UMA MESSAGE QUE 
+
+
+
+ELE VAI MOSTRAR APENAS 
+
+
+NO 
+
+
+FRONTEND.... ---->  MAS SE EXAMINARMOS A RESPONSE NO DEVTOOLS,
+
+podemos ver aquela mensagem de 
+
+'Validation failed, entered data is incorrect'...
+
+
+
+
+
+
+
+
+--> OK, A SERVERSIDE VALIDATION ESTÁ FUNCIONANDO, ERA ISSO QUE O PROFESSOR QUERIA NOS MOSTRAR...
+
+
+
+
+
+
+----> BROWSER E SERVERSIDE DEVEM TER A MESMA VALIDATION...
+
+
+
+
+
+
+
+
+
+-> OK... AGORA PODEMOS 'ADIICONAR UMA DATABASE' 
+
+
+a 
+
+essa nossa route (já fiz isso, entretanto)....

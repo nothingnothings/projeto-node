@@ -1,0 +1,2829 @@
+
+
+
+
+
+OK... COMO A AUTHENTICATION FUNCIONA EM GERAL? 
+
+(MAIS ESPECIFICAMENTE NO REACTJS E EM APLICATIVOS NEXTJS...)
+
+
+
+
+
+
+
+
+
+
+
+--> A IDEIA 'CORE' É SEMPRE A MESMA:
+
+
+
+NÓS 
+
+TEMOS 
+
+
+
+
+
+NOSSO 'CLIENT' (browser e o user visitando a página através do browser...)
+
+
+
+
+
+
+
+
+--> AÍ, TEMOS O SERVER QUE FAZ 'SERVE' 
+
+
+DA PAGE EM SI... -------> E NOSSO SERVIDOR 
+
+
+
+
+TAMBÉM ESTÁ/FICA CONECTADO A UMA 
+
+DATABASE,
+
+
+
+DATABASE EM QUE 
+TODOS 
+
+OS 
+
+NOSSOS 
+
+USERS 
+
+ESTÃO 
+
+'STORED'.... -------> AGORA ASSUMIMOS 
+
+QUE 
+
+UM 
+
+USER 
+
+JÁ 
+
+CRIOU UMA 
+
+
+'ACCOUNT',
+
+
+E QUE 
+
+AGORA 
+
+ESSE MESMO USUÁRIO 
+
+
+
+VISITA NOSSA PAGE 
+
+e QUER 
+
+FAZER 
+
+LOGIN... ---> 
+
+
+
+
+
+
+
+
+COMO ISSO FUNCIONA? ------> BEM, O USUÁRIO INPUTTA 
+
+A 
+
+DATA 
+
+
+EM UMA 
+
+LOGIN FORM,
+
+
+
+
+COMO NOSSA FORM DE LOGIN,
+
+
+
+
+
+
+___ AÍ __ CLICA 'LOGIN'... -_> QUANDO isso
+
+
+
+
+ACONTECE,
+
+NÓS ENVIAMOS UM ___ REQUEST__ COM 
+
+
+__JAVASCRIPT___ AO 
+
+
+SERVIDOR___ ... (é aqui que vamos disparar um 
+
+HTTP REQUEST 
+
+
+A NOSSA API ROUTE definida no nosso app nextjs...) --------->
+
+
+
+NOSSO REQUEST 
+
+VAI 
+
+CONTER A 'USER DATA',
+
+no caso 
+
+
+'username' 
+e 
+
+'password'...
+
+
+
+
+
+
+--> LÁ NO 
+
+
+SERVER/backend,
+
+
+PODEMOS 
+
+__VALIDATE___ 
+
+
+ESSE USERNAME/PASSWORD... ---> PODEMOS, DEPOIS DE SANITIZAR 
+
+
+
+
+ESSA 
+
+DATA,
+
+
+
+
+
+ENVIAR ESSES DADOS 
+
+
+AO NOSSO DATABASE 
+
+
+PARA 
+
+
+___VERIFICAR__ SE 
+
+TEMOS UMA CONTA PARA 
+
+ESSE EMAIL ADDRESS ESPECÍFICO...
+
+
+
+
+
+--------> E SE O PASSWORD 
+
+
+
+'MATCHES' o password que encontramos na database,
+
+
+
+
+AÍ 
+
+
+
+VAMOS ENVIAR DE VOLTA UMA RESPONSE 
+
+___ QUE DIZ 'YES' (sim, suas credenciais estavam corretas),
+
+
+
+OU 'NÃO', SUAS 
+
+CREDENCIAIS 
+ESTÃO INCORRETAS....
+
+
+
+
+
+
+
+
+--> ESSE REQUEST 
+
+VAI OU ACEITAR OU DECLINAR O AUTH REQUEST....
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+AÍ, DEPOIS DE ENVIARMOS ESSA RESPOSTA COM 'YES' OU 'NO' (apesar de que 
+
+essa response vai ser constituída por um bocado de coisas a mais do que isso
+),
+
+
+
+
+NOSSO CLIENT VAI PODER, DEPOIS DISSO,
+
+TAMBÉM 
+
+
+'REACH PROTECTED ROUTES'
+
+
+
+
+E ENVIAR REQUESTS 
+
+A 
+OUTROS 
+
+ENDPOINTS NO NOSSO SERVIDOR/outros urls no nosso SERVIDOR 
+QUE 
+
+TALVEZ 
+
+
+REQUEIRAM AUTHENTICATION... -------> 
+
+
+
+
+
+COMO POR EXEMPLO,
+
+
+AQUELA 
+
+NOSSA 
+
+'PROFILE PAGE'
+
+
+
+que vai DEPENDER DO 'AUTH STATE'
+
+de nosso usuário (não vai aparecer se o USUÁRIO NÃO ESTIVER AUTENTICADO...).
+
+
+--------------------------
+
+
+
+
+CÓDIGO FICOU ASSIM:
+
+
+import Link from 'next/link';
+
+import MainNavigationStyle from './MainNavigation.module.css';
+
+import { useContext } from 'react';
+
+import AuthContext from '../../store/authContext';
+
+const MainNavigation = () => {
+  const authContext = useContext(AuthContext);
+
+  return (
+    <header className={MainNavigationStyle.Header}>
+      <Link href="/">
+        <a>
+          <div className={MainNavigationStyle.Logo}>Next Auth</div>
+        </a>
+      </Link>
+      <nav>
+        <ul>
+          <li>
+            <Link href="/auth">Login</Link>
+          </li>
+          {authContext.auth && ( //render condicional -- quando NÃO ESTAMOS AUTENTICADOS, o 'Profile' não aparece...
+            <li>
+              <Link href="/profile">Profile</Link>
+            </li>
+          )}
+          {!authContext.auth && ( //render condicional
+            <li>
+              <button>Logout</button>
+            </li>
+          )}
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+export default MainNavigation;
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+OK... CONTINUANDO a aula do professor.... 
+
+
+
+
+
+
+
+---> O USER PROFILE AGORA SÓ 
+
+APARECE 
+
+SE 
+
+O USUÁRIO 
+
+ESTIVER AUTENTICADO...
+
+
+
+
+
+
+
+
+-------> e se esse request for enviado a um backend api,
+
+
+
+
+o 
+
+
+
+VELHO PASSWORD DEVERÁ SER SUBSTITUÍDO POR UM NOVO.... ---> 
+
+
+ESSE 
+TIPO 
+
+DE REQUEST 
+
+SÓ 
+
+
+DEVE SER 'ALLOWED AND FULFILLED' 
+
+
+SE __ O USUÁRIO ESTIVER AUTHENTICATED.... -->  
+
+
+
+
+
+PRECISAMOS DE UMA DATA 
+
+EXTRA ANEXADA AO REQUEST,
+
+
+
+
+DATA EXTRA QUE DIRÁ 
+
+AO 
+
+
+BACKEND QUE 
+
+'ESTE USER ESTÁ AUTHENTICATED'....
+
+
+
+
+
+
+
+
+
+----> OK... MAS ESSA LÓGICA DE BACKEND ___NÓS NUNCA IMPLEMENTAMOS ANTES___ (essa lógica 
+
+de 
+
+DAR 'MATCH' DOS 
+
+DADOS 
+
+DIGITADOS NOS INPUT FIELDS 
+
+COM 
+
+
+
+DADOS 
+
+
+ARMAZENADOS LÁ 
+
+
+EM UMA DATABASE... tipo o mongodb) -----> NÓS NUNCA FIZEMOS ISSO; O QUE FIZEMOS 
+
+
+
+FOI SÓ USAR A REST API DO FIREBASE, QUE FAZ ESSE 'MATCH' AUTOMATICAMENTE...
+
+
+
+
+
+-----------
+
+
+
+
+
+
+
+--> isso pq QUALQUER UM PODERIA ESTAR ENVIANDO REQUESTS 
+
+
+AO NOSSO 
+
+
+
+
+
+API,
+
+
+
+e por isso o request 
+
+
+
+precisa 
+
+
+carregar 
+
+
+
+ALGUMA PERMISSÃO EXTRA, 
+
+QUE 
+
+
+DEVE 
+
+ENTÃO SER VERIFICADA NO SERVIDOR... ------->
+
+
+
+
+
+
+
+E ESSA PARTE DA 'PERMISSÃO' É IMPORTANTE;
+
+
+JUSTAMENTE 
+
+PQ 
+
+
+
+UM SIMPLES 
+
+
+
+
+'SIM' OU 'NÃO' RETORNADO PELO CLIENT __ NÃO SERIA/NÃO 
+
+
+
+É O SUFICIENTE 
+
+
+('A  "yes" ALONE IS NOT ENOUGH TO THEN 
+
+ACCESS PROTECTED RESOURCES (API endpoints) '''')
+
+
+
+
+
+--> PQ É CLARO QUE SEMPRE 
+
+PODEMOS 
+
+
+ENVIAR 
+
+UM 
+
+REQUEST 
+
+A 
+
+ALGUM 
+
+
+API ENDPOINT 
+
+
+QUE 
+
+REQUER 
+
+AUTHENTICATION,
+
+E AÍ 
+DIZER 
+
+'HEY, ESTOU AUTENTICADO...' -----> E NÓS 
+
+
+
+NÃO PODEMOS 
+
+SIMPLESMENTE 
+
+'BELIEVE THAT'
+
+
+
+COMO AUTORES DO API...- -> 
+ 
+
+
+
+
+ É POR ISSO QUE PRECISAMOS DE ALGUMA 'PROVA' 
+
+ PARA 
+
+ INDICAR QUE
+  
+  O USUÁRIO ESTÁ AUTENTICADO. .... --> E, PORTANTO,
+
+
+
+
+
+  AUTHENTICATION 
+
+
+  ENVOLVE 
+
+
+  __ ESSA TROCA DE 'CREDENTIALS' 
+
+  PARA 
+
+
+  CONSEGUIR PERMISSÃO,
+
+
+
+  mas A 'PERMISSÃO' EM SI 
+
+
+
+
+  É MAIS DO QUE APENAS UM 
+
+
+  'SIM' ou 'NÃO'... ---------> PARA 
+
+
+
+  SER 
+
+  MAIS ESPECÍFICO,
+
+
+
+
+
+  NÃO PODEMOS SÓ 
+
+  ARMAZENAR ('STORE')
+
+
+  UM 
+
+
+
+  'YES' 
+
+
+e então o utilizar.... --> NÓS 
+
+
+
+
+NÃO PODEMOS FAZER ISSO JUSTAMENTE 
+
+
+
+PQ 
+
+UM 
+
+'FALSO YES'
+
+PODERIA SER UTILIZADO... =-----> não podemos 
+
+
+
+
+
+'SIMPLY SAY TO OUR SERVER THAT WE ARE AUTHENTICATED,
+
+ and then request protected data'/perform protected operations -----> 
+
+
+
+
+
+
+ PORTANTO, 
+
+
+ PRECISAMOS 
+
+ DE 
+
+ ALGUMA 'PROOF',
+
+
+
+
+ PROOF 
+
+
+ QUE 
+
+
+ NÃO CONSIGA SER 
+
+ FALSIFICADA... -->  
+ PARA ISSO,
+
+
+
+ PARA 
+
+ RESOLVER 
+
+ ESSE problemA,
+
+
+
+
+ TEMOS 
+
+ 2
+  SOLUÇÕES DISTINTAS:
+
+
+
+
+
+  1) SERVERSIDE SESSIONS 
+
+
+
+
+
+  2) AUTHENTICATION TOKENS...
+
+
+
+
+
+
+
+
+
+
+--> ESSES SÃO 2 APPROACHES COMUNS PARA SOLUCIONAR ESSE PROBLEMA DE 
+
+
+'UNFAKABLE PERMISSIONS'...
+
+
+
+
+
+
+
+------> O CONCEITO DE 'SERVERSIDE SESSIONS'
+
+
+
+
+FUNCIONA DE MODO QUE NÓS  
+
+
+
+a) ARMAZENAMOS UM 'UNIQUE IDENTIFIER' NO SERVIDOR (id) (NÓS FAZEMOS GENERATE 
+DE UMA SESSION ID), 
+
+
+E AÍ 
+
+__ENVIAMOS ___ O MESMO IDENTIFIER AO CLIENT...
+
+
+(''''Store unique identifier on server/database, send same identifier 
+to client, the client that sent us the credentials '''''')
+
+
+
+
+
+b) Client sends identifier along with requests to protected requests....
+
+
+--> AÍ PODEMOS USAR ESSE 'STORED IDENTIFIER' 
+
+PARA O ANEXAR 
+
+A 
+REQUESTS 
+
+QUE 
+
+DEPOIS ENVIAMOS A 'PROTECTED RESOURCES' no servidor... --> aí, o SERVER SEMPRE 
+
+
+SERÁ/É CAPAZ 
+
+DE 
+
+EXTRAIR 
+
+ESSE IDENTIFIER LÁ DOS 'INCOMING REQUESTS'..., AÍ CHECAR 
+
+SE 
+
+
+ESSE IDENTIFIER ESTÁ ARMAZENADO NA DATABASE,
+
+
+
+E SE ELE ESTIVER ARMAZENADO, ACESSO É GARANTIDO AO USER...
+
+
+
+
+
+
+
+
+
+--> ISSO FARÁ COM QUE __ APENAS CLIENTS QUE POSSUAM AQUELE IDENTIFIER ESPECÍFICO SEJAM
+ 
+ CAPAZES 
+
+ DE ENVIAR REQUESTS 
+
+
+ A 
+
+ ESSES CONTEÚDOS PROTEGIDOS... -----> BEM, MAS VOCÊ PODE SE PERGUNTAR:
+
+
+
+
+
+
+
+ ESSE IDENTIFIER NÃO PODERIA SER ROUBADO?
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR ADMITE QUE ___ 'WHILE ITS IN TRANSIT' 
+
+
+
+ ele não deve/provavelmente não deve ser STOLEN,
+
+
+ JUSTAMENTE PQ VAMOS ESTAR USANDO/DEVEMOS ESTAR USANDO 
+
+
+ 'SSL'
+
+ PARA 
+
+
+ ENCRIPTAR A CONEXÃO de qualquer forma... -----> E QUANDO ESSE 
+
+
+ IDENTIFIER 
+
+ É 
+
+ ARMAZENADO NO SERVERSIDE,
+
+
+
+ ELE É ARMAZENADO __TIPICAMENTE___ EM UM COOKIE____.... ---> E ESSE COOKIE PODE 
+
+ ENTÃO SER CONFIGURADO DE UMA MANEIRA QUE __ELE NÃO É ACESSÍVEL __ POR MEIO 
+
+ DE 
+
+ JAVASCRIPT (justamente para __PREVENIR ___ 'CROSS-SITE SCRIPTING ATTACKS'... (XSSS))
+
+
+
+
+
+
+
+ ---> >>>>> ISSO, ESSA DEFINIÇÃO DO COOKIE,
+
+ FARÁ 
+
+ COM QUE 
+
+
+ ELE 
+
+ SÓ PODERÁ SER LIDO 
+
+
+ POR MEIO DO SERVIDOR/SÓ O SERVIDOR TERÁ 'READ' PERMISSION 
+
+
+
+ EM RELAÇAÕ A ELE, 
+
+ E ELE SÓ LERÁ ESSES COOKIES QUANDO ELES ESTIVEREM 'ATTACHED' TO 
+
+ OUTGOING REQUESTS...
+
+
+
+
+
+
+
+ -------> E MESMO SE ESSES COOKIES FICASSEM/FICAREM ACESSÍVEIS POR MEIO DE JAVASCRIPT,
+
+
+
+VOCê vai sempre querer proteger seu app contra 
+
+XSSS 
+
+de qualquer forma,
+
+
+
+E 
+
+SE VOCÊ PODE 
+
+
+'RULE OUT' 
+
+
+
+ESSE TIPO DE ATAQUE,
+
+
+
+
+
+SUA 'AUTHENTICATION PERMISSION',
+
+
+armazenado 
+
+
+
+
+EM ALGUM 'CLIENTSIDE STORAGE',
+
+
+
+
+SERÁ BEM SECURE,
+
+
+
+PQ 
+
+SÓ 
+
+VOCÊ, 
+
+
+O 
+
+
+DONO DESSE COMPUTADOr E __ USUÁRIO DESSE BROWSER,
+
+será 
+
+CAPAZ DE VER 
+
+
+ESSE 
+
+'COOKIE' (isso significa que
+VOCÊ 
+
+
+__SÓ PODERIA __ HACKEAR A VOCÊ MESMO, NO MÁXIMO DOS CASOS...) ----> E ISSO SIGNIFICA QUE 
+
+
+
+UM 
+
+
+
+MALUCO ALEATÓRIO 
+
+
+
+
+NÃO SERIA/NÃO É CAPAZ 
+
+
+DE 
+
+
+SIMPLESMENTE ENVIAR 
+
+
+UM FAKE REQUEST 
+
+AO 
+
+SERVIDOR,
+
+
+
+
+JUSTAMENTE PQ ENQUANTO QUE VOCÊ PODERIA 
+
+
+SURGIR COM UM IDENTIFIER 
+
+ALEATÓRIO,
+
+
+O SERVER 
+
+
+
+NÃO SABERIA/NÃO TERIA UM IDENTIFIER RANDOMIZADO DESSES ARMAZENADO NA SUA DATABASE (não teria match)...
+
+
+https://dev.to/thecodearcher/what-really-is-the-difference-between-session-and-token-based-authentication-2o39
+
+
+
+EX:
+
+
+
+What is session based authentication?
+Session based authentication is one in which the user
+ state is stored on the server’s memory. When using a session based auth system, 
+ the server creates and stores the session data in the server memory when the user 
+ logs in and then stores the session Id in a cookie on the user browser.
+
+The session Id is then sent on subsequent requests to the server and the server compares 
+it with the stored session data and proceeds to process the requested action.
+
+
+
+
+What is token based authentication?
+Token based authentication is one in which the user state is stored on the client. 
+This has grown to be the preferred mode of authentication for RESTful APIs.
+ In the token based authentication, the user data is encrypted into a JWT (JSON Web Token) with 
+ a secret and then sent back to the client.
+The JWT is then stored on the client side mostly localStorage and sent as a header 
+for every subsequent request. The server receives and validates the JWT before proceeding to
+ send a response to the client.
+
+
+
+
+ When to use?
+
+There really isn’t a preferred method for authentication, 
+both methods can be used interchangeably or together to create a hybrid system. 
+It all boils down to the developer and the use case.
+However, it is worth noting that token based authentication scales better than that of
+ a session because tokens are stored on the client side while session makes use of the server memory so 
+ it might become an issue when there is a large number of users using the system at once.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> O MÉTODO USADO NA FIREBASE API 
+
+ é 
+ o 
+
+ do 
+
+
+ 'token based authentication',
+
+
+ e não o do 
+
+
+ 'session based'...
+
+
+
+
+
+
+ Please... for the love of god, never store the JWT in localStorage nor sessionStorage. 
+ It is vulnerable to XSS and a ton of other stuff. Store it in a secure cookie and let the server handle it without any client manipulation.
+Anyway this is a great explanation!
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+-------> o outro conceito é o das 'AUTHENTICATION TOKENS'.... --> NÃO É 
+
+
+MT DIFERENTE DAQUELE DAS 'SERVERSIDE SESSIONS'... -----> 
+
+
+
+A DIFERNEÇA, AQUI, É QUE EM VEZ DISSO,
+
+
+É O __ SERVER __ QUE 
+
+CRIA __
+
+
+E FAZ O 'SIGN' DE ''' TOKENS'''.'''.. ---->  
+
+
+
+TOKENS, NO FINAL DAS CONTAS,
+
+SÃO 
+
+'RANDOM STRINGS',
+
+
+
+
+RANDOM STRINGS QUE PODEM SER 'UNPACKED TO DATA PACKAGES'....  -----> 
+
+
+
+ISSO SIGNIFICA QUE 
+
+NÓS PEGAMOS 
+
+'VARIOUS PIECES OF DATA' E AÍ 'SIGN THEM TOGETHER',
+
+
+e 
+
+aí uma 
+
+TOKEN DESSAS É ENVIADA DE VOLTA AO CLIENT.... --> O CLIENT, ENTÃO, PODE 
+
+
+SALVAR 
+
+ESSA TOKEN E A ANEXAR A 'OUTGOING REQUESTS',
+
+
+TUDO PARA DIZER AO SERVER QUE 
+
+ACESSO 
+
+
+DEVE SER CONCEDIDO ÀQUELE USUÁRIO 
+
+(''''client sends token along with requests to protected 
+
+resources'''') ---->
+
+
+
+
+
+
+
+
+
+OU SEJA:
+
+
+
+'STORE UNIQUE IDENTIFIER ON SERVER, SEND 
+SAME IDENTIFIER TO CLIENT'                
+
+
+
+VS 
+
+
+'Create (but not store) "permission" token on server,
+send token to client (that then STORES THE TOKEN)'...
+
+
+
+
+
+
+
+
+
+
+---> OK.... NO APPROACH 'AUTHENTICATION TOKENS',
+
+
+
+
+ainda que O SERVER __ NÃO ARMAZENE __ ESSA TOKEN EM UMA DATABASE 
+
+OU EM QUALQUER OUTRO LUGAR,
+
+
+
+
+
+O ____SERVER____ VAI SABER/SABE__ COMO/QUE
+
+
+AQUELE TOKEN FOI 'SIGNED' POR ELE... ------> 
+
+
+E
+ O PROFESSOR 
+
+ LOGO VOLTARÁ A ISSO -->  ESSENCIALMENTE,
+
+
+
+ O SERVER __VAI SER CAPAZ__ DE VERIFICAR__ SE UM 
+
+ TOKEN FOI CRIADO POR ELE OU NÃO... -------> 
+
+
+
+
+ E, PORTANTO, DE NOVO, 
+ SE EU 
+
+INVENTAR 'A RANDOM TOKEN STRING' 
+
+
+E ENTÃO EU ENVIAR ISSO A UM SERVER PARA 
+
+CONSEGUIR 
+
+ACESSO 
+
+A 
+'PROTECTED RESOURCES',
+
+
+
+
+
+O ACESSO SERIA NEGADO,
+
+ISSO 
+
+PQ 
+
+
+O SERVER NÃO SERIA/NÃO SERÁ CAPAZ DE 
+__vERIFICAR___ MINHA 
+
+RANDOM STRING__.... ----> isso pq ela 'WOULDNT BE A VALIDLY SIGNED TOKEN',
+
+
+GERADA POR AQUELE SERVER/ESSE SERVER....
+
+
+--------------------------------------
+
+
+
+
+
+
+BEM, E ESSES SÃO OS 2 APPROACHES QUE PODEMOS TER.....
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO... E QUANDO BUILDAMOS UMA 'SINGLE PAGE APPLICATION',
+
+
+
+
+
+QUE NÓS AINDA 'KIND OF DO', quando USAMOS O NEXTJS,
+
+
+
+AÍ __ NÓS TIPICAMENTE__ TRABALHAMOS COM ___ TOKENS__ EM
+ 
+
+ VEZ DE 'SESSIONS'... ---------------->
+
+
+
+
+ E HÁ RAZÕES PARA ISSO:
+
+
+
+
+
+
+
+
+
+RAZÕES PARA USAR 'TOKENS' COM REACT/NEXTJS APPS:
+
+
+
+
+
+
+1) PÁGINAS SÃO SERVIDAS 'DIRETAMENTE' (directly) 
+E POPULADAS COM 
+
+LÓGICA __ SEM TER__ DE NECESSARIAMENTE 'HIT THE SERVER' (
+
+
+
+  Pages are served directly and 
+  populated 
+
+  with logic WITHOUT NECESSARILY HITTING THE SERVER...
+)  -------------> 
+
+
+É CLARO QUE SE VOCÊ ESTIVER USANDO AQUELA FEATURE DO 
+
+NEXTJS com uma página sua,
+
+aquela feature do
+
+'getServerSideProps',
+
+
+aquela feature que fará COM QUE ' A REQUEST WILL BE HANDLED BY THE 
+SERVER EVERY TIME THAT PAGE IS BEING SERVED',
+
+
+
+VOCÊ PODERIA USAR 
+
+ESSAS 
+
+'SESSIONS', pq suas páginas aí necessariamente vão requisitar um 'hit the server'...
+
+
+
+
+
+
+---> MAS AÍ VOCÊ TAMBÉM 
+
+TERÁ MTAS PÁGINAS QUE 
+
+SÃO/SERÃO 'PRE-GENERATED'.... ---> COM ESSAS PÁGINAS,
+
+uma 
+
+
+vez QUE O USUÁRIO 
+
+ESTEJA 
+
+NO SEU WEBSITE,  
+
+
+
+MUITAS PÁGINAS ______ NÃO ____ SERÃO 'FETCHED' 
+
+lá do 
+
+BACKEND __ AT ALL__,
+
+
+e sim 
+
+
+vão ser 'LOADED AND GENERATED DYNAMICALLY'
+
+
+COM __ FRONTEND JAVASCRIPT (react/nextjs).... ---> ISSO 
+
+
+PQ 
+
+__VOCê __ AINDA __ TERÁ UMA 
+
+SPA (single-page application), 
+
+pelo menos 
+
+PARA 
+
+UM MONTE DAS PÁGINAS QUE COMPÕEM SEU SITE,
+
+
+
+___DEPOIS ____ DE VOCÊ JÁ TER LOADED INICIALMENTE SUA 
+
+PRIMEIRA PAGE... --> pq depois desse initial load da PRIMEIRA PÁGINA,
+
+
+o REACT ___ 'TAKES OVER' e HANDLA SEU WEBSITE...
+
+
+----------> POR ISSO QUE 
+
+ISSO É IMPORTANTE:
+
+
+COMO VOCÊ __ NÃO VAI 'SEND A REQUEST' 
+
+
+PARA __ TODA E CADA_ _PÁGINA __ QUE VOCÊ VISITA 
+
+NAQUELE WEBSITE/no seu website,
+
+
+JUSTAMENTE PQ VOCÊ NÃO ESTÁ USANDO 
+
+SERVERSIDEPROPS,
+
+
+
+O __ SERVER___ NÃO VÊ/NÃO VERÁ __ 'EVERY REQUEST'
+
+
+que você envia,
+
+
+
+E POR ISSO 
+
+
+
+
+VOCÊ __ CARREGA PÁGINAS ___ SEM O SERVER_ SER CAPAZ 
+
+DE 
+
+'DIRECTLY FIND OUT' SE VOCê ESTÁ AUTHENTICATED OU NÃO...
+
+
+
+
+
+
+
+
+
+
+
+---> ALÉM DISSO,
+
+
+'BACKEND APIs,
+
+AS APIS _TIPICAMENTE USADAS __ 
+
+PARA 
+
+SPAs,
+
+
+
+SÃO TIPICAMENTE 
+'STATELESS',
+
+
+
+
+O QUE SIGNIFICA QUE __ ESSAS BACKENDS __ NÃO SE IMPORTAM___ 
+
+SOBRE 
+
+'THE INDIVIDUAL CONNECTED CLIENTS',
+
+
+
+
+ELAS NÃO 'KEEP TRACK OF ALL THE CONNECTED CLIENTS'.... --> EM VEZ DISSO,
+
+
+
+
+A IDEIA É QUE 
+
+ESSA 
+
+API BACKEND AÍ __ CONSIGA ___ FUNCIONAR __ 
+'PRETTY MUCH ON ITS OWN',
+
+
+
+
+SENDO SUA ÚNICA TAREFA/JUST IS ABLE 
+
+
+TO 
+
+
+
+'HAND OUT PERMISSIONS'
+
+
+
+a 
+
+CLIENTS QUE 
+
+AUTENTICARAM,
+
+PARA QUE 
+
+ELES POSSAM 
+
+MAIS TARDE 
+
+
+
+
+PEDIR ACESSO A 'PROTECTED RESOURCES'.... --------> EM OUTRAS PALAVRAS,
+
+
+
+A 
+
+
+'API EM SI' 
+
+NÃO 
+
+___ ARMAZENA QUALQUER INFORMAÇÃO EXTRA SOBRE 
+
+OS 
+
+
+'CONNECTED CLIENTS'  ----------> E COMO ISTO AQUI 
+
+É 
+
+SOBRE 
+
+
+COMO NÓS 
+
+'BUILD SPAs',
+
+
+
+
+O SERVER __NÃO FICA/NÃO É ENVOLVIDO 
+
+
+COM TODO REQUEST E AÇÃO 
+
+
+QUE 
+
+ACONTECE NA NOSSA PAGE/BROWSERSIDE... ----> ISSO 
+
+
+PQ 
+
+HANDLAMOS ESSAS PÁGINAS COM 
+
+'FRONTEND JAVASCRIPT',
+
+
+E PQ 
+
+ 
+ TEMOS AQUELA 
+
+ 'STATELESS BACKEND API' 
+
+ __CONECTADA___ AO 
+
+
+ SPA.... ------------------>
+
+
+
+
+
+
+
+ E ___________JUSTAMENTE______ POR CONTA DISSO,
+
+ PODERÍAMOS
+
+ AFIRMAR 
+
+ QUE 
+
+ TEMOS 
+
+ KINDOF 
+
+
+ UMA 
+
+ COMBINAÇÃO 
+
+ 'DETACHED'
+
+
+
+ ENTRE O FRONT E O BACKEND... -->   ---> 
+
+
+
+
+
+ ELES 
+
+ __ DE FATO __ CONVERSAM ___ UM COM O OUTRO ___ÀS VEZES__, 
+
+ MAS 
+ NÃO 
+
+ PARA __TODA E QUALQUER AÇÃO 
+
+
+ QUE 
+
+ OCORRE/OCORRERÁ NA NOSSA PAGE... -------> 
+
+
+
+ E PQ 
+
+
+ ESSE 
+ É O CASO,
+
+
+
+ SERVIDORES NÃO 
+
+ SALVAM INFORMAÇÃO 
+ SOBRE 
+
+
+
+ 'AUTHENTICATED CLIENTS',
+
+
+
+ E EM VEZ 
+
+ DISSO 
+
+
+ OS CLIENTS 
+
+
+
+ __DEVEM __'GET THAT 
+ 'STANDALONE PERMISSION' THAT ALLOWS THEM TO PROVE 
+ THAT THEY ARE AUTHENTICATED....' ---------------->
+
+
+
+
+ E É EXATAMENTE POR ISSO QUE 
+
+ USAMOS 
+
+
+ ESSAS TOKENS,
+
+ AS 
+
+ '
+
+ JWT JSON WEB TOKENS'...  ---> FORMA MAIS UTILIZADA DE WEB TOKEN.... --> isso simplesmente 
+
+ descreve A MANEIRA PELA QUAL A TOKEN É GERADA... -- >MAS NÃO VAMOS TER DE 
+
+ NOS IMPORTAR MT SOBRE _ A MANEIRA PELA QUAL GERAMOS ESSAS 'JWT',
+
+ justamente 
+
+ PQ VAMOS USAR 
+
+ UMA TPL (third party library)
+
+ PARA 
+
+ FAZER 
+
+ GENERATE 
+
+ DESSES
+  
+  JWTs...
+
+('next-auth' )
+
+
+
+
+ https://www.youtube.com/watch?v=UBUNrFtufWo
+
+
+
+
+
+
+
+
+
+
+
+ SERVERSIDE SESSIONS---> STATEFUL SESSION ENTRE O FRONTEND CLIENT E BACKEND SERVER..
+
+
+--> SÃO VULNERÁVEIS A ATAQUES CSRF... --> mas o risco é BEM BAIXO, principalmente 
+
+se você implementar UM FRAMEWORK MODERNO 
+
+COMO DJANGO/ruby on rails...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> é por isso que USAMOS ESSES TOKENS.... -----> 
+
+
+
+
+
+
+
+
+
+
+OK, JWT TOKENS SÃO 
+
+
+
+IMPORTANTES,
+
+E É POR ISSO QUE 
+
+DEVEMOS 
+
+AS OBSERVAR MAIS DE PERTO... -------> 
+
+
+
+DEVEMOS 
+
+
+ENTENDER __ COMO EXATAMENTE UMA JSON 
+WEB TOKEN 
+
+
+
+
+___ FUNCIONA___... -------> 
+
+
+
+
+
+E, NO FINAL DAS CONTAS,
+
+
+UMA 
+
+JSON 
+
+WEB TOKEN 
+
+É 
+
+
+GERADA 
+COM 
+
+
+
+'3 MAIN BULDING BLOCKS'...:
+
+
+
+
+
+
+
+
+
+
+temos:
+
+
+
+
+1) 'ISSUER DATA' ----> É UMA DATA QUE É 'AUTOMATICALLY ADDED INTO A TOKEN', POR PARTE DO SERVIDOR___, QUANDO AQUELA TOKEN É GENERATED....... ---> 
+                        ESSA É UMA METADATA QUE NÓS __ GERALMENTE_ _ NÃO 'SETUP' POR NOSSAS PRÓPRIAS MÃOS,
+                        MAS QUE É TIPICAMNETE __ PRE-CONFIGURADA__ POR 
+                        THIRD PARTY PACKAGES DIVERSOS, tpps usados PARA GERAR TOKENS....
+
+
+
+
+2) PODEMOS ADICIONAR o 2o block, o 'CUSTOM DATA', 
+
+__ QUE PODE SER, POR EXEMPLO, ALGUMA INFORMAÇÃO SOBRE O USER... ('e.g. user data')...
+
+
+
+
+
+
+
+3) POR FIM, TEMOS O BUILDING BLOCK DO 'Secret Signing Key',
+
+
+
+QUE É __MUITO IMPORTANTE ____ ....  ---------------> essa é uma KEY __ SUPER IMPORTANTE,
+
+
+QUE É __ SETTADA ___ _____NO SERVIDOR__.... --> isso significa que 
+
+__ESSA __ KEY ___ NUNCA 
+
+
+SERÁ VISTA/REPASSADA AO CLIENT,
+
+O CLIENT 
+
+
+NUNCA 
+
+VAI VER ESSA KEY....  ------> E ISSO É IMPORTANTE, PQ 
+
+
+
+SE VOCÊ TEM ESSA KEY (se o client tiver 
+
+posse dessa key),
+
+
+VOCÊ PODE CRIAR 
+
+
+'VALID TOKENS',
+
+
+TOKENS QUE SERÃO __ ACEITAS __ PELO SERVIDOR___... --> E É EXATAMENTE POR ISSO 
+
+QUE 
+
+SÓ O 
+
+SERVER 
+
+SABERÁ/SABE ESSA KEY,
+
+e o client nunca pode saber... ---> CERTO.. MAS ISSO AÍ É __ SÓ UM __ PEDAÇO__ DA NOSSA TOKEN...
+
+
+
+
+
+
+
+
+
+
+a TOKEN de nosso app é formada por meio da COMBINAÇÃO 
+
+DESSAS 
+
+3 'PARTES',
+
+
+
+
+
+
+ISSUER DATA + CUSTOM DATA + SECRET SIGNING KEY 
+           (e.g. user data)
+
+
+
+
+-------------------------------
+
+
+
+
+
+A 'TOKEN' (JWT, json web token) É JUSTAMENTE 
+
+
+
+UMA 
+
+'RANDOM STRING' QUE 
+
+INCORPORA __ TODA A DATA__  
+
+DESSES 
+
+3 BUILDING BLOCKS... --> É UMA LONGUÍSSIMA 
+
+
+STRING.... ---> E A PARTE 
+
+IMPORTANTE,
+
+AQUI,
+
+É 
+
+QUE 
+O 
+
+'SIGNING' da token, 
+
+FEITO NO SERVIDOR, 
+
+
+
+
+NÃO SIGNIFICA ___ NECESSARIAMENTE__ 'ENCRYPTION' 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE 
+
+ A 
+
+ 'JSON WEB TOKEN' ________NÃO É ENCRIPTADA____ -----> 
+
+ ELA SÓ 
+
+ É 
+
+
+ 'SIGNED',
+
+ e não ENCRIPTADA..... ---> 
+
+
+
+ ISSO QUER DIZER 
+
+
+ __QUE ELA PODE __ SER 
+
+
+
+ 'PARSED'
+
+ E 
+
+ 'READ' 
+
+
+ POR __ QUALQUER PESSOA___.... -------------> OU SEJA,
+
+ VOCÊ 
+
+ PODE FAZER 
+
+
+  
+
+  ___UNPACK___ DA JWT 
+
+
+  E 
+
+  LER 
+
+
+
+OS DADOS QUE ESTÃO DENTRO DESSA TOKEN..... -------> 
+
+
+
+
+A KEY (secret signing key)
+ 
+
+
+ APENAS PROVA __ QUE 
+
+ UM DETERMINADO 
+
+ ___ SERVIDOR___ CRIOU AQUELE__ TOKEN... ------> MAS VOCÊ PODE, 
+
+
+ A DESPEITO DISSO,
+
+
+
+ ___LER O CONTEÚDO ___ DESSES TOKEN ___ SEM SABER AQUELA 'SECRET SIGNING KEY'.... ---> MAS 
+
+
+
+
+ É ___ ÓBVIO__ QUE 
+
+
+ A KEY (a 'secret signing key')
+
+
+ NUNCA, JAMAIS 
+
+ FICARÁ 
+
+ INCLUSA NO TOKEN.... (
+
+
+   não, em vez disso,
+
+
+   ela 
+
+
+   SEMPRE VAI FICAR 
+
+   NO SERVIDOR, ARMAZENADA LÁ...
+ )
+
+
+
+
+
+
+ ISSO SIGNIFICA QUE 
+ NÃO CONSEGUIMOS 
+
+ 'READ THAT KEY',
+
+
+
+ MESMO 
+
+
+ SE NÓS FIZERMOS 'UNPACK' 
+
+
+ DESSA TOKEN ENVIADA PELO SERVIDOR...
+
+
+
+
+
+
+
+ --> BEM.. É ESSA TOKEN QUE 
+
+ É 
+
+
+
+ENTÃO 'STORED BY THE CLIENT/BROWSER',
+
+
+E QUE 
+
+
+ENTÃO É ANEXADA A REQUESTS ENVIADOS A 'PROTECTED RESOURCES' (PROTECTED API ROUTES)...
+ 
+
+ no servidor....
+
+
+
+
+
+
+
+
+
+
+--> POR EXEMPLO,
+
+
+
+SE VOCÊ QUER TROCAR O SEU PASSWORD,
+
+
+NÓS 
+
+
+NÃO VAMOS 
+
+APENAS/SIMPLESMENTE 
+
+
+
+
+'JUST SEND THE OLD AND THE NEW PASSWORD',
+
+
+
+
+MAS 
+
+TAMBÉM DEVEREMOS/SEREMOS OBRIGADOS 
+
+A 
+
+'INCLUDE THAT TOKEN' (enviado pelo SERVIDOR) LÁ 
+
+
+no OUTGOING REQUEST... -----> ESSA TOKEN,
+
+ENTÃO,
+
+
+É __VALIDADA__ PELO SERVER__,
+
+
+
+
+
+QUE __ BASICAMENTE __ CHECA: 
+
+
+
+''''OK, SE EU FOSSE USAR MINHA SIGNING KEY, KEY QUE SÓ EU CONHEÇO,
+
+
+
+EU SERIA CAPAZ DE GERAR ESSE TOKEN ESPECÍFICO? """""""" -------> 
+
+
+
+SE 
+
+A 
+
+RESPOSTA FOR 'YES',
+
+
+O SERVIDOR __ VAI __ SABER QUE 
+
+AQUELE 
+
+TOKEN/REQUEST COM O TOKEN VAI SER VÁLIDO,
+
+
+
+E SE FOR 'NO',
+
+
+'INVALID',
+
+
+
+o acesso vai ser 
+
+DENIED --------> 
+
+
+
+E É POR ISSO QUE 
+
+
+
+É IMPOSSÍVEL 'GENERATE A TOKEN'
+
+
+
+SEM SABER AQUELA 'SECRET SIGNING KEY' 
+
+armazenada no servidoR....
+
+
+
+
+
+
+
+
+
+
+----> PODERÍAMOS GERAR UMA TOKEN, SIM, MAS ELA SERIA UMA TOKEN __INVÁLIDA__, 
+
+sem 
+
+
+
+data que seria produzida APENAS POR AQUELA 'SECRET SIGNING KEY'....
+
+
+
+
+
+
+
+
+
+--> E É EXATAMENTE POR ISSO QUE ESSE É UM 'SECURE MECHANISM' .... --> 
+
+
+
+PROFESSOR 
+
+FALOU MT,
+
+
+MAS 
+
+ESSA É A TEORIA DE QUE PRCISMAOS 
+
+
+
+
+PARA 
+
+MERGULHAR 
+
+
+NO 
+
+'AUTHENTICATIOn'
+
+
+
+e a implementação dessa 'authentication'...  -----> 
+
+
+A 
+BOA NOTÍCIA 
+
+É QUE 
+
+NÃO PRECISAMOS CRIAR TODAS ESSAS COISAS 
+
+DO ZERO.... --> 
+
+
+
+PARA 
+
+
+
+A AÇÃO DE 'TOKEN CREATION' 
+
+
+E 
+
+'VALIDATION',
+
+
+podemos 
+
+
+
+CONFIAR EM 
+
+'SECURE THIRD PARTY PACKAGES'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+detalhe importante: um servidor É CAPAZ DE DESCOBRIR (sempre) 
+
+
+SE UMA 
+
+TOKEN __ FOI CRIADA __ POR ELE OU NÃO___ (a partir 
+
+da 
+
+DATA embutida na token que É CRIADA 
+
+A 
+
+PARTIR 
+
+DA TAL 
+
+DE
+
+
+
+'SECRET SIGNING KEY'...)
+
+
+
+
+
+
+
+
+
+OU SEJA,
+ 
+ O SERVIDOR REALMENTE FAZ UM 'SIGN' 
+
+ de nossa 
+
+ RANDOMLY GENERATED STRING (que é o TOKEN JWT, essencialmente)
+
+
+
+
+
+
+
+
+ ---> EXEMPLO 
+
+
+
+ DE 
+
+
+ FETCH REQUEST COM UMA TOKEN ANEXADA A ELE (código de queryParams, enviado a 'firebase REST API'...):
+
+
+ export const asyncFetchOrdersStart = (token, userId) => {
+        return dispatch => {
+                dispatch(fetchOrdersStart());
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';  ///obs:: sempre coloque as propriedades/objetos à direita das keys (keys como 'orderBy') WRAPPADAS POR  '  ""  ' (double quotation marks), como visto naquele "userId"....
+        axiosOrder.get('/orders.json' + queryParams ) ////////// '/orders.json'   | ?auth= token |  'orderBy=userId equal to userId(constante) ' | )
+       // (SIM, É UM CÓDIGO ABSURDO ASSIM MESMO, TUDO PARA QUE o último userId fique "userId"...)
+        //e tudo isto é necessário, de verdade....
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+A __ÚNICA COISA QUE __ O SERVIDOR PRECISA 
+
+FAZER 
+É 
+
+'VALIDATE THE SIGNATURE'.... (isso significa, em outras 
+
+palavras,
+
+
+QUE 
+
+
+
+O SERVIDOR NÃO PRECISA/NÃO HÁ NECESSIDADE 
+
+DE 
+
+ELE 
+
+RODAR NENHUM 
+
+'DATABASE LOOKUP'
+
+para checar se 
+
+aquele usuário realmente existe/possui validação/token existe 
+
+
+no servidor....
+
+
+
+) -------> E ISSO 
+
+
+É _BEM MAIS EFICIENTE, QUANDO QUEREMOS 
+
+
+
+'BUILD A DISTRIBUTED SYSTEM IN THE CLOUD'... (ou seja, não há tantos gastos com reprodução de servidores FÍSICOS para armazenar nossas sessions, pq ESTAREMOS USANDO TOKENS, que são justamente __ ARMAZENADOS NOS CLIENTS, e por isso 
+
+não ocupam 
+
+espaços nos nossos servidores...)
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+AGORA, FINALMENTE,
+
+ENTENDI....
+
+
+
+
+
+
+
+
+
+
+----> SERVERSIDE SESSIONS --> ocupam espaço em 
+
+servidores/máquinas remotas.... não possuem 
+
+verificação de ASSINATURA DE 'PRIVATE/SECRET SIGNING KEY' (que ocorre no 'token authentication', nessa modalidade aí)....
+
+
+
+
+
+
+
+
+----> TOKEN AUTHENTICATION --> NESSA MODALIDADE,
+
+LIDAMOS COM 'TOKENS'... -> são armazenados __ NOS BROWSERS 
+
+DOS USUÁRIOS, 
+
+e cada token vem com uma 'ASSINATURA' de que 
+
+foi criada por nosso servidor.... (pela 'PRIVATE/SECRET SIGNING KEy'...) --> 
+
+
+E essa key nunca sairá do servidor,
+
+é propria a ele... --> 
+
+
+
+
+
+COMO 
+
+
+
+A TOKEN É SEMPRE A MESMA NOS 200 MIL TOKENS QUE VOCÊ GERAR,
+ 
+ 1 para cada usuário,
+
+
+ resulta que 
+
+ vocÊ 
+ __NÃO PRECISA 'CHECAR FISICAMENTE' pela existência de cada token em uma database remota,
+
+ e sim 
+
+ APENAS 
+
+ SE 
+
+ A ASSINATURA DE CADA TOKEN BATE COM A ASSINATURA DA 
+ 'pRIVATE/SECRET SIGNING KEY'
+
+ daquele servidor específico....
+
+
+
+
+
+ E O FORMATO 
+
+ DE NOSSAS TOKENS GERALMENTE 
+
+ É 
+
+
+ 'Authorization: Bearer<token>'....
+
+
+
+
+ QUANDO FORAM INVENTADAS 
+
+ AS 
+
+ 'JSON WEB TOKENS'? ------> 
+
+
+
+ EM 
+
+
+
+ December 28, 2010
+JSON Web Token
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+vamos usar uma TPL ___PARA ____ 
+
+
+
+'GENERATE' 
+
+
+
+E 
+
+'SIGNING'
+
+
+NOSSA TOKEN... ---> 
+
+
+
+
+
+
+
+
+
+
+JSON WEB TOKEN --> 
+
+
+
+
+
+3 MAIN BLOCKS...
+
+
+
+
+
+1ISSUER DATA --> DATA QUE É AUTOMATICAMENTE ADICIONADA A UMA TOKEN, PELO SERVER,
+
+QUANDO 
+
+ELA É GENERATED....
+
+
+
+é pre-configurada pelas TPP que geram nossas tokens...
+
+
+
+
+
+
+2CUSTOM DATA -->  NÓS PODEMOS __, ENTRETANTO,
+
+ADICIONAR 
+
+'CUSTOM DATA' 
+
+
+na nossa token,
+
+tipicamente 
+
+INFORMAÇÕES SOBRE O USUÁRIO.... 
+
+
+
+
+
+
+
+
+
+
+3 ASSINATURA DA KEY.... (mas não a KEY EM SI....)
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+isso tudo é uma viagem, e é bem legal....
+
+
+
+
+
+
+
+
+
+
+
+SERVER-SIDE TOKEN __ CREATION__ + SIGNING__ 
+
+
+
+
+
+
+
+
+
+When using token based authentication you have to manually associate the token with the request. Contrary to cookies, tokens are not set automatically by the browser thus not susceptible to csrf attacks.
+
+
+COMO VISTO
+
+em 
+
+''''''''''''
+
+ export const asyncFetchOrdersStart = (token, userId) => {
+        return dispatch => {
+                dispatch(fetchOrdersStart());
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';  ///obs:: sempre coloque as propriedades/objetos à direita das keys (keys como 'orderBy') WRAPPADAS POR  '  ""  ' (double quotation marks), como visto naquele "userId"....
+        axiosOrder.get('/orders.json' + queryParams ) ////////// '/orders.json'   | ?auth= token |  'orderBy=userId equal to userId(constante) ' | )
+
+'''''''''''''''''
+
+
+
+
+While this approach is SAFE from csrf attacks, it IS SUSCEPTIBLE to xss attacks.
+
+A minimal effort improvement would be to use session storage instead of local storage since session storage data gets purged after the user closes the tab/browser.
+
+
+
+
+
+
+
+
+
+
+https://medium.com/wiixzer/security-xss-e-csrf-o-que-%C3%A9-como-vivem-o-que-comem-596105d80307
+
+
+
+
+
+Diferença entre XSS e CSRF
+Tecnologia
+o diferença chave entre X e CRF é que, em X (ou Cro ite cripting), o ite aceita o código malicioo enquanto, em CRF (ou Cro ite Requet Forgery), o código malicioo é armazenado
+
+Diferença entre XSS e CSRF
+Contente:
+O que é XSS?
+O que é CSRF?
+Qual é a diferença entre XSS e CSRF?
+Resumo - XSS vs CSRF
+
+ 
+o diferença chave entre XSS e CSRF é que, em XSS (ou Cross Site Scripting), o site aceita o código malicioso enquanto, em CSRF (ou Cross Site Request Forgery), o código malicioso é armazenado em sites de terceiros. O XSS é um tipo de vulnerabilidade de segurança do computador em aplicativos da web que permite que invasores injetem scripts do lado do cliente em páginas da web visualizadas por outros usuários. Por outro lado, CSRF é um tipo de atividade maliciosa de um hacker ou site que transmite comandos não autorizados nos quais o aplicativo da web do usuário confia.
+
+
+
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+XSSS = 
+
+
+Web Storage (localStorage/sessionStorage) is
+ accessible through JavaScript on the same domain.
+  This means that any JavaScript running on your site will have access to web 
+  storage, and because of this can be vulnerable to cross-site scripting (XSS) 
+  attacks. XSS, in a nutshell, is a type of vulnerability where an attacker can 
+  inject JavaScript that will run on your page. Basic XSS attacks attempt to inject 
+  JavaScript through form inputs, where the attacker puts <script>alert('You are Hacked');</script> into a form to see if it is run by the browser and can be viewed by other users.
+
+
+
+-----------------------------------------
+
+So if I'm understanding you correctly, you recommend cookies? Just to make sure. Thanks! – 
+SuperLemon
+ Sep 29 '17 at 11:43
+14
+
+Yes. I recommend cookies because of the additional security they provide, and the simplicity of protecting against CSRF with modern web frameworks. Web Storage (localStorage/sessionStorage) is vulnerable to XSS, has a larger attack surface area, and can impact all application users on a successful attack. – 
+Kaloyan Kosev
+ Sep 29 '17 at 19:07 
+
+
+
+---------------------------
+
+
+https://academind.com/tutorials/localstorage-vs-cookies-xss
+
+
+OK.... VI UM POST DO PROFSSOR SOBRE ISSO:
+
+
+If you browse the internet, you find quite a lot of developers spreading the information that localStorage would be insecure and you shouldn't use it to store authentication tokens. Instead, you should use http-only cookies that hold those tokens.
+
+Side-note: If you're not sure what I mean with "authentication tokens", you might want to check out my Node.js - The Complete Guide course - I cover the two most common authentication mechanisms (sessions & tokens) in great detail there!
+
+In this article, I'll explain in detail why http-only cookies are not more secure than localStorage and what that means for you and your app.
+
+
+
+
+
+Side-note: If you're not sure what I mean with "authentication tokens", you might want to check out my Node.js - The Complete Guide course - I cover the two most common authentication mechanisms (sessions & tokens) in great detail there!
+
+In this article, I'll explain in detail why http-only cookies are not more secure than localStorage and what that means for you and your app.
+
+
+
+
+
+
+
+
+
+
+We attach the token on the Authorization header and send it to the server, where it can be verified and then grants the user access to protected data.
+
+Looks good and is pretty straightforward, right?
+
+Indeed, it is a great approach and - contrary to the misconception mentioned in the beginning of the article - it is perfectly fine to use localStorage.
+
+But you can indeed also run into problems if your page is vulnerable to Cross-Site-Scripting (XSS) attacks.
+
+

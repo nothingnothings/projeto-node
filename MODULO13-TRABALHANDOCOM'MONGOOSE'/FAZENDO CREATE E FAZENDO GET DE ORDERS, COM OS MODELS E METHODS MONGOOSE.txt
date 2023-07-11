@@ -1,0 +1,3399 @@
+
+
+
+
+
+
+
+
+
+----> OK... É HORA DE TRABALHAR NOS 2 ÚLTIMOS 'PEDAÇOS' 
+
+DE NOSSO 
+
+
+
+
+APP, que 
+
+SÃO 
+
+
+
+
+
+
+
+AS ROUTES DE 
+
+
+
+'get orders' 
+
+e 
+
+
+
+'create orders'... 
+
+
+
+
+
+
+
+
+------> PARA AS ORDERS,
+
+eu não sei se professor vai querer 
+
+CRIAR 
+
+
+
+1 
+
+
+
+
+MODEL/COLLECTION A PARTE.... --> creio que sim...
+
+
+
+
+
+
+
+
+
+---> PROFESSOR SUGERE O PAUSE DO VÍDEO PARA TENTARMOS ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMEÇAMOS POR ESTES CÓDIGOS AQUI:
+
+
+
+
+
+(MODEL)
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const orderSchema = new Schema({
+
+
+
+
+  user: {
+    required: true,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+
+
+
+
+
+
+});
+
+
+
+
+
+
+module.exports = mongoose.model('Order', orderSchema);
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CONTROLLER:
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+  const user = req.user;
+
+
+
+
+  const order = new Order(
+    {
+      user: user
+    }
+  )
+  
+  order.save().then(
+    (result) => {
+
+      console.log(result);
+      res.status(302).redirect('/cart/orders');
+    }
+  )
+
+
+
+
+
+
+
+
+  ---------------------------------
+
+
+
+
+
+
+
+  ok.... e isso REALMENTE está criando uma 'order' 
+
+
+
+
+  na 
+
+  DATABASE 
+
+  MONGODB...
+
+
+
+
+
+
+
+
+
+  ENTRETANTO, OS OBJETOS ESTÃO FICANDO COM ESTA ESTRUTURA:
+
+
+
+
+  {
+    "_id": {
+        "$oid": "617a26a42aa89a45d0f0d612"
+    },
+    "user": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "__v": 0
+}
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+EDITEI UM POUCO MAIS O CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+
+ELE ESTÁ FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+  console.log(req.user, 'LINE');
+  const user = req.user;
+
+
+
+
+  const order = new Order(
+    {
+      userId: req.user._id,
+      cart: req.user.cart
+    }
+  )
+  
+  order.save().then(
+    (result) => {
+
+      console.log(result);
+      res.status(302).redirect('/cart/orders');
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  E ASSIM (model):
+
+
+
+
+
+
+
+  const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const orderSchema = new Schema({
+
+
+userId: {
+        type: Schema.Types.ObjectId,
+        required: true
+
+},
+
+
+  cart: {
+    required: true,
+    // type: Schema.Types.ObjectId,
+    type: Object,
+    ref: 'User',
+  },
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> OU SEJA,
+
+CRIEI 
+
+
+2 FIELDS 
+
+
+
+
+nos 
+
+documents 'order',
+
+
+
+
+1 para 
+
+o 'userId' 
+
+
+
+do usuário 
+
+que 
+
+cria essas orders,
+
+
+
+e 
+
+
+OUTRO PARA 
+
+
+
+OS 
+
+
+PRODUCTS/cart items ENVOLVIDOS NESSA ORDER....
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+E NOSSOS DOCUMENTS 'order' estão ficando com esta estrutura:
+
+
+
+
+
+{
+    "_id": {
+        "$oid": "617a28d84b81241b0bad9a10"
+    },
+    "userId": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "cart": {
+        "products": [{
+            "productId": {
+                "$oid": "6178c95a034366e935717476"
+            },
+            "quantity": 2,
+            "_id": {
+                "$oid": "617a26f82d2545dbb4e3b9a9"
+            }
+        }, {
+            "productId": {
+                "$oid": "6179bcb8a05105d79005d70b"
+            },
+            "quantity": 1,
+            "_id": {
+                "$oid": "617a28d14b81241b0bad9a03"
+            }
+        }]
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> OK... AGORA VOU QUERER __ RETRIEVAR __ 
+
+
+A INFO 
+
+
+
+ACERCA 
+
+
+
+DE 
+
+
+
+
+
+
+TODOS OS PRODUCTS,
+
+lá 
+
+
+
+
+na página de 
+
+
+'orders' 
+
+
+(vou precisar de 'getOrders', algo assim, para
+
+
+PEGAR 
+
+TODAS AS 
+
+ORDERS 
+
+
+
+
+DO USER,
+
+E PARA 
+
+ENTÃO 
+
+
+
+exibir as orders bem detalhadinhas...
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+--> É LÓGICO QUE, PARA ISSO,
+
+
+
+__PROVAVELMENTE__ vou precisar 
+
+
+de 
+
+
+
+ 
+1 método 
+
+
+em 
+
+'user'.... (
+
+
+
+
+  pq entre 
+
+  o 
+
+
+  'user' 
+
+  e 
+
+  as 
+
+  'orders'
+
+  há 
+
+  uma relation 
+
+
+
+  de 
+
+
+
+  'ONE-TO-MANY'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MEU CÓDIGO ESTÁ FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+
+
+
+
+
+  Order.find({_id: req.user._id})
+  .populate('cart.products.productId')
+  .then(
+    (orders) => {
+
+           res.render(
+        'shop/orders',
+        {
+          pageTitle: 'Your Orders',
+          orders: orders,
+          path: '/orders'
+        }
+      )
+
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const orderSchema = new Schema({
+
+
+userId: {
+        type: Schema.Types.ObjectId,
+        required: true
+
+},
+
+
+  cart: {
+    required: true,
+    // type: Schema.Types.ObjectId,
+    type: Object,
+
+    products: [
+            {productId: {
+
+                required: true, 
+                type: Schema.Types.ObjectId,
+                ref: 'Product'
+            } }
+    ]
+  },
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+TALVEZ O QUE PRECISE SER FEITO, AGORA,
+
+
+
+seja 
+o 
+
+
+AJUSTE DE MEU VIEW,
+
+para que 
+
+
+ELE CONSIGA 
+
+
+
+
+
+outputtar essas orders certinhas....
+
+
+
+
+
+
+
+
+
+
+--> PROBLEMA:
+
+
+
+'orders' está sendo retornado como um ARRAY VAZIO. []
+
+
+
+
+
+
+
+
+
+
+ENCONTREI O PROBLEMA...
+
+
+
+ERA ISTO:
+
+
+  Order.find({userId: req.user._id})
+
+
+
+
+  que estava 
+
+
+  assim (errado):
+
+
+'''                               '''''
+    Order.find({_id: req.user._id})
+
+
+
+------------------------------
+
+
+
+
+
+
+
+OK.... 
+
+
+MAS O QUE FALTA, AGORA?
+
+
+
+
+Falta ajustar o view...
+
+
+(eu acho, mas o negócio não está sendo 'populated' adequadamente...)
+
+
+
+
+
+
+2
+
+Populate in Mongoose currently only works with _id's,
+
+
+ though there's a long-standing issue to change this. 
+ You'll need to make sure your Car model has an _id field and that
+ 
+  the inventory field in User is an array of these _id's.
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O PROBLEMA ERA ISTO AQUI:
+
+
+
+
+
+
+  cart: {
+    // required: true,
+    // type: Schema.Types.ObjectId,
+    // type: Object,
+
+
+
+
+
+
+
+
+
+------> isso aí n pode ficar no código, por alguma razão...
+
+
+
+
+
+
+
+
+
+
+
+CERTO... FUNCIONOU...
+
+
+
+
+
+
+O CÓDIGO COMPLETO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getOrdersPage = (req, res, next) => {
+
+
+
+
+
+  Order.find({userId: req.user._id})
+  .populate('cart.products.productId')
+  .then(
+    (orders) => {
+
+
+        console.log(orders);
+
+
+        orders.forEach(
+          (order) => {
+
+            console.log(order, 'LINE');
+
+
+            //     order.cart.products.forEach(
+            //       (product) => {
+            //         console.log(product, 'LINE2');
+            //       }
+            //     )
+
+
+
+            order.totalPrice = order.cart.products.map( ////define o TOTAL PRICE de cada order...
+              (product) => {
+              return  product.productId.price * product.quantity
+              }
+            ).reduce(
+              (prevValue, curValue) => {
+                  return prevValue + curValue;
+              }, 0
+            )
+
+          }
+        )
+           res.render(
+        'shop/orders',
+        {
+          pageTitle: 'Your Orders',
+          orders: orders,
+          path: '/orders'
+        }
+      )
+
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> esse código de 'orders', no caso,
+
+
+
+consegue:
+
+
+
+
+
+
+
+1) FETCHEAR data específica acerca DE CADA ORDER
+
+a) quantity de cada product (Cart item na order) 
+
+
+b) PRICE de cada order 
+
+
+c) CÓDIGO de cada order (que é o id, na verdade....)
+
+
+d) TITLE de cada product nessa order... 
+
+
+e) PREÇO TOTAL DA ORDER.... (total price)....
+
+
+
+
+
+
+
+
+
+
+
+
+ok... acho que estou satisfeito, por enquanto...
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+OK... AGORA A __ÚNICA __ COISA QUE 
+
+eu vou querer fazer,
+
+para COMPLETAR,
+
+
+
+é 
+
+
+ESVAZIAR 
+
+os 
+
+
+
+'products' 
+
+
+
+no 'CART' 
+
+
+
+de nosso USER 
+
+
+quando tivermos CONCLUÍDO O 'post' de uma ORDER....
+
+
+
+
+
+
+
+---> para isso, obviamente TEREMOS DE USAR O 
+
+CONTROLLER DE 'orderPost',
+
+
+QUE TEM ESTE CÓDIGO, POR ENQUANTo:
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+  console.log(req.user, 'LINE');
+  const user = req.user;
+
+
+
+
+  const order = new Order(
+    {
+      userId: req.user._id,
+      cart: req.user.cart,
+      totalPrice: 0
+    }
+  )
+  
+  order.save().then(
+    (result) => {
+
+      console.log(result);
+      res.status(302).redirect('/orders');
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---------> VOU QUERER RODAR ALGUM CÓDIGO DE 'ESVAZIAR CART' 
+
+
+
+  ali depois de 'order.save()',
+
+  naquele THEN BLOCK....
+
+
+
+
+
+  ---------------------------------------
+
+
+
+
+
+  CERTO.... FUNCIONOU...
+
+
+
+  FICOU ASSIM:
+
+
+
+
+
+
+controller:
+
+
+
+
+
+  exports.orderPost = (req, res, next) => {
+
+  console.log(req.user, 'LINE');
+  const user = req.user;
+
+
+
+
+  const order = new Order(
+    {
+      userId: req.user._id,
+      cart: req.user.cart,
+      totalPrice: 0
+    }
+  )
+  
+  order.save().then(
+    (result) => {
+
+      console.log(result);
+
+        return req.user.clearCart() ////////EIS O CÓDIGO EM QUESTAÕ
+        .then(
+          (result) => {
+            res.status(302).redirect('/orders');
+          }
+        )  
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+MODEL DE 'USER':
+
+
+
+
+
+
+
+
+
+
+
+
+userSchema.methods.clearCart = function() {
+
+ this.cart = {
+      products: []
+  }
+
+  return this.save();
+
+}
+
+
+
+
+
+
+
+
+-_>
+
+
+
+
+
+
+
+
+ok.... o que falta, agora?
+
+
+
+
+
+
+
+
+--> vou assistir o vídeo do professor....
+
+
+
+
+
+
+
+
+
+----->  ELE COMEÇA 
+
+
+
+ESCREVENDO 
+
+
+
+
+
+a parte de 
+
+
+'orders'...
+
+
+
+
+
+
+
+
+
+
+----> O CREATE DE ORDERS,
+
+É ISSO QUE VAMOS QUERER FAZER...
+
+
+
+
+
+
+
+--> LÁ 
+
+
+
+
+NO CONTROLLER 
+
+
+
+
+
+de 
+
+'postOrder',
+
+
+
+
+
+
+
+
+
+PROFESSOR COMEÇA ASSIM:
+
+
+
+
+
+
+
+
+
+exports.postOrder = (req, res, next) => {
+
+
+
+  ...
+}
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+vamos escrever o 
+
+
+'req.user.addOrder()',
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+exports.postOrder = (req, res, next) => {
+
+
+
+
+
+      req.user.addOrder();
+}
+
+
+
+
+
+
+
+
+
+--> VAMOS INSERIR 
+
+
+UM NOVO DOCUMENT 'order'
+
+
+NA NOSSA 
+
+'ORDER COLLECTION'....
+
+
+
+
+
+--> COMO VAMOS TRABALHAR COM UMA NOVA COLLECTION, de 'orders',
+
+
+
+VAMOS 
+
+
+COM CERTEZA PRECISAR DE UMA 
+
+
+NOVO MODEL...
+
+
+
+
+
+
+
+
+
+--> professor cria um arquivo 
+
+
+
+
+
+'order.js'
+
+
+
+NO FOLDER DE 
+
+'models',
+
+
+ISSO PQ 
+
+
+
+
+ELE VAI PRECISAR DE UM MODEL 'order'
+
+
+
+
+PARA 
+
+
+
+
+ARMAZENAR DATA/DOCUMENTS 'order'
+ 
+
+
+ NA COLLECTION 
+ de 
+
+
+ 'orders'...
+
+
+
+
+
+
+
+
+
+ --> professor escreve os códigos clássicos:
+
+
+
+
+
+
+
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+
+ const Schema = mongoose.Schema;
+
+
+
+
+ const orderSchema = new Schema(
+   {
+
+
+        products
+
+
+
+   }
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR VAI CRIAR ESSE SCHEMA 
+
+
+ tendo 
+
+
+
+ um array 'products',
+
+ QUE 
+
+
+ terá um 
+
+ ARRAY 
+
+ DE OBJETOS ({}) 'product'...
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ const mongoose = require('mongoose');
+
+
+
+ const Schema = mongoose.Schema;
+
+
+
+
+ const orderSchema = new Schema(
+   {
+
+
+        products: [
+          {
+
+          }
+        ]
+
+
+
+   }
+ )
+
+
+
+
+
+
+ ---------------------------------
+
+  
+
+
+
+
+ok.... 'products'
+
+
+será um ARRAY DE DOCUMENTs.... ------->  E CADA DOCUMENT TERÁ,
+
+ 
+
+
+
+ por exemplo,
+
+
+
+
+ UM FIELD DE 
+
+ 'productData', QUE 
+
+ SERÁ 
+
+
+DE 
+
+
+'type'
+
+
+
+
+'Object'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+
+ const Schema = mongoose.Schema;
+
+
+
+
+ const orderSchema = new Schema(
+   {
+
+
+        products: [
+          {
+            productData: {type: Object}
+          }
+        ]
+
+
+
+   }
+ )
+
+
+
+
+----------------------------------
+
+
+
+
+
+CADA 'productData'
+
+
+será 
+
+
+de 
+
+type 
+
+OBJECT 
+
+
+PQ _ ISSO AÍ _ SERÁ 
+
+ 
+
+ UM DOCUMENT 'full'.... ----> 
+
+
+
+
+
+
+ VAMOS COLOCAR UM REQUIRED: true,
+
+
+
+
+
+
+ e aí 
+
+
+
+ VAMOS COLOCAR UM FIELD DE 'quantity' para cada PRODUCT, também...
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+ 
+
+ const mongoose = require('mongoose');
+
+
+
+ const Schema = mongoose.Schema;
+
+
+
+
+ const orderSchema = new Schema(
+   {
+
+
+        products: [
+          {
+            productData: {type: Object, required: true},
+            quantity: {
+              type: Number,
+              required: true
+            }
+          }
+        ]
+
+
+
+   }
+ )
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+-------> CERTO.... 
+
+
+
+E AQUI JÁ É POSSÍVEL VER DIFERENÇAS ENTRE 
+
+
+O 
+
+
+CÓDIGO DO PROFESSOR E O QUE EU ESCREVI..
+
+
+
+
+
+
+
+
+
+
+
+eu escrevi assim:
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const orderSchema = new Schema({
+
+
+userId: { ////isto aqui também ficou diferente.
+        type: Schema.Types.ObjectId,
+        required: true
+
+},
+
+
+  cart: { ///isto ficou diferente.
+
+
+    products: [
+            {productId: {
+
+                required: true, 
+                type: Schema.Types.ObjectId, ////isto aqui ficou diferente.
+                ref: 'Product'
+            },
+          quantity: {
+            required: true,
+            type: Number,
+          }
+          
+          }
+    ]
+  },
+
+  totalPrice: { ////isto aqui também ficou diferente.
+      required: true,
+      type: Number
+  }
+
+
+
+});
+
+
+
+module.exports = mongoose.model('Order', orderSchema);
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+CÓDIGO DO PROFESSOR FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+ 
+
+ const mongoose = require('mongoose');
+
+
+
+ const Schema = mongoose.Schema;
+
+
+
+
+ const orderSchema = new Schema(
+   {
+
+
+        products: [
+          {
+            productData: {type: Object, required: true},
+            quantity: {
+              type: Number,
+              required: true
+            }
+          }
+        ]
+
+
+
+   }
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----> OK... MAS O PROFESSOR __ TAMBÉM__ VAI QUERER 
+
+
+ um 
+
+ field de 
+
+ 'user',
+
+
+
+ e lá dentro 
+
+
+
+ DO 'user' 
+
+ ele VAI QUERER FIELDS 
+
+ de 
+
+
+ 'name' 
+
+
+
+ e 
+
+
+o 'id'.... (userId)... -> que será de 'type' Schema.types.ObjectId'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E NOSSO 'userId',
+
+no caso,
+
+
+TAMBÉM VAI 
+
+
+
+ter um 'ref' (vai se referir)
+
+
+
+AO 
+
+
+
+'User'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ const mongoose = require('mongoose');
+
+
+
+ const Schema = mongoose.Schema;
+
+
+
+
+ const orderSchema = new Schema(
+   {
+
+
+        products: [
+          {
+            productData: {type: Object, required: true},
+            quantity: {
+              type: Number,
+              required: true
+            }
+          }
+        ],
+
+
+        user: {
+
+              name: {
+                type: String,
+                required: true
+              }, 
+
+
+              userId: {
+                type: Schema.types.ObjectId, 
+                required: true,
+                ref: 'User' //////eis o código em questão.
+              }
+
+        }
+
+   }
+ )
+
+
+
+
+
+
+
+ ----------------------------------
+
+
+
+
+ CERTO.... ISSO QUER DIZER QUE O 
+
+ PROFESSOR 
+
+
+
+ _fORROU__ com um pouco mais 
+
+
+ 
+
+ de info/documents 
+
+
+ esse 
+
+
+ document de 'order'....
+
+
+
+
+
+
+
+ -------->  PROFESSOR EXPLICA QUE 
+
+
+ esse 
+
+
+ 'type: Object'
+
+
+ LÁ 
+
+
+ em 
+
+ 'product' 
+
+
+ É __ APENAS__ 1 ''''SHORTCUT''''... --> se você realmente quiser,
+
+ você pode 
+
+ DEFINIR TODAS 
+
+ AS 
+
+ properties dos 'products' nesse local explicitamente,
+  
+
+  (full nested product with all the properties there),
+
+
+
+
+  __AQUI O PROFESSOR VAI DIZER 'BEM, PODE SER QUALQUER OBJECT',
+
+
+
+  mas poderíamos 
+
+
+
+  forçar 
+
+  a pessoa que usa o código 
+
+
+  a REALMENTE 
+
+
+
+
+  ___ TER DE CRIAR 1 OBJECT com todos os properties adequados ('title', 'price', 'description', etc etc.....)
+
+
+
+  ------------------------------
+
+
+
+
+
+  OK... DEFINIMOS ESSE 'order schema'...
+
+
+
+
+
+
+
+
+
+
+  --> AGORA O PROFESSOR escreve o EXPORT 
+
+  de um MODEL BASEADO NESSE SCHEMA,
+
+
+  código padrão...:
+
+
+
+
+
+
+
+
+
+
+ ' module.exports = mongoose.model('Order', orderSchema);'
+
+
+
+
+
+
+ ------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ OK.... AGORA TEREMOS NOSSO MODEL DE 'Order'.... ------> E ELE É REALMENTE NOVO,
+
+ AINDA NÃO O UTILIZAMOS NO NOSSO CÓDIGo..
+
+
+
+
+
+
+
+
+------> VMAOS IMPORTAR ISSO NO CONTROLLER DE 
+
+'shop.js',
+
+
+
+
+
+
+
+PARA USAR NO CONTROLLER DE 
+
+'orderPost'... 
+
+
+
+
+
+
+
+----------- -> AGORA QUE 
+
+USAMOS 
+
+
+UMA PACKAGE 'MODEL-BASED' DE NOVO, PARA O INTERACT COM DATA,
+
+
+
+
+NÓS __ TEMOS QUE SER MAIS 'STRICT' sobre a manipulação de data (e isso é uma boa coisa, geralmente)...
+
+
+
+
+
+
+
+
+-----> PORTANTO, AGORA TEMOS 
+
+
+1 MODEL DE 'ORDER'...
+
+
+
+
+
+
+
+
+
+
+--> E COM O MODEL DE 'ORDER' ADICIONADO,
+
+
+
+
+DEVEMOS VER __COMO INTERAGIR__ 
+
+
+ENTRE 
+
+
+
+O MODEL 
+
+
+
+DE 
+
+'order'
+
+
+e o 
+
+'user'....
+
+
+
+
+
+
+
+
+---> no código do MEU CONTROLLER, EU ESCREVI ASSIM:
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+  const user = req.user;
+
+  const order = new Order(
+    {
+      userId: req.user._id,
+      cart: req.user.cart,
+      totalPrice: 0
+    }
+  )
+  
+  order.save().then(
+    (result) => {
+
+      console.log(result);
+
+        return req.user.clearCart()
+        .then(
+          (result) => {
+            res.status(302).redirect('/orders');
+          }
+        )  
+    }
+  )
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+É CLARO QUE 
+
+UM PEDAÇÃO DISSO DEVE ESTAR INCORRETO...
+
+
+
+
+
+
+
+
+-------> PROFESSOR 
+
+
+
+COMEÇA ESCREVENDO ASSIM:
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+const order = new Order();
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+----------> OU SEJA, ELE VAI CRIAR UM NOVO 'OBJETO ORDER',
+
+
+POR MEIO 
+
+daquele 
+
+
+
+'ORDER MODEL CONSTRUCTOR'... -------> 
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+const order = new Order();
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-> MAS COM ESSE CÓDIGO AÍ,
+
+
+ESSE MODEL PRECISA SER 'initialized'... ------> 
+
+
+
+
+
+
+PARA ISSO,
+
+
+VAMOS TER QUE 
+
+PASSAR 
+
+1 
+
+
+
+__object___ como parâmetro,
+
+
+OBJECT 
+
+
+
+
+
+que terá 
+
+
+
+de 
+
+'encaixar' 
+
+suas keys com as keys definidas lá no schema, no nosso model...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+const order = new Order(
+  {
+    products: ...,
+
+    user: ...
+
+
+
+
+  }
+);
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+A PARTE DE 'user' É __BEM MAIS SIMPLES, POIS JÁ TEMOS 
+
+O NOSSO 
+
+
+
+OBJETO 'user' no NOSSO REQUEST,
+
+por isso podemos simplesmente escrever:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+const order = new Order(
+  {
+    products: ...,
+
+    user: {
+
+      name: req.user.name,
+      userId: req.user._id
+    }
+
+
+
+
+  }
+);
+
+
+
+
+
+}
+
+
+
+--------------------------------
+
+
+
+ESSA É A PARTE MAIS FÁCIL...
+
+
+
+
+
+
+
+
+AGORA PRECISAMOS 
+
+ADICIONAR 
+
+OS 
+
+
+'products' 
+
+
+
+
+PARA O CART DESSE USER Aí.... (mais difícil....)
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, PROFESSOR APONTA QUE __ ISSO NÃO É __ TÃO DIFÍCIL,
+
+
+isso pq 
+
+
+
+NÓS JÁ IMPLEMENTAMOS ALGO SIMILAR NO PASSADO...
+
+
+
+
+
+
+-> professor está falando de 
+
+
+
+'''''
+
+
+
+
+
+
+
+ req.user
+    .populate('cart.products.productId') 
+  
+    .then(
+      (user) => {
+
+            console.log(user.cart.products);
+
+
+            res.render(
+              'shop/cart', {
+
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: user.cart.products
+              }
+            )
+
+
+      }
+    )
+
+
+
+
+
+
+''''''',
+
+
+
+
+AQUELE APPROACH 
+para 
+
+FETCHEAR 
+
+todos 
+os products 
+
+
+DO 
+
+CART 
+
+ 
+
+
+ do user, para então 'populate' 
+
+
+
+
+'products' com a DATA NECESSÁRIA, data extraída LÁ DA COLLECTION DE 'products', que está como 'ref' desse field aí...
+
+
+
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE O PROFESSOR COPIA 
+
+
+AS LINHAS 
+
+
+
+
+'''
+
+
+req.user
+    .populate('cart.products.productId') 
+  
+    .then(
+      (user) => {
+
+          const products = user.cart.items;
+
+
+
+
+''''''''''
+
+
+
+
+
+
+
+
+
+
+
+
+COPIA TUDO ISSO 
+
+
+E 
+
+
+
+COLA EM 
+
+
+'postOrder',
+
+
+
+BEM NO INÍCIO...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+
+    req.user ////////EIS O CÓDIGO EM QUESTÃO.
+    .populate('cart.products.productId') 
+  
+    .then(
+      (user) => {
+
+          const products = user.cart.products;
+
+      })
+
+
+const order = new Order(
+  {
+    products: ...,
+
+    user: {
+
+      name: req.user.name,
+      userId: req.user._id
+    }
+
+
+
+
+  }
+);
+
+
+
+
+
+}
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+E AGORA, COM ESTE CÓDIGO AQUI:
+
+
+        const products = user.cart.products;
+
+
+
+
+  --> TEMOS TODOS OS PRODUCTS QUE 
+
+
+  FICAM DENTRO 
+
+  DO 
+  'CART' 
+
+
+
+DO USER...
+
+
+
+
+
+--------> PROFESSOR VAI QUERER CRIAR NOSSA 'order'
+
+DENTRO DO THEN BLOCK 
+
+desse 'populate' aí...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+
+    req.user ////////EIS O CÓDIGO EM QUESTÃO.
+    .populate('cart.products.productId') 
+  
+    .then(
+      (user) => {
+
+          const products = user.cart.products;
+
+const order = new Order(
+  {
+    products: ...,
+
+    user: {
+
+      name: req.user.name,
+      userId: req.user._id
+    }
+
+  }
+);
+
+      })
+
+
+}
+
+
+
+
+
+-----------------------------
+
+
+
+
+E AÍ, DENTRO DESSA ORDER,
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+
+VAMOS QUERER QUE ESSA KEY 
+
+de 
+
+
+'products: ...' 
+
+
+
+
+
+TENHA 1 ARRAY DE PRODUCTS __ TRANSFORMADOS___... --> PARA SERMOS MAIS PRECISOS,
+
+
+
+___ VAMOS ___ QUERER __ QUE 
+
+
+
+
+CADA 'product' dentro de 'products' 
+
+
+TENHA 
+
+1 
+
+FIELD DE 
+
+
+'product' 
+
+
+
+e 
+
+
+1 field de 'quantity',
+
+
+
+EXATAMENTE COMO VISTO NO SCHEMA:
+
+
+
+
+
+
+
+
+products: [
+
+
+
+  {
+
+
+
+    product: {type: Object, required: true},
+    quantity: {type: Number, required: true}
+  }
+
+
+]
+
+
+---------------------------------
+
+
+
+
+
+
+
+E ISSO É _ QUASE__ 
+
+
+
+O QUE TEMOS DENTRO 
+
+
+
+de 
+
+
+'const products = user.cart.products',
+
+
+
+
+MAS O QUE 
+
+TEMOS 
+
+NESSE 
+
+
+
+'.products' 
+
+
+É __ A PRODUCTDATA (de que precisamos) 
+
+
+
+DENTRO DE 
+
+
+1 FIELD CHAMADO DE 'productId',
+
+
+
+MAS __ISSO É FÁCIL DE CONSERTAr__... ------> 
+
+
+
+
+O PROFESSOR VAI USAR '.map()'
+
+
+PARA __ MANIPULAR___ 
+
+
+
+
+ESSE ARRAY 
+
+
+de 
+
+
+'user.cart.products'
+
+
+PARA QUE 
+
+
+ELE 
+
+FIQUE 
+
+NO FORMATO QUE DESEJAMOS....
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+
+
+
+    req.user 
+    .populate('cart.products.productId') 
+  
+    .then(
+      (user) => {
+
+          const products = user.cart.products.map(
+            (product) => {
+
+
+                  return {
+                    quantity: product.quantity, 
+                    product: product.productId /////EIS O CÓDIGO EM QUESTÃO.
+                  }
+            }
+          )
+
+
+
+const order = new Order(
+  {
+    products: products,
+
+    user: {
+
+      name: req.user.name,
+      userId: req.user._id
+    }
+
+  }
+);
+
+      })
+
+
+}
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+ISSO VAI REALMENTE REORGANIZAR TODA A ESTRUTURA desse array, 
+
+
+
+para que 
+
+
+
+consigamos o colocar na INSTANCIAÇÃO DE 
+
+
+'order',
+
+na nova 'order'...
+
+
+
+
+
+
+
+
+
+--> CREIO QUE FICA TIPO ASSIM:
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: product.productId,
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save().then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    });
+  });
+
+
+
+
+
+
+  ------------------------------------------------
+
+
+
+
+
+
+
+
+
+  certo... mas é claro que temos que ADAPTAR O VIEW, TAMBÉM... pq 
+
+
+
+  a estrutura de nossos 'products' agora OBVIAMENTE MUDOU...
+
+
+
+
+
+
+
+
+  --> É CLARO QUE ISTO AQUI:
+
+
+   order.save()
+
+
+
+
+   --> TAMBÉM É ESSENCIAL,
+
+   pq é isso aí que vai SALVAR NOSSA ORDER NA DATABASE..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> CERTO... CONSEGUI... O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+   (CONTROLLER DE 'getOrders'):
+
+
+
+
+
+
+   exports.getOrdersPage = (req, res, next) => {
+  Order.find({ userId: req.user._id })
+    // .populate('cart.products.productId')
+    .populate('products.product')
+    .then((orders) => {
+      console.log(orders);
+
+      orders.forEach((order) => {
+        console.log(order, 'LINE');
+
+            order.products.forEach(
+              (product) => {
+                console.log(product, 'LINE2');
+              }
+            )
+
+        // order.totalPrice = order.cart.products
+        order.totalPrice = order.products
+          .map(
+            ////define o TOTAL PRICE de cada order...
+            (product) => {
+                console.log(product, 'LINE3');
+              // return product.productId.price * product.quantity;
+              return product.product.price * product.quantity;
+            }
+          )
+          .reduce((prevValue, curValue) => {
+            return prevValue + curValue;
+          }, 0);
+      });
+      res.render('shop/orders', {
+        pageTitle: 'Your Orders',
+        orders: orders,
+        path: '/orders',
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+controller de 'orderPost':
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+  req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        product: product.productId,
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save().then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  VIEW 
+
+
+  da page de 
+
+
+  'orders':
+
+
+
+
+
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/orders.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul class="order__items">
+ <% orders.forEach(order => { %>
+     <li class="order__item">
+        <h1>Order Code: <%= order._id %></h1>
+        <ul>
+          <% order.products.forEach(product => { %>
+
+            <li><%= product.product.title %> (<%= product.quantity %>)
+              <p>Price: $<%= product.product.price %></h1>
+            
+            </li>
+
+        <%  }) %>
+        <h1>Total Price: <%= order.totalPrice %></h1>
+        </ul>
+
+     </li>
+
+
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... QUAL O PRÓXIMO PASSO?

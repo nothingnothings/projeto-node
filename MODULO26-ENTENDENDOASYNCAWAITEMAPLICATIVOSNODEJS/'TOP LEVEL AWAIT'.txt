@@ -1,0 +1,217 @@
+
+
+
+
+
+
+
+
+
+
+
+-> NA ÚLTIMA AULA,
+ 
+
+
+
+
+ ADICIONAMOS 
+
+
+ ASYNC/AWAIT.... --> MAS HÁ UMA 
+
+
+ IMPORTANTE 
+
+ ADIÇÃO 
+
+ QUE 
+ O 
+
+ PROFESSOR QUER COLOCAR,
+  
+
+
+  NESSA AULA... --> 
+
+
+
+   A PARTIR DA VERSÃO 12.3,
+
+
+
+
+
+
+
+   VOCÊ PODE __ ACTUALLY __ USAR __ 
+
+
+
+
+   ___ A KEYWORD 'await'
+
+
+
+   __ ACTUALLy___ 
+
+
+
+
+
+   FORA___ DE 
+
+
+   FUNÇÕES 
+
+   'async'.... (wtf.... nunca ouvi falar disso )
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> OU SEJA,
+
+   ISSO SIGNIFICA QUE PODEMOS SOLTAR 'await'
+
+
+   EM UM CONTEXTO GLOBAL,
+
+
+   NOS NOSSOS ARQUIVOS...
+
+
+
+
+
+
+
+
+
+
+   ------------->  OU SEJA,
+
+
+
+
+
+
+   DEIXAR O AWAIT DE UMA 'PROMISE'
+
+
+   __ NO LADO DE FORA DAS FUNCTIONS,
+
+   NO 'TOP-LEVEL' DE SEU SCRIPT... -------> 
+
+
+
+   O AWAIT 
+
+
+   PODE 
+
+   SER 
+   usado 
+
+
+
+
+   NESSE CONTEXTO GLOBAL TBM... (antigamente você não podia fazer isso, era obrigado a escrever o 'await' dentro de uma função com 'async', uma wrapper function... )
+
+
+
+
+
+
+
+
+
+
+
+   --> ENTRETANTO, 
+
+
+
+   SE VOCÊ 
+
+
+
+
+   ESTÁ USANDO 
+
+   'async/await'
+
+
+
+   DENTRO DE UMA FUNÇAÕ,
+
+
+
+
+   VOCÊ 
+
+
+
+   AINDA DEVE USAR/ESCREVER 
+
+
+
+
+    na lista de parâmetros de sua função..
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Maybe you noticed that on the frontend, the username is missing.
+
+We'll fix that in the next modules but you can also fix it right now of course.
+
+The reason for it missing is that I accidentally removed the populate('creator') step when fetching the post data in our controller action.
+
+Example:
+
+When fetching posts, this snippet:
+
+Post.find()
+    .countDocuments()
+    .then(count => {
+      totalItems = count;
+      return Post.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
+should become
+
+Post.find()
+    .countDocuments()
+    .then(count => {
+      totalItems = count;
+      return Post.find()
+        .populate('creator')
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
+
+
+
+
+
+
+    (não sei do que o professor está falando...)

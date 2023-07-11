@@ -1,0 +1,1676 @@
+
+
+
+
+
+
+
+
+
+-->  COM TODA A TEORIA FORA DO CAMINHO,
+
+
+
+
+
+
+
+devemos construir NOSSA PRIMEIRA 'SIMPLE REST API'...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+PROFESSOR 
+
+
+
+ESTÁ 
+
+EM 
+
+1 FOLDER 
+
+
+
+NOVINHO....
+
+
+
+
+
+
+--> A ÚNICA COISA QUE ELE FEZ, NESSE FOLDER, É RODAR 'npm init'
+ 
+
+ E CONFIRMOU TODAS AS DEFAULT SETTINGS...
+
+
+
+
+
+
+
+
+ --> OK, PARA CONSTRUIR UMA REST API,
+
+
+
+
+ POR ONDE COMEÇAMOS?
+
+
+
+
+
+
+
+
+ --> BEM, TODAS AS COISAS QUE APRENDEMOS 
+
+
+
+
+
+ AO LONGO DO CURSO AINDA SÃO IMPORTANTES...
+
+
+
+
+
+
+
+
+
+ VAMOS COMEÇAR CRIANDO UM NODEEXPRESS SERVER, EXATAMENTE COMO ANTES...
+
+
+
+
+
+
+
+
+
+ --> É CLARO QUE VOCÊ NÃO PRECISA USAR O 'EXPRESS'---->  VOCÊ PODE 
+
+
+
+ USAR SÓ O NODE,
+
+ MAS O PROBLEMA É QUE 
+
+ VOCÊ TERÁ 
+
+ DE FAZER UM MONTE DE 
+
+
+
+ REQUEST PARSING E ASSIM POR DIANTE __ POR CONTA PRÓPRIA... (como aprnedmeos durante o curso)......
+
+
+
+
+
+
+
+
+
+
+
+ ----> E É CLARO QUE VOCÊ PODE USAR 
+
+
+ OUTROS FRAMEWORKS QUE NÃO SÃO O EXPRESS...  ----> EXISTEM 
+
+
+
+ 'SPECIALIZED REST API FRAMEWORKS',
+
+
+
+ mas o professor diz que 
+
+ DEVEMOS USAR 
+
+
+ O EXPRESS,
+  
+  POIS ELE É UM ÓTIMO 'ALL-ROUNDER'...
+
+
+
+
+
+
+
+
+
+  --> VAMOS INSTLAR, COM 
+
+
+
+
+  'npm install --save express',
+
+
+
+  ESSA DEPENDENCIA 
+
+
+
+  DE PRODUCTION,
+
+  do express...
+
+
+
+
+
+
+
+
+
+
+  ----------> OK......... 
+
+
+
+
+  VAMOS PRECISAR DO EXPRESS 
+
+
+  PARA 
+
+
+
+
+  CONTRUIR UMA REST API CONVENIENTEMENTE...
+
+
+
+
+
+
+
+
+
+
+
+  -_> CERTO... COM ISSO INSTALADO,
+
+
+  PROFESOSR 
+
+
+
+
+  VAI INSTALAR OUTRA DEPENDENCY DE CARA,
+
+
+
+
+
+  UMA DEVELOPMENT DEPENDENCY,
+
+
+
+
+  QUE 
+
+
+
+SERÁ 
+
+
+'nodemon'... (
+
+
+PQ AINDA NÃO VAMOS QUERER 
+
+
+TER QUE 
+
+
+RESETTAR 
+
+NOSSO 
+
+SERVER 
+
+MANUALMENTE 
+
+APÓS CADA MUDANÇA..
+
+
+)
+
+
+
+
+
+
+
+
+
+
+-----> CERTO.... -----> npm install --save nodemon'...
+
+
+
+
+
+
+
+
+
+
+
+------> COM ISSO,
+
+
+
+VAOMS ATÉ O 
+
+
+
+
+
+
+
+package.json
+
+
+
+E VAMOS 
+
+
+ADICIONAR UM SCRIPT DE 
+
+'start',
+
+QUE 
+
+SERá 
+
+
+
+
+'nodemon app.js',
+
+
+PARA 
+
+COMEÇAR O APP.JS 
+
+com 
+
+
+O NODEMON... 
+
+
+
+
+
+
+
+
+
+
+
+--> certo.. mas antes disso, encontro um PROBLEMA.... o express não está querendo ser instalado...
+
+
+
+
+
+
+
+
+
+--> AH. EU estou sem internet... __ QUE MARAVILHA__...
+
+
+
+
+
+
+
+
+--> eu ainda tenho que instalar esses pacotes, na verdade...
+
+
+
+
+
+
+
+
+
+
+-----------> ok, agora voltou, momentaneamente...
+
+
+
+
+instalei rápido.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> INSTALEI O NODEMON TAMBÉM...
+
+
+
+
+
+AGORA CRIAMOS UM ARQUIVO 'app.js',
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> A PRIMEIRA COISA QUE FAREMOS, DENTRO DE 'app.js',
+
+
+
+É IMPORTAR O 'express'....
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+const express = require('express');
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+
+VOU QUERER CRIAR MEU 
+
+
+'express app',
+
+
+por meio 
+
+
+da escrita 
+
+de 
+
+
+'
+const app = express();'
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM
+:
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+CERTO.... 
+
+
+
+
+
+
+
+
+
+DEPOIS DISSO... 
+
+
+
+
+
+--> VAMOS, FINALMENTE,
+
+
+FAZER 
+
+'app.listen(3000)'
+
+
+
+
+
+
+
+
+
+
+
+-> VAMOS FAZER LISTEN A INCOMING REQUESTS... 
+
+
+
+
+
+---> MAS O PROFESSOR VAI USAR A PORTA '8000' em vez de 
+
+
+3000,
+
+
+
+
+PQ ELE NOS EXPLICA QUE VAMOS PRECISAR DESSA PORT DE 
+
+3000 
+
+MAIS TARDE....
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+
+
+
+
+
+
+
+app.listen(8000); ///usamos '8000' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK... TAMBÉM PRECISARIA DA PACKAGE DO MONGOOSE (npm install --save mongoose),
+
+
+MAS ACHO QUE 
+DEVO 
+
+FAZER ISSO MAIS TARDE... (e acho que o mongoose TAMBÉM PRECISA DO PACKAGE DO 'Mongodb'...)
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+ESSE 
+É UM 
+
+
+SERVER 
+
+SIMPLES QUE AGORA PODEMOS EXECUTAR,
+
+É 
+O 
+
+'SIMPLEST POSSIBLE 
+
+
+NODEEXPRESS SERVER'...
+
+
+
+
+
+
+
+
+
+--> MAS PARA ADICIONAR ALGUMAS ROUTES NESSE NOSSO SERVER,
+
+PROFESSOR CRIA UM FOLDER DE 'routes',
+
+
+
+EXATAMETNE COMO HAVÍAMOS FEITO ANTERIORmente...
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> MAS PARA TER ESSAS ROUTES _ E CONSEGUIRMOS FAZER ALGO COM ELAS,
+
+
+PROFESSOR DIZ QUE DEVEMOS INSTALAR_ O 'BODY-PARSER',
+
+
+
+
+
+
+PARA QUE 
+
+SEJA 
+
+POSSÍVEL
+
+
+PARSEAR 
+
+INCOMING REQUEST 
+
+BODIES... 
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+
+const app = express();
+
+
+app.listen(8000); ///usamos '8000' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+
+OK... AGORA 
+
+
+
+
+DEVEMOS ADICIONAR ALGUMAS ROUTES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE PODERÍAMOS 
+
+
+ESCREVER 
+
+
+'app.put' no 
+
+APP.JS,
+
+
+
+
+
+
+MAS __ QUE _ ELE PREFERE USAR 
+
+ O 
+
+ 'EXPRESS ROUTER',
+
+ POR MEIO 
+
+ DAQUELE 
+
+
+ FOLDER DE 
+
+
+
+ 'routes'... 
+
+
+
+ tentar 
+
+ formatar esse código sozinho...
+
+
+
+ fica tipo:
+
+
+
+
+
+ 
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+CERTO...
+
+
+
+
+AGORA SÓ PRECISO 
+ESCREVER 
+
+ALGUMAS ROUTES NESSE ARQUIVO DE 
+
+
+'shop.js'...
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+talvez tipo assim:
+
+
+
+
+
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+
+
+
+
+
+
+router.get('/', shopController.getStartingPage);
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+AGORA SÓ PRECISO 
+
+
+PEGAR 
+
+ESSE 
+
+ARQUIVO 
+
+
+
+'shop.js'
+
+
+
+DE ROUTES 
+
+
+
+
+E 
+
+
+ENFIAR LÁ NO MEU APP.JS,
+
+
+como eu já havia aprendido....
+
+
+
+
+o código é tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser'); ///PRECISO DISSO PARA 'PARSE INCOMING REQUEST BODIES'...
+
+
+const app = express();
+
+
+
+const shopRoutes = require('./routes/shop');
+
+
+
+
+app.use(shopRoutes);
+
+
+
+
+
+
+
+
+app.listen(8000); ///usamos '8000' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE 
+
+ESSA ESTRUTURA 
+
+
+
+DE 
+
+
+
+SEPARAR 'ROUTES' 
+
+E 
+
+'CONTROLLERS' 
+
+
+
+
+AINDA FAZ SENTIDO... --> É EXATAMENTE COMO ANTES,
+
+
+
+
+A ÚNICA DIFERENÇA É QUE AGORA NÃO TEREMOS 
+
+MAIS A FIGURA DAS 
+
+'VIEWS'...
+
+
+
+
+
+
+
+
+
+
+
+--> O FOLDER DE 'views'
+
+
+
+NÃO SERÁ MAIS UTILIZADO, PQ NÃO VAMOS MAIS RENDERIZAR VIEWS,
+
+E SIM VAMOS 
+
+APENAS 
+
+'EXCHANGE DATA'
+
+
+ENTRE O SERVER E BROWSERSIDE...
+
+
+
+
+
+
+
+
+
+
+--------> MAS O PROFESSOR NÃO VAI QUERER CRIAR O NOSSO SHOP DE CARA... -> 
+
+
+
+ELE VAI QUERER CRIAR UM BLOG SIMPLES, PARA COMEÇAR....
+
+
+
+
+
+
+
+-> para isso, ele cria um arquivo route 
+
+de 
+
+
+'feed.js'...   (COMO 'NEWSFEED', coisa assim...)  ------> 
+
+
+
+
+NESSE LOCAL,
+
+
+SEREMOS CAPAZES DE:
+
+
+
+
+
+1) CREATE NEW MESSAGES 
+
+
+
+2) SHOW EXISTING MESSAGES,
+
+
+
+3) etc....
+
+
+
+
+
+
+
+
+
+
+
+DENTRO DE 'feed.js',
+
+
+
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+ESCREVE:
+
+
+
+
+
+
+
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+
+--------------------------------
+
+
+
+
+ELE TAMBÉM ESCREVE ALGO QUE EU ESQUECI,
+
+QUE É O EXPORT 
+
+DE 
+
+'router',
+
+LÁ NO FINAL, COM 
+
+
+
+
+'module.exports = router;'
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+
+
+
+
+
+
+router.get('/', feedController.getStartingPage);
+
+
+
+
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK ,AGORA PODEMOS  DEFINIR ALGUMAS ROUTES..
+
+
+
+
+
+
+
+
+
+-> PROFESSOR VAI QUERER COMEÇAR SIMPLES,
+
+
+COM UMA ROUTE DE 
+
+'get' 
+
+
+O PATH 
+
+SERÁ 
+
+
+'/posts',
+
+
+
+
+EM QUE SERVIREMOS NOSSOS POSTS...
+
+
+
+
+
+
+
+
+
+--> TEMOS O PATH DE '/posts',
+
+
+
+E AÍ VAMOS PRECISAR DA LÓGICA A SER EXECUTADA QUANDO 
+
+
+FOR CARREGADO ESSE PATH...
+
+
+
+EX:
+
+
+
+
+
+
+
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+
+
+
+
+
+
+router.get('/posts', ...);
+
+
+
+
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> PORTANTO, PROFESSOR CRIA UM NOVO FOLDER, CONTROLLERS,
+
+
+EM QUE 
+
+ELE 
+
+
+
+
+
+
+
+
+CRIA UM ARQUIVO DE 'feed.ejs' (controller)...
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE LOCAL,
+
+
+ELE USA A SINTAXE DE EXPORTS PARA EXPORTAR UMA NOVA FUNCTION,
+
+função de 
+
+
+
+
+'exports.getPosts = (req, res, next) => {
+
+
+
+}
+
+'
+
+
+
+
+
+
+
+
+
+MESMA COISA QUE APRENDEMOS NO INÍCIO DO CURSO, PORTANTO...
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+
+
+
+
+TUDO EXATAMENTE COMO ANTES, PORTANTO..
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE CONTROLLER, VAMOS QUERER 
+
+'
+SEND A RESPONSE'..
+
+
+
+
+
+
+
+
+--> ENTRETANTO,
+
+NOSSA RESPONSE __ NÃO VAI SER __ 
+UM 'res.render',
+
+
+E SIM 
+VAI 
+
+
+SER 
+
+ALGO COMO 
+
+
+
+
+
+
+
+'res.send'... (OU NÃO...)
+
+
+
+
+
+
+
+
+
+-----> VAMOS QUERER ENVIAR 'DATA PURA',
+
+
+como um CÓDIGO JSON,
+
+E O PROFESSOR NOS EXPLICA QUE 
+
+ESSA É A PARTE 
+
+EM QUE 
+
+AS COISAS 
+
+FICAM INTERESSANTES....
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ANTES DE FAZERMOS ISSO,
+ 
+ LÁ 
+
+
+ NO NOSSO ARQUIVO 
+
+ 'routes'
+
+
+
+ O PROFESSOR VAI QUERER IMPORTAR O 
+
+
+
+
+
+ 'feedController', por meio deste código:
+
+
+
+
+
+ EX:
+
+
+
+
+ 
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+const feedController = require('../controllers/feed');
+
+
+
+
+
+
+router.get('/posts', feedController.getPosts);
+
+
+
+
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+OK, CONTINUANDO...
+
+
+
+
+
+
+
+
+
+
+
+-----. ISSO FEITO, AGORA TEMOS ESSA ROUTE DE 
+
+
+
+'get'
+
+
+
+em '/posts'...
+
+
+
+tipo assim:
+
+
+
+
+
+
+router.get('/posts', feedController.getPosts);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> nós ENTÃO REGISTRAMOS ESSA ROUTE LÁ EM 'app.js',
+
+
+QUE 
+
+É 
+NOSSA 'STARTING FILE',
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+const feedRoutes = require('./routes/feed');
+
+
+
+
+
+
+
+
+app.use(feedRoutes);
+
+
+
+
+app.listen(8080);
+
+------------------
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+--> OK, MAS PROFESSOR COLOCA UM '/feed' ANTES DAS FEED ROUTES,
+
+para 
+que nossa route fique 
+
+
+
+'localhost:3000/feed/posts'... -----> PARA CONSEGUIR A ROUTE 'get' DE 'posts'...
+
+
+
+
+
+TIPO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+---> app.use('/feed', shopRoutes);
+
+
+
+
+
+
+
+
+
+
+-- >MAS AGORA DEVEMOS FALAR SOBRE A RESPONSE,
+
+E SOBRE 
+
+
+'HOW WE COULD SEND A REQUEST (rest api)
+
+
+TO THAT ROUTE'...

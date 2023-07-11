@@ -1,0 +1,3928 @@
+
+
+
+
+
+
+
+
+
+POR FIM, MAS NÃO MENOS IMPORTANTE,
+
+
+
+
+ANTES DE REALMENTE 
+
+
+
+SHIPPARMOS 
+
+NOSSO APP A UM SERVER, SHIPPAR NOSSO 
+
+
+SERVER A UM HOSTING PROVIDER,
+
+
+
+
+
+
+
+__ O PROFESSOR QUER DAR UMA OLHADA EM 
+
+
+'SSL/TLS' 
+
+
+
+
+
+
+
+
+
+
+
+TLS ----> É SIMPLESMENTE A VERSÃO MAIS NOVA DO 'SSL'.... -->   SSL --> é  o termo que mais pessoas conhecem...
+
+
+
+
+
+
+
+
+
+-----> AMBOS SÃO 'ABOUT SECURING YOUR DATA',
+
+
+
+
+A DATA __ QUE É ENVIADA __ 
+
+
+DO CLIENT PARA __ O SERVER... -------> ISSO PQ 
+
+
+
+QUANDO 
+
+
+NÓS 
+
+
+
+FAZEMOS O COMMUNICATE 
+
+
+ENTRE O CLIENT-SERVER,
+
+
+
+
+
+
+NÓS __ TIPICAMENTE__ 
+
+
+
+TROCAMOS 'DATA'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CLIENT  <<-------------- DATA ------------> >>> Server 
+
+
+
+
+
+
+
+
+
+
+
+-> CERTO... MAS DURANTE 
+
+
+O FLOW 
+
+
+DESSE 
+
+
+
+EXCHANGE 
+
+DE DATA,
+
+
+
+PODEMOS TER 'ATTACKERS'...
+
+
+
+
+
+
+
+
+
+
+
+
+-_> ATTACKER --> THIRD PARTY,
+
+
+
+UMA PESSOA QUE PODE ESTAR 'EAVESDROPPING'... ------>  É CLARO QUE 
+
+ISSO 
+
+
+NÃO É SUPER TRIVIAL, MAS É POSSÍVEl... --> PORTANTO,
+
+
+
+
+ESSE ATTACKER PODERIA 
+
+'READ YOUR DATA' ,
+
+
+
+
+
+
+
+A DATA QUE 
+
+VOCÊ VAI ESTAR ENVIANDO DO CLIENT 
+PARA O SERVER... (
+
+
+    e isso pode ser um grande problema se estamos falando de CARTÕES DE CRÉDITO, 
+
+etc...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... EU ENTENDO....
+
+
+
+
+
+
+
+
+-> VAMOS QUERER PROTEGER 
+
+
+ESSA DATA, 
+
+
+E VAMOS FAZER 
+
+
+ISSO COM 
+
+ENCRYPTIOn 
+
+
+
+SSL/TLS .... --> 
+
+
+
+
+QUANDO 
+ESSA 
+PROTEÇÃO 
+
+ESTÁ NO LUGAR,
+
+
+É IMPOSSÍVEL
+ 
+
+ FAZER 'EAVESDROPPING',
+
+
+
+ ISSO PQ 
+
+
+
+
+A DATA VAI FICAR 'UNREADABLE'
+
+
+enquanto estiver em trânsito...
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "cross-env NODE_ENV=production DEBUG=meuProjeto MONGO_USER=madblorga MONGO_PASSWORD=T5lws5TGxtclEbKI MONGO_DATABASE=shop STRIPE_KEY=sk_test_51JzRu5CmbCw1fMfwoGYpGL1UxowTNGxpiFigIrmYjprkWQj6rk9wAVl1oIGGnG4kyhAFJEtd0VQqVMpPkbrQUNeb00B11Axm7L node app.js",
+    "start:dev": "cross-env DEBUG=meuProjeto nodemon app.js"
+  },
+
+
+
+
+
+
+
+  E ASSIM:
+
+
+
+
+
+
+
+
+const morgan = require('morgan'); //MIDDLEWARE USADO PARA CONSOLE.LOGGAR A ATIVIDADE DO USUÁRIO (requests) NO NOSSO TERMINAL/CONSOLE...
+
+const debug = require('debug')('meuProjeto'); //melhor console.logging de seu projeto....
+
+
+const name = 'meuProjeto'
+
+
+
+debug('booting %s', name);
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+debug exposes a function; simply pass this
+
+ function the name of your module, and it will return a decorated version of console.error 
+ 
+ for you to pass debug statements to. This will allow you to toggle the debug output
+ 
+  for different parts of your module as well as the module as a whole.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ah, deu certo.... 
+
+
+
+
+--> QUANDO VOCÊ QUISER FAZER UM __CONSOLE.LOG __ MELHORADO_ NO SEU APP,
+
+
+
+SIMPLESMENTE CHAME 
+
+
+
+
+'debug('sua mensagem')'
+
+
+
+NO SEU CÓDIGO,
+
+PARA AUTOMATICAMETNE 
+
+
+RECEBER UM OUTPUT COMO ESTE:
+
+
+  app Sua mensagem +211ms
+
+
+
+
+
+  -----------------------------
+
+
+
+
+  vou testar em outrAS PARTES 
+
+  DE MEU CÓDIGO,
+
+  COMO 
+
+
+  nos controllers...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ex: shop controller:
+
+
+
+
+
+  
+
+debug('SHOP CONTROLLER CODE'); /// ----> AGORA FIZ FUNCIONAR... APARENTEMENTE APENAS É NECESSÁRIO IMPORTAR/ESCREVER AQUELE CÓDIGO DE IMPORT VISTO LOGO ACIMA, CÓDIGO QUE É:
+
+
+
+//////////////////////////////////////////////
+// const debug = require('debug')('app'); 
+
+
+// const name = 'meuProjeto'
+
+
+
+// debug('booting %s', name);
+//////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+OU SEJA, PRECISAMOS ESCREVER TODO AQUELE CÓDIGO DE IMPORT __ CORRETO__ para então 
+
+
+
+conseguirmos 
+
+
+
+escrever 
+
+'debug()'
+
+nas partes de nosso controller... e aparentemente temos que fazer isso em TODOS OS ARQUIVOS UQE QUEREMOS DEBUGGAR, NO NOSSO CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS EM VEZ DE FAZER ESSA SINTAXE MERDA,
+
+
+VOCÊ PODE SEGUIR ESTA DICA:
+
+
+
+
+
+
+
+
+Also, you can inspect multiple modules at once, by separating the names with a comma.
+
+
+
+
+DEBUG=my-namespace,express* node app.js
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ISSO NÃO DEU CERTO... --> APARENTEMENTE, PRECISO __ DEFINIR O NOME DE CADA 'MODULE', e aí referenciar 
+
+
+lá no package.json 
+
+
+
+nas minhas env variables...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEU CERTO:
+
+
+
+
+  app booting meuProjeto +0ms
+mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority
+  app booting shop +0ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY\faturas
+  app SHOP CONTROLLER CODE +169ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY
+  app Test debug log +222ms
+production
+  app booting admin +0ms
+  app booting auth +0ms
+  app AUTH CONTROLLER +1ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> em cada um dos meus controllers, podemos encontrar código como este:
+
+
+
+
+
+
+const debug = require('debug')('app'); //melhor console.logging de seu projeto....
+
+
+const name = 'auth'
+
+
+
+debug('booting %s', name);
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... 
+
+
+
+AGORA CONSEGUI DE VERDADE:
+
+
+
+
+  app booting meuProjeto +0ms
+mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority
+  shop booting shop +0ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY\faturas
+  shop SHOP CONTROLLER CODE +171ms
+A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY
+  app Test debug log +215ms
+production
+  admin booting admin +0ms
+  auth booting auth +0ms
+  auth AUTH CONTROLLER +1ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> E O CÓDIGO DOS CONTROLLERS FICA TIPO ASSIM:
+
+
+
+
+
+
+  const debug = require('debug')('shop'); //melhor console.logging de seu projeto....
+
+
+const name = 'shop';
+
+
+
+debug('booting %s', name);
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+When it comes to your application, you can do more sophisticated application logging.
+
+For that, you can use one of the most popular package called winston. Winston is a multi-transport async logging library for Node.js.
+
+You can add winston to your project by installing it:
+
+npm install winston --save
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok, mas prosseguindo com o conteúdo do 'SSL/TLS'
+
+
+e como settar 
+
+isso 
+
+
+no seu 
+
+
+appp.....
+
+
+
+
+
+
+
+
+
+
+-------> evite EAVESDROPPING, essencialmente...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> SSL/TLS ENCRYPTION --> 
+
+ 
+
+  
+
+
+  A DATA FICARÁ __ UNREADABLE__ ENQUANTO ESTIVER 'IN TRANSIT',
+
+
+  E SÓ _ VAI CONSEGUIR SER DECRIPTADA __ LÁ NO SEU SERVER/BACKEND..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> PARA HABILITAR ESSA ENCRYPTION E PARA SER CAPAZ DE 'DECRYPT isso',
+
+
+
+
+
+
+  NÓS __ TRABALHAMOS__ 
+
+
+
+
+  COM 
+
+
+
+  UM __ PAR __ DE KEYS... -------->
+
+
+
+
+
+  SERÃO 2 KEYS:
+
+
+
+
+
+
+
+
+  1) UMA __ PUBLIC KEY __ (disponibilizada ao público, como vimos antes com o STRIPE)
+
+
+
+
+
+
+  2) uma PRIVATE KEY (mantida no backend, chuto eu)....
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> AMBAS SERÃO 'KNOWN TO THE SERVER'...
+
+
+
+
+
+
+
+
+
+
+
+  --> ESSA 'PUBLIC KEY'  
+
+
+  É, COMO O NOME SUGERE,
+
+
+
+  ALGO _ _QUE NÃO TEMOS QUE 'PROTECT'...
+
+
+
+
+
+
+
+
+
+
+  --> A 'PRIVATE KEY', POR OUTRO LADO,
+
+
+
+  É ALGO QUE __ TEMOS QUE PROTEGER 100%.... --> ESSA KEY SÓ SERÁ __ CONHECIDA PELO SERVER,
+
+
+  PQ 
+
+
+
+
+
+
+  ESSA KEY DEPOIS SERÁ IMPORTANTE PARA O __ 'DECYPT' DA DATA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> JÁ A __ PUBLIC ___ KEY__ VAI SER USADA PARA 'ENCRYPTING'....
+
+
+
+
+
+
+
+
+
+
+
+  RESUMINDO:
+
+
+
+  1) PUBLIC KEY --> CONHECIDA POR TODOS/PÚBLICO --> usada para ENCRYPTAR sua data...
+
+
+
+
+
+
+
+
+
+  2) PRIVATE KEY ---> CONHECIDA SÓ PELO SERVER/BACKEND ---> USADAS PARA __ DECRYPTAR SUA DATA...
+
+
+
+
+
+
+
+
+
+
+
+
+  -----> OK.... ---> 
+
+
+  
+
+
+
+
+  BEM, EM 
+
+
+  'SSL CERTIFICATE',
+
+
+
+
+  NÓS __ VAMOS __ BINDAR__ ESSA 
+
+
+
+
+
+'PUBLIC KEY' 
+
+
+
+
+
+'TO THE SERVER IDENTITY' (
+
+
+  vamos bindar a KEY PÚBLICA à IDENTIDADE DO SERVIDOR/APP seu...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> 'SERVER IDENTITY' --> isso é simplesmente algo 
+
+
+
+como 
+
+
+'domain' ( nome do site), 
+
+
+
+ou então 
+
+
+'admin email address',
+
+ 
+ são a DATA QUE 
+
+
+
+
+ __ VOCÊ _ SETTA __ QUANDO VOCÊ CRIA UM 'SSL CERTIFICATE'.... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+                    (certificate BINDS KEY TO IDENTITY)
+ SSL CERTIFICATE <<------------>>> PUBLIC KEY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> ESSE CERTIFICATE SSL, portanto,  VAI CONECTAR UMA PUBLIC KEY E UM SERVER,
+
+
+
+
+
+E ÁI __ VAI __ 'SEND THAT DATA TO THE CLIENT' ---> 
+
+
+
+vai enviar 
+
+
+
+
+
+
+A DATA_ __ COM ESSA 'PUBLIC KEY' 
+
+
+
+__ AO CLIENT,
+
+
+
+CLIENT QUE TAMBÉM FICARÁ CIENTE DA PUBLIC KEY... --_> CLIENT TEM QUE FICAR SABENDO DESSA PUBLIC KEY,
+
+
+
+E TEM QUE 
+FICAR SABENDO QUE 
+
+
+ELA 
+
+
+'PERTENCE A ESSE SERVER ESPECÍFICO' (bind key to server, that is the SSL CERTIFICATE's FUNCTION)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> PARA __ CONSEGUIR__ EMITIR ESSE 'SSL CERTIFICATE',
+
+
+VOCÊ VAI PRECISAR DE 
+
+UM 
+
+
+'CERTIFICATE AUTHORITY' para isso,
+
+
+
+
+
+
+
+EMBORA __ OBVIAMENTE__ VOCÊ POSSA 
+
+
+
+CRIAR __ SEUS PRÓPRIOS 'SSL CERTIFICATES', por conta própria... -> FAREMOS ISSO NESTE MÓDULO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> MAS QUANDO VOCÊ CRIA SUAS PRÓPRIAS KEYS (public e private),
+
+
+O BROWSER 
+
+_ NÃO VAI ACTUALLY __ CONFIAR EM VOCÊ , CONFIAR QUE ESSA 
+
+
+
+
+INFO É REALMENTE ___ CORRETA.... -->>>> E ESSAS SÃO AS HIPÓTESES 
+
+
+
+
+BEM NORMAIS NA NET, HIPÓTESES EM QUE 
+
+
+
+RECEBEMOS WARNINGS/INFO DIZENDO 
+
+
+'
+HEY, ESSA PÁGINA USA SSL, 
+
+
+MAS __ NÃO PARECE SER SECURE, VOCÊ REALMENTE QUER A VISITAR?' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> É POR ISSO QUE NA FASE DE  'PRODUCTION' VOCÊ TIPICAMENTE 
+
+USARÁ 
+
+
+UM 
+
+SSL CERTIFICATE _ PROVIDENCIADO POR UMA 
+
+'KNOWN CERTIFICATE AUTHORITY',
+
+
+AUTHORITY EM QUE __o  BROWSER CONFIA.... -------> SE VOCÊ FIZER ISSO/SEGUIR ESSA DIRETRIZ,
+
+
+VOCÊ TERÁ 
+
+'A REAL SECURE AND TRUSTED PROTECTION'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AINDA ASSIM, 
+
+
+CABE RESSALTAR QUE 
+
+
+
+__ A MANEIRA PELA QUAL ESSE MECANISMO DE PROTEÇÃO 'ssl' 
+
+FUNCIONA _ 
+
+
+SEMPRE __ É/SERÁ A MESMA...
+
+
+
+
+
+SEMPRE TEREMOS:
+
+
+
+
+
+
+
+
+
+1) ESSA PUBLIC KEY.... public key será parte daquele 'CERTIFICATE' 
+
+
+
+
+
+
+
+
+
+2) O CERTIFICATE __ IDEALMENTE_ NÃO VAI SER CRIADO POR VOCê, E SIM POR UMA  'TRUSTED CERTIFICATE AUTHORITY'
+
+
+
+
+
+
+
+
+
+3) apesar de NÃO SER O IDEAL, ___PODEMOS__ CRIAR NOSSO PRÓPRIO SSL CERTIFICATE.... -> 
+
+
+não é ideal, mas é DE GRAÇA...
+
+
+
+
+
+
+
+
+
+
+
+4) A PUBLIC KEY É ENTÃO RECEBIDA PELO CLIENT, TUDO ATRAVÉS DAQUELE 
+
+'CERTIFICATE' que vamos criar/incorporar...
+
+
+
+
+
+
+
+
+
+
+5) A PARTIR DA 'PUBLIC KEY',
+
+
+O CLIENT  ___ PODE 'ENCRYPTAR'
+
+A 
+
+DATA QUE 
+
+ELE VAI ENVIAR AO SERVEr...
+
+
+
+
+
+
+6) JÁ O SERVER, POR MEIO DAQUELA 'PRIVATE KEY' (conhecida apenas pelo próprio server),
+
+
+
+__ VAI __ ACTUALLY__ DECRYPTAR A DATA ENVIADA PELO USER... --> E 
+
+
+___SÓ ___ A PRIVATE KEY___ DO SEU SERVER, ENFIADA NO SEU SERVER,
+
+
+VAI SER CAPAZ DE DECRIPTAR ESSA 
+
+
+DATA ENCRYPTADA 
+
+
+
+
+pela 'public key', que 
+
+
+acaba sendo enviada ao server/backend...
+
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... É ASSIM QUE O SSL FUNCIONA,
+
+
+E É ASSIM QUE 
+É FEITO 
+
+O 
+
+
+'SECURE YOUR DATA IN TRANSIT',
+
+como o SSL FAZ ISSO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS ANALISAR COMO ISO FUNCIONA NA PRÁTICA...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA SETTAR UMA CONEXÃO SSL __ POR CONTA PRÓPRIA 
+
+
+NO SEU SERVER,
+
+
+
+
+
+COM SEU __ PRÓPRIO SSL CERTIFICATE ,
+
+
+
+
+
+
+(
+
+  DE NOVO, VOCÊ SEMPRE DEVE OBTER ESSE CERTIFICATE DE UMA 'AUTHORITY';
+
+
+  você vai querer recorrer a uma dessas AUTHORITIES quando você estiver
+
+
+  '
+  DEPLOYING FOR PRODUCTION'....
+)
+
+
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE, PARA O TESTING DE NOSSO APP,
+
+
+
+PODEMOS DEFINITIVAMENTE 
+
+BRINCAR 
+
+
+COM NOSSOS PRÓPRIOS VALORES DE 'private key' 
+
+
+e 
+
+
+'public key'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK... -> MAS COMO FAZEMOS PARA __ CRIAR _UM CERTIFICATE? 
+
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR EXPLICA QUE 
+
+FAZEMOS ISSO,
+
+NO NOSSO APP NODE,
+
+
+
+
+
+
+
+
+
+
+
+
+
+__ POR _ MEIO DO COMANDO 'openSSL'.... ---------------> 
+
+
+
+
+
+
+
+
+
+
+'ex:
+
+
+
+
+
+
+openssl' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> NO MAC E NO LINUX,
+
+
+VOCÊ TEM ESSE COMANDO __ INSTALADO __ POR DEFAULT.... --> JÁ NO WINDOWS, POR OUTRO LADO,
+
+
+NÃO TEMOS ESSA COLHER DE CHÁ....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR EXECUTAR ESSE CÓDIGO DE 
+
+
+'openssl',
+
+
+
+O PROFESSOR 
+
+VAI ATÉ O GOOGLE 
+
+ 
+
+ E DIGITA 
+
+ 'openssl windows'...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> A SEGUNDA PÁGINA,
+
+
+
+ 'Binaries - OpenSSL/Wiki',
+
+
+
+
+
+
+
+ ___ VAI _ NOS DAR ALGUMAS INFORMAÇÕES  
+
+
+
+
+
+
+
+
+ SOBRE COMO EXECUTAR ESSE COMANDO NO WINDOWS..
+
+
+
+
+
+
+
+
+ -----> devemos ENTRAR NO LINK DE 
+
+
+
+
+ 'slproweb.com/products/Win32OpenSSL.html' ...
+
+
+
+
+
+
+ --> NESSE LOCAL VOCÊ VAI ENCONTRAR ALGUNS INSTALADORES QUE __ INSTALAM__ ESSA 
+ TOOL DE 
+
+ 'OpenSSL' 
+
+
+ no windows também...
+
+
+
+
+
+
+
+
+ --> INSTALAMOS ISSO...
+
+
+
+
+
+
+
+
+ ok....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO FEITO,
+
+
+
+
+
+
+
+
+ ___ PODEMOS __ RODAR,
+  
+  LÁ 
+
+
+
+  NO TERMINAL DE NOSSO PROJETO,
+
+
+  O CÓDIGO 
+
+
+
+  'openssl req -nodes -new -x509 -keyout server.key -out server.cert' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------>  ISSO, ESSE COMANDO AÍ,
+
+
+
+
+  __ __ SE VOCÊ DIGITAR 'ENTER',
+
+
+
+
+SERÃO 
+
+REALIZADAS DIVERSAS QUESTÕES PARA VOCê ...
+
+
+
+
+
+
+
+
+
+
+
+--> 
+
+
+
+
+
+EX:
+
+
+
+
+Country Name(2 letter code) [AU]: 
+
+
+
+
+
+
+
+
+
+
+
+--------> ALI, NO  CASO,
+
+
+DEVEMOS 
+
+
+'CHOOSE VALID VALUES'... -----> ENTRETNATO, 
+
+
+
+ISSO NÃO VALE MT, NA VERDADE...
+
+
+
+
+
+
+
+
+
+
+
+
+------> MAS A IDEIA AQUI, É CLARO, 
+
+
+É QUE __ VOCÊ __ CONSEGUIRÁ/CONSEGUE __ 
+
+
+
+
+
+
+
+
+SETTAR/ATRIBUIR/BIND A 'IDENTIDADE DO SEU APLICATIVO' (a identidade do app em si )
+
+
+
+
+
+
+__ A UMA PUBLIC KEY/public key desse app..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> DE NOVO:
+
+
+
+
+
+
+
+
+
+
+
+
+SEU PRÓPRIO 'SSL CERTIFICATE',
+
+
+criado por suas PRÓPRIAS MÃOS,
+ 
+
+ ELE __ NUNCA __ VAI 
+
+
+
+
+ PASSAR/SER ACEITO PELOS BROWSERS MODERNOS... isso é um FATO...
+
+
+
+
+
+
+
+
+
+ --> SE VOCÊ QUISER USAR ESSE 'SSL CERTIFICATE' ___ FALSO____,
+
+ é claro que você pode,
+
+ SE __ ESTIVER EM DEVELOPMENT (pq não há nada em jogo)...
+
+
+
+
+
+
+
+
+
+
+
+ ------> MAS SE VOCÊ UMA HORA QUISER __ DEPLOYAR SEU APP,
+
+
+
+ É LÓGICO _ QUE 
+
+
+ SERÁ 
+
+ NECESSÁRIO 
+
+ ENCONTRAR  UMA 'TRUSTED CERTIFICATE AUTHORITY'....
+
+
+
+
+
+
+
+
+
+
+
+ -----> A IDEIA, NO CASO, É 
+
+
+
+ __ 'CONNECT YOUR IDENTITY' (do seu app)
+
+
+
+
+À 'PUBLIC KEY' 
+
+que vai ser enviada aos users....
+
+
+
+
+
+
+
+
+
+
+
+
+--> quer-se que 
+
+
+
+A IDENTIDADE DO SEU APP 
+
+
+__ PRECISA __ SEJA CONECTADA/VAI SER CONECTADA  __ à 'PUBLIC KEY'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DE NOVO: 
+
+
+SEU PRÓPRIO 'SELF SSL CERTIFICATE'
+
+__ não vai ser aceito pelos browsers (not recognized), de qualquer forma....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ok... -> mas para PRODUCTION,
+
+
+
+
+___ NÃO _ DEVEMOS _ USAR __ 
+
+
+ESSA OPÇÃO;
+
+
+NÃO PODEMOS usar essa versão do código...
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... MAS ENCONTREI UM ERRO:
+
+
+
+
+PS A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY> openssl req -nodes -new -x509 -keyout server.key -out server.cert
+openssl : O termo 'openssl' não é reconhecido como nome de cmdlet, função, arquivo de script ou programa operável. Verifique a 
+grafia do nome ou, se um caminho tiver sido incluído, veja se o caminho está correto e tente novamente.
+No linha:1 caractere:1
++ openssl req -nodes -new -x509 -keyout server.key -out server.cert
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (openssl:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+
+
+
+
+
+
+
+
+
+
+ --> VAMOS PRECISAR ADICIONAR ESSE CÓDIGO/RUN 
+
+
+ aos 
+
+
+ 'PATH' 
+
+ de nosso path....
+
+
+
+
+
+
+
+
+
+
+ --> CONSEGUI.... --> AO EXECUTAR ESSE CÓDIGO, RECEBO ESTA MENSAGEM, NO TERMNAL:
+
+
+
+
+
+
+ PS A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY> openssl req -nodes -new -x509 -keyout server.key -out server.cert
+..+..+.........+....+..+....+.........+...+..+.+..+.........+...+...+.......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+.......+........+...+......+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+...+.......+...+...+......+......+..+...+.......+........+.......+..+.+...+..+...+....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+....+.+............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+......+.....+...............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ISSO, ESSA EXECUÇÃO, 
+
+
+VAI TE DAR 
+
+' PRIVATE 
+
+
+E 
+
+
+PUBLIC' 
+
+
+keys 
+
+
+
+
+
+__ AGLOMERADAS/'PACKAGED UP' __ EM 1 
+
+'certificate'... ----> 
+
+
+
+
+
+OK.. AÍ O PROFESOR RECEBE ESTA PERGUNTA:
+
+
+
+
+
+
+
+
+
+
+
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+------> PROFESSOR EXPLICA QUE AS PERUGNTAS QUE RECEBEMOS/RECEBEREMOS SÃO MEIO IDIOTAS,
+
+
+
+
+
+E _ QUE _ OS VALORES QUE VOCÊ INPUTTA NÃO SÃO TÃO ÚTEIS....
+
+
+
+
+
+
+
+
+
+
+
+--> A IDEIA, AQUI, PORTNATO, É QUE 
+
+
+
+
+NÓS CONSEGUIMOS CONECTAR NOSSO APP (IDENTIDADE DE NOSSO APP)
+
+
+
+
+A UMA 
+
+
+
+
+
+
+'PUBLIC KEY'--------> 
+
+
+
+
+
+
+
+
+MAS, DE NOVO, 
+
+
+SE 
+
+
+
+VOCÊ TIVER UM 
+
+
+
+'CERTIFICATE'
+
+
+
+
+
+
+
+QUE FOI SIGNADO LITERALMENTE POR VOCÊ,
+
+
+
+ISSO NÃO VAI SER ACEITO POR BROWSERS, DE QUALQUER JEITO...
+
+(
+
+  ISSO SIGNIFICA QUE _ PARA PRODUCTION, NÃO DEVEMOS USAR ESTE CÓDIGO (não será aceito por browsers dos users, será tido como suspeito...):
+
+
+''''''
+openssl req -nodes -new -x509 -keyout server.key -out server.cert
+
+
+''''''
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+-> AINDA ASSIM, PROFESSOR VAI REALMENTE RESPONDER ALGUMAS DAS PERGUNTAS,
+
+
+PREENCHÊ-LAS COM 'TRUTHY VALUES'... (mas são info que NÃO MUDAM EM NADA O FUNCIONAMENTO DO NOSSO APP).....
+
+
+
+
+
+
+
+
+
+
+
+
+------->  OK... E UM __ VALOR IMPORTANTE___ NESSE RUN DE 
+
+
+
+'openssl req -nodes -new -x509 -keyout server.key -out server.cert'
+
+
+
+É __ JUSTAMENTE 
+
+O 
+
+
+
+
+
+''''Common Name''' --------> 
+ 
+
+
+
+
+
+
+
+ NESSE SLOT,
+  
+  
+  VOCÊ __ DEVE__ SETTAR __ SEU VALOR COMO 
+
+
+
+  'localhost',
+
+  PQ CASO CONTRÁRIO ESSE CERTIFICATE __ NÃO VAI FUNCIONAR___... --> NÃO VAI FUNCIONAR 
+
+
+  JUSTAMENTE PQ 
+
+
+
+
+  ESSE 'Common Name'
+
+
+  TEM QUE ESTAR 
+
+
+  'SETTADO/VINCULADO
+   
+
+   ao seu domain'... ------------>> ISSO SIGNIFICA QUE 
+
+
+
+   SE VOCÊ TENTASSE USAR SEU 'SELF-SIGNED CERTIFICATE'
+
+
+
+
+   NO __ SERVER_ QUE VOCê DEPLOYA, você seria PUNIDO.....
+
+
+
+
+
+
+   ----------------------------------------
+
+
+
+
+
+
+   -> NUNCA TENTE USAR 'YOUR SELF SIGNED CERTIFICATE' 
+
+ 
+   __ NO SERVER EM QUE VOCÊ DEPLOYA SEU APP... --->  E TAMBÉM NÃO TENTE USAR ESSE 'CERTIFICATE CASEIRO' em apps EM FASE DE PRODUCTION/DEPLOY....
+
+
+
+
+
+
+
+
+
+
+
+
+   --------> ok... o 'COMMON NAME' TEM QUE ESTAR VINCULADO/ACORRENTADO 
+
+
+   AO VALOR DE 
+
+
+   'localhost'....
+
+
+
+
+
+
+
+
+
+
+
+   OK, MAS DE NOVO: 
+
+   TIPICAMENTE VOCÊ VAI _ REQUEST_ UM CERTIFICATE PARA O SEU DOMAIN __ ATRAVÉS_ _DE ALGUMA 
+
+   'AUTHORITY',
+
+
+
+
+
+E __ AÍ _ SÃO ELES QUE FAZERAÕ ISSO PARA VOCÊ..
+
+
+
+
+
+
+
+
+
+
+
+
+------> MAS SE VOCÊ CRIAR SEU PRÓPRIO SSL CERTIFICATE,
+
+
+
+
+
+
+
+
+
+
+-> IDEALMENTE/TIPICAMENTE,
+
+VOCÊ VAI REQUERER UM CERTIFICATE 
+
+
+
+
+___ PARA __ O SEU 'DOMAIN', TUDO POR MEIO DE ALGUMA PROPRIEDAED...
+
+
+
+
+
+
+
+--> E ESSE CERTIFICATE DEVE ESTAR SETTADO COMO ESSE 'maine'...
+
+
+
+
+
+
+
+2) 
+
+
+
+
+
+
+
+se vocÊ TIVER SEU PRÓRPIO PROVIDER;/AUTHORITY,
+
+ELES VÃO FAZER ESSE SET DO 
+
+
+'localhost AUTOMATICAMENTE PARA VOCÊ...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.. MAS DEPOIS DE FAZERMOS TUDO ISSO,
+
+
+TEREMOS 2 NOVOS FOLDERS NO NOSSO APP:
+
+
+
+
+
+
+
+
+
+'SERVER.CERT' (certificado EM SI)  (OBS: TAMBÉM CONTÉM A 'PUBLIC KEY'..)
+
+
+
+
+
+'server.key' (É A PRIVATE KEY EM SI)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS NÃO ESTOU ENCONTRANDO O ARQUIVO DE 'cert'....
+
+
+
+
+
+
+
+
+--> MAS CONTINUANDO A AULA:
+
+
+
+PRIVATE KEY SEMPRE FICARÁ 
+
+
+
+NO SERVER,
+
+
+e oq 
+
+
+'CERTIFICATE'
+
+é algo a que QUEREMOS MANDAR O CLIENT ___ NO FINAL DAS CONTAS.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK.... MAS PRA __ CONSEGUIRMOS __ usar essa 'public key',
+
+
+lá em 'app.js',
+
+
+
+NO CASO ,
+
+
+TEMOS QUE 
+
+IMPORTAR UM NOVO __ NODE_MODULE,
+
+QUE SERÁ 
+
+O 
+
+'http',
+
+
+POR MEIO DO CÓDIGO 
+
+
+
+
+'const https = require('https');' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OBS::: ATÉ AGORA, NO CURSO, USAMOS 'HTTP', mas agora vamos usar HTTPS, com esse 'SSL CERTIFICATE' aí...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMMON NAME --> SETTE 'LOCALHOST'.. 
+
+
+
+
+
+
+
+
+
+--> ISSO PQ VOCÊ PRECISA SETTAR ISSO COMO O DOMAIN QUE VOCê ESTÁ USANDO...
+
+
+
+
+
+
+
+
+
+
+
+--> EX: SE VOCÊ FOSSE USAR SEU 'SELF-SIGNED CERTIFICATE'
+
+
+
+
+
+no server em que vocÊ deploya seu app, e se 
+
+
+você 
+
+
+hosta seu APP EM 'exemplo.com',
+
+
+
+VOCÊ 
+
+
+SERIA OBRIGADO A SETTAR ESSE 'common name' 
+
+
+
+como 
+
+
+'example.com'....
+
+
+
+
+
+
+Common Name (e.g. server FQDN or YOUR name) []:
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO TIPICAMENTE VOCÊ VAI REQUISITAR UM SSL CERTIFICATE A UMA 'AUTHORITY',
+
+
+E aí _ ELES VAO FAZER ISSO POR VOCÊ, você geralmente naõ tem que fazer este procedimento...
+
+
+
+
+
+
+
+
+
+
+
+--> MAS SE VOCê ESTÁ CRIANDO SEU PRÓPRIO CERTIFICATE (como esses caras fazem, os 'AUTHORITIES'),
+
+vocÊ 
+deve 
+
+colocar o DOMAIN EM QUE SEU APP NODEEXPRESS ESTÁ RODANDO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> como nós estamos rodando esse backend __ LOCALMENTE, PRECISAMOS SETTAR 'localhost',
+
+
+PQ SE COLOCARMOS OUTRA COISA, O CERTIFICATE SERÁ DENIED... (se o valor for outro)...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+Country Name (2 letter code) [AU]:BR
+State or Province Name (full name) [Some-State]:RS
+Locality Name (eg, city) []:Porto Alegre
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Soshiki
+Organizational Unit Name (eg, section) []:a
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ISSO FEITO,
+
+ESCRITO 
+
+
+
+
+ESSE 'common name',
+
+
+
+FICAREMOS 
+
+COM 
+
+
+
+2 ARQUIVOS NOVOS NO ROOT DE 
+
+NOSSO APP:
+
+
+
+
+
+
+1) O ARQUIVO 'SERVER.CERT'
+
+
+
+
+2) O ARQUIVO 'server.key'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> o 'certificate' VAI SER O ARQUIVO __ COM __ O SEU 'CERTIFICATE EM QUESTÃO' + a PUBLIC KEY....
+
+
+
+
+
+
+
+
+
+--> já o 'server.key' SERÁ _ SUA PRIVATE KEY...
+
+
+
+
+
+
+
+
+
+EX( CERTIFICATE ):
+
+
+
+-----BEGIN CERTIFICATE-----
+MIID9TCCAt2gAwIBAgIUfFXX4x9j98F0QaFrAfOGcYyzvCMwDQYJKoZIhvcNAQEL
+BQAwgYkxCzAJBgNVBAYTAkJSMQswCQYDVQQIDAJSUzEVMBMGA1UEBwwMUG9ydG8g
+QWxlZ3JlMRAwDgYDVQQKDAdTb3NoaWtpMQowCAYDVQQLDAFhMRIwEAYDVQQDDAls
+b2NhbGhvc3QxJDAiBgkqhkiG9w0BCQEWFW1hZGJsb3JnYUBob3RtYWlsLmNvbTAe
+Fw0yMTEyMjcxODA5MTJaFw0yMjAxMjYxODA5MTJaMIGJMQswCQYDVQQGEwJCUjEL
+MAkGA1UECAwCUlMxFTATBgNVBAcMDFBvcnRvIEFsZWdyZTEQMA4GA1UECgwHU29z
+aGlraTEKMAgGA1UECwwBYTESMBAGA1UEAwwJbG9jYWxob3N0MSQwIgYJKoZIhvcN
+AQkBFhVtYWRibG9yZ2FAaG90bWFpbC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IB
+DwAwggEKAoIBAQDaxb6chF8Gr4ltYHIkdfnlBcAAWDZWmyfG6oVFD7fs0vmiOZAH
+AeFdbf1IBR3WrCq0ySurnuiS1RMOOuwOUlMm/zcTZxNbAcWUIUAL2/jsZ0asxRpy
+uIi1+6VWHKEU2p9g8ejW4VDdutpdRxyRlaahrTWU3/W7VB7fPlNdWgVqgVCkrUB1
+L2pwBq4vJAOJsYl/BfYkX5+J1t+SmylmjU8uWlR3YToQSFtAY3tdt3zqMOjrzhyX
+Q3hHsYjPGMCeKU4ob6ethrX41FlJ/w6CNeiEzP3sl3RN39lhk28pY4ZLA4srJLnz
+/9jpslasLIdWjY2J8ffXbR+cq7XZ4K8le/tvAgMBAAGjUzBRMB0GA1UdDgQWBBS6
+ouPjEOEZqKhERZMSxejuoGG+yDAfBgNVHSMEGDAWgBS6ouPjEOEZqKhERZMSxeju
+oGG+yDAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQDJ5jUnVXoR
+73VBdwagpZZVCO5e7QfRrT67GA4M+2ATGQi7Xzg6aZ17i5NbRxisq2PivX2fMacQ
+e27wqX2hVctiH8vKgbq0N+nvE94cilcJzAISZxZLeEHvqO6GaIASs04eeX5q9mhN
+wsv4FyDfRf4oq6JgGzFbejrue6N3eEDDg4PDtendzuS3lYuRBEp0c5MgKydUnG7X
+hirl4Q487ZexSei8kQGLc4pxV+NMNcI7OR2NLdlmy0y8YfvCr/18J+g80t8arNPK
+43/g+mBL9fpcyBVbtgc8RN13Mgsbr8c+1Pxy0SI6Ft+8QSXShsdu2cRhdyx8y5Yr
+JzC0QcZZ9ABo
+-----END CERTIFICATE-----
+
+
+
+
+
+
+
+
+
+
+
+EX( private key):
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----BEGIN PRIVATE KEY-----
+MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDaxb6chF8Gr4lt
+YHIkdfnlBcAAWDZWmyfG6oVFD7fs0vmiOZAHAeFdbf1IBR3WrCq0ySurnuiS1RMO
+OuwOUlMm/zcTZxNbAcWUIUAL2/jsZ0asxRpyuIi1+6VWHKEU2p9g8ejW4VDdutpd
+RxyRlaahrTWU3/W7VB7fPlNdWgVqgVCkrUB1L2pwBq4vJAOJsYl/BfYkX5+J1t+S
+mylmjU8uWlR3YToQSFtAY3tdt3zqMOjrzhyXQ3hHsYjPGMCeKU4ob6ethrX41FlJ
+/w6CNeiEzP3sl3RN39lhk28pY4ZLA4srJLnz/9jpslasLIdWjY2J8ffXbR+cq7XZ
+4K8le/tvAgMBAAECggEANQsRBj4KFELnXT+vLSv1pRPZ07uPoTwJTu951J7VB3S3
+1h+CzlAkZlTOvnGPJIel6yODlR74YPGMpzyeE3LeemwS3H93b+9kCmBtePKizh7U
+QfugSAR6ETWshs52N+oyDn1Y6RDEXJ57Z3ZgdOQF/NlUTn5mxD7HJXWlHNNA0OuK
+70FTBHcllmSJaXaEW6ZrS+03YT5zhbrtbwYNOdAhlEokl1XYuGCyrNh2nmkSuTpl
+n1+t4KrXVvBmOyD65wIA2ZrwcO080ZsRgG1ryUtKtiFYzKFs4NYpyBOml05EOqlI
+AhEi5mPwg8KGi9uAoGyCn5xJm2UuVxtY0XjvK9hzMQKBgQDpxG/mBkraiFPfgq3v
+daHWrX8IBix5dehZAIK755egUo++b94OIHd/cmjgMeQSqhp88PoC41ALUK54emCk
+MypCq2ILnofWcM2P87tPlV0EemiW+U2elH4fKBWz0Ffx8YD3463yJIJ9DGmilDJA
+BOX/LRcYFBVxOyI02pjSd+fdXQKBgQDvlDmUNbJsscH0X3P0ZuPtKoPAWyIn2NzI
++uNa14PKLPY7ZgsUxBGCn27F+sHmhh5+5cRS7Dr1EngKkiVn6cX7nA283Lw2ABXx
+6XhLsILb9ll2zb8pTXSArE45/sdn/3VzSy7pMxroUqZ2k5xglPJsC3sf0xYM2ZE8
+/x+joiVjOwKBgC7kInYHqRgw5HIfKniwJeiEIMkhQ+aRSiwgOBktGXMlXIQcuHQo
++w9ribH/D/rWeD27sMrHghTi+Dxef+gwAzggXKhsAl93fSR1BYuvMFtnmnc+Rt2a
+d7oUNlY9Yoa7pN0UpJ2/yRUAWmgsRfAli2UmTE2eKbbu36uudZ0yRCZZAoGALaqH
+PyTtGaLYYYhARfnGwFI2QtgcLpQ7oWORKqOhz0u6s5/DxPWKkOdq6fneM96kuXN6
+dIPqyQP4NaudzazVvBwG0lUQ2woxJKdn8qV2jA7tBqQ5J9pHtq8hShSyVbRv4sYV
+7wV6v4XhjQCd8hryCn41vd8yeMiP0pyen0Ys8jkCgYAGHzHIsnYNixyIxaJF6WeY
+jFoewQT9SpKhOhOQn1LVeXFQV0Ms1hk3g7cdcsyPsVSjroBxVwT3915wH9F1bJ+a
+hq+F2RsRPIqMWNTEQw6G4UR5WUiqkBLcurcNAvVtNdAP+jCGlNtyIlNHLSCfyN/G
+EIxCGr31n1vM55ilLswlqA==
+-----END PRIVATE KEY-----
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+OK... A PRIVATE ('server.key') KEY SEMPRE FICARÁ NO SERVER,
+
+
+AO PASSO QUE 
+
+
+
+o 
+
+
+'server.cert' É A COISA 
+
+QUE 
+
+
+ENVIAREMOS AO 
+
+CLIENT, NO FINAL DAS CONTAS.... ENVIAMOS O CERTIFICATE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA FAZER ISSO,
+
+
+
+PARA _ _ENVIAR__ O CERTIFICATE AOS NOSSOS USER,
+
+
+PRECISAMOS IR ATÉ 
+
+'app.js' 
+
+
+
+ E DEVEMOS __ IMPORTAR__ UM NOVO MÓDULO 
+
+
+
+
+
+ NODE.... -----> É O MÓDULO DE 'https'...
+
+
+
+
+
+
+
+
+
+
+
+ -----> ELE É IMPORTADO ASSIM:
+
+
+
+
+
+
+
+
+ const https = require('https');
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> ESSE MÓDULO NOS DEIXA 'SPIN UP A HTTPS SERVER'.... 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ ------> ISSO PQ, ATÉ AGORA,
+
+
+
+ DIRETA/INDIRETAMENTE, POR MEIO DE 'app.listen()',
+
+
+
+
+ __ SEMPRE UTILIZAMOS 
+
+
+ 'HTTP' ...- ------------> 
+
+
+
+
+
+
+
+
+ AGORA VAMOS SUBSTITUIR 
+
+
+ ESSE 
+
+ 'HTTP' USADO NO NOSSO APP __ por _ HTTPs....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> PARA FAZER ISSO,
+
+
+
+
+
+
+ PARA USAR ESSE MÓDULO DE 'https',
+
+
+
+ PRECISAMOS 'READ IN' 
+
+
+
+
+ OS ARQUIVOS DE 'server.key' 
+
+
+ e 
+
+
+
+ 'server.cert'...
+
+
+
+
+
+
+
+
+
+
+ ---> OK.. PARA FAZER 'READ IN' DESSES ARQUIVOS,
+
+  
+
+
+
+
+
+
+  PRECISAMOS 
+
+
+  ESCREVER 
+
+
+
+
+
+
+  basicamente:
+
+
+
+
+
+
+
+  const privateKey = ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> PARA CONSEGUIR ESSA PRIVATEKEY NESSE NOSSO ARQUIVO,
+
+  precisamos USAR O PACKAGE DE 'fs' (FILE SYSTEM) do node,
+
+
+
+
+
+  QUE __ AÍ 
+
+  ESCREVEMOS ASSIM:
+
+
+
+  const privateKey = fs.readFileSync() 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> SIM, NÓS VAMOS ___ FAZER__ READ __ DE ESSA FILE __ DE FORMA SÍNCRONA__... --> ISSO SIGNIFICA QUE ISSO 
+
+  VAI 
+
+
+  'BLOCK OUT' 
+
+
+
+  A CODE EXECUTION DE NOSSO CÓDIGO, até que esse arquivo seja lido...  ---------> NA GRANDE MAIORIA DAS SITUAÇÕES,
+
+
+
+
+
+
+
+VOCÊ NUNCA VAI QUERER USAR 
+
+
+
+ESSE 'readFileSync'...---> ENTRETANTO, COMO AQUI ESTAMOS FALANDO DE ALGO QUE ACONTECE _ ___ ANTES DO 'ACTIVE RUNTIME' DE NOSSO 
+
+SERVER ( ou seja, ANTES DO SERVER SER EFETIVAMENTE ABERTO),
+
+
+
+
+NÃO PRECISAMOS NOS PREOCUPAR COM 
+
+
+
+
+A '''DEMORA''' 
+
+
+nesse 'readFile' de modalidade síncrona...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+const User = require('./models/user');
+
+const csrfProtection = csrf();
+
+
+
+const privateKey = fs.readFileSync(); ///////COMO VAMOS QUERER GERAR ESSA KEY __ ANTES__ DE NOSSO SERVER EFETIVAMENTE SER INICIADO, NÃO HÁ PROBLEMA EM USAR ESSA MODALIDADE 'sync' de 'readFile'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... VAMOS LER ESSA FILE SINCRONAMENTE... --> O ARQUIVO QUE VAMOS LER É 
+JUSTAMENTE 
+
+'server.key'....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const privateKey = fs.readFileSync('server.key'); ///////COMO VAMOS QUERER GERAR ESSA KEY __ ANTES__ DE NOSSO SERVER EFETIVAMENTE SER INICIADO, NÃO HÁ PROBLEMA EM USAR ESSA MODALIDADE 'sync' de 'readFile'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TAMBÉM ADICIONAREMOS __ OUTRA CONSTANTE__, 
+
+
+
+QUE SERÁ 
+
+
+A CONSTANTE DE 
+
+'certificate',
+
+QUE 
+
+SERÁ 
+
+
+
+
+JUSTAMENTE 
+
+
+'server.cert',
+
+NOSSO CERTIFICATE...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+const https = require('https');
+
+
+const errorController = require('./controllers/error');
+
+const User = require('./models/user');
+
+const csrfProtection = csrf();
+
+
+
+const privateKey = fs.readFileSync('server.key'); ///////COMO VAMOS QUERER GERAR ESSA KEY __ ANTES__ DE NOSSO SERVER EFETIVAMENTE SER INICIADO, NÃO HÁ PROBLEMA EM USAR ESSA MODALIDADE 'sync' de 'readFile'...
+
+
+const certificate = fs.readFileSync('server.cert'); ///AMBAS CONSTANTES/ARQUIVOS _ SERÃO UTILIZADOS PARA _ PODERMOS __ EXECUTAR/UTILIZAR O PROTOCOLO 'HTTPS' no lugar do 'http' , no nosso projeto.... (ssl ENCRYPTION)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------->  FINALMENTE, ISSO TUDO FEITO,
+
+DEVEMOS SCROLLAR LÁÁÁÁÁ embaixo,
+
+
+bem no local EM QUE 
+
+TEMOS 
+
+AQUELE 
+
+'app.listen'
+
+
+DENTRO DO 'mongoose.connect()',
+
+
+
+
+
+
+QUE ESTÁ ASSIM, NO PRESENTE:
+
+
+
+mongoose
+  .connect(
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+   app.listen(process.env.PORT || 3000);  //  ---> OK .... MAS VAMOS COLOCAR UMA GAMBIARRA,   (a grande maioria dos hosting providers vai enfiar uma variável de 'PORT' no seu runtime AUTOMATICAMENTE, o que fará com que esse valor seja preenchido...)
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+AGORA, NO CASO,
+
+
+
+__ DEIXAREMOS DE USAR 'app.listen',
+
+
+PARA ENTÃO 
+USAR 
+
+'https.listen'... (que funciona exatamente da mesma forma que 'app.listen', MAS QUE ACABA UTILIZANDO AQUELA 'PRIVATE KEY' E AQUELA 'PUBLIC KEY', armazenadas nas suas constantes, e utilizdas aqui...)
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+mongoose
+  .connect(
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+   https.listen(process.env.PORT || 3000);  //  ---> OK .... MAS VAMOS COLOCAR UMA GAMBIARRA,   (a grande maioria dos hosting providers vai enfiar uma variável de 'PORT' no seu runtime AUTOMATICAMENTE, o que fará com que esse valor seja preenchido...)
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS SÓ CHAMAR 'https' 
+
+
+
+POR SI SÓ _ NÃO VAI __ RESOLVER SUA SITUAÇÃO... --> você precisa chamar 
+
+
+'https.createServer()',
+
+
+ESSE METHOD 
+
+de 
+
+'createServer'
+
+
+DENTRO DE 'https'....
+
+
+
+
+
+
+
+
+
+--> DENTRO DESSE CREATESERVER,
+
+
+VOCÊ DEVE PASSAR 2 ARGUMETNOS:
+
+
+
+
+
+
+1) O PRIMEIRO ARGUMENTO É __ UM OBJETO EM QUE __ CONFIGURAMOS O NOSSO SERVER HTTPS.... ---> DEVEMOS APONTAR 
+
+A NOSSA __ PRIVATE__ KEY__ E AO CERTIFICATE...
+
+
+
+
+
+
+
+
+
+2) O SEGUNDO ARGUMENTO __ ___ É __ O 'REQUEST HANDLER';
+
+
+no nosso caso, ESSE 'REQUEST HANDLER' É NOSSA PRÓPRIA 'EXPRESS APPLICATION'...
+
+
+
+
+
+
+
+
+
+
+--------> vamos escrevendo assim, portanto:
+
+
+
+
+
+https.createServer({}, app); 
+
+
+
+
+
+
+(
+
+
+
+  COLOCAMOS 'app', que 
+
+  é 
+
+
+''''''''
+  const app = express();
+'''''''
+
+,
+
+
+
+
+__DENTRO __ DESSE SEGUNDO PARÂMETRO, POIS ELE REALMENTE É NOSSO 'REQUEST HANDLER'...
+
+)
+
+
+
+
+
+
+
+
+-----> OK... MAS 
+
+
+PRECISAMOS 
+
+
+DAQUELE 
+
+PRIMEIRO ARGUMENTO, DAQUELE 'JAVASCRIPT OBJECT'... ----------> 
+
+
+
+
+DENTRO DESSE OBJETO, 
+
+
+PRECISAMOS SETTAR 2 COISAS:
+
+
+
+
+
+1) A PRIMEIRA PROPRIEDADE SERÁ DE NOME 'key' ---> NESSA PROPRIEDADE, COLOCAMOS NOSSA __ PRIVATE___ KEY... a constante que recém criamos....
+
+
+
+
+
+2) depois, você precisa de uma propriedade 'cert', EM QUE VOCÊ VAI INSERIR O CERTIFICATE QUE RECÉM CRÍAMOS....
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const https = require('https');
+
+
+const errorController = require('./controllers/error');
+
+const User = require('./models/user');
+
+const csrfProtection = csrf();
+
+
+
+const privateKey = fs.readFileSync('server.key'); ///////COMO VAMOS QUERER GERAR ESSA KEY __ ANTES__ DE NOSSO SERVER EFETIVAMENTE SER INICIADO, NÃO HÁ PROBLEMA EM USAR ESSA MODALIDADE 'sync' de 'readFile'...
+
+
+const certificate = fs.readFileSync('server.cert'); ///AMBAS CONSTANTES/ARQUIVOS _ SERÃO UTILIZADOS PARA _ PODERMOS __ EXECUTAR/UTILIZAR O PROTOCOLO 'HTTPS' no lugar do 'http' , no nosso projeto.... (ssl ENCRYPTION)...
+
+
+
+
+
+
+
+
+
+mongoose
+  .connect(
+    // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+   https.createServer(
+     {
+       key: privateKey,
+       cert: certificate
+     },
+
+
+     app
+
+
+   ).listen(process.env.PORT || 3000);  //  ---> OK .... MAS VAMOS COLOCAR UMA GAMBIARRA,   (a grande maioria dos hosting providers vai enfiar uma variável de 'PORT' no seu runtime AUTOMATICAMENTE, o que fará com que esse valor seja preenchido...)
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+CERTO.... O resto do código CONTINUA COMO ANTES,
+
+AINDA SERÁ 
+
+
+aqueel 
+
+
+'.listen(process.env.PORT || 3000);',
+
+
+EM QUE 
+
+FAZEMOS LISTEN TO A REQUESTS FEITOS AO NOSSO SERVER...
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... OBSERVE:
+
+
+    https.createServer(
+      {
+        key: privateKey,
+        cert: certificate
+      },
+      app  ///coloque o ACTUAL APP/REQUEST HANDLER QUE VOCÊ ESTÁ USANDO NO SEU PROJEOT...--> como nós estamos usando EXPRESS, COLOCAMOS UMA REFERÊNCIA AO 'const app = express()'....
+    )
+    .listen(
+      process.env.PORT || 3000
+    );
+
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+AGORA, SE VOCÊ INICIALIZAR O SEU SERVER,
+
+
+
+
+
+
+VOCê VERÁ __ QUE __ A SSL ENCRYPTION ESTARÁ SENDO UTILIZADA...
+
+
+
+
+
+
+
+
+
+
+
+
+---> MAS SE __ TENTARMOS ACESSAR 'http://localhost:3000',
+
+
+VAMOS ___ FALHAR___... --> VAMOS FALHAR 
+
+JUSTAMNETE 
+
+PQ 
+
+
+
+
+
+O BROWSER ESTÁ TENTANDO USAR 'http', que é o DEFAULT...
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIRMOS ACESSAR NOSSA PAGE, AGORA,
+
+DEVEMOS TROCAR A URL NA BARRA DE ENDEREÇOS,
+
+fazer com que fique 
+
+
+
+'https://localhost:3000'...
+
+
+
+
+
+
+
+
+
+
+
+--> FEITO ISSO,
+
+RECEBO ESTA MENSAGEm:
+
+
+
+
+Sua conexão não é particular
+Invasores podem estar tentando roubar suas informações de localhost (por exemplo, senhas, mensagens ou cartões de crédito). Saiba mais
+NET::ERR_CERT_AUTHORITY_INVALID
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... EU JÁ VI ISSO UMA VEZ.... ENTÃO É ___por isso_ que 
+
+esse NEGÓCIO ACONTECE....
+
+
+
+
+
+
+
+
+--> O BROWSER ESSENCIALMENTE_ _ NÃO RECONHECE/ACEITA _ 
+
+ESSE 
+
+'SELF-SIGNED CERTIFICATE'.... ------> MAS SE CLICARMOS EM 'ADVANCE',
+
+
+
+PODEREMOS 
+
+REALMENTE 
+
+PROSSEGUIR AO NOSSO SITE....
+
+
+
+
+
+
+
+
+
+
+
+
+------> O BROWSER AINDA VAI 
+
+
+NOS MOSTRAR AUQELE LINK EM VERMELHO, DIZENDO 
+
+'NÓS NÃO GOSTAMOS DESSE SEU 
+
+
+SELF-SIGNED CERTIFICATE',
+
+
+
+
+__ MAS TECNICAMENTE AGORA __ESTMAOS USANDO_ _SSL PROTECTION.... ------> 
+
+
+
+
+E´E ASSIM QUE 
+
+
+VOCÊ __ ENABLA__ SUA PROTEÇÃO SSL... -------> MAS ASSIM COMO 
+
+
+'COMPRESSION' E 'LOGGING',
+
+
+TIPICAMENTE 
+
+
+
+
+O SEU HOSTING PROVIDER VAI 
+
+
+
+
+JÁ SETTAR ISSO PARA VOCÊ,
+PQ 
+
+TECNICAMENTE 
+
+O 
+
+
+
+
+HOSTING PROVIDER __ POSSUI 'TODA A INFRAESTRUTURA DO SERVER DELE __ NA FRENTE __ DO SERVER QUE VOCÊ VAI CONSTRUIR',
+
+
+etc etc... --------> OS SERVERS DO 
+
+HOSTING PROVIDER USAM SSL ,
+
+
+
+
+
+
+
+E _ O TRÁFEGO ENTRE ___ O SEU APP E OS 'IN-BETWEEN SERVERs' 
+
+
+
+USA __ HTTP NORMAL.... (ISSO PQ OS CANAIS DE COMUNICAÇÃO ENTRE O SEU APP E OS SERVERS DO SEU HOSTING PROVIDER __ JÁ NÃO 
+
+SÃO EXPOSTOS AO PÚBLICO NORMALMENTE...) -------------->
+
+
+
+
+
+E O HOSTING PROVIDER,
+
+
+NO CASO ,
+
+
+
+
+
+
+VAO GERALMENTE (quase 100%) 
+
+
+
+
+implementar esse código de 'CERTIFICATING' 
+
+
+por conta própria, sem vocÊ interferir em nada do rpocesso...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E, DE FATO, AQUI O PROFESSOR 
+
+
+
+VAI VOLTAR à VERSÃO ANTIGA DO NOSSO CÓDIGO, com 
+
+
+'app.listen(process.env.PORT || 3000)',
+
+
+
+
+
+PQ _ 
+
+
+
+ELE VAI PRECISAR _ DISSO MAIS TARDE _ QUANDO FORMOS FAZER DEPLOY,
+
+
+PQ 
+
+
+NÓS __ REALMENTE__ VAMOS 'LET OUR HOSTING PROVIDER MANAGE SSL',
+
+
+
+mas é claro que 
+
+
+
+SE EM ALGUMA HIPÓTESE VOC~E PRECISAR FAZER ISSO 
+
+
+
+MANUALMENTE,
+
+
+
+
+SÃO ESSES PASSOS ACIMA QUE VOCÊ SEGUIRÁ.... -------> É __ ASSIM QUE VOCÊ 
+
+
+
+
+COMEÇA UM SERVER NODE NO MODO 'HTTPS'...
+
+
+
+
+
+
+

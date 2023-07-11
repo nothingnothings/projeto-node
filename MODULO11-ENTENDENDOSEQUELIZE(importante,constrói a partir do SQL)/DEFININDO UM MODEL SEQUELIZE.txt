@@ -1,0 +1,1750 @@
+
+
+
+
+
+
+
+
+
+---> COM A CONEXÃO SETTADA, 
+
+por meio 
+
+do código de 
+
+
+''
+
+
+const Sequelize = require('sequelize'); ///ESTAS 2 LINHAS (o sequelize em si) VAI RODAR __ IMPLICITAMENTE (por trás das cenas) AQUELAS LINHAS DE CÓDIGO QUE VEMOS LOGO ACIMA... (vai settar AUTOMATICAMENTE UMA CONNECTION POOL à NOSSA DATABASE SQL....)
+
+
+const sequelize = new Sequelize('node-complete', 'root', 'K4tsuhir00ht0m0', {
+
+    dialect: 'mysql',
+    host: 'localhost'
+
+});
+
+
+module.exports = sequelize; ///lembre-se de sempre exportar o seu objeto 'sequelize'...
+
+
+'',
+
+
+
+
+
+
+
+LÁ NAQUELE OBJETO 'database',
+
+
+que 
+EXPORTA 
+
+ESSE OBJETO AÍ,
+
+
+
+
+
+
+
+
+
+_ DEVEMOS __ IR 
+
+ATÉ 
+
+O 
+
+
+
+
+NOSSO 
+
+
+___ 
+
+
+
+
+ARQUIVO 
+
+'product.js',
+
+
+
+AQUELE MODEL 
+
+
+
+
+_ DO EXPRESS/NODE,
+
+
+
+E AÍ 
+
+
+__ 
+
+
+
+
+DEVEMOS ___ DELETAR _______________________TUDO_________________________..........
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS APAGAR TUDO, TODO O MODEL DE 'product.js',
+
+
+
+
+
+PQ NÃO VAMOS PRECISAR DE NADA DAQUILO,
+
+
+vamos 
+
+ESCREVER TUDO 
+
+DO 
+
+ZERO...
+
+
+
+
+
+
+
+
+
+
+---> OK.... NESSE NOVO MODEL DE 'product',
+
+O PROFESSOR 
+
+PRIMEIRAMENTE 
+
+PRECISA 
+
+
+
+
+
+IMPORTAR 
+
+2 COISAS IMPORTANTES:
+
+
+
+
+
+
+1) O PACOTE SEQUELIZE EM SI..
+
+
+
+
+
+
+
+--> professor vai escrever a sintaxe de import do NODE 
+
+
+
+
+const Sequelize = require('sequelize');
+
+
+
+
+
+
+
+
+
+
+---> ISSO VAI NOS RENDER UMA CLASS/CONSTRUCTOR FUNCTION,
+
+e é exatamente por isso que 
+o professor 
+usou 
+
+uma 
+
+inicial maiúscula...
+
+
+
+
+
+
+
+
+-------> OK..
+
+
+
+
+
+
+2)  A SEGUNDA COISA QUE O PROFESSOR 
+
+
+VAI QUERER 
+
+
+
+IMPORTAR 
+
+
+É 
+
+A NOSSA 
+
+'ACTUAL DATABASE CONNECTION POOL',
+
+representada 
+
+por 
+
+aquele 
+
+
+export de 
+
+'sequelize'
+
+que 
+
+escrevemos 
+
+
+NO ARQUIVO 
+
+'database.js',
+
+lá no folder 'util'...
+
+
+
+
+
+
+--> ESSE IMPORT O PROFESSOR ARMAZENARÁ EM UMA CONSTNATE COM INICIAL MINÚSCULA,
+para diferenciar....
+
+
+
+
+
+ex:
+
+
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database');  ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ESSAS 2 COISAS 
+
+IMPORTADAS,
+
+
+AGORA 
+
+PODEMOS 
+
+
+REALMENTE 
+
+DEFINIR UM 
+
+
+'MODEL'
+
+
+dentro 
+
+
+desse 
+
+
+'product.js'...
+
+
+
+
+
+
+
+
+
+
+
+---> ESSE MODEL VAI SER 'MANAGED' PELO SEQUELIZE...
+
+
+
+
+
+
+
+
+
+
+--> E EU PRESUMO QUE A SINTAXE VAI SER __ BEM PARECIDA __ COM 
+
+
+AQUELA 
+
+DE CONSTRUCTOR FUNCTION QUE TIVEMOS 
+
+
+NOS ÚLTIMOS MÓDULOS...
+
+
+
+
+
+
+
+
+
+--_> PARA 
+
+
+CRIAR 
+
+ESSE MODEL,
+
+
+professor 
+
+
+usa uma nova constante,
+
+
+
+
+
+
+
+
+QUE 
+
+PROFESSOR NOMEARÁ 
+
+DE 
+
+'Product',
+
+
+QUE SEGURARÁ 
+
+
+NOSSO MODEL....
+
+
+
+
+
+
+
+
+
+
+
+
+--> mas essa 'const Product'
+
+
+NÃO VAI SEGURAR UMA CLASS,
+
+
+como fazíamos antigamente com 
+
+códigos como 
+
+
+'''''''
+
+
+
+module.exports = class Product {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+
+}
+
+
+
+''''''',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EM VEZ DISSO,
+
+PROFESSOR 
+
+VAI USAR 
+
+
+o 
+
+
+'sequelize' (com letras minúsculas, o que é BASICAMENTE 
+
+AQUELA 'connection pool' TURBINADA, pq é mais do que uma connection pool,
+
+é uma CONNECTION POOL COM UM 'FULLY CONFIGURED SEQUELIZE ENVIRONMENT', que 
+
+tem a connection pool, sim, mas também 
+
+
+TODAS AS FEATURES DO SEQUELIZE....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK....
+
+
+
+vai ficando assim:
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+
+
+
+const Product = sequelize.xxxxxx
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+E AÍ, O QUE VAMOS QUERER CHAMAR 
+
+
+NESSE 
+
+
+
+'connection pool turbinado'
+
+
+É 
+
+
+__ACTUALLY__ 
+
+
+o método 
+
+
+
+'.define()'... ------> 
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+
+
+
+const Product = sequelize.define();
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+----> OK... COMO PRIMEIRO PARÂMETRO 
+
+
+
+desse 'define',
+
+
+temos 
+
+o 
+
+'MODEL NAME'....-------> E, BY THE WAY,
+
+
+
+
+AQUI NO 
+
+IDE VOCê TBM 
+
+Vê UM EXEMPLO 
+
+
+
+
+DE DEFINIÇÃO DE MODEL,
+
+
+exatamente como você o vê 
+__nos OFFICIAL DOCS DO SEQUELIZE...
+
+
+
+
+
+
+
+
+
+
+-> OK... O 'MODELNAME'
+
+tipicamente 
+
+É 
+UM 
+
+
+
+__NOME EM LOWERCASE.... ------> 
+
+
+
+
+
+E O PROFESSOR 
+
+VAI DEFINIR 'product',
+
+
+exatamente assim:
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+
+
+
+const Product = sequelize.define('product') //////////EIS O CÓDIGO EM QUESTÃO.
+ 
+
+
+
+
+
+
+ --------------------------------------
+
+
+
+
+
+
+
+
+
+
+ JÁ O SEGUNDO ARGUMENTO DEFINE A __ESTRUTURA__ DE 
+
+
+
+ NOSSO MODEL.... --> E COMO ISSO VAI DEFINIR A ESTRUTURA 
+
+ DE 
+
+ NOSSO 
+
+ 'MODEL',
+
+ ISSO, PORTANTO, 
+
+ TAMBÉM 
+
+ VAI DEFINIR AUTOMATICAMNETE 
+
+
+ a 
+
+
+
+ ESTRUTURA __ DA 
+
+
+ NOSSA 
+
+ 'DATABASE TABLE' para esse model...
+
+
+
+
+
+
+
+
+ --------> O PROFESSOR EXPLICA QUE 
+
+
+
+
+ ISSO SERÁ UM 
+
+
+ OBJETO JAVASCRIPT, coisa bem simples,
+
+
+
+ E DENTRO 
+
+ DELE 
+
+
+ VOCÊ 
+
+
+ VAI SIMPLESMENTE 
+
+ DEFINIR 
+
+ OS 
+
+
+ 'ATTRIBUTES/FIELDS'
+
+
+
+ QUE 
+
+ NOSSO 
+
+ PRODUCT 
+
+ DEVERÁ 
+ TER... 
+
+
+
+
+
+
+
+--> POR EXEMPLO,
+
+VOU QUERER TER UM ______ID________.....
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); 
+
+
+
+const sequelize = require('../util/database');
+
+
+
+
+
+const Product = sequelize.define('product', {
+
+
+        id: ....
+
+
+
+});
+ 
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+---> ESSE FIELD 'ID',
+
+
+por sua vez,
+
+É 
+
+
+
+CONFIGURADO POR UM 
+
+
+OBJETO 
+
+
+
+em que 
+
+
+
+EU 
+
+ENTÃO CONFIGURO SEU ATRIBUTO... -->  por exemplo,
+
+aí 
+
+
+
+
+SETTAMOS O SEU 'TYPE'... --> 
+
+
+E O 
+
+TYPE 
+
+
+
+
+É
+
+
+
+
+UM DOS 
+
+TYPES 
+
+ 
+
+ 
+
+
+
+____ DEFINIDOS/ACEITOS PELO 
+
+'SEQUELIZE PACKAGE',
+
+
+representado 
+
+por 
+
+'Sequelize' (objeto Sequelize)....
+
+
+
+
+
+
+
+--> PARA 
+
+
+
+
+
+CONSEGUIR ESCREVER 1 DESSES TYPES, 
+
+
+1 dessas sintaxes que representa um type,
+
+VOCÊ TEM COISAS COMo 
+
+
+
+
+'Sequelize.NUMBER',
+
+
+
+
+'Sequelize.STRING',
+
+
+etc etc...
+
+
+
+-----------
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); 
+
+
+
+const sequelize = require('../util/database');
+
+
+
+
+
+const Product = sequelize.define('product', {
+
+
+        id: {
+
+            type: Sequelize.NUMBER
+        }
+
+
+
+}
+
+
+)
+
+
+
+
+------------------------------------
+
+
+
+
+mas aqui NÃO TEMOS COISAS COMO 
+
+'VARCHAR',
+
+e sim 
+
+temos coisas 
+
+mais 
+
+'javascriptish',
+
+
+COISAS 
+
+mais 
+
+relacionadas ao javascript...
+
+
+
+
+
+
+
+
+--> e o professor VAI QUERER USAR UM 'INTEGER',
+
+
+PQ O PROFESSOR VAI QUERER 
+
+QUE 
+
+NOSSOS IDS 
+
+
+SEJAM 
+NÚMEROS,
+
+NÚMEROS QUE 
+
+COMECEM 
+
+EM 1
+
+
+ E ENTÃO 
+
+
+ SEJAM INCREMENTADOS 1 A 1....
+
+
+
+ ex:
+
+
+
+
+
+
+ 
+
+const Sequelize = require('sequelize'); 
+
+
+
+const sequelize = require('../util/database');
+
+
+
+
+
+const Product = sequelize.define('product', {
+
+
+        id: {
+
+            type: Sequelize.INTEGER
+        }
+
+
+
+}
+
+
+)
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+PARA FAZER COM QUE 
+
+ESSE 
+
+FIELD 
+
+
+
+'AUTO-INCREMENT',
+
+
+auto-incrementing,
+
+
+
+__O PROFESSOR __ _ 
+
+
+TAMBÉM 
+
+
+TEM QUE 
+
+DEFINIR ESSA PROPRIEDADE,
+
+
+ESCREVNEDO
+ 
+
+
+
+ 'autoIncrement: true'....
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ 
+ 
+
+const Sequelize = require('sequelize'); 
+
+
+
+const sequelize = require('../util/database');
+
+
+
+
+
+const Product = sequelize.define('product', {
+
+
+        id: {
+
+            type: Sequelize.INTEGER,
+            autoIncrement: true
+        }
+
+
+
+}
+
+
+)
+
+
+
+----------------------------
+
+
+
+
+
+
+VOCÊ ENCONTRA TODAS ESSAS INFORMAÇÕES DAS PROPRIEDADES 
+
+DISPONÍVEIS 
+
+
+
+__LÁ NOS OFFICIAL DOCS DO SEQUELIZE__...
+
+
+
+
+
+
+
+------> é lá em 'Model definition'... --> 
+
+
+
+
+ISSO TE MOSTRA 
+
+TUDO SOBRE COMO 
+DEFINIR 1 MODEL,
+
+
+como 
+
+DEFINIR 
+
+
+OS DIFERENTES TIPOS DE 'TEXT'
+
+PARA 
+
+1 MODEL,
+
+
+
+E TAMBÉM 
+
+
+VÊ UMA 
+
+LIST
+ 
+ DE 
+
+ TODOS
+  
+
+  OS 
+
+  SUPPORTED DATA TYPES...
+
+
+
+
+
+
+
+
+
+
+
+  ----> COMO O PROFESSOR NÃO VAI QUERER QUE 
+
+  ESSE VALOR 
+
+
+  SEJA NULO, NUNCA VAI QUERER ISSO,
+
+
+
+
+  __ELE VAI DEIXAR A PROPRIEDADE 
+
+  'allowNull' COMO 
+
+  'false'...
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+  const Sequelize = require('sequelize'); 
+
+
+
+const sequelize = require('../util/database');
+
+
+
+
+
+const Product = sequelize.define('product', {
+
+
+        id: {
+
+            type: Sequelize.INTEGER,
+            autoIncrement: true,
+            allowNull: false
+        }
+
+
+
+}
+
+
+)
+
+----------------------
+
+
+
+EX:
+
+
+
+
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+
+
+
+
+
+
+
+const Product = sequelize.define(
+    'product', {
+        id: {
+                type: Sequelize.INTEGER,
+                autoIncrement: true,
+                allowNull: false
+
+
+        }  
+    }
+)
+
+
+
+
+
+
+------------------------------
+
+
+
+
+POR FIM, 
+
+
+PROFESSOR VAI DEFINIR 
+
+
+
+
+'primaryKey',
+
+PARA __ DEFINR __ 
+
+
+
+ESSE 
+
+FIELD/KEY COMO 
+
+'PRIMARY KEY'
+
+DESSA TABLE 
+
+DE 
+
+'products',
+
+
+
+é o field 
+
+que 
+
+
+DEFINE ESSE COMO O VALOR/KEY PRIMÁRIA 
+
+
+DESSA 
+
+TABLE... --> ESSE É UM CONCEITO IMPORTANTE 
+
+
+
+
+EM DATABASES SQL, POIS 
+
+
+IMPORTA 
+
+PARA 
+
+O 
+
+RETREIVE DE DATA 
+
+E 
+
+PARA 
+
+__o DEFINE DE RELATIONS... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO DEFINIDO, 
+
+
+1 
+
+PRODUCT TAMBÉM TEM OUTROS FIELDS,
+
+
+COMO 
+
+1 'title'...
+
+
+
+
+
+
+
+-_> PARA O TITLE,
+
+
+de novo 
+
+DEFINIMOS UM 
+
+
+
+OBJETO JAVASCRIPT... ---> MAS SE VOCÊ QUER DEFINIR __ APENAS __ O TYPE,
+
+há um 
+
+
+SHORTHAND, 
+
+
+shorthand 
+
+em que 
+
+você 
+
+
+escreve 
+
+
+
+
+'title: Sequelize.STRING' -------> ISSO 
+
+
+VAI 
+
+TE 
+
+DEIXAR 
+
+
+
+DEFINIR O TYPE DA DATA 
+
+QUE DEVERÁ ENCAIXAR NESSE FIELD,
+
+
+SEM 
+DEFINIR MAIS NADA DESSE FIElD...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const Product = sequelize.define(
+    'product', {
+        id: {
+                type: Sequelize.INTEGER,
+                autoIncrement: true,
+                allowNull: false,
+                primaryKey: true
+
+
+        } ,
+
+        title: Sequelize.STRING,  ////shorthand do DEFINE visto logo acima... (com esse shorthand, definimos apenas o TYPE daquele field, sem definir mais nada acerca das características que esse field deve ter....)
+    
+    
+            price: {
+                type: Sequelize.DOUBLE, ///CASAS DECIMAIS... considera '0.99', etc...
+                allowNull: false ////_IMPOSSIBILITA O WRITE DE VALORES NULOS.... produto sempre deverá custar alguma coias....
+            }
+    
+    
+    },
+
+
+)
+
+
+
+
+
+
+
+
+
+
+---> ISSO FEITO, PROFESSOR VAI QUERER DEFINIR A 'IMAGEURL',
+
+
+
+
+
+
+A QUAL DEFINE 
+
+
+
+
+
+
+TYPE COMO SENDO 
+
+
+
+de type 
+
+'string',
+
+
+e allownull como FALSE...
+
+
+
+
+
+
+
+--> POR FIM, 
+
+PROFESSOR VAI QUERER 
+
+TER UMA DESCRIPTION,
+
+QUE 
+
+TAMBÉM 
+
+
+VAI 
+
+
+
+SER 
+
+DE TIPO 
+
+'Sequelize.STRING',
+
+
+ e o allowNull como false...
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+
+
+
+
+
+
+
+
+const Product = sequelize.define(
+    'product', {
+        id: {
+                type: Sequelize.INTEGER,
+                autoIncrement: true,
+                allowNull: false,
+                primaryKey: true
+
+
+        } ,
+
+        title: Sequelize.STRING,  ////shorthand do DEFINE visto logo acima... (com esse shorthand, definimos apenas o TYPE daquele field, sem definir mais nada acerca das características que esse field deve ter....)
+    
+    
+            price: {
+                type: Sequelize.DOUBLE, ///CASAS DECIMAIS... considera '0.99', etc...
+                allowNull: false ////_IMPOSSIBILITA O WRITE DE VALORES NULOS.... produto sempre deverá custar alguma coias....
+            },
+
+
+        imageUrl: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        description: {
+            type: Sequelize.STRING,
+            allowNull: false
+        }
+    
+    
+    },
+
+
+)
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+por fim,
+ 
+
+ PROFESSOR USA 'module.exports'
+
+ PARA 
+
+
+ __EXPORTAr__ 
+
+
+
+
+ NOSSO 
+
+
+
+ OBJETO/MODEL 
+
+ 'Produt'...
+
+
+
+
+
+
+
+
+
+ module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> ESSA CONSTANTE EM QUE 
+
+
+ ARMAZENEI O 
+
+
+ __ MODEL QUE CRIEI __ SERÁ __ EXPORTADA POR MEIO DESSE 
+
+
+ module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> CERTO... --> COM ISSO, 
+
+
+ 
+
+
+ DEMOS UM GRANDE PASSO ADIANTE,
+
+
+ E AGORA PODEMOS COMEÇAR A __USAR__ ESSE PRODUCT__..
+
+
+
+
+
+
+ vamos ver como o utilizar nA PRÓXIMA LIÇÃO....

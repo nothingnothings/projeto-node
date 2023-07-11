@@ -1,0 +1,1273 @@
+
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA QUE SABEMOS __COMO FAZER __ DISPLAY DE PRODUCT INFORMATION 
+
+POR MEIO 
+
+DO 
+
+
+__GET___ DESSA INFORMATION __ LÁ DE SUA URL... -------> 
+
+
+
+AGORA TEMOS UM 
+
+
+PROBLEMA SIMILAR 
+
+COM 
+
+O 
+
+
+'ADD A PRODUCT TO THE CART' (o botão de 'add to cart' lá na página de 'Product detail')....
+
+
+
+
+
+
+
+
+
+----> NÓS TEMOS AQUELE BUTTON DE 'ADD TO CART',
+
+
+
+__MAS NO FINAL DAS CONTAS,
+
+
+QUANDO 
+
+
+
+VAMOS FAZER O 'POST' 
+
+DESSA DATA AÍ,
+
+
+
+por meio 
+
+
+do código do view:
+
+
+
+          <form action="/cart" method="POST">
+            <button class="btn" type="submit">Add to Cart</button>
+          </form>
+
+
+
+
+
+
+
+
+__NÓS TAMBÉM QUEREMOS/VAMOS QUERER 
+
+SABER __ QUAL 
+
+PRODUCT__ VAMOS QUERER 
+
+
+
+ADICIONAR 
+
+AO 
+
+
+'CART'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ENTRETANTO, 
+
+
+
+AQUI O PROFESSOR NOS EXPLICA QUE ELE VAI QUERER ENVIAR UM POST REQUEST...
+
+
+
+
+
+
+--->  esse button manda um POST request...  ----> E ISSO 
+
+
+
+
+___TEM UMA 
+
+
+IMPLICATION IMPORTANTE... -----> ISSO SIGNIFICA QUE 
+
+
+______NÓS PODEMOS __ 
+
+
+'PASS DATA' 
+
+
+NO REQUEST BODY.. --> podemos usar 
+
+O 
+REQUEST 
+
+BODY 
+
+
+PARA 
+
+PASSAR DATA... -------->  ISSO _ NÃO ERA POSSÍVEL PARA UM 
+
+
+
+'GET REQUEST',
+
+
+
+MAS 
+
+É 
+
+POSSÍVEL 
+PARA 
+
+UM 
+
+
+REQUEST DE TIPO 'POST'...  ----> PARA OS POST REQUESTS,
+
+
+VOCÊ 
+
+
+TIPICAMENTE 
+
+USA 
+
+
+
+__ O REQUEST_ _ BODY...
+
+
+
+(
+
+e isso TAMBÉM É O QUE UTILIZAMOS 
+
+
+
+ANTERIORMENTE,
+
+
+__ QUANDO ADICIONAMOS 1 PRODUCT... ----> 
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+NÓS 
+
+
+TÍNHAMOS 
+
+
+AQUELE 
+
+código 
+
+
+de 
+
+
+'''
+
+
+
+
+
+
+
+
+ <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description"></textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price"></title>
+        </div>
+        <button type="submit" class="btn">Add Product</button>
+    </form>
+
+
+
+
+-----------
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ISSO 
+
+
+AUTOMATICAMENTE 
+
+NOS DÁ UM REQUEST 
+QUE 
+
+COLOCA 
+
+TODA 
+
+A 
+'INPUT DATA'
+
+
+dentro 
+
+
+
+do 'body' dele...
+
+
+
+
+
+
+-----> MAS ISSO __ SÓ FUNCIONA COM O POST DE DATA, E NÃO FUNCIONA COM O GET DE DATA___....
+
+
+
+
+
+
+
+
+
+--> MAS PARA O POSTING DE DATA,
+
+
+
+NÓS OBVIAMENTE __ NÃO 
+
+PRECISAMOS COLOCAR 
+
+
+
+
+nada na URL,
+
+
+
+
+
+pq 
+
+
+
+
+___ A DATA__ JÁ É COLOCADA __ NO REQUEST BODY DE TIPO 'POST'... ------> 
+
+
+
+É POR ISSO 
+
+QUE 
+
+
+
+NESSA FORM, LÁ 
+
+
+EM 
+
+
+'product-detail.ejs',
+
+
+NÓS DEVEOMS 
+
+
+
+'SIMPLY PASS SOME IMPORTANT INFORMATION'
+
+
+COMO PARTE DO POST REQUEST... -----> É POR ISSO QUE 
+
+
+O 
+
+PROFESSOR 
+
+VAI ADICIONAR 1 INPUT ALI, dentro da form... --> 
+
+SÓ QE 
+
+ELE 
+
+
+
+COLOCA 
+UM 
+
+
+INPUT DE TYPE 
+
+'hidden'... -----> 
+
+ISSO FARÁ COM QUE 
+
+
+
+__ELE NÃO SEJA DISPLAYADO _____ 
+
+
+
+
+NA PAGE... (
+
+
+
+    MAS MESMO 
+
+    NÃO 
+
+    ESTANDO 
+
+    VISÍVEL NA PÁGINA,
+
+    ELE AINDA É 
+
+
+    'ENCODED NO REQUEST' DE TIPO POST
+
+    QUE 
+    ACABA SENDO ENVIADO....
+
+
+)
+
+
+
+
+
+ex:
+
+
+
+
+
+
+          <form action="/cart" method="POST">
+            <button class="btn" type="submit">Add to Cart</button>
+            <input type="hidden"> //////////EIS O CÓDIGO EM QUESTÃO.
+          </form>
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+----> DEPOIS DISSO, PROFESSOR COLOCA UM 
+
+
+
+ATTRIBUTE 'name' 
+
+de 
+
+'productId',
+
+
+
+E AÍ 
+
+
+COLOCA UM 
+
+ATTRIBUTE 
+'value',
+
+
+
+QUE TERÁ JUSTAMENTE 
+
+
+
+
+
+
+o 'product.id',
+
+
+
+
+
+
+
+E FAREMOS A MESMA COISA COM TODOS OS OUTROS INPUTS....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+         <form action="/cart" method="POST">
+            <button class="btn" type="submit">Add to Cart</button>
+            <input type="hidden" name="productId" value="<%= product.id %>"> ///////EIS O CÓDIGO EM QUESTÃO.
+                 <input type="hidden">
+                      <input type="hidden">
+                           <input type="hidden">
+          </form>
+
+
+
+
+
+
+
+
+
+
+
+--> E ESSE 
+
+
+
+
+
+REQUEST SERÁ ENVIADO, 
+
+
+
+COM ESSA 'DATA' desse PRODUCT aí, 
+
+QUE 
+
+
+SERÁ COMPOSTO 
+
+PELO PRODUCTID... (que é o que interessa)....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main class="centered">
+          <h1><%= prod.title %></h1>
+          <hr>
+          <div>
+            <img src="<%= prod.imageUrl %>" alt="<%= prod.title %>"></img>
+          </div>
+          <h2><%= prod.price %></h2>
+          <p><%= prod.description %></p>
+          <form action="/cart" method="POST">
+            <button class="btn" type="submit">Add to Cart</button>
+            <input type="hidden" name="productId" value="<%= prod.id %>">
+          </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, AINDA QUEREMOS PASSAR ESSE 'ID' AO NOSSO 
+
+
+BACKEND,
+
+AO NOSSO 
+
+
+APP 
+
+'NODE EXPRESS'... ------> MAS O PROFESSOR N QUER USAR A URL, AQUI,
+
+JUSTAMENTE PQ 
+
+
+
+__ELE JÁ ESTÁ ENVIANDO/USANDO UM POST REQUEST,
+
+
+e por isso não há necessidade....
+
+
+
+
+
+(MAS VOCÊ PODERIA FAZER, SE QUISESSE --> SE QUISESSE FAZER ASSIM,
+
+
+VOCÊ 
+
+
+
+SIMPLESMENTE TERIA DE ADICIONAR UM 
+
+'
+DYNAMIC SEGMENT' 
+
+PARA 
+
+POST REQUESTS...
+
+ 
+
+
+
+)
+
+
+
+
+
+
+
+
+--> AGORA, COM ESSE REQUEST DE TIPO POST 
+
+SENDO DISPARADO 
+
+
+A 
+
+
+'/cart',
+
+DEVEMOS 
+
+ESCREVER UMA ROUTE DISSO 
+
+
+LÁ 
+
+EM 
+
+
+'shop.js',
+
+ARQUIVO DE ROUTES...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+''router.post('/cart', xxxxx)'
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+tipo 
+
+
+''                      '''
+shopController.postToCart 
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+ESCREVEREMOS:
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+
+
+
+}
+
+
+
+
+
+-----------------------
+
+
+
+
+EX:
+
+
+
+
+exports.postToCart = (req, res, next) => {
+
+
+}
+    
+
+
+
+
+
+
+
+
+
+    ------> ALI, NESSE LOCAL,
+
+
+    ___ VAMOS __ TER QUE RETRIEVAR 
+
+    O 
+    PRODUCTID 
+
+
+LÁ DO INCOMING REQUEST,
+
+
+E TAMBÉM 
+
+
+
+
+__FETCHEAR__ ESSE PRODUCT LÁ DE NOSSA DATABASE/FILESYSTEM....
+
+
+
+
+
+-------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+
+
+        const productId = req.body.productId;
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM,
+
+
+CREIO EU:
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+
+  const productId = req.body.productId;
+  Product.findProduct(productId, 
+    
+    () => {
+
+      
+    }
+    )
+
+}
+
+
+
+
+
+
+--------------------------
+
+
+
+VAMOS QUERER
+ 
+
+ __aDICIONAR __ ESSE 
+
+
+
+ 'Product' ESPECÍFICO __ AO NOSSO CART (e vamos ter que criar um model para o cart, provavelmente...)
+
+
+
+
+
+
+
+
+ -----> professor faz exatamente o que 
+
+
+ fizemos:
+
+
+
+
+
+
+
+ const productId = req.body.productId;
+
+
+ console.log(productId);
+
+
+res.redirect('/cart');
+
+
+
+
+
+
+
+--> AÍ ELE REDIRECIONA,
+ 
+
+
+
+ por enquanto...
+
+
+
+
+
+
+
+
+ ok......
+
+
+
+
+
+
+
+
+
+
+
+
+ -------- 
+
+
+ AGORA, QUANDO CLICAMOS EM 'ADD TO CART',
+
+
+ vemos aquele console.log 
+
+
+ de 
+
+
+
+
+
+  '''console.log(productId);''''
+
+
+
+
+
+
+
+
+
+
+
+  ------------------------------
+
+
+
+
+
+
+
+  --> ISSO ESTÁ FUNCIONANDO, MAS OBVIAMENTE NÃO ESTAMOS ARMAZENANDO ESSA DATA/O PRODUCT EM UM CART,
+
+  POR ENQUANTO...
+
+
+
+
+
+
+
+
+
+
+
+  --> E ANTES DE TRABALHARMOS NISSO,
+
+
+DEVEMOS 
+
+
+IR 
+
+ATÉ 
+
+
+
+A 
+
+
+
+PÁGINA DE 
+
+'product-detail'
+
+
+E ENTÃO 
+
+
+PEGAR 
+
+
+
+TODA AQUELA 
+
+
+FORM 
+
+
+de 
+
+
+'
+
+
+
+          <form action="/cart" method="POST">
+            <button class="btn" type="submit">Add to Cart</button>
+            <input type="hidden" name="productId" value="<%= prod.id %>">
+          </form>
+
+
+'
+
+
+
+
+
+
+
+
+
+------> DEVEMOS COLOCAR ESSA FORM __ EM TODOS __OS LUGARES__ EM QUE 
+
+COLOCAMOS 
+
+2 
+
+BOTÕES 
+
+'Add to Cart'.... (substituímos pelo antigo....)
+
+
+
+
+
+
+
+
+--> COMO EM 'Product list'....
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product.id %>" class="btn">Details</a>
+              <!-- <form action="/add-to-cart/" method="POST">
+              <button class="btn" >Add to Cart</button>
+            </form> -->
+            <form action="/cart" method="POST">
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" name="productId" value="<%= product.id %>">
+              </form>
+
+
+        </div>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+TAMBÉM 
+
+
+COLOCAMOS 
+
+
+EM 
+
+
+'index.ejs',
+
+PQ LÁ TAMBÉM TEMOS ESSE BUTTON...
+
+
+
+
+
+
+
+
+
+--> E COMO 
+
+ESSE CÓDIGO AÍ __ É EXATAMENTE O MESMO NOS 3 VIEWS, 
+PROFESSOR 
+
+DIZ QUE PODEMOS 
+
+
+
+ESCREVER UM INCLUDES PARA ISSO (
+
+    mas 
+
+    eu 
+
+    não vou, pq 
+
+
+    há discrepância entre 'product' e 'prod'...
+)
+
+
+
+
+
+
+
+
+---------> PROFESSOR RECEBE UM __ERRO___ -->
+
+
+
+
+ELE DIZ QUE ISSO 
+
+
+ACONTECEU PQ 
+
+COLOCAMOS 1 INCLUDE DENTRO 
+
+
+
+
+__DE UM FOR LOOP/LOOP EM GERAL,
+
+
+
+
+
+
+
+
+
+E AÍ SE VAMOS QUERER ACESSAR 1 VALOR NESSA VARIÁVEL 
+
+
+
+'product' (dentro do loop),
+
+
+
+
+
+
+
+O INCLUDE INFELIZMENTE NÃO VAI CONSEGUIR ACESSAR BEM ESSA VARIÁVEL.. (por default)...
+
+
+
+
+
+
+-> MAS VOCÊ PODE PASSAR A ESSE INCLUDE AÍ,
+
+
+POR MEIO DE UMA GAMBIARRA... -----> 
+
+
+A
+ GAMBIARRA É 
+
+ PASSAR 
+
+
+ UM OBJETO COMO SEGUNDO 
+
+
+
+ __ ARGUMENTO DO STATEMENT DE INCLUDE,
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+ '''<%- include('../includes/add-to-cart.ejs', {product: product}) %>'''''
+
+
+                                          ^^^^^^^^^^^^^ É ESSE SEGUNDO PARÂMETRO... --> a variável 'product' do LOOP será passado como 'PRODUCT' ao nosso _INCLUDE__....
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok........
+
+
+
+      <!-- <%- include('../includes/add-to-cart.ejs', {product: product}) %> -->
+
+
+
+
+
+
+
+
+
+
+ISSO TUDO ESTÁ FUNCIONANDO... --> O PRÓXIMO PASSO é  
+
+
+
+
+
+____ O TRABALHO COM O 'CART',
+
+DEVEMOS 
+
+
+CRIAR UM __MODEL PARA ELE_....

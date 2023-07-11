@@ -1,0 +1,1338 @@
+
+
+
+
+
+
+
+
+VAMOS FAZER O 'EDIT' DE UM PRODUCT FUNCIONAR....
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+ 
+ PRIMEIRAMENTE 
+
+ PRECISAMOS 
+
+
+ 'LOAD A PRODUCT',
+
+ carregar 
+
+
+
+ A 
+
+ DATA 
+
+ DE 
+
+ UM PRODUCT POR MEIO DO SEU 
+
+
+ ID (.findByPk()),
+
+
+
+
+ PARA 
+
+ ENTÃO 
+
+
+
+
+ __USAR __ ESSA DATA __ PARA SUBSTITUIR __ A 
+
+ DATA
+
+
+ JÁ 
+
+ EXISTENTE 
+
+
+
+
+ NA DATABASE SQL, para aquele 
+
+ 'record'...
+
+
+
+
+
+
+
+ OK... 
+
+
+
+ ACHO QUE COMEÇA ASSIm:
+
+
+
+
+
+
+
+ exports.editProduct = (req, res, next) => {
+
+
+  const editedProduct = new Product(
+    req.body.id,
+    req.body.title,
+    req.body.imageUrl,
+    req.body.description,
+    req.body.price
+  );
+
+  editedProduct.save();
+
+  res.redirect('/admin/product-list-admin');
+
+};
+
+
+
+
+
+
+
+
+
+
+
+-_> VMAOS REMOVER ESSE CÓDIGO VELHO 
+
+
+de 
+
+'editedProduct.save()'...
+
+
+(que NÃO USA/USAVA O SEQUELIZE...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+ exports.editProduct = (req, res, next) => {
+
+const productId = req.params.
+
+     Product.findByPk()
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> não, espere... estou fazendo tudo errado... --> primeiro preciso da PAGE 
+
+
+de 
+
+'edit a product',
+
+
+fazer com que ela fique customizada com a data DE UM SINGLE PRODUCT encontrado por nós 
+
+na nossa database...
+
+
+
+
+
+
+
+
+
+
+
+TIPO ISTO, CREIO EU:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+  if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+
+  Product.findByPk(productId) //código COM O SEQUELIZE...
+    .then((product) => {
+      if (!product) {
+        alert(
+          'The requested product has not been found in the database.'
+        );
+        return;
+      } else {
+        res.render('/admin/edit-product', {
+          pageTitle: 'Edit Product',
+          path: '/admin/edit-product',
+          editing: editMode, ////TRABALHO COM QUERY PARAMS.... --> usado para comunicar/diferenciar entre requests que querem ADICIONAR UM NOVO PRODUTO E ___ REQUESTS__ QUE QUEREM __ ALTERAR UM PRODUTO QUE JÁ EXISTE ('editMode = true'....)
+          prod: product,
+        });
+      }
+    });
+};
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+CERTO.
+
+
+
+FUNCIONOU.
+
+BRILHANTE.
+
+
+
+
+
+
+
+--> AGORA 
+
+
+DEVEMOS 
+
+FAZER O 
+
+BOTÃO 
+
+
+de 
+
+
+
+'edit product',
+
+
+QUE 
+
+EXECUTA 
+
+O CONTROLLER 
+
+DE 
+
+
+'editProduct',
+
+
+
+
+FUNCIONAR:
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+};
+
+
+
+
+
+
+
+
+
+
+
+
+---> 
+
+
+
+
+
+ESCREVO ASSIM:
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+console.log(productId);
+
+
+  Product.update(
+    {title: req.body.title,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description,
+    price: req.body.price,
+    },
+
+    {where: {id: productId} }
+  )
+
+  .then(
+    (result) => {
+        console.log(result);
+        res.status(302).redirect('/');
+    }
+  )
+  .catch(
+    (err) => {
+        console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+--> E ISSO REALMENTE FUNCIONOU... --> ESTÁ EDITANDO NOSSOS PRODUCTS,
+
+
+BEM CERTINHO...
+
+
+
+E ESTÁ EXECUTANDO ESTA QUERY:
+
+
+
+
+
+
+Executing (default): UPDATE `products` SET `title`=?,`imageUrl`=?,`description`=?,`price`=?,`updatedAt`=? WHERE `id` = ?
+
+
+
+
+
+
+
+
+
+
+OBS:
+
+
+
+
+
+
+
+I would like to prevent e and . to be type in an <input type="number"/>. Without jQuery or using step attribute. I've tried with pattern="[0-9]" but it's not working.
+
+EDIT : On focus the keyboard should be a digit keyboard.
+
+
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+The 'e' is the only letter that's accepted in a number
+
+ field because it allows for exponents. You could use input type="text"
+ 
+ 
+  but it doesn't give you the browser's native up and down arrows that 
+  
+  type="number" does. And the pattern attribute validates on submission
+  
+  
+   but doesn't stop someone from typing the 'e' in the first place. In 
+   
+   REACT you can use this to completely block the 'e' key from being 
+   
+   
+   typed in a number input:
+
+
+
+
+<input type="number" onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } />
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... AGORA VEMOS O CÓDIGO DO PROFESSOR....
+
+
+
+
+
+
+
+
+--> ele escreve:
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+
+  if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+
+  Product.findByPk(productId) //código COM O SEQUELIZE...
+    .then((product) => {
+      if (!product) {
+        alert(
+          'The requested product has not been found in the database.'
+        );
+        return;
+      } else {
+        res.render('admin/edit-product', {
+          pageTitle: 'Edit Product',
+          path: '/admin/edit-product',
+          editing: editMode, ////TRABALHO COM QUERY PARAMS.... --> usado para comunicar/diferenciar entre requests que querem ADICIONAR UM NOVO PRODUTO E ___ REQUESTS__ QUE QUEREM __ ALTERAR UM PRODUTO QUE JÁ EXISTE ('editMode = true'....)
+          prod: product,
+        });
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> EXATAMENTE COMO FIZEMOS...
+
+
+
+
+
+
+
+----->
+
+
+
+
+
+OK.... JÁ PARA O CÓDIGO DO CONTROLLER DE 
+
+'editProduct',
+
+
+ELE 
+
+
+ESCREVE 
+
+
+
+
+UM CÓDIGO UM POUCO DIFERENTE.......
+
+
+
+
+
+
+
+
+
+
+
+O NOSSO TINHA FICADO ASSIM:
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+console.log(productId);
+
+
+  Product.update(
+    {title: req.body.title,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description,
+    price: req.body.price,
+    },
+
+    {where: {id: productId} }
+  )
+
+  .then(
+    (result) => {
+        console.log(result);
+        res.status(302).redirect('/');
+    }
+  )
+  .catch(
+    (err) => {
+        console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+MAS O DO PROFESSOR FICOU ASSIM:
+
+
+
+
+
+
+
+Product.findById(productId)
+.then(
+    product => {
+
+
+        product.title = req.body.title;
+        product.price = req.body.price;
+        product.description = req.body.description;
+        product.imageUrl = updatedImageUrl;
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+----> MAS O PROFESSOR EXPLICA QUE 
+
+
+ESSE 
+
+CÓDIGO AÍ,
+ 
+ ESSAS LINHAS 
+
+
+ ''
+
+     product => {
+
+
+        product.title = req.body.title;
+        product.price = req.body.price;
+        product.description = req.body.description;
+        product.imageUrl = updatedImageUrl;
+    }
+
+
+'''
+
+
+
+
+NÃO VÃO SALVAR AUTOMATICAMENTE 
+
+
+
+ESSE NOVO 
+
+OBJECT NO LUGAR DO VELHO,
+
+lá 
+
+na database... --> PARA CONSEGUIRMOS 
+
+
+SALVAR 
+
+
+
+___ ESSES NOVOS VALORES POR CIMA DOS ANTIGOS PARA ESSE PRODUCT NA DATABASE,
+
+
+
+
+
+O PROFESSOR DIZ QUE 
+
+
+
+DEVEMOS CHAMAR 
+
+
+
+'Product.save()'...
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR EXPLICA QUE 
+
+
+
+
+'Product.save()'
+
+É UM 
+
+
+
+__ MÉTODO FORNECIDO PELO SEQUELIZE,
+
+
+QUE 
+
+BASICAMENTE 
+
+
+'TAKES THE PRODUCT/OBJECT/MODEL AS WE EDITED IT 
+
+
+AND THEN SAVES IT BACK TO THE DATABASE'....''''
+
+
+
+
+
+
+
+
+
+
+--> SE O PRODUCT NÃO EXISTIA AINDA,
+
+
+O 
+
+
+'xxx.save()'
+
+
+__ VAI CRIAR UM NOVO PRODUCT.... --> 
+
+
+
+
+MAS 
+
+
+SE 
+
+ESSE 
+
+
+
+PRODUCT/RECORD JÁ EXISTIA NA DATABASE,
+
+
+ELE 
+
+VAI 
+
+
+'OVERWRITE/UPDATE' 
+
+
+o 
+
+
+
+RECORD VELHO COM NOSSOS NOVOS VALORES...
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+AÍ O PROFESSOR IA CHAINAR 
+
+
+
+
+'then' e 'catch' 
+
+
+nesse 
+
+
+call 
+
+de 
+
+'.save()',
+
+
+MAS 
+
+AÍ 
+
+ELE 
+
+
+DECIDE 
+
+
+OPTAR 
+POR UMA SINTAXE ALTERNATIVA,
+
+ASYNC AWAIT,
+
+PARA 
+
+EVITAR 
+
+O NESTING DE NOSSAS PROMISES... (para evitar uma FEIURA SIMILAR A DE NESTED CALLBACKS...)
+
+
+
+
+
+
+
+---> PARA ISSO, 
+
+
+
+ELE ESCREVE ASSIM:
+
+
+
+
+
+
+
+
+
+Product.findById(productId)
+.then(
+    product => {
+
+
+        product.title = req.body.title;
+        product.price = req.body.price;
+        product.description = req.body.description;
+        product.imageUrl = updatedImageUrl;
+        return product.save(); //////ele escreve isto, esse RETURN de product.save, para então usar com AQUELE then e catch blocks...
+    }
+)
+.then(
+(result) => {
+        console.log('UPDATED PRODUCT'
+    );
+}
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+----> RECEBI UM ERRO:
+
+
+
+
+
+
+
+TypeError: Product.save is not a function
+    at A:\projeto4 - NODEJS\MODULO11-ENTENDENDOSEQUELIZE(importante,constrói a partir do SQL, 
+SQL QUERIES)\NOVONOVOPROJETO8-TRABALHANDOCOMDATABASESQL\controllers\admin.js:130:25
+
+
+
+
+
+
+
+
+
+
+-----> ACHO QUE É PQ 
+
+
+A SINTAXE CORRETA É 
+
+
+
+'product.save()' (MINÚSCULO...)
+
+
+
+
+
+
+
+
+
+
+
+
+---> RECEBI OUTRO ERRO:
+
+
+
+
+
+
+  errors: [
+    ValidationErrorItem {
+      message: 'product.imageUrl cannot be null',
+      type: 'notNull Violation',
+      path: 'imageUrl',
+      value: null,
+      origin: 'CORE',
+      instance: [product],
+      validatorKey: 'is_null',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+--> ERA UM ERRO DE ESCRITA, NADA DE MAIS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, CONSEGUI UPDATAR 
+
+
+MEU PRODUCT,
+
+
+tudo 
+graças 
+
+
+a 
+
+'findByPk()' 
+
+
+
+e 
+
+
+'product.save()'....
+
+
+
+
+
+
+
+
+
+
+
+--> OK... 
+
+
+
+MAS AÍ O PROFESSOR NOS FALA DE UM ___ PROBLEMA__... --> QUANDO 
+
+
+
+
+
+__SALVAMOS ___ UM NOVO PRODUCT/EDITAMOS UM 
+
+
+
+
+
+PRODUCT QUE JÁ EXISTE__ E ENTÃO __ SOMOS _________ REDIRECIONADOS__ 
+
+
+À 
+
+PÁGINA 
+
+de 
+
+'ADMIN PRODUCTS' (Que DEVERIA MOSTRAR ESSA ALTERAÇÃO),
+
+
+
+
+
+NÓS SÓ VEMOS A 
+
+
+ALTERAÇÃO APLICADA NAQUELE PRODUCT 
+
+
+__ SE RECARREGARMOS A PÁGINA_....
+
+
+
+
+
+
+------> QUAL É A RAZÃO PARA TAL?
+
+
+
+
+
+--> PQ 
+
+
+DIABOS O NEGÓCIO NÃO ATUALIZA INSTANTANEAMENTE?
+
+
+
+
+
+
+
+
+
+-----> BEM, 
+
+
+A 
+
+
+RESPOSTA/RAZÃO 
+
+
+
+
+
+
+
+É QUE 
+
+NÓS __ REDIRECIONAMOS __ O USER__ POR MEIO 
+
+DAQUELE 
+
+STATEMNET 
+
+
+
+
+
+de 
+
+'res.redirect('/admin/products'); ---------> 
+
+
+
+
+
+
+
+E COMO 
+
+
+NÓS APRENDEMOS ANTERIORMENTE,
+
+
+
+ O JAVASCRIPT 
+
+
+ E o 
+
+ NODEJS 
+
+
+
+ SIMPLESMENTE 
+
+
+
+
+
+
+
+______eXECUTAM __ SEU CÓDIGO DE CIMA PARA BAIXO... ------> 
+
+
+
+
+
+
+
+
+
+
+MAS O PROBLEMA, AQUI, É QUE 
+
+
+ASYNC OPERATIONS COMO '.findById()' 
+
+
+e 
+
+
+'product.save()'
+
+
+
+SÃO __ OPERAÇÕEs__ QUE DEMORAM 1 TEMPO,
+
+
+OPERAÇÕEs__ 
+
+QUE 
+
+NÃO VAO 
+
+
+CONCLUIR INSTANTANEAMENTE 
+
+COMO 
+
+um 
+
+
+'console.log()'
+
+
+ou um 
+
+'res.redirect()'...
+
+
+
+
+
+
+
+
+--->
+
+
+
+
+VOCÊ PODE VER A ORDEM DE EXECUÇAÕ AQUI:
+
+
+
+
+
+
+
+  Product.findByPk(productId)  ///////1 ............ (e continua)..... ////////2 (só vai concluir DEPOIS...)
+  .then(
+      product => {
+  
+  
+          product.title = req.body.title;
+          product.price = req.body.price;
+          product.description = req.body.description;
+          product.imageUrl = req.body.imageUrl;
+          return product.save();           //////2 
+      }
+  )
+  .then(
+(result) => {console.log('UPDATED PRODUCT')
+}
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+      }
+  )
+
+res.status(302).redirect('/products'); ///////////2 (ocorre logo depois de 1... instantaneo)...
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+OK,
+
+
+ISSO SIGNIFICA QUE 
+
+
+A ENGINE DO JAVASCRIPT VAI 'REDIRECT BEFORE OUR PROMISE IS DONE'...
+
+
+
+
+
+
+
+--------> PARA TENTAR CONSERTAR ISSO,
+
+
+O PROFESSOR 
+
+
+MOVE 
+
+NOSSO REDIRECT PARA DENTRO DO THEN BLOCk FINAL...
+
+
+
+
+
+(É CLARO QUE ISSO NÃO É IDEAL,
+
+PQ 
+
+NÃO ESTAMOS PROPORCIONANDO UMA USER EXPERIENCE BOA, ESTAMOS 
+
+DEIXANDO DE HANDLAR O ERROR CASE, NESSE CASO....)
+
+
+
+--> mas veremos error handling mais tarde no curso..
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+  Product.findByPk(productId) ///versão do PROFESSOR de 'findById()', que mais embaixo usa 'Product.save()' PARA __ EDITAR (se o product JÁ existia como record na table de products) ou ADICIONAR (se o product NÃO EXISTIA AINDA na nossa table de products) ___ UM OBJECT COM ESSES VALORES, como um record, lá na nossa DATABASE SQL..
+  .then(
+      product => {
+  
+  
+          product.title = req.body.title;
+          product.price = req.body.price;
+          product.description = req.body.description;
+          product.imageUrl = req.body.imageUrl;
+        //  return Product.save(); 
+          return product.save();          //fazemos isso, esse return, para que o THEN e CATCH blocks logo abaixo CONSIGAM executar código a partir desse return....
+      }
+  )
+  .then(
+(result) => {console.log('UPDATED PRODUCT')
+res.status(302).redirect('/products');
+
+
+
+
+}
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+      }
+  )
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+OK, MAS O QUE INTERESSA É QUE COM ISSO 
+
+
+
+AS CHANGES 
+
+NO NOSSO PRODUCT SÃO REFLETIDAS 
+
+
+E VISTAS PELO USUÁRIO 
+
+JÁ 
+
+QUANDO OCORRE O REDIRECT.... user experience melhor, nesse aspecto...
+
+
+(só vamos redirecionar DEPOIS DO UPDATE TER SIDO SUCCESSFUL.)
+
+
+
+
+
+
+
+
+
+
+-------> OK... AGORA O PROFESSOR VAI QUERER NOS MOSTRAR 
+
+
+A 
+
+OPERAÇÃO 
+
+
+DE 
+
+__DELETE__ DE 
+
+1
+
+RECORD NA DATABASE...
+
+

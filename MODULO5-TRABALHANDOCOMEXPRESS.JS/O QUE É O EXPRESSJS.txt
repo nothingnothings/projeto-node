@@ -1,0 +1,572 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> o que, e POR QUE?
+
+
+
+
+
+
+--> O QUE É O EXPRESSJS? PQ USÁ-LO?
+
+
+
+
+
+
+
+--> PROFESSOR MENCIONOU ANTES:
+
+
+
+
+
+ESCREVER TODA AQUELA LÓGICA SERVERSIDE É algo chato e complexo....
+
+
+
+
+
+
+
+
+
+
+ --> PODEMOS CITAR COMO EXEMPLO AS LINHAS 
+
+ DE CÓDIGO 
+
+
+ QUE 
+
+ TIVEMOS 
+
+
+
+ DE ESCREVER 
+
+ PARA 
+
+ __EXTRAIR __ O BODY__ 
+
+
+ DO 
+
+
+ REQUEST...
+  
+
+
+
+
+
+  --> LEMBRE-SE, TIVEMOS DE ESCREVER ESSAS LINHAS AQUI:
+
+
+(manualmente):
+
+
+
+
+  1) FAZER LISTEN AO EVENT 'data' --> linha:   'req.on('data', chunk => {
+      ....
+  })
+
+
+
+
+
+
+  2) FAZER LISTEN AO EVENT 'END', que termina esse listen da 'data'... -> 
+
+
+
+  ex: return req.on('end', () => {
+      
+  })
+
+
+
+
+
+
+
+
+
+  3) DENTRO DESSE LISTENER (req.on())  de 'END',
+
+  tivemos 
+
+
+  de CRIAR UM 
+
+  BUFFER, 
+
+
+
+  UM BUFFER QUE ENTÃO FOI CONVERTIDO EM UMA STRING COM '.toString()'
+
+
+
+  EX:
+
+
+
+return req.on(
+    'end', 
+    () => {
+        const parsedBody = Buffer.concat(body).toString();
+    }
+)
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+E ISSO AÍ, ESSA OPERAÇÃO TODA,
+
+
+FOI 
+
+'JUST FOR ONE TYPE OF DATA WE COULD GET'.... ----> 
+
+
+
+SE NÓS FOSSEMOS 
+
+RETRIEVAR/FAZER 'GET' 
+
+DE OUTROS TIPOS 
+
+DE 
+
+DATA,
+
+
+
+COMO POR EXEMPLO 
+
+
+
+PEGAR 
+
+UMA 
+
+'FILE'
+
+
+ou 
+
+'DIFFERENTLY STRUCTURED DATA';
+
+
+SE FIZESSEMOS ISSO,
+
+
+AÍ TERÍAMOS DE ESCREVER 
+
+
+
+
+UMA LÓGICA NOVA, DIFERENTE DESSA QUE ESCREVEMOS AGORA..... ---> E A FUNÇAÕ 
+
+DO 
+
+
+
+EXPRESS.JS 
+
+
+
+É JUSTAMENTE NOS AJUDAR COM ISSO.... -------> O EXPRESSJS 
+
+
+
+
+ACTUALLY NÃO TEM UMA 
+
+'BUILT-IN WAY' 
+
+
+DE 
+
+
+
+HANDLAR/PARSEAR 
+
+
+DATA 
+
+
+DO 
+
+BODY,
+
+
+
+MAS 
+
+ELE 
+
+CERTAMENTE 
+
+DEIXA 
+
+MAIS FÁCIL O ___ INSTALL __  __ DE 
+
+
+
+UM __ OUTRO__ PACKAGE, AINDA OUTRO PACKAGE,
+
+
+QUE PODE 
+
+SER 
+
+'EASILY HOOKED INTO OUR PROJECT',
+
+
+
+PACKAGE QUE 
+
+
+ENTÃO FARÁ O PARSING PARA NÓS....
+
+(logo veremos o que o professor quer dizer por isso....)
+
+
+
+
+
+
+----> ENFIM, GERALMENTE 
+
+
+NÃO VAMOS QUERER 
+
+NOS IMPORTARMOS 
+
+COM TODOS 
+
+ESSES 
+DETALHES NITTY GRITTY...
+
+
+
+
+
+
+
+
+
+
+--------> EM VEZ DISSO, QUEREMOS FOCAR NO NOSSO CÓDIGO, O CÓDIGO QUE DEFINE 
+
+NOSSA APPLICATION... ---> OS UNIQUE SELLING POITNS DE NOSSO 
+APLICATIVO...
+
+
+
+
+
+
+--> PARA ISSO, USAMOS 
+UM FRAMEWORK... --> FRAMEWORK FAZ TODO O HEAVY LIFTING- --> 
+
+UM FRAMEWORK 
+
+É 
+
+BASICAMENTE UM __SET DE HELPER FUNCTIONS__,
+
+MAS 
+
+ELE 
+
+TAMBÉM 
+
+
+É 
+
+UM 
+
+
+SET DE 
+
+'TOOLS E RULES',
+
+
+com os quais trabalhamos..... ------> OU SEJA,
+
+
+FICAMOS COM UMA CLEARLY DEFINED WAY/OUTLINE 
+
+DE COMO 
+
+DEVEMOS 
+
+ESTRUTURAR NOSSO CÓDIGO,
+
+
+
+__ E TAMBÉM 
+SOBRE COMO 
+
+PODEMOS 
+
+TRABALHAR COM ESSE FRAMEWORK PARA ESCREVER CÓDIGO LIMPO....
+
+
+
+
+
+
+
+
+
+
+--> EXPRESSJS NOS AJUDA COM ISSO...
+
+
+
+
+
+
+
+---> MAS É CLARO QUE EXPRESSJS NÃO É O ÚNICO FRAMEWORK PARA O NODEJS... 
+
+
+
+
+
+
+
+
+-----> ALÉM DE USAR 'express.js',
+
+VOCÊ PODE/PODERIA 
+
+USAR 
+
+
+NODEJS 
+
+VANILLA --> VOCÊ PODE, TEORICAMENTE,
+
+FICAR COM 
+
+O VANILLA 
+
+
+NODEJS.... ----> VOCÊ PODE TEORICAMENTE ESCREVER TUDO POR CONTA PRÓPRIA SÓ COM ELE....
+
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE EXISTEM OUTRAS 
+FRAMEWORKS 
+
+PARA O NODEJS.... --> 
+
+
+EXEMPLO É O 
+
+
+'Adonis.js'... -------> SE VOCÊ ALGUMA VEZ JÁ USOU O 'LARAVEL' PARA A LINGUAGEM PHP,
+
+
+
+O ADONIS É BASICAMENTE UM FRAMEWORK INSPIRADO 
+
+
+
+PELO 'LARAVEL', mas para o nodejs....
+
+
+
+
+
+
+
+
+
+--> HÁ TAMBÉM:
+
+
+
+
+1) KOA 
+
+
+
+
+2) SAILS.js...
+
+
+
+
+
+
+
+
+--> E EXISTEM MUITOS MAIS... -----> HÁ 
+
+
+
+INÚMERAS ALTERNATIVAS,
+
+
+
+vantagens e desvantagens....
+
+
+
+
+
+
+
+
+
+--> MAS O EXPRESS.JS É 
+
+O MAIS UTILIZADO,
+
+
+O MAIS POPULAR...
+
+
+
+
+
+
+
+
+--> A COISA BOA DO EXPRESS.JS É 
+
+QUE 
+
+ELE É 
+
+ALTAMENTE FLEXÍVEL....
+
+
+
+
+
+--> ELE NÃO ADICIONA TANTAS COISAS NOVAS OUT OF THE BOX,
+
+mas o bom 
+
+É QUE 
+
+ELE 
+
+TE 
+
+DÁ UMA 
+
+MANEIRA 
+
+
+CERTINHA 
+
+DE 
+
+BUILDAR 
+
+SEU APP/
+
+
+
+TRABALHAR COM 
+
+SEUS 
+
+
+INCOMING REQUESTS,
+
+
+e justamente 
+
+
+POR ISSO 
+
+ESSE FRAMEWORK 
+
+
+É 
+
+
+'HIGHLY EXTENSIBLE',
+
+
+
+
+___ E É POR ISSO __ QUE 
+
+EXISTEM 
+
+
+MILHARES DE THIRD PARTY PACKAGES 
+
+CONSTRUÍDAS 
+
+
+__ESPECIFICAMENTE __ PARA O EXPRESS.JS.. ---> 
+
+
+
+
+VOCÊ PODE ADICIONÁ-LAS FACILMENTE AO SEU APP,
+
+SEM TER QUE 
+
+CONFIGURAR MTAS COISAS.... --> 
+
+ESSA 
+
+É 
+
+A 
+
+'MAIN STRENGTH' 
+
+do 
+
+
+express.js,
+ 
+ na verdade...
+
+
+
+
+
+ (nesse quesito, É BEM PARECIDO COM O REACT...)

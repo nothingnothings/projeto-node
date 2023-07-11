@@ -1,0 +1,999 @@
+
+
+
+
+
+
+
+
+
+
+
+--> PARA 
+
+ASSEGURAR QUE 
+
+CONSIGAMOS 
+
+
+'DELETE POSTS',
+
+
+
+
+
+
+
+
+VAMOS ATÉ O 
+
+
+
+'feed.js' (routes)
+
+
+
+E AÍ 
+
+
+
+ESCREVEMOS UMA 
+
+
+NOVA ROUTE,
+
+
+COM METHOD 
+
+DE 
+
+
+'delete'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+router.delete('/delete-post', feedController.deletePost);
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo.... mas eu havia codado isso 
+
+DE FORMA 
+
+
+
+DIFERENTE,
+
+
+NO MEU APP...
+
+
+
+
+
+
+
+
+---> O PROFESSOR EXPLICA QUE __ 'COM DELETE ROUTES,
+
+
+VOCÊ NÃO PODE 
+
+
+ENVIAR 1 BODY...' -------> o que quer dizer que 
+
+
+
+
+MEU CÓDIGO ANTERIOR (Que colocava/coloca o 'postId' DENTRO DO REQUEST BODY) SÓ FUNCIONA/
+
+
+FUNCIONARIA/VAI FUNCIONAR __ SE 
+
+
+
+ESCREVEMOS 
+
+ALGO COMO 
+
+
+router.post('/delete-post', feedController.deletePost);,
+
+
+
+
+
+
+
+
+O QUE TAMBÉM SERVE (não é totalmente errado),
+
+
+MAS 
+
+
+NÃO É RECOMENDADO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> ISSO SIGNIFICA QUE NESSE CASO DO PROFESSOR (E a maior parte dos casos de DELETE ALGUMA COISA,
+
+
+
+em REST APIs),
+
+
+
+VAMOS PREFERIR O APPROACH DE 
+
+'EXTRACT ID DA COISA LÁ DA SUA URL',
+
+
+e não 
+
+do request body em si...
+
+
+
+
+
+
+
+
+
+
+--> é por isso que escrevemos 
+
+
+
+
+'router.delete('/post/:postId', controller);'...
+
+
+
+
+
+
+--------------
+
+
+
+
+
+
+
+
+
+
+
+------->  É CLARO QUE __ VAMOS PRECISAR DE UMA 'CONTROLLER ACTIOn'...
+
+
+
+
+
+
+
+
+
+
+-_> VAMOS ATÉ 
+
+'feed.js'
+
+
+
+E O ADICIONAMOS...
+
+
+
+
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+exports.deletePost = (req, res, next) => {
+
+
+
+    const postId = req.params.postId;
+
+
+
+
+    
+
+
+
+
+}
+
+
+
+
+
+
+
+
+--> EXTRAÍDO ESSE ID LÁ 
+
+DA URL,
+
+
+PROFESSOR VAI USAR 'findById'
+
+PARA 
+
+ENCONTRAR 
+
+
+O POST CORRESPONDENTE A ESSE POST RENDERIZADO NA TELA DO USER, cujo id extraímos da url....
+
+
+
+
+
+
+
+
+
+
+EU HAVIA ESCRITO ASSIM:
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+  // const postId = req.params.postId;
+
+  // const postId = req.body.postId; ///approach que usávamos COM __ O 'router.post('/delete-post/...')' -----> MAS NÃO VAMOS USAR com o approach do 'router.delete()', PQ o method 'DELETE' naõ PERMITE O SEND DE REQUEST BODIES... (e antes estávamos extraindo o id do request body....) ---> agora vamos extrair esse id LÁ DA URL, POR MEIO DE 'req.params.postId'...
+
+const postId = req.params.postId;
+
+
+
+  Post.findById(postId).then((post) => {
+    ////// isto vai apagar a image correspondente a esse post, lá de nossa database...
+    fs.unlink(post.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Post.findByIdAndDelete(postId) ///já isto vai deletar o ACTUAL POst  de nossa database....
+    .then((result) => {
+      console.log(result);
+
+      res.status(200).json({
+        message: 'Product successfully deleted',
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: 'Failed to delete product.',
+        err: err,
+      });
+    });
+};
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK, VAMOS ENCONTRAR 
+
+
+
+ESSE 
+
+
+
+POST POR ID,
+ 
+ E AÍ 
+
+ VAMOS QUERER 
+
+ O DELETAR... -------->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ E AÍ 
+
+ ESCREVEMOS AQUELE CATCH BLOCK... ----> SE TIVERMOS UM ERROR, VAMOS USAR AQUELE 
+
+ 'OLD ERROR CATCHING ERROR',
+
+
+ de 
+
+
+
+
+'.catch(
+    (err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+    }
+)
+'
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+  // const postId = req.params.postId;
+
+  // const postId = req.body.postId; ///approach que usávamos COM __ O 'router.post('/delete-post/...')' -----> MAS NÃO VAMOS USAR com o approach do 'router.delete()', PQ o method 'DELETE' naõ PERMITE O SEND DE REQUEST BODIES... (e antes estávamos extraindo o id do request body....) ---> agora vamos extrair esse id LÁ DA URL, POR MEIO DE 'req.params.postId'...
+
+const postId = req.params.postId;
+
+
+
+  Post.findById(postId).then((post) => {
+    ////// isto vai apagar a image correspondente a esse post, lá de nossa database...
+    fs.unlink(post.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  // Post.findByIdAndDelete(postId) ///já isto vai deletar o ACTUAL POst  de nossa database.... --> mas vamos USAR O 'findById()' + deleteone(), PQ _ QUEREMOS __FAZER AS COISAS POR PARTES, ANTES IDENTIFICAR SE O USER REALMENTE TEM AQUELE POST (post é realmente desse user), etc tetc....
+  //   .then((result) => {
+  //     console.log(result);
+
+  //     res.status(200).json({
+  //       message: 'Product successfully deleted',
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).json({
+  //       message: 'Failed to delete product.',
+  //       err: err,
+  //     });
+  //   });
+
+
+  Post.findById(postId)
+  .then(
+    (post) => {
+            /////CHECK LOGGED IN USER (later in the course)...
+    }
+  )
+.catch(
+    (err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+    }
+)
+
+};
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+ENTRETANTO, UMA COISA QUE JÁ FAREMOS, AGORA,
+
+É 
+
+DELETAR A IMAGE VINCULADA A ESSE POST ESPECÍFICO, por meio de 'fs.unlink'...
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+const postId = req.params.postId;
+
+
+
+
+  Post.findById(postId)
+  .then(
+    (post) => { //check logged in user (LATER IN THE COURSE)...
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+      
+    }
+  )
+  .catch(
+    (err) => {
+
+    }
+  )
+
+
+};
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+MAS ANTES DISSO,
+
+PROFESSOR VAI QUERER 
+
+'CHECK IF THAT POST REALLY EXISTS'...
+
+
+
+
+
+
+
+-> PARA ISSO,
+
+
+
+ELE COPIA AQUELA LÓGICA USADA 
+
+em 
+
+'update post',
+
+
+
+AQUELE CÓDIGO DE 
+
+
+''
+
+
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+
+
+'''
+
+
+E 
+
+COLA 
+
+
+NESSA ROUTE DE 
+
+'delete product'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+const postId = req.params.postId;
+
+
+
+
+  Post.findById(postId)
+  .then(
+    (post) => { //check logged in user (LATER IN THE COURSE)...
+
+    
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+      
+    }
+  )
+  .catch(
+    (err) => {
+                if(!err.statusCode) {
+                    err.statusCode = 500;
+                }    }
+                next(err);
+  )
+
+
+};
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+
+ENCONTRADO 
+
+ESSE POST 
+
+AÍ (e não entrando no block de '!post'),
+
+
+
+VAMOS 
+
+
+
+
+EXECUTAR UM CÓDIGO 
+
+
+de 
+
+
+
+'return Post.findByIdAndRemove()',
+
+
+DENTRO 
+
+
+
+DE ESSE 'Post.findById()'...
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+  Post.findById(postId)
+    .then((post) => {
+      //check logged in user (LATER IN THE COURSE, when we have 'logged in users'...)... 
+          
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+      return Post.findByIdAndRemove(postId)
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+AÍ VAMOS ADICIONAR MAIS UM 'then block'
+
+
+
+
+PARA 
+
+
+VER O 'RESULT' 
+
+DESSA OPERATION DE 'findByIdAndRemove()'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+  Post.findById(postId)
+    .then((post) => {
+      //check logged in user (LATER IN THE COURSE, when we have 'logged in users'...)... 
+          
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+      return Post.findByIdAndRemove(postId)
+      .then(
+        (result) => {
+              console.log(result);
+              res.status(200).json(
+                {
+                  message: 'The post was deleted.'
+                }
+              )
+        }
+      )
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+
+
+
+
+
+
+
+
+
+
+    -----------------------------
+
+
+
+
+
+
+
+
+
+
+    ok.... 
+
+    COM ISSO,
+
+
+
+    A ACTION DE 'deletePosT'
+
+
+
+
+    JÁ FOI CONFIGURADA... 
+
+
+
+
+
+
+
+    -> PROFESSOR DIZ QUE SÓ PRECISMAOS 
+
+
+    TRABALHAR LÁ NO FRONTEND,
+
+
+    colocar 
+
+
+
+
+    aquele 
+
+
+    'fetch('URL')',
+
+
+    ENFIAR 
+
+
+
+    O NOSSO ENDPOINT CORRETO ALI...
+
+
+
+
+
+
+
+    ----------------------------
+
+
+
+    EX:
+
+
+
+
+
+
+
+    deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch(`http://localhost:8080/feed/delete-post`, {
+      // method: 'POST',
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        postId: postId,
+      }),
+    })
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+certo....
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+
+
+
+
+AGORA ESSE NEGÓCIO DEVE FUNCIONAR QUANDO CLICAMOS NO 
+
+BOTÃO DE 'DELETE'...
+
+
+
+
+
+
+
+
+
+--> OK, MAS AÍ RECEBEMOS UM ERROR:
+
+
+
+
+
+
+
+Access to fetch at 'http://localhost:8080/feed/delete-post' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+
+
+
+
+
+
+--> sim, é pq minha ROUTE MUDOU..
+
+
+
+agora É:
+
+
+
+
+router.delete('/delete-post/:postId', feedController.deletePost);
+
+
+
+
+
+
+
+
+--> tenho que enfiar o 'postId'
+
+dentro dessa url aí,
+
+onde envio o REQUEST DE TIPO DELETE (frontend)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... funcionou. O DELETE DELETA NOSSO POST LÁ DO SERVER/DATABASE,
+
+
+
+E __ TAMBÉM_ _DELETA A IMAGE__ QUE ESTAVA VINCULADA A ESSE POST...

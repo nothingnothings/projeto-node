@@ -1,0 +1,2235 @@
+
+
+
+
+
+
+
+
+PODEMOS USAR NODEMON COM ___ TYPESCRIPT__ EM VEZ DE JAVASCRIPT:
+
+
+
+https://futurestud.io/tutorials/typescript-use-nodemon-to-restart-your-server-on-changes#:~:text=Nodemon%20is%20a%20useful%20tool,with%20TypeScript%20instead%20of%20JavaScript.
+
+
+
+
+
+
+
+Nodemon is a useful tool to automatically restart your Node.js server when changing files. It’s a perfect helper during development. You can also use Nodemon with TypeScript instead of JavaScript.
+
+This tutorial walks you through the seamless setup and shows you how to restart your Node.js code written with TypeScript using Nodemon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É ESTE CÓDIGO AQUI, PENSO EU:
+
+
+
+   "dev:server": "nodemon --watch './**/*.ts' --exec 'ts-node' app.ts"
+
+
+
+
+
+
+
+
+
+
+
+
+----> MAS ANTES DISSO, PRECISAMOS INSTALAR A PACKAGE 
+
+
+DO 
+
+
+
+
+'ts-node' 
+
+
+NO NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+
+OBS:
+
+
+ --save-dev ts-node
+
+
+
+
+
+ ---> ISSO AÍ É UMA __ DEV DEPENDENCY, É  CLARO...
+
+
+
+
+
+
+
+
+
+
+ AIND ESTOU RECEBENDO ESTE ERRO:
+
+
+
+
+
+
+
+ ''ts-node'' não é reconhecido como um comando interno
+ou externo, um programa operável ou um arquivo em lotes.
+
+
+
+
+
+
+
+
+-_> TALVEZ EU TENHA QUE INSTALAR O 'nodemon' como DEPENDENCIA DE DESENVOLVIMENTO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> JÁ FIZ ISSO, NÃO FUNCIONOU...
+
+
+
+
+
+VEREI ESTE WORKAROUND AQUI:
+
+
+
+
+------------------------------------------
+
+
+
+
+ just encountered a similar issue: on Mac OS --exec ts-node works, on Windows it doesn't.
+
+My workaround is to create a nodemon.json like this:
+
+{
+  "watch": "src/**/*.ts",
+  "execMap": {
+    "ts": "ts-node"
+  }
+}
+and change the package.json scripts section to
+
+"scripts": {
+  "start": "nodemon src/index.ts"
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OU SEJA,
+
+EDITAR NOSSO NEGÓCIO PARA QUE ELE FIQUE ASSIM:
+
+
+
+"scripts": {
+  "start": "app.ts"
+},
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.ts"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> MAS ISSO __ TAMBÉM ___ NÃO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+  --> AINDA RECEBI O MESMO ERROR:
+
+
+
+
+  ts-node' não é reconhecido como um comando interno
+ou externo, um programa operável ou um arquivo em lotes.
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+5
+
+Nodemon is for watching and rerunning node processes when files change. The local ts-node installed in the node_modules directory is not recognized in the scope of the --exec argument. To get around this, some people have recommended installing ts-node globally. As a user pointed out, that's not a good solution because it relies on packages external to your project and makes the ts-node in our node_modules pointless.
+
+To fix your solution, prefix ts-node with the npx helper, which will use your local node_module executables.
+
+package.json, inside the scripts block:
+
+"start": "nodemon --watch './src/**/*' -e ts --exec 'npx ts-node src/index.ts'"
+An alternative approach could be to use the typescript watcher with the existing node command and the concurrently package.
+
+"start": "concurrently \"tsc --watch\" \"node ./dist/index.js\""
+Same principle. One package watches for changes (nodemon & tsc) and restarts the second process (the node/ts-node server).
+
+Edit 11/17/2021: I returned this post to use it as a reference for setting up a prototype build and found the nodemon approach above was no longer working, it was now throwing the error:
+
+''npx' is not recognized as an internal or external command,
+operable program or batch file.
+I found a fix was to convert all single quotes to escaped double quotes.
+
+"start": "nodemon --watch \"./src/**/*\" -e ts --exec \"npx ts-node src/index.ts\""
+Guess something changed since I my original post. Hope that helps!
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+DESCOBRI UMA PACKAGE NOVA, QUE 
+
+
+TALVEZ SUBSTITUA ESSAS 
+
+2
+ 
+
+ PACKAGES... (tanto a package de 'nodemon' como a package de 'ts-node'...)
+
+
+
+ É A PACKAGE DE 
+
+
+
+ 'ts-node-dev'....
+
+
+
+
+ EX:
+
+
+ https://github.com/wclr/ts-node-dev
+
+
+
+
+
+
+
+
+ 227
+
+I've dumped nodemon and ts-node in favor of a much better alternative, ts-node-dev https://github.com/whitecolor/ts-node-dev
+
+Just run ts-node-dev src/index.ts
+
+
+
+
+
+
+So I literally just have "start": "ts-node-dev src". No need for babel, nodemon, or any of the config that comes with it. Everything is handled for you.
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOSSA.... PERFEITO.
+
+
+
+É MUITO BOM.... 
+
+
+
+
+ele realmente faz tudo isso,
+
+
+
+
+
+
+
+faz tanto a função do 'nodemon' como do 
+
+'ts-node',
+
+
+EM 1 
+
+MESMO 
+
+
+DEPENDENCY...
+
+
+
+
+
+--> só não sei se ele JÁ COMPILA O CÓDIGO AUTOMATICAMENTE (isso seria muito god)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> NÃO, ELE NÃO COMPILA.... -> isso significa que 
+
+
+QUANDO QUEREMOS ___ 'TRANSFORMAR EM REAL'
+
+
+
+
+nosso trabalho feito com o typescript,
+
+AINDA TEMOS QUE 
+
+
+
+EXECUTAR 
+
+'tsc' 
+
+
+
+para compilar nossos arquivos '.ts'...
+
+
+
+
+
+
+
+
+
+-> ok, mas por acaso ele funciona com ARQUIVOS QUE EXISTEM NA 'TREE' do 'app.ts'? (como os controllers?)
+
+
+
+
+
+
+
+
+
+
+
+--> não, não está funcionando... 
+
+
+
+
+--> tenho que ver __ COMO SELECIONAR__ TODOS __ MEUS ARQUIVOS '.ts'
+
+DENTRO DO MEU FOLDER...
+
+
+
+
+
+
+
+
+
+--> mas esse package tem alguns problemas, aparentemente...
+
+
+
+
+
+
+
+
+
+
+-> NÃO VALE A PENA USAR ESSE PACKAGE....
+
+
+
+
+
+
+
+
+
+--> melhor só instalar 'ts-node' como global e foda-se...
+
+
+
+
+
+
+
+--> e depois adicionar esse comando no NOSSO PATH do pc....
+
+
+
+
+
+
+
+
+--> certo... mas nem com isso INSTALADO GLOBALMENTE conseguimos 
+
+
+replicar 
+
+
+
+
+
+
+
+o comportamento do nodemon (de recarregar a partir de saves)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> '''CONSERTEI'''' o problema, por meio de um execute simples do 'nodemon', mas com um arquivo '.ts':
+
+
+
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.ts"
+
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+talvez a soluçaõ seja usar um ARQUIVO CONFIG DO NODEMON..
+
+
+(
+
+
+    'nodemon.json'
+)
+
+
+
+
+
+
+
+
+
+
+REESTRUTUREI MEU CÓDIGO, COLOQUEI TODOS OS ARQUIVOS DO BACKEND dentro de um folder chamado de '/src'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> CLARO QUE ISSO AINDA NÃO ESTÁ FUNCIONANDOo...
+
+
+
+
+
+
+
+
+
+
+
+
+ts-node will only execute files that are 
+transitively required or imported by your main file src/index.ts.
+ You can use the --files option to make it include all files specified in
+  tsconfig.json in the compilation, but this only helps to declare things, not to define them at runtime.
+   See the documentation. If you need to execute all files without using require or import, 
+   consider running your project using a different tool.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> acho que ENTENDI A RAZÃO DO PROBLEMA.... ---> é pq 
+
+
+
+lá nos nossos arquivos estamos importando 
+
+
+
+
+
+outros arquivos
+
+
+por meio de 
+
+'import xxx from '''SSSS.js'' (
+
+
+
+  OU SEJA,
+
+  ESTAMOS IMPORTANDO _ 
+
+ ARQUIVOS '.js',
+
+ E NÃO 'TS'...
+
+)
+
+
+
+
+
+
+
+
+
+
+OK, mas e se eu importasse arquivos 'ts',
+
+SERÁ QUE ISSO FARIA ALGUMA DIFERENÇA?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO __ NÃO FUNCIONA___:
+
+
+
+
+An import path cannot end with a '.ts' extension. Consider importing './routes/routes' instead.
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+ts-node will only execute files that are transitively required or imported by your main file src/index.ts. 
+You can use the --files option to make it include all files specified in tsconfig.json in the compilation,
+ but this only helps to declare things, not to define them at runtime. See the documentation. 
+ If you need to execute all files 
+without using require or import, consider running your project using a
+ different tool.
+
+
+
+
+
+
+
+
+ok..... --> isso significa que PRECISAMOS DEPENDER FORTEMENTE DE 'tsc', executá-lo para EFETIVAMENTE TESTAR NOSSO CÓDIGO....
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS VER UM POUCO MAIS SOBRE ESSE PROJETO 'TYPESCRIPT-NODE',
+
+e mais coisas que podemos fazer com ele...
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR QUER COMEÇAR COM UMA FEATURE EXTRA DO TYPESCRIPT 
+
+que 
+
+
+você pode utilizar....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ PODE TER VISTO QUE 
+
+
+QUANDO O 
+
+PROFESSOR 
+
+ACESSOU 
+
+
+
+
+
+
+
+as propriedades de 
+
+
+
+'req.body.text' 
+
+
+
+e 
+
+'req.params.todoId',
+
+
+
+
+
+
+ELE___ CONSEGUIU _ 'AUTO-COMPLETION'
+
+
+
+
+__ DESDE __ QUE ELE 
+
+TRABALHASSE __ SÓ NO OBJETO 'request'... -----> por exemplo,
+
+
+
+
+SE  ELE DIGITOU/DIGITAVA APENAS 
+
+'req',
+
+
+
+ELE CONSEGUIA _ VER__ QUE ESSE NEGÓCIO POSSUÍA/POSSUI 
+UMA 
+
+
+
+PROPRIEDADE/objeto de 'body'...
+
+
+
+
+
+
+
+
+
+
+---------> MAS AS COISAS QUE 
+
+
+O PROFESSOR PODE ACESSAR NO __ 'BODY' em si SÃO __ MUITO FLEXÍVEIS... -> isso pq 
+
+
+O 
+
+PROFESSOR PODE ACESSAR QUALQUER COISA LÁ... ----> ISSO PQ 
+
+
+
+
+__ O TYPESCRIPT__ NÃO TEM COMO/NÃO CONSEGUE 
+
+
+IDENTIFICAR/ENTENDER 
+
+
+
+
+AS COISAS QUE 
+
+VAO 
+
+
+EXISTIR
+ 
+
+ DENTRO 
+
+
+
+
+ DO 
+
+
+ ___ BODY___ DO INCOMING REQUEST__ ------> E A MESMA COISA SE APLICA AO 
+
+ 'params'... 
+
+
+
+
+
+
+
+
+
+
+
+
+ -_> VOCê ATÉ PODERIA ARGUMENTAR QUE ISSO É IDIOTA,
+
+ QUE 
+
+ ELE 
+
+ ___DEVERIA__ SER CAPAZ__ DE ENTENDER/SABER__ QUAIS PROPRIEDADES TEMOS DENTRO DE 'params',
+
+
+
+ pois 
+
+ havíamos escrito aquele código de 
+
+
+
+ 'router.put('/todo/:todoId')',
+
+
+
+
+ QUE 
+
+
+
+
+ VAI NOS DAR ESSA PROPRIEDADE/valor.... ---------> NÓS HAVÍAMOS ENCODADO O VALOR DESSA PROPRIEDADE 'todoId'
+
+
+
+ DENTRO 
+
+
+
+ Da propriedade 'todoId',
+
+
+
+ NO CASO... ------> MAS O TYPESCRIPT__ NÃO CONSEGUE__ SABER QUE 
+
+
+ VOCÊ 
+
+
+
+
+
+ TEM ISSO NO SEU BODY/PARAMS 
+
+
+ AUTOMATICAMENTE... --> ELE NÃO CONSEGUE __ JUSTAMNETE PQ_ __ ELE É 'INCAPAZ' 
+
+ DE 
+
+ ANALISAR 
+
+
+ O __ RESTO__ DO SEU CÓDIGO 
+
+ PARA __ ENTNEDER__ O QUE __ DEVE EXISTIR DENTRO DESSE 
+
+
+ PARÂMETRO 'params'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> RESUMINDO:
+
+
+
+PARAMS/BODY,
+
+ 
+
+ NO CASO,
+
+
+  
+
+
+
+  __ SEMPRE__ SERÃO DE 'type: any' --> ESSE SERÁ O STARTING TYPE 
+
+  DESSES OBJETOS/PROPRIEDADES...
+
+
+
+
+
+
+
+
+
+
+  -----------> CORREÇÃO:
+
+
+
+
+
+  NA VERDADE,
+
+
+
+  'req.params'
+
+  É NA VERDADE UM 
+
+  
+
+  'ParamsDictionary',
+
+
+
+
+  ___ MAS ISSO AÍ_ É ESSENCIALMENTE 
+
+
+
+  UM OBJETO __ COM VÁRIAS KEY-VALUE PAIRS,
+
+
+
+
+
+
+EM QUE __ 'ANY KEYS ARE ALLOWED' (é TIPO um 'type: any')....
+
+
+
+
+
+
+-----------------> ATÉ AÍ, TUDO BEM.... -> ENTRETANTO,
+
+O PROBLEMA 
+
+É QUE 
+
+NOSSO SUPORTE AO TYPESCRIPT __ NÃO É TÃO BOM __  (not the best)
+
+
+
+
+
+com a figura do 
+
+'req.body'
+
+
+e 
+
+do 
+
+'req.params'..
+
+
+
+
+
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE, por exemplo,
+
+
+SE O PROFESSOR ESCREVER/ESCRVESSSE:
+
+
+
+
+'text.req.body.titles',
+
+
+
+
+_ ELE NÃO OBTERIA ERRO ALGUMm;.... ------> e ISSO É PÉSSIMO,
+
+
+POIS ESTAMOS USANDO __ TYPESCRIPT_ _ JUSTAMENTE PARA ___ EVITAR__ ERROS COMO ESSE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> MAS É CLARO QUE O TYPESCRIPT _ É INCAPAZ__ DE 'ANTECIPATE'
+
+
+
+TODO O TIPO DE DATA QUE VAMOS RECEBER  DE 'ICNOMING REUQUESTS.'....
+
+
+
+
+
+
+
+ENTRETANTO,
+
+NÓS, COMO DESENVOLVDEDORES
+,
+
+
+
+
+__ DEVEMOS/provavelmente vamos _sABER QUAL TIPO DE DATA 
+
+
+VAMOS CONSEGUIR 
+
+
+
+
+
+____ DE VOLTA DESSa função .......... --------->
+
+
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE DEIXAREMOS/VAMOS QUERER __ DEIXAR_ O TYPESCRIPT SABRR DISO.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO FAZMOS O TYEPSCRIPT CIENTE DE NOSSO CONHECIMNETO ACERCA 
+
+
+da data que será reotornada por essa função?  
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA QUE O TYPESCRIPT __ FIQUE __ SABENDO QUAL É O FORMATO QUE NOSSO 'REQUEST BODY/params'
+
+DEVERÁ 
+
+
+SE PARECER,
+
+
+
+
+
+
+
+
+VAMOS TER QUE 
+ALTERAR UM POUCO NOSSO CONTROLLER DE 'todo.ts'...
+
+
+
+O CÓDIGO NO MOMENTO ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+        const errors = validationResult(req); 
+      
+        if (!errors.isEmpty()) {
+        return res.status(422).json(
+            {
+                message: 'ENTERED DATA IS INVALID',
+                errors: errors
+            }
+        )
+        }
+
+
+  const body = .... 
+    const newTodo: Todo = {
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+    }
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+--> PARA ISSO,
+
+
+VAMOS SETTAR/PODEMOS SETTAR 
+
+
+
+
+
+1 NOVA CONSTANTE, DE NOME 'body':
+
+
+
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+        const errors = validationResult(req); 
+      
+        if (!errors.isEmpty()) {
+        return res.status(422).json(
+            {
+                message: 'ENTERED DATA IS INVALID',
+                errors: errors
+            }
+        )
+        }
+
+
+  const body = ....  ////////EIS O CÓDIGO EM QUESTão....
+    const newTodo: Todo = {
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+--> VAMOS ESCREVER '
+
+
+
+
+
+const body = req.body....
+
+
+
+
+
+
+
+
+
+
+
+--> MAS NÃO SÓ ISSO,
+
+vamos escrever assim:
+
+
+
+
+
+
+
+const body = req.body as 
+                      ^^^^ 
+
+
+                      VAMOS USAR ESSA KEYWORD AÍ.... -> vamos usar essa  keyword para usar o __'''TYPE__ CONVERSION'''__ DO TYPESCRIPT,
+
+                      PARA CONVENCER O TYPESCRIPT DE QUE 
+
+
+                      ___ ESSE 'body' (req.body)
+
+                      É 
+
+
+                      DE UM __ CERTO TYPE....
+
+
+
+
+
+
+
+
+--> NO CASO, AQUI __ DEFINIREMOS 
+
+
+
+'1 TYPE DE NOSSA ESCOLHA'
+
+que 
+
+
+VAI  REFLETIR__ COMO __ NOSSO __ 
+
+
+BODY (req.body)
+
+
+DEVERÁ 
+
+SE PARECER... ---> (NA VERDADE,__ COMO UM 'REQUEST BODY' __ PARA __ ESSA ROUTE ESPECÍFICA, ROUTE DE 'get TODOS', deve se parecer) --> contexto local...
+
+
+
+
+
+
+
+ 
+
+----------> 
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+        const errors = validationResult(req); 
+      
+        if (!errors.isEmpty()) {
+        return res.status(422).json(
+            {
+                message: 'ENTERED DATA IS INVALID',
+                errors: errors
+            }
+        )
+        }
+
+
+  const body = req.body as ......  ////////EIS O CÓDIGO EM QUESTão....
+    const newTodo: Todo = {
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+    }
+
+
+
+--------------------------
+
+
+
+
+
+
+
+BEM, VAMOS DEFINIR ISSO 
+
+
+
+
+
+
+
+de forma que 
+
+'SERÁ UM OBJETO 
+
+
+
+
+COM UMA PROPRIEDADE de 'text',
+
+que será 
+
+
+
+DE TYPE STRING....'
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+        const errors = validationResult(req); 
+      
+        if (!errors.isEmpty()) {
+        return res.status(422).json(
+            {
+                message: 'ENTERED DATA IS INVALID',
+                errors: errors
+            }
+        )
+        }
+
+
+  const body = req.body as {
+      text: string ////////eis o código em questão.
+
+
+  };
+    const newTodo: Todo = {
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+    }
+
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+RESUMINDO: 
+
+
+'as' 
+
+NA PARTE DA DIREITA DA DEFINIÇÃO DE CONSTANTES __ 
+
+
+
+NOS PERMITE__ 
+
+DEFINIR A 
+
+
+_ ESTRUTURA__ DE 
+
+
+NOSSOS BODIES/PARAMS...
+
+(
+
+  ou seja,
+
+  agora o typescript SABERÁ QUE 
+
+
+  DENTRO DESSE BODY EXISTIRÁ/EXISTE APENAS UMA ÚNICA PROPRIEDADE,
+
+  propriedade de 
+
+  'text',
+
+
+  DE TYPE 'string' (só strings poderão ser inseridas)....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK..... AGORA, TEMOS ISTO:
+
+
+
+  const body = req.body as {
+      text: string 
+
+
+  };
+    const newTodo: Todo = {
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+                texts: req.body.texts ////SE TENTARMOS ACESSAR 'req.body.texts', IMEDIATAMENTE O TYPESCRIPT NOS AJUDARÁ, NOS MOSTRARÁ QUE TEMOS UM __ ERRO__... (erro: essa propriedade NÃO EXISTE no objeto 'req.body'...)
+    }
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+PARA DEIXAR NOSSO CÓDIGO AINDA MAIS BONITO,
+
+
+podemos 
+
+
+
+FAZER 'OUTSOURCE' 
+
+desse type 
+
+
+
+de 
+
+'as {
+
+  text: strings
+}',
+
+
+
+
+POR MEIO 
+
+
+
+
+DA UTILIZAÇÃO DE UM 
+
+
+'type alias',
+
+
+
+LÁ EM CIMA, NO CONTEXTO GLOBAL DE NOSSO CÓDIGO..
+
+
+
+
+ex:
+
+
+
+
+
+
+type RequestBody = { text: string };
+
+
+
+......
+
+
+
+    // const body = req.body as { ///TYPE __ CONVERSION__ do typescript... (definirá esse formato COMO O VÁLIDO PARA 'body', no CONTEXTO DESTE CONTROLLER ESPECÍFICO de 'get todos')....
+    //     text: string  //essa será a única propriedade tida como 'válida' dentro de nosso 'body', no contexto desse controller...
+    // }
+
+
+    const body = req.body as RequestBody; ////^^^^ É O MESMO CÓDIGO LOGO DE CIMA, aquele 'const body = req.body as {text: string}' ------> ENTRETANTO, NESSA VERSÃO AQUI usamos um 'type alias', para fazer OUTSOURCE DE NOSSO TYPE lá em cima... (type que define a estrutura do nosso 'body' nesse controller).... 
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                // id: 'String',
+                // text: 'EXEMPLO' 
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+               
+                // texts: req.body.texts ///isso aparecerá como INVÁLIDO, pq é isso que definimos logo ali em cima, com 'const body = req.body as {text: string}
+    
+            }
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTo... -----> O PROFESSOR TAMBÉM USA ESSE 'TYPE ALIAS' de 
+
+
+
+'RequestBody'
+
+LÁ 
+
+
+
+
+NO CONTROLLER DE 'editTodo',
+
+
+
+PQ 
+
+
+
+ELE TAMBÉM 
+
+USA O ACESSO AO 'body'....
+
+
+
+
+
+
+eX (o formato do meu código era um pouco diferente, por isso não fez tanta diferença a definição desse 'type' para esse 'body' desse request...):
+
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const errors = validationResult(req); 
+      
+    if (!errors.isEmpty()) {
+      console.log(errors);
+    return res.status(422).json(
+        {
+            message: 'ENTERED DATA IS INVALID',
+            errors: errors
+        }
+    )
+    };
+
+
+    const body = req.body as RequestBody; ///DEFINE O FORMATO DE NOSSO 'BODY' (que terá só a propriedade 'text', sem NENHUMA OUTRA, nenhuma outra como 'texts', por exemplo...)
+
+
+    const todoId = req.params.todoId as unknown; ////'req.params' É UM OBJETO DE 'type: any'... ( pode ser qualquer coisa...) -> MESMA COISA COM o 'body', QUE TAMBÉM TEM ESSE 'type:any'.... 
+
+
+    console.log(todoId);
+
+
+
+
+    const inputtedText = req.body.text;
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+                return todo.id === todoId;
+        }
+    );
+
+    console.log(todoIndex);
+
+    if (todoIndex >= 0) {
+
+        todos[todoIndex].text = inputtedText;
+
+      return res.status(200).json(
+            {
+                message: 'Updated todo',
+                todos: todos
+            }
+        )
+
+    }
+
+    res.status(404).json(
+        {
+            message: 'Could not find todo for this id.'
+        }
+    )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA o professor diz que fará a MESMA COISA PARA O 'params',
+
+
+
+PARA QUE 
+
+CONSIGAMOS O UTILIZAR TANTO EM 
+
+
+'updateTodo' 
+
+
+como 
+
+'deleteTodo':
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+type RequestParams = {
+  todoId: string
+}
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+COMPLEMENTANDO, REFERENCIAMOS/DEFINIMOS ESSE TYPE COMO SENDO O FORMATO DO 'req.params',
+
+mais para baixo...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+type RequestParams = {
+  todoId: string
+}
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+FUI ALTERANDO MEU CÓDIGO PARA 
+
+
+
+REPRESENTAR O DO PROFESSOR, FICOU ASSIM:
+
+
+
+
+
+
+import { Request, Response, NextFunction } from 'express'; ///soluciona nosso problema de 'auto-correct'....
+
+
+import { Todo } from '../models/todo'; ///SERÁ USADO LOGO ABAIXO, naquele array genérico (para deixar menos genérico)....
+
+
+import { validationResult } from 'express-validator';
+
+
+
+
+type RequestBody = { text: string };
+
+type RequestParams = { todoId: string};
+
+// type Todo = { ///PROFESSOR DECIDE IMPORTAR ISSO DE UM FOLDER EXTERNO, 'models'... 
+
+// }
+
+
+// const todos: string[] = []; ///array de STRINGS....  (porém só inicialmente, pq vamos querer que seja um ARRAY DE OBJETOS 'todo' --> type aliasing)....
+
+
+
+
+// const todos: Array<Todo> = []; ///SINTAXE COMPLETA DE COMO ASSIGNAR O TYPE 'todo' COMO INNERTYPE DESSE GENERIC TYPE (que é o array em si)....
+
+
+let todos: Array<Todo> = []; ///SINTAXE COMPLETA DE COMO ASSIGNAR O TYPE 'todo' COMO INNERTYPE DESSE GENERIC TYPE (que é o array em si)....
+//queremos uma VARIABLE, e não const, pq vamos SUBSTITUIR ESSE ARRAY POR UM ARRAY SEM O TODO QUE QUEREMOS 'DELETAR'...
+
+
+
+
+// const todos: Todo[] = []; /É UM SHORTCUT PARA A SINTAXE LOGO ACIMA.... (de definição de inner type do generic type que é o array...)
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+    console.log('TODO');
+    res.status(200).json(
+        {
+            todos: todos //vamos retornar esse array, na nossa response..
+        }
+    )
+
+        
+   
+}
+
+
+console.log('TESTTasaassasasREEasaasasasasdasdssadssdsas');
+
+
+
+
+console.log('EXAMPLE121');
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+    // const newTodo = new Todo( ///sintaxe ERRADA (isso não é um model mongoose, e sim um model normal)....
+    //     {
+    //     }
+    // )
+
+        const errors = validationResult(req); 
+      
+        if (!errors.isEmpty()) {
+          console.log(errors);
+        //   const error = new Error('Validation failed, entered data is incorrect.');
+        //   error.statusCode = 422;
+        //   throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+      
+        return res.status(422).json(
+            {
+                message: 'ENTERED DATA IS INVALID',
+                errors: errors
+            }
+        )
+        }
+    
+    // const body = req.body as { ///TYPE __ CONVERSION__ do typescript... (definirá esse formato COMO O VÁLIDO PARA 'body', no CONTEXTO DESTE CONTROLLER ESPECÍFICO de 'get todos')....
+    //     text: string  //essa será a única propriedade tida como 'válida' dentro de nosso 'body', no contexto desse controller...
+    // }
+
+    const body = req.body as RequestBody; ////^^^^ É O MESMO CÓDIGO LOGO DE CIMA, aquele 'const body = req.body as {text: string}' ------> ENTRETANTO, NESSA VERSÃO AQUI usamos um 'type alias', para fazer OUTSOURCE DE NOSSO TYPE lá em cima... (type que define a estrutura do nosso 'body' nesse controller).... 
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                // id: 'String',
+                // text: 'EXEMPLO' 
+                id: new Date().toISOString(),
+                // text: req.body.text ///precisamos do BODYPARSER para isso... ------> ///O objeto 'body' SEMPRE SERÁ, INICIALMENTE, UM objeto de 'TYPE: ANY'....
+               text: body.text
+                //texts: req.body.texts ///isso aparecerá como INVÁLIDO, pq é isso que definimos logo ali em cima, com 'const body = req.body as {text: string}
+    
+            }
+
+
+    todos.push(newTodo); ///esse todo vai passar a existir NA MEMÓRIA DE NOSSO APP, lá naquele array...
+
+
+
+
+    res.status(201).json(
+        {
+            message: 'Created todo',
+            todos: todos
+        }
+    )
+}
+
+
+
+
+
+
+
+
+
+
+export const deleteTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const params = req.params as RequestParams;
+
+
+
+
+    // const todoId = req.params.todoId;
+
+    const todoId = params.todoId;   /// acessamos esse 'type' aí... (definido GLOBALMENTE)...
+
+    /// const todoIds = params.todoIds; //não existe no type 'RequestParams' --> isso nos providencia TYPE SAFETY...
+
+
+
+    todos.find(
+        (todo) => {
+            return todo.id === todoId;
+        }
+    )
+
+    if (todos.length === 0) {
+
+        return res.status(404).json(
+            {
+                message: 'Todo could not be found'
+            }
+        )
+    }
+
+
+    todos = todos.filter(
+        (todo) => {
+               return  todo.id !== todoId;
+        }
+    )
+
+
+    res.status(200).json(
+        {
+            message: 'Deleted todo successfully',
+            data: todos
+        }
+    )
+
+
+
+}
+
+
+
+
+
+
+
+export const editTodo = (req: Request, res: Response, next: NextFunction) => {
+
+
+    const errors = validationResult(req); 
+      
+    if (!errors.isEmpty()) {
+      console.log(errors);
+    return res.status(422).json(
+        {
+            message: 'ENTERED DATA IS INVALID',
+            errors: errors
+        }
+    )
+    };
+
+    const params = req.params as RequestParams;
+
+    const body = req.body as RequestBody; ///DEFINE O FORMATO DE NOSSO 'BODY' (que terá só a propriedade 'text', sem NENHUMA OUTRA, nenhuma outra como 'texts', por exemplo...)
+
+
+    // const todoId = req.params.todoId; ////'req.params' É UM OBJETO DE 'type: any'... ( pode ser qualquer coisa...) -> MESMA COISA COM o 'body', QUE TAMBÉM TEM ESSE 'type:any'.... 
+
+    const todoId = params.todoId; 
+
+
+    // const inputtedText = req.body.text;
+
+    const inputtedText = body.text;
+
+
+    const todoIndex = todos.findIndex(
+        (todo) => {
+                return todo.id === todoId;
+        }
+    );
+
+    console.log(todoIndex);
+
+    if (todoIndex >= 0) {
+
+        todos[todoIndex].text = inputtedText;
+
+      return res.status(200).json(
+            {
+                message: 'Updated todo',
+                todos: todos
+            }
+        )
+
+    }
+
+    res.status(404).json(
+        {
+            message: 'Could not find todo for this id.'
+        }
+    )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+agora sempre que 
+
+
+tentamos acessar coisas que NÃO EXISTEM NESSE 'params' cuja estrutura definimos por meio daquele 'type alias',
+
+VAMOS RECEBER UM AVISO/ERRO pelo typescript....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> __ E AÍ O PROFESSOR NOS EXPLICA UQE 
+
+ 
+ PODEOMS _ DEFINIR _ DIFERENTES 'ALIASES' PARA 
+
+ BODIES/PARAMS 
+
+
+ SE  VOCÊ 
+
+ TIVER _ _DIFERENTES ROUTES,
+
+ COM DIFERENTES 'PARAMS/BODIES' para 
+
+ cada 
+
+ uma delas....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----> AQUI, NO CASO,
+
+
+ TRABALHAMOS COM SEMPRE O MESMO TIPO DE 'RequestBody' e 'RequestParams',
+
+
+
+ MAS HÁ CASOS EM QUE VOCÊ PODE DEFINIR MÚLTIPLOS ALIASES DE BODY/PARAMS....
+
+
+
+(multiple, differently named type aliases, to use this pattern in different routes...)
+
+
+
+
+
+
+ ------>  COM ISSO, MELHORAMOS NOSSO CÓDIGO AINDA MAIS,
+
+
+ E AGORA 
+
+ ESTMAOS 
+
+
+
+ TIRANDO VANTAGEM DO TYPESCRIPT PARA NOS FORÇAR, COMO DESENVOLVEDORES,
+
+
+ A 
+
+ ESCREVER 
+
+
+
+
+CÓDIGO MELHOR...

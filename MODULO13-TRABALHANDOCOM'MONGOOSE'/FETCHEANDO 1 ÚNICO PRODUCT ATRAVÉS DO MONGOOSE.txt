@@ -1,0 +1,501 @@
+
+
+
+
+
+
+--> AGORA QUE FOMOS CAPAZES DE FETCHEAR TODOS OS PRODUCTS NA COLLECTION 
+DE 
+
+'products'
+
+
+por meio do mongoose,
+
+com o código de 
+
+
+'''
+
+Product.find() ////MÉTODO DO MONGOOSE.... --> sintaxes alternativas (que te dão o CURSOR em vez de um array) ---> 'Product.find().cursosr().eachAsync()'       __ E ____ 'Product.find().cursor().next()' -------> ESSAS 2 VERSÕES VAO TE DAR O _CURSOr__ EM VEZ DE UM ARRAY COM TODOS OS DOCUMENTS... (comportamento contrário àquele do 'mongodb driver' comum, portanto...)
+  .then(
+
+
+
+    (products) => {
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    }
+        
+
+
+  )
+
+
+
+  ''',
+
+
+
+
+
+  AGORA 
+
+
+
+
+  DEVEMOS NOS ASSEGURAR QUE 
+
+
+
+  CONSIGAMOS 
+
+
+
+  FAZER A MESMA COISA 
+
+
+
+   
+   COM 
+
+
+   'GET A SINGLE PRODUCT'....
+
+
+
+
+--> PARA ISSO,
+
+
+VAMOS TRABALHAR NO CONTROLLER 
+
+DE 
+
+
+
+
+'''
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+
+  const productId = req.params.productId.trim();
+
+
+
+  if ( productId.length < 24) {
+
+    return;
+  }
+
+  Product.getSingleProduct(ObjectId(productId))
+  .then(
+    (product) => {
+
+        if(!product) {
+      
+          return;
+        }
+
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+  -----> PRIMEIRAMENTE, O QUE VAMOS FAZER É REMOVER ESSE 
+
+
+  'Product.getSingleProduct(ObjectId(productId))',
+
+
+
+  JUSTAMENTE 
+
+  PQ 
+
+  EU ACHO QUE VAMOS USAR 
+
+  
+
+  TIPO UM 
+
+  MÉTODO 
+
+
+
+  '.findOne()'.... 
+
+
+
+
+
+
+
+
+
+
+
+  --> E, DE FATO,
+
+  PROFESSOR 
+
+
+  PEDE QUE USEMOS 
+
+
+
+  'Product.findOne(ObjectId(productId))'....
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+  exports.getProductDetailPage = (req, res, next) => {
+
+
+  const productId = req.params.productId.trim();
+
+
+
+  if ( productId.length < 24) {
+
+    return;
+  }
+
+  Product.findOne(ObjectId(productId))
+  .then(
+    (product) => {
+
+        if(!product) {
+      
+          return;
+        }
+
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+---------------------------------
+
+
+
+
+ISSO É UM MÉTODO 
+
+
+BUILTIN DO MONGOOSE, QUE REALMENTE PODEMOS UTILIZAR PARA FETCHEAR APENAS 
+
+1 DOCUMENT EM 1 COLLECTION...
+
+
+
+
+
+
+
+
+
+OK... FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR 
+
+
+ADMITE QUE 
+
+TEMOS 
+
+
+
+UM MÉTODO 
+
+de 
+
+
+'findById()'... -------> 
+
+
+
+
+
+
+
+
+
+
+E, DE FATO, O PROFESSOR USOU 
+
+
+
+'.findById()'
+
+
+EM VEZ 
+
+DE 
+
+
+'findOne()'.... -----> QUAL 
+
+
+É 
+
+A DIFERENÇA 
+
+
+ENTRE 
+
+
+
+'findOne()'
+
+
+e 
+
+
+'findById()' ? 
+
+
+
+
+
+
+
+
+
+
+FINDBYID VS FINDONE ------> a diferença,
+
+
+NO MONGOOSE,
+
+
+É QUE 
+
+
+'findById()'
+
+_AUTOMATICAMENTE CONVERTE O 
+
+
+
+ARGUMENTO QUE VOCÊ PASSA 
+
+A 
+
+ELE 
+
+
+
+para 
+
+'ObjectId(argumento)',
+
+
+ao passo 
+
+que o 
+
+
+
+'findOne()'
+
+NÃO FAZ ISSO... ( você precisa escrever 'ObjectId(xxxx)' manualmente, no espaço do parâmetro...)
+
+
+
+
+
+
+
+
+('findById')
+--> Finds a single document by its _id field. 
+
+
+findById(id) is almost* equivalent to findOne({ _id: id }). 
+If you want to query by a document's _id, use findById() instead of findOne().
+
+
+
+Finds a single document by its _id field. findById(id) is almost* equivalent to findOne({ _id: id }). If you want to query by a document's _id, use findById() instead of findOne().
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+  // Product.getSingleProduct(ObjectId(productId)) ////método ESTÁTICO criado por nós, PARA SER USADO COM O 'MONGO DB DRIVER' comum (sem o mongoose... por isso, pior).... ------> o  método builtin do mongoose, 'findOne()', é melhor do que esse método wonky que escreveoms...
+  // Product.findOne({_id: ObjectId(productId)}) ////MÉTODO BUILTIN DO MONGOOSE, EXISTENTE EM TODOS OS MODELS MONGOOSE CRIADOS POR NÓS... ---->  O 'findOne()' É A MESMA COISA QUE 'findById()', com a diferença que ele NÃO VAI AUTOMATICAMENTE CONVERTER o argumento passado por você em 'ObjectId(argumento)'....
+  Product.findById(productId)  ///Finds a single document by its _id field. findById(id) is almost* equivalent to findOne({ _id: id }). If you want to query by a document's _id, use findById() instead of findOne().
+  
+
+
+
+
+
+  ------------------------------------------------------
+
+
+
+
+
+
+  ok... essa é a diferença entre os 2...
+
+
+
+
+
+
+
+
+
+--> podemos até mesmo passar uma STRING como o parâmetro 
+
+
+de 
+
+
+'findById()'
+
+do mongoose,
+
+QUE ELE VAI 
+
+AUTOMATICAMENTE CONVERTÊ-LA 
+EM 
+
+
+UM 
+
+VALOR 
+
+'ObjectId(string)'
+para nós...
+
+
+
+
+
+
+
+-------> OK, GANHAMOS MT CONVENIENCE POR MEIO DO MONGOOSE...
+
+
+
+
+
+
+
+--> OK, 
+
+
+VAMOS 
+
+
+
+
+CONSEGUIR 
+
+
+TUDO ISSO POR MEIO DO MONGOOSe....
+
+
+
+
+
+
+
+
+
+--> SALVAMOS TUDO E APERTAMOS EM 'DETAILS' DO PRODUCT... -> VAMOS 
+
+VER OS DETAILS PARA ESSE PRODUCT...
+
+
+
+
+
+
+
+-> isso tudo vai estar funcionando,
+
+
+
+
+AJUSTAMOS NOSSO CO´DIGO COM FACILIDADE AO MONGOOSE...

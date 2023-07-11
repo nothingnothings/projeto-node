@@ -1,0 +1,1620 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... JÁ TEMOS UMA 'DATA DEFINITION'/schema definition,
+
+que 
+
+
+é 
+
+este código aqui:
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+
+
+
+
+
+
+const Schema = mongoose.Schema;
+
+
+
+
+
+
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: yes,
+      type: String
+    },
+
+    price: {
+      required: yes,
+      type: Number
+    },
+
+
+    description: {
+      required: yes,
+      type: String
+    },
+
+    imageUrl: {
+      required: yes,
+      type: String
+    }
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> JÁ TEMOS , PORTNATO, UM 
+
+
+'BLUEPRINT',
+
+
+que 
+
+é 
+
+
+esse 
+
+SCHEMA PARA O NOSSO PRODUCT...
+
+
+
+
+
+
+
+
+
+
+---> AQUI DEVEMOS APONTAR QUE O 'MONGOOSE'
+
+
+TAMBÉM 
+
+TRABALHA 
+
+
+COM 
+
+ALGO QUE 
+
+
+CHAMAMOS 
+
+DE 
+
+'MODELS'.... --------> E __ O 'MODEL' 
+
+
+TAMBÉM 
+
+É ALGO QUE 
+
+
+
+
+VAMOS EXPORTAR 
+
+NESSE 
+
+'product.js'...
+
+
+
+
+
+
+---> E PARA EXPORTAR O 'MODEL',
+
+
+
+
+
+
+devemos 
+
+escrever 
+
+
+
+um código 
+
+
+
+
+
+ 
+assim:
+
+
+
+
+
+
+'module.exports = mongoose.model()' .... ----->
+
+
+
+
+
+
+
+
+OU SEJA,
+
+VOCÊ 
+VAI 
+
+USAR 
+
+A SINTAXE DE EXPORTAÇÃO COMUM DO NODE,
+
+MAS AÍ 
+
+VOCÊ 
+
+VAI 
+
+
+__EXPORTAr__ 1 objeto 'mongoose'
+
+
+COM UMA EXECUÇAÕ DESSE MÉTODO '.model()'... ----------> 
+
+
+
+
+
+
+
+
+
+E '.model()',
+
+no caso,
+
+
+É ___bASICAMENTE__
+
+
+
+
+IMPORTANTE __ PARA O MONGOOSE, POR TRÁS DAS CENAS,
+
+
+
+PQ __ É 
+
+ELE 
+
+
+QUE 
+
+CONECTA 
+
+
+
+
+UM SCHEMA/os nossos schemas  (que são blueprints, basicamente),
+
+
+
+
+CONECTA ESSES 
+
+
+
+SCHEMAS COM 
+
+
+
+UM ''''NAME'''' ............ ---------> ISSO SIGNIFICA QUE 
+
+
+
+VOCÊ 
+
+
+VAI 
+
+
+passar, como parâmetro de '.model()',
+
+
+UM ___ NAME, uma string que será um nome... --> AQUI, VAMOS COLCOAR UM NAME DE 'Product'...
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: yes,
+      type: String
+    },
+
+    price: {
+      required: yes,
+      type: Number
+    },
+
+
+    description: {
+      required: yes,
+      type: String
+    },
+
+    imageUrl: {
+      required: yes,
+      type: String
+    }
+  }
+)
+
+
+
+
+
+
+
+
+module.exports = mongoose.model('Product');
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+TIPICAMENTE 
+
+
+VOCÊ NOMEIA SEU MODEL ASSIM,
+
+COM UMA LETRA MAIÚSCULA INICIAL... -----> E AÍ VOCÊ SIMPLESMENTE 
+
+
+
+ESCREVE O NOME 
+
+DA ENTIDADE QUE 
+
+ISSO REFLETE 
+
+NO SEU APP/PROJECT... -----> 
+
+
+
+
+
+JÁ O SEGUNGO __ ARGUMENTO__ É 
+
+O 
+
+'SCHEMA' 
+
+que definimos... no nosso caso,
+
+
+esse 
+
+
+schema 
+
+é 
+
+
+o 
+
+
+'productSchema'
+
+
+
+que recém definimos...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: yes,
+      type: String
+    },
+
+    price: {
+      required: yes,
+      type: Number
+    },
+
+
+    description: {
+      required: yes,
+      type: String
+    },
+
+    imageUrl: {
+      required: yes,
+      type: String
+    }
+  }
+)
+
+
+
+module.exports = mongoose.model('Product', productSchema);
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO... E É ESSE MODEL QUE VAMOS EXPORTAR,
+
+
+PQ
+
+
+É 
+
+
+COM ESSE MODEL QUE TRABALHAREMOS, TRABALHAREMOS NO NOSSO CÓDIGO... 
+
+
+
+
+
+
+
+
+
+-->  COM ESSE MODEL DEFINIDO/EXPORTADO,
+
+
+
+PODEMOS 
+
+
+
+
+
+IR ATÉ 
+
+O 
+
+CONTROLLER 
+
+
+
+DE 
+
+'admin.js',
+
+
+EM QUE 
+
+
+
+
+
+TÍNHAMOS  
+
+
+
+
+AQUELE CÓDIGO DE 
+
+'postAddProduct',
+
+
+
+
+
+
+
+
+que era assim:
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  const user = req.user;
+  const userId = req.user._id;
+
+ 
+
+
+
+  const newProduct = new Product(title, price, imageUrl, description, userId); ///com isso, estamos usando A VERSÃO 'NOSQL'/mongodb do código de 'add a product to our database'... 
+
+   newProduct.save().then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> E, DE FATO, 
+
+
+ESSE 
+
+
+CÓDIGO ADICIONAVA 1 'PRODUCT'
+
+
+
+A NOSSA COLLECTION DE 'PRODUCTS'...
+
+
+
+
+
+
+
+
+
+
+--> E AGORA, DE NOVO,
+
+VAMOS QUERER SER CAPAZES DE 
+
+
+
+1) CRIAR UM PRODUCT 
+
+
+
+2) SALVAR ESSE PRODUCT 
+
+NA COLLECTION DE 'PRODUCTS', na nossa database...
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO, NO CASO,
+
+
+
+PROFESSOR EXPLICA QUE 
+
+VAMOS BASICAMENTE 
+
+MANTER 
+
+O CÓDIGO QUE TÍNHAMOS ANTES...
+
+
+
+
+
+
+VAMOS MANTER:
+
+
+
+
+
+
+
+
+
+1)
+
+
+
+const Product = require('../models/product'); ///////OU SEJA, O IMPORT DO MODEL CONTINUA O MESMO.... (a única coisa que mudou foi o código em 'product.js', no interior desse arquivo, de fato.)
+
+
+
+
+
+
+
+
+
+2)  --> ENTRETANTO, 1 AJUSTE É NECESSÁRIO PARA 
+
+USAR 
+
+ESSE MODEL do mongoose importado lá de 'product.js'... --> 
+
+
+
+PARA 
+
+
+USAR 
+
+
+esse model,
+
+NÓS 
+
+
+NÃO VAMOS 
+
+USAR 
+
+ESTE CÓDIGO ANTIGO:
+
+
+'const product = new Product(title, price, description, imageUrl, null, req.user._id)'....
+
+
+
+
+
+_NÓS NÃO VAMOS PASSAR MÚLTIPLOS ARGUMENTOS ASSIM,
+
+
+
+
+
+E SIM __ VAMOS 
+
+
+PASSAR 
+
+APENAS 
+
+
+1 ARGUMENTO,
+
+
+
+
+
+E 
+ESSE 
+
+
+ARGUMENTO É 
+
+__ UM OBJETO JAVASCRIPT....
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+
+
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  const user = req.user;
+  const userId = req.user._id;
+
+
+
+  const product= new Product({}); ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro...
+
+   newProduct.save().then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ----> CERTo... --> NESSE OBJETO JAVASCRIPT, VAMOS QUERER 
+
+
+
+
+
+   'MAP THE DIFFERENT VALUES QUE ENCONTRAMOS/existem
+
+
+
+   NO NOSSO SCHEMA'....
+
+
+
+
+
+
+
+   --> É POR ISSO QUE O CÓDIGO VAI FICAR + OU - ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+   
+exports.postAddProduct = (req, res, next) => {
+
+
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+ // const user = req.user;
+  //const userId = req.user._id;
+
+
+
+  const product= new Product({
+
+        title: title, 
+        price: price,
+        imageUrl: imageUrl,
+        description: description,
+                                                         ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro...
+
+  });
+
+   newProduct.save().then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+ESSENCIALMENTE,
+
+
+mappeamos OS VALORES QUE VAMOS QUERER 
+
+
+DENTRO 
+
+DE 
+
+CADA 
+
+1 
+
+DOS FIELDS DEFINIDOS 
+
+lá 
+
+
+
+
+em 
+
+
+
+'''
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: yes,
+      type: String
+    },
+
+    price: {
+      required: yes,
+      type: Number
+    },
+
+
+    description: {
+      required: yes,
+      type: String
+    },
+
+    imageUrl: {
+      required: yes,
+      type: String
+    }
+  }
+)
+
+
+
+'''',
+
+
+
+LÁ 
+
+
+NO 
+
+'product.js'...
+
+
+-------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+
+
+
+
+--> AGORA, COM ISSO,
+
+
+
+VAMOS TER CRIADO/CRIAREMOS 1 NOVO 'PRODUCT' COM BASE NO NOSSO MODEL,
+
+QUE 
+
+
+
+FOI BASEADO NO NOSSO SCHEMA....  -----> PORTANTO,
+
+
+
+
+É UM PRODUCT MANAGEADO PELO 
+
+'MONGOOSE'....  ---------------> 
+
+
+
+
+
+
+
+
+E, DE FATO,
+
+
+
+
+1
+ PRODUCT/MODEL 
+
+
+
+ DESSES
+
+
+
+
+
+
+____JÁ VEM COM UM MÉTODO 'save()',
+
+
+dessa vez 
+
+PROVIDENCIADO PELO 
+
+PRÓPRIO 'mongoose',
+
+
+E NÃO POR NÓS.... (deprecado o método 'save()' que escrevíamos lá em 'product.js'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO É BEM IMPORTANTE:
+
+
+
+ESSE 
+
+MÉTODO 
+
+'save()'
+
+
+NÃO SERÁ 
+
+DEFINIDO POR NÓS/NÃO É DEFINIDO POR NÓS,
+E SIM 
+
+É 
+
+PROVIDENCIADO PELO MONGOOSE... 
+
+
+
+
+
+
+
+
+
+------------> NÃO É DEFINIDO POR NÓS PQ VOCÊ DEVE TER PERCEBIDO __QUE __ NÓS __ 
+
+
+
+NÃO DEFINIMOS NENHUM MÉTODO 'save' 
+
+
+
+lá 
+
+
+na definição do 'schema'... é por isso que ele é 'builtin'...
+
+
+
+
+
+
+
+
+
+-----> ESSE MÉTODO 'save()'
+
+ESTÁ 
+
+REALMENTE VINDO DO MONGOOSE...
+
+
+
+
+
+
+
+
+
+---->  PROFESSOR NOS EXPLICA QUE 
+
+
+
+NÓS AINDA PODEMOS CHAMAR 
+
+AQUELE 
+
+'.then()'
+
+
+block em cima 
+
+desse 
+
+
+MODEL MONGOOSE INSTANCIADO........ ----> ELE EXPLICA QUE 
+
+
+__TECNICAMENTE__ NÓS 
+
+
+NÃO 
+
+RECEBEMOS UMA 'PROMISE' por meio do call de 
+
+
+'.save()' do mongoose,
+
+mas que 
+
+MESMO ASSIM ELE 
+
+NOS DÁ 
+
+
+UM MÉTODO 
+
+'.then()',
+
+
+que age exatamente como um 'then()' normal...
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE O CÓDIGO VAI FICANDO ASSIm:
+
+
+
+
+
+
+
+  const product = new Product({
+
+                            ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl
+  }); 
+
+   product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+   .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+   .then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------> 
+
+
+
+
+
+E AÍ, O PROFESSOR CONCLUI QUE 
+
+ESSE 
+
+CÓDIGO 
+
+DEVE 
+
+ACTUALLY CONTINUAR A FUNCIONAR COMO ANTES...
+
+
+
+
+
+
+
+
+
+--> DEVEMOS TESTAR __ 
+
+ESSE CÓDIGO.. -> voltamos ao nosso app...
+
+
+
+
+
+
+
+
+
+
+
+--> VOLTAMOS AO NOSSO APP E CLICAMOS no botão de 'add product'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK.... REMOVEMOS AQUELE 
+
+
+
+'app.use()' (middleware)
+
+
+
+que 
+
+adicionava 
+
+1 user 
+ao nosso app...
+
+
+
+
+
+
+
+--> OK.... ESCREVEMOS QUALQUER MERDA 
+
+NO 
+
+'ADD PRODUCT',
+e aí 
+
+
+colocamos 
+
+add product...
+
+
+
+
+
+
+
+
+
+------> AGORA, VAMOS 
+
+
+VER 
+
+
+SE 
+
+O PRODUCT REALMENTE FOI SALVO 
+
+NA 
+
+DATABASE...
+
+
+
+
+
+
+
+
+
+--------------> FUNCIONOU...
+
+
+
+
+
+
+
+--> ENCONTRAMOS ESSE 
+
+'PRODUCT'
+
+NA COLLECTION DE 
+
+'PRODUCTS':
+
+
+
+
+_id
+:
+6177795dc2c506f904a4647a
+title
+:
+"AAAA"
+price
+:
+21221
+description
+:
+"212121"
+imageUrl
+:
+"AAAA"
+__v
+:
+0
+
+
+
+
+
+
+
+
+
+
+
+
+-----> DE FATO,
+
+
+
+
+O CÓDIGO DO MONGOOSE ESTÁ FUNCIONANDO... --> PARECE QUE 
+
+ELE 
+
+
+ESTÁ CRIANDO UMA 
+
+COLLECTION 
+
+DE 
+
+nome 
+
+
+'
+products'
+
+
+A PARTIR 
+
+DA LINHA DE CÓDIGO 
+
+
+
+'''
+
+module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+
+
+'''
+
+
+definida
+
+lá 
+
+
+em 
+
+'product.js',
+
+nosso model....
+
+
+
+
+
+
+
+
+----> CERTO... OUTRA COISA INTERESSANTE É UM 
+
+
+FIELD 
+
+QUE 
+
+FOI ADICIONADO AUTOMATICAMENTE 
+
+
+PELO MONGOOSE,
+
+
+field 
+
+de 
+
+
+'__v: 0'...
+
+
+
+
+
+
+
+
+--> MAS O QUE É ESSE '__v'? 
+
+
+
+
+
+
+
+
+--------> VIMOS ISSO NO COMPASS, É CLARO...
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+PROFESSOR COMENTA QUE ESSA COLLECTION DE 'products', sua criaçaõ,
+
+
+
+
+
+
+__ESTÁ __ VINDO LÁ 
+
+
+
+
+de 
+
+
+
+''module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+'''
+
+
+
+
+
+
+
+
+
+
+--> 
+
+
+O MONGOOSE PEGA 
+
+
+
+
+SEU 
+
+'MODEL NAME' 
+
+PASSADO ALI,
+
+(no caso producT),
+
+
+
+TRANSFORMA TODO SEU NOME EM 
+
+LOWERCASE,
+
+
+
+
+E AÍ 
+
+
+USA SUA FORMA PLURAL COMO NOME 
+
+
+
+DA 
+
+
+
+COLLECTION/DATABASE... -----> 
+
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE O NOME que passamos ali tem um grande impacto, pq é usado 
+
+como 
+
+nome da nossa 
+
+
+collection... 
+
+
+
+
+
+
+
+
+-----> ENTRETANTO,
+
+
+
+PROFESSOR 
+
+
+
+DIZ QUE 
+
+
+VAI 
+
+DROPPAR ESSA COLLECTION AGORA,
+
+para 
+
+que 
+
+CONSIGA 
+
+
+
+
+CONSERTAR AS SETTINGS DE CONNECTION
+
+lá 
+
+em 
+'app.js',
+
+
+
+NO FINAL DO ARQUIVO... --> mas é um problema do código dele, e não o nosso...
+
+
+
+
+
+
+----------
+
+
+
+
+
+OK, ISSO JÁ ESTÁ MT BOM.... --> 
+
+
+
+
+AGORA SOMOS CAPAZES 
+
+DE 
+
+__SALVAR __ DATA ATRAVÉS DO MONGOOSe...

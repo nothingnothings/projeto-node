@@ -1,0 +1,1965 @@
+
+
+
+
+
+
+
+
+
+
+----> nós demos uma olhada bem boa naquele negócio de 'middlewares'...
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS ENTENDER ___ COMO PODEMOS 'ACTUALLY' WORK 
+
+
+
+COM 
+
+
+
+
+INCOMING REQUESTS.... --> DEVEMOS 
+
+
+VER COMO 
+
+PODEMOS 
+
+
+EXTRAIR
+ 
+ DATA 
+
+ DE 
+ INCOMING REQUESTS...
+
+
+
+
+
+
+
+
+ ----> de novo, O PROFESSOR QUER SER CAPAZ DE HANDLAR 'POST REQUESTS'... ------> 
+
+
+
+
+ OK...
+
+
+
+
+TEMOS AQUELE MIDDLEWARE 
+
+de 
+
+'add-product',
+
+
+QUE É ASSIM:
+
+
+
+
+
+
+app.use('/add-product', (req, res, next) => {
+
+    console.log('In another middleware!');
+    res.send('<h1>The 'Add Product' Page </h1>');
+
+
+
+
+})
+
+
+
+
+
+
+
+-----> PROFESSOR QUER ACTUALLY 
+
+
+RETORNAR __ UMA HTML PAGE COM UMA FORM,
+
+por meio 
+
+
+desse 
+
+middleware aí.. ----> PARA ISSO,
+
+
+
+PROFESOSR VAI SIMPLESMENTE 
+
+RETORNAR UMA FORM.... ---->  
+
+
+
+
+
+
+
+
+ele escreve 
+
+
+
+'res.send(<form></form>)' -------> 
+
+
+
+
+
+
+
+PROFESSOR NOS RESSALTA QUE AQUI DEVERÍAMOS WRAPPAR 
+
+ESSE NEGÓCIO COM 
+
+AS TAGS NECESSÁRIAS, como 
+
+'<html></html>'
+
+
+E 
+
+'<body></body>',
+
+
+
+MAS QUE 
+
+ELE 
+
+ESTÁ DEIXANDO 
+
+SÓ 
+
+'<form></form>'
+
+
+AQUI 
+
+
+PARA QUE 
+
+FIQUE MAIS 
+
+
+
+
+FÁCIL DE SER LIDO, ESTE CÓDIGO.... (mas mais tarde vamos escrever PROPER HTML CODE,
+
+
+entaõ 'no worries'...)
+
+
+
+
+
+
+
+
+
+
+----> OK... TEMOS A NOSSA FORM... --->  E AÍ DENTRO DELA TEREMOS UM INPUT 
+
+
+DE 
+
+TYPE 
+
+'TEXT',
+
+COM UM 
+
+NAME 
+
+DE 
+
+'TITLE'...
+
+
+
+
+--> TAMBÉM TEREMOS UM BUTTON DE TYPE 'submit',
+pq 
+
+esse 
+
+BUTTON DEVERÁ SUBMTITAR A FORM E ENTÃO 
+
+
+__ ENVIAR UM POST REQUESt__....
+
+
+
+ex:
+
+
+
+
+
+
+
+app.use('/add-product', (req, res, next) => {
+
+    console.log('In another middleware!');
+
+
+    res.send(<form><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+
+
+})
+
+
+
+
+
+
+
+
+
+
+--> VAMOS SIMULAR QUE ESSA É UMA FORM QUE NOS DEIXARÁ ADICIONAR 
+
+UM PRODUTO AO NOSSO 
+
+
+
+
+ONLINE SHOP, OU ALGO ASSIM... --->  
+
+
+
+
+
+
+CERTO.... MAS ESSA 'FORM' TAMBÉM PRECISA DE UM ATTRIBUTE 
+'
+action',
+
+
+QUE DEVERÁ 
+
+SER 
+
+
+
+
+O PATH/URL 
+A QUE 
+
+O 
+
+
+REQUEST 
+
+DEVERÁ 
+
+SER ENVIADO --> VAMOS COLOCAR O PATH COMO 
+
+'/product',
+
+
+
+E O METHOD DEVERÁ SER DE 'post'....
+
+
+
+ex:
+
+
+
+
+
+
+
+
+app.use('/add-product', (req, res, next) => {
+
+    console.log('In another middleware!');
+
+
+    res.send(<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+
+
+})
+
+
+
+
+
+
+
+
+-----> OK.... ISSO VAI ENVIAR UM CÓDIGO ADICIONAL, ESSA FORM AÍ....
+
+
+
+
+
+
+
+
+ 
+
+ OK... ISSO VAI ENVIAR ESSA FORM AÍ DE VOLTA AO 
+
+ VISITANTE DE NOSSA PÁGINA, QUANDO ELE VISITA 
+
+
+ '/add-product'... 
+
+
+
+
+
+
+
+ -----> MAS AGORA PRECISAMOS __ ESPECIFICAMENTE __ DE UMA ROUTE PARA 
+
+
+ '/product',
+
+
+
+
+
+
+ TUDO PARA 
+
+
+ QUE O 
+
+
+
+
+ REQUEST ENVIADO A '/product'
+
+
+ SEJA 
+
+ HANDLADO... 
+
+
+
+
+
+
+
+
+ ----> E PARA ISSO, VAMOS PRECISAR DE UMA ROUTE QUE:
+
+
+
+ 1) ACEITE APENAS REQUESTS FEITOS A ELE __ DE MODO 'POST'...
+
+
+
+
+ 2) SEJA ACESSADO COM REQUESTS FEITOS A '/product'...
+
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO, PROFESSOR ESCREVE UM 
+
+
+
+
+ 'app.use('/product');
+
+
+
+
+
+
+
+
+
+
+ ----------> PROFESSOR EXPLICA QUE PODEMOS COLOCAR 
+
+ ESSE 
+
+ 'app.use('/product')
+
+ DEPOIS 
+
+
+
+ DO 
+
+ 'app.use('/add-product')',
+
+
+
+ TUDO PQ 
+
+ ELES NÃO TEM NADA EM COMUM ENTRE SI.... (na verdade, temos a palavra 'product', MAS 
+ 
+ 
+ VOCÊ DEVE SE LEMBRAR QUE 
+ 
+ O 
+ 
+ 
+ NODEJS/EXPRESSJS/REACT-ROUTER-DOM 
+ 
+ ___CONSIDERAM APENAS ___O  
+ 
+ 
+ 
+ 'START' __ 
+ 
+ 
+ DE 
+ 
+ 
+ UMA STRING como 'COMPARTILHADA'....) ---------->  (ou seja, podemos colocar esse negócio DEPOIS de '/add-product', 
+ 
+ A 
+ 
+ ÚNICA ROUTE QUE NÃO PODEMOS COLOCAR NO INÍCIO, CASO N QUEIRAMOS QUE SEJA EXECUTADA,
+ 
+ 
+ É 
+ 
+ 
+ '/', pq 
+ 
+ '/' SEMPRE EXISTIRÁ NO INÍCIO DE TODO E QUALQUER NOME DE ROUTE...)
+
+
+
+
+
+
+
+
+
+
+---->OK...
+ 
+ FICARÁ ASSIM:
+
+
+
+
+
+
+
+
+3
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+SIDENOTE: você sempre pode OMITIR 
+
+
+
+
+
+O ARGUMENTO 'next'
+
+
+
+'(req, res, next) => {
+
+}
+'
+
+
+
+
+
+SE VOCÊ NÃO PLANEJA O UTILIZAR....
+
+
+EX:
+
+
+
+
+(req, res) => {
+
+}
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+-> MAS O PROFESSOR SEMPRE O ADICIONA,
+
+
+PARA DEIXAR BEM CLARO QUE 
+
+ELE 
+
+EXISTE....
+
+
+
+
+
+
+-----> CERTO....
+
+
+
+aí o código ficou assim:
+
+
+
+
+
+app.use(
+    '/product', (req, res, next) => { ////EIS O CÓDIGO EM QUESTÃO. 
+
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> ok.... agora o professor quer REDIRECIONAR 
+
+A ESSE NEGÓCIO... -----> e, por enquanto, o professor vai querer 
+
+
+CONSOLE.LOGGAR A INCOMING DATA NO 
+
+CONSOLE... -----------> 
+
+
+
+
+E, BEM, O QUE PODEMOS FAZER AQUI,
+ 
+
+
+ PARA O REDIRECTING,
+
+
+
+ É 
+
+ DEFINIR 
+
+
+ '
+ res.redirect()'.... ----->  PROFESSOR EXPLICA QUE ISSO AÍ É BEM MAIS FÁCIL/CONVENIENTE 
+
+ DO QUE 
+
+ ESCREVER 
+
+ AQUELE 
+
+ CÓDIGO CLUNKY de 
+
+
+ 'res.setHeader(
+     {
+         'Location': '/ROUEQUEVOCÊVAIQUERER'
+     }
+ )
+ ',
+
+
+
+
+
+AQUELE CÓDIGO EM QUE 
+
+DEFINIMOS O 'LOCATION HEADER' 
+
+
+
+a ser aplicado ao user...
+
+
+
+
+
+
+
+
+
+
+
+------>  ok.... ISSO SIGNIFICA QUE 
+
+'res.redirect()'
+
+É 
+
+___OUTRA__ CONVENIENCE FUNCTION ADICIONADA PELO 
+
+
+EXPRESSJS...
+
+
+
+-> professor vai escrever assim:
+
+
+
+
+
+
+
+
+app.use(
+    '/product', (req, res, next) => { ////EIS O CÓDIGO EM QUESTÃO. 
+
+
+            res.redirect('');
+    }
+)
+
+
+
+
+
+
+
+
+
+--------> E AQUI, O PROFESSOR VAI QUERER REDIRECIONAR APENAS PARA 
+
+'/'.... 
+
+
+
+
+
+
+EX:
+
+
+
+
+
+app.use(
+    '/product', (req, res, next) => { 
+
+
+            res.redirect('/'); ////EIS O CÓDIGO EM QUESTÃO. 
+    }
+)
+
+
+
+-----------------------------
+
+
+
+
+
+
+--> MAS É CLARO QUE 
+
+ESSA NÃO É A ÚNICA COISA EM QUE O PROFESSOR ESTÁ INTERESSADO...
+
+
+
+
+---> ELE TAMBÉM ESTÁ INTERESSADO 
+
+
+EM PEGAR O BODY DO REQUEST;
+
+
+PEGAR o 
+QUE 
+
+O USUÁRIO 
+
+NOS ENVIOU POR MEIO DESSE REQUEST... -->  
+
+
+
+E PARA ISSO,
+
+
+
+
+
+O EXPRESSJS TEM OUTRA CONVENIENCE FEATURE PARA NÓS... ------> 
+
+
+
+SE 
+
+ELE 
+
+CONSOLE.LOGGAR 'req.body',
+
+
+
+
+ELE VAI VER ALGO NOVO....
+
+
+
+
+
+
+
+
+--> O PROFESSOR NOS EXPLICA QUE O FIELD 'body'
+
+É UM NOVO FIELD CRIADO/ADICIONADO 
+
+AO 
+
+'request'
+
+
+POR MEIO DO EXPRESSJS,
+
+
+
+e que agora devemos ver o que há dentro dele...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+app.use(
+    '/product', (req, res, next) => { 
+
+            console.log(req.body);////EIS O CÓDIGO EM QUESTÃO. 
+            res.redirect('/'); 
+    }
+)
+
+
+
+
+---------------------------
+
+
+
+
+'
+.body' --> NOVO FIELD ADICIONADO PELO EXPRESSJS...
+
+
+
+
+
+
+
+
+-----> OK... VOLTAMOS 
+
+AO 
+
+
+
+'/add-product',
+
+aí o professor 
+
+
+
+ESCREVE 
+'book' 
+
+
+
+
+NO INPUT FIELD, depois coloca 'send', botão de send... ----->
+ 
+
+
+ NO CONSOLE, IMEDIATAMENTE VEMOS 
+
+ 'undefined'...
+
+
+
+
+
+
+
+
+ ---> OK... --> NOS LIVRAMOS DOS OUTROS CONSOLE.LOGS,
+
+
+
+
+ para 
+
+
+ ver 
+
+ melhor...
+
+
+
+ -----> A RAZÃO PARA 
+
+ TERMOS 
+
+
+ VISTO 
+
+
+ 'UNDEFINED' 
+
+ É QUE 
+
+ ESTAMOS 
+
+
+ 'ALMOST THERE'.............. 
+
+
+
+
+
+
+
+ ---> O EXPRESSJS DE FATO NOS DÁ ESSA 
+
+ 'BODY CONVENIENCE PROPERTY',
+
+
+
+
+
+ _______MAS, POR DEFAULT,
+
+
+O 'REQUEST'
+
+
+__NÃO TENTA __ PARSEAR__ O INCOMING REQUEST 
+
+BODY........ ------->  PARA 
+
+
+
+FAZER 
+
+ESSE PARSING 
+
+no nosso request,
+
+
+
+PRECISAMOS __ REGISTRAR__ UM 
+
+
+'PARSER'
+
+NO NOSSO CÓDIGO... -------> 
+
+
+
+
+
+E  NÓS FAZEMOS ADD DE 
+
+
+
+UM 'PARSER'
+
+
+JUSTAMENTE POR MEIO DO ADD 
+
+DE __ OUTRO MIDDLEWARE__ 
+
+
+NO NOSSO 'app.js'...
+
+
+
+
+
+
+
+
+
+
+-----> NÓS VAMOS ADICIONAR OUTRO MIDDLEWARE... --> E NÓS TIPICAMENTE 
+
+
+ADICIONAMOS 
+
+
+NOVOS MIDDLEWARES DE __PARSING__ NO NOSSO CÓDIGO___ ANTES ___ (na ordem)
+
+
+DOS 
+
+
+'ROUTE HANDLING MIDDLEWARES'.... -------> ISSO 
+
+PQ 
+
+
+O 
+
+PARSING DO BODY
+
+
+
+
+
+____SEMPRE __ _DEVE ___ ACONTECER ''''NO MATTER WHERE YOUR REQUEST ENDS UP''''....
+
+
+
+
+
+
+
+
+
+--> é por isso que vamos escrever esse middleware de PARSER/PARSING 
+
+
+DE BODY ____ BEEEEEM LÁ NO INÍCIO DO NOSSO ARQUIVo....
+
+
+
+
+ex:
+
+
+
+
+const express = require('express');
+
+const app = express();
+
+
+
+app.use( ///EIS O CÓDIGO EM QUESTÃO.
+
+)
+
+app.use(
+    '/add-product',
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+});
+
+
+
+
+app.use(
+    '/product', (req, res, next) => { 
+
+                console.log(req.body);
+                res.redirect('/');
+    }
+)
+
+
+
+app.use(
+    '/', 
+    (req, res, next) => {
+
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+CERTO.... ALI DENTRO VAMOS QUERER 'PARSE THE INCOMING REQUEST BODY'... ----> 
+
+
+
+
+E PARA ISSO,
+
+VAMOS REALMENTE 
+
+__INSTALAR__ UMA THIRD PARTY PACKAGE... --------> 
+
+
+
+
+NÓS INSTALAMOS 
+
+
+ESSA 
+
+
+
+
+THIRD PARTY PACKAGE 
+
+por meio 
+
+
+de 
+
+'npm install --save',
+
+
+
+PQ ESSE CÓDIGO VAI SER USADO EM 'PRODUCTION' TAMBÉM...
+
+
+
+
+
+
+
+
+
+-----> ok, por isso não colocamos '-dev'... --> 
+
+
+
+
+
+
+A PACKAGE QUE QUEREMOS INSTALAR É 
+
+
+'body-parser'...
+
+
+
+
+
+
+
+
+
+------> E O PROFESSOR EXPLICA QUE 
+
+ESSA PACKAGE NA VERDADE 
+
+SERIA INCLUÍDA 
+
+__NO 
+
+
+EXPRESSJS,
+
+
+
+
+AÍ FOI REMOVIDA,
+
+AÍ FOI INCLUÍDA DNV...
+
+
+
+
+
+
+
+-> O PROFESSOR VAI USAR ESSE INSTALL DA TPP ___ JUSTAMENTE PQ 
+
+___ESSA É  A MANEIRA RECOMENDADA 
+
+DE 
+
+A UTILIZAR (pq se no futuro 
+
+eles 
+
+decidirem REMOVER ESSA PACKAGE DE NOVO, 
+
+
+aí teremos problemas, problemas que são 
+
+evitados por meio do 
+
+simples código de 
+
+'npm installl --save body-parser'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------>  OK.... INSTALEI...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> INSTALAMOS O 'BODY PARSER',
+
+
+E AÍ PODEMOS O IMPORTAR 
+
+
+
+NO NOSSO 
+
+'app.js',
+
+
+
+justamente 
+
+por meio 
+de 
+
+
+'const bodyParser = require('body-parser');'
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO, PROFESSOR ENTÃO NOS CONTA QUE PODEMOS UTILIZAR 
+
+
+
+ESSE 
+
+
+OBJETO 
+
+'bodyParser'
+
+
+LÁ NO NOSSO MIDDLEWARE QUE SERÁ/É DEDICADO AO PARSING 
+
+
+de nosso 
+
+body... -----> VAMOS ESCREVEr 
+
+
+
+
+'app.use(bodyParser);',
+
+
+
+
+E AÍ 
+
+
+VAMOS 
+
+
+
+
+USAR A DOT NOTATION PARA ACESSAR UM MÉTODO ESPECÍFICO NELE.. 
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+app.use(bodyParser.urlencoded());
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+VAMOS QUERER O MÉTODO 
+
+
+'urlencoded()'...
+
+
+
+
+
+
+
+------> PROFESSOR EXPLICA QUE 
+
+
+
+___ ESSA É UMA FUNÇÃO QUE TEMOS QUE EXECUTAR,
+
+
+E QUE __PODEMOS ___ PASSAR __ OBJETOS PARA A CONFIGURAR,
+
+
+mas que 
+
+você não precisa fazer isso aqui....
+
+
+
+
+
+
+
+
+-------> CERTO... E O QUE ISSO FAZ É 
+
+
+
+__REGISTRAR__ UM MIDDLEWARE ........... --------> ISSO 
+
+
+SIGNIFICA QUE 
+
+
+
+ESSA PRÓPRIA FUNÇÃO 
+
+'.urlEncoded()'
+
+VAI 
+
+
+'YIELD US SUCH A 
+
+
+MIDDLEWARE FUNCTION'( uma função como '(req, res, next) => {}').......
+
+
+
+
+
+
+
+----> é uma função INVISÍVEL DE MIDDLEWARE... ------> 
+
+
+
+E AÍ,
+
+DENTRO 
+
+DESSA 
+
+
+FUNÇÃO INVISÍVEL-MIDDLEWARE 
+
+
+
+
+que fica 
+
+
+
+DENTRO 
+
+de 
+
+
+'urlencoded()',
+
+
+
+ELA TERÁ UM 
+
+CALL 
+DE 
+
+
+
+'next()'
+
+OCULTO,
+
+O QUE 
+
+FAZ COM QUE 
+
+
+
+
+OS REQUESTS QUE ALCANÇAM NOSSO SERVER ___TAMBÉM__ ALCANCEM
+
+O 
+
+
+RESTO 
+
+
+dos nossos middlewares escritos mais abaixo....
+
+
+
+
+
+
+
+
+
+
+
+
+----------> CERTO... MAS A VANTAGEM, AQUI, É QUE __ ANTES__ DE 
+
+
+ALCANÇAR
+
+O __ RESTO ___ DOS MIDDLEWARES_ NO NOSSO 
+
+
+ARQUIVO,
+
+
+ESSE 
+
+'bodyParser.urlencoded()'
+
+
+
+DENTRO 
+
+DE 
+'app.use()'
+
+
+
+
+_VAI PARSEAR A 'INCOMING REQUEST DATA'
+
+
+
+BEM DIREITINHO....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const express = require('express');
+
+const app = express();
+
+
+
+app.use( 
+
+    bodyParser.urlencoded(); ////EIS O CÓDIGO EM QUESTÃO. 
+
+)
+
+app.use(
+    '/add-product',
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>');
+});
+
+
+
+
+app.use(
+    '/product', (req, res, next) => { 
+
+                console.log(req.body);
+                res.redirect('/');
+    }
+)
+
+
+
+app.use(
+    '/', 
+    (req, res, next) => {
+
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+app.listen(3000);
+
+
+
+
+
+--------------------------
+
+
+
+
+
+--> OK... E A VANTAGEM, AQUI,
+É 
+
+
+QUE 
+
+ESSE NEGÓCIO FAZ 
+
+O PARSING 
+
+
+MANUAL QUE O PROFESSOR NOS MOSTROU NAS LIÇÕES ANTERIORES,
+
+
+mas de forma 
+
+
+AUTOMÁTICA....
+
+
+
+
+
+
+
+--> MAS É ÓBVIO QUE 
+
+
+
+
+'bodyParser.urlencoded()'
+
+
+___NÃO VAI PARSEAR TODOS __OS TIPOS POSSÍVEIS DE ARQUIVOS... --> OU SEJA,
+
+
+
+
+'JSON', arquivos e etc,
+
+
+
+
+NÃO SÃO ABRANGIDOS por esse PARSING METHOD ESPECÍFICO....
+
+
+
+
+
+
+
+--> MAS O 'urlencoded()'
+
+ABRANGE O CASE 
+
+
+
+
+ATUAL NOSSO,
+
+
+ESSE 
+
+CASE 
+
+
+
+DE 
+
+
+'DATA SENT THROUGH A FORM'... ------> SE TIVERMOS OUTROS BODIES,
+
+COMO 
+
+ARQUIVOS,
+
+VAMOS 
+
+USAR 
+
+OUTROS PARSERS... -->  E ESSA, DE NOVO, É UMA DAS MAIN ADVANTAGES DO 
+
+
+
+EXPRESSJS:
+
+
+
+
+
+SE TIVERMOS QUE USAR ALGUM CÓDIGO ESPECÍFICO,
+
+SÓ O IMPORTAMOS 
+
+DIRETAMENTE E O USAMOS NOS NOSSOS MIDDLEWARES... é fácil assim...
+
+
+
+
+
+
+
+
+
+--------------------> OK... COM ISSO, AGORA REALMENTE DEVEMOS TER UM 
+
+OUTPUT 
+
+VÁLIDO
+ 
+ PARA 
+
+ AQUELE 
+
+ 'console.log(req.body)'
+
+ NAQUELE MIDDLEWARE MAIS DE BAIXo...
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+ Boa tarde Irene, primeiro deprecated não necessariamente está dando erro é so que não terá mais suporte a essa versão e pode num futuro dar erros.
+
+em relação ao express utilize conforme exemplo abaixo...
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+OK, REINICIAMOS NOSSO SERVER 
+
+E ENTÃO TESTAMOS....
+
+
+
+
+
+
+
+--> BTW, QUANDO INSTALAMOS UMA PACKAGE NOVA, NÃO DEVEMOS CONFIAR NO RELOAD DO NODEMON,
+
+devemos realmente reiniciar o server...
+
+
+
+
+
+
+
+-------> ok... --> MAS HÁ UMA COISA QUE ESQUECEMOS, AQUI.... --> esqueceoms 
+
+
+de
+ 
+
+PASSAR UM OBJETO 
+'{}'
+
+COMO 
+
+
+
+__PARÂMETRO DE 
+
+'.urlencoded()'.... --->
+
+
+
+
+DEVEMOS COLOCAR DENTRO DESSE OBJETO UMA KEY DE 
+
+'extended: false/true'... -->   VAMOS DEIXAR 
+COMO 
+
+
+'FALSe' ---> ISSO COMUNICA SE O PARSER DEVERÁ 
+
+
+'BE  ABLE TO PARSE NON-DEFAULT FEATURES',
+
+
+por assim dizer... ------> PROFESSOR DEFINE COMO 
+
+'FALSE'
+
+para 
+
+que 
+
+esse 
+
+bodyParser
+
+
+se adapte com o que temos no nosso código....
+
+
+
+
+
+
+
+EX:
+
+
+ extended: true precises that the req.body object will contain values of any type instead of just strings.
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+--> OK... REINICIAMOS NOSSO SERVER, ENTRAMOS NAQUELA URL DE 
+
+'add-product',
+
+
+AÍ 
+
+
+
+ENVIAMOS ALGO POR MEIO DAQUELA FORM..
+
+
+
+
+
+
+
+
+
+
+
+-> o que obtemos, no console, sinalizando nosso SUCESSO,
+
+
+É ISTO:
+
+
+
+'''{ title: 'asaas' }'''
+
+
+
+
+
+
+
+-----> SINAL DE QUE 
+
+
+__ NOSSO 
+
+
+BODY DO INCOMING REQUEST 
+
+
+
+__FOI PARSEADO...------> 
+
+AGORA 
+
+
+
+
+
+CONSEGUIMOS UM OBJETO JAVASCRIPT COM UM KEY-VALUE PAIR,
+
+o que 
+
+deixa o EXTRACT DO CÓDIGO BEM MAIS FÁCIL,
+
+
+
+__PQ NÃO TEMOS QUE FAZER COMO ANTES, 
+
+
+EM QUE 
+
+
+
+
+__TIVEMOS QUE USAR A FUNÇÃO DE 'SPLIT' 
+
+
+
+E __ AQUELE NEGÓCIO DE CRIAR UM ARRAY __ ADICIONAL  MANUALMENTE E ASSIM POR DIANTE...
+
+
+
+
+
+
+
+
+
+
+--> aGORA, EM VEZ DISSO, VAMOS SIMPLESMENTE CONSEGUIR UM OBJECT EM QUE 
+
+
+VAMOS 
+
+
+SÓ PEGAR A 'KEY' (Que é 'title', nesse caso)
+QUE 
+
+DEFINIMOS 
+
+
+NO NOSSO 
+
+
+
+
+'<input/>'
+
+LÁ 
+
+EM CIMA,
+
+
+
+
+
+E AÍ ___ 
+
+O VALOR QUE 
+
+O USER INPUTTOU (ou seja,
+
+
+
+ESSA MANEIRA É BEM MAIS FÁCIL E SIMPLES DO QUE 
+
+O 
+
+APPROACH QUE USAMOS ANTERIORMENTE....
+
+)
+
+
+
+
+
+-------> AGORA, PORTANTO, PODEMOS TRABALHAR COM TODA 
+
+A 
+
+DATA QUE NOSSOS USUÁRIOS NOS YIELDARAM,
+
+
+
+__ E AÍ ___ 'STORE THAT DATA IN A DATABASE' ( coisa que faremos mais tarde),
+
+
+AÍ 
+
+__MOSTRAR UMA RESPONSE E OUTRAS COISAS...
+
+
+
+
+
+
+
+
+
+
+-----> OK.. MAS AQUI AINDA TEMOS UM PROBLEMA:
+
+
+
+ESSE 
+
+
+
+MIDDLEWARE DE 
+
+'''
+
+app.use(
+    '/product', (req, res, next) => { 
+
+                console.log(req.body);
+                res.redirect('/');
+    }
+)
+
+
+
+''''
+
+
+ESTÁ TAMBEM FAZENDO LISTEN 
+
+
+DE 
+
+'GET REQUESTS',
+
+
+QUANDO NÓS ___ SÓ VAMOS QUERER__ FAZER O LISTEN DE UM 
+
+
+'POST REQUEST',
+
+só vamos querer ACEITAR POST REQUESTS 
+
+
+nesse middleware aqui...
+
+
+
+
+
+
+-_> OK, COMO PODEMOS 
+
+FAZER COM QUE 
+NOSSO CÓDIGO 
+
+SÓ 
+HANDLE 
+
+POST REQUESTS NESSA ROUTE ESPECÍFICA?

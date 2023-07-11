@@ -1,0 +1,985 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> NO FRONTEND,
+
+
+
+NA FUNÇÃO DE 'finishEditHandler',
+
+
+
+
+
+QUE TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = async (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+
+    try {
+      this.setState({ editLoading: true });
+
+      //Set up data (with image!)
+      // let url = 'URL';
+
+      ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+      let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+      // console.log(postData.image);
+
+      // let url = 'http://localhost:8080/feed/post';
+
+      let graphqlQuery = {
+        query: `
+        mutation {
+          createPost(
+            userInput: {
+                  title: "${postData.title}",
+                  content: "${postData.content}",
+                  imageUrl: "Dummy"
+            }
+         ) {
+          post {
+            title
+            content 
+            _id
+            imageUrl
+          },
+          creator {
+            name 
+            _id
+          }
+        }
+        }
+      `,
+      };
+      let url = 'http://localhost:8080/graphql';
+      let method = 'POST';
+
+      if (this.state.editPost) {
+        // url = `http://localhost:8080/feed/post/${postData.id}`;
+        // method = 'PUT';
+
+        graphqlQuery = {
+          query: `
+          mutation {
+
+          }
+        `,
+        };
+      }
+
+      console.log(this.props.token);
+      // for (var pair of formData.entries()) {
+      //   // console.log(pair[0] + ', ' + pair[1]);
+      // }
+
+      const editAndAddResults = await fetch(url, {
+        method: method,
+
+        // body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE, não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ  ENVIANDO DATA por meio daquele 'formData.append()'... APENAS precisamos settar, nesse case, UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+
+        // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+        //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+        //                       'multipart/form-data'
+        // }
+      });
+      // .then((res) => {
+      if (editAndAddResults.status === 400) {
+        throw new Error(
+          'Please input values that are valid and not equal to previous ones.'
+        );
+      }
+
+      if (
+        editAndAddResults.status !== 200 &&
+        editAndAddResults.status !== 201
+      ) {
+        throw new Error('Creating or editing a post failed!');
+      }
+
+      // return res.json();
+      // })
+      // .then((data) => {
+
+      const manipulatedEditAndAddResults = await editAndAddResults.json();
+
+      const post = {
+        _id: manipulatedEditAndAddResults.post._id,
+        title: manipulatedEditAndAddResults.post.title,
+        content: manipulatedEditAndAddResults.post.content,
+        creator: manipulatedEditAndAddResults.post.creator,
+        createdAt: manipulatedEditAndAddResults.post.createdAt,
+      };
+
+      console.log(post, 'Line');
+      this.setState((prevState) => {
+        let updatedPosts = [...prevState.posts];
+        if (prevState.editPosts) {
+          const postIndex = prevState.posts.findIndex((post) => {
+            return post._id === prevState.editPost._id;
+          });
+          updatedPosts[postIndex] = post;
+        } else if (prevState.posts.length < 2) {
+          updatedPosts = prevState.posts.concat(post);
+        }
+        return {
+          posts: updatedPosts,
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+        };
+      });
+
+      this.loadPosts();
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      //   console.log(err);
+      this.setState({
+        isEditing: false,
+        editPost: null,
+        editLoading: false,
+        error: err,
+      });
+      this.loadPosts();
+      // });
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> NESSE CÓDIGO AÍ,
+
+
+PROFESSOR APONTA QUE __ VAI _ IGNORAR O 'FILE UPLOAD'
+
+
+POR ENQUANTO...
+
+
+
+
+
+
+
+
+------->  EM VEZ DISSO,
+
+ELE 
+
+VAI 
+
+
+FOCAR 
+
+
+
+
+
+NO 'REACH THE GRAPHIQL ENDPOINT'
+
+
+
+e no CREATE DE UM NOVO USER.... -------> PARA ISSO,
+
+
+
+ELE 
+
+
+VAI 
+
+
+
+PRIMEIRAMENTE 
+
+
+
+SE LIVRAR DA DIFERENCIAÇÃO ENTRE A URL/ENDPOINT 
+
+DE 
+
+'EDIT' E 'ADD', que tínhamos anteriormente... --> ISSO 
+
+
+PQ 
+
+
+AGORA SÓ VAMOS TER 1 ÚNICO ENDPOINT,
+
+que 
+
+diferenciará 
+
+
+
+as FEATURES do seu código 
+
+DE ACORDO ___ COM AS QUERIES/MUTATIONS QUE ELE RECEBER...
+
+
+
+
+
+
+
+
+--> E AGORA NOSSO METHOD SEMPRE SERÁ O MESMO, 
+
+
+DE TIPO 'POST'....
+
+
+
+
+
+
+
+
+
+
+
+--> O BODY TAMBÉM NÃO SERÁ MAIS 'formData',
+
+
+
+E SIM _ NOSSO _ 'graphqlQuery'....
+
+
+
+
+
+--> EXATAMENTE COMO EU HAVIA ESCRITO:
+
+
+
+
+
+
+
+
+
+--> ok, 
+
+aí professor começa:
+
+
+
+
+
+
+
+
+
+mutation {
+    createPost(postInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "DUMMY"}) {
+
+
+    }
+}
+
+
+
+
+
+
+--------------------
+
+
+
+OK... MAS NO {} do 'get back',
+
+
+
+PROFESSOR VAI QUERER __ RECEBER 
+
+o 
+
+
+'_id'
+
+
+
+e o 
+
+'title' 
+
+
+
+de nosso 
+
+
+
+POST... ( achei estranho; só isso?)
+
+
+
+
+
+
+
+
+
+
+--> O RESTO DO CÓDIGO, AQUELES IF CHECKS CHECANDO POR ERRORS (statusCode diferente de '200' ou '201'),
+
+
+TODOS ELES TERÃO DE SER ALTERADOS....
+
+
+
+
+
+
+
+
+
+--> AH, PARECE QUE ELE REALMENTE ADICIONARÁ MAIS ALGUMAS COISAS,
+ 
+ nesse return (para acompanhar nosso schema, penso eu)...
+
+
+
+
+
+
+
+
+
+ ------> É POR ISSO QUE ELE ESCREVE:
+
+
+
+ 
+mutation {
+    createPost(postInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "DUMMY"}) {
+
+
+            _id
+            title 
+            content
+            imageUrl 
+            creator 
+            createdAt
+            updatedAt
+    }
+}
+
+
+----------------------------
+
+
+
+
+
+CERTO.... MAS 1 DETALHE, AQUI,
+
+É QUE 
+O 
+
+
+
+'creator',
+
+
+
+SE CHECARMOS 
+
+
+NOSSO SCHEMA,
+
+VEMOS ISTO:
+
+
+
+type Creator {
+      _id: ID!
+      name: String!
+}
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+PRECISAMOS __ SER MAIS ESPECÍFICOS ___ PARA DIZER QUAIS PROPREIDADES 
+
+
+DO CREATOR VAMOS QUERER FETCHEAR...
+
+
+
+
+
+
+
+--> no caso, escrevemos assim:
+
+
+
+
+
+mutation {
+    createPost(postInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "DUMMY"}) {
+
+
+            _id
+            title 
+            content
+            imageUrl 
+            creator {
+                _id
+                name
+            }
+            createdAt
+            updatedAt
+    }
+}
+
+
+
+
+-----------------------------
+
+
+
+
+
+E ESSA É A COISA BEM LEGAL DO 'graphql': 
+
+
+
+PODEMOS REALMENTE 'drill into the data'...
+
+
+
+
+
+
+
+
+
+------> mas digamos QUE __ SÓ VAMOS QUEREr_ _ O 'name'
+
+desse creator,
+
+
+
+
+SEM 
+
+
+
+__ PEGAR TAMBÉM, DE VOLTA,
+
+o 
+
+
+
+'_id'... 
+
+
+
+
+
+
+
+
+
+--> SE QUISERMOS FAZER ISSO,
+
+BASTA ESCREVER SÓ o 'name',
+e deixar de lado 
+
+o 
+
+write de 
+
+'_Id'...
+
+
+
+
+
+
+
+
+
+
+
+--> E ISSO MOSTRA O PODER DE 'graphql'
+
+MUITO BEM...
+
+
+
+
+
+
+--> PODEMOS 'GET EXACTLY THE DATA WE NEED'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTo... ---> NÓS OBTIVEMOS ESSA DATA AÍ....
+
+
+
+
+
+
+
+--> ASSUMIMOS QUE NOSSO POST REQUEST É ENVIADO, AQUI...
+
+
+
+
+
+
+
+
+
+
+--> CERTO... MAIS TARDE,
+
+
+ALI EMBAIXO,
+
+
+neste código aqui:
+
+
+
+
+
+      const post = {
+        _id: manipulatedEditAndAddResults.post._id,
+        title: manipulatedEditAndAddResults.post.title,
+        content: manipulatedEditAndAddResults.post.content,
+        creator: manipulatedEditAndAddResults.post.creator,
+        createdAt: manipulatedEditAndAddResults.post.createdAt,
+      };
+
+
+
+
+
+
+
+
+--> TEREMOS __ ALGUNS PROBLEMAS_.... ( 
+
+
+
+    pq várias dessas propriedades provavelmente estarão dentro de 
+
+    'data.post',
+
+
+    ou algo assim...
+)
+
+
+
+
+
+
+
+-----> MAS O PROFESSOR PEDE QUE 
+
+FOQUEMOS NAS COISAS QUE CONSOLE.LOGGAMOS NO CONSOLE,
+
+VER SE O SEND DESSE REQUEST FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+------> DE VOLTA AO NOSSO APP,
+
+
+
+
+
+
+PROFESSOR TENTA 
+
+
+
+ENVIAR UM REQUEST...
+
+
+
+
+
+
+
+
+
+
+--> AÍ ELE DIZ ALGO QUE TALVEZ SOLUCIONE NOSSO PROBLEMA... --> NO NOSSO CÓDIGO,
+
+ESTAMOS ENVIANDO APENAS 1 HEADER DE 'Authorization' (com nossa TOKEN),
+
+
+
+
+__ MAS __ NÃO ESTAMOS _ INCLUINDO O 
+
+HEADER 
+DE 
+
+'Content-Type: application/json'
+
+
+NESSE REQUEST..
+
+
+
+É POR ISSO QUE VAMOS ESCREVER ASSIM:
+
+
+
+
+
+
+
+
+
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          'Content-Type': 'application/json' ///colocamos isto na VERSÃO __ 'GRAPHQL' de nosso código, pois é necessário lá... (é necessário em muitas outras hipóteses, também, mas neste curso, passou a ser necessário quando trocamos para um bakcned GRAPHQL..)
+          
+          
+          
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE, não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ  ENVIANDO DATA por meio daquele 'formData.append()'... APENAS precisamos settar, nesse case, UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+---> não, mas ainda ESTAMOS OBTENDO 'not authenticted',
+
+
+aquele erro lá....
+
+
+
+
+
+
+
+
+
+-------> CERTO... DE VOLTA AO APPP,
+
+
+
+CRIAMOS EM 'new post',
+
+
+
+
+
+TENTAMOS INVENTAR UM NOVO POST... 
+
+
+
+
+
+
+
+--> AÍ RECEBEMOS UM ERRO:
+
+
+
+'cannot read property _id of undefined'....
+
+
+
+
+
+
+
+--> MAS NO CÓDIGO DO PROFESSOR, ELE ACTUALLY CONSEGUIU CRIAR 1 POST.... (e no meu código, eu não consegui isso)...
+
+
+
+
+
+
+-------> depois de alguns ajustes,
+
+CONSEGUI:
+
+
+
+
+
+     createPost: async function(args, req) {    
+
+
+        console.log(req.isAuth, 'LINESAHDSUU');
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+
+        const errors = [];
+
+
+        if (validator.isEmpty(args.userInput.title) || !validator.isLength(args.userInput.title, {min: 6})) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'Please insert a valid title, with more than 6 characters.'})
+        }
+
+
+        if (validator.isEmpty(args.userInput.content) || !validator.isLength(args.userInput.content, {min: 6})) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Please input valid content, with more than 6 characters.'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+        
+
+        console.log(args.userInput);
+
+        console.log(req.userId);
+
+
+        const post = new Post({
+            title: args.userInput.title,
+            content: args.userInput.content,
+            imageUrl: args.userInput.imageUrl, ///talvez o mesmo funcionamento do Multer?
+            creator: {
+                userId: ObjectId(req.userId) ///extraído do TOKEN, que vai ter ficado armazenado no request object....
+            },
+            //updatedAt e createdAt vão ser criados/addados __ AUTOMATICAMENTE PELO MONGOOSE, por conta de 'timestamps: true'. Mesma coisa com '_id' desse post....
+        }).save();
+
+        // const savedPost = await post.save();
+
+
+        console.log(post, 'LINE');
+        
+     const user = await User.findOne({ _id: req.userId });
+
+
+     if (!user) {
+         const error = new Error('Invalid user.');
+         error.code = 401;
+         throw error;
+     }
+
+        user.posts.push(
+            {
+                postId: ObjectId(post._id),
+              }
+        );
+
+    const savedUser = await user.save();
+
+        return {
+            post: {
+                ...savedPost._doc,
+                _id: savedPost._id.toString(), //para evitar o return do id do post NA FORMA DE UM OBJETO, vamos OVERWRITTAR O VALOR DESSE ID OBJETO POR SUA FORMA 'string'....
+                createdAt: savedPost.createdAt.toISOString(), //mesma coisa; o formato 'DATE TYPE', usado pelo mongoose, NÃO É RECONHECIDO PELA GRAPHQL API __ COMO __ SENDO UMA VALID STRING (String!), por isso temos que o converter por meio de 'toISOString()'...
+                updatedAt: savedPost.updatedAt.toISOString(),
+            },
+            creator: {
+                _id: savedUser._id.toString(),
+                name: savedUser.name
+            }
+        }
+
+
+     }
+
+
+}
+
+
+
+
+------------------------------
+
+
+
+
+CERTo....
+
+
+
+
+
+
+
+
+
+-------> E AGORA, SE ENTRARMOS NA COLLECTION DE POSTS,
+
+
+VEMOS QUE CADA POST POSSUI ESTA ESTRUTURA:
+
+
+{
+    "_id": {
+        "$oid": "61c167e768d1e7ce686c8e48"
+    },
+    "title": "AFFASFF",
+    "content": "fasasfaf",
+    "imageUrl": "Dummy",
+    "creator": {
+        "userId": {
+            "$oid": "61c167e768d1e7ce686c8e47"
+        }
+    },
+    "createdAt": {
+        "$date": "2021-12-21T05:36:39.724Z"
+    },
+    "updatedAt": {
+        "$date": "2021-12-21T05:36:39.724Z"
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+CERTO.... AGORA PERCEBO QUE ESTÁ TUDO CERTO,
+
+
+
+
+MENOS O 
+
+'post' 
+
+
+QUE DEVE SER CRIADO 
+
+LÁ 
+
+
+
+dentro do 
+
+
+
+
+
+'user' document correspondente, 
+
+
+no array de 'posts'... (
+
+    é, isso NÃO ESTÁ SENDO ADDADo....
+)
+
+
+
+
+
+
+
+-> vou tentar consertar isso sozinho, mas isto é o tema da PRÓXIMA AULA...

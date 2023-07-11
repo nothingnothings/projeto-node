@@ -1,0 +1,406 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK... TRABALHAMOS UM MONTE NA FEATURE DE 'RESET PASSWORDS'..
+
+
+
+
+
+
+
+
+--> AGORA É HORA DE TRABALHAR 
+
+
+NA 
+
+FEATURE 
+
+DA 
+
+'AUTHORIZATION'...
+
+
+
+
+
+
+
+
+--> POR AUTHORIZATION,
+
+
+
+PROFESSOR QUER DIZER QUE 
+
+
+
+'''NOT EVERY AUTHENTICATED USER IS/SHOULD BE ALLOWED TO DO EVERYTHING''' --> ALGUNS 
+
+
+
+USERS 
+
+
+SÃO/SERÃO MAIS AUTORIZADOS DO QUE OUTROS.... ------> 
+
+
+
+ALGUNS USERS 
+
+
+TERÃO 
+
+
+
+
+'LOGINS DE ADMIN',
+
+
+e OUTROS 
+
+
+
+'LOGINS DE USER'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR QUER, INICIALMENTE, __ QUE __ SÓ O USER_ 
+
+RESPONSÁVEL PELO CREATE/EDIT DAQUELE PRODUCT _ SEJA_ _ 
+
+CAPAZ __ 
+
+DE 
+
+O 
+
+EDITAR/DELETAR/MODIFICAR...
+
+
+
+
+
+
+
+
+
+--> NO NOSSO PROJETO, NO MOMENTO, POSSO DELETAR/EDITAR QUALQUER PRODUTO, DE QUALQUER ADMIN,
+
+
+
+por conta própria... --> VAMOS QUERER _ AUTHORIZATION__ PARA LIMITAR ESSE ACESSO/PODERES...
+
+
+
+
+
+
+
+
+
+
+
+
+--> AUTHORIZATION --> SIGNIFICA QUE _ EU VOU RESTRINGIR __AS PERMISSÕES DE UM 'LOGGED IN USER'... ------>  
+
+
+
+
+
+
+
+
+
+VAMOS QUERER:
+
+
+
+
+
+
+1) QUE CADA USER SEJA CAPAZ DE ADICIONAR QUALQUER COISA AO 'CART', INCLUSIVE OS PRODUCTS CRIADOS POR SI PRÓPRIOS (ou seja, 1 admin pode adicionar ao próprio cart UM PRODUTO QUE FOI EFETIVAMENTE CRIADO POR ELE MESMo...) 
+
+
+
+
+
+
+
+
+2) QUE APENAS OS PRODUCTS CRIADOS POR 1 ADMIN SÓ POSSAM SER ALTERADOS/DELETADOS PELO PRÓPRIO ADMIN CRIADOR....
+(você não pode editar/remover products que NÃO FORAM CRIADOS POR VOCÊ.... )
+
+
+
+
+
+
+
+
+
+
+---> PROFESSOR QUER _ IMPLEMENTAR ISSO CONOSCO...
+
+
+
+
+
+
+
+-->OK, MAS __ COMO PODEMOS __ IMPLEMENTAR ISSO?
+
+
+
+
+
+
+
+
+
+
+
+
+----> BEM, QUANDO NÓS CRIAMOS 1 NOVO PRODUCT,
+
+
+
+
+
+
+NÓS TEMOS QUE __ ESTAR LOGGADOS.... ----> 
+
+
+
+
+
+
+OK.... -----> QUANDO CRIAMOS UM 
+
+
+NOVO PRODUCT,
+
+
+
+
+
+
+
+ELE APARECE NA LISTA DE 'PRODUCTS',
+
+E LÁ 
+
+NA 
+
+COLLECTION,
+ 
+
+ NA 
+
+ DATABASE,
+
+
+
+ de 
+
+ 'products'...
+
+
+
+
+
+
+
+
+
+
+ -> E O CÓDIGO FICA MAIS OU MENOS ASSIM:
+
+
+
+
+
+
+
+
+ {
+    "_id": {
+        "$oid": "6178c95a034366e935717476"
+    },
+    "title": "ASAS",
+    "price": 22121,
+    "description": "ASSAAS",
+    "imageUrl": "ASAS",
+    "userId": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+CERTO...
+
+
+
+E aí o que interessa é que CADA PRODUCT ESTÁ _ VINCULADO__ 
+
+A 
+
+1 
+
+'user',
+
+
+
+
+por meio daquele 
+
+'userId'...
+
+
+
+
+
+
+--> o model de product, por exemplo,
+
+
+
+
+tem este formato:
+
+
+
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+    title: {
+
+      required: true,
+      type: String
+    },
+
+    price: {
+      required: true,
+      type: Number
+    },
+
+
+    description: {
+      required: true,
+      type: String
+    },
+
+    imageUrl: {
+      required: true,
+      type: String
+    },
+
+    userId: { ////// USADO PARA DEFINIR RELATION ENTRE os models/collection de 'User' e 'Product', por meio desse ID aí (relations por meio de REFERENCING...).
+      required: true, 
+      type: Schema.Types.ObjectId, /////// use isto, esse DATA TYPE, se você pretende fazer REFERENCING entre duas collections/models....
+      ref: 'User'  /////// AQUI VOCê DEVE ESPECIFICAR O __ NOME __ DA DATABASE/COLLECTION que você vai querer __CONECTAR/RELATE a essa database/model de 'product'... (você deve colocar a inicial maiúscula, EXATAMENTE COMO VOCÊ definiu o nome dessa collection/model, lá em 'user.js', nesse caso...)
+    } 
+  }
+)
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> E SE DERMOS UMA OLHADA EM TODOS NOSSOS USERS,
+
+
+
+
+
+
+
+
+
+
+___ NÓS __ VAMOS VER QUE __ 
+
+
+
+
+TEMOS ALGUNS USERS com emails aleatórios...
+
+
+
+
+
+
+
+
+--> MAS SE EU LOGGAR COM DIFERENTES USERS,
+
+EU AINDA POSSO 'EDIT/DELETE' qualquer product, e É EXATAMENTE ISSO QUE QUEREMOS 
+
+PREVENIR,
+
+
+E QUE 
+
+
+VEREMOS 
+
+NA PRÓXIMA AULA...

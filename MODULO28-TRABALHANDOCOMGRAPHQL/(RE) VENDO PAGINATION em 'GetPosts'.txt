@@ -1,0 +1,1739 @@
+Currently, when adding a new post with only one post being loaded, we end up with one post on the starting page (instead of the expected two posts).
+
+We'll fix that later of course but you can already go ahead and make the required adjustment on your own.
+
+We have to adjust our "add a post" code in the frontend to handle post creation and pagination correctly:
+
+this.setState(prevState => {
+    let updatedPosts = [...prevState.posts];
+    if (prevState.editPost) {
+        const postIndex = prevState.posts.findIndex(
+            p => p._id === prevState.editPost._id
+        );
+        updatedPosts[postIndex] = post;
+    } else {
+        if (prevState.posts.length >= 2) {
+            updatedPosts.pop();
+        }
+        updatedPosts.unshift(post);
+    }
+    return {
+        posts: updatedPosts,
+        isEditing: false,
+        editPost: null,
+        editLoading: false
+    };
+});
+The following if block was added:
+
+if (prevState.posts.length >= 2) {
+    updatedPosts.pop();
+}
+
+
+
+
+
+
+
+
+
+
+
+--> eu já havia consertado isso, uma vez,
+
+
+
+
+
+
+eu consigo me lembrar... (mas faz bastante tempo).
+
+
+
+
+
+
+
+
+
+
+--> OUTRO PROBLEMA:
+
+
+quando não temos POST ALGUM no nosso app,
+
+
+
+o spinner fica girando para sempre, e não conseguimos aquela mensagem de 'no posts found'....
+
+
+
+
+
+
+
+
+
+--> era um console.log causando esse problema...
+
+
+
+o console.log era este:
+
+
+    // console.log(neededUserDocuments[0].createdAt.toISOString(), 'LINE350');
+
+
+
+
+
+
+
+
+
+--> CERTO....
+
+
+
+
+AGORA 
+
+
+
+TENHO QUE VER SE ESSE BUG DO PROFESSOR EXISTE....
+
+
+
+
+
+
+
+
+
+--> bem, eu consegui criar o post, e ele apareceu, mas recebo um ERRO DE 
+
+'TypeError: Cannot read properties of null (reading 'createPost')'
+
+
+
+
+
+
+
+
+--> o bug do professor NÃO EXISTE...
+
+
+
+
+
+
+
+
+
+
+--> ok... tenho que ver a razão desse error...
+
+
+
+
+
+
+
+
+--> ESSE ERRO ME DEU MUITA RAIVA,
+
+mas eu descobri a razão dele.... --> 
+
+
+
+foi lá no resolver o problema... -> 
+
+
+
+
+
+
+Ex:
+
+
+    console.log(savedUser.name, 'LINE22');
+
+    // console.log(post);
+
+
+    console.log(savedPost);
+
+    return {
+
+        ...savedPost._doc,
+        title: savedPost.title,
+        _id: savedPost._id.toString(), //para evitar o return do id do post NA FORMA DE UM OBJETO, vamos OVERWRITTAR O VALOR DESSE ID OBJETO POR SUA FORMA 'string'....
+        createdAt: savedPost.createdAt.toISOString(), //mesma coisa; o formato 'DATE TYPE', usado pelo mongoose, NÃO É RECONHECIDO PELA GRAPHQL API __ COMO __ SENDO UMA VALID STRING (String!), por isso temos que o converter por meio de 'toISOString()'...
+        updatedAt: savedPost.updatedAt.toISOString(),
+        creator: {
+          name: savedUser.name,
+          _id: savedUser._id.toString()
+        }
+        // creator: {
+        //   name: savedUser.name,
+        //   _id: savedUser._id.toString(),
+        //   posts: savedUser.posts
+        // },
+      }
+  },
+
+
+
+
+
+
+
+
+
+
+  --_> EU ESTAVA FAZENDO O RETURN DE FORMA _ ERRADA__ desse objeto/resposta aí... --. 
+
+
+
+  eu estava retornando 
+
+  'post {
+
+
+   ...savedPost._doc,
+        title: savedPost.title,
+        _id: savedPost._id.toString(), //para evitar o return do id do post NA FORMA DE UM OBJETO, vamos OVERWRITTAR O VALOR DESSE ID OBJETO POR SUA FORMA 'string'....
+        createdAt: savedPost.createdAt.toISOString(), //mesma coisa; o formato 'DATE TYPE', usado pelo mongoose, NÃO É RECONHECIDO PELA GRAPHQL API __ COMO __ SENDO UMA VALID STRING (String!), por isso temos que o converter por meio de 'toISOString()'...
+        updatedAt: savedPost.updatedAt.toISOString(),
+        creator: {
+          name: savedUser.name,
+          _id: savedUser._id.toString()
+        }
+
+
+
+  }
+
+
+  ',
+
+
+
+
+  QUANDO O CORRETO É 
+
+  APENAS RETORNAR ISSO 
+
+  SOLTO, ASSIM:
+
+
+
+
+
+  return  {
+
+
+   ...savedPost._doc,
+        title: savedPost.title,
+        _id: savedPost._id.toString(), //para evitar o return do id do post NA FORMA DE UM OBJETO, vamos OVERWRITTAR O VALOR DESSE ID OBJETO POR SUA FORMA 'string'....
+        createdAt: savedPost.createdAt.toISOString(), //mesma coisa; o formato 'DATE TYPE', usado pelo mongoose, NÃO É RECONHECIDO PELA GRAPHQL API __ COMO __ SENDO UMA VALID STRING (String!), por isso temos que o converter por meio de 'toISOString()'...
+        updatedAt: savedPost.updatedAt.toISOString(),
+        creator: {
+          name: savedUser.name,
+          _id: savedUser._id.toString()
+        }
+
+
+
+  }
+
+
+
+
+
+
+ISSO ACONTECEU PQ LÁ NO MEU SCHEMA NÓS HAVÍAMOS SETTADO 
+
+QUE 
+
+
+
+
+
+deveria ser retornado '} Post!', 
+
+
+
+O QUE 
+
+SIGNIFICA QUE 
+
+
+DEVEMOS RETORNAR 'SOLTO' o objeto naquele trecho ali...
+
+
+
+
+
+
+
+
+
+
+OK... VOLTANDO 
+
+
+
+AO 'GET DO USER STATUS'...
+
+
+
+
+
+
+--> TEREMOS DE ESCREVER UMA NOVA QUERY....
+
+
+
+
+
+
+
+--> vamos até o schema, em que escrevemos, lá em 'RootQuery',
+
+um 
+
+
+'getStatus'....
+
+
+
+
+
+
+
+
+
+--> O RESOLVER FICOU ASSIM:
+
+
+
+  getUserStatus: async function(args, req) {
+
+
+    const userId = req.userId;
+
+    const user = await User.findOne({ _id: ObjectId(userId) });
+
+    if (!user) {
+      const error = new Error('User not found.');
+      error.code = 404;
+      throw error;
+    }
+
+
+
+    return user.status; ///É UMA STRING....
+  }
+
+
+
+
+
+
+
+
+  ---> O SCHEMA FICOU ASSIM:
+
+
+
+
+
+
+  type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+      getCreationStatus(userId: ID!, postId: ID!): PostAuth
+      getPost(postId: ID!): Post!
+      getStatus(userId: ID!): String!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E A QUERY NO FRONTEND VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    // fetch('URL')
+    // fetch('http://localhost:8080/auth/status', { ///versão REST API de nosso código
+
+    const userId = localStorage.getItem('userId');
+    console.log(userId);
+
+      const graphqlQuery = {
+        query: `
+        {
+          getStatus(userId: "${userId}")
+        } 
+        
+        `
+      }
+
+      fetch('http://localhost:8080/graphql', { ////versão GRAPHQL de nosso código...
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(graphqlQuery),
+      method: 'POST'
+    })
+      .then((res) => {
+
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data.errors) {
+          throw new Error('Failed to fetch user status.');
+        }
+        console.log(data.data.getStatus);
+        // this.setState({ status: data.status });
+        this.setState({ status: data.data.getStatus });
+      })
+      .then()
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+    console.log('Entered');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ------------------------------
+
+
+
+
+
+
+
+
+    --> agora vamos escrever a query/mutation para  __ UPDATAR__ 
+
+
+    ESSE 
+
+
+    VALOR DE 'STATUS'
+
+
+    LÁ NA NOSSA DATABASE....
+
+
+
+
+
+
+
+    (
+        ok, e depois disso, fazemos o que? 
+
+
+        recarregamos a página?
+    )
+
+
+
+
+
+
+
+
+    ---> bem, no frontend temos este código:
+
+
+
+
+
+    
+  statusUpdateHandler = async (event) => {
+    event.preventDefault();
+
+    // console.log(event.target.value);
+    try {
+      const updateStatusResult = await fetch(
+        'http://localhost:8080/auth/status',
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            status: this.state.status,
+          }),
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json', //isto ainda é necessário.... (request de tipo patch/post/put...)
+          },
+        }
+      );
+
+      if (
+        updateStatusResult.status !== 200 &&
+        updateStatusResult.status !== 201
+      ) {
+        throw new Error("Can't update status!");
+      }
+      const manipulatedUpdateStatusResult = await updateStatusResult.json();
+
+      // console.log(manipulatedUpdateStatusResult);
+    } catch (err) {
+      this.catchError();
+    }
+  };
+
+
+
+
+
+
+
+
+
+  e este aqui, também:
+
+
+
+
+
+
+    statusInputChangedHandler = (input, value) => {
+    this.setState({ status: value });
+  };
+
+
+
+
+
+
+
+
+  -----------------------------------
+
+
+
+
+
+
+
+
+  BEM, EU CONSEGUI... :
+
+
+
+
+
+
+
+
+
+
+
+
+  O RESOLVER FICOU ASSIM:
+
+
+
+
+
+
+
+
+  
+  updateUserStatus: async function(args, req) {
+
+
+    
+    const errors = [];
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+      const userId = req.userId;
+
+      const user = await User.findOne({ _id: ObjectId(userId) });
+
+
+      if (!user) {
+        const error = new Error('User not found.');
+        error.code = 404;
+        throw error;
+      }
+
+
+      user.status = args.status;
+
+
+
+
+      const savedUser = await user.save();
+
+
+
+      if(
+        !savedUser
+      ) {
+        return 'FAILED';
+      } else {
+        return user.status
+      }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O 
+
+
+
+SCHEMA FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): Post!
+      updatePost(userInput: UserPostInputData, postId: ID!): Post!
+      deletePost(postId: ID!): ID!
+      updateUserStatus(status: String!): String!
+}
+
+
+
+
+
+
+
+
+
+
+
+--> E A QUERY FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+statusUpdateHandler = async (event) => {
+    event.preventDefault();
+
+
+    const graphqlQuery = {
+
+      query: `
+     mutation {
+      updateUserStatus(status: "${this.state.status}")
+      }
+      `
+    }
+
+
+
+    try {
+      const updateStatusResult = await fetch(
+        'http://localhost:8080/graphql', ///vERSÃO __GRAPHQL__ de nosso código...
+        {
+          method: 'POST', ///versão GRAPHQL de nosso código....
+
+          body: JSON.stringify(graphqlQuery), ///VERSÃO __ GRAPHQL DE NOSSO CÓDIGO (body)...
+
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json', //isto ainda é necessário.... (request de tipo patch/post/put...)
+          },
+        }
+      );
+
+
+
+      const manipulatedUpdateStatusResult = await updateStatusResult.json();
+
+
+    
+       if(
+         manipulatedUpdateStatusResult.errors 
+       ) {
+        throw new Error("Could not update status!");
+       }
+      // console.log(manipulatedUpdateStatusResult);
+    } catch (err) {
+      this.catchError();
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OK, MAS NÃO SERIA LEGAL SE O 
+
+  FRONTEND 
+
+
+
+  MOSTRASSE ALGO, SINALIZANDO QUE 
+
+  ESSE 
+  STATE FOI UPDATADO?
+
+
+
+
+
+  ----------------------
+
+
+
+  OK... CONSEGUI.... COLOQUEI UM NOVO STATE DE 'statusLoading',
+
+
+  E AÍ 
+
+  EDITEI 
+
+
+  O
+   
+
+
+   'statusUpdateHandler'
+
+
+
+   para que 
+
+
+
+
+
+ELE 
+
+
+
+FAÇA 
+
+
+ESSE LOAD APARECER PARA O USER....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+ statusUpdateHandler = async (event) => {
+    event.preventDefault();
+
+    // console.log(event.target.value);
+
+    this.setState(
+      {
+        statusLoading: true
+      }
+    )
+
+    const graphqlQuery = {
+
+      query: `
+     mutation {
+      updateUserStatus(status: "${this.state.status}")
+      }
+      `
+    }
+
+    try {
+      const updateStatusResult = await fetch(
+        // 'http://localhost:8080/auth/status', ////versão REST API de nosso código...
+        'http://localhost:8080/graphql', ///vERSÃO __GRAPHQL__ de nosso código...
+        {
+          // method: 'PATCH', ///versão REST API de nosso código
+          method: 'POST', ///versão GRAPHQL de nosso código....
+
+          body: JSON.stringify(graphqlQuery), ///VERSÃO __ GRAPHQL DE NOSSO CÓDIGO (body)...
+
+          // body: JSON.stringify({ ///versão REST API de nosso código...
+          //   status: this.state.status,
+          // }),
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json', //isto ainda é necessário.... (request de tipo patch/post/put...)
+          },
+        }
+      );
+
+      // if (
+      //   updateStatusResult.status !== 200 &&
+      //   updateStatusResult.status !== 201
+      // ) {
+      //   throw new Error("Can't update status!");
+      // }
+
+
+
+      const manipulatedUpdateStatusResult = await updateStatusResult.json();
+
+
+       if(
+         manipulatedUpdateStatusResult.errors 
+       ) {
+        this.setState(
+          {
+            statusLoading: false
+          }
+        )
+        throw new Error("Could not update status!");
+       }
+       this.setState(
+        {
+          statusLoading: false
+        }
+      )
+
+      // console.log(manipulatedUpdateStatusResult);
+    } catch (err) {
+      this.catchError();
+      this.setState(
+        {
+          statusLoading: false
+        }
+      )
+    }
+  };
+
+
+
+
+
+
+
+  -------------------------------------
+
+
+
+
+
+
+
+devemos assistir a aula do professor, ver se ele fez algo de diferente....
+
+
+
+
+
+
+
+
+
+
+
+----> Para fazer o get do status,
+
+
+
+
+ele 
+
+
+
+escreve isto:
+
+
+
+
+
+getUserStatus: User!
+
+
+
+(
+
+
+
+    em vez 
+
+
+
+de 
+
+
+
+
+'getUserStatus: String!', como ue havia escrito....
+
+
+)
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE 
+
+
+
+
+
+
+NÓS PODERÍAMOS 
+
+TER UMA
+
+
+
+MUTATION DE 'UPDATEUSER'
+
+
+
+
+para 
+
+
+
+UPDATAR__ 
+
+
+vários fields 
+
+do user (
+
+    'generic approach'
+),
+
+
+mas que 
+
+como aqui só vamos atualizar o 
+
+
+STATUS DO 
+
+
+USER,
+
+
+ele 
+
+vai 
+
+realmente 
+escrever só 
+
+
+
+
+'updateStatus(status: String!): User!' ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> aí ele passa a escrever os resolvers...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+getStatus: async function(args, req) {
+
+
+
+    if(!req.isAuth) {
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+    }
+
+
+
+    const user = await User.findById(req.userId);
+
+
+    if(!user) {
+
+        const error = new Error('No user found!');
+        error.code = 404;
+        throw error;
+    }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE PODERÍAMOS RETORNAR TODA A DATA DE UM USER, AQUI,
+
+
+
+
+MAS O PROFESSOR 
+
+EXPLICA QUE VAMOS IDEALMENTE 
+
+SÓ 
+
+RETORNAR 
+
+
+O 
+
+'STATUS' 
+desse 
+
+user....
+
+
+
+
+
+
+
+
+------> por isso 
+
+
+ELE VAI ESCREVER UMA QUERY 
+
+
+
+
+tipo assim;
+
+
+
+
+
+
+const graphqlQuery = {
+
+
+
+    query: `
+    {
+
+        getStatus {
+            status
+        }
+
+
+    }
+    
+    `
+}
+
+
+
+
+
+
+
+
+-----------------> essa é a versão DELE da query....
+
+
+
+
+
+
+
+
+
+
+----------> aí ele escreve 
+
+
+aquela lógica de 
+
+
+
+'catch errors',
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+.then(
+    (resData) => {
+
+        if (resData.errors) {
+            throw new Error('Fetching status failed!');
+
+        }
+    }
+)
+
+
+
+
+
+
+
+
+
+-_> POR FIM, ELE ACESSA OS FIELDS 
+
+DO RETURN DE NOSSA QUERY 
+
+
+
+para escrever o set de nosso state...
+
+
+
+
+ex:
+
+
+
+
+
+
+this.setState({status: resData.data.status})
+
+
+
+
+
+
+
+
+
+
+
+
+---------> ELE SALVA TUDO ISSO E RECARREGA O APP... 
+
+
+
+
+
+
+
+
+
+--> ele recebe aquele erro maldito de 
+
+
+'cannot return null for non-nullable field'...
+
+
+
+
+
+-->  
+
+
+
+NO RESOLVER 
+
+
+
+ELE HAVIA RETORNADO __ O 
+
+
+
+
+OBJETO necessário ,
+
+
+MAS 
+
+ELE 
+
+NÃO HAVIA CHAMADO 
+
+'.save()'
+
+
+no user....
+
+
+
+
+
+
+
+
+
+
+------> ENTRETANTO,
+
+
+
+
+
+
+
+professor explica que 
+
+
+
+
+o 
+
+
+
+acesso a data está errado,
+
+
+
+o correto é 
+
+
+'status: resData.data.getStatus.status'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... AÍ TEREMOS O STATUS FIELD...
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO.... 
+
+
+
+
+
+
+
+AGORA DEVEMOS NOS ASSEGURAR 
+QUE TAMBÉM 
+
+CONSEGUIMOS FAZER O __ UPDATE__ DE UM STATUS...
+
+
+
+
+
+
+
+
+
+
+--> ok.... ----> 
+
+
+
+
+vamos lá 
+
+
+
+
+
+
+
+no arquivo resovlers,
+
+
+
+
+aí escrevemos 
+
+
+
+'updateStatus: async function(args, req) {
+
+
+
+
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR FAZ CHECK PELO AUTH DO USER,
+
+
+
+TUDO BEM NORMAL....
+
+
+
+
+EX:
+
+
+
+
+
+
+
+  updateUserStatus: async function(args, req) {
+
+
+    
+    const errors = [];
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+      const userId = req.userId;
+
+      const user = await User.findOne({ _id: ObjectId(userId) });
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... 
+
+
+
+
+
+
+
+SE NÃO ENCONTRARMOS O USER,
+
+VMAOS QUERER ESCREVER ISTO:
+
+
+
+
+
+
+  updateUserStatus: async function(args, req) {
+
+
+    
+    const errors = [];
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+      const userId = req.userId;
+
+      const user = await User.findOne({ _id: ObjectId(userId) });
+
+
+      if (!user) {
+        const error = new Error('User not found.');
+        error.code = 404;
+        throw error;
+      }
+
+
+      user.status = args.status;
+
+
+
+
+      const savedUser = await user.save();
+
+
+
+      if(
+        !savedUser
+      ) {
+        return 'FAILED';
+      } else {
+        return user.status
+      }
+  }
+};
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CASO CONTRÁRIO, VAMOS DEFINIR O USER COM 
+
+
+'user.status = args.status',
+
+
+
+E AÍ 
+
+
+
+VAMOS RETORNAR O STATUS DESSE USER....
+
+
+
+
+
+
+
+
+
+
+
+---> POR FIM, PROFESSOR DIZ QUE TAMBÉM TEMOS QUE 
+
+
+
+
+UPDATAR ISSO 
+
+
+NO FRONTEND....
+
+
+
+
+
+
+
+
+---> ELE 
+
+AJEITA O 
+
+
+REQUEST/QUERY,
+
+
+
+deixa tipo assim:
+
+
+
+
+
+
+
+statusUpdateHandler = async (event) => {
+    event.preventDefault();
+
+    // console.log(event.target.value);
+
+    this.setState(
+      {
+        statusLoading: true
+      }
+    )
+
+    const graphqlQuery = {
+
+      query: `
+     mutation {
+      updateUserStatus(status: "${this.state.status}")
+      }
+      `
+    }
+
+    try {
+      const updateStatusResult = await fetch(
+        // 'http://localhost:8080/auth/status', ////versão REST API de nosso código...
+        'http://localhost:8080/graphql', ///vERSÃO __GRAPHQL__ de nosso código...
+        {
+          // method: 'PATCH', ///versão REST API de nosso código
+          method: 'POST', ///versão GRAPHQL de nosso código....
+
+          body: JSON.stringify(graphqlQuery), ///VERSÃO __ GRAPHQL DE NOSSO CÓDIGO (body)...
+
+          // body: JSON.stringify({ ///versão REST API de nosso código...
+          //   status: this.state.status,
+          // }),
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json', //isto ainda é necessário.... (request de tipo patch/post/put...)
+          },
+        }
+      );
+
+      // if (
+      //   updateStatusResult.status !== 200 &&
+      //   updateStatusResult.status !== 201
+      // ) {
+      //   throw new Error("Can't update status!");
+      // }
+
+
+
+      const manipulatedUpdateStatusResult = await updateStatusResult.json();
+
+
+       if(
+         manipulatedUpdateStatusResult.errors 
+       ) {
+        this.setState(
+          {
+            statusLoading: false
+          }
+        )
+        throw new Error("Could not update status!");
+       }
+       this.setState(
+        {
+          statusLoading: false
+        }
+      )
+
+      // console.log(manipulatedUpdateStatusResult);
+    } catch (err) {
+      this.catchError();
+      this.setState(
+        {
+          statusLoading: false
+        }
+      )
+    }
+  };
+
+
+
+
+
+  -------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  OK... PROFESSOR FEZ EXATAMENTE COMO EU FIZ...
+
+
+
+
+
+
+
+
+OK... CONSEGUIMOS 
+
+MOVER TODO NOSSO APP REST API 
+
+
+
+
+
+
+PARA UMA VERSÃO 
+
+
+'GRAPHQL '..
+
+
+
+
+
+
+--> PODEMOS VER A VANTAGEM DO GRAPHQL:
+
+
+
+É MAIS FLEXÍVEL QUANTO à DATA QUE FETCHEAMOS NO BACKEND... -> __ PORTANTO,
+
+SEU FRONTEND DEVELOPMENT
+ 
+ PDOE 
+
+
+
+
+
+ FICAR MAIS RÁPIDO,
+
+ PQ 
+ O 
+
+ BACKEND VAI TE DAR 
+
+ 'YOUR ENTIRE 
+
+
+ BANDWIDTH OF DATA YOU 
+
+
+
+
+WILL BE INTERESTED IN'....

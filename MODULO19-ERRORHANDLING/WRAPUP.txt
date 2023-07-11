@@ -1,0 +1,284 @@
+https://expressjs.com/en/guide/error-handling.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ACABAMOS ESTE MÓDULO... 
+
+
+
+
+
+
+
+-------> DEMOS UMA OLHADA NOS DIFERENTES TIPOS DE ERRORS,
+E COMO 
+
+FAZER HANDLE DELES...
+
+
+
+
+
+
+
+
+
+
+
+
+--> TYPES OF ERRORS E HANDLING ERRORS:
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ PODE DIFERENCIAR ENTRE DIFERENTES TIPOS DE 
+
+
+ERRORS:
+
+
+
+
+
+
+1) TECHNICAL ERRORS (errors que são THROWN por diversos motivos, ao longo de nosso código)... (também podemos fazer isso por conta própria, esse throw....)
+
+
+
+
+2) 'EXPECTED ERRORS' --> EX: 'INVALID USER INPUT' ------> VOCÊ ESPERA QUE ISSO VAI ACONTECER, E AÍ ESCREVE VALIDATION, ETC, para fazer o manage desses errors...
+
+---> EXPECTED ERRORS NÃO SÃO TECNICAMENTE ERROS, MAS SÃO COISAS ERRADAS, COMO INPUTS ERRADOS, ou 'file access que pode falhar ocasionalmente' --> VOCÊ, NESSES CASOS, PODE USAR 
+
+
+ifchecks, try-catch, then-catch,  tudo isso, qualquer 1 deles funciona... (if checks são bem efetivos...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ERROR HANDLING PODE SER FEITO:
+
+
+
+
+1) COM 'custom if-checks'...
+
+
+
+
+
+
+2) TRY-CATCH (código _SÍNCRONO_...) 
+
+
+
+
+
+3) COM 'then-catch' (CÓDIGO ASSÍNCRONO) 
+
+
+
+4) etc.....
+
+
+5) VOCÊ 
+
+PODE 
+
+
+__ USAR O 
+
+
+'EXPRESS ERROR HANDLING MIDDLEWARE PARA FAZER HANDLE DE TODOS OS 'UNHANDLED ERRORS' ---->  ou seja, handle dos erros que QUEBRAM O SEU APP, FAZEM ELE CRASHAR... 
+
+
+
+
+
+
+
+
+
+
+
+--------> SE VOCê QUER FORWARDAR 1 ERROR EM 
+
+
+
+'then-catch',
+
+VOCÊ APRENDEU 
+
+
+QUE VOCÊ PODE USAR 
+ 
+AQUELE 
+
+GLOBAL 
+
+EXPRESS ERROR HANDLING MIDDLEWARE( e vocÊ pode ter vários, lá em 'app.js'),
+
+
+
+
+
+
+
+DESDE QUE 
+
+VOCÊ 
+
+FAÇA 
+
+
+
+'next(new Error(err))'  (COM CÓDIGO ASYNC)
+
+
+
+
+ou 
+
+'throw new Error(err);' (COM CÓDIGO SYNC....)
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+-----> VIMOS TAMBÉM STATUS CODES....
+
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE QUANDO VOCê FAZ O RETURN DE RESPONSES, É UMA ÓTIMA 
+
+PRÁTICA 
+
+
+FAZER TAMBÉM O SET DOS HTTP STATUS CODES APROPRIADOS... ---> ISSO FAZ COM QUE O BROWSER 
+
+SAIBA 
+
+EXATAMENTE O QUE HOUVE DE ERRADO...
+
+
+
+
+
+
+
+-------> TEMOS:
+
+
+
+
+
+
+
+
+
+
+
+2xxxx --> SUCCESS CASES 
+
+
+
+
+
+3XXX --> REDIRECT CASES 
+
+
+
+
+
+4XXX --> CLIENTSIDE ERROR CASES 
+
+
+
+
+
+
+5XXXX --> SERVERSIDE ERROR CASES...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> SETTAR STATUS CODES __ NÃO SIGNIFICA QUE _ 
+A 
+
+
+RESPONSE _ ESTÁ 'INCOMPLETA' OU QUE O 
+
+
+APP CRASHOU, necessariamente...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------> DEVEMOS VER QUAL STATUS CODE É MELHOR PARA CADA USE-CASE....

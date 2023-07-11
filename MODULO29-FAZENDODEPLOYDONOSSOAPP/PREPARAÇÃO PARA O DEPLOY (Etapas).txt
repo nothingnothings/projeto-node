@@ -1,0 +1,785 @@
+
+
+
+
+
+
+
+
+
+--> PREPARANDO NOSSO CÓDIGO PARA 'PRODUCTION'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO VAMOS PREPARAR NOSSO APP PARA PRODUCTION? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OBVIAMENTE,
+
+ISSO DEPENDE__ SEMPRE _ DO TIPO DE APP QUE VOCÊ ESTÁ CONSTRUINDO...
+
+
+
+
+
+
+
+
+--> MAS EM GERAL VOCÊ VAI USAR 
+
+
+AQUILO QUE O PROFESSOR CHAMA DE 
+
+
+'Environment Variables' ---> VEREMOS O QUE 
+
+ISSO 
+
+SIGNIFICA 
+
+
+NO NOSSO 
+
+PROJETO FULL,
+
+neste módulo... -->  
+
+
+
+
+
+VOCê DEVE USAR ENVIRONMENT VARIABLES 
+
+EM VEZ 
+
+
+
+
+DE HARDCODAR CERTOS VALORES (
+
+
+
+    usar para coisas como API KEYS,
+    PORT NUMBERS,
+
+
+    PASSWORDS,
+
+
+    ETC ETC... ---> isso para que você consiga 
+
+    SUBSTITUIR AS 'VARIÁVEIS DE TESTE'
+
+
+    pelas 
+
+    VARIÁVEIS DE VERDADE,
+
+
+    quando for a hora de deployar seu código...
+
+
+)
+
+
+
+
+
+
+
+
+
+
+---> VOCê TAMBÉM DEVE:
+
+
+
+
+
+
+
+SE VOCÊ ESTIVER USANDO ALGUM THIRD PARTY SERVICE, COMO O 'STRIPE',
+
+
+
+
+__ QUE __ VOCÊ __ 
+
+
+ACABE USANDO 
+
+
+
+AS 'PRODUCTION API KEYS',
+
+
+
+
+E NÃO 
+
+AS 
+
+'DEVELOPMENT API KEYS' (realmente, isso existe no stripe....) ---------> STRIPE,
+
+
+
+NO CASO,
+
+
+NOS DAVA 
+UMA 
+
+'TESTING API KEY',
+
+QUE 
+
+ERA USADA 
+
+
+PARA 
+
+
+TESTAR NOSSO APp.... --------- ISSO É OBVIAMENTE O QUE QUEREMOS USAR NA 
+
+
+FASE DE TESTES,
+
+MAS NA FASE 
+
+DE 
+DEPLOY QUEREMOS USAR 
+A 
+
+'DEPLOY API KEY'...
+
+
+
+
+(
+    e isso existe também em outras apis,
+
+
+    DIFERENCIAÇAÕ ENTRE API KEYS DE DEVELOPMENT E DE PRODUCTION....
+)
+
+
+
+
+
+
+--> certo.... MAS NÓS TALVEZ 
+
+
+
+
+TAMBÉM 
+
+TENHAMOS 
+
+ALGUNS MECANISMOS PARA FAZER 
+'HANDLE DE ERROS'... ----> OU ENTÃO PARA __ console.loggar algo... -> QUEREMOS __ 
+
+
+SEMPRE __ 
+
+REDUZIR 
+
+
+
+'
+ERROR OUTPUT DETAILS'... --> RARAMENTE VAMOS QUERER 
+
+
+ENVIAR 
+
+
+
+TANTA 
+
+'SENSITIVE INFO'
+
+aos nossos users.... ---------> ISSO SIGNIFICA QUE 
+
+SE ALGO FALHA NO NOSSO CÓDIGO,
+
+
+SE 
+
+ALGUMA MENSAGEM DE ERRO 
+
+
+É 
+
+
+ATIRADA (throw),
+
+
+
+NÓS QUEREMOS __ ASSEGURARr_ 
+
+
+
+QUE 
+
+ESSA MESSAGE/ERROR HANDLING CONTENHA __ A MENOR QUANTIDADE _ POSSÍVEL 
+
+
+
+
+
+DE INFO.... --> ISSO PQ OS USERS DE NOSSO WEBSITE 
+
+
+
+NÃO DEVEM 
+
+
+
+TER NENHUM 'INSIGHT' NO SOURCE CODE DE NOSSO PROJETO...----------> BEM.... POR DEFAULT,
+
+
+
+
+NESSA MANEIRA QUE CONSTRUÍMOS ESSE PROJETO/ESSES PROJETOS,
+
+
+
+
+___ NÓS __ NÃO TEREMOS __ 
+
+
+PROBLEMAS__ COM ISSO... --> ISSO PQ SE NÓS USARMOS 
+
+
+
+
+
+O MIDDLEWARE DEFAULT DE ERROR HANDLING DO MIDDLEWARE 
+
+E 
+
+
+
+OS 'DEFAULT ERRORS'/custom errors 
+
+que 
+
+
+
+CRÍAMOS,
+
+aí 
+
+
+NÃO PASSAREMOS NENHUMA 'SENSITIVE INFORMATION' 
+
+
+
+ao nossos users...
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS SE VOCÊ ESTÁ CONSTRUINDO _ UM APLICATIVO SEU,
+
+
+EM QUE 
+
+VOCÊ CRIA SEUS PRÓPRIOS ERROR OBJECTS,
+
+
+
+
+
+___ OBJECTS COM UM MONTE DE DATA 
+
+ADICIONADA 
+
+NELES,
+
+
+
+AÍ 
+
+
+
+
+__ GERALMENTE __ É UMA BOA IDEIA '
+
+STRIP SOME DATA OUT OF THESE CUSTOM ERRORS',
+
+
+
+
+
+QUANDO VOCÊ ESTIVER DEPLOYANDO SEU APP... (
+
+    ou quando você estiver preparando seu app para deployment...
+)
+
+
+
+
+
+
+
+
+
+
+
+-------> QUANTO ÀS RESPONSES QUE SEU APP ENVIA,
+
+
+
+
+VOCÊ QUER ASSEGURAR QUE 
+
+SEJAM 
+
+ENVIADOS 
+
+'SECURE RESPONSE HEADERS'... -------> EXPLICAÇÃO:
+
+
+
+HÁ ALGUNS HEADERS/RESPONSE HEADERS QUE 
+
+VOCÊ 
+
+__ PODE__ (e deve)
+
+ADICIONAR 
+
+A 
+QUALQUER 
+
+RESPONSE,
+
+E QUE 
+
+
+
+
+'NÃO MACHUCAM',
+
+
+
+QUE __ PREVINEM__ 
+
+OS CLIENTS DE FAZER CERTAS COISAS,
+
+
+
+
+CERTOS 'SNIFFINGS',
+
+
+e por isso 
+
+SETTAR ESSES HEADERS É UMA BOA IDEIA... (PROFESSOR VAI NOS MOSTRAR ALGUNS DESSES HEADERS,
+
+E ALGUMAS DAS 'BEST PRACTICES')....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+============> BEM, EM UM TÍPICO APP NODE,
+
+
+
+VOCê TAMBÉM PROVAVELMENTE 
+
+VAI ESTAR 
+
+
+'SERVING SOME ASSETS',
+
+
+
+
+
+COMO ALGUM ARQUIVO JAVASCRIPT,
+
+ 
+
+ ALGUM ARQUIVO CSS... -->  e aí __, esses arquivos aí,
+
+
+ OUT OF THE BOX,
+
+
+ _ NÃO VÃO ESTAR 
+
+ 'COMPRESSED'---> 
+
+
+
+
+
+
+
+ E O PROFESSOR EXPLICA QUE 
+
+ ADICIONAR 'COMPRESSION' AOS SEUS ARQUIVOS __ PODE SER UMA EXCELENTE IDEIA,
+
+
+ PQ __ ISSO VAI __ REDUZIR__ SEU RESPONSE SIZE/response time,
+
+
+
+
+
+ PQ O 
+
+ CLIENT VAI TER QUE BAIXAR MENOS DATA...   -0----------> E A GRANDE MAIORIA 
+ DOS BROWSERS MODERNOS 
+
+
+ É 
+
+ CAPAZ 
+
+ DE 
+
+
+ 'DOWNLOAD COMPRESSED/ZIPPED ASSETS',
+
+
+ E 
+
+ AÍ 
+
+
+
+ unzippá-los 
+
+
+
+
+
+ DIRETAMENTE NO BROWSER,
+
+ INSTANTANEAMENTE... --> É 
+
+
+ UM PROCESSO BEM STRAIGHT-FORWARD E SIMPLES...
+
+
+
+
+
+
+
+
+
+
+
+ ------->  POR FIM,
+
+
+ VOCÊ TAMBÉM 
+
+ VAI QUERER 
+
+
+
+'CONFIGURAR O LOGGING '--> ISSO PQ 
+
+
+VOCÊ VAI QUERER 
+
+SABER O QUE 
+
+ESTÁ ACONTECENDO NO SEU SERVER.... -------->  COMO AGORA NÃO ESTAMOS MAIS TESTANDO 
+
+O SERVIDOR,
+
+
+
+
+
+
+e sim 
+
+
+
+VENDO A INTERAÇÃO DE USERS DE VERDADE COM NOSSO APP,
+
+
+
+
+
+NÓS CERTAMENTE VAMOS QUERER 
+
+
+LOGGAR AS INTERAÇÕES 
+
+
+
+
+EM ARQUIVOS 'LOG',
+
+
+
+
+
+ARQUIVOS QUE PODEREMOS 
+
+
+
+EXAMINAR A QUALQUER MOMENTO QUE DESEJARMOS... -----> ESSA É OUTRA COISA QUE 
+
+QUEREMOS ADICIONAR,
+
+TUDO PARA QUE 
+
+
+
+
+'KEEP YOU UP TO DATE ABOUT WHATS HAPPENING'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR FIM,
+
+
+
+
+VAMOS VER O 'SSL/TLS' 
+
+
+
+
+
+
+--> VAMOS USAR 'SSL/TLS' --> ISSO AÍ É 'ENCRYPTION OF DATA IN TRANSIT'.... --> 
+
+
+É ALGO QUE 
+
+VEREMOS 
+
+AGORA ,
+
+
+E QUE NÃO VIMOS ATé o momento... -->
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS SÓ USAMOS UM SERVIDOR HTTP ATÉ AGORA.... --> ISSO SIGNIFICA QUE 
+
+NOSSA 
+
+COMUNICAÇÃO 
+
+ENTRE 
+
+O 
+
+
+SERVER E O BROWSER __ NÃO __ ESTAVA/ESTÁ FICANDO' ENCRYPTED'.... --> 
+
+
+
+
+
+PARA FINS DE TEST,
+
+
+ISSO 
+
+É 
+
+
+PERFEITAMENTE OK,
+
+MAS QUNADO 
+
+
+VOCê 
+
+
+QUER 
+DEPLOYAR SEU APP,
+
+
+
+
+
+
+__-É FORTEMENTE RECOMENDADO ENCRIPTAR SUAS CONEXÕES... --> VEREMOS 
+
+
+COMO LIGAR ISSO 
+
+
+
+
+
+
+no seu nodeapp,
+
+NESTE MÓDULO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TAMBÉM É BOM MENCIONAR QUE OS 
+
+3 ÚLTIMOS PONTOS,
+
+
+
+
+O 
+
+'ASSET COMPRESSION',
+
+
+'LOGGING'
+
+
+e 
+o 
+
+
+
+'USE SSL/TLS' 
+
+
+
+
+
+
+__ SÃO _ COISAS QUE FREQUENTEMENTE 
+
+
+
+HANDLADAS AUTOMATICAMETNE POR SEU 'HOSTING PROVIDER'... -->
+
+
+
+O PROFESSOR VAI FALAR SOBRE ISSO... --> TIPICAMENTE 
+
+VOCÊ 
+
+VAI QUERER USAR UM 
+
+
+'MANAGED SERVICE',
+
+
+
+
+SERVICE EM QUE ESSAS COISAS (3 pontos)
+
+
+SÃO/SERÃO 
+
+
+MANAGED 
+
+PARA VOCÊ, AUTOMATICAMENTE...  -------> O PROFESSOR VAI NOS MOSTRAR O APPROACH DE COMO 
+
+
+
+ENABLAR ESSAS 3 COISAS MANUALMENTE,
+
+
+MAS 
+
+É 
+
+
+BOM 
+
+
+APONTAR QUE 
+
+
+
+__ PROVAVELMENTE 
+
+
+VOCê 
+
+NÃO VAI TER QUE 
+FAZER ISSO,
+QUANDO FOR HORA DE DEPLOYAR SEU APP ( se seu hosting provider for bom)....
+
+
+
+
+
+
+
+
+
+-----------------

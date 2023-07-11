@@ -1,0 +1,1285 @@
+
+
+
+
+
+
+
+agora vamos adicionar um NOVO MODELO,
+
+
+'ORDER'...
+
+
+
+
+
+
+
+
+
+
+---> NOSSO CART JÁ POSSUI A FUNCIONALIDADE DE 'ADD PRODUCT TO CART',
+
+e 
+
+
+'remove product from cart'...
+
+
+
+
+
+
+
+
+
+
+--> AGORA 
+
+
+
+
+TEMOS A FUNCIONALIDADE ANTIGA DE 'ADD CART ITEMS',
+
+
+mas agora 
+
+
+
+SEM 
+
+
+__O STORE __ DE NADA __ EM ARQUIVOS (file system),
+
+
+
+
+
+E SIM 
+
+O
+ 
+
+
+ TRABALHO COM 
+
+
+
+ UMA DATABASE SQL...
+ (como deveríamos fazer....)
+
+
+
+
+
+
+
+
+
+
+ --> MAS UMA COISA ESTÁ FALTANDO,
+
+
+
+
+ __ QUE SÃO AS 'ORDERS'...
+
+
+
+
+
+
+ --> PROFESSOR EXPLICA QUE 
+
+
+ NÃO VAI 
+
+ ADICIONAR 
+
+ UM 
+
+ FLOW 
+
+ VERDADEIRO 
+
+ DE 
+ '
+ CHECKOut'
+
+
+ AINDA... 
+
+
+
+
+
+
+ -> MAS  ELE DIZ QUE 
+
+ __QUER TER UM 
+
+ BOTÃO 
+
+ DE 
+ '
+ CHECKOUT'
+
+
+
+
+
+ no nosso CART,
+
+
+
+ QUE VAI BASICAMENTE, POR ENQUANTO,
+
+
+ provisoriamente,
+
+
+
+
+ MOVER TODOS 
+
+ OS 
+
+
+ ELEMENTS 
+
+
+
+ DE DENTRO 
+ DO 
+
+
+
+ NOSSO 
+
+ 'cart' (ou seja, os CARTITEMS VINCULADOS AO NOSSO CART) 
+
+
+
+ __PARA FORA __ DESSE CART ( ou seja, 'clear the cart'),
+
+
+
+
+
+
+E EM VEZ DISSO,
+
+criar 
+
+um 
+
+
+novo 
+
+
+RECORD 
+
+em uma 
+
+TABLE 
+
+CHAMADA 
+
+DE 
+
+'orders', uma 
+'order.'..
+
+
+
+
+
+
+
+----> E ESSA ORDER/ESSAS ORDERS 
+
+VÃO 
+
+SER 
+
+'RELATED TO A COUPLE OF PRODUCTS',
+
+
+
+
+
+___ E ___ TAMBÉM FICARÃO 'RELATED' a um USER...
+
+
+
+
+
+
+
+--> PODEMOS COMEÇAR A TENTAR 
+
+IMPLEMENTAR ISSO POR CONTA PRÓPRIA....
+
+
+
+
+
+
+
+
+
+
+--> COMO PRIMEIRO PASSO,
+
+
+
+ESCREVO O MODEL, 
+
+
+POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+const sequelize = require("../util/database");
+
+
+const Order = sequelize.define('order',
+{
+
+    id: {
+        allowNull: false,
+        autoIncrement: true,
+        type: Sequelize.INTEGER,
+        primaryKey: true
+    }
+}
+
+);
+
+
+module.exports = Order;
+
+
+
+
+
+
+
+
+
+
+
+--> isso, é claro, 
+
+
+PRECISA __ DA DEFINIÇÃO DAS RELATIONS,
+
+
+
+RELATIONS AOS PRODUCTS E A UM USER,
+
+lá 
+
+
+em 
+'app.js'...
+
+
+
+
+
+
+
+
+--> vou lá e escrevo:
+
+
+
+
+
+
+User.hasMany(Order);
+Order.belongsTo(User);
+
+
+Order.hasMany(Product);
+Product.belongsToMany(Order);
+
+
+
+
+
+
+
+
+
+
+
+
+--> __NÃO SEI__ 
+
+
+se a segunda parte está certa... --> pq 
+
+eu NÃO SEi se vou usar uma table intermediária para isso OU NÃO... --> talvez 
+
+
+
+
+
+a ideia seja colocar 'Order.hasMany(CartItem)',
+
+e não 
+
+o 
+
+
+'Order.hasMany(Product)...'
+
+
+
+
+---------------------------
+
+
+
+
+
+
+--> é, talvez seja isso...
+
+
+
+
+
+
+
+
+--> ganho um ERRO no console...:
+
+
+
+AssociationError [SequelizeAssociationError]: cartItem.belongsToMany(order) 
+
+requires through option, pass either a string or a model
+
+
+
+
+
+
+
+
+
+--> de fato, eu estava certo... -> parece que o professor vai querer 
+
+CRIAR AINDA OUTRO MODEL,
+
+um 
+model 
+
+de 
+
+'orderItem',
+
+
+no futuro...
+
+
+
+
+
+
+
+--> isso significa que o código correto é REALMENTE ESTE:
+
+
+
+
+
+User.hasMany(Order);
+Order.belongsTo(User);
+
+
+Order.hasMany(CartItem, {through: orderItem});
+CartItem.belongsToMany(Order, {through: orderItem});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+ESSE CÓDIGO AÍ DE CIMA DEU ERRO...
+
+
+(se vocÊ quer uma RELATION 'MANY-TO-MANY', você 
+
+__NÃO PODE __ USAR 'hasMany' com 'belongsToMany'; VOCÊ É OBRIGADO A USAR 
+
+
+2 calls de 'belongsToMany', 1 contra o outro...)
+
+
+
+
+
+
+
+
+
+O CÓDIGO CORRETO ( que não deu erro, e criou TABLES para esses models), 
+
+foi ESTE:
+
+
+
+
+Order.belongsToMany(CartItem, {through: OrderItem}); 
+CartItem.belongsToMany(Order, {through: OrderItem});
+
+
+
+
+-----------------------------------
+
+
+
+
+
+CERTO....
+
+
+
+AGORA SÓ PRECISAMOS 
+
+
+
+DE:
+
+
+
+
+
+
+1) UM BOTÃO DE 'make order', ou algo assim, 
+
+
+lá na página de 
+
+
+'Cart'... 
+
+(editar o view)...
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+        <button>Place an Order</button>
+
+
+
+
+
+2) aí vamos precisar de um 
+
+
+
+CONTROLLER PARA ISSO...
+
+
+
+
+
+--> colocamos esse controller lá em 'shop.js',
+
+com os outros....
+
+
+
+
+
+
+--> TIPO ASSIM:
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+}
+
+
+
+
+
+
+
+
+3) AÍ PRECISAMOS DE UMA ROUTE para 
+
+esse controller...
+
+
+
+
+
+
+
+
+
+
+--> eu escrevo estas linhas:
+
+
+
+
+        <form action="/cart/order" method="POST">
+          <input type="hidden" name="cartId" value="<%= cart.id %>">
+        <button class="btn" type="submit">Place an Order</button>
+      </form>
+
+
+
+
+
+
+
+---> e aí, isto:
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+  console.log(req.user.cart, 'LINE'); ////isso (o cart) não existe dentro do objeto 'req.user', justamente pq DEVEMOS O CONSEGUIR ATRAVÉS DE 'req.user.getCart()', para conseguir o cart específico Àquele user (userId field dentro do cart e 'id' field no user DEVEM DAR MATCH...)
+
+
+
+
+  // let productList;
+ req.user
+    .getCart()
+    .then((cart) => {
+
+      const fetchedCart = cart;
+      return cart.getProducts()
+                  
+      .then(products => {
+          console.log(products);
+ res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products,
+        cart: fetchedCart
+        // cartItems: cartItems
+    }) 
+  })
+    .catch((err) => {
+      console.log(err);
+    })
+
+  }
+    )
+      .catch(
+        (err) => {console.log(err)}
+      )
+    
+
+
+
+
+
+
+
+
+
+
+
+(PARA CONSEGUIR 
+
+aquele 
+
+'cart.id' LÁ NAQUELE INPUT TYPE HIDDEN, na form daquele button do 'Place an Order'...)
+
+
+
+
+
+
+4) ok....
+
+
+com isso,
+
+passamos ao edit 
+
+
+
+DE NOSSO CONTROLLER 
+
+
+de 
+
+'orderPost'...
+
+
+
+
+
+
+
+
+--> COMEÇAMOS ASSIM:
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+    const cartId = req.cart.id;
+
+
+
+    
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-> próximo passo é CONSEGUIR TODOS OS CARTITEMS a partir desse 'cartId'...
+
+
+
+
+
+
+
+
+
+
+
+-----> OK.... NÃO CONSEGUI 
+
+FAZER ISSO...
+
+
+
+
+
+
+--> vou ver a aula do professor...
+
+
+
+
+
+
+
+--> para isso, vamos começar com o 
+
+
+
+MODEL 
+
+
+de 
+
+
+'Order'...
+
+
+
+
+
+
+
+
+
+
+
+-----> professor cria um arquivo 
+
+
+
+'order.js'... 
+
+
+
+
+
+
+
+
+--> AÍ ELE ESCREVE ISTO:
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+const sequelize = require("../util/database");
+
+
+
+
+
+
+
+const Order = sequelize.define('order',
+{
+
+    id: {
+        allowNull: false,
+        autoIncrement: true,
+        type: Sequelize.INTEGER,
+        primaryKey: true
+    }
+}
+
+);
+
+
+
+
+module.exports = Order;
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+PROFESSOR ENTÃO ESCLARECE:
+
+
+
+
+
+
+
+o ___QUE É UMA ORDEr? -----> 
+
+
+
+
+uma order 
+
+é,
+
+NO FINAL DAS CONTAS,
+UMA 
+
+'IN-BETWEEN TABLE',
+
+
+
+
+É UMA IN-BETWEEN TABLE __ ENTRE 
+
+
+1
+ 
+ 'user' (a que a ORDER PERTENCE/belongs...),
+
+
+
+ E AÍ 
+
+
+
+
+
+ __MÚLTIPLOS PRODUCTS,
+
+
+
+QUE FAZEM _ PARTe__ DA ORDER... -------> 
+
+
+
+
+ESSES PRODUCTS, AÍ,
+
+
+
+
+DE NOVO,
+
+
+
+POSSUEM UMA 'QUANTITY'
+
+
+anexada 
+
+a eles... 
+
+
+
+
+
+
+----> OU SEJA, EXATAMENTE COMO TÍNHAMOS 'cartItems'
+
+
+PARA 
+
+
+
+o 'cart',
+
+
+
+
+NÓS TEREMOS 
+
+
+'ORDERITEMS'
+
+para nossa 'order'...
+
+
+
+
+
+
+o código de 'order-item.js' vai ficar assim:
+
+
+
+
+
+
+
+const sequelize = require('../util/database');
+
+const Sequelize = require('sequelize');
+
+const OrderItem = sequelize.define('orderItem', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+
+  quantity: {type: Sequelize.INTEGER}
+});
+
+
+
+
+
+module.exports = OrderItem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> 
+
+
+
+
+
+
+
+ok.........
+
+
+
+
+
+
+
+
+
+-----> O MODEL DE 'order.js'
+
+
+
+NÃO TERÃ MAIS NADA 
+
+
+
+
+NO SEU INTERIOR... -> não terá mais NADA ALÉM DO 'ID'... --> isso 
+
+
+pq 
+
+
+o 
+
+
+'order.js'
+
+
+VAI SER ESSENCIALMENTE 
+
+UM 
+
+
+'SEGUNDO CART' 
+
+para nós......... ------> VOCÊ CERTAMENTE PODERIA 
+
+
+DIZER QUE 
+'Order'
+ 
+
+ deveria ter mais info,
+
+ como um address,
+  
+
+
+
+e cellphones,
+
+
+
+MAS __ AÍ ISSO _É ALGO ADICIONAL......
+
+
+
+
+
+
+
+
+
+
+----> MAS QUANTO ÀS 'RELATIONS',
+
+há uma diferença importante 
+
+em relação 
+
+ao 
+
+
+'cart'...
+
+
+
+
+
+
+
+
+------> SE VAMOS 
+
+ATÉ O 
+
+
+APP.JS,
+
+em que settamos 
+
+
+nossas relations,
+
+
+
+
+
+O PROFESSOR 
+
+VAI QUERER 
+
+ESTABELECER 
+
+AS RELATIONS 
+
+
+
+
+entre 
+
+'order', 'orderItem',
+
+ etc etc...
+
+
+
+
+
+
+
+
+
+ --------> 
+
+
+
+ o PROFESSOR VAI ESCREVER:
+
+
+
+
+
+ 1) 'Order.belongsTo(User)' (não vai pertencer a múltiplos users, pq uma order sempre vai pertencer APENAS A UM USER, O USER QUE 'PLACED THAT ORDER'...)
+
+
+
+
+
+
+
+
+ 2) 'User.hasMany(Order)' -----> ISSO PQ O USER PODE TER VÁRIAS ORDERS, POR ISSO ESCREVEMOS UMA 'ONE-TO-MANY' RELATIONSHIp....
+
+
+
+
+
+
+
+ 3) 'Order.belongsToMany(Product)' ----> ISSO PQ UMA ORDER PODE __PERTENCER__ A VÁRIOS PRODUCT... 
+
+ (
+
+
+
+     ou seja,
+
+     o código correto 
+
+     era 
+
+
+     'Order.belongsToMany(Product)',
+
+     e NÃO
+
+
+
+     'CartItem.belongsToMany(Order)'.... 
+ )
+
+
+
+
+
+ --> aí o professor vai escrever 
+
+
+
+
+ ''''Order.belongsToMany(Product, {through: OrderItem})'''',  (pq um mesmo PRODUCT PODE APARECER EM MÚLTIPLAS 'Order', exatamente como UM MESMO PRODUCT PODE APARECER EM múltiplos 'cart'..)
+
+
+
+
+ OU SEJA,
+
+
+ VAI SER EXATAMENTE O MESMO FORMATO DE '
+
+
+ Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem}); 
+
+
+',
+
+
+
+mas 
+
+com 
+
+UMA THROUGH TABLE DIFERENTE, through table de 'OrderItem' em vez de 'CartItem'...
+
+
+
+
+
+
+OU SEJA,
+
+
+
+3.5) 
+
+
+Order.belongsToMany(Product, {through: OrderItem});
+Product.belongsToMany(Order, {through: OrderItem});
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+CÓDIGO FICOU TIPO ASSIm:
+
+
+
+
+Order.belongsToMany(Product, {through: OrderItem}); 
+Product.belongsToMany(Order, {through: OrderItem});
+
+
+
+
+
+
+
+
+
+
+
+
+-> mas tenho um problema: 
+
+
+estou com 
+
+2 
+
+
+
+'orderItems' tables na minha database...
+
+
+
+
+
+
+
+
+------> ok... acho que consertei...
+
+
+
+
+
+
+
+
+os fields nas tables ficaram assim:
+
+
+
+
+
+
+
+
+
+
+
+1) orders: 'userId' e 'id'...
+
+
+
+
+
+2) orderItems: fields 'quantity', 'orderId' e 'productId'...
+
+
+
+
+
+
+
+
+
+
+
+--> COMO PRÓXIMA ETAPA, PROFESSOR DIZ QUE DEVEMOS 
+
+NOS CERTIFICAR DE ADICIONAR UM BUTTON DE 'CHECKOUT',
+
+
+E 
+
+
+ENTÃO 
+
+
+DEVEMOS 
+
+FAZER COM QUE 
+
+ESSE BUTTON TRIGGUE ALGUMA COISA PARA 
+
+
+
+ADICIONAR/CRIAR UMA ORDER... (order em 'orders'...)

@@ -1,0 +1,517 @@
+
+
+
+
+
+
+
+
+
+---> NÓS JÁ TEMOS A VIEW DA PAGE DE 
+
+'edit-product' (que funciona tanto com os cases de ADD A PRODUCT COMO DE EDIT A PRODUCT)....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    </head>
+    <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+    <form class="product-form" action="/admin/<% if (editing) { %> edit-product <% } else { %>add-product <% } %>" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" value="<% if(editing) { %><%= prod.title %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="imageUrl" id="titleUrl" value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description" ><% if(editing) { %><%=prod.description%><% } %></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price" value="<% if(editing) { %><%= prod.price %><% } %>"></title>
+            </div>
+            <button type="submit" class="btn"><%= editing ? 'Edit Product': 'Add Product' %></button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS 
+
+
+
+ASSEGURAR QUE 
+
+
+ESSA PAGE CONSIGA SER ALCANÇADA POR MEIO DE UMA ___ROUTE___....
+
+
+
+
+
+
+
+
+
+--> vamos lá no arquivo 'admin.js'
+
+das routes...
+
+
+
+--> MAS ANTES DISSO,
+
+PROFESSOR ESCREVE NA NOSSA VIEW de 'admin-product-list':
+
+
+
+
+
+
+
+
+------------->          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
+     
+
+
+
+
+
+
+
+
+
+
+-------> OK.... ESSE LINK AGORA VAI NOS LEVAR A 
+
+
+ESSA ROUTE ESPECIAL 
+
+DE 
+
+
+'/admin/edit-product/:productId'... (e conterá nosso QUERY PARAM DE 'edit=true'....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> NÓS COLOCAMOS O QUERY PARAM,
+
+
+
+QUE FICA AQUI:
+
+
+
+  <a class="btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
+                                                            ^^^^^^^^^^
+
+
+
+
+
+
+
+
+
+ok... eu havia feito isso....
+
+
+
+
+----------------
+
+
+
+
+
+
+
+
+---> ESSE QUERY PARAM É CHECADO LÁ NO NOSSO CONTROLLER, COMO PODEMOS NOS LEMBRAR...
+
+
+
+ex:
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit; ///bem importante.
+
+  if(!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+  
+  const productId = req.params.productId;
+
+  Product.findProduct(productId,
+      (product) => {
+
+        if (!product) {
+          return res.redirect('/'); //não é a melhor user experience, mas dá pro gasto.... (devíamos mostrar um error....)
+        }
+        res.render('admin/edit-product', {
+          pageTitle: 'Edit Product', 
+          path: '/admin/edit-product',
+          editing: editMode, ////TRABALHO COM QUERY PARAMS.... --> usado para comunicar/diferenciar entre requests que querem ADICIONAR UM NOVO PRODUTO E ___ REQUESTS__ QUE QUEREM __ ALTERAR UM PRODUTO QUE JÁ EXISTE ('editMode = true'....)
+          prod: product
+        });
+      }
+    
+    )
+
+
+};
+
+
+
+
+
+---------------------------------
+
+
+
+
+ok....
+
+
+
+
+
+
+
+LÁ NO ARQUIVO DE 'admin.js',
+
+
+de routes,
+
+
+professor registra esta route:
+
+
+
+router.post('/edit-product/:productId', adminController.editProduct);
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+^^^^^^^^^^^OK, MAS AÍ, EU JÁ FIZ UMA CAGADA... --> a cagada 
+
+é 
+
+que 
+
+
+___COMO ESSE É UM __________POST REQUEST__,
+ 
+
+
+ NÓS NÃO PRECISAMOS/NÃO HÁ NECESSIDADE (E é errado) 
+
+
+
+ COLOCAR/USAR UM 
+
+ DYNAMIC SEGMENT NA NOSSA URL... --> ISSO PQ 
+
+
+
+ A 
+
+ DATA 
+
+ACERCA DO PRODUCT 
+
+JÁ É 
+
+
+'ENCLOSED' NO REQUEST QUE 
+
+ESTAMOS ENVIANDO, JUSTAMNETE POR 
+
+
+ESSE REQUEST SER UM REQUEST DE TIPO POST...
+
+
+
+
+
+
+
+--> isso significa que eu posso __REMOVER__ 
+
+'/:productId'
+
+
+dessa string aí, da route....
+
+
+
+
+(e meu código também não está funcionando, por alguma razão....)
+
+
+
+
+ex:
+
+
+
+
+
+router.post('/edit-product');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ok.. mas meu problema agora é 
+
+
+com este controller:
+
+
+
+exports.editProduct = (req, res, next) => {
+      // const productId = req.params.productId;
+      // const editedProduct = new Product();
+      console.log(req.params);
+      console.log(req.body);
+
+      // Product.findProduct(
+      //   productId, (product) => {
+      //         // console.log(product);
+      //         // console.log(req.body);
+      //         // res.redirect('/');
+
+      //         const newProduct = {
+      //             ...req.body,
+      //             id: productId
+      //         }
+      //         // console.log(newProduct, 'LINE2');
+
+      //        if (product === newProduct) {
+      //         alert('No changes to product were detected, redirecting to home page...');
+      //          res.redirect('/');
+      //        } else {
+      //        editedProduct.save(newProduct);
+      //       //  console.log('TEST');
+      //         res.redirect('/');
+      //        }
+             
+            
+
+
+      //   }
+      // )
+}
+
+
+
+
+
+
+
+
+
+
+-----> SEM A 
+
+DATA 
+
+
+EXTRAÍDA POR MEIO DO 'query params',
+
+
+NÃO SEI COMO 
+
+ADICIONAR 
+
+
+O ID 
+
+
+
+DO OBJETO DE VOLTA AO OBJETO CONSTRUÍDO com 
+
+
+o 'req.body'.... de nosso request....
+
+
+
+
+--> CONSEGUI POR MEIO DESTA GAMBIARRA,
+
+LÁ NO VIEW 
+
+de 
+
+'edit-product.ejs':
+
+
+    <input type="hidden" name="id" value="<%= prod.id %>">
+
+
+
+    (ISSO VAI REALMENTE NOS DAR 1 FIELD DE 'id' dentro DO NOSSO OBJETO/DATA ENFIADA 
+    
+    NO REQUEST DE TIPO POST, que é o que queremos.... é o id/identificador daquele product....)
+
+
+
+
+
+
+
+
+
+O CÓDIGO DO CONTROLLER, ESCRITO POR MIM, ESTÁ FICANDO ASSIM:
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+      // const productId = req.params.productId; ///DEIXAMOS DE USAR PARAMS, POIS AGORA VAMOS NOS APROVEITAR DAS INFORMAÇÕES CONTIDAS NO REQUEST DE TIPO POST QUE NOS FORA ENVIADO....
+      // const editedProduct = new Product();
+      // console.log(req.params);
+      console.log(req.body);
+
+
+      const newProduct = {
+        ...req.body
+      }
+
+        console.log(newProduct);
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> PROFESSOR NOS EXPLICA UQE 
+
+
+dentro 
+
+de 
+
+'exports.editProduct = (req, res, next) => {}'
+
+
+
+
+VAMOS QUERER __ BASICAMENTE __ CONSTRUIR UM NOVO PRODUCT,
+
+
+E AÍ 
+
+
+
+'REPLACE' 
+
+O 
+
+PRODUCT JÁ EXISTENTE COM 
+
+
+ESSE NOVO PRODUCT... ----> ISSO SIGNIFICA QUE VAMOS TER QUE TRABALHAR UM POUCO COM O 
+
+
+
+MODEL DE 'product'.... 
+
+
+
+
+
+
+
+
+
+VEREMOS ISSO NA PRÓXIMA AULa....
+
+

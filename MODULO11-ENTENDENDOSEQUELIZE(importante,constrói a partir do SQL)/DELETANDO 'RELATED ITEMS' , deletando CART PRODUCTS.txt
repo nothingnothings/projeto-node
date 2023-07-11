@@ -1,0 +1,724 @@
+
+
+
+
+
+
+
+
+
+
+
+DEVEMOS EDITAR O CONTROLLER DE 
+
+
+
+
+'deleteProduct'
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+  const productId = req.body.id;
+  // const productPrice = req.body.price; ////esta versão do código __ NÃO FUNCIONA___ (pq é o price _ GERAL__ que vai ser considerado, nesse negócio, e não o PRICE DE CADA PRODUCT INDIVIDUAL..)
+  console.log(productId);
+
+  Product.findProduct(productId, (product) => {
+    console.log(product, 'LINE');
+    Cart.deleteProductFromCart(productId, product.price);
+    res.redirect('/cart');
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+-> ESSE CÓDIGO PRECISA SER EDITADO...
+
+
+
+
+
+
+
+---> vamos querer:
+
+
+
+
+
+DELETAR O 
+
+
+CART-ITEM 
+
+
+
+relacionado 
+
+
+
+
+ao 
+
+
+nosso 
+
+'produc-item' 
+
+específico...
+
+
+
+
+
+
+
+ok...
+
+
+vou tentar escrever algo....
+
+
+
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+  const productId = req.body.id;
+
+
+
+
+    req.user.getCart().then(
+
+
+          (cart) => {
+
+            
+            cart.removeProduct(product, {where: {id: productId}})
+          }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--------------
+
+
+
+
+
+
+OK... MAS MEU CÓDIGO _NÃO FUNCIONOU...
+
+
+
+
+
+
+eis ele:
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+  const productId = req.body.id;
+  // const productPrice = req.body.price; ////esta versão do código __ NÃO FUNCIONA___ (pq é o price _ GERAL__ que vai ser considerado, nesse negócio, e não o PRICE DE CADA PRODUCT INDIVIDUAL..)
+  // console.log(productId);
+
+  // Product.findProduct(productId, (product) => {
+  //   console.log(product, 'LINE');
+  //   Cart.deleteProductFromCart(productId, product.price);
+  //   res.redirect('/cart');
+  // });
+
+  let fetchedCart;
+
+
+
+  req.user.getCart().then(
+    (cart) => { 
+        fetchedCart = cart;
+     return cart.getProducts({where: {id: productId}});
+    }
+  )
+  .then(
+    (products) => {
+
+      const product = products[0];
+
+
+      if (product.quantity === 1) {
+        return fetchedCart.removeProduct(product, {where: {id: productId}})
+
+
+      } else {
+          console.log(product.cartItem);
+        product.cartItem.quantity = product.cartItem.quantity - 1;
+
+        console.log(product.cartItem.quantity);
+      }
+
+      
+    }
+  )
+
+
+};
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+OK... CONSEGUI 
+
+
+
+UM POUCO...
+
+
+
+CONSEGUI O 'CASE' 
+
+
+
+
+EM QUE 
+
+SÓ TEMOS 
+
+
+1 EXEMPLAR DAQUELE 
+
+
+
+'CARTITEM'/product 
+
+no nosso 
+
+'cart'....
+
+
+
+
+
+
+
+--> para isso, chamei '.destroy()' sobre 
+
+
+
+meu 
+
+
+
+'product.cartItem'...
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+  const productId = req.body.id;
+  // const productPrice = req.body.price; ////esta versão do código __ NÃO FUNCIONA___ (pq é o price _ GERAL__ que vai ser considerado, nesse negócio, e não o PRICE DE CADA PRODUCT INDIVIDUAL..)
+  // console.log(productId);
+
+  // Product.findProduct(productId, (product) => {
+  //   console.log(product, 'LINE');
+  //   Cart.deleteProductFromCart(productId, product.price);
+  //   res.redirect('/cart');
+  // });
+
+
+  req.user.getCart().then(
+    (cart) => {
+
+
+
+       
+
+        return cart.getProducts({where: {id: productId}});
+    }
+  )
+  .then(
+      (products) => {
+
+        const product = products[0];
+
+
+        
+        if (product.cartItem.quantity === 1) {
+
+
+          product.cartItem.destroy();
+
+        }
+      }
+
+  )
+
+
+};
+
+
+
+
+
+
+-------------------------
+
+
+
+
+COMO PRÓXIMA ETAPA, PRECISO 
+
+
+
+ALTERAR 
+
+
+
+A QUANTITY DO PRODUCT, QUANDO NÃO VOU QUERER O REMOVER, E SIM 
+
+só reduzir em 1 
+
+
+
+sua quantidade (quantidade 'old' maior do que 1, basicamente...)
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+CONSEGUI.... CODIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+  const productId = req.body.id;
+
+
+  req.user.getCart().then(
+    (cart) => {
+        return cart.getProducts({where: {id: productId}});
+    }
+  )
+  .then(
+      (products) => {
+
+        const product = products[0];
+        if (product.cartItem.quantity === 1) {
+
+         return product.cartItem.destroy();
+    
+        } else {
+
+          newCartItem = {
+            ...product.cartItem
+          }
+          newCartItem.quantity = product.cartItem.quantity - 1;
+
+          return product.cartItem.update(newCartItem);
+        }
+      }
+
+  )
+  .then(
+    (result) => {
+      res.redirect('/cart');
+    }
+  )
+
+
+
+
+
+
+
+
+
+  ISSO REALMENTE FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+  --> AGORA DEVEMOS VER A VERSÃO DO PROFESSOR....
+
+
+
+
+
+
+
+
+  ELE ESCREVE:
+
+
+
+
+
+  exports.postCartDeleteProduct = (req, res, next) => {
+
+
+
+
+    const productId = req.body.productId;
+
+
+
+
+      req.user
+      .getCart()
+      .then(
+        (cart) => {
+
+            return cart.getProducts({where: {id: productId}})
+
+
+        }
+      )
+  }
+
+
+
+
+
+
+
+
+
+
+  -> ELE ESCREVE __ EXATAMENTE O QUE EU ESCREVI, ESSENCIALMENTE...
+
+
+
+
+  ----> ele 
+
+
+
+  pega o cart para então rodar 'getProducts',
+  para então 
+
+  colocar uma condição de 
+
+  'where: {id: productId}'...
+
+
+
+
+
+
+
+
+
+  ---> 
+
+  CONTINUANDO:
+
+
+
+
+
+    exports.postCartDeleteProduct = (req, res, next) => {
+
+
+
+
+    const productId = req.body.productId;
+
+
+
+
+      req.user
+      .getCart()
+      .then(
+        (cart) => {
+
+            return cart.getProducts({where: {id: productId}})
+
+
+        }
+      )
+      .then(
+        products => {
+
+          const products = products[0];
+        }
+      )
+  }
+
+
+
+
+
+
+
+
+
+
+--> POR FIM, ELE DIZ QUE 
+
+
+
+
+AGORA VAMOS QUERER DESTRUIR ESSE 'PRODUCT' REPREsentado por 'product',
+
+
+MAS VAMOS QUERER 
+
+FAZER 
+
+ISSO,
+ 
+
+ DELETAR ESSE PRODUCT,
+
+ LÁ 
+
+ NA NOSSA 
+
+ TABLE INTERMEDIÁRIA
+
+ DE 
+
+ 'cartItem' (que conecta meu cart com esse product),
+
+
+
+ __E NÃO NA TABLE DE 'products' em si...
+
+
+
+
+
+---> PARA CONSEGUIR FAZER ISSO,
+
+
+
+PROFESSOR FAZ EXATAMENTE O QUE FIZEMOS:
+
+
+ELE 
+
+ESCREVE 
+
+
+
+'product.cartItem.destroy()'...
+
+
+
+
+
+
+
+
+-->'product.cartItem' ---> É O 'MAGIC FIELD'
+
+QUE 
+
+
+O SEQUELIZE NOS DÁ 
+
+
+PARA 
+
+
+
+'ACCESS THE ELEMENT IN THE IN-BETWEEN TABLE',
+
+
+
+e aí 
+
+chamamos 
+
+
+'.destroy()',
+
+
+PARA 
+
+
+DESTRUIR ESSE ELEMENTO ESPECÍFICO...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+    exports.postCartDeleteProduct = (req, res, next) => {
+
+
+
+
+    const productId = req.body.productId;
+
+
+
+
+      req.user
+      .getCart()
+      .then(
+        (cart) => {
+
+            return cart.getProducts({where: {id: productId}})
+
+
+        }
+      )
+      .then(
+        products => {
+
+          const products = products[0];
+          return product.cartItem.destroy();
+        }
+      )
+      .then(
+        (result) => {
+
+          res.redirect('/cart');
+        }
+      )
+  }
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+-->AÍ COLOCAMOS TAMBÉM UM 
+
+REDIRECT,
+
+PARA REDIRECIONAR AO CART... ------> 
+
+
+ISSO 
+
+VAI FAZER COM QUE 
+
+O 
+
+
+
+ITEM SUMA... 
+
+
+
+
+
+
+OK.... MAS MEU CÓDIGO É AINDA MELHOR, PQ 
+
+
+TEMOS A OPÇÃO DE REMOVER 
+
+
+CARTITEMS
+
+
+1 por 1... 
+
+
+
+
+
+
+
+OK... FUNCIONOU MESMO....
+
+
+
+HORA DE VER AS ÚLTIMAS AULAS DESTE MÓDULO....

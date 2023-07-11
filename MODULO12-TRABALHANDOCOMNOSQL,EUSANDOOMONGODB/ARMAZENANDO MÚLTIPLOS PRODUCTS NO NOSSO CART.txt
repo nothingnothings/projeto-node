@@ -1,0 +1,2251 @@
+
+
+
+
+
+
+
+--> É AQUI QUE OS PROBLEMAS COMEÇAM, em questão de lógica...
+
+
+
+
+
+
+
+
+
+--> O MEU CÓDIGO, NO CASO, de 'addProduct()', no model de 'user',
+
+QUE 
+
+CONSEGUIU 
+
+FAZER ISSO,
+
+FOI ESTE:
+
+
+
+
+
+
+
+
+  addToCart(product) { ///código do professor. Bem superior ao nosso.
+
+    let updatedCart;
+    console.log(this.cart, 'LINE');
+    console.log(product);
+
+    if (!this.cart) { ///alteração para evitar erro de 'cannot read property products of undefined', mais abaixo...
+        console.log('CASE1')  ////é o case em que NÃO TÍNHAMOS NENHUM PRODUCT AINDA NO NOSSO CART...
+      updatedCart = { 
+        products: [
+          {
+            // ...product,
+          
+            quantity: 1,
+            productId: product._id
+          },
+        ],
+      };
+
+    } else {
+      console.log('CASE2'); ///case em que JÁ TÍNHAMOS PRODUCTS NO NOSSO CART...
+
+      const existingProductIndex = this.cart.products.findIndex(
+        (prod) => {  console.log(prod, 'LINE561');
+                    console.log(product._id.toString(), prod.productId.toString())
+          return product._id.toString() === prod.productId.toString();
+        }
+      )
+
+      console.log(existingProductIndex, 'EXAMPLE');
+
+      if (existingProductIndex === -1) {
+
+          console.log(this.cart.products[existingProductIndex], 'EXAMPLE2');
+
+
+          const oldProducts = this.cart.products.map(
+              (p) => {    
+                    return  {
+                      productId: p.productId,
+                       quantity: p.quantity
+                  
+                      }
+              }
+            )
+          
+            console.log(oldProducts, 'OLDPRODUCTS');
+          
+        updatedCart = {
+          products: [
+            // ...this.cart.products,
+            ...oldProducts,
+            {
+              // ...product,
+              productId: product._id,
+              quantity:  1,
+            },
+          ],
+        };
+      } else {
+
+        const oldProducts = this.cart.products.map(
+          
+          (product) => {    
+            console.log(product.productId, 'TESTTT');
+                return  {
+                   quantity: product.quantity, 
+                  productId: product.productId
+                  }
+          }
+        )
+
+        updatedCart = {
+          products: [
+            ...oldProducts
+          ]
+        };
+        updatedCart.products[existingProductIndex].quantity = this.cart.products[existingProductIndex].quantity + 1;
+      }
+    }
+
+
+
+    const db = getDb();
+
+   return db.collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        {
+          ///é o 'update object', que vai updatar esse objeto 'user' específico, especificamente seu field/objeto 'cart'....
+
+          $set: {
+            cart: updatedCart,
+          },
+        }
+      )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+  ---------------------------
+
+
+
+
+
+
+
+
+
+
+
+  OK... MAS COMO 
+
+
+
+  O PROFESSOR ESCREVEU ISSO? 
+
+
+
+
+
+  --> BEM, ELE NOS EXPLICA QUE VAMOS 
+
+  QUERER 
+
+  ARMAZENAR 
+
+
+  MÚLTIPLOS PRODUCTS 
+
+
+
+  NO NOSSO 
+
+
+  'products', em 'cart'... ---> E VAMOS QUERER 
+
+
+
+  ALTERAR 
+
+  A 
+
+  'QUANTITY'
+
+  em 
+
+  1 
+
+  determinado objeto 'product',
+
+  caso 
+
+
+  ELE JÁ EXISTA 
+
+  NESSE 
+
+  ARRAY 
+
+  de 
+
+  'products'....
+
+
+
+
+
+
+
+
+
+  -------> OK....
+
+
+
+  O PROFESSOR, PRIMEIRAMENTE,
+
+
+
+  COMENTA DE VOLTA AQUELE CÓDIGO DE 
+
+
+
+
+  'const cartProduct = this.cart.products.findIndex(
+    (p) => {
+      return p._id === product._id
+    }
+  )',
+
+
+
+  QUE 
+
+  É UM ___ CÓDIGO QUE __ REALMENTE __ CHECA
+   
+
+
+
+   SE 
+
+   1 
+
+   DETERMINADO ITEM 
+
+
+   já existe no nosso 
+
+   array de 
+
+   'products'...
+
+
+
+
+
+   ------------------------------------
+
+
+
+
+O PROFESSOR SÓ ADMITE QUE VAI TER QUE TWEAKAR 1 POUQUINHO O CÓDIGO, esse código aí.
+
+
+
+
+
+-----> ELE VAI PROCURAR por 'p.productId' em vez de 'p._id'...
+
+
+   ex:
+
+
+
+
+
+
+
+   addToCart(product) {
+
+
+const cartProduct = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+   }
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+OK.... AGORA 
+
+
+SE 
+
+ESSE 
+
+
+negócio for algo DIFERENTE DE 
+
+'-1',
+
+
+VAMOS __saBER QUE __ 
+
+
+
+ESSE PRODUCT 
+
+JÁ EXISTIRÁ 
+
+EM ALGUM LUGAR DE NOSSO 'CART'...
+
+
+
+
+
+
+
+
+--> O PROFESSOR ENTÃO ESCREVE UMA VARIÁVEL 
+
+'newQuantity' ,
+
+
+E A DEFINE COMO 
+'1',
+
+
+por default....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+   addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+
+
+   }
+
+  
+
+
+  --------------------------
+
+
+
+
+
+
+
+OK... MAS AGORA, SE 
+
+'cartProduct'
+
+for 
+
+SUPERIOR OU IGUAL A 0 (ou seja, NÃO SEJA -1),
+
+
+
+
+
+
+
+
+ISSO VAI SIGNIFICAR QUE 
+
+ESSE 
+
+PRODUCT JÁ 
+
+
+EXISTE 
+
+
+NO NOSSO 
+
+
+ARRAY 
+
+de 
+
+'products'...
+
+
+
+
+
+--> NESSE CASO ,
+
+vamos querer 
+
+que 
+
+'newQuantity'
+
+SEJA 
+
+REDEFINIDA  
+
+PARA 
+
+
+ser 
+
+
+
+
+igual 
+a 
+
+
+'this.cart.items[cartProductIndex] + 1' ...
+
+
+
+
+
+
+(É UM CÓDIGO BEM SIMILAR AO MEU, 
+
+mas ao mesmo tempo um pouco diferente)......
+
+
+
+
+
+
+
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+   addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1; ///EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+
+
+
+   }
+
+
+
+
+
+
+
+--------------
+
+
+
+
+
+
+
+
+
+--> NO MEU CÓDIGO, ISSO FICOU MEIO ASSIm:
+
+
+
+
+else {
+
+        const oldProducts = this.cart.products.map(
+          
+          (product) => {    
+            console.log(product.productId, 'TESTTT');
+                return  {
+                   quantity: product.quantity, 
+                  productId: product.productId
+                  }
+          }
+        )
+
+        updatedCart = {
+          products: [
+            ...oldProducts
+          ]
+        };
+        updatedCart.products[existingProductIndex].quantity = this.cart.products[existingProductIndex].quantity + 1;
+      }
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+ok... 
+
+
+
+AÍ O PROFESSOR, NA SUA VERSÃO DO CÓDIGO,
+
+
+vai escrever uma pequena gambiarra, vai reutilizar o 'newQuantity'
+
+
+
+
+
+NO BLOCK DE CÓDIGO NÃO CONTEMPLADO 
+
+
+por 
+
+'if (cartProductIndex >= )'...
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+   addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1; 
+}
+
+
+const updatedCart = {
+  items: [{ productId: ObjectId(product._id), quantity: newQuantity}] ///EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+  const db = getDb();
+
+  return db
+  .collection.....
+
+   }
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+ENTRETANTO,
+
+
+O PROFESSOR AGORA NOS EXPLICA QUE __ NEM SEMPRE __ ELE VAI QUERER 
+
+ESSE CÓDIGO DE 
+
+
+
+'''
+const updatedCart = {
+  items: [{ productId: ObjectId(product._id), quantity: newQuantity}] ///EIS O CÓDIGO EM QUESTÃO.
+}
+
+''',
+
+PQ 
+
+NEM 
+
+SEMPRE 
+
+
+ELE 
+
+VAI QUERER OVERWRITTAR
+ 
+ O 
+
+ VELHO ARRAY 
+ COM 
+
+ 1 
+
+ NOVO 
+
+ ARRAY 
+
+ COM 
+
+
+ __EXATAMENTE 1 PRODUCT/object,
+
+
+
+
+
+
+
+ POR ISSO 
+
+ ELE 
+
+
+
+
+VAI __ QUERER __ ADICIONAR ___ 1  NOVO OBJETO  'product'
+
+
+ao 
+
+array 
+
+
+SE _o  PRODUCT AINDA NÃO EXISTIR NESSE ARRAY,
+
+
+
+
+__ OU SE ELE EXISTE,
+
+
+EELE 
+
+VAI QUERER 
+
+
+UPDATAR 
+
+
+
+APENAS 
+
+A QUANTITY 
+
+
+DESSE PRODUCT...
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE 
+
+
+UMA DAS MANEIRAS MAIS SIMPLES DE 
+
+FAZER 
+
+ISSO (
+
+
+e há outras maneiras, maneiras em que você usa 
+
+
+
+OUTRAS FUNÇÕES PROPORCIONADAS PELO MONGODB
+
+),
+
+
+
+MAS 
+
+
+
+
+UMA 
+
+DAS 
+
+APPROACHES 
+
+MAIS 
+
+CLARAS 
+
+E SIMPLES 
+
+
+É 
+
+
+
+
+simplesmente você 
+
+escrever 
+
+
+
+
+
+
+
+'const updatedCartItems'.... --> CRIAR UMA CONSTANT COMO ESSA... ----> 
+
+
+
+
+
+
+
+AÍ, NESSA CONSTANT VOCÊ VAI __ ACESSAR __ O 
+
+
+
+SEU ARRAY DE 'products'...., lá no seu cart...
+
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+const updatedCartItems = this.cart.items
+
+
+
+
+
+
+
+
+
+
+------> E AÍ, VOCÊ VAI CRIAR __ UM NOVO ___ARRAY,
+
+
+
+EM QUE 
+
+VOCê __ VAI QUERER COPIAR __ _TODOS OS ELEMENTOS JÁ EXISTENTES,
+
+
+
+COM A AJUDA DO SPREAD OPERATOR...
+
+
+
+
+
+ex:
+
+
+
+
+
+const updatedCartItems = [...this.cart.products]
+
+
+
+
+
+
+
+OK... FOI EXATAMENTE ISSO QUE EU FIZ...
+
+
+
+
+
+
+
+
+
+
+--> FICARIA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+   addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1; 
+}
+
+const updatedCartItems = [...this.cart.products]; //////EIS O CÓDIGO EM QUESTÃO.
+
+const updatedCart = {
+  items: [{ productId: ObjectId(product._id), quantity: newQuantity}] 
+}
+
+
+  const db = getDb();
+
+  return db
+  .collection.....
+
+   }
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+OK, ISSO NOS DÁ/NOS DEU UM 
+
+
+__ARRAY__ COM TODOS OS 
+
+
+PRODUCTS QUE 
+
+ESTAVAM 
+
+DENTRO DE 
+
+'products',
+
+em 
+
+'cart'.. -----> 
+
+
+
+E AGORA 
+
+
+
+
+ELES ESTÃO NESSA CONSTANTE 
+
+
+'updatedCartItems'... --> E AGORA 
+
+PODEMOS 
+
+
+__EDITAR__ ESSE ARRAY_,
+
+
+
+
+EDITAR ESSE ARRAY ____ SEM __ TOCAR __ NO 
+
+ARRAY ANTIGO,
+
+TUDO GRAÇAS 
+
+
+
+A MANEIRA PELA QUAL O JAVASCRIPT FUNCIONA, COMO ELE FUNCIONA COM 
+OS 
+
+REFERENCE E PRIMITIVE TYPES...
+
+
+
+
+
+
+
+
+
+-----> OK... AGORA EU POSSO EDITAR ESSE NEGÓCIO.... -----> 
+
+
+
+
+
+MAS ANTES DISSO,
+
+PRECISAMOS DIFERENCIAR:
+
+
+
+
+'''TEMOS ESSE PRODUCT NO CART __ OU NÃO''''.. -----> 
+
+
+
+
+
+
+PARA ISSO, PROFESSOR VAI MOVER 
+
+
+
+ESSE 
+
+
+'const updatedCartItems' 
+LÁ PARA CIMA , __ ANTES__ DO 
+
+
+
+'if check' de 'cartProductIndex >= 0'...
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+   addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+const updatedCartItems = [...this.cart.products]; //////EIS O CÓDIGO EM QUESTÃO.
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1; 
+}
+
+
+const updatedCart = {
+  items: [{ productId: ObjectId(product._id), quantity: newQuantity}] 
+}
+
+
+  const db = getDb();
+
+  return db
+  .collection.....
+
+   }
+
+
+
+
+--------------------------------------
+
+
+
+
+OK......... 
+
+
+
+
+depois desse 'const updatedCartItems',
+
+PORTANTO, TEMOS 2 'CASES'.... --> 
+
+
+
+
+
+
+1) CASE EM QUE __TEMOS ESSE PRODUCT JÁ NO ARRAY DE 'products' em 'cart' em 'user.... --> 
+NESSE CASE, nós vamos ENTRAR NAQUELE IF CHECK de 'cartProductIndex >= 0'....
+
+
+
+2) CASE EM QUE _NÃO TEMOS ESSE PRODUCT __ JÁ NO ARRAY de 'products' em 'cart' em 'user'--> 
+nesse case, VAMOS SEGUIR 
+
+com o 'updatedCart' equivalente aquele '{productId: xxxx, quantity: 1}'....
+
+
+
+
+
+
+------> NO CASE 1,
+
+VAMOS 
+
+ESSENCIALMENTE __ QUERER ___ 
+
+
+UPDATAR 
+
+O 
+
+'cartItem' específico __ QUE 
+
+
+
+É REPResentado/SERÁ REPRESENTADO 
+por 
+
+
+'updatedCartItems[cartProductIndex]'.... -----> VAMOS QUERER _ O EDITAR__ 
+
+
+E DEFINIR 
+
+SUA QUANTITY COMO EQUIVALENTE A 'newQuantity', que é 'this.cart.items[cartProductIndex].quantity + 1'...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+ addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+const updatedCartItems = [...this.cart.products]; 
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+  updatedCartItems[cartProductIndex].quantity = newQuantity;   //////EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+const updatedCart = {
+  items: [{ productId: ObjectId(product._id), quantity: newQuantity}] 
+}
+
+
+  const db = getDb();
+
+  return db
+  .collection.....
+
+   }
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+OK... PROFESSOR FEZ EXATAMENTE ISSO... 
+
+
+
+
+
+
+___ JÁ NO 'ELSE CASE',
+
+
+PROFESSOR 
+
+VAI QUERER 
+
+
+
+
+
+definir 
+
+'updatedCartItems.push()',
+
+
+PARA 
+
+ENTÃO 
+
+
+SIMPLESMNETE 
+
+ADICIONAR 
+
+
+1 
+
+NOVO, inédito, ____ CARTITEM __ AO 
+
+
+NOSSO ARRAY DE 'products'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+ addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+const updatedCartItems = [...this.cart.products]; 
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+  updatedCartItems[cartProductIndex].quantity = newQuantity;  
+} else {
+
+    updatedCartItems.push({});   //////EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+const updatedCart = {
+  products: [{ productId: ObjectId(product._id), quantity: newQuantity}] 
+}
+
+
+  const db = getDb();
+
+  return db
+  .collection.....
+
+   }
+
+
+
+-------------------------------
+
+
+
+
+
+--> VAMOS ADICIONAR UM 
+
+NOVO 
+
+CART ITEM,
+
+exatametne como descrito 
+
+em 
+
+''  products: [{ productId: ObjectId(product._id), quantity: newQuantity}] '''
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+ addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+const updatedCartItems = [...this.cart.products]; 
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+  updatedCartItems[cartProductIndex].quantity = newQuantity;  
+} else {
+
+    updatedCartItems.push({productId: ObjectId(product._id), quantity: newQuantity});   //////EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+
+
+
+  const db = getDb();
+
+  return db
+  .collection.....
+
+   }
+
+
+
+
+
+
+   -------------------------
+
+
+
+
+   CERTO....
+
+
+
+
+   OU SEJA,
+
+
+   PROFESSOR ESCREVEU __ EXATAMENTE O MESMO CÓDIGO QUE EU,
+
+   que 
+   havia escrito isto:
+
+
+
+
+  
+
+
+    addToCart(product) { ///código do professor. Bem superior ao nosso.
+
+    let updatedCart;
+    console.log(this.cart, 'LINE');
+    console.log(product);
+
+    if (!this.cart) { 
+        console.log('CASE1')  
+      updatedCart = { 
+        products: [
+          {
+          
+            quantity: 1,
+            productId: product._id
+          },
+        ],
+      };
+
+    } else {
+      console.log('CASE2');
+
+      const existingProductIndex = this.cart.products.findIndex(
+        (prod) => {  console.log(prod, 'LINE561');
+                    console.log(product._id.toString(), prod.productId.toString())
+          return product._id.toString() === prod.productId.toString();
+        }
+      )
+
+      console.log(existingProductIndex, 'EXAMPLE');
+
+      if (existingProductIndex === -1) {
+
+          console.log(this.cart.products[existingProductIndex], 'EXAMPLE2');
+
+
+          const oldProducts = this.cart.products.map(
+              (p) => {    
+                    return  {
+                      productId: p.productId,
+                       quantity: p.quantity
+                  
+                      }
+              }
+            )
+          
+            console.log(oldProducts, 'OLDPRODUCTS');
+          
+        updatedCart = {
+          products: [
+            ...oldProducts,
+            {
+              productId: product._id,
+              quantity:  1,
+            },
+          ],
+        };
+      } else {
+
+        const oldProducts = this.cart.products.map(
+          
+          (product) => {    
+            console.log(product.productId, 'TESTTT');
+                return  {
+                   quantity: product.quantity, 
+                  productId: product.productId
+                  }
+          }
+        )
+
+        updatedCart = {
+          products: [
+            ...oldProducts
+          ]
+        };
+        updatedCart.products[existingProductIndex].quantity = this.cart.products[existingProductIndex].quantity + 1;
+      }
+    }
+
+
+
+    const db = getDb();
+
+   return db.collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        {
+          ///é o 'update object', que vai updatar esse objeto 'user' específico, especificamente seu field/objeto 'cart'....
+
+          $set: {
+            cart: updatedCart,
+          },
+        }
+      )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+-------------------------------
+
+
+
+
+
+É EXATAMENTE ESSE CÓDIGO AÍ, MAS MAIS OPTIMIZADO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR FIM, 
+
+PARA COMPLETAR O SEU CÓDIGO,
+
+
+
+o professsor 
+
+
+
+escreve 
+
+
+'const updatedCart = {
+    products: updatedCartItems
+}',
+
+
+
+
+PARA 
+
+QUE 
+
+A TRANSFORMAÇÃO DE NOSSO CART nesse 'cart + 1 product'/'cart + 1 quantity de um product'
+
+
+SE COMPLETE....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+ addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p._productId === product._id
+    }
+  );
+
+
+
+let newQuantity = 1;
+
+const updatedCartItems = [...this.cart.products]; 
+
+
+if (cartProductIndex >= 0) {
+  newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+  updatedCartItems[cartProductIndex].quantity = newQuantity;  
+} else {
+
+    updatedCartItems.push({productId: ObjectId(product._id), quantity: newQuantity});   //////EIS O CÓDIGO EM QUESTÃO.
+}
+
+
+const updatedCart = {
+
+  products: updatedCartItems;
+}
+
+
+
+  const db = getDb();
+
+  return db
+  .collection('users').updateOne(
+        { _id: ObjectId(this._id) },
+
+        {
+          ///é o 'update object', que vai updatar esse objeto 'user' específico, especificamente seu field/objeto 'cart'....
+
+          $set: {
+            cart: updatedCart,
+          },
+        }
+      )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+   }
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+MAS pq DIABOS 
+
+
+ESCREVEMOS 
+
+
+
+''const updatedCart = {
+    products: updatedCartItems
+}',''',
+
+
+
+
+
+
+
+???
+
+
+
+
+
+
+
+
+--> É PQ 
+
+
+
+
+O 
+
+
+'products' SEMPRE SERÁ 
+
+
+
+1 ARRAY COM __TODOS OS 'OLD ELEMENTS' (pq os copiamos anteriormente, com '[...this.cart.items]', antes de realizar quaisquer operações),
+
+
+
+
+
+
+
+1 ARRAY QUE TEM SOBRE SI 1 PRODUCT ADICIONADO, OU ENTÃO 1 FIELD DE 'quantity' em 
+1 dos objetos 
+'product' 
+alterado para ser '+1'....
+
+ 
+
+
+
+
+
+
+
+ ----------> OK....  COM ISSO ,
+
+ PODEMOS UPDATAR 
+
+ NOSSO 
+
+
+ ARRAY 'products' em nosso cart de forma SAFE,
+
+
+
+ com o restante do código....
+
+
+
+
+
+
+
+ -->SALVAMOS TUDO ISSO 
+
+
+ E TESTAMOS NOSSO CÓDIGO....
+
+
+
+
+
+
+
+
+ HMM... ok, mas isso cagou um pedaço da lógica.... --> pq agora 
+
+ NOVOS OBJETOS 'PRODUCT' ESTÃO SENDO CRIADOS 
+
+
+
+ sempre,
+
+
+
+ e nunca há aquela diferenciação 
+
+
+ entre 
+
+ o 'already existing product' ou não..
+
+
+
+
+
+
+ --> também ganhei este erro:
+
+ TypeError: Cannot read property 'findIndex' of undefined
+
+
+
+
+
+
+
+
+
+
+ -->A VERSÃO DO PROFESSOR AINDA NÃO ESTÁ FUNCIONANDO, MAS A MINHA ESTÁ, SEM PROBLEMAS....
+
+
+
+
+
+
+
+ ok... consertei um problema de 
+
+
+ ''
+
+
+ TypeError: Argument passed in must be a Buffer or string of 12 bytes or a string of 24 hex characters  
+    at new BSONTypeError (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\bson\lib\error.js:39:42)
+    at new ObjectId (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\bson\lib\objectid.js:62:23)
+    at ObjectId (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\bson\lib\objectid.js:25:20)
+    at exports.getProductDetailPage (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\controllers\shop.js:480:28)
+    at Layer.handle [as handle_request] (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\layer.js:95:5)
+    at next (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\route.js:137:13)
+    at Route.dispatch (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\route.js:112:3)
+    at Layer.handle [as handle_request] (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\layer.js:95:5)
+    at A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\index.js:281:22
+    at param (A:\projeto4 - NODEJS\MODULO12-TRABALHANDOCOMNOSQL,EUSANDOOMONGODB\NOVONOVOPROJETO10-USANDODATABASESNOSQL,NOCASO,OMONGODB\node_modules\express\lib\router\index.js:354:14)
+[nodemon] restarting due to changes...
+
+
+
+
+
+''',
+
+
+
+tudo por meio deste código:
+
+
+
+
+  const productId = req.params.productId.trim();
+  // console.log(productId);
+  console.log(productId);
+  console.log(productId.length);
+
+
+  if ( productId.length < 24) {
+
+    return;
+  }
+
+  Product.getSingleProduct(ObjectId(productId))
+  .then(
+    (product) => {
+
+        if(!product) {
+      
+          return;
+        }
+
+
+          // console.log(product, 'LINEE');
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+
+-->AQUELE IF CHECK ALI 
+
+resolveu o show desse erro aí...
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.......
+
+
+
+mas pq diabos o código do professor não funciona/funciona de forma torta?
+
+
+
+
+
+
+
+
+
+
+--> NÃO SEI... MAS NA VERSÃO DO SEU CÓDIGO,
+
+
+
+ele também teve 
+
+vários objects sendo adicionados.... --> sinal de que não funcionou tão bem assim...
+
+
+
+
+
+
+
+--> NOSSA LÓGICA FALHOU... -----> 
+
+PROFESSOR 
+
+
+
+diz que 
+
+a razão para a falha 
+
+
+foi 
+
+
+a comparação 
+
+de 
+
+
+
+
+'
+
+addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p.productId === product._id
+    }
+  );
+
+
+
+}
+'''
+
+
+
+
+
+
+
+
+--> certo.... o problema que 
+
+
+
+
+temos é que 
+
+
+
+o 
+
+'product'
+
+que estamos fazendo 
+
+GET 
+
+nessa funçaõ 
+
+
+de 
+
+'addToCart(product)'
+
+
+
+É UM __ PRODUCT QUE NÓS RECÉM RETRIEVAMOS 
+LÁ 
+
+
+DA NOSSA DATABASE... ------> E O 
+
+
+
+'_id'
+
+
+que 
+
+temos 
+
+dentro 
+
+desse product 
+
+
+É 
+
+__ACTUALLY__ 
+
+TRATADO
+ 
+ COMO 
+
+ UMA 
+
+ 'STRING'
+
+
+
+ no javascript,
+
+ MAS 
+
+
+ A QUESTÃO __ É __ QUE 
+
+
+
+ ISSO AÍ 
+
+ NÃO É ___EXATAMENTE 
+
+
+
+ DO TIPO 'string',
+
+
+
+
+ SEU TIPO REALMENTE NÃO É 
+
+
+ ___EXATAMENTE__ DO TIPO STRING,
+
+ e sim de algo 'parecido com uma string'.... -----> 
+
+
+
+
+
+
+ E COMO NÓS 
+
+
+
+ estamos fazendo um check de 
+
+
+ 'return p.productId === product._id',
+
+
+
+
+
+ ESSE 
+
+ NEGÓCIO 
+
+ AÍ, 
+
+ o 
+
+ '===',
+
+ VAI CHECAR 
+
+ TANTO PELO __VALOR__ COMO PELO DATATYPE... --> mas 
+
+
+ como 
+
+ esses 
+
+ 2 negócios _NÃO POSSUEM O EXATO MESMO DATATYPE (1 é uma STRING de verdade, o outro uma 'pseudoString',,),
+
+
+
+
+
+
+É ISSO QUE 
+
+
+ESTÁ 
+
+
+DANDO NOSSO ERROR... ------> PARA RESOLVER ESSE PROBLEMA,
+
+UMA SOLUÇAÕ 
+
+É 
+
+
+SIMPLESMENTE 
+
+TROCAR 
+
+
+'==='
+
+para 
+
+'==',
+
+para apenas checar PELO MESMO VALOR,
+
+e não 
+
+o 
+
+
+mesmo 
+
+datatype...
+
+
+
+
+
+
+
+
+--> A OUTRA SOLUÇÃO É USAR '.toString()'
+
+
+EM AMBOS 
+
+
+
+lados da equaçõa...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p.productId == product._id
+    }
+  );
+
+
+
+}
+
+
+
+
+
+
+
+
+OU:
+
+
+
+
+
+
+addToCart(product) {
+
+
+const cartProductIndex = this.cart.products.findIndex(
+    (p) => {
+      return p.productId.toString() === product._id.toString()
+    }
+  );
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+
+ISSO FUNCIONOU....
+
+
+
+
+
+
+
+--> AGORA MÚLTIPLOS 'PRODUCT'
+ 
+ ESTÃO SENDO 
+
+ ADICIONADOS AO 
+
+
+ NOSSO 
+
+ 'cart',
+
+ dentro de 'user'...
+
+
+
+
+
+
+ --------------------
+
+
+
+
+
+
+
+ ok........... ISSO AGORA ESTÁ FUNCIONANDO, AGORA ESTAMOS UPDATANDO 
+
+ O CART...
+
+
+
+
+
+
+ ---> essa é uma FUNCIONALIDADE DE 'ADD TO CART'
+
+ bem básica,
+
+
+ implementada POR NOSSA PRÓPRIA CONTA....
+
+
+
+
+
+ -> aGORA É CLARO QUE VAMOS QUERER 
+
+ SER 
+
+ CAPAZES 
+
+ DE 
+
+ FETCHEAR 
+
+ NOSSA 
+
+ 'CART DATA' e DISPLAYAR NA PÁGINA DE 'CART'...

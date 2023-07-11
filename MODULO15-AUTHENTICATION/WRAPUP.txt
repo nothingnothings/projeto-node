@@ -1,0 +1,501 @@
+
+
+
+
+
+
+
+
+
+
+--> ACABAMOS ESTE MÓDULO...
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE VAI MOSTRAR OUTRAS 
+
+
+
+'AUTHENTICATION RELATED THINGS'
+
+
+
+NO PRÓXIMO MÓDULO...
+
+
+
+
+
+
+
+
+--> NO PRÓXIMO MÓDULO ELE VAI NOS MOSTRAR 
+
+
+'PASSWORD RESETTING',
+
+
+
+
+MAS __ ESSAS 
+
+SÃO 
+
+ 
+
+
+
+ AS COISAS__ BÁSICAS__ QUE 
+
+ VOCê TEM QUE 
+
+ SABER SOBRE AUTHENTICATION...
+
+
+
+
+
+
+
+
+
+
+
+
+ -> AUTHENTICATION:
+
+
+ ** SIGNIFICA QUE NEM TODOS OS USERS/VISITORS DE SUA PAGE 
+
+
+ DEVEM VER E INTERAGIR COM TUDO...
+
+
+
+ **** VIMOS QUE _ A AUTHENTICATION __ TEM QUE _ ACONTECER NO SERVERSIDE,
+
+ ISSO 
+
+
+ PARA 
+
+ QUE USERS NÃO CONSIGAM 'TRICK YOU' e fazer vocÊ PENSAR __ QUE ESTÃO AUTENTICADOS,
+
+
+ ------> E É POR ISSO QUE __ DEVEMOS __ USAR 'SESSIONS'
+
+
+ PARA ___ ARMAZENAR __ NOSSO 
+
+
+ 'AUTH STATUS.'..
+
+
+
+
+
+
+
+
+
+ ****** VIMOS, ADEMAIS,
+
+ QUE 
+
+
+ ___PODEMOS__ PROTEGER__ ROUTES POR MEIO 
+
+
+
+
+
+DAQUELE 
+
+
+
+_ CÓDIGO HANDY __de middleware,
+ 
+
+ LÁ 
+
+
+ NO MEIO 
+
+ DAS NOSSAS ROUTES,
+
+ tipo 
+
+
+ 
+
+ o que é observado neste trecho:
+
+
+
+
+
+ router.post('/edit-product', authCheckerAndRedirecter, adminController.editProduct);
+
+
+
+
+
+
+
+
+
+
+ ------> ESSE MIDDLEWARE AÍ EXECUTA UM IF CHECK que checa 
+
+ PELA 
+
+ EXISTÊNCIA DE UMA SESSION/propriedade 'isLoggedIn' 
+
+
+NA SESSION DO USER,
+
+ARMAZENADA 
+
+
+NA 
+DATABASE... ----> seu código é:
+
+
+
+
+
+
+
+module.exports = (req, res, next) => {
+
+
+    if(!req.session.isLoggedIn) {
+
+        res.redirect('/login');
+
+    } else {
+
+        next();
+    }
+}
+
+
+
+
+
+
+
+
+--> OK, 
+
+
+
+
+'YOU CAN 
+
+PROTECT ROUTES BY CHECKING THE (session-controlled) login status _ RIGHT BEFORE YOU 
+
+ACCESS A CONTROLLER ACTION'...
+
+
+
+
+
+
+
+
+
+
+--------> ok... 
+
+
+
+
+É ÓBVIO QUE 
+
+
+
+
+AUTHENTICATION TEM UMA RELAÇÃO ESTREITA COM 'SECURITY'
+
+e 
+
+
+COM 
+
+
+
+O PROVIDE ___ DE UMA _ BOA USER EXPERIENCE... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> **** PASSWORDS ___ DEVEM SEMPRE SER ARMAZENADOS __ EM UM FORMATO 'hashed',
+
+POR MEIO 
+
+DE 
+
+PACOTES COMO 'BCRYPT'...
+
+
+
+
+
+
+
+---_> SE VOCÊ ARMAZENA SEUS PASSWORDS DE FORMA 'PLAIN TEXT',
+
+
+se a database for atacada,
+
+
+HACKERS TERÃO ACESSOS 
+
+
+
+ÀS SENHAS DIRETAMENTE..
+
+
+
+
+
+
+
+
+
+
+
+-------> CSRF ATTACKS --> SÃO UM PROBLEMA __ REAL,
+
+
+
+E VOCÊ DEVE, PORTANTO,
+
+__SEMPRE INCLUIR 'CSRF PROTECTION'
+
+
+__ EM __ QUALQUER__ APP QUE __ VOCÊ 
+
+
+CONSTRUIR__...
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+POR FIM,
+
+
+
+--> PARA UMA MELHOR USER EXPERIENCE,
+
+
+VOCÊ PODE 
+
+
+
+PROCURAR A MATÉRIA 
+
+
+DO 
+
+
+'FLASH DATA/MESSAGES' DENTRO 
+
+DE 
+
+
+SUA SESSION (session store), PARA QUE 
+
+ENTÃO 
+
+
+
+VOCÊ CONSIGA __ DISPLAYAR__ ESSAS MESSAGES __ NOS SEUS VIEWS...
+
+
+
+
+
+
+
+
+
+'''FLASHING''' --> ESSE TERMO SIGNIFICA QUE __ ESSA DATA __ VAI 
+
+SER __REMOVIDA__ DA SESSION ___ AUTOMATICAMENTE__ 
+
+
+
+POR NOSSA PACKAGE,
+
+
+
+
+ASSIM QUE USARMOS ESSA DATA... -------> E NÓS PODEMOS _USAR _ 
+
+ESSA 
+
+'
+
+DATA TEMPORÁRIA'
+
+PARA 
+
+FAZER 
+
+UM 
+
+'PERSIST TEMPORÁRIO'
+
+
+
+AO LONGO DE REDIRECTS 
+
+
+
+em nosso app.... ---> PQ REDIRECTS __ TECNICAMENTE TRIGGAM 2 DIFERENTES REQUESTS(
+
+
+
+
+
+
+    na verdade, tecnicamente temos o OLD REQUEST (que morre)
+
+    E 
+
+    AÍ O NOVO REQUEST COMEÇA...,
+
+
+    E 
+
+
+
+    SE QUISERMOS 'SHARE DATA ACROSS REQUESTS',
+
+
+
+___ VOCÊ __ PRECISA __ OBRIGATORIAMENTE__ USAR UMA SESSION,
+
+E 
+O 
+
+
+
+'connect-flash'
+
+
+SE APROVEITA DISSO...
+
+)
+
+
+
+
+
+
+
+
+
+
+--> OK... ESSAS SÃO AS COISAS GERAIS 
+
+
+DE AUTHENTICATION QUE VOCê PRECISA SABER...
+
+
+
+
+
+
+
+
+
+--> E COM ESSE CONHECIMENTO,
+
+
+VOCÊ JÁ VAI MUUUITO LONGE...
+
+
+
+
+
+
+
+
+
+--> NO PRÓXIMO MÓDULO,
+
+
+
+VAMOS VER __ COMO __ ENVIAR 'MAILS' 
+
+DE 
+
+DENTRO 
+
+
+DE 
+
+
+NOSSO APP NODE... ---> ISSO PQ 
+
+VAMOS _ PRECISAR__ 
+
+DESSA 
+
+FEATURE __ PARA ENTÃO 
+
+
+'ENHANCE' 
+
+NOSSO 
+
+
+APP UM POUCO.... -----> VAMOS MELHORAR NOSSO APP EM RELAÇÃO AO __AUTHENTICATION...  -------->
+
+
+
+
+
+FAREMOS ISSO PARA __ QUE _ CONSIGAMOS IMPLEMENTAR UM SISTEMA/MECANISMO 
+
+
+
+DE __ RESET___ DE PASSWORDS....
+
+
+
+
+
+
+
+
+
+-------> FAREMOS ISSO NO PRÓXIMO MÓDULO,
+
+MAS 
+
+ANTES DISSO VAMOS VER __ COMO ENVIAR EMAILS.../mails...

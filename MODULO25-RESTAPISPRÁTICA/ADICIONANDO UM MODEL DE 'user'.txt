@@ -1,0 +1,1097 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... AGORA O PROFESSOR VAI QUERER COMEÇAR A ADICIONAR AUTHENTICATION 
+
+
+NESSE NOSSO PROJETO 
+
+
+
+
+COM REST API...
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+VAMOS ATÉ A PASTA 'Models'
+
+DE NOSSO BACKEND 
+
+E 
+
+ADICIONAMOS UM NOVO MODEL,
+
+'user.js'....
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE AGORA VAMOS QUERER __ 
+
+
+
+CRIAR ESSE USER,
+
+COM A SINTAXE MONGOOSE....
+
+
+
+
+
+
+-> tentarei fazer de cabeça...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMECEI COM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({});
+
+module.exports = mongoose.model("Users", userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... até aí tudo bem,
+
+mas preciso DEFINIR OS FIELDS 
+lá 
+
+
+em 
+
+'new Schema({
+
+})'
+
+
+
+
+
+
+
+
+
+
+
+
+VOU COMEÇAR COM PASSWORD,
+
+PQ 
+
+TODO USER VAI TER UM PASSWORD...
+
+
+
+
+
+
+
+
+TALVEZ ASSIM:
+
+
+
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  password: {
+    required: true,
+    type: String,
+  }
+});
+
+module.exports = mongoose.model("User", userSchema);
+
+
+
+
+
+
+
+-------------------------
+
+
+OK... VOU VER A AULA DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ELE ADICIONA UM MODEL DE USER,
+
+
+
+
+bem como eu fiz...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> CERTO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUE PROPRIEDADES ELE ADICIONA
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE ADICIONA EMAIL
+,
+
+
+
+QUE DEVERÁ SER DE TYPE STIRNG,
+
+E DEVERÁ SER REQUIRED...
+
+
+
+
+
+
+
+ex:
+
+
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  password: {
+    required: true,
+    type: String,
+  },
+
+  email: {
+      required: true,
+      type: String
+  }
+});
+
+module.exports = mongoose.model("Users", userSchema);
+
+
+
+------------------------------------ 
+
+
+
+
+
+
+
+
+
+
+
+
+O PASSWORD JÁ ESTÁ CERTO.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O USER TAMBÉM 
+
+
+VAI 
+
+TER 
+
+1 'name'... --> 
+
+
+
+O NAME SERÁ DE TYPE STRING E REQUIRED...
+
+
+
+
+TAMBÉM VAI TER 1 'status'...
+
+
+
+--> TAMBÉM DE TIPO STRING, E REQUIRED...
+
+
+
+
+
+
+
+ex:
+
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  password: {
+    required: true,
+    type: String,
+  },
+
+  email: {
+      required: true,
+      type: String
+  },
+  name: {
+      type: String,
+      required: true
+  }
+
+  status: {
+        type: String,
+        required: true
+  } 
+});
+
+module.exports = mongoose.model("Users", userSchema);
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+CADA USER TAMBÉM TERÁ UMA PROPRIEDADE 
+
+
+de 
+
+'posts'.... --> e
+
+
+
+E ESSA PROPRIEDADE VAI SER 1 ARRAY.... ------> 
+
+
+
+E CADA 
+
+
+OBJECT NESSE ARRAY 
+
+VAI SER 
+
+
+DE TYPE 
+
+
+
+'Schema.Types.ObjectId'...
+
+
+
+
+
+
+
+
+
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  password: {
+    required: true,
+    type: String,
+  },
+  email: {
+    required: true,
+    type: String,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  posts: [
+        {
+            type: Schema.Types.ObjectId;
+        }
+
+  ]
+});
+
+module.exports = mongoose.model("User", userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VAMOS QUERER ISSO 
+
+
+PQ 
+
+CADA 
+
+
+1 DESSES OBJECTS dentro de 'posts' 
+
+
+DEVERÁ 
+
+
+
+SER UMA __ REFERENCE___ A UM 'POST'...  -----> É POR ISSO QUE 
+
+VAMOS ADICIONAR AQUELA KEY DE 
+
+'ref',
+
+
+
+APONTANDO 
+
+A 
+
+'Post'... (apontamos ao MODEL de 'Post'....)....
+
+
+
+
+
+
+
+
+--------> OU SEJA,
+
+VAMOS ARMAZENAR REFERÊNCIAS A 'POSTS'
+
+
+
+
+EM CADA 1 DE NOSSOS USERS...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  password: {
+    required: true,
+    type: String,
+  },
+  email: {
+    required: true,
+    type: String,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  posts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref:  'Post'
+        }
+
+  ]
+});
+
+module.exports = mongoose.model("User", userSchema);
+
+
+
+
+---------------------------------
+
+
+
+CERTO... ESSE SERÁ O FORMATO DE NOSSOS USER...
+
+
+
+
+
+
+
+
+
+
+--> AGORA PODEMOS USAR ESSE MODEL PARA 
+SETTAR 
+
+
+NOSSO 'SIGNUP'
+,
+
+
+
+E, MAIS TARDE,
+
+
+A ROUTE DE 'LOGIN'...
+
+
+
+
+
+
+
+
+
+
+--------> PARA ISSO,
+
+PARA SETTAR A AUTHENTICATION,
+
+
+CRIAMOS UM NOVO ARQUIVO 'route',
+
+
+
+ARQUIVO DE 
+
+
+
+'auth.js'...
+
+
+
+
+
+
+
+---------> OK...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> SERÁ AUTH-RELATED...
+
+
+
+
+
+
+
+
+
+
+
+-> LÁ DENTRO,
+
+
+COMO ANTES,
+
+
+
+
+
+
+importamos O EXPRESS, 
+
+E 
+AÍ 
+O 
+
+ROUTER DO EXPRESS.
+
+
+
+
+tipo assim:
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+
+
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+-----------> AÍ O PROFESSOR VAI QUERER CRIAR 
+
+UMAS ROUTES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+
+
+
+
+
+UMA ROUTE DE POST... -->   
+
+
+
+
+
+
+
+
+
+NA VERDADE,
+
+
+ELE MUDA DE IDEIA,
+
+OPTA POR UMA ROUTE 
+
+
+
+DE 
+
+'PUT' --> justificativa:
+
+
+
+
+
+
+
+
+
+NÓS VAMOS 
+
+
+
+OU __CRIAR UM NOVO USER,
+
+
+
+OU 
+
+
+'OVERWRITE EXISTING DATA' (user data)
+
+
+POR MEIO DESSA ROUTE....
+
+
+
+
+
+
+
+--> MAS TANTO POST COMO PUT FUNCIONARIAM...
+
+
+
+
+
+
+
+
+
+
+
+--> ok... 
+
+
+ele escreve
+
+
+router.put('/signup');
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+ELE DIZ QUE PRECISA DO CONTROLLER DE 'signup',
+
+
+criar 1 controller para isso,
+
+E
+ TAMBÉM 
+
+
+ __ QUE ELE VAI __ ADICIONAR VALIDATION PARA ESSAS ROUTES... (por meio de 'express-validator'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ENTRETANTO,
+
+
+ ANTES DISSO,
+
+ ELE DIZ QUE DEVE SETTAR ESSAS ROUTES 
+
+
+
+
+ LÁ 
+
+
+ NO 'app.js',
+
+ PARA QUE 
+
+ ELAS 
+
+ CONSIGAM SER 'REACHED' 
+
+ pelos nossos users...
+
+
+
+
+
+
+
+
+
+
+ -> para isso, 
+
+ ele 
+ importa 
+
+
+ por meio de 
+
+
+ 'const authRoutes = require('.....')',
+
+
+
+
+ E AÍ 
+
+
+
+ ESCREVE UM MIDDLEWARE TIPO 
+
+
+
+ 'app.use(authRoutes);'....
+
+
+
+
+
+
+
+
+
+
+
+ TIPO ISTO:
+
+
+
+
+
+ app.use(bodyParser.json());
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
+
+app.use('/images', express.static(path.join(__dirname, 'images'))); //não se esqueça do '/images' no início...
+
+// console.log(path.join(__dirname, 'images'));
+
+
+
+app.use(authRoutes);
+
+app.use('/feed', feedRoutes);
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+
+
+
+
+
+
+
+AGORA TEMOS 
+
+ESSAS ROUTES LEGAIS, AÍ...
+
+
+
+
+
+
+
+
+
+
+--> MAS PROFESSOR FAZ UMA BREVE ALTERAÇAÕ,
+
+
+ELE 
+
+
+coloca 
+
+
+'/auth' 
+
+
+NO INÍCIO DESSE MIDDLEWARE,
+
+
+PARA QUE 
+
+APENAS 
+
+
+OS REQUESTS 
+
+QUE 
+
+
+ALCANCEM 
+
+'/auth' 
+
+
+CONSIGAM 
+
+
+ENTRAR 
+
+NESSAS NOSSAS ROUTES 
+
+ESPECIAIS DE 
+
+'auth'...(
+
+    tipo 
+
+    'localhost:8080/auth/signup',
+
+
+
+    ETC ETC...
+)
+
+
+
+
+
+
+
+
+
+
+
+--> EX:
+
+
+
+app.use('/auth', authRoutes);
+
+app.use('/feed', feedRoutes);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR TAMBÉM VAI QUERER ADICIONAR VALIDATION A ESSAS ROUTES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> certo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAS E QUANTO à VALIDATION
+
+
+
+
+
+
+
+
+
+
+--------> BEM, PRECISAMOS DO CONTROLLER, 
+
+ANTES DISSo...
+
+
+--> VEREMOS ISSO NA PRÓXIMA AULA....

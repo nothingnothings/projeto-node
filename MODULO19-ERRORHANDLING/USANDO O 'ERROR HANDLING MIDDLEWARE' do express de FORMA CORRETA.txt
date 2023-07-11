@@ -1,0 +1,2227 @@
+
+
+
+
+
+
+
+
+
+
+--> AGORA QUE APRENDEMOS SOBRE ESSE 
+
+'EXPRESS ERROR HANDLING MIDDLEWARE' QUE 
+
+ADICIONAMOS 
+
+
+NO NOSSO 
+
+CÓDIGO, 
+
+
+
+
+POR MEIO 
+
+
+
+
+
+DE
+
+
+
+
+TRECHOS COMO ESTE:
+
+
+app.use( ///////MIDDLEWARE ESPECIAL DO EXPRESS. USADO PARA HANDLING DE ERROS... (o express identifica que ele é especial POR MEIO DOS SEUS 4 ARGUMENTOS, 'error, req, res, next'...)
+(error, req, res, next) => { //para acessar/executar o código contido nesse MIDDLEWARE/nesses middlewares especial/especiais, basta USAR A FUNÇÃO 'next()' e então passar UM ERRO COMO PARÂMETRO, TIPO ASSIM: 'next(erroQueVocêQuerPassar)' ------> SE VOCÊ USAR ISSO EM ALGUM LUGAR DO SEU CO´DIGO, ESSE CALL VAI AUTOMATICAMETNE TRIGGAR ESTE MIDDLEWARE AQUI, de 'error, req, res, next'...
+//e sim, a execuçaõ desse middleware especial vai pular ATÉ MESMO A EXECUÇAÕ DE 'error404' (que é o middleware/route 'unknown' de nosso app, que faz catch de todos os paths/routes não compreendidos por 'adminRoutes', 'authRoutes', etc...)
+
+    res.redirect('/500'); //ver controller de 'error500', lá em 'error.js'...
+
+}
+
+); 
+
+
+
+
+
+
+
+
+
+
+
+E 
+
+
+
+
+
+
+
+
+ESTE:
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+
+  if(!req.session.user) {
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { 
+        return next();
+  }
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err); ///ESTE AQU
+  
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+,
+
+
+
+
+
+
+
+
+
+DEVEMOS 
+
+
+
+
+
+
+ENTENDER:
+
+
+
+
+
+
+
+O QUE EXATAMENTE 
+
+
+
+
+
+
+
+
+ESSE 'throw new Error', nesse 
+
+
+
+
+___MIDDLEWARE___ DE 
+
+
+'app.use()' de 'User.findById()'
+
+
+
+
+
+__ 
+
+FAZ/FARÁ POR NÓS? ------------> O PROFESSOR HAVIA 
+
+MENCIONADO,
+
+
+
+NO INÍCIO 
+
+
+
+DESSE MÓDULO DE ERROR HANDLING,
+
+
+
+QUE 
+
+
+AQUELE 
+
+trecho 
+
+
+
+'  .catch((err) => {
+      console.log(err);
+      throw new Error(err); ///ESTE aqui
+  
+    });
+
+'
+
+
+
+
+
+
+
+
+
+EVENTUALMENTE 
+
+SE 
+ 
+TORNARIA IMPORTANTE... --------> BEM... ------>  O PROFESSOR 
+
+
+
+EXPLICA QUE 
+
+
+DESSA FORMA AÍ,
+
+
+
+ESCRITO 
+
+
+SIMPLESMENTE 
+
+ASSIM:
+
+
+
+
+
+'throw new Error(err);',
+
+
+
+
+
+
+
+
+
+ESSE ___ THROW__ DESSE __ ERROR __ NÃO VAI FAZER COISA ALGUMA,
+
+
+INFELIZMENTE... (wont do anything) --->  O PROFESSOR 
+
+
+
+COMEÇA NOSSO SERVER MAIS UMA VEZ,
+
+
+
+E 
+
+
+
+AÍ 
+
+ELE 
+
+
+ASSEGURA 
+
+
+QUE 
+
+
+CONSIGAMOS UM 
+
+
+
+ERRO 
+
+
+NESSE CÓDIGO AI,
+
+PARA 
+
+QUE SEJA TRIGGADO ESSE 'throw new Error'...
+
+
+(ele faz isso por meio do WRITE DE UM DUMMY ERROR....)
+
+
+
+
+
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+
+  if(!req.session.user) {
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+        throw new Error('Dummy'); ///ESTE ERRO AQUI VAI TRIGGAR AQUELE CATCH BLOCK, QUE VAI TRIGGAR AQUELE THROW DE ERRO de 'err'...
+      if(!user) { 
+        return next();
+  }
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err); ///ESTE AQU
+  
+    });
+});
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+OK.... VAMOS DAR ESSE THROW AÍ SIMPLESMENTE PARA _ SIMULAr_ ALGUMA COISA DANDO ERRADO....
+
+
+
+
+
+
+
+
+
+
+
+-----> CATCH BLOCK VAI CATCHEAR ESSE NEGÓCIO, E AÍ VAI 'HANDLAR'... -------> 
+
+
+
+
+
+
+
+
+
+QUANDO ELE HANDLA, ELE VAI EXECUTAR ESSE 
+
+
+'throw new Error(err);'
+
+
+
+
+E _ AÍ ___ 
+
+
+
+VAI ___ CRASHAr____ --> 
+
+
+
+
+VAI 
+
+CRASHAR,
+
+VAI CARREGAR INFINITAMENTE,
+
+
+
+
+
+
+JUSTAMNETE  PQ TEREI CONSEGUIDO AQUELE ERRO DE 
+
+
+
+'
+Error: Error: Dummy'...
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK.... ISSO SIGNIFICA QUE __ ISSO AÍ, AGORA_, 
+
+'IS NOT DOING ANYTHING'... -------> 
+
+
+
+
+SIGNIFICA QUE 
+
+NOSSO APP __aINDA ESTÁ CRASHANDO__, 
+
+
+
+
+
+
+____ POR ISSO UM 
+
+
+
+
+'IMPORTANT TAKEAWAY'
+
+É 
+ 
+
+ QUE 
+
+ FAZER 
+ o 
+
+ THROW 
+
+ DE 
+
+ 1 
+
+
+ ERROR 
+
+
+ em 
+
+
+ 
+ ''''''
+
+
+
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err); ///ESTE AQU
+  
+    });
+
+
+
+''''''''
+
+
+
+
+
+
+--------------------------> ESSE THROW DESSE ERRO, DE FORMA PORCA NESSE LUGAR,
+
+
+
+'DOES NOT LEAD TO OUR GENERAL ERROR HANDLING MIDDLEWARE',
+
+
+
+
+não leva À execução de nosso error handling middleware 
+
+
+especial de 
+
+
+
+''''''''''
+
+
+
+
+
+
+app.use( ///////MIDDLEWARE ESPECIAL DO EXPRESS. USADO PARA HANDLING DE ERROS... (o express identifica que ele é especial POR MEIO DOS SEUS 4 ARGUMENTOS, 'error, req, res, next'...)
+(error, req, res, next) => { //para acessar/executar o código contido nesse MIDDLEWARE/nesses middlewares especial/especiais, basta USAR A FUNÇÃO 'next()' e então passar UM ERRO COMO PARÂMETRO, TIPO ASSIM: 'next(erroQueVocêQuerPassar)' ------> SE VOCÊ USAR ISSO EM ALGUM LUGAR DO SEU CO´DIGO, ESSE CALL VAI AUTOMATICAMETNE TRIGGAR ESTE MIDDLEWARE AQUI, de 'error, req, res, next'...
+//e sim, a execuçaõ desse middleware especial vai pular ATÉ MESMO A EXECUÇAÕ DE 'error404' (que é o middleware/route 'unknown' de nosso app, que faz catch de todos os paths/routes não compreendidos por 'adminRoutes', 'authRoutes', etc...)
+
+    res.redirect('/500'); //ver controller de 'error500', lá em 'error.js'...
+
+}
+
+); 
+
+
+
+
+''''''''
+
+
+
+
+
+
+
+
+
+-----> E ISSO É ___ BEM IMPORTANTE__.... ------> NOSSO 
+
+
+
+MIDDLEWARE ESPECIAL __ NÃO SERÁ ATIVADO__ JUSTAMENTE 
+
+
+PQ 
+
+
+LÁ 
+
+
+
+
+
+em 
+
+
+
+'.catch(err => {
+    throw new Error(err);
+})'
+
+
+
+
+__NÓS __ AINDA ESTAMOS 
+
+
+DENTRO __ DE CÓDIGO ASSÍNCRONO,
+
+
+AINDA ESTMAOS 
+
+
+
+'INSIDE A PROMISE, INSIDE A THEN/CATCH BLOCK'... ----------> SE VOCÊ 
+
+
+
+
+FAZ THROW DE ERRORS DENTRO DE PROMISES,
+
+
+
+
+
+_________ VOCê __ NÃO VAI___ CONSEGUIR 'REACH THAT 
+
+
+EXPRESSJS SPECIAL ERROR HANDLING MIDDLEWARE'... (e isso é uma MÁXIMA, sempre vai acontecer....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BASTA __ EXAMINAR__ QUALQUER OUTRO CONTROLLER PARA __ PERCEBER QUE ISSO É VERDADE...
+
+
+
+
+
+
+
+CÓDIGO DE UM CONTROLLER QUALQUER:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+
+  Product.find() 
+    .populate('userId', 'name') 
+    .then((products) => {
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error); /////ESCREVEMOS APENAS ISTO, MAS NÃO FIZEMOS 'throw new Error(err)', COMO FIZEMOS NAQUELE CÓDIGO EXEMPLO do catch block, visto logo acima....
+
+
+}) 
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+OU SEJA,
+
+
+EM TODOS 
+
+OS LUGARES ANTERIORES NÓS __ HAVÍAMOS APENAS __ 
+
+ESCRITo 
+
+
+
+
+'return next(error)',
+
+
+PASSAMOS 
+
+
+
+1 'OBJETO ERROR' 
+
+
+
+
+A 
+
+ESSE 
+
+CALL 
+
+DE 'NEXT',
+
+
+
+
+MAS __ nunca __ USAMOS __ EFETIVAMENTE 
+
+
+
+
+
+
+o write de 
+
+'throw new Error()'
+
+
+
+DENTRO DO CATCH BLOCK....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> realmente, parece que __ NÃO FUNCIONA CHAMAR 'throw new Error()' 
+
+DENTRO DOS 
+
+then/CATCH BLOCKS (isso se REALMENTE PLANEJARMOS USAR O 'SPECIAL EXPRESSJS ERROR HANDLING MIDDLEWARE', o middleware CENTRAL de error handling,  lá em 'app.js')
+
+
+
+
+
+
+
+
+
+
+---------> A PARTE INTERESSANTE, DIZ O PROFESSOR, É QUE 
+
+
+
+SE 
+
+
+
+
+__TENTARMOS/REALMENTE ESCREVERMOS ___ 
+
+
+
+
+
+
+'throw new Error()'
+
+
+
+
+
+__ DO LADO ___ DE FORA__ 
+
+
+DE 
+
+'THEN/CATCH' blocks,
+
+
+
+
+
+____ OU SEJA,
+
+
+__fORA __DE ASYNC CODE_,
+
+
+
+
+
+
+EM LUGARES EM QUE 
+
+CÓDIGO EXECUTAM DE FORMA __ SÍNCRONA_,
+
+
+
+
+
+
+
+
+
+
+FORA DE CALLBACKS/THEN-CATCH BLOCKS,
+
+
+
+SE FIZERMOS 
+
+
+
+ALGO ___ASSIM__:
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+     throw new Error('Sync D ummy'); /////////ASSIM, FZER ESSE THROW __ FORA__ DO CÓDIGO ASSÍNCRONO (then/catch) , SE FIZERMOS ESSE THROW ASSIM, o resultado será diferente...
+  if(!req.session.user) {
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+       
+      if(!user) { 
+        return next();
+  }
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err); 
+  
+    });
+});
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+aquele THROW DE ERROR agora está _ NO LUGAR __DE FORA 
+
+DE CÓDIGO ASSÍNCRONO ( ou seja, é executado de forma SÍNCRONA)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ok.... -------> se fizermos ISSO E RECARREGARMOS NOSSA PÁGINA,
+
+
+
+
+
+__NÓS VAMOS PERCEBER__ QUE 
+
+
+
+___ O NOSSO APP __ AINDA VAI TENTAR 
+
+'LOAD THE 500 PAGE', MAS 
+
+
+ELE 
+
+
+_ VAI __ FALHAR___  O LOAD.... -------> O LOAD VAI FALHAR PQ 
+
+
+
+
+
+
+
+
+
+
+
+
+1) NÓS TEMOS NOSSO MIDDLEWARE, em 'app.js',
+
+QUE 
+
+
+FAZ O RETRIEVE DO USER,
+
+
+
+por meio de 
+
+
+
+
+
+app.use((req, res, next) => { 
+
+     throw new Error('Sync Dummy'); /////////ASSIM, FZER ESSE THROW __ FORA__ DO CÓDIGO ASSÍNCRONO (then/catch) , SE FIZERMOS ESSE THROW ASSIM, o resultado será diferente...
+  if(!req.session.user) {
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+       
+      if(!user) { 
+        return next();
+  }
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err); 
+  
+    });
+});
+
+
+
+
+
+
+
+
+
+
+2) O PROBLEMA, NESSE CÓDIGO, É QUE TEMOS ESSE 
+
+'throw new Error'.... ------------> esse 'throw new Error'
+
+
+__ FUNCIONA, É EXECUTADO, MAS O PROBLEMA É QUE __ ELE __ É EXECUTADO 'FOR EVERY INCOMING REQUEST'...
+
+
+
+
+
+
+
+3) como esse throw do erro de 'Sync Dummy' FAZ COM QUE __ 
+
+SEJA __ TRIGGADO__ NOSSO SPECIAL ERROR HANDLING MIDDLEWARE,
+
+
+
+
+
+O CÓDIGO DELE É EXECUTADO, CÓDIGO QUE É:
+
+
+app.use( 
+(error, req, res, next) => {
+    res.redirect('/500'); 
+
+}
+
+); 
+
+
+
+
+
+
+
+
+
+----------> OU SEJA,
+
+É UM _CÓDIGO DE REDIRECT... ----> o problema é que QUANDO REDIRECIONAMOS,
+ 
+ NÓS __ SEMPRE__  __ PERDEMOS__ O REQUEST ANTIGO... (é substituído por um NOVO REQUEST),
+
+
+
+ o que 
+
+ significa que __ UM NOVO _ REQUEST 
+
+ é 
+
+
+ FORMULADO...
+
+
+
+
+
+
+
+
+4) ESSE REQUEST__ VAI _ EXECUTAR 
+
+ESSE MESMO CÓDIGO,
+
+vai executar 
+
+
+'''
+
+
+
+app.use((req, res, next) => { 
+
+     throw new Error('Sync Dummy'); /////////ASSIM, FZER ESSE THROW __ FORA__ DO CÓDIGO ASSÍNCRONO (then/catch) , SE FIZERMOS ESSE THROW ASSIM, o resultado será diferente...
+  if(!req.session.user) {
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+       
+      if(!user) { 
+        return next();
+  }
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err); 
+  
+    });
+});
+
+
+
+
+
+
+
+'''
+
+
+
+
+
+______ DE NOVO__.... 
+
+
+
+
+
+
+
+
+
+
+5) nesse código, temos aquele 'throw new Error()' do Sync Dummy,
+
+
+QUE __ VAI ___ EXECUTAR__ 
+
+
+
+MAIS 
+
+1 VEZ... -_> e isso VAI ACONTECER PARA SEMPRE, 
+
+PQ 
+
+
+TERÁ 
+
+SIDO 
+
+CRIADO 
+
+
+1 
+
+LOOP (por conta desse redirect + throw de um novo error, que resulta em um novo redirect, que por sua vez resulta em um novo throw de error, que resulta em um novo redirect, etc etc...)
+
+
+
+
+
+
+
+
+
+
+
+--> E É POR ISSO QUE NOSSA PAGE de '500' NUNCA ACABA SENDO CARREGADA; é POR CONTA DESSE LOOP AÍ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> UMA SOLUÇÃO AQUI,
+ 
+
+ EXPLICA O PROFESSOR,
+
+ É 
+
+
+ SIMPLESMENTE ___ NÃO REDIRECIONAR__ 
+
+à 
+
+page de 
+
+'500'
+
+
+
+por meio dessa lógica de 
+
+
+''
+
+
+
+
+
+
+app.use( 
+(error, req, res, next) => {
+    res.redirect('/500'); 
+
+}
+
+); 
+
+
+
+
+
+
+
+'''
+
+
+
+
+
+
+--> EM VEZ DE EXECUTAR ESSA LÓGICA DE 
+
+
+redirect 
+
+
+NO NOSSO 'SPECIAL ERROR HANDLING MIDDLEWARE',
+
+
+
+
+PROFESSOR 
+
+
+
+
+NOS EXPLICA QUE 
+
+A 
+
+SOLUÇÃO É 
+
+
+
+RENDERIZAR 
+ESSA 
+
+PAGE DE 
+
+
+
+
+'500'
+
+
+DIRETAMENTE,
+POR MEIO DE 
+
+'
+res.status(500).render()',
+
+
+O CÓDIGO QUE TÍNHAMOS NO NOSSO CONTROLLER 
+
+de 
+
+
+
+
+'error.js', lá em 'error500'...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+''''
+
+app.use( 
+(error, req, res, next) => {
+   
+
+
+        res.status(500).render('500', {
+
+            pageTitle: 'Error!',
+            path: '/500',
+            isLoggedIn: req.session.isLoggedIn
+        })
+
+}
+
+); 
+
+
+
+'''''
+
+
+
+
+
+
+
+
+
+
+-------> OK... MAS AO FAZERMOS ISSO,
+ 
+
+ RECEBEMOS OUTRO ERRO,
+
+
+ ERRO DE 
+
+
+ 'csrfToken is not defined'.... --> ISSO OCORRE DEVIDO __À ORDEM DE EXECUÇÃO DE NOSSO CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+ NOSSO CÓDIGO DE 'app.js'
+
+ ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const csrfProtection = csrf(); 
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, 
+    }
+  )
+);
+
+
+
+app.use(csrfProtection); 
+
+app.use(flash()); 
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+
+  if(!req.session.user) { //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+  }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err);
+  
+    });
+});
+
+
+
+
+
+app.use((req, res, next) => { 
+
+res.locals.isLoggedIn = req.session.isLoggedIn;
+console.log('LOCALS SET')
+res.locals.csrfToken = req.csrfToken();
+
+  next(); 
+}
+)
+
+
+
+
+app.use((req, res, next) => {
+
+  next();
+});
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404);
+
+
+app.use( 
+(error, req, res, next) => { 
+    res.redirect('/500'); //ver controller de 'error500', lá em 'error.js'...
+
+}
+
+); 
+
+
+
+
+
+
+ 
+mongoose
+  .connect(
+  // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+
+      app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+ 
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+---------->  O PROBLEMA ESTÁ NO CÓDIGO __ QUE GERA__ NOSSA CSRFTOKEN/a insere na nossa session...
+
+
+
+
+
+
+
+
+
+--> o trecho em que esse problema reside é:
+
+
+
+
+
+app.use((req, res, next) => { 
+
+res.locals.isLoggedIn = req.session.isLoggedIn;
+console.log('LOCALS SET')
+res.locals.csrfToken = req.csrfToken();
+
+  next(); 
+}
+)
+
+
+
+
+
+
+
+
+
+
+-------> A SOLUÇÃO É PEGAR ESSE TRECHO DE NOSSO CÓDIGO E O __ COLOCAR__ 
+
+
+ANTES DE 
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+////////ANTES, LOGO AQUI...
+
+
+
+app.use((req, res, next) => { 
+
+        throw new Error('Sync Dummy');
+  if(!req.session.user) { 
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { 
+        return next();
+  }
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err);
+  
+    });
+});
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+SE FIZERMOS ISSO, ESSE ERRO DE 
+
+
+
+'csrfToken is not defined'
+
+
+__SERÁ RESOLVIDO__...
+
+
+
+
+
+
+
+
+
+
+EX(código final):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const csrfProtection = csrf(); 
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, 
+    }
+  )
+);
+
+
+
+app.use(csrfProtection); 
+
+app.use(flash()); 
+
+
+app.use((req, res, next) => { ////////EIS O CÓDIGO EM QUESTÃO.
+
+res.locals.isLoggedIn = req.session.isLoggedIn;
+console.log('LOCALS SET')
+res.locals.csrfToken = req.csrfToken();
+
+  next(); 
+}
+)
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+
+  if(!req.session.user) { //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+  }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err);
+  
+    });
+});
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+
+  next();
+});
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404);
+
+
+app.use( 
+(error, req, res, next) => { 
+
+                  res.status(500).render('500', { ///////EIS O CÓDIGO EM QUESTÃO.
+
+            pageTitle: 'Error!',
+            path: '/500',
+            isLoggedIn: req.session.isLoggedIn
+        })
+
+
+}
+
+); 
+
+
+
+
+
+
+ 
+mongoose
+  .connect(
+  // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+
+      app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+ 
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> ESSE 
+
+
+
+
+CÓDIGO VAI EVITAR 'INFINITE LOOPS'...
+
+
+
+
+
+
+-------------> MAS A PARTE INTERESSANTE DESSE CÓDIGO É QUE 
+
+
+
+
+
+O THROW DAQUELE ERRO NO __CÓDIGO SÍNCRONO( throw de 'Sync Dummy') 
+
+
+
+
+
+
+____ AINDA __ VAI NOS DEIXAR 
+
+'
+REACH THAT GLOBAL ERROR HANDLING MIDDLEWARE' 
+
+
+de 
+
+
+
+
+
+'''''''''''
+
+app.use( 
+(error, req, res, next) => { 
+
+                  res.status(500).render('500', { 
+
+            pageTitle: 'Error!',
+            path: '/500',
+            isLoggedIn: req.session.isLoggedIn
+        })
+
+
+}
+
+); 
+
+
+
+
+'''''''''''''
+
+
+
+
+
+
+
+
+
+
+
+--------> A RAZÃO PARA ISSO,
+
+EXPLICA O PROFESSOR,
+
+É QUE 
+
+
+
+
+
+
+
+EM 
+
+
+
+'SYNC PLACES' (fora de callbacks e promises),
+
+
+
+__ VOCÊ FAZ 
+
+'THROW DE UM ERROR'
+
+E 
+
+AÍ 
+
+
+O __ 
+
+EXPRESS VAI REALMENTE 
+
+
+'AUTOMATICALLY DETECT THIS'
+
+
+
+e 
+
+
+aí 
+
+
+VAI __ EXECUTAr__ 
+
+
+
+
+SEU 
+
+
+'PRÓXIMO ERROR HANDLING MIDDLEWARE'....  --------> JÁ _ DENTRO __ DE 
+
+
+
+
+
+CÓDIGOS ASSÍNCRONOS, CÓDIGOS 
+
+
+COMO 
+
+
+'PROMISES'/then-catch/callbacks,
+
+
+
+
+
+
+
+
+
+___ ESSE THROW DE ERROS, DE FORMA PORCA, 
+
+
+
+_______NÃO FUNCIONA__, entretanto... ---------> DENTRO 
+
+
+
+
+
+
+______ DE CÓDIGO_ SÍNCRONO,
+
+
+SOMOS ___ OBRIGADOS___ A 
+
+USAR 
+
+
+'throw new Error',
+
+
+
+
+
+PQ É 
+ISSO QUE VAI FUNCIONAR...
+
+
+
+
+
+
+
+
+
+
+JÁ __ DENTRO __ DE CÓDIGO __ ASSÍNCRONO___, 
+
+
+DEVEMOS 
+
+USAR 
+
+
+
+'next(error)',
+
+PQ 
+
+É 
+
+ISSO QUE VAI FUNCIONAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESUMO:
+
+
+
+
+
+
+
+
+
+
+
+CÓDIGO SYNC --> devemos usar 'throw new Error()', pq é ISSO QUE __ VAI TRIGGAR __ A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE' no app.js...
+
+
+
+
+
+
+
+
+CÓDIGO ASYNC --> DEVEMOS USAR 'next(error)', PQ É __ ISSO QUE VAI TRIGGAR A  NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE' lá no app.js...
+
+
+
+
+
+
+
+
+
+
+ok.... 
+
+
+ENTENDI.
+
+
+
+
+
+
+
+
+RESUMO - DENTRO DE CATCH BLOCKS, use 'next(new Error(error))', DENTRO DE CÓDIGO SÍNCRONO, use 'throw new Error()', essa É A MORAL, E É ASSIM QUE DEVEMOS ESCREVER NOSSO ERROR HANDLING, para que funcione
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> ok...... O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+  // throw new Error('Dummy'); //// exemplo de THROW DE ERROR em códigos SÍNCRONOS (que vai REALMENTE TRIGGAR o special express error handling middleware, ao contrário do throw de Error em CÓDIGOS_ _ ASSÍNCRONOS, que não funciona)...
+  if(!req.session.user) { //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+  }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+      // throw new Error(err); //NUNCA FAÇA ASSIM.... não faça o THROW DE ERRORS dentro de código assíncrono (dentro de CALLBACKS, THEN-CATCH BLOCKS e async/await), PQ ESSES THROWS __ NÃO VÃO TRIGGAR__ O SEU 'SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE' (só será triggado esse middleware SE SEU 'throw new Error()' for escrito FORA DE CÓDIGO ASSÍNCRONO, em código SÍNCRONO....) --> PARA CONSEGUIR 'REACH OUT' AO SPECIAL EXPRESS ERROR HANDLING MIDDLEWARE __ DENTRO _DE CÓDIGO ASSÍNCRONO (como promises/then-catch, callbacks e async/await), VOCê É __ OBRIGADO__ A USAR 'next(new Error(error))'...
+    });
+});
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+------>  É ASSIM QUE CONSEGUIMOS FAZER 
+
+
+ESSE 
+
+
+throw/next 
+SER 
+
+DETECTADO 
+
+PELO 
+
+
+
+EXPRESS,
+
+
+
+
+E É __ ISSO QUE _ USAMOS EM TODOS NOSSOS OUTROS ARQUIVOS,
+
+
+
+como 
+
+OBSERVADO NO CÓDIGO de 
+
+
+
+
+''
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+
+  Product.find() 
+    .populate('userId', 'name') 
+    .then((products) => {
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error); /////ESCREVEMOS APENAS ISTO, MAS NÃO FIZEMOS 'throw new Error(err)', COMO FIZEMOS NAQUELE CÓDIGO EXEMPLO do catch block, visto logo acima....
+
+
+}) 
+
+
+
+
+
+
+
+
+
+''
+
+
+
+
+
+
+
+
+E OUTROS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+
+
+
+
+
+DENTRO DE CÓDIGO ASYNC/THEN-CATCH,
+
+
+USE 
+
+
+
+'next(new Error(error))';
+
+
+
+
+
+
+
+
+
+
+FORA DESSE TIPO DE CÓDIGO, USE 
+
+
+
+
+'throw new Error(error);'
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+ok.....
+
+
+
+resumo da lição:
+
+
+
+
+
+
+
+
+1) VOCÊ DEVE 'AVOID INFINITE LOOPS',
+
+
+LOOPS TRIGGADOS POR SEU 'ERROR HANDLING MIDDLEWARE',
+
+
+COMO o que observamos no 
+
+
+comportamento entre 
+
+
+'
+redirect('500') -> throw new Error()' (no nosso middleware)
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+2) VOCÊ PODE FAZER 'THROW THE ERROR' EM LUGARES EM QUE TEMOS '
+
+SYNC CODE'.... (mas não DENTRO DE PROMISES, THEN-CATCH, CALLBACKS, async/await... ESSES SÃO LUGARES EM QUE 
+VOCÊ PRECISA USAR 'next(new Error(error));'
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1285 @@
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> NÓS HAVÍAMOS ADICIONADO AQUELA 
+
+
+ LÓGICA DE 
+
+ 'FILE STORAGE' 
+
+
+ ao nosso model de 'product',
+
+
+
+
+
+
+ E AGORA DEVEMOS 
+
+
+ MELHORAR UM POUCO 
+
+
+ O CÓDIGO NO NOSSO MODEL... -----------> 
+
+
+
+
+
+
+
+
+
+ NÓS ESTAMOS REUSANDO PEDAÇOS DE CÓDIGO NO  NOSSO MODEL,
+
+ E 
+
+ ISSO 
+
+ PEDE POR ALGUMA OPTIMIZATION..
+
+
+
+
+
+ ---> OPTIMIZATION/REFACTORING --------> 
+
+
+
+
+
+
+
+
+PARA ISSO, PROFESSOR DECIDE CRIAR UMA HELPER FUNCTION,
+
+
+
+A QUAL 
+
+
+
+
+  
+
+  ARMAZENA EM UMA CONSTANTE CHAMADA 
+
+  de 
+
+  'getProductsFromFile'....
+
+
+
+
+
+
+
+
+
+
+  --------> 
+
+
+  ex:
+
+
+
+
+
+  const getProductsFromFile = () => {
+
+  }
+
+
+
+
+
+
+  -------------------------
+
+
+
+
+  --> ESSA __HELPER FUNCTION 
+
+  VAI 
+
+  FAZER AQUELA MÃO DE 
+
+  'PATH CONSTRUCTION' para nós,
+
+
+
+
+  E TAMBÉM 
+
+
+  VAI FAZER 
+
+  'READ' DE NOSSO ARQUIVO.... 
+
+
+
+
+
+
+
+  ( ou seja,
+  
+  
+  
+  ELA 
+  
+  VAI 
+
+  BASICAMENTE 
+
+
+
+
+  AGRUPAR OS CÓDIGOS DE 
+
+
+
+  '''
+
+
+const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+''''
+
+
+
+
+
+e  
+
+
+'''''''''''''''''''
+
+static fetchAll(callback) {
+  
+  
+  fs.readFile(filePath, (err, fileContent) => {
+ 
+         if(err) {
+           alert('Whoops, something went wrong. No products are displayed...');
+          callback([]);
+         }
+
+
+        callback(JSON.parse(fileContent));
+       })
+     
+   }
+
+'''''''''''''''''''
+
+
+
+  
+  
+  )
+
+
+
+
+
+
+
+
+
+
+  --------> CERTO....
+
+
+
+
+
+
+  PROFESSOR VAI QUERER ESPECIFICAMENTE A PARTE DE DENTRO DE 
+
+  'fetchAll()':
+
+
+
+
+
+
+
+    fs.readFile(filePath, (err, fileContent) => {
+ 
+         if(err) {
+           alert('Whoops, something went wrong. No products are displayed...');
+          callback([]);
+         }
+
+
+        callback(JSON.parse(fileContent));
+       })
+     
+
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+NOSSA FUNÇÃO 
+
+
+
+'getProductsFromFile'
+
+
+
+
+VAI FICAR ASSIm:
+
+
+
+
+
+
+const getProductsFromFile = () => {
+
+        const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+
+
+
+            fs.readFile(filePath, (err, fileContent) => {
+
+                if (err) {
+                    callback([]);
+                }
+                
+
+                calllback(JSON.parse(fileContent);)
+
+
+            })
+
+
+
+}
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+PARA QUE ESSA FUNÇÃO FUNCIONE, PROFESSOR NOS EXPLICA QUE 
+
+ELE AINDA VAI 
+
+
+PRECISAR 
+
+DAQUELE 
+
+'cb/callback'
+COMO 
+
+
+PARÂMETRO....
+
+
+
+
+
+
+
+
+----> 
+
+
+
+ex:
+
+
+
+
+
+const getProductsFromFile = (callback) => {
+
+        const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+
+
+
+            fs.readFile(filePath, (err, fileContent) => {
+
+                if (err) {
+                    callback([]);
+                }
+                
+
+                calllback(JSON.parse(fileContent);)
+
+
+            })
+
+
+
+}
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+EX
+
+
+
+
+const getProductsFromFile = (callback) => { ////agrupa tanto a LÓGICA de PATHBUILDING (filePath) COMO A DE 'READFILE', que estava em 'fetchAll'...
+  const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    }
+
+    callback(JSON.parse(fileContent));
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+---------> E É CLARO QUE 
+
+
+
+ELE VAI QUERER SUBSTITUIR AQUELE CALL DE 'fetchAll()' lá  NO CONTROLLER 
+
+
+
+'products.js'
+
+
+POR 
+
+ESSA FUNÇÃO 
+
+
+DE 
+
+'getProductsFromFile'....
+
+
+
+
+
+
+
+
+
+
+--> E PROFESSOR EXPLICA QUE É CLARO QUE AINDA VAMOS PRECISAR DESSE ARGUMNETO 
+
+
+
+'callback',
+
+
+justamente pq 
+
+
+
+___ NÓS AINDA EXECUTAMOS ESSA FUNÇÃO lá no final de 'readFile',
+
+
+
+AINDA A EXECUTAMOS LÁ, com 'callback([])'/'callback(JSON.parse(fileContent))',
+
+
+
+
+E AINDA 
+
+
+
+
+
+__FAZEMOS, NO FINAL DAS CONTAS__, 
+
+
+
+o  RETURN DO VALOR DE 'READ FILE' 
+
+
+COMo 
+
+'products',
+
+DENTRO DESSA CALLBACK FUNCTION 'callback' (Que é '(products) => {...}')
+
+
+
+
+
+
+
+--------> esse código 
+
+aí,
+
+
+
+
+ESSE CÓDIGO TODO CONFUSO ASSÍNCRONO ___ 
+
+
+
+
+
+EXISTE DESSA FORMA TUDO DEVIDO 
+
+AO 
+
+
+
+FATO 
+
+
+
+DE 
+
+
+'fs.readFile'
+
+
+__DEMORAR UM POUCO__ PARA COMPLETAR SUA OPERAÇÃO_, 
+
+
+
+
+E COMO __ ELE __ DEMORA UM POUCO PARA COMPLETAR A SUA OPERAÇÃO,
+
+
+
+
+NÓS SOMOS OBRIGADOS A RECORRER A UMA FUNÇÃO(À callback function, 'callback') 
+
+
+PARA __ COMUNICAR __ O 'getProductsFromFile'
+
+
+
+__ QUE 'A OPERAÇÃO DE READ FILE ACABOU'... (esse é o propósito desse 
+
+argumento 
+
+'callback',
+
+
+
+___ CALL US BACK/call the function back...)
+
+
+
+
+
+
+
+
+
+
+-> ou seja,
+
+
+
+ESSA HELPER FUNCTION AINDA TEM O MESMO PADRÃO DE 'fetchAll':
+
+
+
+
+
+ELA __ RECEBE/EXIGE UMA FUNÇÃO __ 'callback',
+
+
+Q QUAL 
+
+
+
+ELA ___ EXECUTA 'ONCE ITS DONE READING THE FILE' ( ou seja, QUANDO 
+
+
+O 'readFile' ACABAR SUA PRÓPRIA OPERAÇÃO 
+
+
+
+E 
+
+
+EXECUTAR SEU PRÓPRIO CALLBACK, que 
+
+
+é 
+justamente 
+
+'callback()'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> COM ISSO,
+
+
+
+
+
+COM ESSE 'getProductsFromFile' 
+
+
+TUNADO,
+
+
+PROFESSOR DIZ QUE 
+
+A ÚNICA COISA QUE 
+
+TEMOS QUE FAZER, AGORA,
+
+
+
+É 
+
+
+__CHAMÁ-LO 
+
+
+DENTRO 
+
+DE 
+
+'static fetchAll()',
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+static fetchAll(cb) {
+    getProductsFromFile(cb);
+}
+
+
+
+
+
+
+
+-> VAMOS CHAMAR ESSA FUNÇÃO 'fetchAll'
+
+
+
+
+
+E AÍ FORWARDAR NOSSO CALLBACK, A FUNÇÃO 'callback',
+
+PARA QUE 
+
+
+AÍ NADA 
+
+
+DÊ ERRADO.... 
+
+
+
+
+
+
+
+
+
+
+
+
+EX(código até agora):
+
+
+
+
+
+
+const getProductsFromFile = (callback) => { ////agrupa tanto a LÓGICA de PATHBUILDING (filePath) COMO A DE 'READFILE', que estava em 'fetchAll'...
+  const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    }
+
+    callback(JSON.parse(fileContent));
+  });
+};
+
+
+
+
+
+
+
+      static fetchAll(cb) {
+            getProductsFromFile(cb);
+
+      }
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+PROFESSOR ENTÃO FALA DO CÓDIGO DE 'save()',
+
+
+QUE É ESTE:
+
+
+
+
+
+
+
+
+
+
+  save() {
+    fs.readFile(filePath, (err, fileContent) => {
+      let products = [];
+
+      if (!err) {
+        products = JSON.parse(fileContent);
+      }
+
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+    });
+  }
+
+
+
+
+
+--> SE VOCÊ 
+
+
+
+
+VER BEM,
+
+essa é a MESMA LÓGICA QUE 
+
+TEMOS 
+
+
+LÁ 
+
+
+Em 
+
+'getProductsFromFile' 
+
+
+(pq 
+
+
+
+lá em 
+
+'getProductsFromFile', SÓ QUE SEM O CALL DE UMA FUNÇÃO 'callback()',
+
+
+pq 
+
+LÁ 
+
+NÓS TAMBÉM OU:
+
+
+1) RETORNAMOS UM EMPTY ARRAY ([]) 
+
+
+
+2) RETORNAMOS NOSSO PARSED CONTENT (JSON.parse(fileContent))
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OU SEJA...
+ 
+ DESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+ 
+  save() {
+    fs.readFile(filePath, (err, fileContent) => {
+      let products = [];
+
+      if (!err) {
+        products = JSON.parse(fileContent);
+      }
+
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+--> TEMOS ISTO:
+
+
+
+
+
+
+
+
+  save() {
+    fs.readFile(filePath, (err, fileContent) => { //MESMA LÓGICA 
+      let products = []; /// MESMA LÓGICA
+
+      if (!err) {
+        products = JSON.parse(fileContent); ///MESMA LÓGICA
+      }
+
+      products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+    });
+  }
+
+
+
+
+
+
+
+
+--> OS ÚNICOS PEDAÇOS 
+
+QUE 
+
+
+SÃO 
+
+
+REALMENTE DIFERENTES SÃO ESTES:
+
+
+
+  products.push(this);
+
+      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+        console.log(err);
+      });
+
+
+
+---------------------------
+
+
+
+
+
+
+
+-------> É POR ISSO QUE PODEMOS SIMPLESMENTE PEGAR ESSAS PARTES DIFERENTES 
+
+
+___E  PASSA-LAS 
+
+COMO 
+
+
+__ O 'callback'
+
+A 
+SER 
+
+EXECUTADO 
+
+por 
+
+'getProductsFromFile',
+
+
+
+justamente pq a lógica é a mesma...
+
+
+
+
+
+
+
+
+
+
+FICARÁ TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  save() {
+      getProductsFromFile((products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+ 
+
+  }
+
+
+
+
+  ------------------------------------
+
+
+
+
+
+
+
+
+  ISSO AÍ BASICAMENTE VAI SE APROVEITAR DA LÓGICA DE 'getProductsFromFile',
+
+
+  QUE É ISTO AQUI:
+
+
+
+
+  const getProductsFromFile = (callback) => { ////agrupa tanto a LÓGICA de PATHBUILDING (filePath) COMO A DE 'READFILE', que estava em 'fetchAll'...
+  const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    }
+
+    else {
+    callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+
+
+
+
+
+
+----> ou seja, é uma função que EXECUTA UM CALLBACK, callback que será justamnete 
+
+
+
+esse código de 
+
+'''
+
+(products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      }
+'''
+,
+
+NESSE 
+
+
+CASO 
+
+DE 
+
+'save() {}'...
+
+
+
+
+
+-----------------------------------
+
+
+OK, TEMOS UMA 
+
+
+VERSÃO 
+
+MAIS SLIM 
+
+
+
+DE 
+
+
+'product.js',
+
+
+POIS AGORA ESTAMOS REUTILIZANDO CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+----> e nosso código ainda funciona...
+
+
+
+
+
+
+
+
+--> MAS RECEBEMOS UM ERRO__... RECEBEMOS UM ERRO PQ 
+
+O 
+
+'PATH' NÃO ESTÁ DEFINED... --> ISSO ACONTECE PQ SÓ ESTAMOS 
+
+DEFININDO 
+
+O 
+
+PATH LÁ NA NOSSA 'HELPER FUNCTION' de 'getProductsFromFile no momento,
+
+
+
+
+
+E EXISTEM 
+
+VÁRIAS MANEIRAS
+ 
+
+
+
+
+DE RESOLVER ESSE PROBLEMA.... -----> UMA DAS MANEIRAS MAIS FÁCEIS, DIZ O PROFESSOR,
+
+
+É SIMPLESMENTE 
+CRIAR ESSE PATH COMO UMA 
+
+
+global 
+
+HELPER CONSTANT (que é o que eu geralmente faço)....
+
+
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO, NO FINAL, FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+const pathHelper = require('../util/path');
+
+const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+
+const getProductsFromFile = (callback) => { 
+
+
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    }
+
+    else {
+    callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+
+
+
+
+
+
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+
+
+
+  
+  save() {
+      getProductsFromFile((products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+ 
+
+  }
+
+
+
+
+
+      static fetchAll(cb) {
+            getProductsFromFile(cb);
+
+      }
+  
+
+
+
+  };
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+---------> COM ISSO, SALVAMOS TUDO E RECARREGAMOS.... nosso código funciona...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE __AGORA FINALMENTE SOMOS CAPAZES DE TRABALHAR DE FORMA ELEGANTE 
+
+
+
+COM NOSSOS PRODUCTS... --> somos 
+
+
+CAPAZES 
+
+DE 
+
+OS 
+
+ARMAZENAR 
+
+
+EM UMA 
+
+
+FILE (método 'save') ,
+
+
+tbm os FETCHEAR DE LÁ (read),
+
+
+
+E TUDO ISSO 
+
+
+
+POR MEIO 
+
+
+DE 
+
+
+1 'MODEL', o 'product'... -----> 
+
+
+
+
+E ISSO AÍ 
+
+é O 
+
+
+'MVC 
+
+
+PATTERN'
+
+
+
+incorporado ao nosso projeto....
+
+
+
+
+
+
+
+--> BASICAMENTE,
+
+
+
+
+
+OS 'model'
+
+
+CONCENTRAM A MAIOR PARTE DO CÓDIGO ASSÍNCRONO de nossos projetos...

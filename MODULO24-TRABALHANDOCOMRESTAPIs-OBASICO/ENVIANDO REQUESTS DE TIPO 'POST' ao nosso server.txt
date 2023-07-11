@@ -1,0 +1,1366 @@
+
+
+
+
+
+
+
+
+
+
+
+
+-----> NÓS APRENDEMOS SOBRE 'CORS'
+
+NA ÚLTIMA LIÇÃO...
+
+
+
+
+
+NOSSO CÓDIGO DO CODEPEN ESTAVA/ESTÁ ASSIM:
+
+
+
+
+
+
+<button id="get">Get Posts</button>
+<button id="post">Create Post</button>
+
+
+
+
+
+
+
+
+const getButton = document.getElementById("get");
+const postButton = document.getElementById("post");
+
+getButton.addEventListener("click", () => {
+  fetch("http://localhost:8080/feed/posts")
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+postButton.addEventListener(
+  "click",
+
+  () => {
+    fetch("http://localhost:8080/feed/post", {
+      method: "POST",
+      title: 'TEST',
+      content: 'TEST2'
+    })
+      .then(
+      (result) => {
+        
+        result.json();
+      }
+    )
+   .then(
+    (data) => {
+      console.log(data, 'LINE');
+    }
+    
+    
+    )
+      .catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO DE 'app.js'
+
+ESTÁ/ESTAVA ASSIM:
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser'); ///PRECISO DISSO PARA 'PARSE INCOMING REQUEST BODIES'...
+
+
+
+
+
+const app = express();
+
+const feedRoutes = require('./routes/feed');
+
+
+
+// app.use(bodyParser.urlencoded()); ///x-www-form-urlencoded <form> ------> USADO EM APPS NODEEXPRESS __ COMUNS__, apps que __ RECARREGAM A PAGE QUANDO UMA FORM É SUBMITTADA.... (e que NÃO TRABALHAM COM O SEND DE JSON DATA NOS REQUESTS E RESPOSNES...) --> E ISSO __ NÃO FUNCIONA COM REST APIs (SPAS e apps de tipo MOBILE...)
+
+
+
+app.use(bodyParser.json()); //////application/json  nas suas RESPONSES E REQUESTS.... --> USADO EM REST APIs, apps REACT, apps MOBILE, apps com 'DECOUPLED FRONTEND AND BACKEND'...  --> APPS SEM RELOAD DE PAGE... -------> O MÉTODO '.json()' do bodyParser é USADO PARA __ PARSEAR COM SUCESSO A JSON DATA EMBUTIDA NOS REQUESTS QUE VAO SER ENVIADOS AO NOSSO BACKEND/APP NODEEXPRESS...
+
+
+
+
+app.use(
+    (req, res, next) => { ////VER AULA 360 ---> USADO PARA __ EVITAR ERROS DE 'CORS' no nosso app..... é usado para DAR PERMISSÃO, PARA DIZER 'ITS FINE TO ACCEPT REQUESTS FROM A FRONTEND THAT IS NOT SERVED BY THE SAME SERVER THAT RUNS OUR BACKEND'....
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Method', 'POST, GET, PUT, PATCH, DELETE OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); ///content-type ---> usado para CONSEGUIR ENVIAR REQUESTS COM JSON DATA... ---> 'Authorization -->  USADO PARA FAZER COM QUE NOSSOS REQUEST OBJECTS consigam SEGURAR UM HEADER ADICIONAL QUE TERÁ 'AUTHORIZATION DATA' acerca de nossos users...
+        next(); ///necessário
+
+    }
+)
+
+
+
+app.use('/feed', feedRoutes);
+
+
+
+
+
+
+
+
+app.listen(8080); ///usamos '8080' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+AGORA O PROFESSOR QUER MOSTRAR COMO 
+
+
+
+ESSE 'GENERAL MIDDLEWARE' QUE 
+
+EVITOU O ERRO DE CORS 
+
+
+
+__ AFETA__ 
+
+
+
+
+
+NOSSOS POST REQUESTS... (route de 'create a post'....)
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR REGISTRA 1 LISTENER NO BUTTON DE 'CREATE A POST'....
+
+
+
+
+
+
+
+
+
+
+------> FETCH METHOD, 
+
+ENVIAR 1 
+
+REQUEST 
+
+A URL DE 
+
+
+
+'localhost:8080/feed/post'...
+
+
+
+
+
+
+
+
+
+
+ELE ESCREVE ISTO:
+
+
+
+
+
+
+
+
+postButton.addEventListener(
+  "click",
+
+  () => {
+    fetch("http://localhost:8080/feed/post", {
+      method: "POST",
+      title: 'TEST',
+      content: 'TEST2'
+    })
+      .then(
+      (result) => {
+        
+        result.json();
+      }
+    )
+   .then(
+    (data) => {
+      console.log(data, 'LINE');
+    }
+    
+    
+    )
+      .catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+);
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+-> 
+
+
+
+
+O CÓDIGO DO PROFESSOR, NA VERDADE, ESTÁ/ESTAVA ASSIM:
+
+
+
+
+
+postButton.addEventListener(
+  "click",
+
+  () => {
+    fetch("http://localhost:8080/feed/post", {
+      method: "POST",
+    })
+      .then(
+      (result) => {
+        
+        result.json();
+      }
+    )
+   .then(
+    (data) => {
+      console.log(data, 'LINE');
+    }
+    
+    
+    )
+      .catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+);
+
+
+
+
+
+
+
+
+-------> ELE 
+
+
+DIZ QUE 
+
+LÁ 
+
+
+
+NO 
+
+
+
+CONSOLE 
+
+
+
+OBTIVEMOS 
+
+ESSE RESULTADO:
+
+
+
+
+
+
+{
+
+    message: 'Post created successfully!",
+
+    post: 
+    id: "2018-10-09T09:14:13:2142"
+}
+
+
+
+
+
+
+
+
+
+
+
+--> entretanto, na minha versaõ do código, a única coisa que 
+
+recebi no console do chrome foi 
+
+
+
+
+'undefined'.... (estranho....)
+
+
+
+
+
+
+
+
+
+
+
+--> era um erro lógico/sintaxe,
+
+
+pq 
+
+
+EU HAVIA ESQUECIDO 'return' em 'return result.json()'... (aí o THEN BLOCK não captou...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, AGORA, QUANDO EU RECARREGUEI A PÁGINA E CLIQUEI NO 'create post',
+
+RECEBI ISTO:
+
+
+
+
+
+
+
+message: 'Post created successfully', post: {…}}message: "Post created successfully"post: {id: '2021-11-27T06:34:15.561Z'}[[Prototype]]: Object 'LINE'
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+MAS O PROFESSOR 
+
+
+
+DIZ QUE 
+
+A COISA CURIOSA, AQUI, É QUE 
+
+
+
+
+
+
+'title' e 'content' nessa response NÃO ESTÃO APARECENDO... NÃO ESTÃO SENDO 'DEFINED'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> EU REFORMULO O CÓDIGO, COLOCO 'title' e 'content' no request, para então os esperar na 
+
+RESPONSe.... 
+
+(coloco o objeto 'body' no REQUEST...)
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getButton = document.getElementById("get");
+const postButton = document.getElementById("post");
+
+getButton.addEventListener("click", () => {
+  fetch("http://localhost:8080/feed/posts")
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+postButton.addEventListener(
+  "click",
+
+  () => {
+    fetch("http://localhost:8080/feed/post", {
+      method: "POST",
+      body: {
+        title: 'TEST',
+        content: 'EXEMPLO'
+      }
+    })
+      .then(
+      (result) => {
+        return result.json();
+      }
+    )
+   .then(
+    (data) => {
+      console.log(data, 'LINE');
+      console.log(data.post.title);
+    }
+    )
+      .catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ENTRETANTO, EU AINDA NÃO RECEBO 
+
+
+MINHA RESPONSE COM O 'title' e o 'content' embutidos...
+
+
+
+
+
+
+
+
+
+--> professor vai explicar a razão disso....
+
+
+
+
+
+
+
+---> QUAL É A RAZÃO?
+
+
+
+
+
+
+
+
+
+
+------> É NO SERVERSIDE O PROBLEMA.... ---> PROFESSOR 
+
+FAZ UM CONSOLE.LOG de 
+
+'title' e 'content'
+
+LÁ 
+
+NO SERVERSIDE,
+
+
+NO CONTROLLER DE 'createPost',
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  ///Create post in DB...
+
+  const title = req.body.title;
+  const content = req.body.content;
+
+    console.log(title, content); ////////EIS O CÓDIGO EM QUESTÃO....
+
+  console.log('REQUEST RECEIVED')
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString(),
+    },
+  });
+};
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+
+ESTAMOS 
+
+SENDO INCAPAZES DE 'EXTRACT THAT DATA'...
+
+
+
+
+
+
+
+
+--> A RAZÃO PARA O PROBLEMA PODE SER ENCONTRADA 
+
+SE 
+
+
+
+ENTRAMOS 
+
+
+
+
+NA ABA 'network'
+
+
+lá 
+
+
+no devtools do chrome...
+
+
+
+
+
+
+--> AÍ VEMOS O POST REQUEST QUE FOI ENVIADO.... -> NOS REQUEST HEADERS,
+
+VAMOS 
+
+VER QUE 
+
+
+
+O 
+
+TIPO DE REQUEST QUE FOI ENVIADO, SEU HEADER DE 'Content-Type' 
+
+ESTAVA COMO 
+
+
+'text/plain',
+
+O QUE 
+
+
+MOSTRA QUE 
+
+
+
+O NOSSO BROWSERSIDE ____ NÃO ESTÁ COM AQUELE HEADER DE 
+
+
+
+'Content-Type: application/json' 
+
+DEFINIDO... 
+
+
+
+
+
+--> PARA ISSO, CONSERTAMOS O CÓDIGO,
+
+
+COM ESTA ESCRITA:
+
+
+
+
+
+
+postButton.addEventListener(
+  "click",
+
+  () => {
+    fetch("http://localhost:8080/feed/post", {
+      method: "POST",
+      body: {
+        title: 'TEST',
+        content: 'EXEMPLO'
+      },
+
+      headers: {
+          'Content-Type': 'application/json'
+      }
+    })
+      .then(
+      (result) => {
+        return result.json();
+      }
+    )
+   .then(
+    (data) => {
+      console.log(data, 'LINE');
+      console.log(data.post.title);
+    }
+    )
+      .catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+);
+
+
+
+
+
+
+
+
+--> CERTO, MAS QUANDO FAÇO ISSO, RECEBO _OUTRO__ ERRO DE 'CORS'...
+
+
+
+
+
+
+
+
+
+Access to fetch at 'http://localhost:8080/feed/post' from origin 'https://cdpn.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+---> CERTO... MAS PARECE QUE EU COMETI OUTRO ERRO... ------> LÁ NO NOSSO 
+
+
+
+CO´DIGO DE 
+
+'postButton', do button,
+
+
+NÓS 
+
+ESQUECEMOS 
+
+DE CHAMAR 
+
+
+'JSON.stringify()'
+
+
+EM CIMA 
+
+DO NOSSO BODY... 
+
+
+
+(
+    pq queremos que NOSSO BODY FIQUE EM UM FORMATO JSON, para que seja 
+
+    parseado no serverside por bodyParser.json()....
+)
+
+
+
+
+
+
+
+
+---> O OUTRO PROBLEMA, QUE JÁ RESOLVEMOS, É DEFINIR AQUELE HEADER DE 
+
+
+'application/json'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const getButton = document.getElementById("get");
+const postButton = document.getElementById("post");
+
+getButton.addEventListener("click", () => {
+  fetch("http://localhost:8080/feed/posts")
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+postButton.addEventListener(
+  "click",
+
+  () => {
+    fetch("http://localhost:8080/feed/post", {
+      method: "POST",
+      body: JSON.stringify({
+        title: 'TEST',
+        content: 'EXEMPLO'
+      }),
+      headers: {
+          'Content-Type': 'application/json'
+      }
+    })
+      .then(
+      (result) => {
+        return result.json();
+      }
+    )
+   .then(
+    (data) => {
+      console.log(data, 'LINE');
+      console.log(data.post.title);
+    }
+    )
+      .catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+);
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+AGORA TESTAMOS DE NOVO.
+
+
+
+
+
+
+OK... __ AGORA DEU CERTO, DE VERDADE.
+
+SUCESSO:
+
+
+{message: 'Post created successfully', post: {…}}message: "Post created successfully"post: content: "EXEMPLO"id: "2021-11-27T06:45:06.600Z"title: "TEST"[[Prototype]]: Object[[Prototype]]: Object 'LINE'
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+---> OU SEJA,
+ 
+
+
+ FIZEMOS 2 COISAS:
+
+
+
+
+
+ 1) DEFINIMOS HEADER DE 'CONTENT-TYPE: APPLICATION/JSON'
+
+
+
+
+
+ 2) ESCREVEMOS 'JSON.stringify(conteúdoDoBody)', PARA ENVIAR O conteúdo EM 1 FORMATO DE JSON...
+
+
+
+
+
+
+
+
+
+ -------------------------------
+
+
+
+
+
+
+ ---> MAS SE NO SERVERSIDE, lá em app.js,
+
+
+ REMOVERMOS 
+
+
+ ESTA LINHA
+
+
+ ''
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    ''',
+
+
+
+
+
+    VAMOS _ _FALHAR__ NO SEND DO REQUEST,
+
+
+    JUSTAMENTE PQ 
+
+    O HEADER DE 
+
+    'Content-Type'
+
+
+    NÃO TERÁ SIDO PERMITIDO... 
+
+    (
+
+
+      ganharemos um erro 
+
+
+      de 
+
+
+
+      'Failed to load .....: request header field 'Content-Type' is not allowed 
+      by Access-Control-Allow-Headers in preflight response'
+    )
+
+
+
+    --> ESSE ERRO ACONTECE SE TIRARMOS ESSA LINHA, QUE É ABSOLUTAMENTE 
+    INDISPENSÁVEL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --> É ASSIM QUE VOCÊ ESTABELECE COMUNICAÇÃO ENTRE CLIENT E SERVER...
+
+
+
+
+
+
+
+    --> MAS É CLARO QUE O CLIENT CODE __ DIFERE__ DE ACORDO COM O CLIENT QUE VOCê ESTÁ USANDO...
+    (
+
+
+
+      aqui estamos usando JAVASCRIPT, COM A FETCH API... --. HÁ OUTROS JEITOS DE ENVIAR 
+
+      ASYNC REQUESTS,
+
+      COMO AXIOS, 
+
+      etc... -----> AJAX REQUESTS POR MEIO DE LIBRARIES COMO 'AXIOS'...
+    )
+
+
+
+
+
+    --> E SE VOCÊ ESTIVER DESENVOLVENDO UM MOBILE APP, VOCÊ TALVEZ 
+
+    TERÁ __ TOTALMENTE__ DIFERENTES_ 'OBJECT/HELPER METHODS'
+
+
+    para enviar requests (em android, em swift, etc....)
+
+
+
+
+
+
+
+
+
+
+    ----> O SERVERSIDE CODE __ NUNCA__ VAI MUDAR,
+
+
+    ELE SEMPRE VAI TER ESSE MIDDLEWARE GENÉRICO DE 
+
+
+    '
+
+    
+app.use(
+    (req, res, next) => { ////VER AULA 360 ---> USADO PARA __ EVITAR ERROS DE 'CORS' no nosso app..... é usado para DAR PERMISSÃO, PARA DIZER 'ITS FINE TO ACCEPT REQUESTS FROM A FRONTEND THAT IS NOT SERVED BY THE SAME SERVER THAT RUNS OUR BACKEND'....
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Method', 'POST, GET, PUT, PATCH, DELETE OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); ///content-type ---> usado para CONSEGUIR ENVIAR REQUESTS COM JSON DATA... ---> 'Authorization -->  USADO PARA FAZER COM QUE NOSSOS REQUEST OBJECTS consigam SEGURAR UM HEADER ADICIONAL QUE TERÁ 'AUTHORIZATION DATA' acerca de nossos users...
+        next(); ///necessário
+
+    }
+)
+
+
+
+'',
+
+
+
+
+
+E 
+
+
+SEMPRE 
+
+
+
+VAI ACEITAR REQUESTS,
+
+
+tanto de MOBILE APPS como WEBAPPS...
+
+
+
+
+
+
+
+--> É SÓ A PARTE DO CLIENTSIDE QUE MUDA DE CLIENT PARA CLIENT UTILIZADO (mobile app vs webapps)....
+
+
+
+
+
+
+
+---> VOCê QUER TER CERTEZA DE QUE 
+
+
+SEUS CLIENTS CONSIGAM SE COMUNICAR, E QUE TUOD 
+
+FUNCIONE 
+
+CERTINHO...
+
+
+
+
+
+
+
+
+
+
+-----> ANTES DE CONCLUIR O MÓDULO,
+
+
+PROFESSOR 
+
+QUER FALAR 1 POUCO SOBRE O 
+POST 
+
+REQUEST 
+
+QUE 
+ENVIAMOS 
+
+POR MEIO 
+
+
+DO BUTTON DE 
+
+'CREATE POST'...
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE 
+
+
+
+APARECEM 
+
+
+2 
+
+
+
+
+
+requests de tipo 'post'
+
+NA ABA NETWORK DO CHROME... -----> ACHO QUE ELE VAI 
+
+EXPLICAR QUE 
+
+
+1 
+
+DESSES REQUESTS É UM REQUEST DE 
+
+TIPO 
+
+
+'options',
+
+
+MANDADO AUTOMATICAMENTE AO NOSSO SERVER, PELO BROWSER...
+
+
+
+
+
+
+
+
+
+
+------> O SEGUNDO REQUEST É O NOSSO POST REQUEST,
+
+
+
+MAS O PRIMEIRO __ É ___ 
+
+
+INTERESSANTE --> SE OBSERVARMOS OS HEADERS,
+
+
+VEREMOS QUE 
+
+
+O METHOD É 
+
+'OPTIONS'... -------> É ENVIADO AUTOMATICAMENTE PELO 
+
+BROWSER, E POR 
+
+
+MUITOS 
+
+
+
+
+'MOBILE APP CLIENTS'...
+
+
+
+
+
+
+
+
+
+-> QUAL É A IDEIA POR TRÁS DE 'OPTIONS'? -------> BEM, O CHROME/BROWSER
+
+
+SIMPLESMENTE VAI EM FRENTE E CHECA 
+
+SE 
+
+ o
+
+ REQUEST 
+
+
+ QUE VOCÊ 
+
+ VAI QUERER 
+
+ ENVIAR 
+
+
+ ESTÁ CERTINHO.... ---> ELE CHECA 
+
+
+ SE 'POST REQUESTS'
+
+
+ SÃO ALLOWED PELO SERVIDOR... .--> CASO CONTRÁRIO, ELE VAI SIMPLESMENTE 
+
+ THROW AN ERROR....  ------> É SIMPLESMENTE UM MECANISMO USADO 
+
+
+ PELO BROWSER 
+
+
+ E MOBILE CLIENTS USAM,
+
+
+
+
+ E NÃO HÁ MT 
+
+
+ QUE VOCÊ PRECISA FAZER 
+
+
+
+ PARA FAZER COM QUE ISSO FUNCIONE... -----> FUNCIONA 'OUT OF THE BOX'...
+
+
+
+
+
+
+
+
+
+
+ --> VOCÊ SÓ QUER TER CERTEZA DE QUE 
+
+
+ VOCê SETTA OS 
+
+
+
+ CORS HEADERS CORRETOS 
+
+ DE 
+
+
+ 'GET, POST, PUT, PATCH, ETC',
+
+
+ lá no app.js....
+
+
+
+
+
+
+
+
+
+
+ -----> VOCÊ PODE COLOCAR 'OPTIONS' 
+
+
+ dentro dos methods aceitos, mas isso não é necessário, pq o request 'options' é enviado AUTOMATICAMENTE...
+
+
+
+
+
+
+
+
+ --> OK... ISSO FOI O 'CORS' E O SERVER COMMUNICATION, POR ENQUANTO...

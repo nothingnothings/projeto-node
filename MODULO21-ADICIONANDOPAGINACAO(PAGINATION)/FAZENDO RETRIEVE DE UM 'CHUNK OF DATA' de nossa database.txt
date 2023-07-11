@@ -1,0 +1,1274 @@
+
+
+
+
+
+
+
+
+
+
+
+----> OK... ESTAMOS SETTANDO ESSES 'QUERY PARAMETERS'
+
+de 
+
+
+
+'page=1' 
+
+
+
+LÁ 
+
+
+
+NO NOSSO PATH/URL,
+
+
+
+E É CLARO QUE PODEMOS USAR ESSA 
+
+
+DATA/PARAMS 
+
+
+LÁ 
+
+
+
+NO BACKEND,
+
+NOS NOSSOS CONTROLLERS,
+
+
+PARA 
+
+
+CONTROLAR __ QUAL_ _ DATA/QUAL __PEDAÇO__ DA DATA DE NOSSO DATABASE VAMOS QUERER 
+
+
+
+
+
+
+ENTREGAR/RESPONDER AO USER...
+
+
+
+
+
+
+
+
+
+-------> NOS NOSSOS CONTROLLERS, SEMPRE ESTIVEMOS FAZENDO 'RETURN' DE TODOS __ OS PRODUCTS DE 1 SÓ VEZ,
+
+
+
+POR MEIO 
+
+
+
+
+DO 
+
+CONTROLLER DE 
+
+
+''
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+  Product.find() 
+    .populate('userId', 'name') 
+    .then((products) => {
+      console.log(products);
+
+    
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+------> OK... VAMOS QUERER USAR AQUELE QUERY PARAMS...
+
+
+
+
+
+
+
+
+
+
+
+
+---------> 
+
+
+
+
+
+
+PARA ISSO, PROVAVELMENTE VAMOS ESCRVER 
+
+
+
+
+'const pageNumber = req.query.page'
+
+
+
+
+
+
+
+
+
+---------------
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+  const pageNumber = req.query.page; /////////EIS O CÓDIGO EM QUESTÃO.
+
+  Product.find() 
+    .populate('userId', 'name') 
+    .then((products) => {
+      console.log(products);
+
+    
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+------------> COM ISSO, AGORA ESTMAOS 
+
+
+'
+GETTING THAT PAGE NUMBER, AND STORING IN THAT CONSTANT'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+COM ISSO, AGORA _ SÓ PRECISAMOS __ DEFINIR ___ 
+
+
+
+
+QUANTOS __ ITEMS__ DEVERÃO SER DISPLAYADOS __ POR PÁGINA __DE 
+
+'PRODUCTS'...
+
+
+
+
+
+
+
+
+
+
+
+
+--------> E ISSO, NO CASO, É ALGO QUE O PROFESSOR VAI QUERER __ ARMAZENAR 
+
+COMO UMA 
+
+
+'GLOBAL CONSTANT' 
+
+
+
+
+NESSE ARQUIVO DE 
+
+'shop.js' (controller)..
+
+
+
+
+
+
+(ele poderia 
+armazenar em outro file, mas prefere armazenar aqui...
+)
+
+
+
+
+
+
+
+
+
+
+
+--------> NO CASO, PARA TESTAR,
+
+PROFESSOR 
+
+
+VAI DEFINIR ESSE VALOR COMO 
+
+'2' (para que fiquemos com MÚLTIPLAS PAGES, PQ NO MOMENTO TEMOS SÓ 3 ITEMS, queremos ver 2 items por page, para termos DUAS PAGES...)
+
+
+
+
+
+
+
+
+
+
+
+---> FICA ASSIM:
+
+
+
+
+
+
+const ITEMS_PER_PAGE = 2;
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---------> OK....
+
+
+
+
+
+2 
+
+ITEMS SERÃO DISPLAYADOS POR PAGE...
+
+
+
+
+
+
+
+
+
+--------> COM ISSO,
+
+
+LÁ 
+
+
+
+EM 
+
+'getProductsPage',
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+___ SABE __ QUE 
+
+
+SE ELE 
+
+ESTIVER 
+
+
+NA PAGE 
+
+
+DE NÚMERO 1,
+
+ELE VAI QUERER 
+
+
+
+'FETCH THE FIRST TWO ITEMS'..
+
+
+
+
+
+
+
+
+
+
+--> se estiver na page DOIS,
+
+ELE VAI QUERER 
+
+
+_FETCHEAr__ 
+
+
+
+
+OS ITEMS 
+
+
+
+
+
+DE INDEXADORES '2 e 3'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS COMO ESCREVER ISSO?
+
+
+
+
+
+
+
+
+
+
+----> BEM, PROVAVELMENTE TEREMOS QUE CUSTOMIZAR O 'find()'
+
+
+
+em 
+
+
+'Product.find()'... 
+
+
+
+
+
+
+
+
+
+--> DE FATO, É ISSO QUE O PROFESSOR NOS DIZ:
+
+
+
+'WE NEED TO CONTROL THE AMOUNT OF DATA WE ARE RETRIEVING FROM THE DATABASE'...
+
+
+
+
+
+
+
+
+
+--> FIND, POR ENQUANTO, ESTÁ NOS DANDO' TODOS OS ITEMS'...
+
+
+
+
+
+
+----> MAS PODEMOS CONTROLAR ESSE FIND....
+
+
+
+
+
+
+
+
+
+---> MONGODB/MONGOOSE (pq mongoose é a mesma coisa, ´so mais fácil de escrever)
+
+
+
+
+_____ TEM UMA  FUNÇÃO/MÉTODO 
+de 
+
+
+'skip()',
+
+
+QUE 
+
+
+PODE 
+
+
+SER ADICIONADA 
+
+
+
+EM 
+
+1 
+
+'CURSOR' (no caso, 'find()' SEMPRE NOS RETORNA UM 'CURSOR', sendo essa a razão de podermos usar '.skip()' nele...)
+
+
+
+
+
+
+
+-> vai ficar tipo 
+
+
+'Product.find()
+.skip().then(
+  products => {
+    ...
+  }
+)
+'
+
+
+
+
+
+
+
+---------> '.skip()'
+
+
+FAZ COM QUE __ 
+
+
+A PRIMEIRA QUANTIDADE 'X' DE RESULTS... 
+
+
+
+
+
+
+
+
+--> ou seja, colocamos a QUANTIDADE DE 'ENTRIES' na nossa database que vamos QUERER
+
+
+
+'PULAR',
+
+
+SKIPPAR,
+ 
+
+
+ ignorar,
+
+
+
+ nesse retrieve dos items...
+
+
+
+
+
+ --> para isso, vamos usar a 'const page = req.query.page'
+
+
+
+ COMO __ MULTIPLICADOR__ 
+
+
+ DO 
+
+
+ 'ITEMS_PER_PAGE', 
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+const ITEMS_PER_PAGE = 2;
+
+
+ 
+exports.getProductsPage = (req, res, next) => {
+
+  const pageNumber = req.query.page; /////////EIS O CÓDIGO EM QUESTÃO.
+
+  Product.find()
+  .skip() ///////VAMOS ESCREVER ALGO AQUI, USANDO 'ITEMS_PER_PAGE' e 'pageNumber'...
+    .populate('userId', 'name') 
+    .then((products) => {
+      console.log(products);
+
+    
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+O PROFESSOR ESCREVE UMA EXPRESSÃO...
+
+
+
+.skip(
+
+(pageNumber - 1) * ITEMS_PER_PAGE
+
+
+
+
+)
+
+
+
+
+
+
+EX: PÁGINA DE NÚMERO 1... 
+
+
+
+
+1 -1 = 0 
+
+
+
+
+0 * 2 = ZERO... ---> ISSO SIGNIFICA QUE 0 ITEMS SERÃO SKIPPADOS, QUANDO ESTIVERMOS NA PAGE 1...
+
+
+
+
+
+
+
+
+
+EX: PÁGINA DE NÚMERO 2:
+
+
+
+
+2 - 1 = 1 
+
+
+
+1 * 2 = DOIS ---> ISSO SIGNIFICA QUE __ 2 ITEMS __ SERÃO SKIPPADOS, QUANDO ESTIVERMO NA PAGE 2 (items de indexadores 2 e 3 serão carregados)...
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+--------------> OK... FICOU TIPO ASSIM:
+
+
+
+
+const ITEMS_PER_PAGE = 2;
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+  // Product.findAll({where:}).then().catch(); /////ali no PRIMEIRO SLOT DE PARÂMETROS, de 'findAll', VOCÊ PODE COLOCAR __OPÇÕEs__ PARA O FETCH.... (definir restrições, como ''''só retrievar os records que tenham/WHERE 'id' igual a xxxx, etc etc...)
+
+  // Product.getProducts()  ////método criado POR NÓS, lá em 'product', método ESTÁTICO....
+
+const pageNumber = req.query.page;
+
+
+
+  Product.find() 
+   .skip(
+     (pageNumber - 1) * ITEMS_PER_PAGE    /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (2 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+   )  ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+  
+  
+  // .select('title price -_id') ////É A MESMA COISA QUE O SEGUNDO PARÂMETRO DE '.populate()', mas atua sobre OS PRODUCTS RETRIEVADOS por meio de '.find()', e não a DATA RETRIEVADA LÁ DO 'RELATED OBJECT' (que é 'user', no caso desse call inferior de '.populate()')....
+    .populate('userId', 'name') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ... ---> JÁ O SEGUNDO PARÂMETRO CUMPRE A MESMA TAREFA DE '.select('fields a serem retrievados de sua database...')'; OU SEJA, NELE VOCÊ PASSA, COMO PARÂMETRO, UMA STRING DIZENDO __QUAIS __ PRODUCTS __ DEVEM SER __RETRIEVADOS DA DATABASE... (é um parâmetro opcional, exatamente como '.select()' o é...)
+    .then((products) => {
+      console.log(products);
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+        // isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+MAS É CLARO QUE _ NÃO VAMOS QUERER APENAS _ SKIPPAR ALGUNS ITEMS.... --> VAMOS QUERER 
+
+
+
+
+SÓ 
+
+RENDERIZAR 
+
+2 ITEMS (VMAOS QUERER 
+
+
+LIMITAR A QUANTIDADE DE ITEMS RETRIEVADOS, TUDO PARA 
+
+
+QUE 
+
+NÓS 
+
+
+
+NÃO FIQUEMOS TIPO 
+
+
+''' AH, ESSES ITEMS INICIAIS AQUI EU NÃO RETRIEVEI, MAS TODO O RESTO EU RETRIEVEI''...
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PARA FAZER ISSO, PROFESSOR EMPREGA OUTRO MÉTODO, MÉTODO 
+DE 
+
+
+
+'.limit()' ----------> esse método, como o NOME SUGERE,
+
+
+
+LIMITA _ A QUANTIDADE DE DATA QUE 
+
+
+BUSCAMOS/FETCHEAMOS... --> 
+
+
+
+
+
+
+O LIMITE É ESPECIFICADO __ PELO NÚMERO __ QUE VOCÊ PASSA 
+
+
+COMO ARGUMENTO A ESSE 
+
+
+NEGÓCIO... ---> NO CASO, PASSAREMOS o valor 'ITEMS_PER_PAGE', QUE É DE 2, NO NOSSO CASO ATUALl...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+const ITEMS_PER_PAGE = 2;
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+  // Product.findAll({where:}).then().catch(); /////ali no PRIMEIRO SLOT DE PARÂMETROS, de 'findAll', VOCÊ PODE COLOCAR __OPÇÕEs__ PARA O FETCH.... (definir restrições, como ''''só retrievar os records que tenham/WHERE 'id' igual a xxxx, etc etc...)
+
+  // Product.getProducts()  ////método criado POR NÓS, lá em 'product', método ESTÁTICO....
+
+const pageNumber = req.query.page;
+
+
+
+  Product.find() 
+   .skip(
+     (pageNumber - 1) * ITEMS_PER_PAGE    /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (2 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+   )  ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+  .limit(ITEMS_PER_PAGE)
+  
+ 
+    .populate('userId', 'name') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ... ---> JÁ O SEGUNDO PARÂMETRO CUMPRE A MESMA TAREFA DE '.select('fields a serem retrievados de sua database...')'; OU SEJA, NELE VOCÊ PASSA, COMO PARÂMETRO, UMA STRING DIZENDO __QUAIS __ PRODUCTS __ DEVEM SER __RETRIEVADOS DA DATABASE... (é um parâmetro opcional, exatamente como '.select()' o é...)
+    .then((products) => {
+      console.log(products);
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+        // isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, AO CLICAR NO LINK DE 'PRODUCTS', RECEBO ESTE ERRO:
+
+
+Error: MongoServerError: Skip value must be non-negative, but received: -9223372036854775808
+    at A:\projeto4 - NODEJS\MODULO21-ADICIONANDOPAGINACAO(PAGINATION)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\controllers\shop.js:1012:21
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --> ISTO ACONTECEU PQ 
+
+    MINHA URL FICOU ASSIm:
+
+
+
+
+    http://localhost:3000/products
+
+
+
+
+
+
+
+
+
+
+    QUANDO DEVIA ESTAR ASSIM:
+
+
+   http://localhost:3000/products/?page=1 
+
+
+
+
+
+
+
+
+   --> PARA ISSO, PRECISO ALTERAR 1 POUCO O 'navigation.ejs',
+
+   PARA QUE 
+
+
+
+   JÁ SEJA CARREGADA A PAGE '1'
+
+
+   automaticamente...
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, RECEBI O MESMO ERRO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, CONSERTEI... MAS 1 PROBLEMA, AGORA, É QUE 
+
+
+
+
+MEUS 
+
+
+
+PRODUCTS ESTÃO SENDO 'RETRIEVED' __ SEM SUAS IMAGES....
+
+
+
+
+
+
+
+--> o estranho é que o CONTROLLER DE 'admin products', em que temos 
+
+
+
+
+TODOS OS PRODUCTS RETORNADOS EM 1 ÚNICA PAGE, 
+
+
+ESTÁ 
+
+
+RETRIEVANDO AS IMAGES CORRETAMENTE...
+
+(
+
+
+  sinal de que é algum problema com 'skip()' e 'limit()'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- >não, mas isso não tem relação com 
+
+'skip()'
+
+e 
+
+
+'limit()'...
+
+
+
+
+
+
+NÃO, É UM PROBLEMA DE NOSSO CÓDIGO, MESMO...
+
+
+
+
+
+
+
+
+
+
+CONSERTEI... ERA ESTA LINHA:
+
+
+
+
+
+
+
+        <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+
+
+
+
+
+
+
+
+
+
+  (ESTAVA SEM O '/' no início... não era um RELATIVE PATH...)
+
+
+
+
+
+
+
+  -----------------------
+
+
+
+
+  ok... código ficou assim:
+
+
+
+
+
+
+
+
+  exports.getProductsPage = (req, res, next) => {
+  // Product.findAll({where:}).then().catch(); /////ali no PRIMEIRO SLOT DE PARÂMETROS, de 'findAll', VOCÊ PODE COLOCAR __OPÇÕEs__ PARA O FETCH.... (definir restrições, como ''''só retrievar os records que tenham/WHERE 'id' igual a xxxx, etc etc...)
+
+  // Product.getProducts()  ////método criado POR NÓS, lá em 'product', método ESTÁTICO....
+
+const pageNumber = req.query.page;
+console.log(pageNumber, 'LINE');
+
+  Product.find() 
+   .skip(
+     (pageNumber - 1) * ITEMS_PER_PAGE    /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (2 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+   )  ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+  .limit(ITEMS_PER_PAGE) ///VAI LIMITAR A '2' (valor desse parâmetro) O NÚMERO ___ DE ITEMS/ENTRIES QUE VAMOS DEIXAR SER FETCHEADOS LÁ DA COLLECTION NA NOSSA DATABASE... (assim reduzimos a quantidade de data fetcheada.... pq fetchear todos os products/documents seria WASTEFUL e demorado)...
+  
+  // .select('title price -_id') ////É A MESMA COISA QUE O SEGUNDO PARÂMETRO DE '.populate()', mas atua sobre OS PRODUCTS RETRIEVADOS por meio de '.find()', e não a DATA RETRIEVADA LÁ DO 'RELATED OBJECT' (que é 'user', no caso desse call inferior de '.populate()')....
+    .populate('userId', 'name') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ... ---> JÁ O SEGUNDO PARÂMETRO CUMPRE A MESMA TAREFA DE '.select('fields a serem retrievados de sua database...')'; OU SEJA, NELE VOCÊ PASSA, COMO PARÂMETRO, UMA STRING DIZENDO __QUAIS __ PRODUCTS __ DEVEM SER __RETRIEVADOS DA DATABASE... (é um parâmetro opcional, exatamente como '.select()' o é...)
+    .then((products) => {
+      console.log(products);
+
+      // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+        // isLoggedIn: req.session.isLoggedIn
+        // isLoggedIn: isLoggedIn
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+
+
+
+
+
+
+    -------------- SERIA BOM EDITAR O CÓDIGO DO CONTROLLER DE 'product-list-admin', também...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --> SE COLOCAMOS A PAGE '3',
+
+
+
+tipo assim:
+
+
+
+
+
+localhost:3000/products/?page=3 
+
+
+
+
+
+,
+
+
+
+VAMOS GANHAR 'no products found'... ----> PQ NÃO TEREMOS NENHUM ITEM PARA ESSA PAGE....
+
+
+
+
+
+
+
+
+
+--> OK, ESSA É A IDEIA GERAL POR TRÁS DA PAGINATION...
+
+
+
+
+
+
+------> BEM, MAS UMA COISA QUE ESTÁ FALTANDO É 
+
+'UPDATE THE PAGINATION BUTTON STATUS BASED ON THE PAGE WE ARE ON, 
+
+AND BASED 
+
+ON THE MAXIMUM NUMBER OF PAGES THAT ARE AVAILABLE ON OUR APP'...
+
+
+
+(
+
+  feature que vemos em muitos sites...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... HORA DE VER A PRÓXIMA AULA DO PROFESSOR...

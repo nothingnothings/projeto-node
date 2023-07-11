@@ -1,0 +1,342 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... AGORA JÁ TMEOS AQUELA 
+
+PACKAGE 
+
+DO 
+
+NODEMON... ---> E O NODEMON VAI FUNCIONAR, SE O IMPORTARMOS,
+
+PQ 
+
+ELE 
+
+JÁ INSTALOU TODAS AS DEPENDENCIES DE QUE PRECISA,
+
+por sua vez.
+
+
+
+
+
+
+
+
+
+
+
+---> OK, COMO PODEMOS 
+
+
+IMPORTÁ-LO?
+
+
+
+
+
+
+
+--> NODEMON É UMA UTILITY TOOL,
+
+
+
+
+UTILITY TOOL QUE NOS DEIXA RODAR NOSSO NODE APP 
+
+
+
+POR MEIO 
+DESSE 
+
+'nodemon',
+
+
+QUE 
+
+VAI 
+
+RODAR 
+
+O NODEJS 
+
+
+NO FINAL DAS CONTAS,
+
+mas QUE 
+VAI 
+
+
+_REINICIAR__ NOSSO 
+
+SERVER 
+
+
+efetuarmos
+
+REALIZARMOS ALGUMA MUDANÇA NESSE...
+
+
+
+
+
+
+
+
+
+
+
+
+------> PARA CONSEGUIR ___ APLICAR __ O NODEMON __ AO NOSSO APP,
+
+
+FAZER COM QUE ELE RODE O NOSSO APP,
+
+
+devemos ir até 
+
+O PACKAGE.JSON 
+
+E ENTÃO 
+
+DEVEMOS 
+
+TROCAR 
+
+
+
+o código de 
+
+
+"start", que é "node app.js"
+
+
+
+POR __ 
+
+
+
+"nodemon app.js"....
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+OK... FICOU ASSIM:
+
+
+
+
+
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+  }
+
+
+
+
+
+
+
+
+----> OK.... 
+
+
+
+
+AGORA DEVEMOS EXECUTAR 
+
+'npm start',
+
+
+
+
+para conseguir 
+
+o run desse nodemon...
+
+
+
+
+
+
+
+
+
+
+-->SIDENOTE: SE VOCê 
+
+TENTASSE  
+
+
+rodar 
+
+
+'nodemon app.js'
+
+
+
+DIRETAMENTE NO TERMINAL,
+
+
+VOCÊ 
+
+
+
+GANHARIA UM 
+
+ERRO 
+
+DE 
+'NOT FOUND',
+
+
+
+
+COMMAND NOT FOUND ---> ISSO 
+
+
+PQ 
+
+
+ESSA PACKAGE ESTÁ INSTALADA APENAS LOCALMENTE, NO SEU PROJETO,
+
+E NÃO 
+
+
+GLOBALMENTE NA LOCAL MACHINE...
+
+
+
+
+
+
+
+
+
+-------> E O TERMINAL TENTA ACHAR ESSE 
+
+'nodemon' GLOBALMENTE, POR ISSO ESSE ERRO....
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... 
+
+
+
+
+
+EX:
+
+
+
+
+[nodemon] 2.0.13
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node app.js`
+some hard coded text
+TEST
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK... ISSO FUNCIONOU.... E FUNCIONOU ATÉ MESMO COM 
+
+
+
+MEUS ARQUIVOS 'ESCRAVOS' do app.js,
+
+COMO 
+
+
+'routes.js'....
+
+
+
+
+
+
+
+
+
+
+
+
+---------->  E ELE REALMENTE ESTÁ 'WATCHING FOR CHANGEs',
+
+
+
+E VAI SEMPRE 
+
+REINICIAR NOSSO SERVER 
+
+CADA 
+
+VEZ QUE 
+
+FIZERMOS UMA CHANGE....
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+In the last lecture, we added nodemon as a local dependency to our project.
+
+The good thing about local dependencies is that you can share projects without the node_modules folder (where they are stored) and you can run npm install in a project to then re-create that node_modules folder. This allows you to share only your source code, hence reducing the size of the shared project vastly.
+
+The attached course code snippets also are shared in that way, hence you need to run npm install in the extracted packages to be able to run my code!
+
+I showed that nodemon app.js would not work in the terminal or command line because we don't use local dependencies there but global packages.
+
+You could install nodemon globally if you wanted (this is NOT required though - because we can just run it locally): npm install -g nodemon would do the trick. Specifically the -g flag ensures that the package gets added as a global package which you now can use anywhere on your machine, directly from inside the terminal or command prompt.

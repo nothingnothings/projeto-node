@@ -1,0 +1,2352 @@
+
+
+
+
+
+
+-> DE VOLTA AO PROJETO,
+ 
+ O 
+
+ PROFESSOR 
+
+ QUITTA 
+
+
+ O 
+
+
+
+DEVELOPMENT SERVER,
+
+
+pq 
+
+agora 
+
+
+ELE VAI QUERER INSTALAR PACKAGES 
+
+DAS 
+
+
+NOSSAS 
+
+
+
+3 TEMPLATING ENGINES,
+
+PARA QUE CONSIGAMOS TRABALHAR COM ELAS...
+
+
+
+
+
+
+
+
+
+-> PARA ISSO, ELE RODA 
+
+
+'npm install --save',
+
+
+
+PQ TODAS AS 
+
+3 
+
+
+
+ENGINES SÃO PARTE 
+
+DE 
+NOSSO 
+ 
+
+ 'NODE CODE',
+
+
+ e SHIPPAM 
+
+
+
+
+ COM O CÓDIGO QUE DEPLOYAMOS/DEPLOYAREMOS EM ALGUM COMPUTADOR, no final das contas...
+
+
+ 
+
+
+ ok ---> 
+
+ ele
+
+
+
+
+
+ VAI QUERER INSTALÁ-LOS COMO 
+
+ PRODUCTION DEPENDENCIES....
+
+
+
+
+
+
+ --> 
+
+
+ aí 
+ ele 
+
+ escreve 
+
+
+ 'npm install --save ejs pug express-handlebars'...
+
+
+
+
+
+
+
+
+
+
+
+ -----> PROFESSOR EXPLICA QUE 
+
+ o 'handlebars' QUE 
+
+ DEVEMOS INSTALAR É 
+
+ O 
+
+ 'express-handlebars',
+
+
+ E NÃO O 
+
+ 'handlebars' comum,
+
+ PQ 
+
+
+ __ESSE DE CIMA__ POSSUI INTEGRAÇÃO 
+
+ COM O 
+
+
+ EXPRESS,
+  
+  QUE VAMOS 
+
+  QUERER...
+
+
+
+
+  A Handlebars view engine for Express which doesn't suck.
+
+
+
+
+
+
+
+
+
+  -----> ejs e PUG JÁ 
+
+
+
+  ___ POSSUEM INTEGRAÇÃO AO EXPRESSJS no seu core....
+
+
+
+
+
+
+
+  ----------------------------
+
+
+
+
+
+
+
+
+
+  ----> ok...
+
+
+
+  AS 3 PACKAGES SERÃO INSTALADAS...
+
+
+
+
+
+
+
+
+
+  -----------------------------
+
+
+
+
+
+
+
+  --------> PROFESSOR QUER NOS COMEÇAR PELO 
+
+  ENSINO 
+
+  DE 
+
+  'pug',
+
+  QUE É A TEMPLATING ENGINE MAIS EXÓTICA DAS 
+
+  3...
+
+
+
+
+
+
+
+
+
+
+
+
+  ------------> PARA USAR O PUG,
+
+  devemos 
+
+  IR ATÉ 
+
+  O 
+
+
+
+
+
+  'app.js'
+
+  E ENTÃO DEVEMOS 
+
+
+  COMUNICAR 
+
+  AO 
+
+
+
+  'express' (e essa é uma feature do EXPRESS, E NÃO DO NODE, BTW.... --> E ESSA É OUTRA RAZÃO MT 
+  FORTE PARA QUERER USAR O EXPRESS, PQ 
+  
+  COM O NODE STANDALONE, ISSO AÍ SERIA MAIS DIFÍCIL, você teria de fazer todo esse processo mostrado 
+  agora __ MANUALMENTE___...)
+
+
+
+  QUE 
+
+
+
+
+
+  
+  ''''HEY,
+
+  NÓS TEMOS UMA TEMPLATING ENGINE QUE É 
+
+  "express-conforming" (se conforma ao EXPRESSJS),
+
+
+
+POR ISSO POR FAVOR 
+
+A UTILIZE PARA __ RENDERIZAR DYNAMIC TEMPLATES..'''''
+
+
+
+
+
+
+
+
+
+
+---> NÓS FAZEMOS 
+
+ISSO 
+
+
+
+POR MEIO 
+
+DA ESCRITA 
+
+EM 
+
+
+'app.js'....
+
+
+
+
+
+
+
+
+
+-----> LÁ EM APP.js,
+
+
+
+
+
+DEPOIS DE CRIARMOS 
+
+NOSSO 
+
+
+
+
+'express app' 
+
+
+E TERMOS 
+O 
+
+ARMAZENADO EM UMA CONSTANTE 
+
+
+com 
+
+'const app = express();',
+
+
+
+VAMOS 
+
+
+
+
+
+
+__QUERER ESCREVER 
+
+
+'app.set()',
+
+
+
+PARA __ ENTÃO,
+
+por meio 
+de 
+
+
+'.set()',
+
+__DEFINIR 
+
+
+' A GLOBAL CONFIGURATION VALUE'.... 
+
+
+
+
+
+
+
+
+
+
+
+-->OK, MAS O QUE É ISSO?
+
+
+
+
+
+
+
+
+
+--> BEM,
+
+
+
+'app.set()'
+
+
+NOS __ DEIXA__ SETTAR__ QUAISQUER VALORES __ GLOBALMENTE__ NA 
+
+NOSSA 
+
+
+EXPRESS APPLICATION... (e isso também pode ser, ACTUALLY,
+
+
+
+
+_ KEYS__ OU CONFIGURATION ITEMS QUE __ O EXPRESSJS __ NÃO ENTENDE... COMO TEMPLATES, na verdade... ..)
+
+
+
+
+
+
+
+
+
+-----> NO CASO DE KEYS/CONFIGURATION ITEMS que 
+
+
+o EXPRESSJS 
+
+__NÃO ENTENDE_, PROFESSOR DIZ QUE NORMALMENTE O EXPRESSJS APENAS OS IGNORARIA,
+
+
+
+MAS __ QUE _ NÓS PODEOMS __ 
+
+'ACTUALLY READ THOSE THINGS' __ POR  MEIO __ 
+
+
+DO 
+
+
+OBJETO 
+
+'app',
+
+POR MEIO 
+
+
+DE 
+
+
+'app.get()'...  (e ESSA, PORTANTO,
+
+
+
+SERIA/É __ OUTRA MANEIRA 
+
+
+DE 
+
+FAZER 
+
+
+'SHARING DATA ACROSS OUR APPLICATION',
+
+
+
+MAS _ NÃO É ALGO EM QUE 
+
+
+ESTAMOS INTERESSADOS AQUI...
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA 
+
+INSTALAR NOSSA TEMPLATING ENGINE, O QUE PODEMOS FAZER, AQUI, É 
+
+
+'USE A COUPLE OF RESERVED KEY NAMES',
+
+
+
+
+ou seja,
+
+
+__'''CONFIGURATION ITEMS''' QUE PODEMOS SETTAR,
+
+
+CONFIG ITEMS QUE 
+
+
+
+'DO LEAD TO EXPRESSJS BEHAVING DIFFERENTLY'...
+
+
+
+
+(UMA LISTA DESSES CONFIG ITEMS PODE SER ENCONTRADA NOS DOCS 
+DE 
+
+'app.set()',
+
+
+
+
+
+EM 
+
+
+
+http://expressjs.com/en/5x/api.html#app.set
+
+ )
+
+
+
+
+
+
+
+
+
+ --> é claro QUE A GRANDE MAIORIA DESSES CONFIG ITEMS NÃO INTERESSA A NÓs,
+
+
+
+
+ MAS A COISA INTERESSANTE PARA 
+
+ NÓS 
+
+ SÃO 
+
+
+ AS 
+
+
+ CONFIG KEYS DE 
+
+
+ 'view engine' 
+
+
+
+ e 
+
+
+
+ 'views'... 
+
+
+
+
+
+
+
+
+
+
+
+
+ 'view engine' -----------> NOS DEIXA 
+
+ COMUNICAR/DIZER AO EXPRESSJS 
+
+ __ QUE 
+
+ 'HEY, PARA QUAISQUER 
+
+ DYNAMIC TEMPLATES QUE ESTAMOS TENTANDO RENDERIZAR (e existe/existirá uma FUNÇÃO ESPECIAL PARA FAZER __ O RENDER DESSES TEMPLATES),
+
+
+POR FAVOR __ UTILIZE EXATAMENTE ESTA ENGINE QUE ESTAMOS DEFININDO NESTA KEY DE 'view engine'...' 
+
+
+
+
+
+------> E 'views', POR SUA VEZ, 
+
+
+__NOS DEIXA__ DIZER __ AO EXPRESSJS ___ O LOCAL EM QUE PODEMOS/VAMOS ENCONTRAR 
+
+ESSES 
+
+
+'DYNAMIC VIEWS'... --------> 
+
+
+
+POR ISSO, O QUE O PROFESSOR 
+
+
+
+
+DIZ QUE PODEMOS FAZER AQUI 
+
+
+
+
+
+
+
+É _ 
+
+
+ESCREVER 
+
+
+
+'app.set('view')';
+
+
+
+
+
+
+
+
+
+
+
+
+E AÍ 
+
+
+'app.set('view engine', 'pug')',
+
+
+
+
+
+
+ISSO VAI REALMENTE 
+DEFINIR 
+
+A KEY 
+
+de 
+
+'view engine' 
+
+
+de NOSSAS 'CONFIG KEYS',
+
+
+
+
+__ COMO __ SENDO 
+
+
+IGUAL A 
+
+'pug'... 
+
+
+
+
+
+
+----->  OK... ---> E PROFESSOR EXPLICA QUE NO VALOR DE 'view engine'
+
+
+
+__NÃO PODEMOS COLOCAR QUALQUER COISA... --> PUDEMOS COLOCAR 'PUG' AQUI 
+
+
+JUSTAMENTE PQ INSTALAMOS A PUG TEMPLATING ENGINE,
+
+ 
+
+ __ E ESSA ENGINE __ 'actually' 
+
+
+ SHIPPA COM 
+
+ 'BUILTIN EXPRESSJS SUPPORT',
+
+
+
+
+ E TAMBÉM 
+
+ 'AUTO-REGISTERS ITSELF WITH EXPRESSJS',
+
+
+ POR ASSIM DIZER... (E É EXATAMENTE 
+ 
+ POR ISSO 
+ 
+ QUE 
+ 
+ 
+ ESSA LINHA 
+ 
+ 
+ 
+ DE 
+ 
+ 
+
+ ''
+
+ 'app.set('view engine', 'pug')',
+
+ '''
+
+
+ FUNCIONOU.... --> isso NÃO FUNCIONA NECESSARIAMENTE PARA TODAS AS ENGINES,
+
+
+ 
+ MAS ENCONTRAMOS MAIS LINKS SOBRE ISSO NA 
+
+ ÚLTIMA LIÇÃO....
+ 
+ )
+
+
+
+
+
+
+
+
+
+ --> OK, MAS A QUESTÃO É QUE O PUG JÁ É 'SUPPORTED OUT OF THE BOX',
+
+
+ E COM ISSO JÁ ESTAMOS 
+
+ 'READY TO GO'...
+
+
+
+
+
+ ----------------------------------
+
+
+
+
+
+
+ ----> CERTO... ISSO FEITO,
+
+ podemos, 
+ lá 
+
+
+ em 
+
+ 'app.js',
+
+
+ SETTAR __ UMA CONFIGURAÇÃO ADICIONAL AO PACKAGE DO PUG... ----> 
+
+
+
+
+
+ESSA CONFIGURAÇÃO É UMA QUE 
+
+
+
+FAZ 
+
+'LET EXPRESS KNOW WHERE TO FIND OUR VIEWS'...-->  
+
+
+
+
+
+
+
+___ ENTRETANTO,
+
+
+ A SETTING DEFAULT  para 'views'
+
+
+ JÁ 
+
+ É 
+
+ BASICAMENTE 
+
+
+ O 
+
+
+ NOSSO 
+
+ 'MAIN DIRECTORY + UM FOLDER CHAMADO VIEWS'...
+
+ (ou seja,
+ 
+ 
+ 
+ é 
+
+
+ 'process.cwd() + /views',
+  
+  basicamente...
+ )
+
+
+
+
+
+
+
+ --> COMO NO NOSSO PROJETO JÁ TEMOS AQUELE FOLDER 'views' 
+
+
+ no ROOT DELE,
+
+
+
+ NÃO PRECISAMOS 
+
+
+ MEXER EM NADA... 
+
+
+
+
+ (ainda assim,  o professor vai definir esse CONFIG EXPLICITAMENTE,  só para mostrar/nos lembrar que ISSO É POSSÍVEL, QUE É UMA OPÇÃO....
+ 
+ )
+
+
+
+
+
+
+ ex:
+
+
+
+ app.set('view engine', 'pug');
+ app.set('views'); ////////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+ app.set('view engine', 'pug'); ///CÓDIGO NECESSÁRIO PARA IMPLEMENTAR/UTILIZAR TEMPLATING ENGINE (no caso, 'pug'...)
+app.set('views'); //////// AQUI DIZEMOS O LUGAR EM QUE DEVERÃO SER ENCONTRADAS NOSSAS VIEWS....  (nós já nomeamos um folder como 'views' no nosos projeto para não ter que alteraer esse default, ainda assim,  o professor vai definir esse CONFIG EXPLICITAMENTE,  só para mostrar/nos lembrar que ISSO É POSSÍVEL, QUE É UMA OPÇÃO....
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+----------> MAS AINDA ASSIM ACHO QUE NÃO ACABAMOS COM ESSA LINHA 
+
+
+'app.set('views', )'....
+
+
+
+
+
+
+-------> OK....... ----> COMO SEGUNDO PARÂMETRO,
+
+
+
+
+
+
+COLOCAMOS 
+
+
+'views' de novo....
+
+
+
+
+
+
+-------> 
+
+
+
+
+ex:
+
+
+
+ app.set('view engine', 'pug'); ///CÓDIGO NECESSÁRIO PARA IMPLEMENTAR/UTILIZAR TEMPLATING ENGINE (no caso, 'pug'...)
+app.set('views', 'views'); //////// AQUI DIZEMOS O LUGAR EM QUE DEVERÃO SER ENCONTRADAS NOSSAS VIEWS....  (nós já nomeamos um folder como 'views' no nosos projeto para não ter que alteraer esse default, ainda assim,  o professor vai definir esse CONFIG EXPLICITAMENTE,  só para mostrar/nos lembrar que ISSO É POSSÍVEL, QUE É UMA OPÇÃO....
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+views --> É UMA PROPRIEDADE...
+
+String or Array	A directory or an array of directories for the application's views. If an array, the views are looked up in the order they occur in the array.	
+process.cwd() + '/views'
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+ok... 
+
+
+resumindo,
+
+valor padrão é 
+
+
+'app.set('views', 'views'); --------> 
+
+
+
+
+
+
+
+
+
+COM ISSO, AGORA ESTAMOS DIZENDO AO EXPRESS QUE QUEREMOS 
+
+
+'COMPILE DYNAMIC TEMPLATES'
+
+
+
+com a ajuda da ENGINE DO PUG,
+
+
+
+
+_____ E O LOCAL EM QUE ENCONTRAREMOS ESSES TEMPLATES (que é em 'views'...)
+
+
+
+
+
+
+
+
+
+
+
+--------. A ÚLTIMA ETAPA, É CLARO,
+
+
+
+É __ ADICIONAR__ OS DITOS TEMPLATES... --------> 
+
+
+
+
+
+
+
+
+PARA ISSO,
+
+
+
+
+PROFESSOR VAI ATÉ O FOLDER DE 
+
+'views'
+
+
+E ADICIONA UM ARQUIVO 
+
+
+
+
+'shop.pug'.... (e aí constatamos o ícone do cachorro....)
+
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA 
+
+TEMOS UMA TEMPLATING FILE,
+ 
+
+ NO FINAL DAS CONTAS...
+
+
+
+
+
+
+
+-----> E AGORA,
+
+
+
+
+O PROFESSOR NOS DIZ QUE 
+
+
+
+ARQUIVOS 'pug', e o 
+
+'PUG' 
+
+EM SI,
+
+
+__FUNCIONAM DE MODO DISTINTO DE ARQUIVOS 
+
+HTML 
+
+
+COMUNS... -------->  ISSO QUER 
+
+ 
+
+ DIZER QUE 
+
+
+ NÃO PODEMOS 
+
+ FAZER UMA CÓPIA PORCA DO CÓDIGO HTML DE 
+
+ 'shop.html',
+
+ NÃO PDEMOS 
+
+
+ COPIAR ISTo:
+
+
+
+
+ <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <title>Shop</title>
+    <!-- <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      main {
+          padding: 1.5rem;
+      }
+
+      .main-header {
+          padding: 0 1.5rem;
+        width: 100%;
+        height: 3.5rem;
+        background-color: #c2c213;
+      }
+
+      .main-header__nav {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .main-header__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .main-header__item {
+        margin: 0 1rem;
+        /* padding: 25px; */
+        padding: 0;
+      }
+
+      .main-header__item a {
+        text-decoration: none;
+        color: black;
+      }
+
+      .main-header__item a:hover,
+        .main-header__item a:active,
+        .main-header__item a.active {
+            color: #9f2fc4;
+        }
+
+
+    </style> -->
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>My Products</h1>
+      <p>List of all my products</p>
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+A BOA NOTÍCIA É, ENTRETANTO,
+
+QUE 
+
+NO 
+
+VISUAL STUDIO CODE,
+
+
+
+___ SE DIGITARMOS o 'html:5',
+
+
+
+VAMOS 
+
+
+
+CONSEGUIR 
+
+o 
+
+
+TEMPLATE 
+
+
+
+
+
+
+do html:5, sim, MAS __ DESSA VEZ ______________________ ADAPTADO___  
+
+
+
+à ESTRUTURA UTILIZADA PELO PUG (nossa, isso é absurdo...).
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> COM ISSO, SE USARMOS ESSA SHORTHAND,
+
+
+
+RECEBEREMOS ESTE ARQUIVO:
+
+
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Document
+    body 
+
+
+
+
+-----------------------
+
+
+
+
+
+
+OU SEJA,
+
+AQUI JÁ É POSSÍVEL VER AQUELA 
+
+
+'MINIMAL HTML SYNTAx'... -------> NÃO TENHO 
+
+
+NENHUMA 
+
+
+
+HTML TAG,
+
+
+
+
+MAS __DEVEMOS TER EM MENTE QUE 
+
+
+
+A 
+
+TEMPLATING ENGINE 'pug',
+
+a 
+
+
+TE do PUG 
+
+
+___VAI, NO FINAL DAS CONTAS,
+
+
+COMPILAR 
+
+ESSE CÓDIGO 
+
+PARA QUE 
+
+
+ELE 
+
+
+
+SEJA ENVIADO COMO HTML AOS NOSSOS USERS... (tudo isso no servidor, de verdade..)
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE
+
+
+
+'''
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Document
+    body 
+
+
+
+
+
+
+
+''' 
+
+
+
+
+É 
+
+
+a mesma COISA 
+
+
+QUE 
+
+UM 
+
+HTML:5 esqueleto NORMAL...
+
+
+
+
+
+
+
+
+
+--------------> A BOA NOTÍCIA, AQUI, É QUE 
+
+O 
+
+IDE 
+
+NOS AJUDA 
+
+COM 
+
+o 
+
+EDIT 
+
+
+
+DE 
+
+ARQUIVOS 
+
+
+DE TEMPLATING ENGINES... (templates)... ------> 
+
+
+
+
+
+por exemplo, se digitarmos 
+
+
+'link',
+
+
+JÁ CONSEGUIMOS UM ATALHO PARA 
+
+
+escrever 
+
+
+'link(rel="stylesheet" href="") ',
+
+
+
+
+JÁ CONSEGUIMOS A VERSÃO ___ PUG_ DISSO....
+
+
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE AGORA POSSO COMEÇAR A ADAPTAR MEU ARQUIVO HTML 'shop.html'
+
+
+NESSE TEMPLATE DO PUG....
+
+
+
+
+
+
+--> E TUDO FICA A MESMA COISA, os paths dos arquivos css tbm ficam os mesmos...
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+CERTO, ENTÃO É ASSIM QUE INSTALAMOS O PUG,
+
+E É ASSIM QUE O UTILIZAMOS..
+
+
+
+
+
+
+
+
+
+
+
+-----> OK, 
+
+
+
+DEVEMOS 
+
+
+TERMINAR ESSE ARQUIVO PUG PARA QUE ELE SE PAREÇA 
+
+COM O 
+
+
+shop.html,
+
+
+PARA QUE 
+
+ENTÃO 
+
+APRENDAMOS 
+
+
+_SOBRE__ COMO ADICIONAR/ESCREVER __ CONTEÚDO DINÂMICO NESSE ARQUIVO 'TEMPLATE'...
+
+
+
+
+
+
+
+
+
+------->  NO BODY TINHAMOS AQUELE HEADER 
+
+e AQUEla 
+
+TAG 
+
+
+'main',
+
+
+POR ISSO VAMOS 
+
+ESCREVER ESSES NEGÓCIOS NO PUG...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> IMPORTANTE::::: INDENTAÇÕES (espaços) 
+
+
+
+IMPORTAM NO PUG,
+
+POR ISSO DEVEMOS NESTEAR NOSSOS ELEMENTOS POR MEIO __ DE INDENTAÇÕES...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Document
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header 
+            nav 
+                ul 
+                    li 
+                    li 
+
+
+
+
+-------------------------------
+
+
+
+OK... MAS AÍ O PROFESSOR NOS FALA DE OUTRA FEATURE DO 
+
+
+
+VISUAL STUDIO CODE...
+
+
+
+
+
+
+---> se digitarmos 
+
+'.' (dot) E DEPOIS O 
+
+
+__NOME DA CLASSE DAQUELA TAG,
+
+
+
+ELA 
+
+ACABA SENDO 
+
+DIGITADA abreviadamente naquela linha, com aquela class....
+
+
+
+
+ex:
+
+
+
+
+body 
+  header.main-header ------------> ISSO SERÁ TRADUZIDO/INTERPRETADO COMO  -----> header(class="main-header"), QUE POR SUA VEZ, SERÁ INTERPRETADO COMO --> <header class="main-header" />
+
+
+
+
+
+
+
+
+
+  ---------------------------------------------------------------------------
+
+
+
+
+
+
+---> ISSO VAI CRIAR UM ELEMENTO 'header' COM ESSA CLASS DE 'main-header'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Document
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header
+        
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+OK... VAMOS TRADUZIR NOSSO ARQUIVO  
+
+'shop.html' agora...
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title My Shop
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a.active(href="/admin/add-product") Add Product
+        main 
+            h1 My Products 
+            p List of all my products
+
+
+
+
+-----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+() depois da 'TAG' ----> É A 'ATTRIBUTE NOTATION'...,
+
+
+
+
+
+NO PUG.... ex:
+
+
+
+
+'a.active(href="/")'...
+
+
+
+------------------------------------
+
+
+
+
+
+
+----> JÁ O TEXT CONTENT É COLOCADO AO LADO DA TAG/attribute notation...
+
+
+
+ex:
+
+
+
+'a.active(href="/") Shop'
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.... --> ESSE É O SETUP QUE VAMOS QUERER TER AQUI....
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title My Shop
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a.active(href="/admin/add-product") Add Product
+        main 
+            h1 My Products 
+            p List of all my products
+
+
+
+
+
+      
+
+  --------------------------------------------
+
+
+
+
+
+
+  -> OK.., MAS AGORA SE EXECUTARMOS 
+
+
+  'npm start',
+
+  NÃO VEREMOS COISA ALGUMA,
+
+
+  NÃO VEREMOS 
+
+  ESSE 
+
+  ARQUIVO 
+
+  'pug'
+
+  sendo utilizado..
+
+
+
+
+
+
+
+
+
+
+  ----------> COM ISSO, BASICAMENTE, NÃO RENDERIZARÍAMOS 
+
+  O 
+
+
+  TEMPLATE ----> ISSO 
+  PQ 
+
+
+  __NÓS AINDA_ __ NÃO 
+
+  ESTAMOS 
+
+
+  COMUNICANDO/NÃO COMUNICAMOS 
+
+  AO 
+
+
+  expressjs 
+
+  que 
+
+
+  ELE 
+
+  DEVE USAR 
+
+  ESSE ARQUIVO...
+
+
+
+
+  -------> OK... ISSO QUER DIZER QUE 
+
+
+  ATÉ AGORA 
+
+
+
+
+
+  NÓS SÓ ESCRVEMOS ESTES CÓDIGOS DE SETUP DO PUG:
+
+
+
+
+  app.set('view engine', 'pug');
+  app.set('views', 'views');
+
+
+
+
+  ---> ESSAS 2 LINHAS AÍ __aPENAS___ DIZEM 
+  AO EXPRESS 
+
+
+____ QUE ___ ELE 'SHOULD USE THIS TEMPLATING ENGINE 
+
+__WHENEVER WE TRY TO RENDER A TEMPLATE',
+
+
+
+MAS 
+
+
+
+POR ENQUANTO __ NÓS ACTUALLY___ NÃO TENTAMOS 
+
+FAZER ISSO, 
+
+NÃO TENTAMOS 
+
+FAZER O 
+
+RENDER DE UM TEMPLATE 
+
+
+NAS NOSSAS ROUTES... -------> É POR ISSO QUE DEVEMOS 
+
+
+IR 
+
+
+ATÉ 
+
+
+
+o arquivo 'route' de 
+
+
+'shop.js'
+
+
+
+E ENTÃO 
+DEVEMOS 
+
+
+TROCAR AQUELE 
+
+CÓDIGO DE 
+
+
+
+'''
+
+
+
+
+router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+
+    res.status(200).sendFile(path.join(rootDir, 'views', 'shop.html')); //VERSÃO QUE UTILIZA UTILITY FUNCTION DO PROFESSOR PARA abreviar '__dirname' e '..' em uma única expressão, 'rootDir'...
+
+  }
+);
+
+
+
+
+''',
+
+
+
+
+
+DEVEMOS 
+
+
+TROCAR AQUELE 
+
+
+
+sendFile 
+
+
+do 
+
+arquivo 
+
+'
+shop.html'
+
+
+
+POR ___ UM 
+
+'sendFile' 
+
+
+
+
+
+
+DO PUG??  ---> DEVEMOS ALTERAR ESSA RESPONSE/SEND FILE COM A RESPONSE,
+
+
+
+
+PARA ___  FAZER __ ALGO DIFERENTE............
+
+
+
+
+
+
+
+
+--->NÃO, NÓS __ NÃO VAMOS USAR 
+
+
+
+'res.sendFile()'... ---------> 
+
+
+
+EM VEZ DE USAR 
+
+
+'res.sendFile()',
+
+O QUE 
+
+VAMOS 
+
+FAZER 
+
+
+É ___ USAR 
+
+
+
+
+UM MÉTODO ESPECIAL 
+
+CHAMADO 
+
+DE 
+
+'.render()',
+
+QUE 
+
+EXISTE 
+
+
+
+________dENTRO DE 
+
+'res'...
+
+
+
+
+ex:
+
+
+
+
+
+router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+
+    res.status(200).render();
+
+  }
+);
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+EX:
+
+
+
+   res.render(); ////.render() --> É UM MÉTODO PROVIDENCIADO PELO EXPRESSJS, e que vai 'USE THE DEFAULT TEMPLATING ENGINE', a engine que definimos em 'app.set('view engine', 'pug')'... 
+
+
+
+
+
+
+
+
+
+  
+  ---> OK, JÁ ESTAMOS USANDO COMO 'DEFAULT TEMPLATING ENGINE' 
+
+  a engine 
+
+  de 
+
+  PUG...
+
+
+
+
+
+
+
+  ---->  AGORA VAMOS QUERER RETORNAR/RENDERIZAR O TEMPLATE DE 
+
+
+  'shop.pug'...
+
+
+
+
+
+
+
+
+
+  -------> E AGORA, COMO __JÁ DEFINIMOS QUE TODOS 
+
+  OS 
+
+  VIEWS ESTÃO 
+
+  NO FOLDER 
+
+  'VIEWS' 
+
+  (por 
+  
+  meio do código 
+  
+  
+  'app.set('views', 'views');' 
+  
+
+  EM __APP.JS...
+
+
+  ),
+
+
+
+
+  NÓS __ REALMENTE __ NÃO PRECISAMOS CONSTRUIR UM PATH A ESSE FOLDER; 
+
+
+  BASTA ___ INDICAR/APONTAR O _ NOME __ DO ARQUIVO 
+
+  '.pug' QUE 
+
+  QUEREMOS 
+
+
+  RENDERIZAR, O TEMPLATE QUE QUEREMOS RENDERIZAR PARA ESSA ROUTE 
+
+
+  DE 
+
+  'GET' + ''/'.....
+
+
+
+
+
+
+
+
+  ---> PARA ISSO, ESCREVEMOS 
+
+
+  'shop'... ( NÓS TAMBÉM N PRECISAMOS ESCREVER 'shop.pug' PQ 
+  
+  
+  
+  NÓS JÁ DEFINIMOS O 'PUG' COMO A 'DEFAULT TEMPLATING ENGINE' DO NOSSO APP, por meio de 'app.set('view engine', 'pug')....)
+
+
+
+
+
+
+
+
+  ---------------------
+
+
+
+
+  EX:
+
+
+
+  router.get('/', (req, res, next) => {
+
+    res.render('shop');
+
+
+  })
+
+
+
+
+--------------------------------
+
+
+
+OK... SALVAMOS TUDO ISSO.
+
+
+
+
+
+-------------------------
+
+
+CERTO, ISSO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+-------> AGORA NOSSA PÁGINA 'SHOP' está sendo RENDERIZADA POR MEIO DO NOSSO 'TEMPLATE' shop.pug,
+
+COM A AJUDA 
+
+DA 
+TEMPLATING ENGINE 
+
+
+DO PUG...
+
+
+
+
+
+
+
+
+--. E SE VOCÊ INSPECIONAR O PAGE SOURCE DA PÁGINA,
+
+você 
+
+constatará 
+
+QUE TUDO 
+
+QUE ESTÁ NA SUA PÁGINA É CÓDIGO HTML NORMAL,
+
+
+
+GRAÇAS À AÇÃO 
+
+DA 
+
+'VIEW ENGINE'/templating engine 
+
+DO 
+PUG,
+
+QUE 
+
+FEZ 
+
+
+'GENERATE' DESSE CÓDIGO HTML AÍ... (based on that minimal version)...
+
+
+
+
+
+
+
+
+
+----> MAS UMA COISA QUE AINDA __ NÃO ESTAMOS FAZENDO __ AQUI É O OUTPUT 
+
+__ DE 
+
+CONTEÚDO DINÂMICO,
+
+UMA 
+
+DAS FEATURES PRINCIPAIS DE TEMPLATING ENGINES...
+
+
+
+
+
+
+--> FAREMOS ESSE OUTPUT DE COISAS DINÂMICAS __ NA PRÓXIMA LIÇÃO....
+
+
+
+
+
+
+
+
+
+
+
+O OUTRO ARQUIVO FICOU ASSIM:
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Add Product
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/forms.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a(href="/") Shop
+                    li.main-header__item 
+                        a.active(href="/") Add Product
+        main 
+            form.product-form(action="/admin/add-product" method="POST")
+                .form-control 
+                    label(for="title") Title 
+                    input(type="text" name="title")
+            button.btn(type="submit") Add Product
+
+
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+

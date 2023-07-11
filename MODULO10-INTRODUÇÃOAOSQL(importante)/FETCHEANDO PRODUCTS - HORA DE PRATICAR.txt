@@ -1,0 +1,90 @@
+
+
+
+
+
+
+
+
+
+
+
+---> MEU CÓDIGO DE FETCH FICOU ASSIM:
+
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+
+   Product.fetchAll(
+   )
+   .then(
+    ([rows, fieldData]) => { ///'fieldData' --> é a METADATA acerca de nossa data (que é 'rows') retrievada da database SQL...
+      res.render('shop/product-list', {
+prods: rows, ////EIS O CÓDIGO EM QUESTÃO.
+pageTitle: 'Shop',
+path: '/products',
+productCSS: true,
+activeShop: true,
+hasProducts: rows.length > 0,
+});
+})
+
+};
+
+
+
+-------------------------------
+
+
+
+
+
+PROFESSOR NOS EXPLICA QUE 
+aquele 
+
+
+'fieldData'
+
+
+NÃO PRECISA SER USADO, QUE É UM ARGUMENTO OPCIONAL...  --> ELE 
+
+SÓ 
+
+
+
+ESCREVEU 
+
+
+ISSO PARA 
+
+NOS MOSTRAR QUE 
+
+PODEMOS 
+
+'EXTRACT THE DIFFERENT 
+
+ELEMENTS 
+
+OF AN ARRAY IN THE ARGUMENTS LIST, already'...
+
+
+
+
+
+
+OK... A PÁGINA DE PRODUCTS JÁ ESTÁ FUNCIONANDO, AGORA É HORA DE 
+
+ver 
+
+'ADD PRODUCT'...
+
+
+
+
+
+--> VEREMOS ISSO NA PRÓXIMA AULA..

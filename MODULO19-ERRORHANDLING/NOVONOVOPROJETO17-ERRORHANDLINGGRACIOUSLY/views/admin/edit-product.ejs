@@ -1,0 +1,35 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    </head>
+    <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+    <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
+        <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" required name="title" id="title" value="<% if(editing) { %><%= prod.title %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" required  name="imageUrl" id="imageUrl" value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text"  required rows="5" name="description" id="description" ><% if(editing) { %><%=prod.description%><% } %></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number"  step=".01" required name="price" id="price" value="<% if(editing) { %><%= prod.price %><% } %>"></title>
+            </div>
+            <% if (editing) { %>
+                <input type="hidden" value="<%= prod._id %>" name="id" required >
+                <% } %>
+            <button type="submit" class="btn"><%= editing ? 'Edit Product': 'Add Product' %></button>
+
+        </form>
+    </main>
+<%- include('../includes/end.ejs'); %>

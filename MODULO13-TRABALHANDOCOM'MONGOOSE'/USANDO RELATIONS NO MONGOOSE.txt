@@ -1,0 +1,2077 @@
+
+
+
+
+
+
+
+
+
+
+
+
+---> COM O USER MODEL JÁ SETTADO,
+
+
+
+
+
+
+seu código de model sendo este:
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  products: [
+    {
+      productId: { type: Schema.Types.ObjectId, required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+, 
+
+
+
+AGORA 
+
+
+DEVEMOS 
+
+
+
+ASSEGURAR
+ 
+
+
+ QUE 
+
+
+
+
+
+SEJA POSSÍVEL
+ 
+
+ SEU 
+
+ USO 
+
+
+ __JUNTO ___ DO MODEL DE 'product' (ou seja, estabelecer uma RELATION entre os dois)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> É CLARO 
+
+ 
+
+ QUE 
+
+ CADA 
+
+
+ OBJETO 
+
+
+ 'Product' 
+
+
+
+ DEVERÁ 
+
+ SER ASSIGNADO A 
+
+ 1 
+
+ 'USER'... ---> 
+
+
+
+ (só não sei se o professor está falando de user 'admin' ou user 'consumer', nesse caso)...
+
+
+
+
+
+
+
+
+
+
+
+ ---------> PARA ISSO, PROFESSOR DIZ QUE OBVIAMENTE 
+
+
+
+
+ ___ DEVEMOS __ 
+
+
+
+
+ MUDAR 1 POUCO O NOSSO 'PRODUCT SCHEMA'... ----> 
+
+
+
+
+
+ ELE NOS DIZ QUE 
+
+
+
+
+
+ cada product tem que ter 1 
+
+
+ field 
+ de 
+
+ 'userId',
+
+ por exemplo...
+
+
+
+
+
+
+
+
+
+
+ --> para isso,
+
+ escrevemos (lá no model de 'product.js'):
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: true,
+      type: String
+    },
+
+    price: {
+      required: true,
+      type: Number
+    },
+
+
+    description: {
+      required: true,
+      type: String
+    },
+
+    imageUrl: {
+      required: true,
+      type: String
+    },
+
+  userId: {
+    required: true,
+    type: String ////EIS O CÓDIGO EM QUESTÃO.
+  }
+  }
+)
+
+
+
+
+
+module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+--> ESSE USERID SERÁ 'required',
+
+
+
+
+
+
+
+
+____ENTRETANTO,
+
+
+SEU 'type'
+
+__ NÃO SERÁ__ DE 
+
+TYPE 
+
+
+
+'String' (default do javascript),
+
+
+
+
+
+___ 
+E __SIM SERÁ ___ DO 
+
+
+TIPO 
+
+
+
+'Schema.Types.ObjectId' ,
+
+
+
+PQ 
+
+
+TODOS OS 
+
+'userId' (que são os '_id' dentro dos documents 'user', na verdade) 
+
+
+
+
+VÃO SER DESSE TIPO 'ObjectId('xxxx')' ,
+
+PQ 
+
+
+É ASSIM QUE ELES SÃO ARMAZENADOS LA 
+
+
+NAS 
+
+
+
+COLLECTIONS MONGODB, NOS DOCUMENTS 'user'...
+
+
+
+
+
+
+
+
+-----> CERTO.... 
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: true,
+      type: String
+    },
+
+    price: {
+      required: true,
+      type: Number
+    },
+
+
+    description: {
+      required: true,
+      type: String
+    },
+
+    imageUrl: {
+      required: true,
+      type: String
+    },
+
+  userId: {
+    required: true,
+    type: Schema.Types.ObjectId ////EIS O CÓDIGO EM QUESTÃO.
+  }
+  }
+)
+
+
+
+
+
+module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+ISSO FEITO,
+
+
+
+PROFESSOR DIZ __ QUE PODEMOS ADICIONAR ALGO ESPECIAL 
+
+
+
+
+COMO 
+
+'ATRIBUTO' 
+
+DESSE 
+
+field 
+
+'userId'
+
+
+em cada 
+PRODUCT,
+
+
+
+
+que é 
+
+
+
+__ UMA PROPRIEDADE 
+
+de 
+
+'ref'... ------> REF VEM DE 'reference',
+
+
+
+
+____ E 
+
+
+
+
+__ELE ACEITA/EXIGE __UMA STRING__, 
+
+
+STRING EM QUE __ DIZEMOS __ AO 
+
+'mongoose' 
+
+O SEGUINTE:
+
+
+
+
+
+
+
+
+'HEY,
+
+
+
+__ ESTE AQUI É O OUTRO MONGOOSE MODEL QUE 
+
+
+'IS RELATED' À DATA nesse field aí...'
+
+
+
+
+
+
+
+
+---> tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: true,
+      type: String
+    },
+
+    price: {
+      required: true,
+      type: Number
+    },
+
+
+    description: {
+      required: true,
+      type: String
+    },
+
+    imageUrl: {
+      required: true,
+      type: String
+    },
+
+  userId: {
+    required: true,
+    type: Schema.Types.ObjectId, ////EIS O CÓDIGO EM QUESTÃO.
+    ref: ''
+  }
+  }
+)
+
+
+
+
+
+module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+OK, MAS PQ PRECISAMOS ESPECIFICAR ISSO AÍ TÃO CERTINHO ASSIM? -----> É PQ 
+
+
+
+
+mesmo 
+
+
+
+que nós 
+
+
+
+tenhamos definido o type como 'ObjectId' (Schema.Types.ObjectId),
+
+
+
+
+ISSO __ NÃO DEIXA_ _ ÓBVIO _ AO MONGOOSE__ A QUE 
+
+
+
+
+
+
+'ObjectId', ObjectId DE 
+
+
+QUAL COLLECTION/MODEL VOCÊ 
+
+
+
+QUER 
+
+
+
+CONECTAR ESSE FIELD AÍ...
+
+
+
+(
+  pq poderíamos/podemos conectar nosso 'product' a 
+
+
+  OUTRS MODELS/COLLECTIONS, como  
+
+
+  'cart', 'orders', etc etc.... -------> 
+
+
+
+  aí, nesses casos, 
+
+
+
+  escreveríamos coisas como 
+
+
+
+  'orderId: {
+    type: Schema.Types.ObjectId,
+    ref: 'COISO DA COLLECTION DE ORDERS, etc etc'
+  }
+'
+
+
+
+)
+O
+
+
+
+
+
+
+
+ 
+--> CERTO... MAS COMO  ESPECIFICAMOS ISSO? -----> PROFESSOR DIZ QUE 
+
+
+
+DEVEMOS 
+
+
+
+SIMPLESMENTE 
+ESCREVEr 
+
+'User', com 
+
+letra maiúscula,
+
+
+
+
+NOME DESSE MODEL QUE VOCÊ DEFINIU LÁ 
+
+
+
+no seu arquivo de model (no caso, em 'user.js'),
+
+
+lá naquela 
+
+
+LINHA DE EXPORT 
+
+
+
+
+que é 
+
+
+'module.exports = mongoose.model('User', userSchema)'....
+
+
+
+
+
+
+
+
+
+VOCÊ DEVE __ PASSAR __ 
+
+
+O 
+
+
+
+'MODEL' A QUE VOCê VAI QUERER __ 'RELATE' 
+
+ESSE 
+
+FIELD 
+
+ESPECÍFICO AÍ...
+
+
+
+
+
+
+
+
+
+
+E É EXATAMENTE POR ISSO QUE O CÓDIGO 
+
+
+DE NOSSO 'product' model fica assim:
+
+
+
+
+
+userId: {
+
+  type: 'Schema.Types.ObjectId',
+  ref: 'User'
+}
+
+
+
+
+
+
+
+
+
+
+
+
+CÓDIGO COMPLETO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {         ////é isso aqui que vai definir a ESTRUTURA/SCHEMA DE CADA DOCUMENTO 'product', no caso...
+
+
+    // title: String ///STRING É UM OBJETO DEFAULT JAVASCRIPT, que pode ser usado aqui para definir o TIPO DE DATA QUE PODERÁ SER ENFIADO NESSE FIELD DE 'title'...
+  /// ^^^^^essa é a versão SIMPLES de definir fields/propriedades no seu objeto/model/document.... já esse código aqui de baixo é como DEFINIR COISAS MAIS ESPECIFICAS DESSE FIELD, como se ele é 'required' ou não, além de seu TYPE e outras configs...
+
+
+    title: {
+
+      required: true,
+      type: String
+    },
+
+    price: {
+      required: true,
+      type: Number
+    },
+
+
+    description: {
+      required: true,
+      type: String
+    },
+
+    imageUrl: {
+      required: true,
+      type: String
+    },
+
+  userId: {
+    required: true,
+    type: Schema.Types.ObjectId, 
+    ref: 'User' ///EIS O CÓDIGO EM QUESTÃO.
+  }
+  }
+)
+
+
+
+
+
+module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--->     ref: 'User' ///EIS O CÓDIGO EM QUESTÃO.,
+
+
+
+
+
+
+
+
+OK,
+
+
+
+'WE WILL REFER TO THE USER MODEL IN THAT PLACE, basically'...
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+COM ISSO,
+
+TEREMOS 
+
+SETTADO UMA RELATION COM SUCESSO...
+
+
+
+(
+
+  ok, 
+
+  mas 
+
+  é uma 
+
+  RELATION 
+
+
+  'one-to-one'? 
+
+
+  'one-to-many'? 
+
+
+
+  como é isso?
+)
+
+
+
+
+
+
+----------> BEM, O PROFESSOR __ DIZ QUE 
+
+ISSO TBM 
+
+SIGNIFICA QUE 
+
+
+LÁ 
+
+
+
+NO NOSSO MODEL DE 
+
+'user',
+
+
+que 
+
+
+TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  products: [
+    {
+      productId: { type: Schema.Types.ObjectId, required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+,
+
+
+
+
+
+
+LÁ NESSE MODEL 
+
+DE 
+
+'user',
+
+
+
+EM QUE 
+
+
+
+__NÓS TAMBÉM 
+
+
+__FAZEMOS 
+
+O 
+
+STORE 
+
+
+
+
+DE 
+
+
+
+'productId'
+
+
+
+DENTRO 
+
+
+DE 
+
+CADA 
+
+
+'product' dentro de 
+
+'products',
+
+
+
+
+
+O __ PROFESSOR __ DIZ QUE 
+
+
+
+
+
+TAMBÉM ___ PODEMOS 
+
+ADICIONAR 
+
+UMA REFERENCE ('ref')
+
+
+
+ALI,
+
+
+E AÍ __ TAMBÉM __ FAZER/ESCREVER 
+
+
+UMA 
+
+
+REFERENCE 
+
+
+
+AO model de 'product'...
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  products: [
+    {
+      productId: { type: Schema.Types.ObjectId, ref: 'Product', //////EIS O CÓDIGO EM QUESTÃO.
+      
+       required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.... ISSO SIGNIFICA QUE AGORA,
+
+lá 
+
+em 
+
+'user.js',
+
+
+
+
+
+NOS 'productItems'
+
+
+armazenados 
+
+
+DENTRO 
+
+DE 
+
+'cart',
+
+
+__TAMBÉM __ VAMOS TER UMA REFERENCE ('productId')/RELATION 
+
+
+
+__AO 
+
+NOSSO MODEL/OBJECTS 
+
+DE 
+
+'product'...
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+espere... preciso processar tudo isso....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  cart: { products: [
+    {
+      productId: { type: Schema.Types.ObjectId, 
+        ref: 'Product', /////AQUI DEFINIMOS UMA RELATION/reference AO MODEL/COLLECTION de 'products'...
+        required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+}
+}
+);
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+OK... ISSO SIGNIFICA QUE 
+
+AGORA 
+
+
+
+DEFINIMOS 
+2 
+RELATIONS...
+
+
+
+
+
+
+
+
+1) relation entre __PRODUCT__ e __ USER...
+
+(
+
+'userId', colocado DENTRO DE cada 'Product', 
+
+e de valor 'objectId(xxx)' ..... ---> sabemos/forçamos que 
+
+o negócio será 
+
+a RELATION entre product e user 
+
+JUSTAMENTE 
+
+PQ 
+
+
+definimos 'ref: 'User' ',
+
+lá 
+
+em 
+
+product.js... (model), no field 'userId'...
+
+
+
+)
+
+
+
+
+
+2) RELATION ENTRE 'product' e nossos 'cart Items/products',
+
+
+
+PQ 
+
+colocamos 
+
+um field de 'productId' 
+
+nos cartItems, e 
+
+
+esse productId 
+
+
+tem seu 'ref' definido como 
+
+'Product' (estabelecida a relation entre os dois...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> tudo me leva a crer que :
+
+
+
+
+
+
+
+
+1A RELATION --> É 'one-to-many', 
+
+
+pq 
+
+o 
+
+
+USER PODE CRIAR MÚLTIPLOS PRODUCT....
+
+
+
+
+
+
+2a relation ---> é 'ONE-TO-MANY',
+
+
+
+
+pq 1 mesmo 'productId' 
+
+pode 
+
+aparecer 
+
+EM __MÚLTIPLOS 'cart item' diferentes...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK, AGORA TEMOS RELATIONS SETTADAS POR MEIO DE 'ref'...
+
+
+
+
+
+
+
+
+--> É CLARO QUE VOCê SÓ PRECISA de 'ref' QUANDO VOCÊ 
+
+
+ESTÁ USANDO/VAI USAR 'references'......... -----> ISSO SIGNIFICA QUE 
+
+
+QUANDO 
+
+VOCÊ 
+VAI TRABALHAR/ESTÁ TRABALHANDO COM 
+
+
+
+'EMBEDDED DOCUMENTS',
+
+
+(
+
+
+exatamente como estamos fazendo com o __CART__, 
+
+
+
+pq o 'cart' 
+
+é 
+
+
+UM ___ 
+
+
+OBJETO/DOCUMENT __ EMBEDDADO DENTRO DE CADA 'user'_, 
+
+
+
+fica dentro dele, E ESSE É SEU MÉTODO DE 'RELATION'.... (em vez do referencing)
+
+
+
+
+
+
+
+
+),
+
+
+
+__VOCÊ 
+
+NÃO PRECISA 
+
+SETTAR 
+
+
+NADA 
+
+DESSES 
+
+'refs',
+
+
+
+ 
+
+ _PQ O EMBEDDED DOCUMENT JÁ TEM UMA RELATION IMPLÍCITA, QUE É MANAGEADA 
+
+ DENTRO 
+
+ DE 
+
+ 1 MESMO DOCUMENT....
+
+
+
+
+
+
+
+
+
+
+ ---------> certo... com as references settadas,
+
+
+
+ PROFESSOR
+
+
+
+ define 'required: true' no 
+
+ field de userId,
+
+
+ antes de prosseguir...
+
+
+
+
+
+
+
+
+
+ -_> COM ESSES SCHEMAS SETTADOS,
+
+
+
+
+
+ PROFESSOR DIZ QUE TAMBÉM PRECISAMOS AJUSTAR NOSSO CÓDIGO...
+
+
+
+
+
+
+
+
+
+
+ --> EXEMPLO DISSO É O CONTROLLER DE 'admin.js',
+
+
+
+
+
+NO LOCAL EM QUE UM 
+
+NOVO 
+
+'product' 
+
+é 
+
+criado....
+
+
+
+
+
+
+
+(ou seja,
+
+
+
+
+em 
+
+
+
+
+''
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  // const user = req.user;
+  // const userId = req.user._id;
+
+    ////VERSÃO QUE UTILIZA/UTILIZAVA O DRIVER PADRÃO DE 'MONGODB' do node, em vez de 'mongoose'.... passamos a usar O MONGOOSE, por isso não vamos mais INSTANCIAR ESSE 'product' com esses argumentos, dessa forma aí...
+  // const newProduct = new Product(title, price, imageUrl, description, userId); ///com isso, estamos usando A VERSÃO 'NOSQL'/mongodb do código de 'add a product to our database'... 
+
+  //  newProduct.save().then(
+  //    (result) => {
+
+  //         // console.log(result);
+  //         res.redirect('/admin/product-list-admin');
+
+  //    }
+  //  )
+  //  .catch(
+  //    (err) => {
+  //         // console.log(err);
+  //         res.redirect('/product-list-admin');
+  //    }
+  //  )
+
+
+
+    
+  const product = new Product({
+
+                            ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl
+  }); 
+
+   product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+   .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+   .then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+};
+
+
+
+
+
+
+''''''''
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+--> DEVO TENTAR 
+
+
+
+
+
+REESTRUTURAR ESSE CÓDIGO SOZINHO, fazer com que 
+
+ele trabalhe com as relations que settamos há pouco...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+   const userId = req.user._id; ///TALVEZ ESTE CÓDIGO
+
+
+
+
+
+    
+  const product = new Product({
+
+                            ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl,
+      userId: userId ///TALVEZ ESTE CÓDIGO.
+  }); 
+
+   product 
+   .save() 
+   .then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+};
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+CERTO... MAS ISSO ME _ DEU UM ERRO.... --> 
+
+
+
+''TypeError: Cannot read property '_id' of null
+    at exports.postAddProduct (A:\projeto4 - NODEJS\MODULO13-TRABALHANDOCOM'MONGOOSE'\NOVONOVOPROJETO11-USANDOMONGOOSEPARAESCREVERQUERIESMONGODBNOSQL\controllers\admin.js:352:27)
+
+    '''
+
+
+
+
+
+
+
+
+
+
+
+    o que pode ser isso...
+
+
+
+
+
+
+
+  não era nada de mais...
+
+
+
+
+
+
+
+
+
+
+--> E NOSSO PRODUCT, DE FATO,
+
+FICOU COM UMA ESTRUTURA ASSIM:
+
+
+
+
+{
+    "_id": {
+        "$oid": "6178c95a034366e935717476"
+    },
+    "title": "ASAS",
+    "price": 22121,
+    "description": "ASSAAS",
+    "imageUrl": "ASAS",
+    "userId": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+---> SINAL DE QUE ISSO DEU CERTO,
+
+pq 
+
+agora temos aquele field 
+
+de 
+
+
+'''
+
+
+    "userId": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+'''
+
+,
+
+
+QUE ESTABELECE 
+
+UMA RELATION ENTRE CADA 
+
+
+'product' 
+e 
+
+esse 
+
+nosso único 'user'...
+
+
+(
+
+
+  e é uma relation 
+
+  'one-to-many',
+
+  pq 
+
+  1 mesmo user PODE TER 
+
+  MÚLTIPLOS PRODUCTS RELACIONADOS A ELE...
+)
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+-----> OK.... PROFESSOR FEZ EXATAMENTE A MESMA COISA QUE NÓS....
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+   const userId = req.user._id; ///TALVEZ ESTE CÓDIGO
+
+
+
+
+
+    
+  const product = new Product({
+
+                            ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl,
+      userId: userId ///TALVEZ ESTE CÓDIGO.
+  }); 
+
+   product 
+   .save() 
+   .then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+ISSO VAI NOS DAR ACESSO AO 
+
+
+
+'userId'.........
+
+
+
+
+
+
+
+
+--> PROFESSOR AINDA NOS EXPLICA QUE O 
+
+'MONGOOSE' 
+
+É 
+
+TÃO CONVENIENTE QUE 
+
+você 
+
+
+não precisa 
+
+
+
+escrever o que eu escrevi, não precisa escrever algo assim:
+
+
+
+
+''''''''''''
+
+
+const userId = req.user._id; 
+
+
+
+const product = new Product(
+  {
+
+
+
+    ...
+    userId: userId
+  }
+)
+
+
+
+''''''
+
+
+
+
+
+
+
+--> EM VEZ DISSO, PROFESSOR DIZ QUE O MONGOOSE NOS DEIXA SER BEM RELAXADOS,
+
+NOS DEIXA 
+
+
+COLOCAR O ___ OBJETO 'user' 
+
+INTEIRO__ DENTRO DESSE 'userId',
+
+que 
+
+MESMO 
+ASSIM 
+
+
+ o  mongoose vai 
+
+ OLHAR DENTRO DO NOSSO objeto 'user' em 'req.user' 
+
+
+ E VAI EXTRAIR 
+
+ o 
+
+
+ '._id'
+  
+  necessário para fazer a operação funcionar...
+
+  (
+
+
+    ou seja,
+
+    poderíamos/podemos 
+
+
+    escrever assim:
+
+
+
+
+
+
+
+
+
+''''''''''''
+
+
+const userId = req.user; ///EIS A MUDANÇA EM QUESTÃO.
+
+
+
+const product = new Product(
+  {
+
+
+
+    ...
+    userId: userId
+  }
+)
+
+
+
+''''''
+
+
+
+
+
+
+
+
+
+
+
+
+
+  )
+
+
+
+
+
+  -----------------
+
+
+
+
+  MAS ESSA É APENAS OUTRA CONVENIENCE DO MONGOOSE, NÃO DEVEMOS DEPENDER DELA,
+
+  PQ 
+  ISSO É CÓDIGO PORCO...
+
+
+
+
+
+
+
+  ------. ok... professor adiciona um novo product, 
+
+
+  e aí 
+
+  ele 
+
+  já vem 
+
+  com 
+
+
+  A REFERENCE AO NOSSO 
+
+
+
+  MODEL/DOCUMENT DE 'user'
+
+  que 
+  o 
+
+  criou...
+
+
+
+
+
+
+
+  -> ISSO É BEM LEGAL,
+
+  É ASSIM QUE 
+
+  PODEMOS 
+
+
+
+  'MANAGE RELATIONS'
+
+
+  através 
+
+  do mongoose....
+
+
+
+
+
+
+
+
+
+
+---> AGORA O PROFESSOR TAMBÉM QUER NOS MOSTRAR ALGO LEGAL, ALGO ADICIONAL,
+
+
+
+ACERCA 
+
+DOO 
+
+'
+FETCH' DESSAS RELATIONS... (na próxima aula, aula de  'uma coisa importnate sobre FETCHING RELATIONS com o mongoose'...)

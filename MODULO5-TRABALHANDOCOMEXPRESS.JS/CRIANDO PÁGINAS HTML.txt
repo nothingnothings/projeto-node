@@ -1,0 +1,879 @@
+ 
+
+
+
+
+
+
+
+
+
+
+ ---> AGORA QUE DEMOS UMA EXAMINADA 
+
+ EM 
+
+
+ COMO 
+
+
+
+
+ ___ AQUELA COISA ' DE EXPRESS/MIDDLEWARE',
+
+
+
+
+ E COMO ROUTING FUNCIONA NO EXPRESSJS,
+
+
+
+
+
+ E COMO 
+
+ PODEMOS 
+
+ NOS APROVEITAR DO ROUTING,
+
+
+
+
+
+
+
+ __ COMO PODEMOS __ FILTRAR__ ROUTES E ASSIM POR DIANTE, etc...
+
+
+
+
+
+
+
+ --> AGORA É HORA 
+
+
+ DE 'ACTUALLY START WORKING ON WHAT WE SERVE TO THE USER'... -----> ATÉ AGORA 
+
+ SÓ FIZEMOS 
+
+ SERVE 
+
+ DE UM 
+
+ 'DUMMY HTML CONTENT'... ------- >
+
+
+
+
+ MAS NÓS NÃO ESTAMOS NESSE CURSO 
+
+
+
+ PARA 
+
+
+ __ APRENDER SÓ ___ A FAZER CONTEÚDO DUMMY HTML...
+
+
+
+
+
+
+
+
+
+ -----> É POR ISSO QUE DEVEMOS SERVE ALGUMAS 
+ PÁGINAS 
+
+
+
+ __HTML AO USUÁRIO _ QUE NÃO PARECEM UM LIXo.... ------> 
+
+
+
+
+
+
+
+
+
+
+
+ PARA ISSO, PROFESSOR CRIA UM NOVO FOLDER NO NOSSO 
+
+ PROJETO,
+
+ CHAMADO 
+
+ DE 
+
+ 'views'... ---------> 
+
+
+
+
+ PROFESSOR EXPLICA QUE PODEMOS USAR 
+
+ O NOME QUE 
+
+ QUISERMOS,
+
+ MAS 
+
+ QUE 
+
+ 'views'
+
+
+
+É 
+
+UM NOME COMUM... ---> É UM NOME COMUM PQ NESTE CURSO 
+
+VAMOS 
+
+LENTAMENTE NOS APROXIMAR 
+
+
+DE UM 
+
+APPROACH 
+
+
+'MVC' (MODEL VIEW CONTROLLER)),
+
+
+
+
+
+
+
+
+ESTRUTURA MODEL VIEW CONTROLLER,
+
+que o 
+
+professor explicará 
+
+mais tarde....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> UMA PARTE DO CONCEITO DESSA STRUCTURE É QUE 
+
+__NÓS _ FAZEMOS 
+
+
+
+MANAGE 
+
+
+DOS 
+
+
+
+
+
+'VIEWS' (a coisa que É SERVIDA AO USER, a coisa que ele 'views' ) 
+
+
+EM 
+
+
+
+APENAS 
+
+1 
+
+LUGAR DE NOSSO APP... -------------> 
+
+
+
+
+
+E OS VIEWS,
+
+
+NO FINAL DAS CONTAS,
+
+VÃO 
+
+SER 
+
+'JUST A BUNCH OF HTML FILES'...
+
+
+
+
+
+
+
+
+
+--------> OK... 
+
+
+
+
+--> CRIAMOS UM NOVO ARQUIVO NESSE 'views',
+
+
+
+QUE CHAMAMOS DE 
+
+'shop.html'....  
+
+
+
+
+
+
+
+-------> ESSA SERÁ A PAGE QUE USERS 
+
+
+ENCONTRARÃO QUANDO VISITAREM APENAS 
+
+'localhost:3000/'...
+
+
+
+
+
+
+
+
+
+---------> ALÉM DE 'shop.html',
+
+PROFESSOR TAMBÉM VAI QUERER UMA VIEW 
+
+DE 
+
+
+'add-product.html',
+
+
+POR ISSO 
+
+ELE 
+
+
+A 
+ADICIONA ALI...
+
+
+
+
+
+
+
+--------> MAIS TARDE, BTW, 
+
+
+
+__CASO VOCÊ JÁ CONHEÇA O CONCEITO DE 
+
+'TEMPLATING ENGINES',
+
+
+
+VAMOS 
+
+UTILIZAR 
+
+
+
+
+UMA DESSAS TEMPLATING ENGINES 
+
+
+
+
+para 
+
+
+QUE 
+CONSIGAMOS 
+
+ADICIONAR CONTEÚDO DINAMICAMENTE 
+
+
+
+
+
+AOS NOSSOS 
+
+
+ARQUIVOS HTML... 
+
+
+
+
+
+
+
+
+--> MAS POR ENQUANTO, COMEÇAMOS POR ELES...
+
+
+
+
+
+
+
+
+--> SE VOCÊ NÃO QUISER ESCREVER O CÓDIGO HTML, VOCÊ PODE SKIPPAR ESTA LIÇÃO...
+(mas eu estou)...
+
+
+
+
+
+
+
+
+
+-------- >OK... 
+
+
+
+--> professor vai usar 'HTML:5'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+OK... COM ESSE ESQUELETO AÍ,
+
+começamos.... 
+
+
+
+
+
+
+
+-------> primeiramente, professor muda o title para 'add product'...
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO,
+
+
+PROFESSOR 
+
+
+VAI QUERER 
+
+ 
+ESCREVER A FORM DENTRO DO BODY... --> MAS O PROFESSOR NÃO VAI QUERER 
+
+APENAS 
+
+
+
+UMA 
+
+FORM,
+ 
+ MAS 
+
+ TAMBÉM 
+
+ VAI QUERER 
+
+
+ __TER UMA 'NAVIGATION BAR' 
+
+ que 
+
+
+VAI NOS DEIXAR 'SWITCH TO MY SHOP.HTML page'... (e também o contrário)....
+
+
+
+
+
+
+--> É POR ISSO QUE ELE VAI ADICIONAR UM HEADER COM UMA NAV BAR...
+
+
+
+EX:
+
+
+
+<body>
+    <header>
+        <nav></nav>
+    </header>
+</body>
+
+
+
+
+
+
+------------------------
+
+
+
+DENTRO DA NAVBAR,
+
+
+ELE VAI COLOCAR ALGUNS 
+
+
+
+'<a/>',
+
+PROVAVELMENTE... -----> UMA UL, COM <li> CONTENDO <a>...
+
+
+
+
+
+
+
+<nav>
+    <ul>
+        <li><a href="/">Shop</a></li>
+    
+    </ul>
+</nav>
+
+
+
+
+------------------------
+
+
+
+EX:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Shop</a></li>
+                <li><a href="/add-product">Add Product</a></li>
+            </ul>
+        </nav>
+    </header>
+</body>
+</html>
+
+
+
+
+
+-------------------------------
+
+
+
+
+NÃO TEMOS STYLING AINDA,
+
+ADICIONAREMOS DEPOIS....
+
+
+
+
+
+
+
+---> ISSO FEITO,
+PROFESSOR ADICIONA UMA TAG DE 
+
+'<main>',
+
+
+
+
+
+
+QUE VAI 
+
+
+
+SEGURAR 
+O 
+
+CONTEÚDO DE NOSSA PAGE....
+
+
+
+
+
+
+---> PROFESSOR VAI QUERER ADICIONAR 
+
+
+
+
+
+
+UMA FORM, QUE TERÁ UM ATTRIBUTE 'action' de '/add-product', E UM 
+
+METHOD 
+
+DE 
+
+'POST'...
+
+
+(LEMBRE-SE QUE __ PODEMOS __ TER UM MESMO PATH PARA 
+
+
+DIFERENTES ROUTES; BASTA USAR UM 
+
+
+METHOD DIFERENTE na definição das routes, 2 routes com mesmo path,
+
+mas methods diferentes para esse path....
+
+
+
+)
+
+
+
+
+
+
+
+------->  CERTO... --> O CÓDIGO ESTÁ FICANDO ASSIM:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Shop</a></li>
+                <li><a href="/add-product">Add Product</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+            <form action="/add-product" method="POST">
+            <input type="text" name="title"></title>
+            <button type="submit">Add Product</button>
+            </form>
+    </main>
+</body>
+</html>
+
+
+
+
+
+--------------------------
+
+
+
+
+É CLARO QUE VAMOS ADICIONAR MAIS A ESSA FORM MAIS TARDE,
+
+
+
+
+PQ ___ OBVIAMENTE __ UM PRODUCT NÃO É COMPOSTO APENAS POR UM 'TITLE',
+
+
+
+
+MAS POR ENQUANTO ISSO SERVIRÁ....
+
+
+
+
+
+
+
+TEMOS NOSSA FORM AQUI... ----> 
+
+
+VAMOS COPIAR 
+
+NOSSO 
+
+
+
+CÓDIGO HTML E COLAR EM 
+
+'shop.html'...
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Shop</a></li>
+                <li><a href="/add-product">Add Product</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>My Products</h1>
+</main>
+</body>
+</html>
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+ou seja,
+
+
+temos 
+
+a mesma navbar de antes, com o header,
+
+mas 
+dessa vez 
+
+NO 'MAIN'
+
+
+temos 
+
+
+UMA H1 
+
+
+QUE 
+
+DIZ:
+
+
+
+
+
+
+''''
+
+    <main>
+        <h1>My Products</h1>
+</main>
+
+''''
+
+
+
+
+
+
+---> MAIS TARDE  NO CURSO VAMOS RENDERIZAR TODOS OS PRODUCTS AQUI.... 
+
+
+
+
+
+
+--> por enquanto, deixamos só um <p> com 
+
+
+'LIST OF ALL THE PRODUCTS' 
+
+
+
+
+
+
+---> MAIS TARDE VAMOS RENDERIZAR TODOS OS PRODUCTS NESSE LGUAR, QUANDO SOUBERMOS COMO 
+
+
+'MANAGE DATA ON THE SERVER' 
+
+e ASSIM POR DIANTE...
+
+
+
+ex:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Shop</a></li>
+                <li><a href="/add-product">Add Product</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>My Products</h1>
+        <p>List of All the Products</h1>
+</main>
+</body>
+</html>
+
+
+
+
+-------------------------
+
+
+
+É CLARO QUE O RESTO 
+
+DA PÁGINA PODE CONTINUAR IGUAL PARA AMBAS AS PÁGINAS...
+
+
+
+
+
+
+
+
+
+--> STYLING ESTÁ FALTANDO... --> 
+
+
+
+
+O PRÓXIMO GOAL 
+
+SERÁ 
+
+SERVIR ESSAS HTML PAGES,
+
+antes 
+
+de passarmos 
+
+AO STYLING....

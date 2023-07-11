@@ -1,0 +1,1034 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> REST APIS existem para RESOLVER 1 ÚNICO PROBLEMA...
+
+
+
+
+
+
+
+
+--> PROBLEMA:
+
+
+
+NEM TODA USER INTERFACE (frontend) 
+
+
+PRECISA __ DE PÁGINAS HTML...
+
+
+
+
+
+
+
+OU: 
+
+
+NEM TODA USER INTERFACE 
+
+
+VAI QUERER/GOSTARIA QUE SEU SERVER 
+
+'GENERATE' 
+
+CÓDIGO HTML (que, efetivamente, é A USER INTERFACE.... SEU CÓDIGO HTML É ESSENCIALMENTE A USER INTERFACE...)
+
+
+
+
+
+
+
+
+
+
+
+--> PENSE EM MOBILE APPS:
+
+
+
+
+
+EX: TWITTER ---------> ESSES APPS 
+
+
+
+TIPICAMENTE __ NÃO ___ FUNCIONAM ___ COM 
+
+
+'SERVERSIDE RENDERED HTML CODE'... --> ISSO SIGNIFICA QUE 
+
+
+ELES 
+
+NÃO PRECISAM 
+
+DE UMA 
+
+
+TEMPLATING 
+
+
+
+ENGINE 
+
+
+NO SERVER 
+
+
+PARA 
+
+RENDERIZAR 
+
+
+CÓDIGO HTML... ------> ISSO PQ 
+
+VOCÊ 
+
+
+
+CONSTRÓI 
+
+
+
+
+ESSES APPS 
+
+
+
+com 
+
+
+'jAVA' (para android) OU 
+
+
+
+SWIFT/objective C (IOS).........
+
+
+
+
+--------> VOCÊ USA 
+
+'UMA RICA SUITE DE 
+
+PRE-BUILT UI WIDGETS', 
+
+
+
+UI LIBRARIES 
+
+PROVIDENCIADAS 
+
+PELA APPLE, PELO GOOGLE,
+
+ETC...
+
+
+
+
+
+
+---------> VOCê USA ESSAS LIBRARIES PARA __ CONSTRUIR__ 
+
+SUAS 
+
+USER INTERFACES 
+
+
+NAS 
+
+RESPECTIVAS 
+
+
+'IDEs'
+
+
+
+DESSAS PROGRAMMING LANGUAGEs (como 
+
+
+'ANDROID STUDIO' PARA ANDROID DEVELOPMENT... )
+
+
+
+
+
+
+
+
+
+-->  E VOCÊ CONSTRÓI ESSAS USER INTERFACES TOTALMETNE 
+
+'DECOUPLED' 
+
+
+
+DO SEU SERVIDOR... -----> VOCê __ Não quer __ 
+
+HTML 
+
+CODE,
+
+
+NESSES APPS,
+
+PQ 
+
+VOCÊ 
+
+
+__ REALMENTE/ DE FATO __ Não CONSEGUE RENDERIZAR 
+
+
+
+html 
+
+nesses dispositivos, nativamente... (
+
+
+É CLARO QUE TEMOS 'MOBILE BROWSERS',
+
+
+
+TEMOS 
+
+BROWSERS NOS NOSSOS CELULARES,
+
+E 
+
+ELES REALMENTE CONSEGUEM 
+
+RENDERIZAR 
+
+PAGES 
+
+HTML...
+
+
+) 
+
+
+
+
+
+
+
+--> MAS O QUE INTERESSA, NO CASO ,É QUE 
+
+
+
+
+____ TODOS OS APPS QUE VOCÊ INSTALA POR MEIO DO APP STORE 
+
+
+
+__FREQUENTEMENTE__ 
+
+
+NÃO USAM HTML 
+
+PARA 
+
+'DRAW THE INTERFACE'.. em vez disso,
+
+
+
+ELAS CONSTROEM 
+
+
+A INTERFACE 
+
+
+__ COM AS FERRAMENTAS_
+
+
+
+DADAS A ELES POR APPLE, POR GOOGLE, ETC.... -------> E AÍ, VOCê 
+
+
+
+SÓ PRECISA 
+
+
+
+
+'THE DATA',
+
+
+OS DADOS,
+
+
+
+PARA 
+
+
+'FILL THESE USER INTERFACES WITH LIFE'....
+
+
+
+
+
+
+
+
+
+--> OUTRO EXEMPLO CLÁSSICO SÃO 
+
+
+
+'SPAs' --> SINGLE PAGE WEB APPS....
+
+
+
+
+
+
+
+Ex: 'udemy course player'....
+
+
+
+
+
+
+
+
+-----> UDEMY COURSE PLAYER... ------>  QUANDO CLICAMOS EM COISAS 
+
+
+DO SITE DA UDEMY,
+
+
+NÃO HÁ NENHUM 
+
+
+RELOAD
+ 
+
+
+
+DA PAGE.... ------> A RAZÃO PARA ISSO É QUE 
+
+
+ESSA 
+
+
+
+PÁGINA INTEIRA É 
+
+RENDERIZADA 
+
+POR 
+
+MEIO 
+
+DE 
+
+BROWSERSIDE JAVASCRIPT.... ------> E ESSE CÓDIGO JAVASCRIPT REALMENTE 
+
+PODE/CONSEGUE 
+
+
+
+__MANIPULAR O DOM__ (
+
+    o código html renderizado de forma simples 
+
+    no browser...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+----> E O QUE O UDEMY FAZ, AQUI,
+
+
+É 
+
+
+
+
+O SIMPLES FETCH DE 1 ÚNICO HTML 
+
+
+
+
+
+
+NO INÍCIO,
+
+
+
+HTML QUE NÃO CONTÉM MT 'CONTEÚDO HTML DE VERDADE',
+
+MAS QUE 
+
+
+
+CONTÉM TODOS ESSES 
+
+'JAVASCRIPT SCRIPT FILES',
+
+
+
+
+
+E 
+ESSES 
+
+
+JS FILES 
+
+
+__ FAZEM REACH OUT A UMA 
+
+'BACKEND API',
+
+
+
+___ 
+
+
+A UMA 
+
+
+'RESTFUL API',
+
+
+
+
+
+
+E AÍ 
+
+
+__SÓ FETCHEAM  
+
+
+A DATA __ DE QUE __ REALMENTE_ PRECISAM,
+
+PARA ENTAÕ 
+
+
+
+'RENDER THE USER INTERFACE'...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> quando clicamos em 'overview' no site da udemy,
+
+
+ALGUM CÓDIGO JAVASCRIPT 
+
+
+
+NO BROWSERSIDE VAI FAZER 
+
+REACH OUT A UM UDEMY SERVER,
+
+
+E 
+
+AÍ 
+
+ME DAR ESSA PARTE 
+
+DA 
+PAGE...
+
+
+
+
+
+
+
+
+-----> WEBAPPS como esses são 
+
+MT POPULARES,
+
+PQ 
+
+
+
+
+TEMOS UM 
+
+
+'MOBILE APP-LIKE FEELING'...
+
+
+
+
+
+
+
+--> SEMPRE FICAMOS NA MESMA PAGE,
+
+E SÓ 
+
+
+
+
+
+A DATA QUE 'GETS RENDERED' MUDA... --> 
+
+
+
+
+
+
+
+PORTANTO, A ÚNICA DATA QUE É TROCADA É TROCADA __POR TRÁS DAS CENAS,
+
+
+
+
+
+E TODO O 'USER INTERFACE RENDERING' OCORRE 
+
+
+
+NO BROWSERSIDE JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+
+--> REACT, ANGULAR, VIEW... -> FRAMEWORKS POPULARES 
+
+
+DO JAVASCRIPT USADOS PARA CONSTRUIR UIs como essas...
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ TALVEZ NÃO TRABALHE EM UM FRONTEND ESPECÍFICO.... talvez 
+
+VOCÊ ESTEJA TRABALHANDO EM UM NODE APP CLÁSSICO (nodeexpress),
+
+
+
+
+SEM REST APi... --_> MESMO NESSES CASOSS,
+
+
+
+
+
+VOCÊ TERÁ ALGUNS 'SERVICE APIs' 
+
+QUE VOCÊ TALVEZ QUEIRA USAR NO SEU APP,
+
+
+como 
+
+o 
+
+'GOOGLE MAPS API'... -->  NÃO É O NOSSO FRONTEND QUE 
+
+REQUER 
+
+QUE 
+
+CONSTRUAMOS UM 
+
+
+RESTFUL API, NESSE CASO, MAS __ É UM OUTRO EXEMPLO DE 1 
+
+
+CASO EM QUE 
+
+
+
+'YOU ONLY NEED THE DATA, AND NO USER INTERFACE ON THE SERVER'...
+
+
+
+
+
+
+
+
+
+
+---> VOCÊ NÃO 'EXPECT' QUE A API DO GOOGLE MAPS VAI TE DAR 
+
+
+UM CÓDIGO HTML,
+
+
+
+E SIM 
+
+VOCÊ SÓ 
+
+
+
+ESTARÁ INTERESSADO EM ALGUMAS COORDENADAS, OU ALGO ASSIM... (
+
+    ou seja,
+
+
+    NOSSO INTERESSE É APENAS __ A DATa__, e não o render de html...
+)
+
+
+
+
+
+
+
+
+--> E ESSE É O TEMA COMUM, AQUI:
+
+
+
+
+TEMOS UM FRONTEND QUE É 
+
+'DECOUPLED'  DO BACKEND... -----> NÓS 
+
+
+SÓ PRECISMAOS 
+
+
+
+'EXCHANGE THE DATA/DATa' 
+
+PQ 
+
+
+
+NÃO QUEREMOS RECEBER CÓDIGO HTML DO SERVIDOR... ---------> CONSTRUÍMOS 
+
+
+ESSA 
+
+
+
+USER INTERFACE POR CONTA PRÓPRIA,
+
+
+NO 
+
+
+
+FRONTEND... ----> NÓS SÓ PRECISAMOS 
+
+TER UM 
+
+BACKEND 
+
+QUE 
+
+ FAÇA SERVE DE 'DATA'... --> E ESSA É A CORE IDEA 
+
+
+ POR 
+
+ TRÁS DAS REST APIs...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> NAS REST APIs,
+
+
+ PRECIsamos 
+
+
+
+ DE UM TIPO __ DIFERENTE__ DE RESPONSES...
+
+
+
+
+
+
+
+
+
+
+ --> 'REST APIS'
+
+
+
+
+
+significam:
+
+
+
+
+
+
+RE presentational State Transfer 
+
+
+
+
+
+REST 
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+-------> A TRADUÇÃO SIMPLES, USADA PELO PROFESSOR, É QUE 
+
+NO´S 
+
+
+
+__TRANSFERIMOS ___ DADOS__ EM VEZ DE 
+
+__ USER 
+
+INTERFACES PROPRIAMENTE DITAS (html)....
+
+
+
+
+
+
+
+
+
+
+
+
+--> EM VEZ DE HTML,
+
+
+NÓS SÓ TRANSFERIMOS DATA (json data),
+
+
+
+
+
+E AÍ __ NÓS 'LEAVE IT TO THE CLIENT/FRONTEND' (seja isso um MOBILE APP ou uma SINGLE PAGE APPLICATIOn) ----> 
+
+
+
+
+DEIXAMOS ESSA TAREFA AO FRONTEND, É ELE QUE 
+
+
+VAI 
+
+
+PEGEAR ESSA DATA E FAZER O QUE QUISER COM ELA, DE ACORDO COM O QUE VOCÊ CODOU...
+
+
+
+
+
+
+
+
+
+
+
+----> E ATÉ AGORA NO CURSO,
+
+
+NÓS SEMPRE RENDERIZAMOS A HTML PAGE 
+
+
+
+NO SERVER.... ------> E ISSO, É CLARO,
+
+
+
+
+INCLUÍA MAIS DO QUE APENAS A 'DATA',
+
+
+
+PQ 
+
+INCLUÍA TAMBÉM A 'USER INTERFACE' (o html)...
+
+
+
+
+
+
+
+
+--------> E AGORA:
+
+
+
+
+
+PROFESSOR DIZ QUE ISSO NÃO É RUIM,
+
+
+
+
+MTAS WEBAPPS 
+
+usam 
+
+esse 
+
+approach... -----> MAS ALGUMAS WEBAPPS 
+
+se beneficiam DE DECOUPLED FRONTEND (ou precisam disso),
+
+
+
+E É AÍ 
+
+
+
+que 
+
+
+
+
+
+
+
+REST APIs podem ser a solução....
+
+
+
+
+
+
+
+
+
+------> MAS É IMPORTANTE RESSALTAR QUE 
+
+
+__ SÓ __ A 'RESPONSE'
+
+
+E 
+
+A 
+
+'REQUEST DATA'
+
+
+mudam... (tiramos o HTML dessa parte do código... não será mais enviado por RESPONSES...) ------> 
+
+
+
+
+
+
+FORA ESSAS ESTRUTURAS, O RESTO DA 'SERVERSIDE LOGIC'
+
+
+continua a MESMA...
+
+
+
+
+
+--> ISSO SIGNIFICA QUE TUDO AQUILO QUE APRENDEMOS SOBRE:
+
+
+1) VALIDATING
+
+
+
+2) REACHING OUT TO DATABASES 
+
+
+
+3) HANDLING FILES ON THE SERVERSIDE
+
+
+
+
+
+
+
+
+
+--> TODAS ESSAS COISAS CONTINUAM DA MESMA FORMA, mesmo com 
+
+
+
+rest APIs...
+
+
+
+
+
+
+
+
+
+--> ISSO É BEM IMPORTANTE DE ENTENDER, PQ 
+
+
+
+
+RESTFUL Apps (single page apps) 
+
+
+
+E 
+
+
+
+'NORMAL WEBAPPS' (com return de código html)
+
+
+NAS 
+
+RESPONSES 
+
+
+FREQUENTEMENTE SÃO TRATADOS COMO DUAS COISAS COMPLETAMENTE DIFERENTES... ENTRETANTO, 
+
+
+
+NÃO SÃO 
+
+
+TOTALMENTE DIFERENTES,
+
+
+A ÚNICA COISA 
+
+
+DIFERENTE ENTRE OS DOIS TIPOS 
+
+É 
+
+O 
+
+'RESPONSE' E 
+ 
+
+ 'THE KIND OF DATA YOU EXPECT' no serverside... --> MAS 
+
+
+
+ FORA ISSO,
+
+
+ ELES NÃO DIFEREM 
+
+
+ NAQUILO __ QUE__ ACONTECE NO ACTUAL SERVER, NO SERVERSIDE...
+
+
+
+
+
+(
+
+
+OK, ENTÃO UMA DAS ÚNICAS DIFERENÇAS É QUE O VIEW ___ NÃO É RENDERIZADO__ NO SERVERSIDE...
+
+)
+
+
+
+
+
+ 
+
+--> E ISSO É BEM IMPORTANTE,
+
+
+
+E 
+
+
+
+É EXATAMENTE A RAZÃO PELA QUAL TUDO QUE ESTUDAMOS ATÉ AGORA _ -NÃO É REDUNDANTE__...
+
+
+
+
+
+
+
+
+------> VAMOS, NA VERDADE, REUTILIZAR 99% DO NOSSO CONHECIMENTO,
+
+
+
+E A ÚNICA COISA QUE MUDAREMOS 
+
+
+
+NOSSA 'DATA USAGE'/data handling, e 
+
+
+a 
+
+response, um pouquinho...

@@ -1,0 +1,2031 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... NOSSO CÓDIGO DE APP.TS ESTÁ FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const addButton = document.querySelector('button');
+
+
+// const input1 = document.getElementById('input1').textContent;
+
+
+// const input2= document.getElementById('input2').textContent;
+
+
+
+
+
+
+// const add = (num1, num2) => {
+
+
+
+//     const paragraphNumber = document.querySelector('p');
+//     paragraphNumber.textContent = num1 + num2;
+// }
+
+
+
+// addButton.addEventListener('click', add(input1, input2))
+
+
+
+
+
+
+const num1Element = document.getElementById('input1') as HTMLInputElement; //SIM, O TYPESCRIPT FUNCIONA COM QUALQUER TIPO DE JAVASCRIPT CODE, ATÉ CMO BROWSERSIDE VANILLA...
+
+
+const num2Element = document.getElementById('input2') as HTMLInputElement; 
+
+
+
+const buttonElement = document.querySelector('button')!; ///O 'BANG' OPERATOR AO FINAL DE UM VALOR DE UMA CONST SERVE PARA DIZER '''ESSA CONST NUNCA FICARÁ COMO 'NULL', ENTÃO PARE DE NOS INCOMODAR COM ESSE AVISO DE 'OBJECT IS POSSIBLY NULL', PQ ELE __ NUNCA __ VAI FICAR COMO NULL, SEU IDIOTA....
+
+
+
+
+// function add (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+//     return num1 + num2;
+//     }
+    
+
+
+// function addSum (num1: number, num2: number, num3) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+    function addSum (num1: number | string ///AQUI __ PERMITIMOS, NESSE PARÂMETRO, TANTO 'STRINGS' COMO 'NUMBERS'...
+        
+        ,
+        
+        num2: number | string) {
+
+
+            if (typeof num1 === 'number' &&
+            typeof num2 === 'number'  ) { ////EIS O CÓDIGO EM QUESTAÕ.
+                  return num1 + num2;
+     } else if (
+         typeof num1 === 'string' &&
+         typeof num2 === 'string'
+     ) {
+         return num1 + '' + num2;
+     }
+
+        return; ///case de 'MIXED DATA TYPES'... -> não vamos querer rodar CÓDIGO ALGUM...
+
+
+    }
+    
+    
+
+
+
+
+
+    // function addSum(num1: any) {} ////SIM, TAMBÉM EXISTE ESSE TYPE DE 'any', que é USADO COMO UM FALLBACK, PQ NÃO É NADA __ ESPECÍFICO, APENAS ATRAPALHA NOSSO CÓDIGO...
+    //// SE VOCê NÃO DEFINE nenhum data type em 1 dos seus parâmetros, ele é considerado como 'ANY', mas isso NÃO É BOM, PQ É UM 'ANY' IMPLÍCITO, um any que faz com que o STRICT MODE PENSE QUE VOCê 'ESQUECEU' DE DEFINIR O DATA TYPE DESSA FUNCTION, o que fará ele RECLAMAR.... (como visto com 'num3')...
+    
+   console.log(addSum(1, 6));
+    
+    
+    // console.log(add('1', '6')); // --> isso fará com que UM ERROR SEJA THROWN PELO TYPESCRIPT, PQ NAQUELA FUNÇÃO DEFINIMOS QUE O DATA TYPE __ DEVE SER, OBRIGATORIAMENTE, _ 'NUMBER', e não string... (como visto nesse CONSOLE.LOG)...
+
+
+
+
+
+
+
+
+
+
+    buttonElement.addEventListener('click',  //ver anotaçaõ lá no selector/ definição da constante de 'buttonElement'...
+    
+    () => {
+
+        // const num1 = num1Element.value; ///SE ESCREVERMOS ISSO SEM _ EXPLICARMOS AO TYPESCRIPT QUE 'num1Element' É _ UMA CONSTANTE QUE SEGURA UM INPUT (pq inputs são elementos que REALMENTE POSSUEM ESSA PROPRIEDADE 'value', que é uma propriedade QUE MUITAS VEZES NÃO EXISTE EM ELEMENTOS HTML... -> precisamos usar aquilo que é chamado de 'TYPE CASTING'... ---> TYPE CASTING É AQUELE TRECHO 'as HTMLInputElement', QUE ESCLARECE QUE ESSE _ ELEMENTO QUE FOI SELECIONADO ___ SERÁ_ __ SEMPRE UM 'INPUT ELEMENT'... (assim, deixamos nosso código bem mais CLARO, EXPLÍCITO)...
+        ///o código de const num1Element = document.getElementById('input1') as HTMLInputElement;  VAI FAZER COM QUE O 'error/aviso' que surge por causa de 'num1Element.value' SUMA...
+        
+        // const num2 = num2Element.value;
+
+
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2); ////////EIS O CÓDIGO EM QUESTÃO (vamos querer adicionar/CONCATENAR 2 STRINGS EM 1 SÓ)..... --> aqui veremos COMO DEFINIR 'MÚLTIPLOS DATA TYPEs' como válidos para 1 parâmetro (tanto o type de STRING como de NUMBER)...
+        console.log(result, stringResult);
+        // console.log(addSum(true, false)); ////ISSO NÃO FUNCIONARÁ, E O TYPESCRIPT APITARÁ/NOS AVISARÁ DISSO... --> É PQ NOSSA FUNCTION DE 'addSum' SÓ ACEITA OS DATATYPES DE NUMBER/STRING PARA SEUS PARÂMETROS, não permitindo o datatype de 'BOOLEAN'... (como true e false)...
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // if (buttonElement) { ////se escrevermos assim, CONSERTAMOS O 'AVISO' do TYPESCRIPT de que essa variável PODERIA ESTAR COMO UNDEFINED (nenhum button encontrado, essa é a hipótese que ele considera)..
+        
+    // buttonElement.addEventListener('click', 
+    
+    // () => {
+
+    //     // const num1 = num1Element.value; ///SE ESCREVERMOS ISSO SEM _ EXPLICARMOS AO TYPESCRIPT QUE 'num1Element' É _ UMA CONSTANTE QUE SEGURA UM INPUT (pq inputs são elementos que REALMENTE POSSUEM ESSA PROPRIEDADE 'value', que é uma propriedade QUE MUITAS VEZES NÃO EXISTE EM ELEMENTOS HTML... -> precisamos usar aquilo que é chamado de 'TYPE CASTING'... ---> TYPE CASTING É AQUELE TRECHO 'as HTMLInputElement', QUE ESCLARECE QUE ESSE _ ELEMENTO QUE FOI SELECIONADO ___ SERÁ_ __ SEMPRE UM 'INPUT ELEMENT'... (assim, deixamos nosso código bem mais CLARO, EXPLÍCITO)...
+    //     ///o código de const num1Element = document.getElementById('input1') as HTMLInputElement;  VAI FAZER COM QUE O 'error/aviso' que surge por causa de 'num1Element.value' SUMA...
+        
+    //     // const num2 = num2Element.value;
+
+
+    //     const num1 = +num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+    //     const num2 = +num2Element.value;
+
+
+    //     const result = addSum(num1, num2);
+    //     console.log(result);
+    // })
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --------> AGORA JÁ SABEMOS UM POUCO DO __ BÁSICO__ 
+
+
+
+    DO TYPESCRIPT...
+
+
+
+    (
+
+
+        sabemos os CORE ESSENTIALS... 
+    )
+
+
+
+
+
+
+
+
+--------> MAS AGORA É HORA DE VER 
+
+
+
+
+ALGUNS OUTROS KEY TYPES 
+
+
+QUE VEREMOS 
+
+AO LONGO DO CURSO,
+
+E QUE 
+
+__PRECISAMOS SABER, EM GERAL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> SÃO OS TYPES DE 'object'
+
+E 
+
+DE 
+
+
+'array'....
+
+
+
+
+
+
+
+
+
+
+
+
+------> LÁ EM 'app.ts',
+
+
+
+
+USAMOS 
+
+
+'number' 
+
+e 
+'string'...
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO,
+
+JÁ ESTÁVAMOS TRABALHANDO UM POUCO COM 'objects'.... ------> ISSO 
+
+PQ 
+
+AQUELAS COISAS 
+
+
+
+
+'HTMLInputElement' 
+
+
+
+e 
+
+
+
+'HTMLButtonElement',
+
+
+
+
+
+OBTIDOS POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+const num1Element = document.getElementById('input1') as HTMLInputElement; //SIM, O TYPESCRIPT FUNCIONA COM QUALQUER TIPO DE JAVASCRIPT CODE, ATÉ CMO BROWSERSIDE VANILLA...
+
+
+const num2Element = document.getElementById('input2') as HTMLInputElement; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ESSES ELEMENTOS AÍ,
+
+
+
+
+__ SÃO ACTUALLY 'OBJECT TYPES' .... --> SÃO OBJECT TYPES 
+
+PQ 
+
+
+NÓS __ 
+
+
+TEMOS, NA VERDADE,
+
+
+'DOM OBJECTS' 
+
+
+
+AQUI NO JAVASCRIPT (representados no javascript)....
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ ------> É CLARO QUE PODEMOS DEFINIR __ NOSSOS PRÓPRIOS 'OBJECT TYPES' permitidos (object data types)..
+
+
+
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO,
+
+ DIGAMOS QUE TEMOS OUTRA FUNÇÃO,
+
+ função de 
+
+ 'printResult()'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ function printResult() {
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -> DIGAMOS QUE ESSA FUNÇÃO DESEJARÁ 
+
+ UM 
+
+
+
+ PARÂMETRO DE 
+
+ 'resultObject'... -->  ISSO SERÁ UM __ OBJETO_ --> 
+
+
+
+
+
+ E 
+
+
+
+ ESSA FUNÇÃO VAI QUERER 
+
+ QUE 
+
+
+ ESSE 
+ OBJETO 
+
+ TENHA UMa propriedade 
+
+ DE 
+
+
+ 'val',
+
+
+
+
+
+
+PARA QUE 
+
+ELE __ CONSIGA__ 
+
+
+
+
+CHAMAR O CÓDIGO DE 'console.log(resultObj.val)'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+ function printResult(resultObject) {
+
+     console.log(reusltObject.val);
+
+
+ }
+
+
+
+
+
+
+ ----------------------------------------
+
+
+
+
+
+
+
+ESSE EXEMPLO É 'MADE-UP',
+
+
+
+mas 
+
+
+É 
+
+REALISTA,
+
+PQ 
+
+EM 
+
+
+
+APPS GRANDES,
+
+
+
+
+
+
+
+
+VOCê 
+
+
+TERÁ 
+
+
+FUNCTIONS QUE __ VÃO QUERER _ OBJECTS__ COMO PARÂMETROS... -------> 
+
+
+
+
+
+
+
+POR ISSO,
+
+AQUI VAMOS QUERER 1 OBJECT,
+
+
+1 object que 
+
+TENHA ESSA PROPRIEDADE 
+
+de 
+
+'val'....
+
+
+
+
+
+
+
+
+
+-----> É CLARO QUE 
+
+
+PODERÍAMOS ESCREVER 
+
+
+'resultObject: any',
+
+EXPLICITAMENTE,
+
+PARA 
+
+DEIXAR QUAQLUER TYPE FUNCIONAR 
+
+
+
+COM 
+
+
+ESSE PARÂMETRO,
+
+
+
+
+MAS ISSO É PÉSSIMO --> QUEREMOS SER BEM CLAROS 
+
+sobre qual FORMATO DE DATA 
+
+ESSE 
+
+
+NOSSO 
+
+PARÂMETRO ACEITA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> QUERO SER CLARO QUE 
+
+
+TENHO 1 OBJETO QUE POSSUÍ UMA PROPRIEDADE 'VAL'...  -----> TAMBÉM VOU QUERER DEIXAR BEM CLARO QUAL 'TYPE'
+
+essa propriedade 
+
+'val' 
+
+
+
+DEVERÁ TER...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+
+
+
+PODEMOS __ SETTAR__  UM 'object type'
+
+
+NESSE LOCAl,
+
+
+
+TUDO POR MEIO DO 
+
+
+write de 
+
+
+': {}' ... -------> DENTRO DESSE OBJETO,
+
+
+
+SIMPLESMNETE DEFINIMOS A ESTRUTURA QUE ESSE OBJETO-parâmetro DEVERÁ TER...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+ function printResult(resultObject: { ///eis o código em questão.
+
+
+ }) {
+
+     console.log(reusltObject.val);
+
+
+ }
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+     function printResult(resultObject: { ///EXEMPLO DE __ COMO DEFINIR __ 'OBJECT TYPES' nos seus parâmetros... --> 'vou querer que essa function receba um data type DE FORMATO OBJECT, COM ESTE, ESTE E ESTE FORMATO'... (define as características do objeto-parâmetro nesse PRÓPRIO OBJETO-CONFIG aqui... {})
+
+        //objeto-config/molde DO FORMATO QUE NOSSO 'object TYPE' deverá ter...
+
+
+        
+
+    }) {
+   
+        console.log(reusltObject.val);
+   
+   
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+
+ESSE LOCAL AÍ __ NÃO É UM LOCAL EM QUE
+
+VAMOS 
+
+'CREATE A OBJECT',
+
+
+
+e sim 
+
+
+
+
+
+UM LOCAL EM QUE 
+
+APENAS 
+
+DEFINIMOS 
+
+
+A __ ESTRUTURA__ DO OBJETO_ QUE VOU 'EXPECT' 
+
+RECEBER 
+
+
+
+NESSE PARÂMETRO 
+
+
+'resultObject'...
+
+
+
+
+
+
+
+
+
+
+
+-------> E ISSO QUE É 'DEFINIR UM OBJECT TYPE'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------> COM ISSO, 
+
+
+PODEMOS 
+
+
+SIMPLESMENTE DIZER QUE VAMOS QUERER UM FIELD DE 'val',
+
+
+
+E DIZER QUE 
+
+QUEREMOS QUE ELE SEJA DE 'TYPE'
+
+'number'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+     function printResult(resultObject: { ///EXEMPLO DE __ COMO DEFINIR __ 'OBJECT TYPES' nos seus parâmetros... --> 'vou querer que essa function receba um data type DE FORMATO OBJECT, COM ESTE, ESTE E ESTE FORMATO'... (define as características do objeto-parâmetro nesse PRÓPRIO OBJETO-CONFIG aqui... {})
+
+
+    val: number;
+
+        
+
+    }) {
+   
+        console.log(resultObject.val);
+   
+   
+    }
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+NESSE 'OBJETO-RECEITA',
+
+
+
+vamos SEPARAR AS DIVERSAS PROPRIEDADES _ POR MEIO DE ';',
+
+EM VEZ DE 
+
+','...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+    function printResult(resultObject: { ///EXEMPLO DE __ COMO DEFINIR __ 'OBJECT TYPES' nos seus parâmetros... --> 'vou querer que essa function receba um data type DE FORMATO OBJECT, COM ESTE, ESTE E ESTE FORMATO'... (define as características do objeto-parâmetro nesse PRÓPRIO OBJETO-CONFIG aqui... {})
+
+        //objeto-config/molde DO FORMATO QUE NOSSO 'object TYPE' deverá ter...
+
+        val: number;
+       exemplo: string;
+       timestamp: Date
+
+
+    }) {
+   
+        console.log(resultObject.val);
+   
+   
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR DEFINIU UMA PROPRIEDADE 
+
+DE 
+
+'timestamp',
+
+QUE DEVERÁ TER UM 
+DATA TYPE DE 'Date'.... --> 
+
+PROFESSOR 
+
+EXPLICA UQE 
+
+O 
+
+OBJETO 
+
+'Date'
+
+É UM 
+
+OBJETO 'BUILTIN' NO JAVASCRIPT,
+
+
+
+
+
+
+
+E QUE 
+
+PODEMOS 
+
+NOS REFERIR 
+
+
+
+
+
+A SUA 'CONSTRUCTOR FUNCTION' como sendo um TYPE,
+
+por meio 
+
+da escrita COM MAIÚSCULA...
+
+
+
+
+ 
+ ------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CERTO.... E AGORA, QUANDO NÓS FORMOS CHAMAR 
+
+ '
+ printResult()',
+
+
+
+ DEVEMOS NOS ASSEGURAR DE QUE A COISA QUE 
+
+ PASSAMOS 
+
+ É _ UM OBJETO_,
+
+ OBJETO 
+ COM 
+
+
+ A 
+
+ PROPRIEDADE 
+ 'val',
+
+ QUE 
+
+ DEVERÁ 
+ SER 
+
+
+ 1 
+ NUMBER....
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+    printResult(
+            {
+                val: 4214142,
+                exemplo: 'asdasa',
+                timestamp: new Date()
+            }
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> SE FIZERMOS ISSO, EXATAMENTE ASSIM,
+
+CHAMANDO COM ESSES VALORES NAS PROPRIEDADES NESSE OBJETO-parâmetro,
+
+
+
+O 
+
+
+TYPESCRIPT NÃO APITARÁ NEM UM POUCO,
+
+
+sinal que 
+
+
+
+
+
+NOSSO 
+
+CÓDIGO ESTÁ BOM/LIMPO/REGULARIZADO...
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+PROFESSOR FAZ ALGO SEMELHANTE...
+
+
+
+
+
+
+--> ENTRETANTO,
+
+ELE DECIDE CHAMAR ESSA FUNÇÃO LÁ DE DENTRO DE 
+
+
+
+'buttonElement.addEventListener()'....
+
+
+
+
+
+EX:
+
+
+
+
+
+    buttonElement.addEventListener('click',  //ver anotaçaõ lá no selector/ definição da constante de 'buttonElement'...
+    
+    () => {
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2); ////////EIS O CÓDIGO EM QUESTÃO (vamos querer adicionar/CONCATENAR 2 STRINGS EM 1 SÓ)..... --> aqui veremos COMO DEFINIR 'MÚLTIPLOS DATA TYPEs' como válidos para 1 parâmetro (tanto o type de STRING como de NUMBER)...
+        console.log(result, stringResult);
+
+        printResult({
+            val: result,
+            exemplo: 'EXEMPLOZXC',
+            timestamp: new Date()
+        })
+    
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ---------> OK..., 
+
+    MAS AQUI SURGIU UM PROBLEMA....
+
+
+
+
+
+
+
+
+
+    -_> o 
+
+
+
+    'val: result'
+
+
+
+    ESTÁ APITANDO/DANDO ERRO... -> O TYPESCRIPT NOS DIZ QUE 
+
+
+
+    '''NÃO HÁ COMO SABER QUE ISSO AÍ SERÁ UM NUMBER, por isso acho que é inválido/incompatível com o que você settou em 'val: number' ''' --> 
+
+
+
+    PARA CORRIGIR ESSE PROBLEMA,
+
+
+
+
+    professor 
+
+
+
+    fez 'CAST' 
+
+    de 
+
+    'result' 
+
+
+    COMO SENDO DE TYPE 'number',
+
+
+
+    TUDO POR MEIO DA KEYWORD DE 'as'....
+
+
+
+
+
+
+    ex:
+
+
+
+
+
+
+
+
+    
+    buttonElement.addEventListener('click',  //ver anotaçaõ lá no selector/ definição da constante de 'buttonElement'...
+    
+    () => {
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2);
+        console.log(result, stringResult);
+
+        printResult({
+            val: result as number, ////////EIS O CÓDIGO EM QUESTÃO  
+            exemplo: 'EXEMPLOZXC',
+            timestamp: new Date()
+        })
+    
+    })
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO... ISSO REMOVEU O ERROR...
+
+
+
+
+
+
+
+
+
+
+
+
+--> com isso, 
+
+ESTAMOS 
+
+PASSANDO 
+
+
+
+UM OBJETO 
+
+DESSES A 'PRINT RESULT',
+
+
+em que 
+
+
+
+
+DEFINIMOS 
+
+
+QUE 
+
+
+
+SUA ESTRUTURA DEVE SER 
+
+
+assim:
+
+
+
+
+
+
+resultObject: {
+    val: number;
+    timestamp: Date
+}
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+COM ISSO, DEIXAMOS BEM CLARO QUAL TIPO DE DATA ESTAMOS ACEITANDO, E COMO ESSA DATA/OBJECT DEVE SE PARECER..
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+OBJECTS SÃO NICE, É CLARO,
+
+
+
+
+MAS __ àS VEZES__ VOCê TRABALHARÁ __ COM ARRAYSS....
+
+
+
+
+
+
+
+
+
+
+----> DIGAMOS QUE EM VEZ DE FAZERMOS O CONSOLE.LOG 
+
+de 
+
+'result'
+
+e 
+
+'stringREsult'
+
+
+
+
+NAQUELES LOCAIS ALI,
+
+
+
+EM 
+
+
+
+''
+
+
+    buttonElement.addEventListener('click',  //ver anotaçaõ lá no selector/ definição da constante de 'buttonElement'...
+    
+    () => {
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2);
+        console.log(result, stringResult);
+
+        printResult({
+            val: result as number, ////////EIS O CÓDIGO EM QUESTÃO  
+            exemplo: 'EXEMPLOZXC',
+            timestamp: new Date()
+        })
+    
+    })
+
+
+
+
+'''
+,
+
+
+
+
+
+
+
+
+
+EM VEZ DISSO,
+
+
+GOSTARÍAMOS __ DE ARMAZENAR __ ESSES VALORES _ 
+
+
+
+EM 
+
+
+
+ARRAYS... -----------> 
+
+
+
+
+
+
+
+
+
+
+PARA ISSO,
+
+O PROFESSOR ADICIONA UNS ARRAYS 
+
+LÁ NO CONTEXTO GLOBAL,
+
+NO TOPO DO NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+
+
+
+-_> ELE OS CHAMA DE 
+
+'numResults'
+
+e 
+
+'textResults'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const numResults = [];
+const textResults = [];
+
+
+
+    buttonElement.addEventListener('click',  //ver anotaçaõ lá no selector/ definição da constante de 'buttonElement'...
+    
+    () => {
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2);
+        console.log(result, stringResult);
+
+        printResult({
+            val: result as number, ////////EIS O CÓDIGO EM QUESTÃO  
+            exemplo: 'EXEMPLOZXC',
+            timestamp: new Date()
+        })
+    
+    })
+
+
+-----------------------------------
+
+
+
+
+
+CERTO... AÍ,
+
+
+NESSE EVENTLISTENER,
+
+VAMOS QUERRE 
+
+
+
+FAZER 
+'PUSH' 
+
+
+
+dos valores 
+
+
+
+
+
+number/string 
+
+
+
+TODA VEZ QUE O BUTTON FOR PRESSIONADO...
+
+
+
+
+
+
+
+
+escrevemos assim:
+
+
+
+
+
+
+
+
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2);
+        console.log(result, stringResult);
+
+
+        numResults.push(result); ///////EIS O CÓDIGO EM QUESTÃO..
+        textResults.push(stringResult);
+
+        printResult({
+            val: result as number, ////////EIS O CÓDIGO EM QUESTÃO  
+            exemplo: 'EXEMPLOZXC',
+            timestamp: new Date()
+        })
+
+
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... COM ISSO,
+
+FAREMOS O PUSH DESSES VALORES LÁ 
+
+NESSES ARRAYS....
+
+
+
+
+
+
+
+
+
+
+
+---> POR FIM, VAMOS CONSOLE.LOGGAR esses arrays, nessa função...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... MAS COM ISSO, IMEDIATAMENTE O TYPESCRIPT VAI NOS APONTAR _ UM ERRO/AVISO quanto aos arrays..._....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> O ERROR SERÁ ''''AH, SEU ARRAY, O TYPE DELE ESTÁ IMPLICITAMENTE COMO "ANY", E ISSO NÃO É PERMITIDO'''....
+
+
+
+
+
+
+
+
+
+
+
+-------> E ESSA É UMA DESCRIÇÃO PERFEITA DO PROBLEMA:
+
+
+
+NÓS ESTAMOS SENDO BEM ESPECÍFICOS SOBRE OS TYPES DE DATA QUE SÃO ADMITIDOS/PERMITIDOS NA FUNÇÃO de 'addSum',
+
+
+
+POR EXEMPLO,
+
+
+
+
+
+
+
+
+MAS AO MESMO TEMPO ESTAMOS SENDO __ BEM __ NÃO ESPECÍFICOS 
+
+
+
+
+
+
+ACERCA DESSES ARRAYS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO...
+
+
+
+
+
+a versão 'não explicada' deles está assim:
+
+
+
+
+
+const numResults = [];
+
+
+
+const textResults = [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS NÃO ESTAMOS FALANDO COISA ALGUMA DOS VALORES QUE ELES DEVEM ACEITAR/aceitar ter 'pushed in'....
+
+
+
+
+
+
+
+
+
+
+
+-----------> PODEMOS SER ESPECÍFICOS,
+
+COM 
+
+
+O 
+
+TYPESCRIPT... ------------> COM O TYPESCRIPT,
+
+
+
+PODEMOS 
+
+
+USAR AQUELA MESMA SINTAXE DE ':' 
+
+
+
+
+DEPOIS DO NOME DA VARIÁVEL...
+
+
+ex:
+
+
+
+
+
+const numResults:  = [];
+
+
+
+const textResults:  = [];
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+AÍ, DO LADO DISSO,
+
+
+
+
+VAMOS __ QUERER DIZER ''''QUEREMOS UM ARRAY CHEIO DE NUMBERS/CHEIO DE STRINGS'''...
+
+
+
+
+
+
+
+
+-> PARA ISSO,
+
+
+
+
+escrevemos ASSIM: 
+
+
+
+
+(SHORTCUT DO TYPESCRIPT):
+
+
+
+
+
+
+const numResults: number[] = [];
+
+
+
+const textResults:  = [];
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+OU SEJA, O ATALHO É 
+
+
+'data type + []'...
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO VAI QUERER DIZER 
+
+
+
+'O TIPO DE DATA ARMAZENADA NESSE ARRAY DE 'numResults'
+
+
+SERÁ __ NUMBER''... (só numbers serão permitidos)...
+
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+const numResults: number[] = [];  ////////COM ESSA SINTAXE DO LADO ESQUERDO DO '=', DIZEMOS AO TYPESCRIPT QUE NESSE ARRAY _ SÓ SERÃO PERMITIDOS __ NUMBERS....
+
+const textResults: string[] = []; ///SÓ SERÃO PERMITIDAS _ strings__ DENTRO DESSE ARRAY...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO....
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, AINDA ESTAREI RECEBENDO __ ERRORS,
+
+lá no call de 
+
+
+
+''
+
+
+        numResults.push(result);
+        textResults.push(stringResult);
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+-> PARA CONSERTAR ESSE PROBLEMA,
+
+
+
+USAMOS A KEYWORD 'as',
+
+PARA ASSEGURAR 
+
+
+QUE ESTAMOS 
+
+
+
+__ REALMENTE_ CIENTES DE QUE AQUI VAMOS FAZER PUSH DE UM NUMBER E DE UMA STRING...
+
+
+
+EX:
+
+
+        numResults.push(result as number);
+        textResults.push(stringResult as string);
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ok.. professor fez exatamente isso..
+
+
+
+
+--> AÍ PODEMOS COMPILAR ESSE CÓDIGO COM 
+
+'tsc'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ VAMOS RODAR NOSSO CÓDIGO, E PERCEBEMOS QUE 
+ELE ESTÁ FUNCIONANDO, QUE ESSES VALORES ESTÃO SENDO ADICIONADOS AOS RESPECTIVOS ARRAYS...]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO... SUCESSO....
+
+
+
+
+
+
+
+
+ESSES SÃO OS ARRAY TYPES,
+
+
+
+QUE 
+
+SÃO MT IMPORTANTES.... SÃO IMPORTNTES PQ 
+
+
+ASSEGURAM QUE 
+
+NUNCA 
+
+VAMOS 
+
+
+
+
+ADICIONAR DATA ERRONEAMENTE A UM ARRAY (ex: adicionar uma STRING a um array que so´ACEITA NUMBERS)....

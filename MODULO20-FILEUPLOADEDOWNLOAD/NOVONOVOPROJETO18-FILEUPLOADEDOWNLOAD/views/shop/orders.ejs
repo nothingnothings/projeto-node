@@ -1,0 +1,40 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/orders.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <% if (errorMessage) {  %>
+        <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } %>
+      <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+        <% } else { %>
+          <ul class="orders">
+ <% orders.forEach(order => { %>
+     <li class="orders__item">
+        <h1>Order # <%= order._id %></h1>
+        <ul class="orders__products">
+          <% order.products.forEach(product => { %>
+
+            <li class="orders__products-item">
+              
+              <span>Product:</span> <%= product.product.title %> (<%= product.quantity %>)
+              <p><span>Price:</span> $<%= product.product.price %></h1>
+         
+            
+            </li>
+
+        <%  }) %>
+        <h2>Total Price: $<%= order.totalPrice %></h1>
+          <p><a class="order__link" href="/orders/<%= order._id %>">Fatura</a></p>
+        </ul>
+
+     </li>
+            <%  }) %>
+          </ul>
+
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs'); %>

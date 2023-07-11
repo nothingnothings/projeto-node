@@ -1,0 +1,457 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> COM RESPONSE HEADERS ADICIONADOS COM A AJUDA DO 'HELMET',
+
+
+
+
+
+DEVEMOS ASSEGURAR 
+
+QUE 
+
+
+
+TAMBÉM 
+
+CONSIGAMOS 
+
+'SERVE OPTIMIZED ASSETS',
+
+
+
+
+
+assets como javascript e css....
+
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIR ADICIONAR ESSA FEATURE DE __ COMPRESSION__ DE ARQUIVOS,
+
+
+VAMOS 
+
+QUERER 
+PROCURAR 
+
+PELA 
+
+PACKAGE DE 
+
+
+
+'node compression' 
+
+
+
+
+
+
+
+
+
+
+--> AÍ, SE PROCURARMOS POR ESSA PACAKGE,
+
+ENCONTRAREMOS 
+
+
+'expressjs/compression',
+
+
+
+
+
+
+nodejs cOMPRESSION MIDDLEWARE...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+https://www.npmjs.com/package/compression
+
+
+
+
+
+
+
+
+
+
+
+
+PARA INSTALAR ESSE NEGÓCIOK,
+
+
+
+
+RODAMOS 
+
+npm install --save compression
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO NOS DEIXA 
+
+
+FACILMENTE ADICIONAR COMPRESSION AO NOSSO APP..... ---> é claro que EXISTEM
+
+
+algumas configurações nos docs,
+
+
+
+
+MAS 
+
+
+
+
+
+
+
+SE QUISERMOS O INSTALL SIMPLES,
+
+
+
+BASTA 
+
+
+IR 
+
+ATÉ 
+
+
+
+SEU 
+
+
+
+
+ARQUIVO app.js 
+
+E 
+
+ESCREVER:
+
+
+
+
+
+
+const compression = require('compression'); 
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+ISSO FEITO,
+
+VAMOS ADICIONAR ESSA PACKAGE COMO MIDDLEWARE,
+
+
+
+
+
+PROVAVELMENTE __ LOGO APÓS __ O HELMET....
+
+
+Ex:
+
+
+
+
+
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
+app.use(helmet()); ////USE ISTO PARA DEIXAR SEU APP NODE MAIS 'SECURE' (é usado para DEIXAR SEUS RESPONSE HEADERS MAIS SEGUROS CONTRA ATAQUES, EM DEPLOYMENT)...
+
+
+
+app.use(compression()); ///EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----> PARA CONSEGUIRMOS VER O EFEITO DISSO,
+
+
+
+
+
+
+
+PROFESSOR COMENTA ESSE MIDDLEWARE PARA FORA,
+
+
+PARA 
+
+
+
+VER A DIFERENÇA DE TAMANHOS 
+
+DOS NOSSOS ARQUIVOS...  (
+
+
+
+    veja 'main.css' e 
+
+    'main.js'....
+
+
+
+
+
+
+    -----> COM A AJUDA DO 'COMPRESSION' 
+
+    package,
+
+
+
+
+
+    VEREMOS QUE 
+
+
+    O TAMANHO SERÁ BEM MENOR,
+
+
+
+
+    PELA METADE... --------> É CLARO QUE 
+
+
+
+    ISSO VAI 
+
+
+
+
+
+
+PESAR BEM MAIS SE VOCÊ TIVER MAIS CÓDIGO FRONTEND SERVIDO NO SEU APP
+)
+
+
+
+
+
+
+
+
+
+--> ESSE PACKAGE É IMPORTANTE 
+
+EM PROJETOS EM QUE 
+
+
+VOCÊ 
+
+TEM 
+
+
+UM MONTE DE CSS E JAVASCRIPT 
+
+SENDO SERVIDO AOS SEUS USERS.. ( ou files sendo servidas)...
+
+
+
+
+
+
+
+
+
+
+
+--> BTW, 
+
+
+
+ARQUIVOS IMAGE NÃO SÃO COMPRIMIDOS POR ESSE PACKAGE,
+
+PQ A COMPRESSÃO DE IMAGES NA VERDADE DEIXA O PROCESSO DE LOAD __ MAIS LONGO_...
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+--> OUTRO DETALHE:
+
+
+
+
+
+
+
+
+
+PROFESSOR RESSALTA QUE A GRANDE MAIORIA DOS HOSTING PROVIDERS QUE 
+
+
+TALVEZ UTILIZEMOS 
+
+
+__ JÁ VÃO TER ALGUMA 
+
+FORMA/SUPORTE 
+
+A 
+
+
+'COMPRESSION' 
+
+
+
+BUILTIN..... -------> ou, em outras hipóteses,
+
+eles 
+
+podem 
+
+OFERECER ESSE SERVIÇO DE 
+
+COMPRESSIOn...  --> NESSES CASOS,
+
+
+ELES 
+
+VÃO 
+
+
+COMPRESS SEUS DADOS 'ON THE FLY',
+
+
+
+
+
+
+
+AÍ _ VOCÊ 
+
+NÃO VAI PRECISAR 
+
+USAR ESSE MIDDLEWARE... ---> MAS NO CASO 
+
+
+EM QUE 
+
+SEU HOSTING PROVIDER NÃO __ SUPORTA COMPRESISON,
+
+
+
+OU EM QUE 
+
+
+VOCê ESTÁ CONSTRUINDO SEU PRÓPRIO SERVER,
+
+
+AÍ 
+
+
+ESSE MIDDLEWARE É UM BOM MIDDLEWARE QUE VOCÊ PODE ADICIONAR...
+
+
+
+
+
+
+
+
+

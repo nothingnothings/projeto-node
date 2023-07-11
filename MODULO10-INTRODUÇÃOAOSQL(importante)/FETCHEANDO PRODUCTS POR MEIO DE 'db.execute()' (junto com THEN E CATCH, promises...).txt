@@ -1,0 +1,2877 @@
+
+
+
+
+
+
+--> AGORA QUE 
+
+
+CONECTAMOS 
+
+
+
+NOSSO CÓDIGO/APP NODEJS/EXPRESS
+ 
+
+
+ À DATABASE 
+
+
+ SQL QUE HAVÍAMOS CRIADO (mySQL),
+
+
+
+
+ O PROFESSOR VAI REMOVER AQUELE CÓDIGO DE 
+
+
+
+ ''
+
+
+ db.execute('SELECT * FROM products').then(
+  (result) => {
+    console.log(result[0]); ////o primeiro elemento do  ARRAY retrievado por uma query DE FETCH DISPARADA a uma database SQL é __SEMPRE _UM ARRAY COM A 'PRÓPRIA DATA'... (é a data que queremos fetchear)...
+    console.log(result[1]); //JÁ O SEGUNDO ELEMENTO NESSE array é SEMPRE __ UM ARRAY__ COM METADATA acerca da data que foi fetcheada (A data que foi fetcheada fica no 'result[0]'...)
+  }
+
+).catch(
+  (err) => {
+    console.log(err);
+  }
+);
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+--> ELE 
+
+VAI REMOVER ESSE CÓDIGO 
+
+
+
+PQ ELE ERA SÓ UM CÓDIGO DE TEST,
+
+
+E NÃO O CÓDIGO QUE VAMOS USAR DE VERDADE...
+
+
+
+
+
+
+
+
+
+
+-> EM VEZ DESSE CÓDIGO,
+
+
+
+É CLARO QUE 
+VAMOS 
+
+
+QUERER ALTERAR NOSSOS 'MODEL',
+
+
+o 
+
+de 
+
+PRODUCTS E O DE CART,
+
+
+
+PARA QUE 
+
+
+
+
+
+
+PASSEM A TRABALHAR COM NOSSA DATABASE 
+
+
+
+DO 
+
+SQL...
+
+
+
+
+
+
+
+
+---> NOSSO CÓDIGO DE 'product.js', o model 'product',
+
+está assim:
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+const Cart = require('./cart');
+
+const pathHelper = require('../util/path');
+
+const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+const getProductsFromFile = (callback) => {
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    } else {
+      callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+module.exports = class Product {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+  save() {
+    getProductsFromFile((products) => {
+      if (this.id) {
+        const existingProductIndex = products.findIndex(
+          (item) => item.id === this.id
+        );
+        const updatedProducts = [...products];
+
+        updatedProducts[existingProductIndex] = this;
+        fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        });
+        console.log('test');
+      } else {
+        this.id = Math.random().toString();
+
+        products.push(this);
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+        console.log('test2');
+      }
+    });
+  }
+
+  static deleteProduct(productId) {
+    getProductsFromFile((products) => {
+      const productPrice = products.find((product) => {
+        return product.id === productId;
+      }).price;
+      const updatedProducts = products.filter((prod) => prod.id !== productId);
+
+      fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+        console.log(err);
+
+        if (!err) {
+          Cart.deleteProductFromCart(productId, productPrice); ////vai DELETAR ESSE PRODUCT ESPECÍFICO DO NOSSO CART/CART DO USUÁRIO, caso o admin DELETE ESSE PRODUCT DA LISTA DE PRODUCTS DISPONÍVEIS...
+        }
+      });
+      console.log('test');
+    });
+  }
+
+  static fetchAll(cb) {
+    getProductsFromFile(cb);
+  }
+};
+
+
+
+  static findProduct(productId, callback) {
+    getProductsFromFile((products) => {
+      const product = products.find((item, index) => {
+        return item.id === productId;
+      });
+
+      callback(product);
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+-------> NESSE CÓDIGO 
+
+AÍ,
+
+
+nós 
+
+
+__JÁ TEMOS 
+
+UMA 
+
+CLASS 
+
+
+EXPORTADA 
+
+por meio 
+
+de 
+
+'module.exports = class Product {}',
+
+
+
+
+
+
+
+CLASS QUE 
+
+INSTANCIAMOS NO NOSSO PROJETO QUANDO CRÍAMOS UM NOVO PRODUCT,
+
+
+
+e que 
+
+
+
+ENTÃO UTILIZAMOS (esse objeto aí, representado por 'this') 
+
+
+
+
+
+__COM O MÉTODO 'save(){}'
+
+
+PARA __ 
+
+
+CRIAR UM NOVO PRODUCT NO NOSSO ARRAY de 'products', NO FILESYSTEM, nesse caso...
+
+
+
+
+
+
+
+
+
+
+-> AGORA VAMOS QUERER SUBSTITUIR O USO DE UM FILESYSTEM 
+
+
+__POR UMA DATABASE SQL...
+
+
+
+
+
+
+
+
+
+
+--> NÓS, POR ENQUANTO,
+
+ESTAMOS 
+
+FETCHEANDO 'product'
+
+LÁ 
+
+
+DE 
+
+
+NOSSO ARQUIVO,
+
+lá do arquivo 
+
+'ProductList'...,
+
+
+
+
+
+
+
+
+NÓS __TAMBÉM TEMOS AQUELES MÉTODOS 
+
+__ESTÁTICOS (static) 
+
+
+
+
+__PARA FETCHEAR DADOS__...
+
+
+esses MÉTODOS SÃO:
+
+
+
+  static fetchAll(cb) {
+    getProductsFromFile(cb);
+  }
+};
+
+
+
+  static findProduct(productId, callback) {
+    getProductsFromFile((products) => {
+      const product = products.find((item, index) => {
+        return item.id === productId;
+      });
+
+      callback(product);
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+  --> NESSES MÉTODOS, NÓS _ _FETCHAMOS DATA LÁ DE NOSSOS ARQUIVOS,
+
+  lá do FILESYSTEM DO NOSSO SERVER/BACKEND....  ----> PROFESSOR ADMITE QUE 
+
+  É POSSÍVEL
+   
+
+   FAZER ISSO,
+
+
+
+   MAS 
+   QUE 
+
+   __ISSO NÃO SERÁ O SETUP DESEJADO POR NÓS... ---> E O PROFESSOR NÃO UTILIZARÁ 
+
+
+
+ESSE SETUP... 
+
+
+
+
+
+
+
+
+
+
+
+*****OBS:::: O PROFESSOR AINDA VAI USAR 'MÉTODOS ESTÁTICOS'
+
+PARA __ FETCHEAR__ DATA,
+
+É CLARO,
+
+
+
+___MAS ELE VAI FETCHEAR ESSA DATA, COM ESSES MÉTODOS ESTÁTICOS,
+
+
+__LÁ ___ DE DATABASES,
+
+E NÃO 
+
+
+
+DO FILESYSTEM DE NOSSO BACKEND...
+
+
+
+
+
+
+
+
+
+--> QUERO FETCHEAR DATA LÁ DA DATABASE.... ----> PARA FETCHEAR 
+
+
+ 
+
+ DATA LÁ DA DATABASE,
+
+
+
+
+ O PROFESSOR VAI REMOVER 
+
+
+ AQUELES 
+ IMPORTS 
+
+ de 
+
+
+
+ 'const fs = require('fs);' 
+
+
+ e 
+
+ 'const path = require('path');',
+
+
+
+
+ PQ 
+
+
+
+ __ELE NÃO VAI MAIS TRABALHAR COM O FILESYSTEM,
+
+
+
+
+ E ISSO QUER DIZER QUE NÃO VAMOS MAIS TRABALHAR COM FILES E PATHS...
+
+
+
+
+
+
+
+
+
+ --> TAMBÉM TIRAMOS O CÓDIGO QUE CONSTRÓI UM PATH,
+
+
+
+
+ pq se tornou inútil....
+
+
+
+
+
+
+ --> CÓDIGO FICA ASSIM (model de 'product.js'):
+
+
+
+
+
+const Cart = require('./cart');
+
+const getProductsFromFile = (callback) => {
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    } else {
+      callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+module.exports = class Product {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+  save() {
+    getProductsFromFile((products) => {
+      if (this.id) {
+        const existingProductIndex = products.findIndex(
+          (item) => item.id === this.id
+        );
+        const updatedProducts = [...products];
+
+        updatedProducts[existingProductIndex] = this;
+        fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        });
+        console.log('test');
+      } else {
+        this.id = Math.random().toString();
+
+        products.push(this);
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+        console.log('test2');
+      }
+    });
+  }
+
+  static findProduct(productId, callback) {
+    getProductsFromFile((products) => {
+      const product = products.find((item, index) => {
+        return item.id === productId;
+      });
+
+      callback(product);
+    });
+  }
+
+  static deleteProduct(productId) {
+    getProductsFromFile((products) => {
+      const productPrice = products.find((product) => {
+        return product.id === productId;
+      }).price;
+      const updatedProducts = products.filter((prod) => prod.id !== productId);
+
+      fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
+        console.log(err);
+
+        if (!err) {
+          Cart.deleteProductFromCart(productId, productPrice); ////vai DELETAR ESSE PRODUCT ESPECÍFICO DO NOSSO CART/CART DO USUÁRIO, caso o admin DELETE ESSE PRODUCT DA LISTA DE PRODUCTS DISPONÍVEIS...
+        }
+      });
+      console.log('test');
+    });
+  }
+
+  static fetchAll(cb) {
+    getProductsFromFile(cb);
+  }
+};
+
+
+
+
+
+------------------------------
+
+
+PROFESSOR NOS EXPLICA QUE 
+
+DEIXAMOS 
+
+O 
+
+IMPORT 
+
+de 
+
+'Cart',
+
+
+MAS APONTA QUE 
+
+ESSE IMPORT FICARÁ 'BROKEN',
+
+pq 
+
+a funcionalidade usava 
+
+
+
+AQUELE PATH LÁ...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O PROFESSOR TAMBÉM VAI REMOVER 
+
+A FUNÇÃO 'CORE' DO NOSSO 
+
+
+MODEL 'PRODUCT',
+
+
+que 
+
+
+era 
+
+
+
+aquele 
+
+
+'getProductsFromFile'....
+
+
+
+
+
+
+
+--> PROFESSOR VAI REMOVER ESTE TRECHO:
+
+
+
+const getProductsFromFile = (callback) => {
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    } else {
+      callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+--> ESSA HELPER FUNCTION QUE FAZIA __ GET _ DE PRODUCTS EM 
+
+1 ARQUIVO __VAI SER REMOVIDA....
+
+
+
+
+
+
+--> REMOVIDA PQ NÃO TRABALHAREMOS MAIS COM FILES...
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR AINDA VAI CRIAR UM PRODUCT, EXATAMENTE COMO ANTES,
+
+
+por meio daquele código de 
+
+
+''
+
+
+
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+
+
+
+''',
+
+
+
+
+POR ISSO 
+
+ELE 
+
+
+VAI 
+
+
+DEIXAR ESSE CÓDIGO EXATAMENTE COMO ELE ESTÁ...
+
+
+
+
+
+
+
+
+--------> OK.... --> MAS O PROFESSOR 
+
+
+__VAI APAGAR _ TODO O CÓDIGO 
+
+
+
+
+__ DE 'SAVING' (save() {} ),
+
+
+
+
+
+
+E TAMBÉM VAI 
+
+DELETAR 
+
+
+__tODO O CÓDIGO 
+
+de 
+
+
+'deleteProduct'...
+
+
+
+
+
+
+
+
+
+--> DELETA TAMBÉM O CÓDIGO DE 'fetchAll',
+
+
+
+
+E TAMBÉM DE 'findProduct'...
+
+
+
+
+
+
+
+
+
+
+NOSSO CÓDIGO FICA ASSIM:
+
+
+
+
+  save() {
+  }
+
+  static findProduct(productId, callback) {
+
+  }
+
+  static deleteProduct(productId) {
+
+  }
+
+  static fetchAll(cb) {
+
+  }
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+ELE VAI QUERER 
+
+COMEÇAR 
+
+
+por 
+
+
+
+'fetchAll'... 
+
+
+
+
+
+
+
+
+
+
+--> BEM,
+
+o 
+
+'fetchAll'
+
+
+
+__AGORA NÃO VAI MAIS PRECISAR DAQUELE CALLBACK FEDORENTO...
+
+
+
+
+--> NÃO VAI MAIS TRABALHAR COM CALLBACKS,
+
+
+
+por isso ele vai ficar assim:
+
+
+
+
+----------------------------
+
+
+static fetchAll() {
+
+}
+
+
+
+-------------------------
+
+
+
+
+VAMOS TRABALHAR COM PROMISES, NO LUGAR DESSES CALLBACKS...
+
+
+
+TIRAMOS CALLBACKS DE TODOS OS LUGARES EM QUE ELES ESTAVAM...
+
+
+
+
+
+---> ok.... AÍ __ PROVAVELMENTE VAMOS 
+
+ESCREVER __ CÓDIGO __ 
+
+
+
+QUE _ EXECUTA__ QUERIES ('db.execute()')
+
+
+
+
+
+
+
+___DENTRO___ DESSE 
+
+
+
+MÉTODO 
+
+'fetchAll',
+
+
+
+
+
+ESSA É A COISA QUE FAZ MAIS SENTIDo...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR PROVAVELMENTE ESCREVERÁ:
+
+
+
+
+------------------------------
+
+
+const db = require('./util/database'));
+
+
+
+static fetchAll() {
+
+
+
+
+        db.execute(
+            'SELECT * FROM products'
+        ).then
+        (
+            (result) => {
+
+            }
+        )
+}
+
+
+-------------------------------
+
+
+
+
+
+OK... ESTOU ACERTANDO...
+
+
+
+
+
+
+
+  static fetchAll() {
+
+    db.execute('SELECT * FROM products')
+    .then(
+      () => {}
+    )
+  }
+
+
+
+
+
+
+
+
+
+
+__SELECT EVERYTHING (tudo, todos os fields de products....) 
+
+
+LÁ 
+
+
+DE 
+
+'products'... 
+
+
+
+
+
+
+-----> OBS: VOCÊ PODE escrever 'SELECT' e 'FROM' em lowercase,
+
+MAS O PROFESSOR 
+
+
+
+PREFERE DEIXAR EM MAIÚSCULO 
+
+
+para 
+que 
+
+
+
+
+CONSIGAMOS DIFERENCIAR A SINTAXE DO SQL 
+
+
+
+EM RELAÇÃO AOS NOSSOS 'DYNAMIC VALUES'...
+
+
+
+
+
+
+--> ok... --> 
+
+
+
+
+
+
+O 
+
+'db.execute(...)'
+
+
+VAI __ NOS RETORNAR  UMA PROMISE.... -----> 
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE CERTAMENTE PODERÍAMOS 
+
+
+
+ESCREVER 
+'.then().catch()'
+
+
+EM CIMA 
+
+DESSA PROMISe,
+
+
+ 
+
+
+ MAS __ 
+
+
+ ELE NOS EXPLICA QUE _ 
+
+
+
+ 'IM ACTUALLY INTERESTED IN THE RETURNED VALUE __ IN THE PLACE__ WHERE 
+
+
+ IM CALLING fetchAll()'.... 
+
+
+
+
+ ( OU SEJA,
+ 
+ 
+ ELE QUER 
+ 
+
+ ESCREVER o '.then()' e '.catch()' BLOCKS 
+
+ LÁ 
+
+
+
+
+ NO LUGAR EM QUE 
+
+ ELE 
+
+ CHAMARÁ
+  
+  'fetchAll()',
+
+
+  E NÃO __ DENTRO 
+
+  DESSA NOSSA FUNÇÃO 'fetchAll'....
+ 
+ 
+ 
+ )
+
+
+
+
+
+
+
+
+ --> É POR ISSO QUE ELE 
+
+ VAI __RETORNAR __ TODA A PROMISE dentro dessa função 'fetchAll',
+
+
+ PARA __ QUE __ ELE 
+
+
+ CONSIGA RODAR 
+
+ '.then().catch()'
+
+
+
+
+ NO LUGAR EM QUE CHAMAR 
+
+ 'fetchAll'...
+
+
+
+ ex:
+
+
+
+ static fetchAll() {
+     return db.execute('SELECT * FROM products');
+ }
+
+
+
+
+
+ ------------------------
+
+
+
+
+
+
+
+
+
+ -> OK, ISSO FEITO,
+
+ IREMOS
+  
+
+
+  ATÉ 
+
+  O 
+
+  LOCAL EM QUE CHAMAOS 
+
+  'fetchAll',
+
+  E ESSE LUGAR É 
+
+  LÁ 
+
+
+
+
+  NO CONTROLLER  
+
+
+
+
+  ___ DE ___ 'shop.js',
+
+
+
+
+  LÁ 
+
+
+
+
+NO CONTROLLER 
+
+de 
+
+'getStartingPage',
+
+POR EXEMPLO,
+
+
+
+que 
+
+ficará assim (acho que ficará assim):
+
+
+
+
+
+
+(CÓDIGO ANTIGO):
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+  Product.fetchAll((products) => {
+    //é código assíncrono, no final das contas...
+
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'Shop',
+      path: '/products',
+      productCSS: true,
+      activeShop: true,
+      hasProducts: products.length > 0,
+    });
+  });
+};
+
+
+
+
+
+
+
+
+CÓDIGO NOVO (com esse código de PROMISES, fazendo contato com NOSSA DATABASE SQL):
+
+
+
+
+
+
+
+exports.getProductsPage = (req, res, next) => {
+  Product.fetchAll()
+  .then(
+      (result) => {
+          return result[1];
+      }
+  )
+  .then(
+      (products) => {
+
+
+
+                    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'Shop',
+      path: '/products',
+      productCSS: true,
+      activeShop: true,
+      hasProducts: products.length > 0,
+    });
+      }
+  )
+};
+
+
+
+----------------------------
+
+
+
+
+TIPO ASSIM,
+
+CREIO EU....
+
+
+
+
+
+
+
+
+---->  O PROFESSOR ESCREVE ASSIm:
+
+
+
+
+
+
+exports.getIndex = (req, res, next) => {
+
+
+    Product.fetchAll().then().catch();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+----> O PROFESSOR DIZ QUE ADICIONAMOS '.catch()" aqui msm... --> ISSO PQ VOCÊ TIPICAMENTE 
+
+
+GOSTARÁ DE TER 
+UM 
+
+'ERROR HANDLING MECHANISM',
+
+
+
+APESAR DE QUE 
+
+NO FUTURO 
+
+APRENDERMEOS 
+
+
+
+UM ERROR HANDLING SUPERIOR AO 
+
+
+
+'.catch()'...
+
+
+
+
+
+-> PROFESSOR ESCREVE UM SIMPLES CONSOLE.LOG DO ERR,
+
+
+
+
+
+
+
+__ E ÁI __ 
+
+
+O PROFESSOR 
+
+
+VAI QUERER 
+
+
+
+
+USAR UMA SINTAXE NEXTGEN 
+
+JAVASCRIPT 
+
+
+DENTRO 
+
+DAQUELE 
+
+
+.then() 
+block 
+
+
+
+PARA 
+
+
+
+___CONSEGUIR __ A PARTE 
+
+DA 
+
+
+DATA QUE NOS INTERESSA.... --> 
+
+
+
+PARA ISSO,
+
+
+PROFESSOR 
+
+VAI USAR 
+
+AQUELA 
+
+NEXT-GEN FEAUTRE 
+
+CHAMADA 
+DE 
+'destructuring'...
+
+
+
+
+--> ELE VAI USAR ESSA FEATURE PARA 
+
+
+'PULL OUT INFORMATION OF THE VALUE' que estamos recebendo como argumento nessa função dentro 
+
+do 
+
+then block....
+
+
+
+
+
+--> ok... mas como ele faz isso?
+
+
+
+
+
+BEM, O JEITO QUE EU HAVIA ESCRITO ERA ASSIM:
+
+
+
+
+
+  Product.fetchAll()
+  .then(
+      (result) => {
+          return result[1];
+      }
+  )
+  .then(
+      (products) => {
+
+      }
+
+
+-----------------------------
+
+
+
+
+
+MAS ISSO AÍ 
+
+
+
+É TOTALMENTE BOSTA... 
+
+
+
+
+
+
+
+--> O MEIO QUE O PROFESSOR 
+
+USA 
+
+
+
+é um approach 
+
+
+EM QUE 
+
+_ELE COLOCA _ UM __ARRAY __ DENTRO 
+
+DA LISTA DE PARÂMETROS do then... (array destructuring..)
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.getIndex = (req, res, next) => {
+
+
+    Product.fetchAll()
+    
+    .then(
+
+
+            ([]) => { /////////EIS O CÓDIGO EM QUESTÃO.
+
+            }
+
+
+    )
+    
+    
+    .catch((err) => {console.log(err)});
+
+
+
+}
+
+
+-----------------------------------
+
+
+
+
+
+
+--> DENTRO 
+
+DESSE 
+
+'[]',
+
+
+
+PROFESSOR 
+
+VAI ESCREVEr 
+
+
+
+'rows' 
+
+
+e 
+'fieldData',
+
+
+O QUE 
+
+FARÁ COM QUE 
+
+SEJA 
+
+CRIADO UM 
+
+
+
+'const rows' 
+
+e um 
+
+
+'const fieldData' (com nossos METADADOS, essencialmente)...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.getIndex = (req, res, next) => {
+
+
+    Product.fetchAll()
+    
+    .then(
+
+
+            ([rows, fieldData]) => { /////////EIS O CÓDIGO EM QUESTÃO.
+
+
+                        
+            }
+
+
+    )
+    
+    
+    .catch((err) => {console.log(err)});
+
+
+
+}
+
+
+
+
+
+
+---------------
+
+
+E AGORA, O PROFESSOR NOS EXPLICA UQE PODEMOS SIMPLESMENTE USAR ESSES NESTED ARRAYS...
+
+
+
+
+
+
+
+--> ELE DIZ QUE PODERÍAMOS OS CONSOLE.LOGGAR,
+
+MAS QUE EM VEZ DISSO ELE VAI QUERER __ RENDERIZAR NOSSA PAGE __ 
+
+
+DENTRO 
+
+
+
+
+DO __ '.then()',
+
+
+
+DEPOIS 
+
+
+DE TERMOS 
+
+
+ESSA
+
+
+INFO/DATA 
+
+de 
+
+'rows' 
+
+e 
+
+'fieldData'...
+
+
+
+
+
+
+
+-----> ELE VAI ESCREVER SIMPLESMENTE ASSIm:
+
+
+
+
+
+
+
+exports.getIndex = (req, res, next) => {
+
+
+    Product.fetchAll()
+    
+    .then(
+
+
+            ([rows, fieldData]) => {
+
+                        
+                    res.render('shop/product-list', {
+      prods: rows,  /////////EIS O CÓDIGO EM QUESTÃO.
+      pageTitle: 'Shop',
+      path: '/products',
+      productCSS: true,
+      activeShop: true,
+      hasProducts: products.length > 0,
+    });
+
+
+            }
+
+
+    )
+    
+    
+    .catch((err) => {console.log(err)});
+
+
+
+}
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+-------> OU SEJA, ELE SIMPLESMENTE PASSARÁ 
+
+'rows'
+
+COMO VALUE 
+
+DAQUELA KEY 
+
+DE PRODUCTS,
+
+pq 
+
+
+
+
+'rows'
+
+
+É EFETIVAMENTE 
+
+
+
+A DATA 
+
+
+
+DOS RECORDS/PRODUCTS que tenho na minha table de 'products'.... (é aquele array CHEIO DE PRODUCTS...)
+
+
+
+
+
+
+
+
+
+
+-----> SALVAMOS TUDO ISSO E 
+
+
+VEMOS NOSSO APP... -> VAMOS VER 
+
+O NOSSO LIVRO 
+
+DISPLAYADO 
+
+NA NOSSA PÁGINA,
+
+
+tudo certinho... e SEM ERROS NO CONSOLE... -------> 
+
+
+
+VEMOS 
+
+ESSE LIVRO 
+
+JUSTAMNETE 
+
+PQ 
+
+
+
+NOSSA DATA FOI RETRIEVADA LÁ DO DATABASE SQL....
+
+
+
+
+
+
+-----> E SE ALTERARMOS ALGUMA COISA NESSE PRODUCT LÁ NA NOSSA DATABASE,
+
+
+
+VEREMOS __ AS MUDANÇAS APLICADAS IMEDIATAMENTE....
+
+
+
+
+
+
+
+-> PROFESSOR  
+
+NOS 
+
+DÁ UMA PEQUENA TAREFA... --> tente consertar 
+
+a página de ADMIN PRODUCTS... (tentar fazer com que 
+
+
+ela FUNCIONE COM NOSSA DATABASE, USANDO 
+
+O MESMO FORMATO DE PROMISES 
+
+
+
+usado com 
+
+
+aquele query lá...
+
+
+)
+
+
+
+
+--> DEPOIS VEREOMS __ COMO INSERIR __ DOCUMENTS/RECORDS 
+
+NA NOSSA DATABASE SQL...
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+CONSEGUI... FICOU ASSIM:
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+
+
+  Product.fetchAll()
+  .then(
+    ([rows, fieldData]) => {
+            res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: rows
+      })
+    }
+  )
+
+}
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+--> AGORA É HORA 
+
+
+DE __TENTAR CRIAR/INSERIR/ESCREVER 
+
+
+1 RECORD/PRODUCT 
+
+LÁ NA NOSSA TABLE 
+
+
+de 
+
+'products',
+
+
+
+NA 
+
+DATABASE SQL...
+
+
+
+
+
+
+
+
+--> vamos precisa de nova lógica em 'save(){}', lá no MODEL DE 'product.js'...
+
+
+
+
+
+
+
+
+
+
+
+-> CERTO...
+
+
+
+
+
+
+MAS ESTE CÓDIGO NÃO FUNCIONOU:
+
+
+
+
+
+  save() {
+    db.execute('SELECT * FROM products')
+    .then(
+      ([rows, fieldData]) => {
+
+      const existingProduct = rows.find(
+          (row) => {
+              return row.id === this.id;
+          }
+        )
+      
+      if(!existingProduct) {
+        db.execute(`INSERT INTO products ${this}`);
+
+      } else {
+
+
+      }
+      }
+    )
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+  --> recebi um erro de 
+
+
+  ''  sqlMessage: "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '[object Object]' at line 1"'''
+
+
+
+
+  Syntax
+There are two basic syntaxes of the INSERT INTO statement which are shown below.
+
+INSERT INTO TABLE_NAME (column1, column2, column3,...columnN)  
+VALUES (value1, value2, value3,...valueN);
+
+
+
+
+
+
+
+
+
+ISTO TAMBÉM NÃO FUNCIONOU:
+
+
+
+
+
+
+
+
+  save() {
+
+    db.execute('SELECT * FROM products')
+    .then(
+      ([rows, fieldData]) => {
+
+      const existingProduct = rows.find(
+          (row) => {
+              return row.id === this.id;
+          }
+        )
+      
+      if(!existingProduct) {
+        db.execute(`INSERT INTO products (${this.id, this.title, this.price, this.description, this.imageUrl})`);
+
+      } else {
+
+
+      }
+      }
+    )
+
+  }
+
+
+
+
+
+
+
+
+  O ERRO EM QUESTÃO:
+
+
+   code: 'ER_PARSE_ERROR'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   CÓDIGO HAVIA FICADO ASSIM:
+
+
+
+
+
+
+     save() {
+
+    db.execute('SELECT * FROM products')
+    .then(
+      ([rows, fieldData]) => {
+        console.log(rows);
+      const existingProduct = rows.find(
+          (row) => {
+              return row.id === this.id;
+          }
+        )
+      
+      if(!existingProduct) {
+        db.execute(`INSERT INTO products ('id', 'title', 'price', 'description', 'imageUrl') VALUES ('${this.title}', ${this.price}, '${this.description}', '${this.imageUrl}')`);
+
+      } else {
+
+
+      }
+      }
+    )
+
+  }
+
+
+
+
+
+
+
+
+
+--> E MESMO ASSIM, RECEBO UM ERRO...
+
+
+
+
+
+
+
+
+
+
+OK... AGORA CONSEGUI ACERTAR __ UM POUCO__ DA SINTAXE:
+
+
+
+
+
+
+
+
+
+    db.execute('SELECT * FROM products')
+    .then(
+      ([rows, fieldData]) => {
+        console.log(rows);
+      const existingProduct = rows.find(
+          (row) => {
+              return row.id === this.id;
+          }
+        )
+      
+      if(!existingProduct) {
+        db.execute(`INSERT INTO products (id, title, price, description, imageUrl) VALUES (${this.title}, ${this.price}, ${this.description}, ${this.imageUrl})`);
+
+      } else {
+
+
+      }
+      }
+    )
+
+  }
+
+
+
+
+
+
+
+
+
+  ------> E COM ISSO, RECEBI OUTRO ERRO:
+
+
+
+
+
+  Error: Column count doesn't match value count at row 1
+    at PromisePool.execute (A:\projeto4 - NODEJS\MODULO10-INTRODUÇÃOAOSQL(importante)\NOVONOVOPROJETO8-TRABALHANDOCOMDATABASESQL\node_modules\mysql2\promise.js:359:22)
+    at A:\projeto4 - NODEJS\MODULO10-INTRODUÇÃOAOSQL(importante)\NOVONOVOPROJETO8-TRABALHANDOCOMDATABASESQL\models\product.js:80:12
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  code: 'ER_WRONG_VALUE_COUNT_ON_ROW',
+  errno: 1136,
+  sql: 'INSERT INTO products (id, title, price, description, imageUrl) VALUES (asasas, 211, 21asas, asasasas)',
+  sqlState: '21S01',
+  sqlMessage: "Column count doesn't match value count at row 1"
+
+
+
+
+
+
+
+
+
+
+
+
+ok, isso significa que 
+
+NOSSO 
+
+ID  __PRECISA__ SER INPUTADO
+ 
+
+
+ naquele field de 'id',
+
+
+
+ mesmo 
+
+
+ nós tendo aquela feature de 
+
+ 'auto generate' no field de ID (que definimos lá no SQL WORKBENCH...) -------> OU.... ALTERNATIVAMENTE,
+
+
+ POSSO 
+
+ SÓ ESCREVER ASSIM:
+
+
+
+
+   db.execute(`INSERT INTO products (title, price, description, imageUrl) VALUES (${this.title}, ${this.price}, ${this.description}, ${this.imageUrl})`);
+
+
+
+
+
+   (OU SEJA, REMOVI aquele 'id' que estava em 'products( id, title, price, description, imageUrl ) ' ...)
+
+
+
+
+
+
+
+
+
+
+   --> RECEBI OUTRO ERRO:
+
+
+
+
+
+
+
+     code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sql: 'INSERT INTO products (title, price, description, imageUrl) VALUES (zassd, 21212121, as21asas, asaswaass)',
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'zassd' in 'field list'"
+
+
+
+
+
+
+  --------------------------------------------
+
+
+
+
+
+
+
+  CONSEGUI!
+
+
+
+  ESCREVI UM CÓDIGO QUE FUNCIONOU....:
+
+
+
+
+
+
+
+
+
+
+    save() {
+    db.execute('SELECT * FROM products')
+    .then(
+      ([rows, fieldData]) => {
+        console.log(rows);
+      const existingProduct = rows.find(
+          (row) => {
+              return row.id === this.id;
+          }
+        )
+      
+      if(!existingProduct) {
+        db.execute(`INSERT INTO products (title, price, description, imageUrl) VALUES ('${this.title}', ${this.price}, '${this.description}', '${this.imageUrl}')`);
+
+      } else {
+
+      }
+      }
+    )
+  }
+
+
+
+
+
+
+
+
+
+
+  ---> PARECE QUE TEMPLATE LITERALS FUNCIONAM 
+
+  com 
+
+
+  esse 'db.execute()',
+
+
+  e são até mesmo 
+
+  a 
+
+  FORMA PREFERIDA DE ESCREVER SQL QUERIES NO NODE...
+
+
+
+
+
+
+
+  ok... agora tenho que escrever o ELSE case, que 
+
+  será 
+
+
+
+  DE UPDATE 
+
+
+
+  do 
+
+
+
+  objeto/record que JÁ EXISTE 
+
+
+  NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+  Note: Be careful when updating records in a table!
+   Notice the WHERE clause in the UPDATE statement. 
+   The WHERE clause specifies which record(s) that should be updated.
+    If you omit the WHERE clause, all records in the table will be updated!
+
+
+
+
+
+
+
+
+
+
+
+
+ESCREVI ISTO:
+
+
+
+
+  static findProductInDatabase(id) {
+    return db.execute(`SELECT * FROM products WHERE id = ${id}`);
+  }
+
+
+
+
+
+
+
+
+E ISTO:
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+  if(!editMode) {
+    return res.redirect('/');
+  }
+  
+  const productId = req.params.productId;
+
+
+
+    Product.findProductInDatabase( //////EIS O CÓDIGO EM QUESTÃO.
+    ).then(
+      ([rows, fieldData]) => {
+          if (!rows) {
+            return res.redirect('/');
+          }  else {
+                      res.render('admin/edit-product', {
+          pageTitle: 'Edit Product', 
+          path: '/admin/edit-product',
+          editing: editMode, ////TRABALHO COM QUERY PARAMS.... --> usado para comunicar/diferenciar entre requests que querem ADICIONAR UM NOVO PRODUTO E ___ REQUESTS__ QUE QUEREM __ ALTERAR UM PRODUTO QUE JÁ EXISTE ('editMode = true'....)
+          prod: rows
+        });
+
+          }
+      }
+    )
+
+
+
+};
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA É QUE 
+
+
+
+O PEDIDO ENVIADO à DATABASE SQL NUNCA 
+
+TERMINA DE SER PROCESSADO... não sei a razão para isso...
+
+
+
+
+
+
+
+--> AGORA RECEBI UM ERROR:
+
+
+
+
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sql: 'SELECT * FROM products WHERE id = undefined',
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'undefined' in 'where clause'"
+}
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+CONSEGUI CONSERTAR... eu havia esquecido de passar o parâmetro 'productId' 
+
+ao call de 
+
+
+'findProductInDatabase'...
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/');
+  }
+  
+  const productId = req.params.productId;
+
+    Product.findProductInDatabase(productId ///EIS O CÓDIGO EM QUESTÃO.
+    ).then(
+      ([rows, fieldData]) => {
+        console.log(rows);
+          if (!rows) {
+            return res.redirect('/');
+          }  else {
+                      res.render('admin/edit-product', {
+          pageTitle: 'Edit Product', 
+          path: '/admin/edit-product',
+          editing: editMode, 
+          prod: rows
+        });
+
+          }
+      }
+    )
+
+
+};
+
+
+
+
+----------------------
+
+
+
+
+OK... AGORA 
+
+A PÁGINA FOI CARREGADA, DE FATO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ESTÁ FUNCIONANDO, E O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/');
+  }
+  
+  const productId = req.params.productId;
+
+
+
+    Product.findProductInDatabase(productId
+    ).then(
+      ([rows, fieldData]) => {
+        console.log(rows);
+          if (!rows) {
+            return res.redirect('/');
+          }  else {
+            const prod = { /////MANIPULAÇÃO DA DATA RETRIEVADA LÁ DA NOSSA SQL DATABASE...
+              ...rows[0]
+            }
+                      res.render('admin/edit-product', {
+          pageTitle: 'Edit Product', 
+          path: '/admin/edit-product',
+          editing: editMode, 
+          prod: prod
+        });
+
+          }
+      }
+    )
+
+};
+
+
+
+
+
+--------------------------
+
+
+
+
+
+OK... com isso ,
+
+
+a página 
+
+de 
+
+
+'Edit Selected Product'
+
+ESTÁ FUNCIONANDO...
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+Faltam ainda algumas páginas...
+
+
+
+
+
+--> a route/path que 
+
+
+REALMENTE 
+
+
+
+
+EDITA 
+
+
+
+1 
+
+
+
+product nosso 
+
+AINDA NÃO ESTÁ FUNCIONANDO BEM... (ela está ADICIONANDO 1 PRODUCT novo,
+
+e não editando 1 que já existe...)
+
+
+
+
+
+
+
+
+
+
+
+----> CONSERTEI O PROBLEMA... 
+
+
+
+
+
+
+
+
+
+
+MEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+const findProductInDatabase = (id) => {
+  return db.execute(`SELECT * FROM products WHERE id = ${id}`);
+}
+
+
+ save() {
+        findProductInDatabase(this.id)
+        .then(
+          ([rows, fieldData]) => {
+            if(!rows) {
+              db.execute(`INSERT INTO products (title, price, description, imageUrl) VALUES ('${this.title}', ${this.price}, '${this.description}', '${this.imageUrl}')`);
+
+            } else {
+              db.execute(`UPDATE products SET title='${this.title}', price=${this.price}, description='${this.description}', imageUrl='${this.imageUrl}' WHERE id=${this.id} `)
+
+            }
+
+          }
+        )
+  }
+
+
+
+
+
+
+  static findProductToEdit(id) {
+     return findProductInDatabase(id);
+  }
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+VAMOS CONSERTAR o 
+
+
+'add Product'...
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA É ESTE IF CHECK:
+
+
+       if(!rows) {
+
+
+
+
+
+
+
+
+
+
+--> ESSE IF CHECK NUNCA ESTÁ SENDO ATIVADO/REACHED...
+
+
+
+
+
+
+
+--> E ISTO AQUI:
+
+
+            if(rows.length === 0) {
+
+
+
+
+              TAMBÉM NÃO FUNCIONA,
+
+
+              pois 
+
+
+              NÃO EXISTE 
+
+
+
+
+              O MÉTODO DE ARRAYS 
+
+              '.length'
+
+
+              dentro 
+
+
+              de 'rows'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> OK... O EDIT ESTÁ FUNCIONANDO... --> 
+
+
+
+
+
+MAS O ADD AINDA NÃO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSEGUI O ADD....
+
+
+FICOU TIPO ASSIM:
+
+
+
+  save() {
+
+        findProductInDatabase(this.id)
+        .then(
+          ([rows, fieldData]) => {
+         const returnedData = [...rows]; ////EIS O CÓDIGO EM QUESTÃO.
+         console.log(returnedData.length === 0, 'ZZZZ');
+            if(returnedData.length === 0) {
+              db.execute(`INSERT INTO products (title, price, description, imageUrl) VALUES ('${this.title}', ${this.price}, '${this.description}', '${this.imageUrl}')`);
+
+            } else {
+              console.log(rows, 'LINE');
+              db.execute(`UPDATE products SET title='${this.title}', price=${this.price}, description='${this.description}', imageUrl='${this.imageUrl}' WHERE id=${this.id} `)
+
+            }
+
+          }
+        )
+  }
+
+
+
+
+
+
+  ------------
+
+
+
+  OK... O QUE SOBROU? 
+
+
+
+
+
+
+  SOBROU A OPERAÇÃO DE __DELETE__...
+
+
+
+
+  Note: Be careful when deleting records in a table! Notice the
+   WHERE clause in the DELETE statement. The WHERE clause specifies which record(s)
+    should be deleted. If you omit the WHERE clause, all records in the table will be deleted!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O PROBLEMA DA OPERAÇÃO DE DELETE É QUE ELA TBM DEVE 
+
+
+APAGAR 
+
+OS 
+
+PRODUCTS QUE FICARAM LÁ NO 'cart',
+
+
+MAS NOSSO 
+
+CART 
+
+__REALMENTE __ AINDA NÃO EXISTE__ NA 
+
+DATABASE 
+
+SQL/NOSQL,
+
+
+
+por isso 
+
+
+não devemos escrever esse código ainda...

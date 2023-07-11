@@ -1,0 +1,2739 @@
+
+PARA INSTALAR 
+
+
+
+
+O DRIVER DO MONGODB 
+
+NO MEU PROJETO 
+
+
+NODE/EXPRESS,
+
+
+eu escrevo:
+
+
+
+
+
+npm install --save mongodb
+
+
+
+
+
+
+
+
+---> OK, ISSO FOI ADICIONADO AO MEU 'PACKAGE.JSON'...
+
+
+
+
+EX:
+
+
+
+{
+  "name": "novonovoprojeto4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect app.js",
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.4",
+    "mongodb": "^4.1.3",
+    "mysql2": "^2.3.0",
+    "pug": "^3.0.2",
+    "sequelize": "^6.7.0"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... POSSO USAR MEU CÓDIGO LÁ 
+
+DO 
+
+
+
+'NEXTJS'
+
+como referência, presumo eu....
+
+
+
+
+
+
+
+
+
+
+---> OK... 
+
+
+
+
+
+
+
+
+---> VAMOS DEIXAR DE USAR 
+
+O 
+
+SEQUELIZE,
+
+também o 
+
+
+
+'mysql2',
+
+
+
+PQ ESSAS 2 PACKAGES 
+
+
+SÃO USADAS PARA DATABASES 
+
+SQL,
+
+e não vamos mais querer usar isso...
+
+
+
+
+
+
+
+--------> PARA SETTAR UMA __ CONEXÃO ___ A UMA DATABASE 
+
+MONGODB,
+
+
+
+
+
+
+__DEVEMOS ESCREVER O CÓDIGO __ NO PRIMEIRO ARQUIVO __ QUE 
+
+É 
+
+
+EXECUTADO _ QUANDO 
+
+
+
+__ RODAMOS NOSSO APP NODE(express) --> 
+
+
+
+NO CASO,
+
+
+É 
+
+O 
+
+
+
+ARQUIVO DE 
+
+'app.js',
+
+é claro....
+
+
+
+
+
+
+
+
+
+O CÓDIGO ATUAL DE 'app.js'
+
+É ESTE:
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/error');
+
+const sequelize = require('./util/database'); 
+
+const Product = require('./models/product');
+const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
+const OrderItem = require('./models/order-item');
+const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user;
+
+      console.log(req.user), 'LINE';
+      next();
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+Product.belongsTo(
+  User,
+
+  {
+    constraints: true,
+    onDelete: 'CASCADE',
+  }
+);
+User.hasMany(Product);
+
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
+User.hasMany(Order);
+Order.belongsTo(User);
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+sequelize
+  .sync()
+  .then((result) => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user;
+  })
+  .then((user) => {
+    return user.createCart();
+  })
+  .then((cart) => {
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> COMO VOCÊ PODE PERCEBER, É UM CÓDIGO QUE 
+
+
+UTILIZAVA/USA 
+
+
+__SEQUELIZE E UMA DATABASE SQL...
+
+
+
+OK, AGORA VAMOS QUERER 
+
+
+
+
+
+
+
+ESTABELECER UMA CONEXÃO A NOSSA DATABASE NOSQL
+
+
+de dentro 
+
+de 
+
+nosso 
+
+app 
+
+NODE(expresS),
+
+
+
+
+NESSE app.js...
+
+
+
+
+
+
+
+--> VAMOS ___PROVAVELMENTE__ PRECISAR DE UMA ARQUIVO 
+
+
+'util.js',
+
+
+
+ALGO 
+
+QUE DEIXAREMOS NO FOLDER DE 'util'...
+
+
+
+
+
+
+
+
+---> PODEMOS NOS BASEAR NO MODELO VISTO 
+
+
+NO NOSSO APP NEXTJS,
+
+em que 
+escrevemos isto (arquivo API route de 'comments'):
+
+
+
+
+
+
+
+
+import { connectDatabase } from '../../../../helpers/db-util';
+
+import { insertDocument } from '../../../../helpers/db-util';
+
+const handler = async (req, res) => {
+  const eventId = req.query.eventId;
+  console.log(eventId);
+
+  let client;
+
+  try {
+    client = await connectDatabase(
+      'mongodb+srv://madblorga:papanacuas@cluster0.nhtjo.mongodb.net/comments?retryWrites=true&w=majority'
+    );
+  } catch (error) {
+    console.log('error - Connection to the database failed');
+    res.status(500).json({ message: 'Connection to the database failed' });
+    return;
+  }
+
+  if (req.method === 'POST') {
+    const commentData = req.body;
+
+    const comment = {
+      ...commentData,
+      eventId: eventId,
+    };
+
+    if (
+      !commentData.email ||
+      !commentData.name ||
+      !commentData.text ||
+      commentData.name.trim() === '' ||
+      commentData.text.trim() === '' ||
+      commentData.email.trim() === ''
+    ) {
+      res
+        .status(422)
+        .json({ message: 'Invalid comment, please input valid information' });
+      return;
+    }
+
+    try {
+      await insertDocument(client, commentData, 'comments');
+      client.close();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to insert comment' });
+      return;
+    }
+    res.status(201).json({
+      message: 'Success, added comment!',
+      comment: comment,
+    });
+  }
+
+  if (req.method === 'GET') {
+
+    const actualList = [];
+
+    try {
+      const db = client.db();
+      await db
+        .collection('comments')
+        .find({ eventId: eventId })
+        .sort({ _id: -1 }) ///isso vai 'SORT' os objetos 'comment' RETRIEVADOS DE NOSSO SERVERSIDE, de forma 'DESCENDING ORDER' (ou seja, os posts mais RECENTES EM CIMA...)
+        .forEach((item) => {
+          console.log(item, 'LINE');
+          return actualList.push(item);
+        });
+    } catch (error) {
+      console.log('Error - could not retrieve comments');
+      res.status(500).json({ message: 'Could not retrieve comments' });
+      return;
+    }
+    res.status(200).json({
+      message: 'Success, comments retrieved!',
+      list: actualList,
+    });
+    console.log(actualList);
+  }
+
+  client.close(); 
+
+};
+
+export default handler;
+
+--------------------------------
+
+
+
+
+
+
+
+
+OK.... O ARQUIVO 
+
+
+'database-util' 
+
+
+em si,
+
+
+NO CASO, 
+
+
+
+
+TINHA ESTE CÓDIGO:
+
+
+
+
+
+import { MongoClient } from 'mongodb';
+
+export const connectDatabase = async (url) => {
+  const client = await MongoClient.connect(url);
+  return client;
+};
+
+export const insertDocument = async (client, document, collection) => {
+  const db = client.db();
+
+  const result = await db.collection(collection).insertOne(document);
+
+
+  return result;
+};
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+a primeira coisa de que precisamos, portanto, é esse import 
+
+de 
+
+MongoClient' lá da package 'mongodb'....
+
+
+
+
+
+
+
+
+--> para CONECTAR __ ESSA DATABASE 
+
+
+
+
+'mongodb',
+
+VAMOS PRECISAR USAR CÓDIGOS NESSE 'MONGOCLIENT'...
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+MongoClient.connect(url); ------> essa URL VAMOS PEGAR LÁ DO MONGODB ATLAS...
+
+
+
+
+
+
+
+algo tipo assim:
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/error');
+
+const MongoClient = require('mongodb');
+
+const sequelize = require('./util/database'); 
+
+const Product = require('./models/product');
+const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
+const OrderItem = require('./models/order-item');
+const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+
+MongoClient.connect(url); //EIS O CÓDIGO EM QUESTÃO.
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user;
+
+      console.log(req.user), 'LINE';
+      next();
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+Product.belongsTo(
+  User,
+
+  {
+    constraints: true,
+    onDelete: 'CASCADE',
+  }
+);
+User.hasMany(Product);
+
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
+User.hasMany(Order);
+Order.belongsTo(User);
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+sequelize
+  .sync()
+  .then((result) => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user;
+  })
+  .then((user) => {
+    return user.createCart();
+  })
+  .then((cart) => {
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+--------------------------
+
+
+
+OBVIAMENTE, VAMOS PRECISAR DE THEN BLOCKS 
+
+
+NESSE 
+
+negócio... 
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE DEVEMOS NOS LIVRAR DE TODO CÓDIGO RELATIVO AO USO DA DATABASE SQL,
+
+
+ao sequelize tbm....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/error');
+
+const MongoClient = require('mongodb');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+MongoClient.connect(url); //EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user;
+
+      console.log(req.user), 'LINE';
+      next();
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+
+
+----------------------------
+
+
+
+
+CERTO....
+
+
+
+nos livramos de todas as associations, 
+
+e os imports 
+
+de 
+
+
+MODELS... 
+
+
+
+
+
+
+
+
+--> TAMBÉM TIRAMOS 
+
+
+
+O NEGÓCIO 
+
+
+
+
+de 
+
+'findByPk()',
+
+
+
+do usuário,
+
+PROFESSOR 
+
+
+
+COMENTA ISSO PARA FORA...
+
+
+
+
+EX:
+
+
+
+
+
+app.use((req, res, next) => {
+  // User.findByPk(1)
+
+  //   .then((user) => {
+  //     req.user = user;
+
+  //     console.log(req.user), 'LINE';
+  //     next();
+  //   })
+
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+});
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ok......AGORA VAMOS ATÉ O FOLDER DE 
+
+
+'util',
+
+dentro 
+
+
+
+
+DO ARQUIVO DE 
+
+'database.js'.... ----> PROFESSOR VAI COMENTAR TODO O CÓDIGO DE 
+
+SEQUELIZE ___ PARA ___ FORA...
+
+
+
+
+
+
+
+
+
+
+--> vai deixar esse arquivo limpo....
+
+
+
+
+
+
+
+
+EU JÁ TENHO ESTE CÓDIGO PRONTO,
+
+
+LÁ 
+
+DO 
+
+NEXTJS:
+
+
+
+
+
+const MongoClient = require('mongodb');
+
+export const connectDatabase = async (url) => {
+  const client = await MongoClient.connect(url);
+  return client;
+};
+
+
+
+
+
+
+
+
+
+
+
+--> SÓ NÃO SEI SE FUNCIONA....
+
+
+
+
+
+--------------------------------->
+
+
+
+
+
+
+o professor já escreve um código um pouco diferente...
+
+
+
+
+
+
+
+
+
+ele escreve:
+
+
+
+
+
+
+
+
+
+
+const mongodb = require('mongodb');
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO VAI NOS DAR ACESSO À PACKAGE DO MONGODB... -> 
+
+
+
+AÍ O PROFESSOR DIZ QUE 
+
+PODEMOS 
+
+
+
+_EXTRAIR _ UM CONSTRUCTOR 
+
+
+
+'MongoClient',
+
+DE DENTRO 
+
+DESSE PACKAGE....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const Mongoclient = ...
+
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+OK... AGORA ENTENDI PQ ESTE CÓDIGO NÃO IA FUNCIONAR:
+
+
+const MongoClient = require('mongodb');
+
+export const connectDatabase = async (url) => {
+  const client = await MongoClient.connect(url);
+  return client;
+};
+
+
+
+
+
+
+---> esse 'MongoClient'
+
+SÓ PODE SER IMPORTADO 
+
+ASSIM COM 
+
+SINTAXE 
+
+ES6.... --> tipo assim:
+
+
+
+import { MongoClient } from 'mongodb'; ------> ISSO FUNCIONARIA,
+
+
+
+
+MAS 
+
+
+NÃO SEI SE POSSO USAR 
+
+
+
+SINTAXE 
+
+ES6 
+
+AQUI, com o node/express,
+
+
+
+POR ISSO 
+
+
+
+
+VOU SEGUIR 
+
+
+
+O TUTORIAL DO PROFESSOR,
+
+
+QUE CONTINUA ASSIM:
+
+
+
+
+
+const mongodb = require('mongodb');
+const Mongoclient = mongodb.MongoClient;
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+OU SEJA, PROFESSOR SIMPLESMENTE ACESSOU 
+
+
+'mongodb.MongoClient',
+
+
+o 'MongoClient' OBJECT dentro 
+
+
+do pacote 
+
+'mongodb',
+
+
+
+essencialmente...
+
+
+
+
+EX:
+
+
+
+
+const mongodb = require('mongodb');
+const Mongoclient = mongodb.MongoClient;
+
+
+
+
+
+
+
+
+
+
+
+----------> O PROFESSOR DIZ QUE PODEMOS ENTÃO USAR ESSE 'CLIENT'
+ 
+ para 
+
+ nos 
+
+ CONECTAR 
+
+
+ à DATABASE 
+
+ DO 
+
+ MMONGODB....
+
+
+
+
+ ------->
+
+
+
+
+ conseguimos fazer isso por meio do 
+
+ run 
+
+
+
+ de um código de 
+
+
+ 'MongoClient.connect();' ------> ISSO 
+
+ É O CÓDIGO QUE 
+ NOS CONECTA 
+
+ À DATABASE... -> MAS VAMOS PRECISAR 
+
+
+ DA 
+
+ URL 
+
+
+ A 
+
+ NOSSA DATABASE...
+
+
+
+
+
+
+
+ ex:
+
+
+ const mongodb = require('mongodb');
+const mongoClient = mongodb.MongoClient;
+
+
+url = mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority
+
+MongoClient.connect(url);
+
+
+
+
+
+
+
+---------------------
+
+
+
+ALGO ASSIM:
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority'
+
+MongoClient.connect(url);
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O CONNECT VAI ACEITAR/EXIGIR UMA URL 
+
+
+
+PARA CONECTAR AO DATABASE...
+
+
+
+
+
+
+----> ok... aí o professor edita o password 
+
+
+e o nome 
+
+da 
+
+database,
+
+etc etc...
+
+
+
+
+
+
+
+
+--> AGORA TEMOS TUDO DE QUE PRECISAMOS PARA SETTAR UMA CONNECTION DESSAS...
+
+
+
+
+
+
+
+
+--> O MÉTODO 
+
+'connect'
+
+
+VAI ACTUALLY 
+
+NOS RETORNAR UMA PROMISE, COM THEN E CATCH...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+
+
+
+
+
+url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority'
+
+MongoClient.connect(url).
+then(
+
+    result => {
+
+        console.log('Connected');
+    }
+    
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+
+
+
+
+
+--> CERTO... É CLARO QUE VOCÊ VAI QUERER EXECUTAR ESSE NEGÓCIO QUANDO SEU SERVER/BACKEND FOR INICIADO,
+
+
+
+
+
+
+
+
+
+POR ISSO 
+
+
+VAMOS ESCREVER 
+
+
+ESSE 
+
+
+NEGÓCIO 
+
+
+
+
+
+
+lá 
+
+
+
+
+
+
+
+EM APP.JS.... 
+
+
+
+
+----------------
+
+PARA FAZER ISSO,
+
+
+
+OBVIAMENTE 
+
+TEMOS DE __eXPORTAr___ 
+
+
+
+
+
+
+
+esse 
+
+'MongoClient.connect()',
+
+
+
+
+
+
+PROVAVELMENTE POR MEIO DE UM 
+
+
+
+
+'module.connectDatabase = xxxx'...
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+-----> MAS O PROFESSOR AINDA VAI QUERER ESCREVER ALGO EXTRA.... --> ELE VAI QUERER 
+
+'WRAP OUR CONNECTION CODE'
+
+
+(
+
+    o código de 
+
+'''''
+
+
+MongoClient.connect(url).
+then(
+
+    result => {
+
+        console.log('Connected');
+    }
+    
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+''''
+
+
+    
+)
+
+
+
+
+_ DENTRO 
+
+
+DE UM 
+
+'METHOD',
+
+
+
+
+METHOD 
+
+CHAMADO 
+D
+E 
+
+
+
+
+
+'const mongoConnect = () => {
+
+}
+
+',
+
+
+
+
+ISSO SERÁ UMA ARROW FUNCTION,
+
+E DENTRO 
+
+DESSA ARROW FUNCTION 
+
+
+
+
+
+O PROFESSOR 
+
+VAI QUERER 
+
+EXECUTAR
+
+
+
+
+ESSE CÓDIGO DE CONNECT DO MONGOCLIENT....
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+AÍ O PROFESSOR VAI COMEÇAR A PUTARIA DOS CALLBACKS....
+
+
+
+
+
+
+
+
+--> ele espera um 
+
+'CALLBACK'
+
+como argumento 
+
+desse 
+
+'mongoConnect'...
+
+
+
+
+
+ex:
+
+
+
+
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+      (result) => {
+                console.log('Connected');
+      }
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+
+
+--------------------
+
+
+
+
+
+E AÍ ELE VAI QUERER CHAMAR 
+
+ESSE 
+
+'callback()'
+
+
+DENTRO 
+
+
+DO 
+
+BLOCK 
+
+DE 
+
+'
+.then()'
+,
+
+
+
+
+COM o 'result' sendo passado como PARÂMETRO....
+
+
+
+
+TIPO ASSIM: 
+
+
+
+
+
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+      (result) => {
+                console.log('Connected');
+                callback(result);
+      }
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+
+
+-------------------------------
+
+
+
+O PROFESSOR FAZ/FEZ ISSO 
+
+
+___ PQ __O RESULTADO __ (o 'result')
+
+
+daquele 
+
+
+'MongoClient.connect()'
+
+
+__ VAI SER JUSTAMENTE O __ NOSSO 'CLIENT',
+
+
+
+POR ISSO 
+
+ELE RENOMEIA 
+
+'result' como 'client'...
+
+
+
+ex:
+
+
+
+
+
+
+const mongoConnect = (callback) => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+      (client) => { /////////EIS O CÓDIGO EM QUESTÃO.
+                console.log('Connected');
+                callback(client);
+      }
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+ESSE 'client' 
+É 
+UM 
+
+
+CLIENT OBJECT,
+
+
+CLIENT OBJECT QUE NOS DÁ ACESSO 
+
+À 
+
+DATABASE....
+
+
+
+
+
+
+--> E AÍ,
+
+POR FIM,
+
+
+
+professor 
+vai 
+escrever 
+
+
+
+
+'module.exports = mongoConnect;'
+
+
+
+PARA __ EXPORTAR__ ESSE MÉTODO COM SUCESSO....
+
+
+
+
+
+
+
+
+ex(código completo):
+
+
+
+
+
+
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+const mongoConnect = () => {
+  url = 'mongodb+srv://madblorga:K4tsuhir00ht0m0@cluster0.nhtjo.mongodb.net/Shop?retryWrites=true&w=majority';
+
+  MongoClient.connect(url)
+  .then(
+      (result) => {
+                console.log('Connected');
+      }
+  )
+  .catch(
+      (err) => {
+                console.log(err);
+      }
+  )
+};
+
+
+
+module.exports = mongoConnect;
+
+
+
+
+
+
+VS 
+
+
+
+
+ export const connectDatabase = async (url) => {
+   const client = await MongoClient.connect(url);
+   return client;
+ };
+
+
+
+
+ --------------------------
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+
+--> COM ISSO EXPORTADO,
+
+ 
+
+ PODEMOS IMPORTAR ESSE MÉTODO 
+
+
+
+ 'mongoConnect'
+
+ LÁ 
+
+
+ NO APP.JS....
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+
+const mongoConnect = require('./util/database');
+
+
+const sequelize = require('./util/database');  //uso de databases SQL...
+
+const Product = require('./models/product');
+const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
+const OrderItem = require('./models/order-item');
+const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user;
+
+      console.log(req.user), 'LINE';
+      next();
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+Product.belongsTo(
+  User,
+
+  {
+    constraints: true,
+    onDelete: 'CASCADE',
+  }
+);
+User.hasMany(Product);
+
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
+User.hasMany(Order);
+Order.belongsTo(User);
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+sequelize
+  .sync()
+  .then((result) => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user;
+  })
+  .then((user) => {
+    return user.createCart();
+  })
+  .then((cart) => {
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO,
+
+ESTAMOS IMPORTANDO ESSA FUNCTION AÍ...
+
+
+
+
+
+
+
+
+-----> AGORA, LÁ EM 'app.js',
+
+
+BEM NO FINAL DO ARQUIVO,
+
+
+
+vou executar 
+
+
+'mongoConnect()'...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+
+const mongoConnect = require('./util/database');
+
+
+// const sequelize = require('./util/database');  //uso de databases SQL...
+
+// const Product = require('./models/product'); //uso de databases SQL
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const OrderItem = require('./models/order-item');
+// const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  // User.findByPk(1)
+
+  //   .then((user) => {
+  //     req.user = user;
+
+  //     console.log(req.user), 'LINE';
+  //     next();
+  //   })
+
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+});
+
+// Product.belongsTo( //uso de databases SQL
+//   User,
+
+//   {
+//     constraints: true,
+//     onDelete: 'CASCADE',
+//   }
+// );
+// User.hasMany(Product);
+
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+
+// User.hasMany(Order);
+// Order.belongsTo(User);
+
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+// sequelize //uso de databases SQL
+//   .sync()
+//   .then((result) => {
+//     return User.findByPk(1);
+//   })
+//   .then((user) => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+
+//     return user;
+//   })
+//   .then((user) => {
+//     return user.createCart();
+//   })
+//   .then((cart) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+
+
+
+mongoConnect(); ///uso de databases NOSQL....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO, MAS É CLARO QUE 
+
+
+
+NAQUELE SLOT EU VOU QUERER 
+
+
+EXECUTAR 
+
+UM 
+
+
+CALLBACK,
+UMA FUNCTION 
+
+QUE 
+
+SERÁ EXECUTADA COMO CALLBACK... ------> 
+
+
+
+NO CASO,
+
+
+PROFESSOR VAI USAR UMA ANONYMOUS FUNCTION,
+
+
+
+em que 
+
+
+escreverá: 
+
+
+
+
+'(client) => {
+
+
+
+}
+'
+
+
+
+
+
+
+
+
+
+
+--> ISSO PQ ELE VAI CONSEGUIR ACESSO AO OBJETO 'CLIENT'...
+
+
+
+
+
+
+
+
+
+
+-----> DENTRO DESSE 
+
+
+'(client) => {
+
+
+}
+
+',
+
+
+O PROFESSOR 
+
+VAI REALMENTE 
+
+
+INICIAR O SERVER COM 
+
+'app.listen(3000)' 
+
+
+(PQ ELE VAI QUERER _ ESTABELECER ESSE 'SERVER ABERTO' APENAS _ QUANDO 
+
+ELE TIVER CERTEZA QUE CONSEGUIU 'CONNECT TO THE DATABASE', o que ocorre 
+quando ele 
+
+receber esse object de 'client' nessa anonymous function....)
+
+
+ 
+
+
+ __ E AÍ __ 
+
+
+ ELE __ 
+
+
+
+TAMBÉM VAI QUERER CONSOLE.LOGGAR O CLIENT,
+
+PARA DAR UMA OLHADA NELE....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+
+const mongoConnect = require('./util/database');
+
+
+// const sequelize = require('./util/database');  //uso de databases SQL...
+
+// const Product = require('./models/product'); //uso de databases SQL
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const OrderItem = require('./models/order-item');
+// const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  // User.findByPk(1)
+
+  //   .then((user) => {
+  //     req.user = user;
+
+  //     console.log(req.user), 'LINE';
+  //     next();
+  //   })
+
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+});
+
+// Product.belongsTo( //uso de databases SQL
+//   User,
+
+//   {
+//     constraints: true,
+//     onDelete: 'CASCADE',
+//   }
+// );
+// User.hasMany(Product);
+
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+
+// User.hasMany(Order);
+// Order.belongsTo(User);
+
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+// sequelize //uso de databases SQL
+//   .sync()
+//   .then((result) => {
+//     return User.findByPk(1);
+//   })
+//   .then((user) => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+
+//     return user;
+//   })
+//   .then((user) => {
+//     return user.createCart();
+//   })
+//   .then((cart) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+
+
+
+mongoConnect(    ///uso de databases NOSQL....
+
+(client) => {
+
+                   console.log(client);
+        app.listen(3000);
+}
+
+
+ 
+    );
+
+
+
+
+
+
+
+
+
+------> 
+
+
+
+
+
+
+
+
+OK, FICOU ASSIM:
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+
+const mongoConnect = require('./util/database');
+
+
+// const sequelize = require('./util/database');  //uso de databases SQL...
+
+// const Product = require('./models/product'); //uso de databases SQL
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const OrderItem = require('./models/order-item');
+// const Order = require('./models/order');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  // User.findByPk(1)
+
+  //   .then((user) => {
+  //     req.user = user;
+
+  //     console.log(req.user), 'LINE';
+  //     next();
+  //   })
+
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+});
+
+// Product.belongsTo( //uso de databases SQL
+//   User,
+
+//   {
+//     constraints: true,
+//     onDelete: 'CASCADE',
+//   }
+// );
+// User.hasMany(Product);
+
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+
+// User.hasMany(Order);
+// Order.belongsTo(User);
+
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+// sequelize //uso de databases SQL
+//   .sync()
+//   .then((result) => {
+//     return User.findByPk(1);
+//   })
+//   .then((user) => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+
+//     return user;
+//   })
+//   .then((user) => {
+//     return user.createCart();
+//   })
+//   .then((cart) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+
+
+
+mongoConnect(   ///uso de databases NOSQL....
+
+
+
+  (client) => { //callback function.... examinar arquivo de 'database.js', no folder 'util'...
+
+    console.log(client);
+    app.listen(3000);
+  }
+
+); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK, MAS UM PROBLEMA 
+
+QUE 
+TEMOS/TEREMOS 
+AQUI 
+
+
+É 
+
+
+QUE 
+
+QUANDO 
+EU 
+
+'BRING UP MY SERVER',
+
+
+
+
+NÓS ACTUALLY 
+
+'REGISTER ALL OF OUR ROUTES' descritas no código (em 'app.use(adminRoutes)', etc) -----> 
+
+
+
+
+
+E AÍ, 
+
+DIVAMOS 
+
+
+NAS 
+FILES 
+
+DE ROUTES,
+
+
+
+
+
+E NOS CONTROLLERS AINDA ESTAMOS USANDO 
+
+AQUELA 
+
+LÓGICA 
+
+
+DE SEQUELIZE...  (sequelize object, que não existe mais, pq 
+
+estamos 
+
+IMPORTANDO OS MODELS,
+
+E NOS MODELS NÓS PRECISAMOS DE SEQUELIZE,
+
+
+e nada disso funciona mais....) -----> 
+
+
+
+
+
+
+
+PORTANTO, 
+
+PARA MOSTRAR COMO O CLIENT TEM AS COISAS NO SEU INTERIOR DE FORMA __sIMPLES,
+
+
+O PROFESSOR 
+
+SIMPLESMENTE 
+
+COMENTA AS ROUTES PARA FORA DO NOSSO CÓDIGo,
+
+
+
+E AÍ ___ 
+
+
+
+
+
+FICAMOS COM NO WORKING ROUTES,
+
+
+
+
+
+mas o que 
+
+
+acontece é que 
+
+
+CONSEGUIMOS 
+'
+ACTUALLY CONNECT'...
+
+
+
+
+
+
+
+------> CERTO.... --> 
+
+
+
+
+VEMOS 
+
+'CONNECTED',
+
+e aí 
+
+
+
+__VEMOS __ 
+
+ESSE 
+
+'MONGOCLIENT' object,
+
+QUE 
+
+
+AÍ TME 
+
+ALGUNS DETAILS SOBRE A CONNECTION,
+
+
+e 
+
+esse 
+
+object 
+
+SERÁ O OBJECT QUE UTILIZAREMOS PARA 
+
+'CREATE DATA IN OUR DATABASE',
+
+por exemplo....
+
+
+
+
+
+--> OK, AGORA ESTAMOS CONECTADOS, 
+
+MAS NOSSO SETUP ESTÁ BROKEN,
+
+
+TEMOS QUE TIRAR AS PARTES QUE 
+
+
+AINDA USAM 
+
+SEQUELIZE....
+
+
+
+
+-> VAMOS __ IMPLEMENTAR __ MONGODB NO NOSSO APP,
+
+ETAPA POR ETAPA,
+
+
+VAMOS APRENDER SOBRE COMO INSERIR DATA,
+
+
+FIND DATA,
+
+
+ ETC ETEC...

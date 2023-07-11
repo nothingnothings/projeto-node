@@ -1,0 +1,1260 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> FICAMOS COM UM __ BUG__ NO NOSSO CÓDIGO.... --> 
+
+
+
+
+
+
+OS POSTS ANTIGAMENTE MOSTRAVAM 
+
+
+
+
+
+
+
+O NOME DE QUEM CRIOU O CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+-_> PROFESSOR EXPLICA QUE ELE ESTÁ COM UM BUG,
+
+
+
+
+E NÓS TAMBÉM...
+
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ NO NOSSO CÓDIGO BACKEND,
+
+
+
+
+LÁ EM 
+
+'getPosts',
+
+
+
+
+
+
+NÓS DEVEMOS 
+
+
+ESCREVER 
+
+
+isto aqui, o 'populate()',
+
+
+
+nesta linha:
+
+
+
+
+
+
+
+
+try {
+    const totalItems = await Post.find().countDocuments();
+    const posts = await Post.find()
+    .populate(
+                'creator'
+    )
+    .skip((currentPage - 1) * perPage) 
+    .limit(perPage)
+}
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+---> O PROFESSOR escreve 
+
+
+'.populate('creator')'
+
+
+PARA 
+
+FETCHEAR__ DE NOSSOS POSTS NÃO SÓ OS POSTS EM SI,
+
+
+MAS 
+
+TAMBÉM 
+
+O 
+
+'FULL OBJECT, com o nome do CREATOR' 
+
+daquele post...
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE O CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+exports.getPosts = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT.... 
+  //código com pagination...
+  const pageNumber = req.query.page || 1;
+
+  const userId = ObjectId(req.userId); ///userId extraído de nossa token e armazenado no objeto request do user... tudo graças ao middleware de 'isAuth', lá no folder de 'middlewareHelpers'...
+
+  console.log(userId);
+  console.log(pageNumber);
+
+  // let totalItems;
+
+    // Post.countDocuments({ creator: { userId: userId } })
+    // .then((numPosts) => {
+      
+    try {
+    // const countedDocuments = await Post.find().countDocuments({creator: {userId: userId}});
+
+
+    const countedDocuments = await Post.find().countDocuments();
+    // const countedDocuments = await Post.find().countDocuments().exec(); ///USE ESTA SINTAXE SE VOCÊ REALMENTE QUISER QUE O MÉTODO MONGOOSE USADO POR VOCÊ __ RETORNE__ UMA 'ACTUAL PROMISE', e não um 'PROMISE-LIKE OBJECT' (pq isso é o que os métodos mongoose fazem, por default, ELES __ RETORNAM UM 'PROMISE-LIKE OBJECT', em que você pode chamar 'async/await' e 'then-catch'...)
+
+
+
+
+
+
+    console.log(countedDocuments);
+
+      // totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+      // return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+    // const neededUserDocuments = await Post.find({creator: {userId: userId}}, null,
+    //   {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    // )
+
+
+
+    const neededUserDocuments = await Post.find({}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    ).sort({_id: -1})
+
+
+    // const neededUserDocuments = await Post.find()  ///versão escrita pelo professor, ela faz a mesma coisa...
+    // .skip((currentPage - 1) * ITEMS_PER_PAGE)
+    // .limit(ITEMS_PER_PAGE);
+
+
+
+
+
+    
+    // The Model.find() function takes 3 arguments that help you initialize a query without chaining. The first argument is the query filter (also known as conditions). The 2nd argument is the query projection, which defines what fields to include or exclude from the query. For example, if you want to exclude the customer's email for privacy concerns, you can use either of the below syntaxes.
+    // The 3rd argument to Model.find() is the general query options. Here's a full list of options (https://mongoosejs.com/docs/api.html#query_Query-setOptions). For example, you can set limit and skip in the 3rd argument.
+
+
+    console.log(neededUserDocuments);
+  
+    // const selectedUserDocuments = await allUserDocuments.skip((pageNumber - 1) * ITEMS_PER_PAGE);
+
+
+    // const posts = await selectedUserDocuments.limit(ITEMS_PER_PAGE);
+
+    if(!neededUserDocuments) {
+      res.status(404).json(
+        {
+          message: 'No posts encountered on database, please try again later.'
+        }
+      )
+    } else {
+
+      res.status(200).json(
+        {
+          posts: neededUserDocuments,
+          currentPage: +pageNumber,
+          totalItems: countedDocuments
+        }
+      )
+
+    }
+
+
+
+  } catch (err) {
+    if (!err.statusCode) {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+    const neededUserDocuments = await Post.find({}, null,
+      {populate: 'creator', skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    ).sort({_id: -1})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> mas não está funcionando....
+
+
+
+
+
+
+
+-> não sei como resolver isso, preciso fazer um NESTED POPULATE (
+
+    colocar as características do user, lá do model de 
+
+    'User' (como 'name', etc) 
+
+
+
+    __ DENTRO __ DESSA 
+
+
+    SUBPROPRIEDADE 
+
+
+    'userId'
+
+
+    em 
+
+
+    'creator', dentro de cada 'post'....
+)
+
+
+
+
+
+
+
+
+
+
+------> não consegui fazer isso....
+
+
+
+
+
+
+
+
+
+--> não sei como fazer isso funcionar...
+
+
+
+
+
+
+
+-_> ESCREVI ASSIM, MAS AINDA NÃO FUNCIONA:
+
+
+
+
+
+
+
+
+
+
+
+    const neededUserDocuments = await Post.find({}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    ).populate(
+      'creator.userId'
+  ).sort({_id: -1})
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+--> o problema é REALMENTE 
+
+ESSE QUERY AÍ,
+
+ESSE QUERY 
+
+DE 
+
+
+
+''''
+
+populate(
+      'creator.userId'
+  )
+
+
+
+  ''''
+
+
+
+  É UM QUERY QUE ESTÁ ESCRITO 
+
+
+  _________tODO ___ ERRADO__.....
+
+
+
+
+
+
+
+
+  ( essa sintaxe de 
+  
+  
+  'creator.userId'
+  
+  
+  
+  __NÃO ALCANÇA__
+
+
+
+  UM elemento que 
+
+  está em uma configuração 
+
+
+
+  'creator: {
+      userId
+  }
+  ' ----------> SÓ NÃO SEI A RAZÃO DISSO...
+
+  
+  )
+
+
+
+
+
+
+
+
+
+  CONSEGUI... CONSERTEI O PROBLEMA....
+
+
+
+
+
+  --> era um problema no SCHEMA de 'post'... --> 
+
+
+
+
+
+  lá nesse schema,
+
+  eu havia settado isto:
+
+
+
+
+
+
+
+
+   creator: {
+             required: true, ///ISTO AQUI....
+             type: Object, ////ISTO AQUI....
+            userId: {
+                required: true, 
+                type: Schema.Types.ObjectId,
+                ref: 'User' ////vai pegar o 'userId' do user que cria um product, eu acho....
+              }
+        },
+
+
+
+
+
+---------------------
+
+
+
+mas isso está COMPLETAMENTE ERRADO,
+
+e estava me causando problemas...
+
+
+
+--> assim que eu REMOVI 
+
+
+esse 
+
+'required: true' 
+
+e 
+
+esse 
+
+'type: Object'
+
+
+nesse '''objeto creator'''',
+
+
+
+CONSEGUI POPULAR 
+
+
+ESSA PROPRIEDADE de 'userId'
+
+
+no interior, ali...
+
+
+
+ENTÃO FICOU ASSIM:
+
+
+
+
+ creator: {
+            userId: {
+                required: true, 
+                type: Schema.Types.ObjectId,
+                ref: 'User' ////vai pegar o 'userId' do user que cria um product, eu acho....
+              }
+        },
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+CERTO.... ISSO SIGNIFICA QUE 
+
+
+PODEMOS AGORA 
+
+
+NOS UTILIZAR DESSA DATA 
+
+
+
+de 
+
+
+
+'name' 
+
+
+que vai ficar enfiada dentro 
+
+
+de esse 
+
+
+
+'creator -> userId'
+
+
+PARA __ OUTPUTTAR_ O NOME _ DO 
+
+
+CRIADOR __ DO POST,
+
+em todos nossos posts...
+
+
+
+
+
+
+
+
+--> ok, mas em que lugar do nosso código devemos colocar isso?
+
+
+
+
+
+
+
+
+
+
+É BEM AQUI, NO RENDER DE 'Feed.js':
+
+
+
+
+
+
+
+
+
+
+              {this.state.posts.map((post) => (
+                <Post
+                  key={post._id}
+                  id={post._id}
+                  author={post.creator.userId.name}
+                  date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                  title={post.title}
+                  image={post.imageUrl}
+                  content={post.content}
+                  onStartEdit={this.startEditPostHandler.bind(this, post._id)}
+                  onDelete={this.deletePostHandler.bind(this, post._id)}
+                  token={this.props.token}
+                  userId={this.props.userId}
+                />
+              ))}
+
+
+
+
+
+
+
+
+
+--> LÁ NAQUELE PROP DE 
+
+
+'author',
+
+eu troquei 
+de 
+
+'post.creator.name' 
+
+para 
+
+
+'post.creator.userId.name'...
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA ISSO ESTÁ FUNCIONANDO NA 
+
+FUNÇÃO 
+
+
+'NORMAL' DE NOSSO CÓDIGO (
+
+
+
+    ou seja,
+
+    quando 
+
+
+    SOMOS 1 USERZINHO, E ENTRAMOS 
+
+
+    NO SITE,
+
+
+    VAMOS VER 'quem criou esse post'... --> 
+
+
+    E QUANDO 
+
+CRIARMOS UM POST,
+
+TBM VEREMOS ISSO, IMEDIATAMENTE...
+)
+
+
+
+
+
+
+
+
+--> mas temos que 
+
+examinar se ISSO APARECE PARA OUTRAS ''PESSOAS'' que estão usando nosso app, também....
+(user experience)...
+
+
+
+
+
+
+
+
+
+--> é, isso NÃO ESTÁ APARECENDO... --> É ESSE O PROBLEMA QUE O PROFESSOR HAVIA MENCIONADO 
+
+ANTERIORMENTE:
+
+
+
+quando 
+
+
+CRIARMOS 1 POST EM 1 DOS USER,
+
+
+
+O POST VAI APARECER 
+
+SEM 
+
+
+'created by ....' 
+
+
+
+
+
+__ NO OUTRO USER... -----> PARA CONSERTAR ISSO,
+
+
+
+TEMOS QUE 
+
+ANALISAR 
+
+
+NOSSO CÓDIGO DE 
+
+'addPost'... (no frontend)  
+
+
+
+E TAMBÉM ALGUNS OUTROS CÓDIGOS, ACHO EU...
+
+
+
+
+
+
+
+
+
+--> hmmm... na verdade, o problema é o código do nosso backend, pq 
+
+PRECISAMOS 
+
+DE UM POST 
+
+MAIS 
+
+'completo'
+
+
+neste lugar aqui:
+
+
+
+
+
+ openSocketToOurBackend.on('posts',
+  
+      
+
+  (data) => {/// data é a data QUE ACTUALLY RECEBEMOS DO 'REQUEST DISPARADO POR NOSSO BACKEND', request de tipo 'WEBSOCKET'...
+
+    if (data.action === 'create') { ////vamos querer aceitar data EMITIDA _ APENAS__ DO REQUEST _ DISPARADO POR NOSSO BACKEND QUE TENHA ESSE VALOR de string 'create' DENTRO DE SUA KEY 'action'.... ( ou seja, só aquele código do 'SOCKETIO' que escrevemos la no controller de 'createPost'...)
+      console.log('ENTEREDPOST');
+      this.addPost(data.post);
+
+    }
+
+
+  }
+  
+  );
+
+
+
+
+
+
+
+
+
+
+
+
+
+  LUGAR QUE FICA NO 'componentDidMount':
+
+
+
+
+
+
+
+
+
+
+
+
+    componentDidMount() {
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  const openSocketToOurBackend = openSocket('http://localhost:8080',  //COLOQUE O PATH/ENDEREÇO DE SEU__ SERVIDOR/BACKEND, APP NODEEXPRESS, no nosso caso....
+  {transports: ['websocket', 'polling', 'flashsocket']});  ///esse segundo parâmetro serve para CONSERTAR O PROBLEMA DE 'CORS' do nosso app, em relação ao recebimento de requests WEBSOCKET sentido server -> frontend....
+ 
+
+  openSocketToOurBackend.on('posts',
+  
+      
+
+  (data) => {/// data é a data QUE ACTUALLY RECEBEMOS DO 'REQUEST DISPARADO POR NOSSO BACKEND', request de tipo 'WEBSOCKET'...
+
+    if (data.action === 'create') { ////vamos querer aceitar data EMITIDA _ APENAS__ DO REQUEST _ DISPARADO POR NOSSO BACKEND QUE TENHA ESSE VALOR de string 'create' DENTRO DE SUA KEY 'action'.... ( ou seja, só aquele código do 'SOCKETIO' que escrevemos la no controller de 'createPost'...)
+      console.log('ENTEREDPOST');
+      this.addPost(data.post);
+
+    }
+
+
+  }
+  
+  );
+  ///essa constante que segura o call de 'openSocket' nos fornece VÁRIOS MÉTODOS 'listener', que são EVENT LISTENERS; usaremo-nos para __ FAZER LISTEN TO _ A EVENTS __ DISPARADOS __ por nosso backend... (como o evento 'posts' que escrevemos lá no backend, no controller de 'feed.js', controller de 'createPost'...)
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK, MAS VAMOS TER QUE IR NOS NOSSOS CONTROLLER, CONTROLLER DE 'createPost',
+
+
+examinar essa questão...
+
+
+
+
+
+
+
+
+
+
+
+--> É ESTE CÓDIGO AQUI, 
+
+o 
+
+PROBLEMA:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const post = await new Post({ 
+
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+    }).save(); //importante.
+
+
+
+
+     const user = await User.findOne({ _id: userId });
+
+
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+
+      
+
+      io.getIo().emit(  
+    'posts', 
+    { 
+        action: 'create', //isso é apenas outro identificador, usado para identificar 'estamos realizando uma ACTION de CREATE no CHANNEL de posts'...
+        post: post  ///essa é a data QUE INTERESSA, que vai ser usada para UPDATAR os posts na lista 'feed' de cada user que está conectado ao nosso app....
+
+    }
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+PRECISAMOS PASSAR O 'name' do 
+
+
+
+
+AUTOR DESSE POST 
+
+
+àquele 
+
+
+negócio 'post', em 'post:post'...
+
+
+
+
+
+
+
+
+
+----> para fazer isso, vamos precisar de um código alternativo...
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, ESTOU COM UM PROBLEMA BEM __ SÉRIO...- -> 
+
+
+
+
+
+
+os 
+
+2 users 
+
+de meu app estão se CONFUNDINDO...
+
+
+não sei pq ....
+
+
+ah, é a mesma instancia do chrome... deve ser por isso...
+
+
+
+
+
+
+
+
+
+--> e ainda estou com aquele problema....
+(
+
+
+    1 post não está sendo criado 
+
+
+
+    no 
+
+
+    outro client.... (no frontend)...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI O PROBLEMA DO 'POP' errado dos posts...
+
+
+
+
+
+--> o código do 'addPost', frontend, ficou assim:
+
+
+
+
+
+
+
+
+
+  addPost = (post) => {
+    this.setState(prevState => {
+                const updatedPosts = [...prevState.posts];
+                if(prevState.postPage === 1 && prevState.posts.length === 5) {
+                    // updatedPosts.pop();
+                    updatedPosts.unshift(post);
+                    updatedPosts.pop();
+                } else {
+                  updatedPosts.unshift(post);
+                }
+                return {
+                    posts: updatedPosts,
+                    totalPosts: prevState.totalPosts + 1
+                }
+
+    })
+}
+
+
+
+
+
+
+
+ou seja,
+
+usamos aquele if check ali, de 
+
+
+'''
+    if(prevState.postPage === 1 && prevState.posts.length === 5) {
+                    // updatedPosts.pop();
+                    updatedPosts.unshift(post);
+                    updatedPosts.pop();
+                } else {
+                  updatedPosts.unshift(post);
+                }
+
+
+'''
+
+
+
+
+para 
+
+
+regular a situação do display desses items....
+
+
+
+
+
+
+ok...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS AINDA TEMOS O PROBLEMA DO 'post lá de cima ficou sem 'created by' ' ....
+
+
+
+
+
+
+
+
+
+
+
+-> para consertar esse problema, vou precisar repassar a info de 'name' 
+
+
+
+a esse 
+
+
+
+lugar/slot aí,
+
+
+
+de alguma forma....
+
+
+
+
+
+
+
+
+
+
+--> vou ter que tweakar o código de 'createPost',
+
+
+provavelmente.... (backend)...
+
+
+
+
+
+
+
+
+
+
+--> OK... CONSEGUI.... TIVE QUE FAZER UMA GAMBIARRA,
+
+
+E FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+  addPost = (post, postCreator) => {
+    this.setState(prevState => {
+                const updatedPosts = [...prevState.posts];
+
+                const yourPost = {
+                  ...post
+                }
+                console.log(yourPost);
+                const userId = yourPost.creator.userId;
+                yourPost.creator.userId = {
+                  userId: userId,
+                  name: postCreator
+                };
+                
+
+                if(prevState.postPage === 1 && prevState.posts.length === 5) {
+                    // updatedPosts.pop();
+                    // updatedPosts.unshift(post);
+                    updatedPosts.unshift(yourPost);
+                    updatedPosts.pop();
+                } else {
+                    // updatedPosts.unshift(post);
+                  updatedPosts.unshift(yourPost);
+                }
+                return {
+                    posts: updatedPosts,
+                    totalPosts: prevState.totalPosts + 1
+                }
+
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> com isso, não apagamos nada do 
+
+
+NOSSO post (ele continua tendo o 'userId' dentro de 'creator', mas agora vai ter também só essa propriedade 'name' com o NAME DO AUTOR...)
+
+
+
+
+
+
+
+ok... ver a aula do professor...
+
+
+
+
+
+
+
+
+
+
+
+---> 

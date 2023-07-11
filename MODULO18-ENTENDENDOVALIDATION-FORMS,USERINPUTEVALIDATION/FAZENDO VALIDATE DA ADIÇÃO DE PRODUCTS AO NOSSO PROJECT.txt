@@ -1,0 +1,1378 @@
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA QUE APRENDEMOS UM MONTE SOBRE VALIDATION,
+
+
+
+
+
+
+SANITIZING INPUT 
+
+E 
+
+ ETC,
+
+
+
+
+
+
+__DEVEMOS __ PRATICAR ISSO UMA __ ÚLTIMA VEZ,
+
+DESSA 
+
+VEZ 
+
+COM 
+
+O 
+
+
+'ADD' DE UM PRODUCT... --------> 
+
+
+
+
+
+
+
+E COM O EDITING TBM...
+
+
+
+
+
+
+
+
+
+
+-----------> vamos querer que:
+
+
+
+
+
+
+
+
+1) TITLE:
+
+
+
+a) NÃO EXISTA PREVIAMENTE 1 PRODUCT COM 1 MESMO TITLE NA NOSSA DATABASE/app...
+
+b) o title seja TRIMMADO (removido o WHITESPACE)...
+
+c) só letras; sem números, sem símbolos.
+
+
+
+
+2) imageUrl:
+
+
+
+a) NÃO EXISTA PREVIAMENTE 1 PRODUCT COM ESSA IMAGE URL....
+
+
+b) trimmada 
+
+
+c) uma STRING de url....
+
+
+
+
+
+3) price:
+
+a) deverá ser um NÚMERO...
+
+
+
+
+4) DESCRIPTION:
+
+
+a) não poderá ser EMPTY...
+
+
+(depois precisamos fazer a MESMA COISA, mas com a route de EDIT A PRODUCT...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> antes disso, adicionei um ATTRIBUTE DE 
+
+'required'
+
+
+EM TODOS OS INPUT FIELDS DE MEU APP.... pq todos são indispensáveis para o funcionamento dele...
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+certo.... continuando.
+
+
+
+
+
+
+
+
+--> IMPORTEI ISTO AQUI 
+
+LÁ 
+
+
+NO ARQUIVO ROUTE DE 
+
+'admin.js':
+
+
+
+const {check, body } = require('express-validator');
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... CONSEGUI IMPLEMENTAR 
+
+
+UMA BOA LÓGICA 
+
+DE 
+
+
+VALIDATION 
+
+
+
+LÁ 
+
+
+
+
+NO 'ADD A PRODUCT',
+
+
+a respeito 
+
+do 
+
+FIELD 
+
+DE 
+
+'TITLE'....
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+--> AGORA VAMOS PARA O 2, A 'IMAGEURL'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> começamos NOVAMENTE COM A CONFIGURAÇÃO 
+
+
+
+lá da route de 'add a product'...
+
+
+
+
+
+
+--> para a IMAGEURL,
+
+
+vamos querer fazer o MESMO PROCEDIMENTo...
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK... CONSEGUI FAZER ISSO COM A IMAGE....
+
+
+
+
+
+
+
+
+------> agora é hora do 3,
+ 
+ O __PRICE__...
+
+
+
+
+
+
+
+
+ --> CONSEGUI, FICOU ASSIM:
+
+
+
+
+
+
+
+
+    check('price')
+      .isNumeric()
+      .withMessage('Price must be a number')
+      .trim(),
+
+
+
+
+
+
+
+
+    --> AGORA SÓ FALTA 
+
+    A 
+
+    'DESCRIPTION',
+
+    que 
+    é uma TEXT AREa...
+
+
+
+
+
+
+
+
+
+
+
+
+    ---------------
+
+
+
+    CERTO... FICOU __BEM BOM__....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/add-product',
+  authCheckerAndRedirecter,
+
+  check('title')
+    .isAlpha()
+    .withMessage('Products must contain only letters.')
+    .trim()
+    .custom((value, { req }) => {
+
+      console.log(value);
+      return Product.findOne({ title: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen title already exists, please choose another one.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+
+
+      check('imageUrl')
+      .isURL()
+      .withMessage('Please input a valid URL')
+      .trim()
+      .custom((value, { req }) => {
+            console.log(value);
+            return Product.findOne({ imageUrl: value }).then((product) => {
+              console.log(product);
+              if (product) {
+                console.log(product, 'LINE');
+                return Promise.reject(
+                  'A product with the chosen imageUrl already exists, please type another url.'
+                );
+              } else {
+                return value;
+              }
+            });
+          })
+      ,
+
+
+      check('price')
+      .isNumeric()
+      .withMessage('Price must be a number')
+      .trim(),
+
+
+
+
+      check('description')
+      .isAlpha()
+      .withMessage('Your description must contain only letters'),
+
+
+
+
+  adminController.postAddProduct
+);
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+AGORA TENHO QUE FAZER A MESMA COISA, MAS COM 
+
+
+O 
+
+
+
+'''EDIT A PRODUCT'''...
+
+
+
+
+
+
+
+CONSEGUI.... FICOU ASSIM,
+
+
+
+
+
+
+
+
+NO CONTROLLER:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+
+
+  if(validationErrors.length > 0) {
+
+    console.log(validationErrors)
+    console.log(errors.array(), 'saasas')
+
+
+    Product.find(
+        {userId: userId}
+    ).then(
+      (products) => {
+
+    
+
+            return  res.render( 'admin/product-list-admin', { 
+              pageTitle: 'Admin Products Page',
+              path: 'admin/product-list-admin',
+              errorMessage: errors.array()[0].msg,
+              validationErrors: validationErrors,
+              prods: products
+        
+            
+            }
+        )
+          
+
+      }
+    )
+
+
+
+
+  } else {
+
+  
+
+
+
+
+
+  Product.findById(productId) //método MONGOOSE, builtin...
+    .then((product) => {
+
+
+
+      if(product.userId.toString() !== req.user._id.toString()) {
+
+        return res.redirect('/');
+      } else {
+
+
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+
+
+
+
+      return product.save(); /////MUITO IMPORTANTE, é isso que 'SALVA' as mudanças que você escreveu logo acima, com a dot notation....
+      }
+    })
+    .then((result) => {
+      console.log('UPDATED PRODUCT');
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+
+    });
+
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+E 
+
+
+
+NO ARQUIVO ROUTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/edit-product',
+  authCheckerAndRedirecter,
+
+
+
+
+  check('title')
+    .isAlpha()
+    .withMessage('Products must contain only letters.')
+    .trim(),
+
+      check('imageUrl')
+      .isURL()
+      .withMessage('Please input a valid URL')
+      .trim()
+      ,
+
+
+      check('price')
+      .isNumeric()
+      .withMessage('Price must be a number')
+      .trim(),
+
+      check('description')
+      .isAlpha()
+      .withMessage('Your description must contain only letters'),
+
+
+  adminController.editProduct
+);
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO... HORA DE VER O VÍDEO DO PROFESSOR....
+
+
+
+
+
+
+
+
+
+---> professor começa só com a validation do 
+
+
+ADD A PRODUCT...
+
+
+
+
+
+
+
+
+-----> professor explica que 
+
+
+
+
+não há apenas 1 solução, aqui... existirão diferentes 
+
+requisitos,
+
+
+dependendo 
+
+
+
+
+do 
+
+
+
+app que você está construindo....
+
+
+
+
+
+
+
+
+
+
+
+----> ENTRETANTO, PROFESSOR EXPLICA QUE O 
+
+'PRICE' 
+
+DEVERÁ SER UM 'FLOATING POINT NUMBER',
+
+ou seja, 
+
+
+
+UM NÚMERO COM CASAS DECIMAIS... (sanitizer?)
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+      check('price')
+      .isNumeric()
+      .withMessage('Price must be a number')
+      .trim()
+      .toFloat()
+
+
+
+
+
+
+    (CREIO EU)
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+-----> A DESCRIPTION DEVERÁ TER NO MÍNIMO 5 CARACTERES...
+
+
+
+
+
+
+---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+router.post(
+  '/edit-product',
+  authCheckerAndRedirecter,
+
+
+
+
+  check('title')
+    .isAlpha()
+    .withMessage('Products must contain only letters.')
+    .trim(),
+
+      check('imageUrl')
+      .isURL()
+      .withMessage('Please input a valid URL')
+      .trim()
+      ,
+
+
+      check('price')
+      .isNumeric()
+      .withMessage('Price must be a number')
+      .trim()
+      .toFloat()
+      ,
+
+      check('description')
+      .isLength({min: 6})
+      .isAlpha()
+      .withMessage('Your description must contain only letters'),
+
+
+  adminController.editProduct
+);
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----------> 
+
+
+
+
+
+
+
+
+
+professor começa assim:
+
+
+
+
+
+
+
+
+
+body('title').isAlphaNumeric().isLength({min: 3})
+.trim()
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+-------> certo... aí, para a imageUrl,
+
+
+
+professor vai escrever:
+
+
+
+
+body('imageUrl')
+.isUrl() 
+
+
+
+
+
+
+-----> ESSA É A ÚNICA COISA QUE ELE VAI CHECAR, QUANTO A ESSE INPUT...
+
+
+
+
+
+
+
+
+
+---------> professor escreve:
+
+
+
+body('price')
+.isFloat() ----------> ISFLOAT  VS_ 'ISNUMERIC'  (você só pode escolher 1 dos 2.... -> o 'isNumeric' DEIXA VOCÊ ESCREVER 'integers', ao passo que o 'isFloat' SÓ _ VAI _ DEIXAR QUE VOCê ESCREVA _ NÚMEROS COM VÍRGULAS/quebrados...)
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+--> POR FIM,
+
+
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+
+ESCREVE 
+
+
+
+1 VALIDATION PARA A DESCRIPTION,
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+body('description')
+.isLength({min: 5, max: 400})
+.trim()
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+----------> o professor vai em frente e faz a mesma coisa que nós,
+
+
+
+coloca uma validation quase idêntica ao 'add' 
+
+lá 
+
+
+
+
+
+na route de 'edit'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR VAI LÁ NO ARQUIVO 'auth.js' (controllers)
+
+
+E AÍ FAZ A MESMA COISA QUE EU, 
+
+IMPORTA 
+
+'validationResult'
+
+
+LÁ 
+
+
+DE 'express-validator',
+
+tipo assim:
+
+
+
+
+
+'const { validationResult } = require('express-validator');
+
+
+
+
+
+
+
+
+
+
+------------> CERTO... --> AÍ LÁ EM 
+
+
+'postAddProduct',
+
+
+
+
+PROFESSOR ESCREVE AQUELA MESMA LÓGICA 
+
+DE 
+
+
+ANTES,
+
+
+
+
+aquela 
+
+de 
+
+
+
+'const errors = validationResults(req)',
+
+
+
+
+
+
+
+PARA ENTÃO 
+
+
+ESCREVER 
+
+UM 
+
+CHECK 
+
+DE 
+
+
+
+'if (!errors.isEmpty()) {
+
+
+
+
+}
+
+',
+
+
+
+
+
+
+
+
+
+BEM PARECIDO COM O 
+
+
+
+'if(validationErrors.length > 0)'
+
+
+QUE 
+
+
+EU ESCREVI....
+
+
+
+
+
+
+
+
+
+----> CERTO...
+
+
+
+
+
+
+
+
+PROFESSOR FEZ A MESMA COISA QUE EU, BASICAMENTE,
+
+
+
+
+
+pq 
+
+ELE 
+
+também 
+
+
+EDITOU O VIEW DAS MESMA FORMA,
+
+DEIXANDO-O ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    </head>
+    <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+    <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
+        <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" required name="title" id="title" value="<% if(editing) { %><%= prod.title %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" required  name="imageUrl" id="imageUrl" value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text"  required rows="5" name="description" id="description" ><% if(editing) { %><%=prod.description%><% } %></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number"  required name="price" id="price" value="<% if(editing) { %><%= prod.price %><% } %>"></title>
+            </div>
+            <% if (editing) { %>
+                <input type="hidden" value="<%= prod._id %>" name="id" required >
+                <% } %>
+            <button type="submit" class="btn"><%= editing ? 'Edit Product': 'Add Product' %></button>
+
+        </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO... --> MAS A MINHA VERSÃO DO APP __ REDIRECIONA__ _O USER PARA A PAGE 
+
+DE 
+
+
+'ALL ADMIN PRODUCTS'
+
+em 
+
+vez 
+
+
+
+
+de 
+
+
+REDIRECIONAR PARA A MESMA PAGE.... (achei que esse approach seria melhor...)
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... isso tudo funcionou.
+
+
+
+
+
+
+
+
+
+-_> PROFESSOR ENCONTRA ALGUNS PROBLEMAS COM 
+
+O TITLE -------> 
+
+
+
+
+
+
+É PQ ELE TINHA DEIXADO 
+
+
+'isAlphaNumeric'...... ---> SE DEIXAMOS 'isAlphaNumeric' 
+
+
+E ESCREVEMOS ___ ESPAÇOS_ ENTRE 
+
+
+
+
+
+a nossa string/texto,
+
+
+
+
+
+O VALIDATE VAI CONSIDERAR 
+
+ESSE TEXTO COMO __ INVÁLIDO __ (pq 1 ESPAÇO __NÃO É UM NÚMERO, E NEM UMA LETRA...) -----> para __ CONTORNAR ISSO,
+
+
+
+
+PROFESSOR USA
+
+
+'isString()"
+
+,
+
+
+PQ 
+
+STRINGS PODEM__ TER ESPAÇOS__....
+
+
+
+
+
+
+
+------> E É POR ISSO QUE VOU TROCAR 
+
+
+'isAlpha()'
+
+
+
+por 
+
+
+
+'isString()'....
+
+
+
+
+
+
+
+-------------------
+
+
+
+OK... ISSO ESTÁ FUNCIONANDO,
+
+E AGORA 
+
+
+
+ ADICIONAMOS VALIDATION PARA O ADD DE PRODUCTS....
+
+
+
+
+
+
+
+
+ --> MAS E QUANTO AO EDITING?
+
+
+
+
+
+
+
+
+
+
+
+
+ BEM, AÍ DEVEMOS VER A PRÓXIMA AULA....

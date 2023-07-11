@@ -1,0 +1,1093 @@
+
+
+
+
+
+
+HOW TO VALIDATE
+
+
+
+
+
+
+
+
+
+--> OK... COMO FAZEMOS VALIDATE DE USER INPUT?
+
+
+
+
+
+
+
+
+
+--> BEM, OBVIAMENTE COMEÇAMOS COM ESTE ESQUEMA:
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+| User Input (Form Input) | 
+
+
+
+
+
+
+
+
+
+
+
+
+
+| Server (Node App) | ----> HANDLARÁ ESSE INPUT...
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+ENTRE ESSES 
+
+
+2 
+
+'AGENTES',
+
+
+
+HÁ 1 
+
+PUNHADO 
+
+DE 
+
+LOCAIS 
+
+EM QUE 
+
+
+PODERÍAMOS 
+
+ADICIONAR 
+
+'VALIDATIOn'.... ----------> POR EXEMPLO,
+
+
+
+PODEMOS ___ 
+
+
+VALIDAR/VALIDATE_ LÁ NO CLIENTSIDE,
+
+
+COM 
+
+A 
+
+AJUDA 
+
+DE 
+BROWSERSIDE JAVASCRIPT (proteção fraca... pacotes como 'sanitizeHtml')....
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+| User Input (Form Input) | 
+
+        |
+        |
+        v
+
+
+| Validate on Clientside | (VALIDATION FRACA)...
+
+
+
+        |
+        |
+        v
+
+
+
+
+
+| Server (Node App) | ----> HANDLARÁ ESSE INPUT...
+
+
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+SE OPTARMOS POR ESSE MODO DE 'VALIDATE',
+
+
+___ ANTES___ DE QUALQUER 
+
+
+'REQUEST BEING SENT',
+
+
+
+
+NÓS PODEMOS 
+
+ESCREVER ALGUM JAVASCRIPT QUE 
+
+
+
+
+FAZ 'WATCH FOR KEY EVENTS' (eventos como KEYSTROKES, ou seja, o user DIGITANDO....),
+
+ 
+
+E 
+
+
+
+AÍ 
+
+ESSE CÓDIGO JAVASCRIPT BROWSERSIDE 
+
+PODE 
+
+CHECAR 
+
+O 
+INPUT DO USER ENQUANTO ELE ESTÁ DIGITANDO, PARA AÍ 'display an error' (
+
+    pq você __PODE__ USAR __ O 
+
+
+    JAVASCRIPT __ PARA ___ ALTERAR O 'DOM'/elementos visuais E FUNCIONAIS 
+
+    __dURANTE __ O RUNTIME...
+
+
+) ------------->  ISSO SIGNIFICA QUE 
+
+
+VOCÊ PODE FAZER 
+
+DISPLAY DE 1 ERROR 
+
+
+DIRETO NO BROWSER, ANTES DE QUALQUER 
+
+
+COISA 
+
+SER 
+
+ENVIADA AO SERVER...
+
+
+
+
+
+
+--------------------------
+
+
+
+
+OK.... ISSO PODE 
+
+'GREATLY ENHANCE YOUR USER EXPERIENCE',
+
+
+
+E É ALGO QUE 
+
+O PROFESSOR 
+
+
+
+DISCUTE NOS CURSOS DEDICADOS DE 
+
+'javascript' 
+
+
+
+e 
+
+'javascript framework'... COURSES,
+
+
+
+
+COMO OS COURSES 
+
+DE 
+REACT 
+
+
+E ANGULAR (aha... touché).
+
+
+
+
+
+
+--------> E O VALIDATE __ CLIENTSIDE __ É ALGO __TOTALMENTE __ OPCIONAL___...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+| User Input (Form Input) | 
+
+        |
+        |
+        v
+
+
+| Validate on Clientside | (VALIDATION FRACA)... ----> TOTALMENTE __ OPCIONAL__...
+
+
+
+        |
+        |
+        v
+
+
+
+
+
+| Server (Node App) | ----> HANDLARÁ ESSE INPUT...
+
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+O VALIDATE 
+
+
+__ CLIENTSIDE__ PODE DEFINITIVAMENTE__ MELHORAR A USER EXPERIENCE,
+
+
+e 
+
+POR ISSO 
+
+VOCÊ
+
+
+
+PODE QUERER 
+
+
+
+CONSIDERAR SEU USO... -------> MAS... É OPCIONAL ___ PQ __ COMO NÓS USAMOS 
+
+'CLIENTSIDE JAVASCRIPT',
+
+
+
+OU SEJA,
+
+
+
+CÓDIGO JAVASCRIPT QUE RODA NO BROWSER,
+
+
+
+
+O __ USER__ PODE:
+
+
+
+1) VER ESSE CÓDIGO 
+
+
+
+
+2) ALTERAR ESSE CÓDIGO 
+
+
+
+3) DESABILITAR O JAVASCRIPT POR INTEIRO....
+
+
+
+
+
+
+
+
+
+
+---------> OU SEJA, ESSA __ NÃO É UMA PROTECTION UQE __ 
+
+
+TE 
+
+
+PROTEGE 
+
+CONTRA 
+
+'INCORRECT DATA BEING SENT TO YOUR SERVER'...
+
+
+
+
+
+
+
+
+
+
+
+-----------> ESSA NÃO É UMA SOLUÇÃO 'SECURE',
+
+
+
+
+E SIM 
+
+SÓ 
+
+
+
+ESTÁ LÁ/É USADA __ PARA 
+
+'IMPROVE THE USER EXPERIENCE'... -------> 
+
+
+
+
+
+ISSO PQ 
+
+
+__ É CLARO QUE __ 
+
+
+VOCê 
+
+PODE FAZER COISAS 
+
+NICE COMO 
+
+
+
+
+''''validate''' (SUGERIR a forma correta do input),
+
+
+
+
+
+
+FAZER COISAS COMO 'SHOW A NICE ERROR MESSAGE',
+
+
+E AÍ __ MANTER__ O OLD INPUT PARA QUE O USER NÃO TENHA QUE 
+
+
+RE-ENTER TODA A DATA, para que possa corrigir só algum detalhezinho, etc....
+
+
+
+
+
+
+
+
+
+
+-------> EX DE VALIDATE CLIENTSIDE CONVENIENTE:
+
+
+
+'Error Message + Keep old input', NO CASO DE FAILED VALIDATION...
+
+
+
+
+
+
+
+
+
+
+----> mas ainda assim, isso é só uma coisa mais de 'USER EXPERIENCE',
+
+e não SERVERSIDE....
+
+
+
+
+
+
+
+
+
+
+---------> O QUE INTERESSA, NO CASO, É 
+
+
+
+
+
+A OPÇÃO DO 'VALIDATE ON THE SERVERSIDE',
+
+
+
+QUE APRENDEREMOS NESSE MÓDULO...
+
+
+
+
+
+
+
+
+
+O ESQUEMA FICA ASSIM:
+
+
+
+
+
+
+
+
+| User Input (Form Input) | 
+
+        |
+        |
+        v
+
+
+| Validate on Clientside | (VALIDATION FRACA)... ----> TOTALMENTE __ OPCIONAL__...
+
+
+
+        |
+        |
+        v
+
+| Validate on Server-Side |  __NÃO É OPCIONAL__... (required) --> VALIDATION FORTE...
+
+        
+        |
+        |
+        v
+
+
+| Server (Node App) | ----> HANDLARÁ ESSE INPUT...
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+ESSE 'VALIDATE SERVERSIDE'
+
+
+é __ OBVIAMENTE O NEGÓCIO 
+
+QUE 
+
+
+FAZEMOS 
+
+
+NO 
+
+'
+NODEJS',
+
+
+
+
+
+NÓS __ BASICAMENTE __ __PRECISAMOS __ FAZER ISSO... --> PRECISAMOS 
+
+FAZER 
+ISSO,
+
+
+O 
+
+VALIDATE DESSA FORMA,
+
+
+PQ __ 
+
+
+ESSE CODE AÍ __ NÃO PODERÁ 
+
+SER 
+
+
+'VISTO, NEM MANIPULADO',
+
+
+
+
+
+___ PELO USER.... (pq é REMOTO).... --->  O USER_ _ TAMBÉM 
+
+
+
+NÃO CONSEGUE FAZER 'DISABLE' DO __ CÓDIGO QUE __ RODA NO NOSSO SERVIDOR/BACKEND NODE,
+
+
+
+JUSTAMAENTE 
+
+
+PQ 
+
+
+ISSO ACONTECE NO 
+
+SERVER,
+
+
+
+E NÃO NO BROWSER.... ----------> 
+
+
+
+
+
+
+
+
+
+E ESSA É A PARTE REALMENTE CRUCIAL,
+
+EM QUE 
+
+DEVE 
+
+
+
+SER SETTADA VALIDATION,
+
+
+E EM QUE 
+
+
+'INVALID VALUES MUST BE FILTERED OUT'... -------> 
+
+
+
+É UM PASSO MUST HAVE,
+
+É 
+
+
+
+ABSOLUTELY REQUIRED,
+
+
+
+
+E 
+
+É 
+
+
+
+A COISA
+
+QUE 
+
+ESTUDAREMOS AGORA... -->  E É ISSO QUE ASSEGURA 
+
+QUE 
+
+
+NÓS 
+
+
+'ONLY WORK WITH VALID DATA IN OUR NODE APP',
+
+
+
+
+
+
+
+E __ 
+
+
+
+
+PARA CONSEGUIR O STORE DE VALID DATA...
+
+
+
+
+
+
+
+
+
+
+
+
+E, IMPORTANTE!!!!!
+
+
+
+
+
+
+
+--> PARA ALGUMAS DATABASE ENGINES, 
+
+a maioria, 
+
+
+como por exemplo o mongodb,
+
+
+
+
+HÁ TAMBÉM 
+
+UMA 
+
+
+'BUIL-IN VALIDATION'
+
+que 
+
+VOCÊ PODE LIGAR,
+
+ 
+
+
+
+
+
+ ________ E ESSA BUILT-IN VALIDATION __ É MOSTRADA 
+
+
+
+ LÁ 
+
+
+
+ NO COURSE DE MONGODB DO PROFESSOR,
+
+
+
+ se quisermos aprender...
+
+
+
+
+
+
+
+
+
+ ------> ESSA VALIDATION 'built-in' 
+
+
+ DAS 
+
+
+DATABASES ENGINES É _ OPCIONAL TBM_... ------> 
+
+
+ISSO 
+
+
+PQ 
+
+_ 
+
+ESSE TIPO DE VALIDATION PODE SER 
+
+1 
+
+
+'LAST RESORT',
+
+
+MAS 
+
+
+
+
+__ SE VOCÊ TEM 
+
+
+
+UMA BOA 'SERVERSIDE VALIDATION'
+
+
+no lugar,
+
+
+__COMO VOCÊ DEVE TER,
+
+
+
+
+
+__ AÍ _ ESSE É UM CENÁRIO 
+
+MEIO DESNECESSÁRIO, 
+
+
+
+
+___ BUILT-IN VALIDATION DAS DATABASES MEIO __ DESNECESSÁRIA,
+PQ 
+
+
+AÍ __ NÃO __ VAI 
+
+EXISTIR 1 
+
+CENÁRIO EM QUE 
+
+'invalid data could reach your database',
+
+
+PQ 
+
+_VOCÊ __ JÁ 
+
+TERÁ 
+
+FILTRADO TODA ESSA INVALID DATA 
+
+LÁ 
+
+
+NAQUELA 
+
+
+'SERVERSIDE VALIDATION',
+
+
+NO SEU NODEAPP...
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+ESQUEMA:
+
+
+
+
+
+
+| User Input (Form Input) | 
+
+        |
+        |
+        v
+
+
+| Validate on Clientside | (VALIDATION FRACA)... ----> TOTALMENTE __ OPCIONAL__...
+
+
+
+        |
+        |
+        v
+
+| Validate on Server-Side |  __NÃO É OPCIONAL__... (required) --> VALIDATION FORTE...
+
+        
+        |
+        |
+        v
+
+
+| Server (Node App) | ----> HANDLARÁ ESSE INPUT...
+
+        |
+        |
+        |
+        V 
+
+| Database | ---> BUILT-IN VALIDATION (também OPCIONAL, MAS BOA DE SE TER... é um 'LAST RESOURCE' )
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+MAS NÃO INTERESSA O APPROACH QUE VOCÊ SEGUIR,
+
+
+não interessa 
+
+se 
+
+
+
+você usa 
+
+SÓ 
+
+
+o 
+
+
+VALIDATE SERVERSIDE,
+
+
+OU 
+
+O 
+
+
+
+VALIDATE SERVERSIDE + VALIDATE DATABASe,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+mas não interessa 
+
+
+
+
+
+QUAL APPROACH VOCÊ SIGA,
+
+
+
+
+__ 
+
+
+
+VOCÊ SEMPRE DEVERÁ 'RETURN AN ERROR MESSAGE' (helpful error message, if possible)
+
+
+AO 
+
+USER,
+QUANDO 
+
+ELE 
+
+INPUTTAR 
+DATA 
+
+INCORRETA....  -------------->
+
+
+
+
+
+
+
+
+
+
+OUTRO PONTO 'DE OURO' 
+
+É:
+
+
+
+
+
+'''NEVER RELOAD THE PAGE, BUT ALWAYS __ KEEP THE DATA__ 
+
+THE 
+
+USER HAS 
+
+ALREADY ENTERED'''.. 
+
+
+
+
+
+
+
+--------> ISSO PQ __O  RELOAD DA PAGE  + SHOW DE 1 ERROR DIZENDO 
+
+
+'sua data está uma merda, tente de novo'
+
+
+
+É __UMA 
+
+
+____ PÉSSIMA__ USER EXPERIENCE,
+
+
+
+
+QUE 
+
+
+
+
+TODOS CONHECEMOS... ------>  VOCÊ INPUTTA ALGO INCORRETO,
+
+
+
+
+AÍ 
+
+'HEY, ESSE PASSWORD NÃO É CONHECIDO/ESSE EMAIL ADDRESS É UNKNOWN',
+
+
+
+
+E AÍ 
+
+
+__VOCê TEM QUE INPUTTAR__ TUDO DE NOVO...
+
+
+
+
+
+
+
+
+--------> OK, ESSA É OUTRA PARTE QUE 
+
+O 
+
+PROFESSOR VAI NOS MOSTRAR,
+
+
+
+COMO 
+
+
+PROVIDENCIAR UMA BOA USER EXPERIENCE COM O ERROR HANDLING...
+
+
+
+
+
+
+
+
+
+
+----> ok, agora sabemos como a VALIDATION FUNCIONA NA TEORIA,
+
+HORA 
+
+DE 
+
+VER 
+
+ISSO EM PRÁTICA...

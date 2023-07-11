@@ -1,0 +1,420 @@
+
+
+
+
+
+
+
+
+
+
+-------> AGORA QUE BREVEMENTE VIMOS O QUE É O NPM E SUA UTILIZAÇÃO,
+
+
+
+
+
+devemos relembrar algo:
+
+
+
+
+
+
+
+
+
+NODEJS --> primariamente foi utilizado para SPIN UP A WEBSERVER __ E ESCREVER CÓDIGO QUE RODA 
+
+NO SERVERSIDE. .. -> e essa é a 
+
+MAIN THING QUE VOCÊ FAZ COM O 
+
+NODEJS,
+
+
+
+quando você escreve seus próprios apps NODEJS... --> mas devemos nos lembrar que PODEMOS 
+
+
+RODAR __ QUALQUER __ CÓDIGO JAVASCRIPT COM O NODEJS.... --> 
+
+ESPECIFICAMENTE,
+
+VOCÊ PODE 
+
+
+
+TAMBÉM INTERAGIR COM O 'LOCAL FLE SYSTEm',
+
+
+PQ VOCÊ PODE 
+
+
+'read and write files'... -> ISSO TE DÁ NOVAS PORTAS,
+
+
+NOVAS OPORTUNIDADES... --> PODEMOS USAR 
+
+O 
+
+NODEJS
+
+
+PARA 
+
+EXECUTAR 
+
+
+
+UTILITY 
+
+SCRIPTS....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PODEMOS USÁ-LO PARA 
+
+'PARSEAR (READ) CERTOS ARQUIVOS',
+
+
+
+'MANIPULAR ESSE CONTEÚDO DESSE ARQUIVO' 
+
+
+
+
+'OUTPUTTAR NOVO ARQVUIO, COM BASE NESSE CONTEÚDO'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ISSO ^^^^^É __ A IDEIA POR TRÁS DAS 
+
+'BUILD TOOLS'; algo que o NODEJS TAMBÉM É CAPAZ DE FAZER/SER USADO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUANDO FALAMOS SOBRE  BUILD TOOLING E WORKFLOW,
+
+
+GERALMENTE FALAMOS DE 'FRONTEND WEB DEVELOPMENT',
+
+
+
+como o 
+
+REACT --> O REACT NÃO __ É UM NODEJS APP__ ---> AINDA ASSIM,
+
+
+NÓS USAMOS 
+
+ O NODEJS E O NPM PARA INSTALAR PACKAGES ADICIONAIS NELE... --> ESSAS PACKAGES, TODAS ELAS,
+
+
+
+ SEGURAM CÓDIGO QUE 
+
+ __RODA _ NO BROWSER.. --> e, no final das contas,
+
+
+ o código que 
+
+
+ ESCREVEMOS NO 'SOURCE FOLDER' do nosso react app 
+
+
+
+ __TAMBÉM VAI RODAR NO BROWSER...--> ENTRETANTO,
+
+
+
+ O PROFESSOR APONTA _ QUE ' A MANEIRA QUE O ESCREVEMOS AQUI'
+
+
+ não vai rodar diretamente no browser (
+
+
+
+     pq aqui estamos 
+
+
+     usando 
+
+
+     A SINTAXE ES6 PARA FAZER MERGE DE VÁRIOS ARQUIVOS '.js' 
+
+
+     EM 1 SÓ....
+ ) -------> ISSO __ NÃO FUNCIONA __ NATIVAMENTE EM TODOS OS BROWSERS,
+
+
+
+
+
+
+ SÓ FUNCIONA EM BROWSERS MODERNOS... ---> isso significa que 
+
+ ESSE CÓDIGO 
+
+ PRECISA SER FORMATADO POR COISAS COMO O 'BABEL',
+
+ que é 
+
+ algo que 
+
+
+ EXISTE COMO DEPDENCY DO REACT, E QUE É EXECUTADO QUANDO VOCÊ RODA 'npm run build'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> ESSE É O CÓDIGO COM QUE TRABALHAMOS, 
+
+
+ ESSE 
+
+ CÓDIGO DO REACT... --> O BUILD WORKFLOW 
+
+
+
+ VAI 
+
+
+ MERGEAR TODO ESSE CÓDIGO E VAI O TRANSFORMAR PARA RODAR 
+
+
+ EM BROWSERS VELHOS, TAMBÉM MINIFICADO E OPTIMIZADO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO TAMBÉM É IMPORTANTE:
+
+
+
+ NÓS USAMOS BUILD TOOLS PARA 'OPTIMIZE' 
+
+
+ NOSSO CÓDIGO:
+
+
+
+
+
+ const copy = (arr) => {
+
+
+     return [...arr];
+ }
+
+
+
+
+
+
+
+
+
+
+ --> ISSO AÍ É FORMATADO PARA RODAR NOS BROWSERS VELHOS, ALÉM DE SER 'ABREVIADO' (minified)....
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> COMO TODO SEU CÓDIGO PRECISA SER BAIXADO PELOS USERS ANTES DE SER USADO,
+ VOCÊ 
+
+ QUER O MANTER 
+
+ 
+
+
+ O MAIS SIMPLES POSSÍVEL...
+
+
+
+
+
+
+
+
+ --------> QUEREMOS 'OPTIMIZED CODE',
+
+ é claro... -> 
+
+
+
+ QUEREMOS 
+
+ CÓDIGO QUE NÃO SEJA 
+
+
+ MT 
+
+ LARGO,
+
+ E QUE AO MESMO TEMPO FUNCIONE 
+
+
+
+
+ EM 
+
+
+ OLDER BROWSERS.....- ---------> 
+
+ O CÓDIGO 
+
+ 'VELHO' 
+
+
+ NÃO VAI USAR NEXT-GEN FEATURES,
+ PARA QUE 
+
+
+ BROWSERS VELHOS CONSIGAM O ENGOLIR... --> isso é fundamental NO FRONTEND, e não tanto 
+
+
+
+
+ no 
+
+
+
+ SERVERSIDE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> lá no projeto 'REACT',
+
+
+
+ vamos rodar 'npm run build'
+
+
+ PARA 
+
+ PEGAR 
+
+
+
+
+ A VERSÃO OPTIMIZADA DO NOSSO CÓDIGO.... 
+
+
+
+
+ (
+      o react vai mergear 'index' e 'App.js' do frontend,
+
+      tudo em 
+
+      1 ARQUIVO SÓ...  ('main.cssadjasihigfah')....
+
+
+
+
+
+      --> arquivo MINIFADO E OPTIMIZADO...
+ )
+
+
+
+
+
+
+
+
+
+
+
+ ------> O CÓDIGO 'OPTIMIZADO' É MT DIFÍCIL DE LER,
+
+ MAS É O CÓDIGO QUE QUEREMOS SERVIR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK.... --> E NÓS USAMOS NPM E NODE PARA __ TRANSFORMAR _ NOSSO CÓDIGO, ESSA É A IDEIA POR TRÁS DE 'BUILD TOOLINGS'
+
+
+
+
+ --> agora devemos ver como o node e o npm podem nos ajudar com isso...

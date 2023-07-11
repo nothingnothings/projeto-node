@@ -1,0 +1,2172 @@
+
+
+
+
+
+
+DEVEMOS TRABALHAR COM ESSE 
+
+
+'router.get('/location', (req, resp, next) => {})' 
+
+
+em 
+
+
+'location'...
+
+(nesse 'path'...)
+
+
+
+
+
+
+
+
+-----> dentro desse path, vamos querer fazer RETRIEVE de DADOS __PARA UM DETERMINADO__ id.... ('for a given ID')...
+
+
+
+
+
+
+
+
+
+
+
+
+A ideia aqui é que NO FRONTEND, no 'MyPlace.js', NÓS 
+
+
+AGORA NÃO FAZEMOS MAIS O PARSING DAS COORDENADAS por meio dos 'queryParams' da URL (como fazíamos antes)...
+
+
+Não, em vez disso, 
+
+
+
+
+AGORA NOS QUERYPARAMS vamos, é claro, ENCONTRAR/VAMOS TER DE FAZER COM QUE O CÓDIGO ENCONTRE
+ 
+
+ ________UMA KEY 'location'  (a key 'location' inserida dentro da/das URLs...)..
+
+
+
+
+ ex de url criada por nós, 
+
+ com 
+
+
+ a 'location key'...
+
+
+ ex:
+
+
+
+ `${location.origin}/my-place?location=${locationId}';
+
+
+
+
+
+ E ESSA KEY de 'location' VAI, É CLARO, segurar O VALOR 
+
+ DE NOSSO 
+
+
+ 'locationId', O QUAL EU VOU QUERER __PROCURAR __ ('LOOK UP') NO 
+
+ NOSSO BACKEND SERVER... (esse id estará armazenado lá...).
+
+
+
+
+ --------------------------------
+
+
+ certo....
+
+
+
+ É por isso que vamos ter que ir até o seguinte trecho de código, em 'MyPlace.js':
+
+
+
+
+ ex:
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+const coords = {
+  lat: parseFloat(queryParams.get('lat')),
+  lng: +queryParams.get('lng')
+};
+const address = queryParams.get('address');
+new LoadedPlace(coords, address);
+
+
+
+
+
+-----------------------------------------------------------------
+
+
+
+
+
+
+VAMOS TER QUE ALTERAR ESSE CÓDIGO....
+
+
+
+O professor comenta para fora do código aquelas linhas que FAZIAM O 'PARSE' da nossa url, dos QUERYPARAMS que estavam inseridos dentro da nossa url...
+
+
+
+
+são as linhas:
+
+
+'
+
+
+const coords = {
+  lat: parseFloat(queryParams.get('lat')),
+  lng: +queryParams.get('lng')
+};
+const address = queryParams.get('address');
+
+'
+
+
+
+
+
+
+
+O CÓDIGO FICA ASSIM:
+
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+//const coords = {
+//  lat: parseFloat(queryParams.get('lat')),
+ // lng: +queryParams.get('lng')
+  // };
+// const address = queryParams.get('address');
+
+new LoadedPlace(coords, address);
+
+
+
+
+-------------------------------------
+
+
+CÓDIGO LIMPO:
+
+
+
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+new LoadedPlace(coords, address);
+
+
+
+-----------------------------------------------------
+
+
+
+
+CERTO.
+
+
+
+
+O PROFESSOR VAI LÁ E ADICIONA uma constante...
+
+
+é nessa constante em que IREMOS ___CONSEGUIR __ O NOSSO 'locId' (locationId) por meio 
+
+
+
+de QUERYPARAMS...
+
+
+
+
+Vamos ter que usar 
+
+
+'queryParams' (aquele nosso objeto que criamos e cujo valor definimos como 'url.searchParams'... )....
+
+
+
+
+
+
+VAMOS TER QUE USAR O PARÂMETRO 'get' DENTRO DESSE 'queryParams'....
+
+
+
+ex:
+
+
+
+'queryParams.get()'
+
+
+
+----------------------------------------
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get();
+new LoadedPlace(coords, address);
+
+
+
+-----------------------------------------
+
+
+
+
+
+CERTO. MAS ESSE MÉTODO '.get' QUE FICA NO INTERIOR DE 'url.searchParams'/queryParams 
+
+
+
+EXIGE/PEDE SEMPRE UM PARÂMETRO...
+
+
+Esse parâmetro É SEMPRE ___UM KEYNAME/KEY___... É a primeira KEY com aquele 
+
+nome encontrada pelo javascript dentro da url...
+
+
+Nós vamos inserir, é claro, 'location', a key inserida dentro da nossa url, e que tem 
+
+ A LOCATION ID DO USUÁRIO inserida no seu interior....
+
+
+ex:
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get('location');
+new LoadedPlace(coords, address);
+
+
+
+---------------------------------------
+
+
+
+
+ISSO FEITO, VAMOS QUERER ENVIAR UM ____FETCH REQUEST___ (fetch API) 
+
+
+
+AQUI....
+
+
+vamos querer enviar um fetch request/um http request 
+
+
+À URL DE 
+'http://localhost:3000/location'   (ao nosso backend, essencialmente)....  (mais propriamente AO PATH DE '/location' SETTADO NO NOSSO 'location.js', NO NOSSO BACKEND.... )
+
+
+
+
+
+
+
+
+EX(Representação):
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location'); //EIS O CÓDIGO EM QUESTÃO...
+new LoadedPlace(coords, address);
+
+
+
+
+--------------------------------------------------
+
+
+
+
+Mas ainda não acabamos aqui....
+
+
+
+
+Aqui, diz o professor, o professor vai querer enviar 
+
+
+
+ESSE 'ID', o ID DE NOSSA 'LOCATION' ('locId') POR 
+
+MEIO 
+
+
+DESSA URL QUE ESTAMOS ENVIANDO....
+
+
+
+
+Mas como fazer isso?
+
+
+
+
+Professor diz que poderíamos adicionar um QUERY PARAMETER.... (ou seja, com '?')...
+
+
+
+
+MAS ELE DIZ QUE É MELHOR NÓS ADICIONARMOS ESSE ID como um 
+
+
+'SEGMENTO DE PATH EXTRA' ('as an extra path segment'...).
+
+
+
+
+O professor faz isso com 
+
+um 'slash' no final do path e então 
+
+
+
+um '+ locId' (  isso fará com que o 'locId' SEJA __APENSO__ À nossa url....)...
+
+
+
+
+
+EX(Representação):
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId); //////////EIS O CÓDIGO EM QUESTÃO.
+new LoadedPlace(coords, address);
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+COM ISSO, AGORA ESTAREMOS ENVIANDO UM 
+
+
+REQUEST DE TIPO 'GET' a essa url de 'http://localhost:3000/location/ + locId'  (NESSE CASO, O id 'locId' É, NA VERDADE, PARTE DA URL....)
+
+
+
+
+
+
+
+Isso significa que essa url 
+
+
+tipicamente 
+
+
+
+será algo como 
+
+
+
+essa url:
+
+
+
+http://localhost:3000/location/ (FIXA)   +   NÚMERO ALEATÓRIO ('locId', um ID aleatório)...
+
+
+
+-------------------------------------
+
+
+
+
+
+LEMBRE-SE:
+
+
+
+a fetch API ___SEMPRE ____ RETORNA ___ UMA PROMISE__ como resultado...
+
+E A PROMISE É __SEMPRE ___ A 'RESPONSE' do servidor...
+
+
+
+E essa promise deve ser administrada, então, por meio de 
+
+
+.THEN() BLOCKS...
+
+
+
+
+E é exatamente isso que o professor faz aqui:
+
+
+
+
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => { /////////EIS O CÓDIGO EM QUESTÃO.
+
+})
+new LoadedPlace(coords, address);
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+CERTO, MAS E QUE CÓDIGO ELE VAI EXECUTAR POR MEIO DESSA 'response' que foi/vai ser recebida?
+
+
+
+
+
+Bem, primeiramente ele vai RETORNAR 
+
+A 'PARSED RESPONSE', ou seja, ele vai usar o 
+
+método 
+
+
+
+'response.json()' para CONVERTER OS ARQUIVOS '.JSON()' enviados pelo 
+
+
+servidor em ____DADOS JAVASCRIPT___ (um objeto javascript, na verdade)...
+
+
+PROFESSOR DIZ QUE 
+
+
+APENAS O CHAMADO DE 'response.json()' não basta, 
+
+QUE TEMOS 
+
+
+
+DE COLOCAR 'return' no início, para que ESSE THEN BLOCK 
+
+RETORNE O 
+
+
+valor 
+
+DESSES DADOS JSON convertidos em objeto javascript PARA NÓS....
+
+
+
+
+REPRESENTAÇÃO:
+
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => { 
+    return response.json(); /////EIS O CÓDIGO EM QUESTÃO.
+
+})
+new LoadedPlace(coords, address);
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+Certo...
+
+
+
+MAS O PROFESSOR NÃO ACABA POR AQUI:
+
+ele ainda vai lá 
+
+
+
+E CRIA __MAIS UM .THEN() BLOCk____.....
+
+
+
+Nesse outro then block, ele vai 
+
+
+ENFIAR O CÓDIGO DO 'new LoadedPlace(coords, address)'....
+
+
+
+
+E esse novo '.then() block' VAI TER UM PARÂMETRO/argumento esperado 
+
+
+de 'data', que será 
+
+
+ A ___DATA___ RETORNADA pelo THEN BLOCK ANTERIOR, o then block que retornou 
+
+ O NOSSO 
+
+
+ OBJETO 'RESPONSE' parseado... (convertido de dados  .json para dados javascript....)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => { 
+    return response.json(); 
+
+})
+.then (data => {
+
+
+
+    new LoadedPlace(coords, address); /////EIS O CÓDIGO EM QUESTÃO.
+
+
+})
+    
+
+-------------------------------------
+
+
+
+
+
+
+
+CERTO, MAS AGORA TEMOS OUTRO PROBLEMA....
+
+
+
+E como faremos a extração dos dados da 'response' (do parâmetro 'data', em outras palavras)?
+
+
+
+    
+
+
+
+BEM, PROFESSOR DIZ QUE NÓS VAMOS VER COMO FAZER ISSO DEPOIS...
+
+
+
+
+Antes disso, antes de ver como extrair esses dados, temos que VER/SABER DE ALGUMA FORMA 
+
+(talvez por meio de um console.log) O QUE DIABOS NÓS ACABAMOS ENVIANDO DE VOLTA AO NOSSO 
+
+SERVERSIDE (por meio dessa fetch api...).
+    
+
+
+
+
+---> para isso, devemos inspecionar o nosso backend, de novo....
+
+
+Lá no nosso 'serverside', nós/o código vai conseguir UMA 
+
+
+____URL____ que contém O ID como __PARTE___ sua...
+
+
+
+
+
+OBS:::
+
+
+O 'EXPRESS.JS' é capaz de 'handle this'....  (o professor por 'this' quer dizer o código de 'router.get('location/')'.... 
+)
+
+
+
+
+PROFESSOR DIZ QUE PODEMOS ADICIONAR UM SEGMENTO EXTRA Ao path de 
+
+
+
+'router.get('/location', ...)'...,
+ 
+
+
+ esse path pelo qual FILTRAMOS nossos requests/os requests enviados pelo browser/browserside....
+
+
+
+
+O professor explica que É POSSÍVEL___, SIM, __DIZER AO EXPRESS.JS ___ QUE 
+
+__QUEREMOS UM SEGMENTO ___DINÂMICO (aquele id da location) DENTRO DE NOSSA URL.... ----->
+
+----> como assim 'segmento dinâmico'? ---->
+
+----> SIGNIFICA que será um segmento que não terá sempre o mesmo valor; será um 
+segmento  QUE MUDARÁ.....
+
+
+
+
+
+---->Como fazer isso, como dizer ao 'express.js' que vamos querer que um segmento desse 
+
+'path' seja DINÂMICO???
+
+
+
+
+Bem, professor explica:
+
+
+devemos adicionar uma 'colon' (':') AO LADO 
+
+
+DO 'slash' FINAL...
+
+
+
+Depois dessa 'colon', vocÊ deve colocar 
+
+QUALQUER IDENTIFICADOR DE SUA ESCOLHA....
+
+
+
+
+ex(representação):
+
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {}); //////////////////EIS O CÓDIGO EM QUESTÃO.
+
+
+module.exports = router;
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+O professor escolhe um identificador de nome 'lid' (location ID).... (mas poderíamos 
+escolher qualquer outro identificador, aqui.)
+
+
+
+
+
+
+Certo.
+
+
+
+Professor aponta que 
+
+
+DENTRO DESSE CÓDIGO QUE SERÁ EXECUTADO NESSA ROTA DE 
+
+'get' NÓS PODEREMOS fazer o 
+
+
+___RETRIEVE___ daquela 'location ID' por meio de um certo código...
+
+
+
+
+Professor cria uma const de nome 'locationId' e então armazena o valor 
+
+
+
+de 
+
+
+'req.'  (request, o objeto request recebido por meio do FLOW do nosso projeto; esse objeto REQUEST é enviado pelo browserside...)
+
+
+
+
+
+mas não só 'req'; O PROFESSOR QUER UMA ___PROPRIEDADE ESPECÍFICA DENTRO DESSE OBJETO 'request' enviado 
+pelo clientside.... o nome 
+da propriedade/objeto 
+
+
+que o professor quer É "PARAMS"... (parameters)....
+
+
+essa propriedade 'parameters' É PROVIDENCIADA A NÓS PELO EXPRESS.JS.... 
+
+
+
+portanto, o código ficará:
+
+
+
+'const locationId = req.params'...
+
+
+
+e mais alguma coisa que o professor quer.... (não acabamos por aqui.)
+
+
+
+
+
+resultado(Até agora):
+
+
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = req.params.
+}); 
+
+
+module.exports = router;
+
+
+
+
+
+------------------------------
+
+
+
+
+Esse objeto 'params', explica o professor, terá uma key em seu interior 
+
+
+DE 'LID' (lid)...
+
+
+
+Ele terá essa key 'lid' pq NÓS ESCOLHEMOS ESSE IDENTIFICADOR 
+
+naquele 'path'....... (ou seja, no código 'router.get('/location/:lid')'....).
+
+
+
+
+
+OBS::: SE VOCÊ ESCOLHEU OUTRO NOME PARA AQUELE IDENTIFICADOR DEPOIS DO ':', VOCÊ TERÁ 
+
+DE USAR O NOME QUE VOCÊ ESCOLHEU COMO O NOME DESSA KEY em 'req.params.xxxx'...
+
+
+
+RESULTADO:
+
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = req.params.lid //eis o código
+}); 
+
+
+module.exports = router;
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+ESSA ('locationId', essa constante que segura essa propriedade, que segura o valor dessa propriedade) SERÁ A 'DATA' 
+
+QUE SERÁ  PARTE DA SUA URL...  (ou seja, aquele trecho ':lid' da sua url....)....
+
+
+
+
+
+
+COM essa data, 
+
+
+agora podemos ir até a nossa 
+
+
+
+constante 'locationStorage', A QUAL __NÃO SERÁ 'CLEARED'/LIMPA, desde QUE NÓS 
+
+NÃO ___REINICIEMOS___ O SERVIDOR.... (e desde que nós não estejamos ficando SEM MEMÓRIA...),
+
+
+
+PARA QUE ENTÃO CONSIGAMOS __a NOSSA 'LOCATION' ___ POR MEIO DAQUELE 'LOCATIONID'....
+
+
+
+
+
+LEMBRE-SE DO SEGUINTE CÓDIGO:
+
+
+
+
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+----------------------------------------
+
+
+Ou seja, aquele código dentro de 'router.post' 
+
+
+ACABA CRIANDO UM OBJETO 'LOCATION' dentro de 'locationStorage' QUE POSSUI 
+
+UMa propriedade 'id' CRIADA A PARTIR DE UMA EXECUÇÃO DE 'Math.random()' (esse é o seu valor, no final das contas)....
+
+ESSA PROPRIEDADE ID, AQUI, DENTRO DESSE ARRAY DE 'locationStorage', É UM __NÚMERO___....
+
+
+
+
+
+
+
+JÁ O QUE VAMOS CONSEGUIR EM  ''''router.get('location/:lid') '''' SERÁ
+
+__UMA STRING____..... ISSO vai ocorrer pq NÃO INTERESSA A COISA QUE VOCÊ ENCODAR 
+NAQUELA URL 
+
+de 'xxxx/location/:lid', ESSA COISA AINDA SERÁ UMA STRING, AINDA SERÁ TIDA COMO UMA STRING... (por causa do enconding, por causa da conversão na forma de uma string...)
+
+
+
+
+Mas oq isso significa?
+
+
+
+
+ISSO SIGNIFICA QUE DEVEMOS ___CONVERTER___ esse número que FORA CONVERTIDO EM UMA STRING (por causa do encoding da url que ocorreu previamente)
+
+DE VOLTA EM UM NÚMERO....
+
+
+
+(
+
+    RESUMINDO:
+
+
+    o 'locationId' passou de 
+
+
+    NÚMERO (id) à STRING (':lid') 
+
+    E AGORA VAI SER CONVERTIDO DE VOLTA A UM NÚMERO...
+
+)
+
+
+
+
+Certo, mas como, E __ONDE___ no nosso código DEVERÁ SER FEITA ESSA CONVERSÃO?
+
+
+
+
+
+O professor explica que isso deverá ocorrer DENTRO 
+
+DO 'router.get('/location/:lid')',
+
+
+DENTRO DO PATH 'location' do método 'GET'....
+
+
+
+
+Nós fazemos essa conversão POR MEIO DA ADIÇÃO DO operador '+' 
+
+NA FRENTE DE 
+
+'req.params.lid'... (na frente desse identificador/DESSA KEY ___que está dentro da URL__...)
+
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid ///eis aqui o código.
+}); 
+
+
+module.exports = router;
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+Certo... feito isso, o professor 
+
+
+então diz que 
+
+
+AGORA  o
+
+
+'locationId' 
+
+
+
+SEMPRE PODERÁ SER ENCONTRADO 
+
+
+____NO ARRAY ___ DE 'locations'...
+
+
+
+
+Como esse id poderá ser encontrado ali, seu OBJETO TAMBÉM PODERÁ 
+
+SER ENCONTRADO LÁ, nesse array...
+
+
+é por isso que ele 
+
+
+vai criar uma 
+
+CONSTANTE 
+
+CHAMADA 
+
+
+DE 
+
+'location', e então 
+
+
+
+armazenar um valor de 
+
+
+
+'locationStorage.locations'   ( ou seja, o ARRAY 'locations' dentro de 'locationStorage')....
+
+
+
+AÍ ELE DIZ QUE ENTÃO PODEREMOS USAR O MÉTODO 
+
+
+
+'find()', o qual EXISTE EM ___ARRAYS____  (esse método EXISTE EM ARRAYS TANTO NO 
+
+JAVASCRIPT COMO NO NODE.JS... existe no serverside e no clientside.. )
+
+
+
+
+
+FIND() ----> ISSO RODA/EXECUTA EM CADA ITEM NO ARRAY (ou seja, em CADA __LOCATION__ naquele 
+
+array....)
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find();///////
+}); 
+
+
+module.exports = router;
+
+
+
+---------------------------------
+
+
+
+
+
+CERTO... MAS NÃO ACABAMOS POR AQUI...
+
+
+
+Esse método de 'find()' sempre exige uma FUNÇÃO INTERNA....
+
+
+
+Essa função interna exige 1 ITEM como parâmetro (o item/items EM QUE 
+
+SERÁ EXECUTADO, EM CADA 1 DELES, O CÓDIGO QUE VOCê PASSAR NO BODY DESSA FUNÇÃO...)...  (o professor, nesse nosso caso, 
+escolhe o nome de item como sendo 'loc'...)
+
+
+
+NO BODY dessa função interna, o professor 
+
+vai querer que seja executado o código de 
+
+
+'return loc.id === locationId;' 
+
+
+(MAS OQ ISSO SIGNIFICA? COMO SERÁ O FUNCIONAMENTO DO MÉTODO 'FIND()' nessa função?
+
+
+
+Bem simples ----> o método find vai RETORNAR O VALOR do objeto/ITEM em que 
+
+ELE ENCONTRAR 'loc.id === locationId', ou seja, VAI RETORNAR O VALOR DO OBJETO EM QUE 
+
+A PROPRIEDADE 'id' DO OBJETO é/for IGUAL A 'locationId', aquela ID extraída da nossa URL, que foi convertida 
+por meio de '+req.params.lid'...)
+
+
+
+
+
+EX(REPRESENTAÇÃO):
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    })
+}); 
+
+
+module.exports = router;
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+Se o professor/nós escrevemos isso, quando esse código do find RETORNAR seu valor,
+
+NÓS SABEREMOS/TEREMOS CERTEZA DE QUE O __iD CORRETO/ADEQUADO__ foi retornado, 
+
+
+E QUE ESSE ID FOI ARMAZENADO COM SUCESSO DENTRO DESSE objeto 'location'...
+
+
+
+
+Mas o professor ainda vai colocar um 'if block' CHECANDO/CODIFICANDO 
+
+OS CASOS EM QUE 'location' FOR FALSe/falsy....  (professor explica que podemos usar if checks no node.js pq ELES SÃO UMA FEATURE CORE DO JAVASCRIPT, usável tanto pelo server como pelo clientside.)
+
+
+O PROFESSOR USA O 'bang parameter' PARA dizer 
+
+
+'se location for FALSE', vou querer executar esse código aqui....
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    });
+    if (!location) { ////EIS O CÓDIGO EM QUESTÃO.
+
+    }
+}); 
+
+
+module.exports = router;
+
+
+
+
+---------------------------
+
+
+
+Se a location for FALSE, vou querer, na verdade, ENVIAR DE VOLTA UMA '.JSON RESPONSE' em que EU 
+
+DEFINIREI MEU PRÓPRIO 'STATUS CODE' como sendo '404'...
+
+
+
+
+OBS: O MÉTODO 'status' EXIGE UM PARÂMETRO QUE É UM __NÚMERO DE STATUS____. o professor utiliza o número 404.
+
+
+
+Professor explica que podemos fazer CHAIN desses 2 métodos, do método '.json()' (que converte 
+nossos dados javascript em '.json') e do método 'status()'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+
+const router = express.Router();
+
+const locationStorage = {
+    locations: []
+};
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    });
+    if (!location) {
+        
+        resp.status(404).json();
+
+    }
+}); 
+
+
+module.exports = router;
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+resp.status(404).json(); -----------> O QUE ESSE CÓDIGO VAI FAZER, PRIMEIRAMENTE,
+
+É DEFINIR ESSE STATUS CODE DE '404'... depois disso ELE EXECUTARÁ 
+
+
+
+o '.json()', que VAI NOS PERMITIR ADICIONAR ALGUNS DADOS AO NOSSO RESPONSE....
+
+
+
+
+
+
+O professor decide adicionar uma propriedade de 'message', em um objeto, com um valor de 
+
+
+'Not found'...
+
+
+
+
+ex:
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    });
+    if (!location) {
+        
+        resp.status(404).json({message: 'Not found'});
+
+    }
+}); 
+
+
+module.exports = router;
+
+
+
+-----------------------------------
+
+
+
+
+
+
+COM ISSO, AGORA TEMOS UMA HIPÓTESE DE ___ERRO____, uma hipótese de ERRO QUE ENVIARÁ UM 
+
+RESPONSE DE 'error' AO FRONTEND... erro de código '404'....
+
+
+
+
+
+MUNIDOS DESSA INFORMAÇÃO DE ERRO, podemos fazer alguma coisa com 
+
+ela lá no frontend... o professor só adicionou esse status code de '404' com o método 
+
+'status' PARA QUE NÓS TENHAMOS UMA CHANCE DE DESCOBRIR SE NÓS ''SUCCEEDED'' ou não no frontend...
+
+
+
+
+Mas só o call de 
+
+'res.status(404).json({message: 'Not found!'});'
+
+
+não basta, O PROFESSOR DIZ QUE ELE DEVERÁ FAZER ___RETURN___ 
+
+desse objeto....
+
+
+
+O professor coloca esse return PQ ELE VAI QUERER QUE __NENHUM CÓDIGO SEJA EXECUTADO__ DEPOIS DESSA MENSAGEM 
+DE ERRO SER MOSTRADA....
+
+
+ex:
+
+
+
+
+if(!location) {
+    return res.status(404).json({message: 'Not found!'});
+}
+
+------------------------------
+
+
+
+
+
+Professor vai querer isso pq DEPOIS DESSE IF CHECK NÓS VAMOS 
+
+RODAR O CÓDIGO QUE DEVERÁ SER EXECUTADO NO CASO DE UMA 'LOCATION' para aquele 
+
+ID ter sido __REALMENTE ENCONTRADA __ (ou seja, nos casos em que nós NÃO ENTRAMOS no if block do erro...).
+
+
+
+NESSES CASOS, NOS CASOS EM QUE NÃO ENTRAMOS NO IF BLOCK, o professor vai querer ENVIAR UMA RESPONSE, enviar 
+
+
+UMA RESPONSE COM O MÉTODO 'json()'... ----> ele diz que poderíamos, também, colocar um 'status(200)' no meio 
+desse call, MAS 200 É O STATUS CODE DEFAULT de qualquer forma, por isso não temos que fazer isso 
+nesse call...
+
+
+
+Aí dentro desse call de '.json()' em 'response', o professor vai querer PROVIDENCIAR 
+
+
+
+OS SEUS DADOS DE LOCALIZAÇÃO.... é por isso que ele vai definir uma propriedade 
+
+de 'address' aqui...
+
+e o valor dessa propriedade será o de 'location.address' (pq dentro do objeto 'location' que críamos 
+a partir de 'localStorage.locations.find(xxx)' HÁ ESSA PROPRIEDADE 
+
+'address'.... essa propriedade foi definida lá em cima, em 'locationStorage.locations.push(
+    {
+        id: id,
+        address: req.body.address,
+        ...
+    }
+)')
+
+
+
+
+
+E O PROFESSOR TAMBÉM VAI QUERER ENVIAR DE VOLTA UMA PROPRIEDADE 'coords' de valor 
+
+'location.coords'....
+
+
+
+
+ex(REPRESENTAÇÃO):
+
+
+
+
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+    locationStorage.locations.push({
+        id: Math.random(),
+        address: req.body.address,
+        coords: { lat: req.body.lat, lng: req.body.lng }
+    });
+    resp.json( {message: 'Stored location!'});
+});
+
+
+
+
+
+router.get('/location/:', (req, resp, next) => {
+    const locationId = +req.params.lid;
+    const location = locationStorage.locations.find(loc => {
+        return loc.id === locationId;
+    });
+    if (!location) {
+        
+     return  resp.status(404).json({message: 'Not found'});
+
+    }
+    resp.json(
+        {
+            address: location.address,
+            coordinates: location.coords   ///////eis o código em questão.
+        }
+    )
+}); 
+
+
+module.exports = router;
+
+
+
+---------------------------------
+
+
+
+
+Certo, agora todo esse código estará SENDO ENVIADO DE VOLTA AO CLIENT...
+
+
+
+
+
+
+DEVEMOS REINICIAR NOSSO SERVIDOR NODE.JS...
+
+
+
+
+O professor diz que devemos ir até o código do clientside 
+
+
+
+
+e tweakar um pouco o código de 'MyPlace.js'...
+
+
+
+
+lá no 'new Loaded Place', professor diz que 
+
+
+devemos PROVIDENCIAR AS COORDENADAS __cORRETAS__ ao 'LoadedPlace'... (não é 'coords')...
+
+
+PARA ISSO, DEVEMOS ESCREVER 
+
+
+
+'data.coordinates' (PQ ESSA É A PROPRIEDADE 'coordinates' QUE SERÁ RECEBIDA 
+
+DA 'response' ENVIADA PELO NOSSO SERVIDOR...)
+
+
+
+
+
+e também 
+
+
+'data.address' para o ENDEREÇO DO USUÁRIO...
+
+
+
+
+EX:
+
+
+
+ISSO 
+
+
+
+
+
+
+
+
+
+
+import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => {
+  return response.json();
+})
+.then(data => {
+  new LoadedPlace(coords, address);
+})
+
+
+
+
+
+
+
+
+
+
+VIRA ISSO: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => {
+  return response.json();
+})
+.then(data => {
+  new LoadedPlace(data.coordinates, data.address); ///EIS AQUI A MUDANÇA.
+})
+
+
+
+
+--------------------------------
+
+
+
+Professor agora esclarece uma coisa:
+
+
+nós talvez consigamos um 
+
+
+
+'status code' de 404 (erro) SE NÓS 
+
+NÃO CONSEGUIRMOS/NÃO ENCONTRARMOS NENHUM PLACE/LOCATION...
+
+
+Nesses casos, vamos querer QUE O CLIENT 
+
+
+NOS MOSTRE ALGUMA COISA, NOS COMUNIQUE QUE HOUVE UM ERRO 404....
+
+
+
+É por isso que ele vai colocar um IF BLOCK 
+
+
+DENTRO DA PROMISE CHAIN da 'fetch API' no código clientside...
+
+
+
+
+
+será um if block de 
+
+
+
+'if(response.status === 404) {
+    throw new Error();
+}'
+
+
+
+
+
+(OU SEJA, SE O STATUS DA RESPONSE FOR DE NÚMERO 404 (caso de erro), VOU QUERER 
+
+DAR THROW NESSE ERRO AQUI, NESSA MENSAGEM DE ERRO AQUI....)
+
+
+
+
+Esse erro terá uma mensagem de 'Could not find location!'....
+
+
+ex:
+
+
+
+
+
+
+
+import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => {
+    if (response.status === 404) {
+        throw new Error('Could not find location!'));
+    }
+  return response.json();
+})
+.then(data => {
+  new LoadedPlace(data.coordinates, data.address); 
+})
+
+
+
+
+
+------------------------------------------
+
+
+
+
+O professor também coloca um catch block no final dessa promise chain.... ele faz isso 
+
+
+para que seja MOSTRADA UMA SIMPLES MENSAGEM DE ALERTA COM AQUELA MENSAGEM DE ERRO 
+
+DENTRO DO OBJETO 'error' caso um erro venha a acontecer...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+import { Map } from './UI/Map';
+
+class LoadedPlace {
+  constructor(coordinates, address) {
+    new Map(coordinates);
+    const headerTitleEl = document.querySelector('header h1');
+    headerTitleEl.textContent = address;
+  }
+}
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+const locId = queryParams.get('location');
+fetch('http://localhost:3000/location/' + locId)
+.then(response => {
+    if (response.status === 404) {
+        throw new Error('Could not find location!'));
+    }
+  return response.json();
+})
+.then(data => {
+  new LoadedPlace(data.coordinates, data.address); 
+})
+.catch( err => {
+    alert(err.message);
+})
+
+
+
+-------------------------------
+
+
+
+PROFESSOR REINICIA O SERVIDOR E O FRONTEND...
+
+
+
+Ele vai lá
+
+
+e ARMAZENA UM NOVO 'address' naquele input field...
+
+
+
+
+
+Certo...
+
+
+Agora  o botão 'find place' faz com que 
+
+
+
+
+O LOCAL DO USUÁRIO (localização/location) 
+
+
+SEJA MOSTRADO NO MAPA, E TAMBÉM FAZ COM QUE A URL 
+
+que tem sua LOCATION ID seja mostrada naquele input field...
+
+
+
+
+SE o usuário então clicar em 'Share Place', o link 
+
+daquela localização É COPIADO NA CLIPBOARd...
+
+
+Se o usuário colar esse link em outra aba, ELE VERÁ 
+
+
+o 'my-place' DAQUELE USUÁRIO...
+
+
+
+
+
+Professor diz que as coisas parecem boas, até agora...
+
+
+
+ESSA LOCALIZAÇÃO DO USUÁRIO ESTÁ VINDO DO NOSSO SERVIDOR...
+
+
+E se nós colocarmos uma 
+
+
+
+LOCALIZAÇÃO/location INVÁLIDA NAQUELA URL, nós ganhamos uma mensagem 
+
+
+de erro/alerta de erro 
+
+
+dizendo 'could not find the  location'...
+
+
+
+
+
+
+CERTO... PORTANTO, NOSSO CÓDIGO ESTÁ FUNCIONANDO COMO DEVERIA, aqui... 
+
+
+
+ELe está funcionando com UMA REST API aplicada de forma BÁSICA,
+
+
+essa REST API FAZ COM QUE REQUESTS SEJAM ENVIADOS AO BACKEND, onde ESSES REQUESTS 
+
+SÃO ENTÃO 'handled' com DIFERENTES ROTAS... essas diferentes rotas FAZEM COM QUE 
+
+OS REQUESTS SEJAM ___ARMAZENADOS___ NA __MEMÓRIA TEMPORÁRIA (memory storage, no caso, 'locationStorage')____ DO NODE.js..../do serevidor.

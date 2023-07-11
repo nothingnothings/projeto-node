@@ -1,0 +1,2535 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> ANTES DE CONCLUÍRMOS ESSE 
+
+
+
+MÓDULO BÁSICO SOBRE O REST,
+
+
+
+
+
+professor 
+
+
+diz uqe 
+
+
+
+
+
+QUER NOS MOSTRAR 
+
+
+
+ALGO __ MUITO IMPORTANTE_ __, 
+
+
+ALGO QUE 
+
+VOCÊ PRECISA CONFIGURAR EM QUALQUER REST API 
+
+
+QUE VOCê 
+
+CONSTRUIR,
+
+
+
+
+
+
+
+
+
+
+
+
+
+QUALQUER REST API QUE VOCÊ CONSTRUIR, API QUE VAI SER USADA 
+
+
+
+POR 
+
+
+
+USERS 
+
+
+
+DE TODO O MUNDO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------> PROFESSOR QUER DEMONSTRAR.. --> ELE VAI ATÉ O CODEPEN (já usamos)...
+
+
+
+
+
+
+
+
+
+
+
+
+---> PODEMOS ESCREVER SNIPETTS 
+
+
+NO 
+
+
+CODEPEN... ---> podemos simular um app frontend bem simples....
+
+
+
+
+
+
+
+
+
+
+
+--> NO CODEPEN,
+
+
+
+
+O PROFESSOR SÓ VAI ESCREVER HTML E JS (sem css),
+
+PQ 
+
+ELE 
+QUER 
+
+MANTER AS COISAS SIMPLES...
+
+
+
+
+
+
+
+
+
+
+-----> PODEMOS SIMULAR UM FRONTEND APP 
+
+
+nesse 
+
+
+
+
+codepen....
+
+
+
+
+
+
+
+
+
+
+--> PQ UM FRONTEND APP,
+
+
+
+SE ELE FOR UM SPA (single page app),
+
+
+
+VAI USAR 
+
+APENAS 
+
+
+
+HTML, CSS E JAVASCRIPT... -----> ISSO PQ NÃO ESCREVEMOS NENHUM SERVERSIDE CODE 
+
+
+
+
+NO NOSSO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+--> ok... 
+
+
+ELE ESCREVE 
+
+UM HTML 
+
+
+
+COM UM BUTTON,
+
+
+
+tipo 
+
+
+
+
+
+<button>Get Posts</button>
+
+
+
+
+
+
+
+
+
+
+--> ELE DUPLICA ESSE BUTTON,
+para 
+
+ficar com um segundo button, de 
+
+'create post'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+<button>Get Posts</button>
+<button>Create Post</button>
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------. ok... -----> AGORA TEMOS ESSES 2 BUTTONS....
+
+
+
+
+
+
+
+
+
+
+
+-> MAS VAMOS ADICIONAR UM CÓDIGO JS PARA FAZER ALGO 
+
+
+COM ELES...
+
+
+
+
+
+
+
+
+----> VAMOS COLOCAR UNS IDS NESSES BUTTONS, PARA USAR SELECTORS VANILLA...
+
+
+
+
+
+
+
+
+Ex:
+
+
+<button id="get">Get Posts</button>
+<button id="post">Create Post</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+--> CERTO... GANHAMOS ACESSO AOS 2, PARA ENTÃO ADICIONAR LISTENERS...
+
+
+
+
+
+
+
+
+adicionamos assim:
+
+
+
+
+
+
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+
+
+
+
+getButton.addEventListener('click', xxx)
+
+
+postButton.addEventListener('click', yyyy)
+
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... NESSE NEGÓCIO VOU DEFINIR UMA ANON FUNCITON,
+
+
+PARA 
+
+
+ENTÃO 
+
+
+'MAKE A REQUEST TO MY BACKEND'...
+
+
+
+
+
+
+--> FAREI ESSE REQUEST POR MEIO DA 'FETCH API', que é 'BUILT INTO MODERN BROWSERS', como já sabemos...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+
+
+
+
+getButton.addEventListener('click', () => {
+
+            fetch()
+})
+
+
+postButton.addEventListener('click', 
+
+
+
+() => {
+
+    fetch()
+}
+
+
+
+)
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+-> CERTO.. NESSE FETCH AÍ,
+
+
+VOU DEFINIR UMA URL 
+A QUE 
+
+ENVIAREI O REQUEST...
+
+
+
+
+
+
+
+
+------> NO CASO, 
+
+
+AÍ SERÁ 
+
+
+'http://localhost:8080/feed/posts'
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+
+
+
+
+getButton.addEventListener('click', () => {
+
+            fetch('http://localhost:8080/feed/posts')
+            .then(
+                () => {
+
+
+
+                }
+            )
+})
+
+
+postButton.addEventListener('click', 
+
+
+
+() => {
+
+    fetch('http://localhost:8080/feed/post', {
+
+            method: 'POST',
+
+
+
+    })
+}
+
+
+
+)
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+ISSO VAI FAZER UM REQUEST 
+
+AO NOSSO BACKEND,
+
+EM AMBOS BUTTONS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ESSE PRIMEIRO BUTTON VAI ENVIAR UM REQUEST DE TIPO 'GET'....
+
+
+
+
+
+
+
+--> THEN BLOCK, CATCH BLOCKS, ESQUECEMOS DELES...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+
+
+
+
+getButton.addEventListener('click', () => {
+
+            fetch('http://localhost:8080/feed/posts')
+            .then(
+                (res) => {
+
+                            console.log(res);
+
+
+                }
+            )
+            .catch(
+                (err) => {
+
+                            console.log(err);
+                }
+            )
+})
+
+
+postButton.addEventListener('click', 
+
+
+
+() => {
+
+    fetch('http://localhost:8080/feed/post', {
+
+            method: 'POST',
+
+
+
+    })
+    .then(
+
+    )
+    .catch(
+
+    )
+}
+
+
+
+)
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+------> CERTO, MAS O THEN BLOCK ESTÁ MEIO ERRADo...
+
+
+
+
+
+
+
+
+--. PROFESSOR EXPLICA QUE O RESULT vai 
+
+estar em um formato JSON... ----> PQ ESSA É A NOSSA RESPONSE:
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE VAMOS TER QUE PARSEAR ESSE 'OBJETO JSON',
+
+
+por meio de 
+
+
+
+
+'return res.json()'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+
+
+
+
+getButton.addEventListener('click', () => {
+
+            fetch('http://localhost:8080/feed/posts')
+            .then(
+                (res) => {
+
+                           return res.json();
+
+
+                }
+            )
+            .then(
+                (data) => {
+                        console.log(data);
+                }
+            )
+            .catch(
+                (err) => {
+
+                            console.log(err);
+                }
+            )
+})
+
+
+postButton.addEventListener('click', 
+
+
+
+() => {
+
+    fetch('http://localhost:8080/feed/post', {
+
+            method: 'POST',
+
+
+
+    })
+    .then(
+
+    )
+    .catch(
+
+    )
+}
+
+
+
+)
+
+
+
+
+-------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK... ISSO ESTÁ CERTO, AGORA....
+
+
+
+
+
+
+
+
+
+
+
+-------> 'res.json()'
+
+VAI CONVERTER 
+
+
+NOSSA DATA 'JSON' 
+
+retornada pelo server 
+
+
+EM ___ 
+
+
+DATA __ JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... 
+
+
+
+
+
+
+
+
+
+
+
+--> CLICAMOS EM 'GET POSTS'... -------> AO FAZERMOS ISSO,
+
+
+
+
+
+AUTOMATICAMENTE, NO DEVTOOLS 
+
+
+
+DO CHROME,
+
+
+
+
+GANHAREMOS UM __ ERROR__.... --> 
+
+
+
+
+ERROR 
+
+DE 
+
+
+
+'Failed to load http://localhost:8080/feed/posts: No 'Access-Control-Allow-Origin' header 
+
+is present on the requested resource. Origin xxxx is therefore NOT ALLOWED ACCESS.... If an 
+
+opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with 
+CORS disabled'...
+
+
+
+
+
+
+
+---> EU JÁ HAVIA VISTO ISSO ANTES... ESSA COISA DO 'CORS'...
+
+
+
+
+
+
+--> HÁ UM JEITO SIMPLES DE 
+
+
+CONSERTAR ISSO, NOS NOSSOS APPS.... --> acho que vi NA PRIMEIRA AULA DE JAVASCRIPT QUE ASSISTI...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+---> O ÚLTIMO FURO DE SEGURANÇA QUE VOCÊ DEVE TER EM MENTE 
+
+É O 
+
+
+
+
+DE 
+
+
+
+
+_____CORS___...
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+O professor já falou sobre isso antes... 
+
+
+
+
+
+Não é bem um ATTACK PATTERN, e sim um 
+
+
+___CONCEITO DE SEGURANÇA ___ ('security concept')....
+
+
+
+
+
+A IDEIA AQUI É QUE 
+
+
+REQUESTS feitos de sua browserside application 
+
+SOMENTE PODEM 
+
+SER FEITOS A UMA BACKEND QUE 
+
+
+______rODA NO MESMO SERVIDOR ____ DA FRONTEND/browserside code...
+
+
+
+
+
+----> O HTML E O SCRIPT QUE FOI SERVIDO NESSE HTML DEVEM TER SIDO SERVIDOS DO __MESMO SERVIDOR_...
+    O LOCAL PARA ONDE VOCÊ ENVIA OS REQUESTS, O BACKEND, DEVE ESTAR RODANDO NO MESMO SERVIDOR 
+    EM QUE O HTML ESTÁ SENDO HOSTEADO...
+
+
+
+
+
+-----> é assim que browsers funcionam, por default... é isso que eles permitem, por default.
+
+
+
+('Requests are only allowed from same origin (domain)' )
+
+
+
+
+
+
+
+
+-----------> MAS EM WEBAPPs modernos, você FREQUENTEMENTE 
+
+PRECISA MANDAR REQUESTS A ___OUTROS SERVIDORES____, no entanto....
+
+
+
+
+
+EM OUTRAS PALAVRAS: frequentemente temos que enviar requests a servidores QUE 
+
+NÃO SERVIRAM O HTML e código javascript browserside... servidores que 
+
+
+APENAS PROVIDENCIARAM ___aLGUNS 'API ENDPOINTS', 
+
+
+ALGUMAS 'URLs' às quais vocÊ pode enviar dados, armazenar dados, ler (fazer fetch) de dados...
+
+
+
+
+ISSO É ALGO QUE VIMOS NO MÓDULO SOBRE 'node.js'....
+
+
+
+
+------------------------------------------------
+
+
+
+
+AÍ, VOCê PODE CONTROLAR O 'CORS'/REQUESTS por meio 
+
+dos 
+
+
+
+SERVERSIDE HEADERS...
+
+
+
+
+SÃO OS SERVERSIDE HEADERS QUE CONTROLAM/QUE DITAM SE 
+
+
+UM DETERMINADO REQUEST É ___PERMITIDO___ (com uma response VÁLIDA 
+sendo enviada em contrapartida)  
+
+OU NÃO... 
+
+
+
+
+
+-------> portanto, esse é um conceito pelo qual 
+
+BROWSERS, POR DEFAULT,
+
+
+
+NÃO PERMITEM QUE VOCÊ ALCANCE ALGUM 
+
+OUTRO SERVIDOR....
+
+
+
+
+__eNTRETANTO___, com OS SERVERSIDE HEADERS ___CORRETOS/ADEQUADOS__, 
+
+
+VOCê PODE fazer 'override' nesse comportamento default de RECUSA....
+
+
+
+
+
+
+
+É UM CONCEITO, PORTANTO, QUE NO FINAL DAS CONTAS DEVE 'secure' servers... ele faz 
+com que NEM 
+
+TODAS AS PESSOAS CONSIGAM ACESSAR OS RECURSOS DE UMA PÁGINA...
+NEM TODAS AS PÁGINAS/USUÁRIOS/SERVIDORES 
+
+PODEM ACESSAR OS RECURSOS 
+
+De outros servidores (at least).....
+
+
+
+
+MAS COM OS HEADERS CORRETOS/ADEQUADOS DEFINIDOS NO SERVERSIDE, 
+
+
+Você pode PERMITIR ESSE 'CROSS ORIGIN RESOURCE SHARING'...
+
+
+
+
+UM EXEMPLO PERFEITO DISSO É 
+
+
+___OS JAVASCRIPT MODULES___....
+
+
+
+
+
+
+----> esse conceito (concept) 'BUILTIN' do javascript 
+
+TAMBÉM __PRECISAVA DE UM 'DEV-SERVER', como vocÊ pode se lembrar...
+
+
+
+
+E ELE REQUERIA UM DEV SERVER PQ 
+
+
+_______JAVASCRIPT MODULES____, ou seja, 
+
+ARQUIVOS JAVASCRIPT IMPORTADOS EM OUTROS ARQUIVOS JAVASCRIPT, 
+
+
+
+SÓ SÃO PERMITIDOS NESSES OUTROS ARQUIVOS ___SE ESSES ARQUIVOS FOREM ____ 
+
+DO MESMO SERVIDOR....
+
+
+
+
+Ou seja, a mim só é permitido importar outro arquivo javascript 
+
+QUE ESTEJA NO __MESMO SERVIDOR__/que seja servido pelo mesmo servidor...
+
+
+
+
+
+
+
+--> E NÃO HÁ NENHUMA MANEIRA DE MUDAR ESSE COMPORTAMENTO, POIS 
+
+ESSE É UM MECANISMO DE SEGURANÇA 'BUILTIN' nos browsers.... (criado especificamente para 
+
+essa feature javascript...).
+
+
+-----------------------------------------------------------
+
+
+
+
+
+OUTRO EXEMPLO DISSO É O APLICATIVO NODE.JS EM QUE TRABALHAMOS....
+
+
+
+Lá nós temos as diferentes ROUTES em que nós 'handle' no 
+
+backend....
+
+
+
+Como a rota 
+
+
+
+
+de 
+
+
+'/add-location', de método POST....
+
+
+
+
+
+E O REQUEST QUE É ENVIADO A ESSA ROTA NÃO É UM 
+
+
+REQUEST 
+
+
+
+ENVIADO DE ALGUMA PÁGINA 
+
+
+_______QUE É 'served' PELO MESMO SERVIDOR.... (pelo mesmo SERVER desse backend...),
+
+
+
+NÃO, 
+
+
+
+ESSE REQUEST É ENVIADO POR ALGO COM IP/URL diferente (como 'localhost:8080' e 'localhost:3000')...
+
+
+
+
+
+É ENVIADO POR UMA PÁGINA QUE RODA EM UM __dOMÍNIO DIFERENTE, EM UM __SERVIDOR___ DIFERENTE....
+
+
+
+E AINDA ASSIM, ESSE CÓDIGO DA ROUTE FUNCIONA...
+
+Mas pq?
+
+
+
+
+FUNCIONA 
+
+
+PQ O PROFESSOR 
+
+
+
+SETTOU os CORRETOS HEADERS 'CORS' NO 
+
+
+
+OBJETO 
+
+
+____'RESPONSE'___ DEFINIDO 
+
+
+
+NO ARQUIVO 'app.js', no ARQUIVO DO BACKEND/NO BACKEND...
+
+
+
+ex:
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+
+})
+
+
+
+
+
+---------------------------------------------
+
+
+ESSES 'CORS HEADERS' DA __RESPONSE__ produzida/enviada pelo servidor DIZEM AO BROWSER 
+
+
+
+'''''OK, isso é ok... ESSA PÁGINA QUE MANDA ESSE REQUEST DE TIPO 'POST', 'GET' E 'OPTIONS'
+DEVE CONSEGUIR/'IS ALLOWED' TO GET THE DATA...''''''' ------------>
+
+
+---------> E É ESSA 'MENSAGEM DO SERVIDOR' QUE FAZ COM QUE O BROWSER NÃO SEJA UM CHATONILDO
+ E AUTOMATICAMENTE ____'''TRAVE''''____ TUDO... É isso que fará com que o browser não produza 
+
+ aquela mensagem de erro do CORS e é isso que fará com que O ___REQUEST DO USUÁRIO___ QUE FOI 
+ FEITO EM UM DOMÍNIO/IP DIFERENTE (como a FRONTEND do webapp... isso é visto no send de requests 
+ PELA FRONTEND em direção À BACKEND de um webapp) SEJA 
+
+ ENVIADO COM SUCESSO À BACKEND de UM WEBAPP, AINDA QUE ESSA BACKEND ESTEJA EM UM DOMÍNIO DIFERENTE (o que geralmente, 99% das vezes, acontece)....
+
+
+ -----------------------------
+
+
+ ESSES HEADERS DA RESPONSE É QUE MUDARÃO O COMPORTAMENTO DO BROWSER, EVITARÃO QUE 
+
+ ELE 'BLOQUEIE' a REQUEST produzida pelo browser....
+
+
+
+
+
+
+
+ ----> isso significa que o CORS do seu backend é um MECANISMO DE SEGURANÇA QUE 
+
+
+ VOCê PODE ___USAR____ ou DESABILITAR___ ou ____CONFIGURAR ___ para 
+
+ satisfazer suas necessidades... (com base nos seus requirements...)
+
+
+
+
+ E ESSA É A IDEIA POR TRÁS DO 'CORS', desse 
+
+
+ conceito de 
+
+
+ cross origin resource sharing...
+
+
+
+
+
+
+
+ ----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CERTO... TEMOS QUE 
+
+
+
+
+ 'ALLOW' 
+
+
+
+ esse 
+
+
+
+
+
+ negócio, lá no nosso backend...
+
+
+
+
+
+
+
+
+
+
+ --> há mt tempo,
+
+
+ eu havia escrito isto:
+
+
+
+
+
+
+ app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+
+})
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+A PERGUNTA É: 
+
+CONSIGO SETTAR ISSO __ SÓ NO MEU CONTROLLER? ---> acho que não; acho que 
+
+precisa ser settado no 
+
+
+SERVER EM GERAL (
+
+    e levando em consideração a ORDEM DE EXECUÇÃO/IMPLEMENTAÇÃO DAS ROUTES....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.. ESSE CÓDIGO __ REALMENTE__ FUNCIONOU....
+
+
+
+
+
+
+
+O CÓDIGO DO 'app.js'
+
+FOI ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser'); ///PRECISO DISSO PARA 'PARSE INCOMING REQUEST BODIES'...
+
+
+
+
+
+const app = express();
+
+const feedRoutes = require('./routes/feed');
+
+
+
+// app.use(bodyParser.urlencoded()); ///x-www-form-urlencoded <form> ------> USADO EM APPS NODEEXPRESS __ COMUNS__, apps que __ RECARREGAM A PAGE QUANDO UMA FORM É SUBMITTADA.... (e que NÃO TRABALHAM COM O SEND DE JSON DATA NOS REQUESTS E RESPOSNES...) --> E ISSO __ NÃO FUNCIONA COM REST APIs (SPAS e apps de tipo MOBILE...)
+
+
+
+app.use(bodyParser.json()); //////application/json  nas suas RESPONSES E REQUESTS.... --> USADO EM REST APIs, apps REACT, apps MOBILE, apps com 'DECOUPLED FRONTEND AND BACKEND'...  --> APPS SEM RELOAD DE PAGE... -------> O MÉTODO '.json()' do bodyParser é USADO PARA __ PARSEAR COM SUCESSO A JSON DATA EMBUTIDA NOS REQUESTS QUE VAO SER ENVIADOS AO NOSSO BACKEND/APP NODEEXPRESS...
+
+
+
+
+app.use(
+    (req, res, next) => { ////VER AULA 360 ---> USADO PARA __ EVITAR ERROS DE 'CORS' no nosso app..... é usado para DAR PERMISSÃO, PARA DIZER 'ITS FINE TO ACCEPT REQUESTS FROM A FRONTEND THAT IS NOT SERVED BY THE SAME SERVER THAT RUNS OUR BACKEND'....
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        next();
+
+    }
+)
+
+
+
+app.use('/feed', feedRoutes);
+
+
+
+
+
+
+
+
+app.listen(8080); ///usamos '8080' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE O ERRO DE 'CORS', 
+
+
+DA FALTA DE 
+
+HEADER 
+
+
+DE 
+
+'Access-Control-Allow-Origin' 
+É UM __ ERRO_ _QUE VOCÊ 
+
+
+VÊ MT QUANDO 
+
+VOCÊ CONSTRÓI
+
+
+
+WEBAPPs... ---------> modern SINGLE PAGE APPLICATIONS... -------> E ESSE ERRO 
+
+
+
+
+FREQUENTEMENTE LEVA A MUITAS CONFUSÕES....
+
+
+
+
+
+
+
+
+
+ESSE TIPO DE ERRO TAMBÉM É CHAMADO DE UM 'CORS ERROR'...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O QUE É CORS, E O QUE ESTÁ CAUSANDO ISSO?
+
+
+
+
+
+
+
+
+
+-----> CORS --> CROSS ORIGIN RESOURCE SHARING... --> POR DEFAULT, 
+
+
+ISSO 
+
+
+
+__ NÃO É PERMITIDO POR BROWSERS...
+
+
+
+
+
+
+
+
+--> DIGAMOS QUE TEMOS 1 CLIENT E 1 SERVER...
+
+
+
+
+
+
+
+| CLIENT | 
+
+
+
+
+
+
+
+| SERVER | 
+
+
+
+
+
+
+
+
+
+
+
+
+DIGAMOS QUE OS 2 ESTÃO RODANDO EM 'localhost:3000' (IMPORTANTE: A PORTA TAMBÉM É PARTE DO 'DOMAIN'...)
+
+
+
+
+
+
+
+
+
+
+
+--> SE ELES RODAM NO MESMO SERVER (front e backend),
+
+
+
+PODEMOS __ ENVIAR 
+
+
+REQUESTS E RESPONSES 
+
+
+
+sem problemas... --> E É EXATAMENTE 
+
+
+
+
+EM RAZÃO DISSO  QUE  NÃO TÍNHAMOS NENHUM PROBLEMA 
+
+
+
+
+
+COM NOSSO SERVERSIDE-FRONTSIDE RELATIONSHIP AO LONGO DO CURSO,
+
+
+ANTES 
+
+DE VER ESSAS REST APIs... -----> ISSO 
+
+
+
+
+PQ COM O NODE E AS TEMPLATING ENGINES,
+
+
+
+NÓS 
+
+
+SEMPRE 
+
+
+
+__RENDERIZÁVAMOS NOSSOS ARQUIVOS HTML NO PRÓPRIO SERVERSIDE,
+
+
+
+
+
+
+
+E AÍ _, PORTANTO, ESSES ARQUIVOS HTML 
+
+
+
+ERAM SERVIDOS __ PELO MESMO __ SERVER/BACKEND A QUE 
+
+VOCê 
+
+ENVIAVA SEUS 
+
+
+REQUESTS.... (e é exatamente por isso que não tínhamos problemas...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ENTRETANTO, 
+
+
+SE O CLIENT E O SERVER __ RODAREM EM DIFERENTES DOMÍNIOS (
+
+
+    ou seja,
+
+    SE O __ FRONTEND RODAR NA PORTA 8080,
+
+    e o 
+
+
+    BACKEND RODAR NA PORTA 3000, por exemplo,
+
+
+
+)
+
+
+
+
+
+
+___ DIFERENTES DOMAINS,
+
+AÍ TEREMOS __ PROBLEMAS... -------> E É CLARO QUE 
+
+
+
+
+
+
+NO __ MODO DE PRODUCTION,
+
+
+VOCÊ 
+
+FREQUENTEMENTE 
+
+TERÁ 
+
+
+
+SITUAÇÕES COM 2 DOMAINS/PROVIDERS DIFERENTES,
+
+COMO 
+
+
+
+
+'myapp.com'  (frontend)
+
+
+
+
+'myapi.com' (backend)...
+
+
+
+
+
+
+
+
+---> E SE VOCÊ TENTAR EXECUTAR SEU CÓDIGO NORMAL, COMO ESTÁVAMOS FAZENDO,
+
+
+__ SEM DEFINIR ESSES HEADERS DE 
+
+'Allow-Access',
+
+
+
+
+
+
+__ VOCÊ 
+
+__ VAI __ ENCONTRAR PROBLEMAS,
+
+
+VOCÊ VAI ENCONTRAR 
+
+
+um 
+
+'CORS ERROR' --> É UM MECANISMO DE SEGURANÇA FORNECIDO PELO BROWSER,
+
+
+QUE TE IMPEDE 
+
+DE 
+
+'SHARE RESOURCES ACROSS DOMAINS, ACROSS 
+
+SERVICES, ACROSS ORIGINS'...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ENTRETANTO, PODEMOS __ OVERWRITTAR__ ESSE COMPORTAMENTO...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO PQ O COMPORTAMENTO 'CORS' _ FAZ SENTIDO __ APENAS PARA ALGUNS TIPOS DE APPS...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA REST API apps,
+
+
+
+ESSE COMPORTAMENTO CORS __ NÃO FAZ SENTIDO, não precisa ser usado...
+
+
+
+
+
+
+
+
+-------> NÓS __ QUEREMOS QUE __ O NOSSO SERVER 
+
+SEJA CAPAZ DE 
+
+'SHARE DATA'.... -------> NÓS DE FATO QUEREMOS 
+
+
+'OFFER DATA' 
+
+
+
+
+DE NOSSO SERVER ___ A DIFERENTES __ CLIENTS.... ------> E ESSES CLIENTS ______ FREQUENTEMENTE__ 
+
+
+
+
+NÃO SERÃO 'SERVED' 
+
+PELA MESMA API EM QUE 
+
+NOSSO SERVER EM SI RODA...
+
+
+
+
+
+
+
+
+
+
+--> EX: GOOGLE MAPS --> VOCê __ NÃO ESTÁ RODANDO O SEU APP (google maps) 
+
+
+
+NOS SERVERS DA GOOGLE,
+
+MAS __ MESMO ASSIM __
+
+VOCÊ PODE O ACESSAR...
+
+
+
+
+
+
+
+
+
+-->  E O MESMO PRINCÍPIO SE APLICA A SUA API...
+
+
+
+
+
+
+
+
+
+
+--> MESMO SE VOCÊ CONSTRUIR TANTO A FRONT COMO BACKEND,
+
+
+VOCÊ GERALMENTE VAI 
+
+    'SERVE'
+
+
+    OS 2 'ENDS'
+
+
+    __ A PARTIR DE DIFERENTES SERVERS,
+
+    PQ 
+
+
+
+    VOCê PODE ESCOLHER UM SERVER/SERVIÇO DE SERVER  QUE É 
+
+
+
+    __OPTIMIZADO __ PARA O 
+
+
+
+    FRONTEND, OPTIMIZADO PARA FRONTEND CODE (que serve essa função mt bom),
+
+
+
+
+    AO MESMO TEMPO QUE 
+
+
+
+ESCOLHE 1 SERVER COMPLETAMENTE DIFERENTE PARA O RUN DO SEU CÓDIGO SERVERSIDE NODEJS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, ENTÃO TEREMOS 'DIFFERENT DOMAINS, DIFFERENT ADDRESSES' 
+
+
+ao longo de nosso frontend e backend...
+
+
+
+
+
+
+
+
+
+--> E É POR ISSO QUE PRECISAMAOS _ RESOLVER __ 
+
+ESSE 
+
+
+
+'CORS ERROR'....
+
+
+
+
+
+
+
+
+
+
+------> PRECISAMOS, NO FINAL DA CONTAS,
+
+
+'TELL THE BROWSER THAT IT MAY __ACCEPT__ 
+
+THE RESPONSE SENT BY OUR SERVER'.... (por meio de HEADERS)...
+
+
+
+
+
+
+
+
+---> PARA DIZER ISSO AO BROWSER, PRECISAMOS __ MUDAR ALGO NO SERVER_, ALGO QUE 
+
+SERÁ 
+
+JUSTAMENTE 
+
+O 
+
+
+__OBJETO __ rESPONSe_....
+
+
+
+
+
+
+
+
+
+---> COMMON GOTCHA --> UM MONTE DE PESSOAS 
+
+
+ENCONTRAM ESSE ERRO DE 
+
+'CORS'
+
+
+
+
+
+NO DEVTOOLS DO CHROME,
+
+E AÍ 
+
+TENTAM 
+
+_rESOLVER__ ISSO __ 
+
+NO LADO DO BROWSERSIDE JAVASCRIPT... .--> ENTRETANTO,
+
+ESSE 
+
+
+É UM 
+
+
+___PROBLEMA DO SERVERSIDE,
+
+
+
+POR MEIO DA DEFINIÇÃO DE HEADERS CORRETOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> LÁ NO NOSSO CÓDIGO SERVERSIDE,
+
+
+EM 'APP.JS',
+
+
+NÓS SÓ PRECIASMOS 
+
+
+
+DEFINIR ALGUNS SPECIAL HEADERS...
+
+
+
+
+
+
+
+--> QUEREMOS SETTAR ESSES HEADERS __ EM QUALQUER__ RESPONSE __ QUE 
+
+
+DEIXA O NOSSO SERVER...
+
+
+
+
+-----> É POR ISSO QUE EU HAVIA ESCRITO AQUELE CÓDIGO DE 
+
+
+
+
+
+app.use(
+    (req, res, next) => { ////VER AULA 360 ---> USADO PARA __ EVITAR ERROS DE 'CORS' no nosso app..... é usado para DAR PERMISSÃO, PARA DIZER 'ITS FINE TO ACCEPT REQUESTS FROM A FRONTEND THAT IS NOT SERVED BY THE SAME SERVER THAT RUNS OUR BACKEND'....
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        next();
+
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+----------> ESSE MIDDLEWARE, UM 'GENERAL MIDDLEWARE',
+
+
+
+É __ IDEAL____....
+
+
+
+
+
+
+
+
+
+
+----> OK... PROFESSOR EXPLICA QUE VAI DEFINIR HEADERS NESSE MIDDLEWARE,
+
+QUE DEVE SER EXECUTADO __ ANTES __ DAS ROUTES RESTANTES...
+
+
+
+
+
+
+
+
+'res.setHeader()'
+ 
+
+ __ NÃO ENVIA UMA RESPONSE, E SIM SÓ SETTA UNS HEADERS...
+
+ (
+
+
+
+
+     já 
+
+
+
+     'res.json()' REALMENTE ENVIA UMA RESPONSe...
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> OK... 'setHeader'
+
+
+ VAI MODIFICAR NOSSO OBJETO 'response'
+
+
+ E ADICIONAR HEADERS extras...
+
+
+
+
+
+
+
+
+ --> OK... PROFESSOR 
+
+
+
+escreve 
+o header de 
+
+'Access-Control-Allow-Origin'... ----> O VALOR 
+
+
+QUE 
+
+ELE DEFINIRÁ 
+
+
+
+
+SERÁ 
+
+    "*" -------> ISSO SIGNIFICA 'ALL' --> ISSO PQ __ TODOS OS DOMAINS _
+
+
+
+
+
+
+    VÃO SER PERMITIDOS, VÃO PODER ACESSAR 
+
+    ESSE 
+
+    NOSSO 
+
+    SERVERSIDE.... --------> É CLARO QUE VOCÊ PODE/PODERIA 
+
+
+    'LOCK IT DOWN' 
+
+
+
+
+    A DOMÍNIOS ESPECÍFICOS, se você desejar...
+
+
+
+
+
+
+
+
+
+
+
+    ------> MAS O PROFESSOR VAI COM 'wildcard', com o '*"...
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR TAMBÉM SETTA OUTRO HEADER,
+
+
+que será 
+
+
+
+'Access-Control-Allow-Methods'  --------> AQUI, POR MEIO DESSE METHOD,
+
+
+
+NÓS DEIXAMOS AQUELAS ORIGINS/DOMÍNIOS 
+
+
+acessar 
+
+
+NOSSO CONTENT/DATA __ POR MEIO DE METHODS ESPECÍFICOS__...
+
+
+
+
+
+
+------------> METHODS ESPECÍFICOS.... --> ISSO 
+
+PQ 
+
+
+
+
+SÓ DESBLOQUEAR AS 'ORIGINS' 
+
+NÃO FUNCIONA POR SI SÓ... ------->  PRECISAMOS DEFINIR OS METHODS PERMITIDOS,
+
+PARA QUE 
+
+
+EXISTA ALGUM EFEITO....
+
+
+
+
+
+----> PROFESSOR COLOCA 'GET, POST, PUT, PATCH, DELETE'... ----> ELE DIZ QUE NÃO PRECISMAOS 
+
+
+
+
+DEFINIR TODOS OS METHODS POSSÍVEIS/EXISTENTES... --> PODEMOS 
+
+'ONLY ALLOW WHAT YOU WANT TO BE USABLE FROM OUTSIDE'...
+
+
+
+
+
+
+
+
+
+
+
+
+------> POR FIM, PROFESSOR ESCREVE UM TERCEIRO 
+
+
+
+'setHeader',
+
+DESSA VEZ 
+
+SETTANDO ___ OS HEADERS_ QUE 
+
+
+PODERÃO SER SETTADOS PELO BROWSER/clientside.. ----> OS HEADERS QUE PODERÃO SER SETTADOS 
+
+
+NOS REQUESTS DE NOSSOS CLIENTS/USERS...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE TAMBÉM PODERÍAMOS USAR, COMO VALOR, UM ' * ',
+
+
+
+
+MAS QUE TAMBÉM 
+
+
+PODEMOS ESPECIFICAR 
+
+
+UNS 
+
+HEADERS ESPECIAIS... -----> O PROFESSOR 
+
+
+VAI QUERER 
+
+
+
+DEFINIR 
+
+
+
+COMO POSSÍVEIS 
+
+OS 
+HEADERS 
+
+DE 
+
+'Content-Type' (para definir como 'application/json' o TYPE, para que seja aceita JSON DATA)
+
+
+
+
+e 
+
+
+'Authorization'...
+
+
+
+
+
+
+
+
+
+
+--> ELE COLOCA 'Authorization'
+
+PARA QUE 
+
+NOSSOS CLIENTS __ SEJAM CAPAZES DE ENVIAR REQUESTS__ _
+
+QUE SEGURAM 
+
+
+'EXTRA AUTHORIZATION DATA' em 1 header específico, header de 'Authorization'...
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser'); ///PRECISO DISSO PARA 'PARSE INCOMING REQUEST BODIES'...
+
+
+
+
+
+const app = express();
+
+const feedRoutes = require('./routes/feed');
+
+
+
+// app.use(bodyParser.urlencoded()); ///x-www-form-urlencoded <form> ------> USADO EM APPS NODEEXPRESS __ COMUNS__, apps que __ RECARREGAM A PAGE QUANDO UMA FORM É SUBMITTADA.... (e que NÃO TRABALHAM COM O SEND DE JSON DATA NOS REQUESTS E RESPOSNES...) --> E ISSO __ NÃO FUNCIONA COM REST APIs (SPAS e apps de tipo MOBILE...)
+
+
+
+app.use(bodyParser.json()); //////application/json  nas suas RESPONSES E REQUESTS.... --> USADO EM REST APIs, apps REACT, apps MOBILE, apps com 'DECOUPLED FRONTEND AND BACKEND'...  --> APPS SEM RELOAD DE PAGE... -------> O MÉTODO '.json()' do bodyParser é USADO PARA __ PARSEAR COM SUCESSO A JSON DATA EMBUTIDA NOS REQUESTS QUE VAO SER ENVIADOS AO NOSSO BACKEND/APP NODEEXPRESS...
+
+
+
+
+app.use(
+    (req, res, next) => { ////VER AULA 360 ---> USADO PARA __ EVITAR ERROS DE 'CORS' no nosso app..... é usado para DAR PERMISSÃO, PARA DIZER 'ITS FINE TO ACCEPT REQUESTS FROM A FRONTEND THAT IS NOT SERVED BY THE SAME SERVER THAT RUNS OUR BACKEND'....
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Method', 'POST, GET, PUT, PATCH, DELETE OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        next();
+
+    }
+)
+
+
+
+app.use('/feed', feedRoutes);
+
+
+
+
+
+
+
+
+app.listen(8080); ///usamos '8080' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+COM TUDO ISSO ESCRITO,
+
+PROFESSOR TERMINA COM O WRITE DE 
+
+'next()',
+
+PARA SEGUIR COM A EXECUÇÃO DAS RESTANTES ROUTES APÓS o 
+
+
+run desse 
+
+MIDDLEWARE GENÉRICO DEFINIDOR DE HEADERS/acesso por meio de headers... 
+
+
+
+
+
+
+
+
+
+
+
+--> OK... MAS O QUE INTERESSA, AGORA, É QUE 
+
+CADA 
+
+RESPONSE QUE 
+
+ENVIARMOS AO BROWSERSIDE/CLIENT __ TERÁ __ 
+
+ESSES 
+HEADERS ESPECIAIS...
+
+
+
+
+
+
+
+
+
+--> PORTANTO, SE SALVARMOS NOSSO CÓDIGO SERVERSIDE E ENTÃO CLICARMOS EM 'get Posts' 
+
+de novo,
+
+
+VAMOS RECEBER A MENSAGEM APROPRIADA,
+
+SEM O ERRO DE CORS, tudo pq 
+
+
+DEFINIMOS 'OS HEADERS APROPRIADOS NO NOSSO OBJETO RESPONSE',
+
+lá no server...

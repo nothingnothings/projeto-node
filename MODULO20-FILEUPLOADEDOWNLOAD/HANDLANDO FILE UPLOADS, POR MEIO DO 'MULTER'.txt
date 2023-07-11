@@ -1,0 +1,1528 @@
+
+
+
+
+
+
+
+
+
+
+
+
+------> VAMOS USAR O 'MULTER' NO NOSSO BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+-> O VIEW FICOU ASSIM:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    </head>
+    <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+    <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
+        <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" required name="title" id="title" value="<% if(editing) { %><%= prod.title %><% } %>">
+            </div>
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required  
+                name="image" 
+                id="image" 
+                
+                
+                >
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text"  required rows="5" name="description" id="description" ><% if(editing) { %><%=prod.description%><% } %></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number"  step=".01" required name="price" id="price" value="<% if(editing) { %><%= prod.price %><% } %>">
+            </div>
+            <% if (editing) { %>
+                <input type="hidden" value="<%= prod._id %>" name="id" required >
+                <% } %>
+            <button type="submit" class="btn"><%= editing ? 'Edit Product': 'Add Product' %></button>
+
+        </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+assim:
+
+
+
+
+
+
+
+  <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
+
+  ...
+
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required  
+                name="image" 
+                id="image" 
+                
+                
+                >
+
+
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+
+ESSAS 
+
+3 COISAS ERAM NECESSÁRIAS:
+
+
+
+
+
+
+
+
+
+
+1) O INSTALL DE MULTER 
+
+
+
+
+
+2) O WRITE DE 'type=file' NO INPUT FIELD EM QUE DESEJAMOS QUE O USER UPLOADE 1 ARQUIVO (1 image, nesse caso) 
+
+
+
+
+
+3) O ADD DO ATTRIBUTE 'enctype="multipart/form-data"
+
+NA TAG 'FORM' QUE WRAPPA NOSSO INPUT...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK, MAS AGORA DEVEMOS USAR 
+
+O MULTER NO NOSSO BACKEND... --> VOLTAMOS AO NOSSO CONTROLLER DE 'admin.js',
+
+
+
+EM QUE 
+
+DEVEOMS TRABALHAR 
+
+
+NO CONTROLLER DE 
+
+
+
+'postAddProduct'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl; ///versão que ainda usava urls..
+  const image = req.body.image; ////versão que usa o FILE UPLOAD de uma IMAGE...
+  console.log(image, 'EXEMPLO1'); ///isso vai nos mostrar que nossa image (File upload) NÃO ESTÁ SENDO HANDLADA CORRETAMENTE
+  const price = req.body.price;
+  const description = req.body.description;
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      // imageUrl: imageUrl,
+      image: image,
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        error.httpStatusCode = 500;
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+--> QUEREMOS USAR O 
+
+
+'MULTER'
+
+
+PARA 
+
+
+'EXTRACT INCOMING FILES'...
+
+
+
+
+
+
+
+
+--> BEM.... O 'MULTER', NA VERDADE (actually),
+
+
+
+NÃO __ É UMA __  PACKAGE QUE __ USAMOS 
+
+
+
+
+NOS NOSSOS CONTROLLERS, tipicamente ( e nem nas ROUTES...)
+
+
+
+
+
+
+
+
+
+
+---> EM VEZ DISSO,
+
+
+
+FAZEMOS EXATAMENTE COMO FIZEMOS COM 'bodyParser'; vamos 
+
+ESCREVER/INVOCAR 
+
+O 
+
+
+
+'multer'
+
+
+LÁ EM 
+
+'app.js',
+
+
+
+
+NAS PRIMEIRAS LINHAS 
+
+EXECUTADAS POR NOSSO BACKEND...
+
+
+
+
+
+
+------> 
+
+
+
+ex:
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+--> VAMOS ESCREVER PERTO DISSO... VAMOS FAZER ASSIM __JUSTAMENTE__ PQ 
+
+O 
+
+'multer'
+
+É UM 
+
+
+
+___MIDDLEWARE, EXATAMENTE COMO 
+
+
+'bodyParser'... 
+
+
+
+
+
+
+
+
+
+--> MULTER É UM MIDDLEWARE QUE É EXECUTADO __ EM CADA 'INCOMING REQUEST'.... 
+
+
+
+O QUE O MULTER FAZ É __ OLHAR EM CADA REQUEST,
+
+
+
+VER 
+
+SE 
+
+ELE 
+
+
+TEM 
+
+
+
+AQUELE 
+
+'MULTIPART FORM DATA'
+
+
+
+
+no body do request,
+
+
+E 
+
+
+AÍ 
+
+___TENTA __ EXTRAIR__ OS ARQUIVOS,
+
+SE ESSE FOR O CASO...
+
+
+
+
+
+
+
+
+
+
+
+---------> ok..  É UM MIDDLEWARE EXTRA QUE PRECISAMOS ESCREVER...
+
+
+
+
+
+
+
+
+
+
+--> PARA FAZÊ-LO, PRIMEIRAMENTE PRECISAMOS __ IMPORTAR__ O MULTER,
+
+
+por meio do código 
+
+
+
+
+'const multer = require('multer');'
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+ISSO FEITO,
+
+
+
+
+PODEMOS 
+
+
+O UTILIZAR...
+
+
+
+
+
+vamos escrever 
+
+
+
+'app.use(multer())' 
+
+
+
+
+
+
+
+
+
+
+
+-------> O MULTER TEM QUE SER EXECUTADO COMO UMA __ FUNÇÃO (())... ------> E AÍ,
+
+
+
+DEPOIS DISSO,
+
+TEMOS 
+
+QUE 
+
+EXECUTAR OUTRO MÉTODO SOBRE ESSE CALL DE MULTER,
+
+
+
+QUE É SIMPLESMENTE UM 
+
+
+
+METHOD 
+
+
+__QUE __ DEFINE__ SE VOCÊ 
+
+
+
+'EXPECT TO GET ONLY ONE FILE, OR MULTIPLE FILES'... ------> COMO VAMOS ESPERAR __ APENAS 1 ARQUIVO, 1 ÚNICO ARQUIVO NA NOSSA FORM,
+
+
+__ VAMOS COLOCAR 
+
+o 
+
+
+MÉTODO/função 
+
+'.single()'...
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(multer().single());
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+ISSO FEITO,
+
+PRECISAMOS 
+
+DECIDIR 
+
+
+QUAL SERÁ O 'INPUT NAME'
+
+
+QUE VAI SEGURAR A FILE... ----> NO NOSSO CASO,
+
+JÁ SABEMOS QUE 
+O INPUT 
+
+NAME 
+
+
+SERÁ 
+'image',
+
+POR ISSO ESCREVEMOS:
+
+
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(multer().single('image'));
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 'image' 
+
+NÃO É UM 'RANDOM VALUE';
+
+
+
+ele escolheu 'image' aqui 
+
+
+
+PQ __ LÁ NA NOSSA VIEW 
+
+
+NÓS HAVÍAMOS COLOCADOS 
+
+UM NAME 
+
+DE 
+
+'image'
+
+LÁ 
+
+
+
+
+NAQUELE INPUT, COMO VISTO AQUI:
+
+
+
+
+            <div class="form-control">
+                    <label for="image">Image</label>
+                <input type="file" 
+                required  
+                name="image" 
+                id="image" 
+                
+                
+
+
+
+
+
+
+
+
+
+
+    
+
+    --> COM ISSO, NÓS INICIALIZAMOS O MULTER,
+
+
+
+
+
+    E AÍ 
+
+
+
+    VEMOS SE ISSO FUNCIONA....
+
+
+
+
+
+
+
+---> MAS PARA VER SE ISSO FUNCIONA, PRIMEIRAMENTE PRECISAMOS SABER 
+
+
+
+
+
+O MODO PELO QUAL O 'MULTER'
+
+
+ACTUALLY 
+
+
+__ARMAZENA___ A 'INCOMING FILe'... ------> PARA ISSO,
+
+
+
+PROFESSOR 
+
+
+VOLTA AO 
+
+'postAddProduct'
+
+
+E 
+
+
+AÍ 
+
+
+
+ELE DECIDE 
+
+
+NÃO 
+
+
+ESCREVER 
+ 
+
+
+'const image = req.body.image',
+
+
+
+
+E SIM 
+
+
+'const image = req.file'
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+DEPOIS DISSO,
+
+ELE FAZ UM CONSOLE.LOG DESSA CONST,
+
+e fica tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> COMO OUTPUT DESSE 
+
+'FILE',
+
+
+RECEBEMOS ISTO:
+
+
+
+
+
+
+
+
+
+{
+  fieldname: 'image',
+  originalname: 'b6321195-8be9-4eef-a43f-6384c568b5e9.jfif',
+  encoding: '7bit',
+  mimetype: 'image/jpeg',
+  buffer: <Buffer ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01 00 01 00 00 ff db 00 84 00 06 06 06 06 07 06 07 08 08 07 0a 0b 0a 0b 0a 0f 0e 0c 0c 0e 0f 16 10 11 10 ... 100041 more bytes>,
+  size: 100091
+} EXEMPLO1
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+ok, isso BASICAMENTE CONVERTEU NOSSA IMAGE EM 1 BUFFER, E AÍ O ARMAZENOU NESSE 
+
+OBJETO 
+
+'file',
+
+
+DENTRO DO OBJETO 'request''...
+
+
+
+
+
+
+
+
+-----> CERTO....
+
+
+
+
+
+QUAL A EXPLICAÇÃO DO PROFESSOR?
+
+
+
+
+
+----> DE FATO,
+
+
+
+
+TEMOS ESSA PARTE AÍ... ---> PARECE QUE O MULTER REALMENTE FEZ ISSO,
+
+
+ CONVERTEU NOSSA IMAGE EM 1 BUFFER, E AÍ O ARMAZENOU NESSE 
+
+OBJETO 
+
+'file',
+
+
+DENTRO DO OBJETO 'request''...
+
+
+
+
+
+
+
+
+
+--------> 
+
+
+
+TEMOS O NOME DO FIELD,
+
+
+O NOME DA FILE,
+
+
+
+
+
+O 'mimetype' (ou seja, QUAL TIPO DE ARQUIVO É ESSE...)
+
+
+
+
+
+--> BUFFER, NO CASO, É O JEITO PELO QUAL O NODE HANDLA A 'BINARY DATA'... --> APRENDEMOS SOBRE 
+
+STREAMS E BUFFERS 
+
+ANTERIORMENTE... --> ESSE É BASICAMENTE 
+
+O 
+
+RESULTADO 
+
+DA 
+
+'STREAMED DATA' (
+
+
+    isso significa que 
+
+
+    O ARQUIVO FOI 
+
+
+    ENVIADO 
+
+    AO NOSSO SERVER 
+
+
+
+    NO FORMATO DE UMA STREAM/HANDLADO NO FORMATO DE UMA STREAM,
+
+
+    PARA 
+
+SER 
+
+HANDLADO EFICIENTEMENTE -------> E AÍ, O 
+
+
+'buffer:', ESSA PROPRIEDADE AÍ,
+
+
+CONTÉM 
+
+BASICAMENTE 
+
+
+'THE COLLECTED DATA',
+
+
+
+
+' the collected DATA IN A BUFFER',  quase 
+
+como uma 
+
+
+'BUS STOP'.... ------> ESSA 'BUS STOP' NOS DÁ UM JEITO DE 'WORK WITH THE STREAM DATA'.... -----> 
+
+
+
+AQUI, NO CASO, É 
+
+A 'COMBINED STREAM DATA'...
+
+
+)
+
+
+
+
+
+
+------> E NÓS PODEMOS, DE FATO, TRABLAHAR COM ESSE 'BUFFER',
+
+
+PARA 
+
+FAZRE COM QUE ELE REALMENTE SE TRANSFORME EM UM 
+
+ARQUIVO... ----------> E VOCÊ PODE,
+
+
+NA VERDADE,
+
+
+
+
+
+
+
+
+CONFIGURAR o 'multer',
+
+esse middleware,
+
+
+
+LÁ EM 
+
+'app.js',
+
+
+
+DE FORMA UM POUCO DIFERENTE... --->  LÁ,
+
+
+NO LOCAL EM QUE
+
+SETTAMOS 
+
+O MULTER,
+
+
+
+PROFESSOR 
+
+EXPLICAU QE 
+
+
+
+PODEMOS _ 
+
+
+PASSAR 1 OBJETO ({}) CONFIG AO MULTER,
+
+
+OBJETO EM QUE _ PODEMOS SETTAR__ ALGUMAS OPÇÕES...
+
+
+
+
+
+
+
+
+
+
+
+--> UMA DESSAS OPÇÕES 
+
+
+
+É A OPÇÃO 
+
+
+
+'dest: '
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(multer({dest: }).single('image'));
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+NESSA PROPERTY, PODEMOS ESPECIFICAR COISAS COMO 
+
+
+
+'/images',
+
+
+ou 
+
+só 
+
+'images'... 
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false })); ////use ISTO e 'multer'( o multer é usado para parsear E HANDLAR, EM SUAS FORMS, TANTO 'text data', como o BODYPARSER, COMO TAMBÉM 'file data', coisa que o bodyparser NÃO CONSEGUE FAZER...)
+app.use(multer({dest: '/images'}). /// o SET DE 'dest' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+single('image'));
+
+
+
+
+
+
+
+
+
+
+---> O QUE ISSO VAI MUDAR É... ---> QUANDO ADICIONARMOS 
+
+
+UMA 
+
+IMAGE DE NOVO,
+
+
+
+VEREMOS QUE NOSSO OUTPUT __ TERÁ MUDADO...
+
+
+
+
+
+
+
+
+IMPORTANTE!!!! --> SE ADICIONAMOS ESSA KEY DE 'dest',
+
+
+
+deixaremos 
+
+DE 
+
+TER 
+
+
+AQUELA KEY DE 'buffer',
+
+
+E VAMOS TER 
+
+
+
+UMA KEY CHAMADA DE 'destination'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  fieldname: 'image',
+  originalname: '7c1f9625-ed0c-4d4e-b87f-2b14c8a04ec2.jfif',
+  encoding: '7bit',
+  mimetype: 'image/jpeg',
+  destination: '/images',
+  filename: 'df795fbddc6c1f17c13c1507160cc4fa',
+  path: '\\images\\df795fbddc6c1f17c13c1507160cc4fa',
+  size: 126043
+} EXEMPLO1
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OU SEJA,
+
+
+AGORA TEMOS 
+
+
+AQUELA PROPRIEDADE 
+
+
+de 
+
+
+
+
+  destination: '/images', 
+
+  E AQUELE 
+
+  PATH 
+
+  DE 
+
+
+    path: '\\images\\df795fbddc6c1f17c13c1507160cc4fa',
+
+
+
+
+
+    --------------------------------------
+
+
+
+
+
+
+
+
+
+
+------> OK... ISSO SIGNIFICA QUE __ O BUFFER DEIXOU DE EXISTIR, PQ 
+
+O 
+
+MULTER JÁ AUTOMATICAMENTE __O CONVERTEU___ (esse buffer) DE VOLTA EM 
+
+'BINARY DATA',
+E AÍ 
+
+O ARMAZENOU 
+
+NAQUELE dest/destination (esse path aí) que 
+
+VOCÊ ESPECIFICOU.. ---------->  
+
+
+
+
+
+
+E, DE FATO, SE AGORA EXAMINARMOS NOSSOS FOLDERS, DE NOSSO WEBAPP,
+
+VAMOS PERCEBER QUE 
+
+
+
+
+PASSAMOS A TER UM FOLDER DE 'images',
+
+
+
+
+
+
+
+
+EM QUE ARQUIVOS DE NOSSAS IMAGES SERÃO ARMAZENADOS...
+
+
+
+
+
+
+
+
+-------> CERTO.... E CADA FILE TERÁ UM 'RANDOM HASH NAME',
+
+
+
+
+E __ NÃO VAI TER UMA 'FILE EXTENSION'... --> ALÉM DISSO,
+
+
+
+__ NÃO É RECONHECIDA COMO UMA IMAGE...  -----> MAS 
+
+
+
+SE ALTERARMOS A EXTENSÃO,
+
+DEIXARMOS 
+
+
+
+'.png'/'.jpg',
+
+
+
+VAMOS EFETIVAMENTE VER A IMAGE QUE UPLOADAMOS AO NOSSO SERVER...  -----> ISSO SIGNIFICA QUE 
+
+
+
+
+NOSSO CÓDIGO REALMENTE FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+---------> TUDO QUE PRECISAMOS FAZER, AGORA, É TWEAKAR 
+
+
+
+
+
+
+__ A MANEIRA _ PELA QUAL ESSE ARQUIVO/OS ARQUIVOS UPLOADADOS __SÃO NOMEADOS__... ------> 
+
+
+
+
+E ISSO É ALGO QUE VEREMOS __ NA PRÓXIMA AULA___....
+
+
+
+
+
+
+
+
+
+
+
+-------> eu também tenho __OUTRO PROBLEMA__... --> FILES (images) estão sendo ADICIONADAS NESSE 
+
+MEU FOLDER __ MESMO QUANDO __ O PRODUCT NÃO É ADDADO (erro de validation)...
+
+
+
+
+
+
+
+
+
+
+-----------> como posso evitar esse 'add compulsório'?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+You can have the validation middleware BEFORE the multer middleware. That way, when the validation fails, all the subsequent middlewares would not be executed -- and thus, the files will not be uploaded.
+
+Separate out the validation like so:
+
+const validateSeamUpload = (req, res, next) => {
+    const { error } = validateSeam(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    return next();
+};
+And then, mount this validateSeamUpload BEFORE the seamUpload middleware like so:
+
+router.post("/", [auth, validateSeamUpload, seamUpload], async (req, res) => {
+    /** No need for validation here as it was already done in validateSeamUpload */
+    const seam = new Seam({
+        stylePicture: req.files["stylePicture"][0].path,
+        materialPicture: req.files["materialPicture"][0].path,
+        description: req.body.description,
+        deliveryDate: req.body.deliveryDate,
+        customer: req.body.customerId
+    });
+
+    await seam.save();
+
+    res.send(seam);
+});
+By the way, you can pass them as arguments to post() as well. Like so:
+
+router.post("/", /** => See, no need for an array */ auth, validateSeamUpload, seamUpload, async (req, res) => {
+    /** your controller code */
+});
+
+
+
+
+
+
+
+
+
+
+
+acho que isso não funciona no meu código...
+
+
+
+
+
+
+
+OK... ISSO É __PÉSSIMO:
+
+
+
+A IMAGE SEMPRE É ENVIADA,
+
+
+E CÓDIGOS COMO 
+
+
+''   req.file === null;'''
+
+
+
+LÁ NOS NOSSOS CONTROLLERS__ NÃO FUNCIONAM__ (pois estão na 'ponta' do runtime, não como 'multer', que está sendo executado LÁ NO ROOT, em 'app.js'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+como fazer isso?
+
+
+
+
+
+
+
+
+Eu não sei.... 
+
+
+
+
+
+posso pensar em algumas soluções...
+
+
+
+
+
+
+
+
+--> se eu troco o 
+
+
+middleware de MULTER de lugar,
+
+eu ganho um erro de 
+
+
+'csrfToken is not set'...
+
+
+
+
+
+
+
+
+--> parece que o write de 
+
+
+
+'multer'
+
+lá em app.js é uma BOSTA.... --> a solução melhor parece 
+
+
+
+ser COLOCAR ELE EM ALGUM ARQUIVO DE 'route', para 
+
+
+que então 
+
+seja possível escrever código de error handling...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+// routes.js
+const multer = require('multer')
+const upload = multer({ storage: multer.memoryStorage() })
+
+router.post('/contact', upload.single('photo'), [
+  // validation ...
+], (req, res) => {
+  // error handling ...
+
+  if (req.file) {
+    console.log('Uploaded: ', req.file)
+    // Homework: Upload file to S3
+  }
+
+  req.flash('success', 'Thanks for the message! I’ll be in touch :)')
+  res.redirect('/')
+})
+
+
+
+
+
+
+---------------------------

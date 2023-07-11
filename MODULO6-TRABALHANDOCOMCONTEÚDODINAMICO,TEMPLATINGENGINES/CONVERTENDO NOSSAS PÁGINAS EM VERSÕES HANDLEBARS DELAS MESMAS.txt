@@ -1,0 +1,1317 @@
+
+
+OK.. VOU TENTAR FAZER ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+COMEÇO PELA VERSÃO 
+
+DE 
+
+'shop.html'/shop.hbs....
+
+
+
+
+
+
+
+
+--> SINTAXE DE FOR LOOPS É TIPO ESTA:
+
+
+     {{#each}}
+
+
+
+
+
+
+
+
+
+
+
+
+-----> RESOLVI UM PROBLEMA/ERRO NO MEU CÓDIGO, QUE ERA ESTE:
+
+
+
+
+Error: ENOENT: no such file or directory, open 'A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\views\layouts\main.handlebars'
+
+
+
+
+
+
+
+
+
+
+--> ISSO ACONTECIA __ JUSTAMENTE __ PQ EU NÃO HAVIA DEFINIDO NENHUM 'LAYOUT DEFAULT'
+
+para 
+
+meus templates handlebars... ---> CONSERTEI ISSO POR MEIO DE 
+
+UM OBJETO 'CONFIG' 
+
+
+LÁ 
+
+
+__ NO CALL DE 'expressHbs()', lá em 'app.engine()'..
+
+
+
+
+
+
+EX:
+
+
+
+
+
+app.engine('hbs', expressHbs(
+  {
+    extname: "hbs",
+    defaultLayout: "",
+    layoutsDir: "",
+  }
+));
+
+
+
+
+
+
+
+--------> ISSO AÍ, ESSE OBJETO 
+
+
+
+'''
+
+  {
+    extname: "hbs",
+    defaultLayout: "",
+    layoutsDir: "",
+  }
+
+'''
+
+
+
+,
+
+
+__ CONSERTOU O PROBLEMA...
+
+
+
+
+
+
+MEU CÓDIGO DA PÁGINA 
+
+
+
+'shop.hbs'
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+  {{#if prods}}
+            {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+            {{/each}}
+            {{else}}
+                <h1>No Products</h1>
+            {{/if}}
+    </main>
+  </body>
+</html>
+
+
+
+
+----------------------------------------
+
+
+
+
+
+-> 
+
+
+FUNCIONA DA MESMA FORMA QUE O PUG,
+
+MAS 
+
+A SINTAXE 
+
+DE IF STATEMENTS 
+
+E FOR LOOPS É DISTINTA... (handlebars, e aquele 'this' que eu não gosto...)
+
+
+
+
+
+
+--------------
+
+
+
+AGORA É HORA DE FAZER A PAGE DE 
+
+'add-product.hbs'..
+
+
+
+
+
+
+--> na verdade,
+
+A PAGE 
+
+
+de 
+
+'add-product''
+
+
+
+NÃO TEM NENHUMA NECESSIDADE DE CÓDIGO DINÂMICO/SINTAXE ESPECIAL JAVASCRIPT com a sintaxe do handlebars... -----> 
+
+
+
+POR ISSO,
+
+
+DEIXAMOS 
+
+
+
+O MESMO CÓDIGO,
+
+ASSIM:
+
+
+
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/">Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product" class="active">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+</body>
+</html>
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+OK... ASSISTIREI A AULA DO PROFESSOR...
+
+
+
+------------------
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE DEVEMOS COMEÇAR SEM O 'LAYOUT'...
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR QUER OUTPUTTAR O TITLE DYNAMICALLY TBM...
+
+
+
+
+
+
+--> por isso escrevemos:
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{pageTitle}}</title>
+    <link rel="stylesheet" href="/css/main.css"></link>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+          <ul class="main-header__item-list">
+            <li class="main-header__item"><a href="/">Shop</a></li>
+            <li class="main-header__item"><a href="/admin/add-product" class="active">Add Product</a></li>
+          </ul>
+        </nav>
+      </header>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+</body>
+</html>
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+OK...
+
+
+
+
+
+
+A PÁGINA DO 'add-product' foi bem fácil...
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
+AGORA DEVEMOS IR ATÉ O 
+
+ARQUIVO DE 
+
+'shop.html',
+
+
+
+
+
+E AÍ 
+
+FAZER AQUELE CÓDIGO DE IF STATEMENTS/FOR LOOP...
+
+
+
+
+
+
+EX:
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>{{pageTitle}}</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+    <div class="grid">
+  {{#if prods}}
+            {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+            {{/each}}
+            {{else}}
+                <h1>No Products</h1>
+            {{/if}}
+    </main>
+     </div>
+  </body>
+</html>
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ok... professor 
+
+escreve 
+
+
+UM IF HELPER...
+
+
+
+
+
+
+{{#if}}
+
+
+
+
+
+
+--> ESSE É UM 'BLOCK STATEMENT'...
+
+
+
+
+BLOCK STATEMENTS SÃo 
+
+
+'{{#}}' .... ---> 
+
+
+
+
+ELES SÃO WRAPPERS, WRAPPAM CONTEÚDOS QUE DEVERÃO SER OUTPUTTADOS CONDICIONALMENTE/EM LOOPS...
+
+
+
+
+
+
+
+---> no caso, 
+
+
+
+PROFESSOR VAI ESCREVER 
+
+
+
+'{{#if prods.length > 0}}'
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>{{pageTitle}}</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+       
+  {{#if prods.length > 0}}
+                <div class="grid">
+            {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+            {{/each}}
+            {{else}}
+                <h1>No Products</h1>
+                       </div>
+            {{/if}}
+
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+INDENTATION NÃO 
+
+
+IMPORTA AQUI,
+
+mas é bom para deixar 
+
+mais fácil de ler...
+
+
+
+EX:
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>{{pageTitle}}</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+       
+  {{#if prods.length > 0}}
+                <div class="grid">
+            {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+                   </div>
+            {{/each}}
+            {{else}}
+                <h1>No Products</h1>
+                    
+            {{/if}}
+
+    </main>
+  </body>
+</html>
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+OK.... MAS RECEBEMOS UM ERRO....
+
+
+
+O ERRO ACONTECEU DEVIDO 
+
+
+
+
+A ESTA LINE AQUI:
+
+
+  {{#if prods.length > 0}}
+
+
+
+
+
+
+
+  ^^^^ O HANDLEBARS NA VERDADE NÃO SUPORTA STATEMENTS COMO ESSE...
+
+
+
+
+
+
+
+
+  --> A ÚNICA COISA QUE O HANDLEBARS SUPORTA É __ 'O OUTPUT DE KEYS  QUE 
+
+
+  RENDEM/YIELDAM OU TRUE OU FALSE'.... --> ISSO SIGNIFICA, RESUMIDAMENTE,
+
+
+  QUE 
+
+
+  __ PRECISAMOS ___ PASSAR ESSE IF CHECK DE 'prods.length > 0 '
+
+
+  PARA ___ DENTRO DO NOSSO CÓDIGO DO EXPRESS,
+
+
+
+  __PARA QUE ENTÃO SÓ O __ RESULTADO__ DESSE CHECK (true ou false)
+
+  SEJA 
+
+  PASSADO 
+
+
+  AO NOSSO TEMPLATE...
+
+  
+
+
+
+  --> para isso,
+
+  vamos 
+
+  até o código 
+
+
+  de 
+
+
+
+
+  'shop.js',
+
+  nesta linha aqui:
+
+
+
+
+
+   res.render('shop', {prods: products, pageTitle: 'Shop', path: '/'});
+
+
+
+
+
+
+
+
+
+
+
+   ^^^ NO OBJETO 'DATA',
+
+   vamos passar UMA NOVA PROPRIEDADE,
+
+
+   de 
+
+
+
+   'hasProducts'...
+
+
+
+
+
+
+
+
+   --> ESSA PROPRIEDADE VAI SIMPLESMENTE FAZER 'HOLD' DE UM VALOR 
+
+   QUE 
+
+   SERÁ O RESULTADO 
+
+
+   DE NOSSO CHECK QUE TÍNHAMOS NO TEMPLATE...
+
+
+
+
+
+
+
+
+
+   ou seja,
+
+   isto:
+
+
+
+
+
+
+
+
+
+
+
+
+
+   router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+
+
+    const products = adminData.products;
+
+      res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', hasProducts: products.length > 0}); 
+            }
+);
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+FAREMOS O CHECK, A PARTIR DO ARRAY 'products',
+
+
+
+__ NESSE CÓDIGO DO EXPRESS MSM,
+
+E NÃO NO NOSSO TEMPLATE (Que não suporta COMPARAÇÕES FEITAS DENTRO DE SI... só 'true'/'false' em variáveis passadas a ele, como essa propriedade 'hasProducts' que vai retornar OU TRUE ou  FALSE... )
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ CERTO... E ISSO AÍ JÁ É UMA 'CORE DIFFERENCE' 
+
+em relação ao pug:
+
+
+
+
+ESSENCIALMENTE,
+ 
+
+
+ NOS NOSSOS ARQUIVOS/TEMPLATES HANDLEBARS __ NÓS SOMOS INCAPAZES__ DE RODAR QUALQUER TIPO DE LÓGICA..
+
+
+
+A ÚNICA COISA QUE SOMOS CAPAZES DE FAZER, EM ARQUIVOS HANDLEBARS,
+
+é 
+
+'OUTPUT SINGLE PROPERTIES/SINGLE VARIABLES E __ SEUS VALORES'.... ------> 
+
+
+
+E AÍ SÓ PODEMOS USAR IF BLOCKS/STATEMENTS 
+
+
+___ COM ESSES VALORES TRUE/FALSE __ PASSADOS __ PELO 
+
+NOSSO CÓDIGO 
+
+EXPRESS,
+
+
+que 
+então vai executar essas lógicas lá msm... (no express)...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>{{pageTitle}}</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        
+  {{!-- {{#if prods.length > 0}} NÃO FUNCIONA. É EXECUTE DE LÓGICA, e isso não funciona em TEMPLATES HANDLEBARS... --> já o código logo abaixo FUNCIONA, pois é só um boolean de 'true/false', extraído de LÓGICA RODADA LÁ NO 'EXPRESS', E NÃO NESSE NOSSO TEMPLATE/arquivo handlebars... --}}
+            {{#if hasProducts}}
+            <div class="grid">
+            {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+            {{/each}}
+             </div>
+            {{#else}}
+                <h1>No Products</h1>
+            {{/if}}
+        </div>
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+------> ISSO, ESSA LIMITAÇÃO, __________PODE__ PARECER COMPLEXA,
+
+
+MAS __ TRAZ ACTUALLY UMA VANTAGEM:
+
+
+
+
+ELA NOS FORÇA 
+
+
+A COLOCAR TODA NOSSA LÓGICA LÁ 
+
+
+NO CÓDIGO/PLATAFORMA DO EXPRESS (
+
+
+     visto em 
+
+
+
+     '''
+     router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+
+
+    const products = adminData.products;
+                                                                     
+      res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', hasProducts: products.length > 0}); 
+             
+            }
+);
+
+'''''
+
+),
+
+
+
+__ E ISSO É BOM 
+
+
+PQ 
+
+É JUSTAMENTE 
+
+
+
+LÁ QUE 
+
+
+NOSSA LÓGICA GERALMENTE/TIPICAMENTE __ DEVE VIVER.... --> e assim,
+
+DEIXAMOS 
+
+NOSSO 
+
+TEMPLATES 
+
+'LEAN',
+
+
+o que é o IDEAL... ----------> ISSO PQ 
+
+
+
+SE VOCÊ 
+
+
+COLOCA MT 
+
+
+
+__LÓGICA__ NOS SEUS TEMPLATES,
+
+
+
+SEU CÓDIGO PODE ACABAR FICANDO ___ DIFÍCIL __ DE LER,
+
+
+
+__ PQ VOCÊ SEMPRE TERÁ 
+
+DE CHECAR 
+
+
+OS 2, DAÍ,
+
+
+__TANTO O CÓDIGO EXPRESS COMO SEUS 
+
+TEMPLATES...
+
+
+
+
+
+
+
+----------> REGRA:
+
+
+O TEMPLATE SEMPRE DEVERÁ 
+
+'BE ABOUT DISPLAYING STUFF',
+
+
+
+AO PASSO QUE 
+
+
+A LÓGICA EM SI 
+
+
+DEVE ACONTECER/SER EXECUTADA LÁ 
+
+
+NO 
+
+EXPRESS, NO CÓDIGO/PLATAFORMA DO EXPRESS...
+
+
+
+
+
+
+
+
+-------> essa é a filosofia do 
+
+
+HANDLEBARS,
+
+e é assim que 
+
+
+
+O HANDLEBARS HANDLA ESSE NEGÓCIO...
+
+
+
+
+
+
+
+
+
+
+------> com isso,
+
+RECARREGAMOS NOSSA PÁGINA...
+
+
+
+
+
+TESTAMOS...
+
+
+
+
+
+
+
+
+
+
+
+
+OK... ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+nossas páginas estão todas funcionando...
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+---> o único problema 
+
+
+
+
+com 
+
+
+o handlebars é o uso 
+
+da THIS KEYWORD 
+
+
+
+
+
+
+nos loops... (isso é nojento),
+
+
+
+
+ISSO É VISTO NESTE CÓDIGO AQUI:
+
+
+
+
+
+
+ {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+            {{/each}}
+
+
+
+
+
+
+     
+     --------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... entendemos essa filosofia,
+
+de ter 
+
+
+MENOS LÓGICA NO TEMPLATE E MAIS LÓGICA NO EXPRESS CODE...
+
+
+
+
+
+(vamos querer deixar nosso template LIMPO DE 
+
+
+
+JAVASCRIPT EXPRESSIONS...)
+
+
+
+
+
+
+
+--> AGORA SÓ FALTA IMPLEMENTAR 1 ÚNICA COISA NO NOSSO CÓDIGO 
+
+
+HANDLEBARS,
+
+que 
+
+é 
+
+JUSTAMENTE O 
+__LAYOUT__...

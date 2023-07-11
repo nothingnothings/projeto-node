@@ -1,0 +1,1183 @@
+ 
+
+
+
+
+
+
+
+
+
+ --> NÓS JÁ TEMOS NOSSO CÓDIGO 'FOR DOWNLOADING A FILE' (no caso, a fatura/invoice)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> SEU CÓDIGO É ESTE:
+
+
+
+
+ exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            return res.send(data); ////EIS O CÓDIGO EM QUESTÃO.
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+-----> E ESSE ARQUIVO AÍ __ SÓ FICA DISPONÍVEL QUANDO ESTIVERMOS/ESTAMOS 
+
+'LOGGED IN'...
+
+
+
+
+
+----------> MAS É CLARO QUE __ PODEMOS __ MELHORAR_ A MANEIRA_ PELA QUAL 
+
+
+RETORNAMOS ESSES 
+
+ARQUIVOS ao user...
+
+
+
+
+
+
+
+
+------> PROFESSOR EXPLICA QUE PODEMOS 
+
+
+
+
+
+
+
+
+
+1) PASSAR MAIS INFO AO BROWSER....
+
+
+
+
+
+
+
+
+
+2) VAMOS QUERER PASSAR MAIS INFO PQ VAMOS QUERER __ 
+
+QUE __ SEJA USADO __ OUTRO 'FILENAME'(user deverá baixar 
+
+um arquivo com filename simples, como 'fatura.pdf'...),
+
+
+
+
+e TAMBÉM PQ __ VAMOS QUERER __ QUE 
+
+A 
+
+
+EXTENSION (ex: '.pdf')
+
+
+CORRETA
+ 
+
+
+ SEJA ANEXADA AO NOSSO ARQUIVO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --------> PARA ISSO, PARA CONFIGURAR ESSAS OPÇÕES DO RETURN DE ARQUIVOS CORRETAMENTE,
+
+
+ DEVEMOS 
+
+
+ __SETTAR_ ALGUNS HEADERS__ por meio 
+
+
+
+ da escrita de 
+
+
+
+ 'res.setHeader('')'...
+
+
+
+
+
+
+
+ -------> A PRIMEIRA COISA QUE O PROFESSOR VAI QUERER 
+
+ FAZER É 
+
+ SETTAR 1 HEADER DE 
+ 'Content-Type'
+
+
+
+ COMO SENDO IGUAL A 
+
+
+
+ 'application/pdf', PQ 
+
+
+ É 
+
+ EXATAMENTE 
+
+
+ 
+
+
+ COM ISSo 
+
+
+
+ QUE 
+
+ ESTAMOS LIDANDO, AQUI...
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+ exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO.
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+---------------------------------------
+
+
+
+
+CERTo.....EX:
+
+
+
+
+
+
+
+
+      } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            return res.send(data); 
+          }
+        });
+
+
+
+
+
+---------------> 
+
+
+
+
+
+
+
+
+
+SALVAMOS ISSO E TESTAMOS... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA, QUANDO CLICARMOS NO NOSSO BUTTON DE 'fatura'
+
+
+
+DE NOVO,
+
+
+_vAMOS __ 
+
+
+
+VER QUE __ 
+
+
+SERÁ ABERTO UM PDF NO BROWSER, O PDF DO ARQUIVO QUE 
+
+QUEREMOS QUE O USER BAIXE ('fatura.pdf')...
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+
+SUCESSO... -> O SIMPLES SET DE UM HEADER DE 'Content-Type'
+
+COMO SENDO EQUIVALENTE A 
+
+
+
+'application/pdf'
+
+
+FEZ ISSO....
+
+
+
+
+
+
+
+
+--> certo... mas no meu código, isso NÃO ESTÁ FUNCIONANDO; CONTINUO BAIXANDO 
+
+
+ESSE 
+
+
+ARQUIVO 
+
+
+SEm 
+
+'.pdf'...
+
+
+
+
+
+
+
+
+
+CERTO... AGORA FUNCIONOU...
+
+
+
+
+
+
+
+--> aparece o visualizador de pdf, tudo certo, com o meu pdf... e aí posso baixá-lo.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTo....
+
+
+
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE O COMPORTAMENTO 
+
+
+DO RETURN DE ARQUIVOS _ JÁ FOI ALTERADO.... -----> ISSO SIGNIFICA QUE 
+
+
+
+POR MEIO DOS HEADERS __ NÓS _ JÁ ENTREGAMOS AO BROWSER UM BOCADO DE INFO 
+
+IMPORTANTE,
+
+info que 
+
+DEIXA ELE HANDLAR 
+
+ESSES 
+
+ARQUIVOS 
+
+
+
+
+
+
+
+DE UMA FORMA MELHOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> E, EXPLICA O PROFESSOR, PARA PDFS,
+
+
+A GRANDE MAIORIA DOS BROWSERS __ OS __ ABRE 'inline' ( ou seja,
+
+
+__DENTRO DO BROWSER..___ ) --------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, ISSO É ÓTIMO... MAS É _ _CLARO ___ QUE PODEMOS PASSAR/SETTAR MAIS 
+
+
+INFORMAÇÕES 
+
+
+
+acerca desse file....
+
+
+
+
+
+
+
+-----> PROFESSOR DECIDE ADICIONAR __ OUTRO __ HEADER,
+
+
+dessa vez um HEADER DE 
+
+
+'Content-Disposition'... ---------> PROFESSOR NOS EXPLICA QUE 
+
+
+ISSO 
+
+
+NOS DEIXA DEFINIR 
+
+
+
+
+'HOW THIS CONTENT SHOULD BE SERVED TO THE CLIENT'... -------> É 
+
+MAIS 
+
+
+1 
+
+HEADER 
+
+QUE 
+
+DEFINE O _ COMPORTAMENTO__ DESSE ARQUIVO QUE É/SERÁ RETORNADO...
+
+
+
+
+
+
+
+
+
+--------> o professor define um valor de 'inline',
+
+
+POIS 
+
+
+
+ELE AINDA VAI QUERER QUE O BROWSER 
+
+
+ABRA 
+
+
+
+ESSE PDF DE FORMA 'inline' (com o viewer de pdf dentro do seu browser...)
+
+
+
+
+
+
+----> E ESSA CONFIG AÍ __ É A DEFAULT,
+
+
+
+
+É O QUE SEMPRE ACONTECE QUANDO VOCê CLICA A UM LINK QUE LEVA A UM PDF, EM DIVERSOS 
+
+
+BROWSERS...
+
+
+
+
+
+
+
+
+
+---------> O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+ exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO.
+            res.setHeader('Content-Disposition', 'inline'); ///EIS O CÓDIGO EM QUESTÃO.
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+------> MAS PROFESSOR EXPLICA QUE ESSA NÃO É A ÚNICA UTILIDADE 
+
+DE 
+
+
+'Content-Disposition'... 
+
+
+
+
+
+
+
+
+--> NÃO; 
+
+
+PQ PODEMOS TAMBÉM __ ADICIONAR UM 'FILENAME'
+
+
+
+a 
+
+
+esse call de 'res.setHeader'
+
+
+
+do 
+
+content-disposition....
+
+
+
+
+
+
+
+
+
+---------> PARA ADICIONAR UM NOME, PROFESSOR DIZ QUE 
+
+DEVEMOS 
+
+ADICIONAR ';' 
+
+
+DEPOIS DA DEFINIÇÃO da 'disposition' ('inline')... ------> 
+
+
+
+
+
+
+
+
+
+
+DEPOIS DESSE ';',
+
+
+
+DEVEMOS 
+
+ESCREVER 
+
+'filename',
+
+
+
+E AÍ DEVEMOS SETTAR 
+
+
+
+ESSA ESCRITA COMO SENDO IGUAL AO 'FILENAME YOU WANT TO SERVE'....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+ exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); 
+             res.setHeader('Content-Disposition', 'inline'; filename=""); ////EIS O CÓDIGO EM QUESTÃO.
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+NO NOSSO CASO,
+
+
+ESSE 'filename'
+
+
+VAI __ SER __ O NOME __ DO 'INVOICE/FATURA'...
+
+
+
+
+
+
+
+
+
+
+
+fica tipo assim:
+
+
+
+
+
+
+ res.setHeader('Content-Disposition', 'inline'; filename=`"${invoiceName}"`);
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> CERTO.... AGORA QUANDO SALVARMOS ESSE ARQUIVO/USER BAIXAR ESSE ARQUIVo,
+
+
+ ele AINDA BAIXARÁ COMO ANTES,
+
+
+
+
+
+ AINDA FICARÃO AQUELES FILES com nomes bizarros (sem 'fatura' no início)...
+
+
+
+
+
+
+
+
+
+
+
+ -----> PARA QUE __ NOSSO __ APP __ RETORNE AS FILES 
+
+
+ COM UM FORMATO DE NOME 
+
+ TIPO 
+
+
+ fatura-61966d050dd562509c7febe7.pdf,
+
+
+
+
+
+
+
+
+ PROFESSOR EXPLICA QUE __TEMOS QUE _tROCAR 
+
+
+ 'inline'
+
+ por 
+
+ 'attachment',
+
+
+ PQ 
+
+
+
+
+
+ 'attachment'
+
+ É A OPÇÃO QUE __ OBRIGA ESSE ARQUIVO A SER 'baixado' pelo user,
+
+
+ E NÃO 
+
+ EXIBIDO _ EM UMA 'PAGE ADJACENTE' (como estivemos fazendo até agora)..
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, mas essa mudança ainda não surtiu efeito... os arquivos continuam com o formato de 
+
+''61966d050dd562509c7febe7''
+
+
+
+
+
+
+--> descobri o erro... eu havia escrito 'disposition-type',
+
+quando era 
+
+'Content-Disposition'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            // res.setHeader('Content-Disposition', 'inline' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+            res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"` )
+
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+-----------
+
+
+
+
+
+
+OK.... AGORA REALMENTE DEU CERTO,
+
+
+CONSEGUI 
+
+
+BAIXAR O ARQUIVO...
+
+
+
+
+
+
+
+ELE FICOU EM UM FORMATO DE 
+
+''
+
+fatura-61966d050dd562509c7febe7
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+-----> CERTO, ISSO FOI AJUSTADO....
+
+
+
+
+
+
+
+
+AGORA TEMOS O PROPER FILENAME,
+
+COM A PROPER EXTENSION....
+
+
+
+
+
+
+
+
+
+
+
+--> E É ASSIM QUE PODEMOS ___ CONTROLAr_ 'HOW THE BROWSER SHOULD HANDLE 
+
+THE INCOMING DATA'... --> podemos 
+
+
+
+OU:
+
+
+
+
+
+
+1) DISPLAYAR ESSA DATA/ARQUIVO __ NO BROWSER, DIRETAMENTE
+
+
+
+
+2) DEIXAR DE DISPLAYAR ESSE NEGÓCIO DIRETAMENTE,
+
+E APENAS 
+
+
+BAIXAR O ARQUIVO/ENVIAR O ARQUIVO AO USUÁRIO...
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR DECIDE RETORNAR PARA 
+
+'inline',
+
+MAS 
+
+
+ELE 
+
+
+
+RESOLVE 
+
+MANTER AQUELE FILENAME ESPECIAL...
+
+
+
+
+
+
+AÍ FICA TIPO 
+
+ASSIM:
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            // res.setHeader('Content-Disposition', 'attachment' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+            res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => {
+          if (err) {
+            return next(err);
+          } else {
+            console.log(data);
+            res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+            // res.setHeader('Content-Disposition', 'inline' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+            res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"` )
+//inline vs attachment; decida qual é o melhor para seu aplicativo, dependendo do caso concreto (queremos que o user baixe o arquivo sem qualquer conversinha? ou queremos que ele VISUALIZE O ARQUIVO no 'pdf viewer'/mp3 viewer do browser antes de o baixar? se quisermos essa lenga-lenga, devemos escrever 'inline')
+            return res.send(data); 
+          }
+        });
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------->  OK... AGORA TEMOS UM SETUP EM QUE __ APENAS 'AUTH USERS'
+
+
+conseguem
+
+
+VISUALIZAR SEUS PRÓPRIOS INVOICES...
+
+
+
+
+
+
+
+
+--> MAS PROFESSOR CONSTATA QUE PODEMOS MELHORAR AINDA MAIS ESSE SISTEMA...

@@ -1,0 +1,1451 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... VAMOS COMEÇAR PELO 'app.js',
+
+
+
+QUE ESTÁ COM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const mongoose = require('mongoose'); // isto DEPRECA o arquivo 'database.js', pois faz toda sua função/atribuições AUTOMATICAMENTE (conecta-nos à database NOSQL/mongodb...)....
+
+const session = require('express-session');
+
+const MongoDBStore = require('connect-mongodb-session')(session); 
+
+// const expressHbs = require('express-handlebars');
+
+const app = express();
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority';
+
+const store = new MongoDBStore( ////usado junto de 'app.use(session())', lá embaixo. Os 2 são necessários...
+  {
+    ///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+    uri: MONGODB_URI, ///mesma connection string de nosso CONNECT GERAL AO NOSSO DATABASE... (usado lá em 'mongoose.connect()')...
+
+    collection: 'sessions', //aqui você define a COLLECTION em que você vai querer ARMAZENAR SUAS SESSIONS....
+    //expires// opcional.... ---> SE VOCÊ SETTAR ISSO, o mongodb VAI AUTOMATICAMENTE LIMPAR suas sessions ARMAZENADAS NESSA collection aí, quando o tempo delas expirar, tempo definido nessa key...
+  } //em 'uri' você deve colocar A __sTRING__ DA DATABASE EM QUE VOCê VAI QUERER ARMAZENAR (o seu store) SUAS SESSIONS...
+);
+
+
+const csrf = require('csurf'); ///USADO __ PARA___ EVITAR 'CSRF ATTACKS', tudo por meio do uso de CSRF TOKENS _ NAS NOSSAS VIEWS.... (Assistir aula 255)... --> OBS:::: VOCÊ DEVE INICIALIZAR/CONFIGURAR SEU CSRFTOKEn (com aquele 'app.use(csrfProtection)'  ) __DEPOIS__ DO MIDDLEWARE QUE DEFINE/SETTA __ SUA __ SESSION.... (visto mais abaixo, com 'app.use(session())' )
+
+
+const flash = require('connect-flash'); /////USADO __ PARA__ FAZER SHOW __ DE ERROR MESSAGES/DISPLAY DE MENSAGENS DE ERRO AO USER __APÓS___ REDIRECTS... (utiliza SESSIONS para isso). ----> OBS::: __TAMBÉM__ DEVE SER INICIALIZADO/USADO ___ DEPOIS __ DO SET DA SESSION (Que é feito com o middleware de 'app.use(session())' )
+
+
+
+app.set('view engine', 'ejs');
+
+// app.set('views', 'views');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const authRoutes = require('./routes/auth');
+
+const errorController = require('./controllers/error');
+
+
+const User = require('./models/user');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+
+
+
+const csrfProtection = csrf( //para fazer esse package de proteção contra ataques CSRF funcionar, VOCÊ __PRECISA__ adicionar CSRF TOKENS A SUAS VIEWS/deixar os csrf tokens DISPONÍVEIS NAS SUAS VIEWS...
+
+
+
+
+  // { //OBJETO CONFIG É OPCIONAL, configura DETALHES como 'ONDE DEVEMOS GUARDAR NOSSO CSRF TOKEN' (o default é NA SESSION, no serverside, mas é possível GUARDAR ESSE VALOR EM COOKIES)
+
+  // } //SÓ ESTE CÓDIGO NÃO BASTA... ainda precisamos _ INICIALIZAR ESSe 'csrfProtection', o que é visto LOGO EMBAIXO, depois do CÓDIGO DE INICIALIZAÇÃO/DEFINIÇAO DE NOSSAS 'session'... ( e esse 'csrfProtection()' SEMPRE DEVE SER _ EXECUTADO__ APÓS ___ A DEFINIÇÃO/INICIALIZAÇÃO DE NOSSA SESSION)
+); 
+
+
+
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, ///define o STORE que você vai querer usar.... (vamos passar nossa CONSTANTE de 'store' que definimos mais acima..., com o 'new MongoDBStore()'...)
+      // cookie: { ////KEY USADA PARA _ DEFINIR CONFIGS ESPECÍFICAS DE NOSSO 'SESSION COOKIE', dos session cookies armazenados no browser de nosso user... (pleonasmo... todos session cookies são armazenados NO BROWSER DO USER...)
+      //   maxAge: ...
+      // }
+    }
+  )
+);
+
+
+
+app.use(csrfProtection); ///inicializa nossa PROTEÇÃO CONTRA ATAQUES CSRF....
+
+app.use(flash()); //inicializa NOSSO CÓDIGO QUE VAI AJUDAR COM O SHOW/DISPLAY DE MESSAGES DE ERRO A PARTIR DE REDIRECTS...
+///definido o uso de 'connect-flash', podemos o UTILIZAR EM QUALQUER LUGAR DE NOSSO APP, no objeto 'request'....
+/// USAGE do MÉTODO que vem com esse middleware:  devemos escrever 'req.flash()' nos LOCAIS DE NOSSO CÓDIGO/CASES __ EM QUE __ VAMOS QUERER FLASHAR UMA 'ERROR MESSAGE' dentro de nossa session, para ser usado PARA __ DISPLAYAR__ ERROR MESSAGES AO USER/USERS....
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+
+  if(!req.session.user) { //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+app.use((req, res, next) => {  ///////////MIDDLEWARE QUE __ VAI ADICIONAR/ADICIONA __ O CSRF TOKEN __ E UMA SESSION____ A CADA 1 DE NOSSAS ROUTES DO OJGO...
+
+
+  //TUDO QUE  DEFINIRMOS EM '.locals' (como 'csrfToken' e 'isLoggedIn', respectivamente nossa CSRF TOKEN E __ A SESSION/AUTH STATUS DO USER...) PODERÁ _SER USADO __ EM CADA 1 DOS VIEWS __ DE NOSSO APP... --_> e é assim que implementamos as SESSIONS e os CSRF TOKENS todos de uma vez, em todas as pages de nosso app...
+res.locals.isLoggedIn = req.session.isLoggedIn;
+res.locals.csrfToken = req.csrfToken();
+
+  next(); ///esse 'next' É NECESSÁRIO, pois __ vamos querer PROSSEGUIR_  depois __ do set dessas propriedades...
+
+
+
+
+  ////OBS:: IMPORTANTE!!! --> SÓ NUNCA SE ESQUEÇA DE COLOCAR O INPUT DE TYPE HIDDEN específico (este aqui:  <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->) ________EM __TODAS AS FORMS, NOS SEUS VIEWS, DE SEU PROJECT.... é necessário, pq senão o pacote 'csurf' VAI TE RETORNAR ERROS DE 'INVALID TOKEN', etc etc...
+}
+)
+
+
+
+app.use((req, res, next) => {
+  // console.log(req.user, 'LINE666666');
+  next();
+});
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.use(errorController.error404);
+
+
+
+
+
+
+
+
+
+
+
+
+mongoose
+  .connect(
+  // ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+
+
+      app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+ 
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+OK.... 
+
+DENTRO DESSE LOCAL,
+
+
+
+o PROFESSOR TEM, DE FATO, 1 CÓDIGO.......
+
+
+
+é
+
+
+ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+
+  if(!req.session.user) { 
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+É NESSE CÓDIGO AÍ QUE 
+
+
+NÓS 
+
+
+
+'GET A  USER OUT OF A SESSION'....  ----> 
+
+
+
+ISSO 
+
+PQ 
+
+
+NÓS VAMOS __ ENCONTRAR 
+
+
+O 
+
+
+USER LÁ NA DATABASE,
+
+
+
+
+por mieo de 
+
+
+
+'User.findById()',
+
+
+
+
+E AÍ VAMOS 
+
+
+
+'STORE THE FOUND USER '
+
+
+
+
+
+no objeto 'user',
+
+
+NO OBJETO 
+
+'request'
+
+
+DAQUEEL USUÁRIO...(
+
+
+
+
+
+
+como visto em 
+
+
+'.then(
+  (user) => {
+
+          req.user = user;
+
+          nexT();
+  }
+)
+'
+) 
+
+
+
+
+
+
+
+
+
+
+---> FAZÍAMOS/FAZEMOS ISSO __ PARA QUE _ CONSIGAMOS USAR ESSE 'USER OBJECT' 
+
+
+
+EM TODAS AS OPERAÇÕES QUE ENVOLVAM NOSSO REQUEST, NO NOSSO APP...
+
+
+
+
+
+
+
+-> esse objeto 'user' é um 'MONGOOSE USER OBJECT'...
+
+
+
+
+
+------> POR FIM, TEMOS AQUELE 
+
+
+
+CATCH BLOCK com 
+
+
+
+
+
+
+'.catch((err) => {console.log(err)})'  --------> 
+
+
+
+
+
+
+
+ESSE 
+
+
+CATCH BLOCK __ VAI 
+
+
+'CATCH ANY POTENTIAL ERRORS' QUE 
+
+OCORRAM  
+
+DURANTE O RUNTIME... --------> E, _ DE NOVO__, 
+
+
+PQ 
+
+
+ISSO 
+
+
+É 
+
+
+
+BEM __IMPORTANTE__ DE ENTENDER:
+
+
+
+
+
+
+
+
+ESSE ____________ CATCH _______ BLOCK____ 
+
+
+
+
+
+
+
+NÃO VAI __ DISPARAR__  SE NÓS __ 
+
+
+
+'DONT FIND A USER WITH THIS ID' (se o user NÃO FOR ENCONTRADO, só será isso, msm... nada DE MAIS....)
+
+
+
+
+
+
+
+
+
+
+--------> ESSE CÓDIGO DE '.catch()'
+
+
+
+
+SÓ ______ VAI DISPARAR__ SE EXISTIR/OCORRER ALGUMA 
+
+
+'TECHNICAL ISSUE'
+
+
+no runtime,
+
+envolvendo essa funçaõ de 
+
+
+
+'User.findById()'... -------> 
+
+
+
+
+
+
+
+
+
+EXEMPLOS DE COISAS QUE PODERÍAM DISPARAR ESSE CATCH BLOC:
+
+
+
+
+
+
+1) A DATABASE ESTÁ DOWN,
+
+
+
+2) SE O USER DO _ APP__ NÃO TEM PERMISSÕES SUFICIENTES PARA __ EXECUTAR _ ESSA ACTION de 'User.findById()'...
+
+
+
+
+
+
+
+
+
+-------> CERTO.... MAS O PROFESSOR JÁ 
+
+
+NOS EXPLICA UQE ___ JÁ _ TEMOS 
+
+
+
+
+
+
+NOSSO PRÓPRIO TIPO DE 
+
+
+
+'ERROR HANDLING'
+
+
+NO LUGAR.... ----------->   e, de novo, 
+
+
+
+NÃO ESTAMOS TRABALHANDO/PENSANDO EM 
+
+'TECHINCAL ERROR OBJECTS' 
+
+aqui,
+
+
+
+
+E SIM _ 
+
+
+
+
+
+
+
+ESTAMOS, LÁ NAQUELA 
+
+LINHA DE 
+
+
+
+'if(!req.session.user) {
+
+
+  return next();
+}',
+
+
+
+
+
+
+
+
+estamos CHECNADO SE _ JÁ TEMOS 
+
+
+
+
+
+1 
+
+'req.session.user'..... -----> E O PROFESSOR JÁ HAVIA COLOCADO/COLOCOU __ UMA 
+
+
+
+SOLUÇÃO, NOS MÓDULOS PASSADOS,
+
+
+PARA O 
+
+
+
+CASE 
+
+EM QUE __ NÃO TEMOS/NÃO TÍNHAMOS/NÃO TEREMOS 
+
+
+
+1 
+
+
+
+OBJETO 'user'
+
+JÁ ATRIBUÍDO A ESSA 
+
+SESSION DESSE VISITANTE, no seu request... ------> isso pq 
+
+
+
+SE NÓS _ NÃO TIVERMOS ESSA SESSION,
+
+
+
+o professor vai querer RODAR O 'next()',
+
+
+QUE POR SUA VEZ 
+
+
+
+VAI 
+
+
+
+__PULAr___ O EXECUTE de 
+
+'User.findById()', 
+
+fazendo com que O PRÓXIMO MIDDLEWARE SEJA EXECUTADO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> MAS PQ DIABOS ESSE CHECK de 
+
+
+''''if(!req.session.user) {
+
+
+  return next();
+}'
+
+
+
+'''''''
+
+
+
+
+
+
+
+
+
+É IMPORTANTE? 
+
+
+
+
+
+
+
+
+
+------------> É PQ SE ELE NÃO EXISTISSE, nós poderíamos QUERER TENTAR 
+
+
+'FIND AN USER' ('User.findById(req.session.user._id)') SEM 
+AQUELE 
+
+
+
+'SESSION OBJECT' EXISTINDO LÁ NA DATABASE, E ISSO _ _CRASHARIA__ NOSSO APP...
+
+
+
+
+
+
+
+
+(
+
+  pq o USO DESSE MIDDLEWARE AÍ É 'SEMPRE REFRESHAR NOSSO USER OBJECT', 
+
+
+  a partir da session que existe lá na nossa database/browser (conjunto)....
+
+
+)
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+nós já temos nosso próprio 'ERROR HANDLING' NO LUGAR...
+
+
+
+
+
+
+----> pq evitamos O 'TRY' DO FIND DE UM USER USANDO 
+
+ESSE 
+
+
+'req.session.user._id',
+
+
+
+QUE ___ NÃO VAI EXISTIR__ SE O USER NÃO ESTIVER LOGGED IN... ------> 
+
+
+
+
+
+
+
+
+
+E É POR ISSO QUE 
+
+
+
+O 
+
+
+'if(!req.session.user) {
+
+  return next();
+}
+'
+
+
+
+É UM CÓDIGO __ INTELIGENTE__, 
+
+
+POIS __ ELE EVITA 
+
+ESSE TIPO DE CENÁRIO.... -------> ELE EVITA A EXECUÇÃO DE UM CÓDIGO QUE __ CERTAMENTE FALHARIA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> devemos escrever códigos que ASSEGUREM A EXECUÇÃO DE CÓDIGOS __ QUE VAO '100% SUCCEED'...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> MAS É CLARO QUE __ _ESSE CÓDIGO __ TODO,
+
+
+ESSE 
+
+BLOCK INTEIRO DE 
+
+
+
+''
+
+
+
+app.use((req, res, next) => { 
+
+
+  if(!req.session.user) { 
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+'''
+
+
+
+
+PODE __ AINDA___ FALHAR__.... 
+
+
+
+
+
+
+
+
+
+
+
+--------> ISSO SIGNIFICA QUE 
+
+NÓS PODEMOS EVENTUALMENTE __ NÃO ENCONTRAR__ ESSE 
+
+
+user (por meio de 'req.session.user._id')
+
+
+
+MESMO ___ NÓS 
+
+
+TENDO ARMAZENADO ESSE USER 
+
+EM 
+
+1 SESSION PREVIAMENTE... --------> TALVEZ PQ __O  USER_ FOI _______ 
+
+
+
+
+DELETADO___ NA DATABASE, POSTERIORMENTE AO STORE DE SUA SESSION..... ('the user entry was deleted in between...') 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> É POR ISSO QUE, PARA EVITAR ESSE CASE DE 'the user data was deleted in-between',
+
+
+
+__O  PROFESSOR__ ADICIONA 
+
+UM 
+
+
+
+CASE 
+DE 
+
+
+
+'if(!user) {
+
+
+  return next();
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+
+
+-------> FICARIA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+
+  if(!req.session.user) { 
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+            return next();
+      }
+
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+-------> OU SEJA,
+
+
+
+
+SE AGORA 
+
+ACONTECER ESSE CASE,
+
+ 
+
+
+ _NÓS EVITAREMOS OS PROBLEMAS POR MEIO DO ________SKIP_______ DO CÓDIGO QUE 
+
+ FAZ 
+
+ O 
+
+
+ 'STORE' 
+
+
+
+ DO user no nosso request.... (
+
+
+
+   ou seja,
+
+   evitamos 
+
+   aquela linha de 
+
+
+   'req.user = user;'
+ ) ------------> 
+
+
+
+
+
+
+
+
+
+ NÓS FIZEMOS/FAZEMOS ISSO, NO CASO,
+
+
+
+ EXPLICA O PROFESSOR, PQ QUEREMOS SER 'SUPER SAFE' ---- QUEREMOS __ TER CERTEZA 
+
+
+ QUE 
+
+ __NÃO EXISTA__ 1 CASE EM QUE __ NÓS
+
+
+
+ 'STORE AN UNDEFINED OBJECT IN THE USER OBJECT, in the request',
+
+
+
+
+
+
+E SIM EM QUE __ VAMOS SIMPLESMENTE ________ PROSSEGUIR/CONTINUAR __ 
+
+
+SEM O USER NO REQUEST (o que é MELHOR DO QUE TER 1 objeto 'user' UNDEFINED no request)
+
+
+
+
+
+
+
+
+
+
+
+---------> O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+
+  if(!req.session.user) { 
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+            return next();
+      }
+
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+---------------> MAS É CLARO QUE __ 
+
+
+FAZERO CONSOLE.LOG DESSE 'err'
+
+
+NO CATCH BLOCK ___ NÃO É ALGO MT ÚTIL_... -----> PROFESSOR ENTÃO 
+
+
+
+NOS EXPLICA QUE FARIA 
+
+MAIS SENTIDO 
+
+
+ESCREVER ALGO ASSIM:
+
+
+
+
+
+'''''''''''''''
+.catch(
+  (err) => {
+
+    throw new Error(err);
+  }
+)
+
+
+'''''''''''''''''
+
+
+
+
+
+OU SEJA,
+
+
+
+__ FAREMOS O THROW DE UM ERROR, fazendo com que SIMPLESMENTE SEJA __ WRAPPADO_ O OBJETO 'err' 
+
+que 
+
+vamos receber nesse catch block.... ---> OK, MAS PARA RECEBER ALGO NESSE CATCH BLOCK,
+
+
+É __ ÓBVIO__ QUE 
+
+
+VAMOS 
+
+TER QUE 
+
+__ESCREVER 
+
+um 
+
+'THROW' 
+
+de um 
+
+ERRO LÁ 
+
+
+
+em 
+
+'if(!user) {}'...
+
+
+
+
+
+
+
+
+
+
+--> sim... foi isso o que eu pensei... pq o 'next()' por si só NÃO VAI FAZER COM QUE 
+
+
+
+
+PULEMOS DIRETAMENTE PARA AQUELE 
+
+
+'catch block'....
+
+
+
+
+
+
+
+
+
+
+
+
+o código está assim, no momento:
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {  // (2/2) (DEVE SER USADO COM O MIDDLEWARE LOGO ACIMA... --> esse middleware aqui, que fica ABAIXO daquele middleware de 'session', __ É O NEGÓCIO _ QUE __ VAI __ USAR__ A 'SESSION DATA' retrievada naquele middleware mais de cima __ PARA ENTÃO _ FETCHEAr/CRIAR __ 1 OBJETO/MODEL 'User' com TODOS OS METHODS MONGOOSE DE QUE PRECISAMOS (pq esses methods NÃO PODEM SER RETRIEVADOS DIRETAMENTE DE UMA SESSION/DATA DE DENTRO DE UMA SESSIOn, que é o que estamos fazendo no c´digo acima, o RETRIEVE/SET DE UMA SESSION...))
+  // User.findById('xsaashisiahsiaxsix')
+
+
+
+  if(!req.session.user) { //USADO PARA EVITAR O ERRO DE 'TypeError: Cannot read property '_id' of undefined at A:\projeto4 - NODEJS\MODULO14-SESSIONSECOOKIES\NOVONOVOPROJETO12-COOKIESESESSIONS\app.js:86:34 ' ------->  COM ESSE CÓDIGO, POUPAMOS ERROS E FAEZMOS COM QUE __ APENAS __ SEJA EXECUTADO O RETRIEVE DE 'user', esse mongodb model, QUANDO EFETIVAMENTE __ EXISTIR UM objeto 'user' dentro do objeto 'REQUEST' de seu user....
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { ///////////CASO DE 'THE USER GOT DELETED IN BETWEEN'.... --> A SESSION DESSE USER AINDA EXISTE NA DATABASE, MAS O USER EM SI FOI DELETADO da database...
+        return next();
+  }
+      req.user = user; //////EIS O CÓDIGO EM QUESTÃO. __VAI_ __ REALMENTE__ nos dar 1 'mongoose model' A PARTIR __ DA SESSION DATA RETRIEVADA AUTOMATICAMENTE PELO 'express-session' MIDDLEWARE usado logo acima... ( e com esse OBJETO/MODEL MONGOOSE cheio de methods, PODEMOS REALIZAR AS OPERATIONS DE NOSSO APP...) (pq esses methods PASSARÃO A EXISTIR DENTRO DO OBJETO 'user' dentro do objeto 'req' daquele user.... )
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err);
+  
+    });
+});
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+nós __SÓ CONSEGUIMOS__ ALCANÇAR aquele catch block,
+
+
+por meio de 
+
+'if(!user)',
+
+
+SE EU ESCREVO ALGUM 
+
+'throw new Error('xxxx')'.... 
+
+
+
+
+
+
+
+--> aí o output fica tipo assim:
+
+
+
+Error: Error: EXEMPLO
+    at A:\projeto4 - NODEJS\MODULO19-ERRORHANDLING\NOVONOVOPROJETO17-ERRORHANDLINGGRACIOUSLY\app.js:146:13
+
+
+
+
+
+
+------------------------
+
+
+OK... mas continuando a aula do professor...
+
+
+
+
+
+
+
+
+
+
+
+
+----------> ele nos explica uqe FAZ BEM MAIS SENTIDO 
+
+
+
+
+
+ESCREVER 
+
+esse 
+
+
+
+'.catch(err => {
+
+
+  throw new Error(err);
+})
+'
+
+
+
+
+
+
+
+---------->  ELE DIZ QUE ISSO AÍ, ESSE WRITE DESSE THROW DESSE ERROR ASSIM __ NOS ___ 
+
+DÁ UMA 
+
+
+'SIGNIFICANT ADVANTAGE',
+
+que 
+
+ele logo nos explicaráa...
+
+
+
+
+
+
+
+
+
+--------> MAS COM ISSO,
+
+
+
+ESSE CÓDIGO está melhor, agora.... ------> AGORA, SE TIVERMOS UMA 
+
+
+
+'REAL TECHNICAL ISSUE' (
+
+
+
+  como DATABASE DOWN, 
+
+
+  ou FALTA DE PERMISSÕES PARA EXECUTAR ESSE 
+
+  CÓDIGO
+
+
+),
+
+
+
+
+
+
+ESSE __ERROR__ SERÁ 'THROWN'... (o que vai INTERROMPER NOSSA EXECUÇAÕ E __QUEBRAR__ O NOSSO APP, pq não adicionamos nenhum código que handle esse throw de error...)
+
+
+
+
+
+
+
+
+
+-------> OK.... MAS PROFESSOR NOS EXPLICA QUE 
+
+
+
+___ O EXPRESSJS NOS __ DÁ UMA MANEIRA DE 'TAKE CARE OF SUCH ERRORS' (erros TÉCNICOS),
+
+
+
+e 
+
+
+É EXATAMENTE 
+
+
+
+POR ISSO QUE 
+
+ELE 
+
+ESTÁ FAZENDO 
+
+ESSE THROW DE ERROR BIZARRO, lá no CATCH BLOCK...
+
+
+
+
+
+
+
+
+----------->  ALTERNATIVAMENTE, É CLARO,
+
+
+PODERÍAMOS 
+
+
+
+SIMPLESMENTE ESCREVER 
+
+
+
+'.catch(
+  err => {
+
+    next();
+  }
+)
+
+',
+
+
+
+
+
+
+
+ESCREVER UM 'NEXT()'
+
+ALI,
+
+PARA 
+
+
+ENTÃO 
+
+
+
+__CONTINUAR__ A EXECUÇÃO 'NORMALMENTE'; NORMALMENTE___ SEM __ TER O 
+
+
+'REQ.USER'
+
+
+SENDO SETTADO... (nesse caso) -------->  MAS O PROFESSOR QUIS, AQUI,
+
+
+
+ESCREVER 
+
+O 
+
+THROW DESSE ERROR 
+
+__ PQ __ ELE 
+
+QUER 
+
+MANAGEAR OS __CASES__ 
+
+
+DE 
+
+'TECHNICAL ISSUE' (connect à database),
+
+
+
+
+
+
+
+ISSO JUSTAMENTE PQ 
+
+
+PROBLEMAS DE CONECTIVIDADE A DATABASES 
+
+
+
+SÃO __ PROBLEMAS BEM MAIORES __ DO QUE 
+
+
+
+'JUST A NON-EXISTING USER'....

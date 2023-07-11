@@ -1,0 +1,592 @@
+
+
+
+
+
+
+
+
+
+--> O QUE SÃO ASYNC REQUESTS?
+
+
+
+
+
+
+
+
+
+
+--> BEM, NÓS TEMOS NOSSO:
+
+
+
+
+
+1) CLIENT (browser)
+
+
+
+
+
+
+
+
+
+
+
+
+2) SERVER (node app)
+
+
+
+
+
+
+
+
+
+
+---> temos essas 2 figuras... --> ESSE É O SETUP QUE TIVEMOS AO LONGO 
+
+
+
+DESSE CURSO INTEIRO..
+
+
+
+É O SETUP QUE VOCÊ TEM COM 
+
+QUALQUER 
+
+
+
+
+
+WEB/mobile project, nesses dias....
+
+
+
+
+
+
+
+
+
+--> TEMOS O BACKEND E O FRONTEND...
+
+
+
+
+
+
+
+
+
+
+
+
+---------> TIPICAMENTE,
+
+
+
+VOCÊ 
+
+
+
+
+
+TEM UM FLUXO ASSIM:
+
+
+
+
+
+
+
+
+
+
+CLIENT (BROWSER)
+
+                ^
+|               |
+|               |
+|               |
+|               |   
+|| (request)    |   (response)
+|               |       (como HTML PAGE)
+|               |
+|               |
+V               |
+
+
+SERVER (node APP)
+
+
+
+
+
+
+
+
+
+
+--> COMO O PROFESSOR MENCIONOU,
+
+ATÉ AGORA NO CURSO 
+
+
+
+
+A RESPONSE SEMPRE FOI 
+
+OU UMA 
+
+PÁGINA HTML,
+
+
+OU UM 
+
+
+REDIRECT 
+
+
+À UMA ROUTE 
+
+QUE 
+
+
+FAZIA RETURN 
+
+DE 
+
+
+UMA OUTRA NOVA PAGE HTML...
+
+
+
+
+
+
+
+
+
+
+---------> OK... ------> É CLARO QUE NÃO HÁ NADA DE ERRADO COM ISSO....
+
+
+
+
+
+
+--> MAS É CLARO QUE EXISTEM TAREFAS/TASKS  EM QUE 
+
+
+
+VOCÊ 
+
+NÃO VAI QUERER 
+
+'reload the page just to delete an item'
+
+
+
+
+
+
+
+
+--> E, NA VERDADE,
+
+
+EM 
+
+
+APPS MODERNOS,
+
+
+
+
+
+
+A PORÇÃO QUE __ ACONTECE __ 'POR TRÁS DAS CENAS'
+
+
+
+__ SE TORNA AINDA MAIOR,
+
+ISSO 
+
+PQ 
+
+__PODEMOS __ FAZER 
+
+
+MUITO ___ COM 
+
+O 
+
+JAVASCRIPT, NO BROWSER,
+
+
+POR TRÁS DAS CENAS... ------> POR MEIO DO JAVASCRIPT NO BROWSER,
+
+
+
+NÓS __ NUNCA __ TEMOS QUE __ 
+
+'FETCH A NEW HTML PAGE',
+
+
+
+
+
+
+
+__ E SIM 
+
+
+NÓS 
+
+
+
+
+'CONSTANTLY CHANGE THE EXISTING PAGE' (ex: react, netflix, etc)...
+
+
+
+
+
+
+'MUDAMOS A PAGE JÁ EXISTENTE',
+
+
+PQ 
+
+ISSO 
+É 
+
+BEM 
+MAIS RÁPIDO 
+
+DO 
+QUE 
+
+
+CARREGAR UMA NOVA 
+
+PAGE HTML...
+
+(
+
+
+
+    MAS ISSO É ALGO QUE VEREMOS NOS MÓDULOS 
+
+
+    'RESTFUL',
+
+
+
+    rest apis...
+)
+
+
+
+
+
+
+
+
+
+
+---> MAS A IDEIA POR TRÁS 
+DE 
+
+'ASYNC REQUESTS'
+
+
+É QUE 
+
+ 
+
+ VOCÊ VAI REALMENTE 
+
+ 'SEND A REQUEST',
+
+
+ MAS QUE 
+
+ ESSE 
+
+ REQUEST 
+
+ VAI 
+ TIPICAMENTE 
+
+
+
+
+ CONTER 
+
+
+ 'DATA EM UM FORMATO ESPECIAL,'
+
+
+
+
+
+ FORMATO ESPECIAL JÁ CONHECIDO POR NÓS,
+ QUE 
+ É 
+
+ O 
+
+ 'JSON'... ------> JAVASCRIPT OBJECT NOTATION DATA...
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+ "{ "asasaspask": "asjsoajaso"}"
+
+
+
+
+
+
+
+
+-----> ESSA DATA É ENTÃO ENVIADA 
+
+
+
+AO SERVER,
+
+
+ÀLGUMA URL/route,
+
+
+
+ACEITADA PELO SERVER (um ENDPOINT)... --------> (É A MESMA LÓGICA DO EXPRESS, essa parte não muda...)
+
+
+
+
+
+
+
+
+
+
+--> O SERVER, ENTÃO, A PARTIR DO SEND DESSA DATA JSON,
+
+
+
+
+
+
+FAZ O QUE ELE QUISER fazer... --> E AÍ, A PARTIR 
+
+
+DO QUE O SERVER QUER 
+
+FAZER,
+
+
+
+VAMOS 'RETURN A RESPONSE'
+
+
+
+AO 
+
+USER,
+
+
+
+E 
+
+__ _ ESSA RESPONSE TAMBÉM 
+
+É 
+
+RETORNADA 
+
+
+'
+BEHIND THE SCENES',  __ SEM RECARREGAR_ A PÁGINA...  ------> E ESSA RESPONSE 
+
+
+
+
+
+VAI SER COMPOSTA 
+
+
+
+_ TAMBÉM ___ POR JSON DATA__....
+
+
+
+
+
+
+
+
+
+--> POR ISSO O FLUXO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+CLIENT (BROWSER)
+
+                ^
+|               |
+|               |
+|               |
+|               |   
+|| (request)    |   (response)
+|    (JSON)     |       (JSON)
+|               |
+|               |
+V               |
+
+
+SERVER (node APP)
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+OK, A RESPONSE SERÁ 'JUST SOME DATa',
+
+
+TIPICAMENTE 
+
+EM UM FORMATO JSON.........
+
+
+
+
+
+
+
+
+------> E É ASSIM QUE 
+
+
+
+
+
+'CLIEN-SERVER'
+
+
+CONSEGUEM SE COMUNICAR,
+
+
+
+
+
+POR MEIO 
+
+DO JAVASCRIPT (
+
+    ou seja,
+
+
+    por meio 
+    de 
+
+    'CLIENTSIDE JAVASCRIPT' 
+
+
+    E UMA 
+
+
+    SERVERSIDE LOGIC, FREQUENTEMENTE NODE,
+
+
+
+
+    ____ TUDO __ SEM RECARREGAR/RECONSTRUINDO 
+
+
+
+    A PAGE...
+
+)
+
+
+
+
+
+
+
+--> O CONCEITO CHAVE É O 'ABANDONO DO RETURN DE HTML PAGES'... ----> ISSO TE DEIXA 
+
+
+FAZER 
+
+
+'SOME WORK BEHIND THE SCENES'
+
+
+
+
+__SEM INTERROMPER O USER FLOW,
+
+
+
+SEM 
+
+
+
+RECARREGAR A PAGE...
+
+
+
+
+
+
+
+
+
+
+ok................ 
+
+
+DEVEMOS DAR UMA OLHADA EM COMO ISSO 
+
+
+
+FUNCIONA/FUNCIONARIA,
+
+NESSE MÓDULO...

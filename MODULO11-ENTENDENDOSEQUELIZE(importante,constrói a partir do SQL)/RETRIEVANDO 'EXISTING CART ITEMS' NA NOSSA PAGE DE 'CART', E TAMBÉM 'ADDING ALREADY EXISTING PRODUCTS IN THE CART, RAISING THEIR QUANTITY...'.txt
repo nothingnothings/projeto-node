@@ -1,0 +1,1566 @@
+
+
+
+
+
+
+
+
+
+
+---> o negócio de aumentar a 'quantity' de cada cartItem 
+
+
+nos nossos CART eu já havia conseguido,
+
+
+
+
+havia ficado assim, o código:
+
+
+
+
+
+
+      if(product) {
+        console.log('ENTERED BLOCK');
+        console.log('TESTE', product, 'TESTE',);
+        CartItem.findAll({where: {productId: productId}})     ////como um PRODUCT com aqueles critérios JÁ FOI ENCONTRADO NO NOSSO CART, NÃO VAMOS QUERER CRIAR 1 NOVO 'PRODUCT', E SIM vamos querer adicionar 1 unidade À 'quantity' 'old' de nossos products...
+        .then(
+          (cartItems) => {
+
+            const cartItem = cartItems[0];
+
+           CartItem.update({quantity: cartItem.quantity}, {where: {productId: productId}}) ////CÓDIGO ABSURDAMENTE CLUNKY, MAS QUE FUNCIONOU..
+           .then(
+             (result) => {console.log(result)}
+           )
+
+
+          }
+        )
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok.....
+
+
+
+
+agora meu objetivo é fazer display dos CARTITEMS ATUAIS/products no 
+
+
+CART ATUAIS 
+
+
+
+
+LÁ NA PAGE DE 
+
+'cart'...
+
+
+
+
+
+
+
+-> vou começar pelos controllers....
+
+
+
+
+
+
+
+
+
+
+
+bem, meu código está assim:
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+    console.log(req.user.cart, 'LINE'); ////isso (o cart) não existe dentro do objeto 'req.user', justamente pq DEVEMOS O CONSEGUIR ATRAVÉS DE 'req.user.getCart()', para conseguir o cart específico Àquele user (userId field dentro do cart e 'id' field no user DEVEM DAR MATCH...)
+
+req.user.getCart()
+.then(
+  (cart) => {
+    console.log(cart, 'LINE');
+      return cart.getProducts();
+  }
+)
+.then(
+(products) => { 
+
+
+        console.log(products);
+        res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        cartProducts: products
+      });
+}
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> BEM... PARECE QUE O QUE INTERESSA, AQUI,
+
+
+
+nessa page,
+
+
+
+
+
+
+
+é conseguir os valores de 'quantity'
+
+para 
+
+colocar 
+
+dentro 
+
+dos 
+
+'()' ao lado de CADA PRODUCTITEM,
+
+
+lá 
+
+
+
+
+no render de meu view...
+
+
+(como 
+
+
+visto neste código:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <style>
+    
+         @media(min-width: 400px) {
+            .btn {
+              width: 7rem;
+            }
+         }
+    
+    </style>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <h1>Your Cart</h1>
+      <% if (cartProducts.length < 0) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% cartProducts.forEach(product => { %>
+            <li>
+              <h1><%= product.title %> (x<%= product.quantity %>)</h1>
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" name="id" value="<%= product.id %>">
+                <button class="btn" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% }) %>
+        </ul>
+        <% } %>
+
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+----> para isso, 
+
+
+
+PROVAVELMENTE VOU PRECISAR 
+
+
+
+
+DE MAIS LÓGICA DE RETRIEVE,
+
+DESSA VEZ 
+
+
+RETRIEVE  
+
+DOS 
+
+DADOS 
+
+'quantity'
+
+em cada 
+
+
+'CartItem' 
+
+
+
+
+na table de 'cartItems'....
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+CONSEGUI....
+ 
+
+
+ O CÓDIGO FICOU EXTREMAMENTE COMPLICADO.........
+
+
+
+
+
+
+
+
+
+
+-----> neste trecho aqui:
+
+
+
+ '''     
+ 
+  CartItem.findAll({ where: { cartId: req.user.id } }).then((cartItems) => {
+        productList.forEach((product) => {
+          product.quantity = cartItems.find((cartItem) => {
+            return cartItem.productId === product.id;
+          }).quantity;
+        });
+
+    ''''',
+
+
+
+
+
+    MANIPULEI 
+
+
+
+    AS 2 'FONTES DE DADOS',
+
+
+
+
+    tanto os 'cartItem' quanto a TABLE DOS PRODUCTS em si... (pq eu precisava 
+    
+    criar uma propriedade/campo 
+
+
+    de 
+
+    'quantity' em cada 
+
+    PRODUCTITEM, para então loopar lá no meu view....
+    
+    
+    
+    ) --> foi por isso que usei aquele 'forEach'...
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+exports.getCart = (req, res, next) => {
+  console.log(req.user.cart, 'LINE'); ////isso (o cart) não existe dentro do objeto 'req.user', justamente pq DEVEMOS O CONSEGUIR ATRAVÉS DE 'req.user.getCart()', para conseguir o cart específico Àquele user (userId field dentro do cart e 'id' field no user DEVEM DAR MATCH...)
+
+  let productList;
+
+  const cartId = req.user
+    .getCart()
+    .then((cart) => {
+      console.log(cart, 'LINE');
+      return cart.getProducts();
+    })
+    .then((products) => {
+      console.log(products);
+
+      productList = products;
+
+      CartItem.findAll({ where: { cartId: req.user.id } }).then((cartItems) => { ///////EIS  O CÓDIGO EM QUESTÃO.
+        productList.forEach((product) => {
+          product.quantity = cartItems.find((cartItem) => {
+            return cartItem.productId === product.id;
+          }).quantity;
+        });
+
+
+
+
+
+        return res.render('shop/cart', {
+          path: '/cart',
+          pageTitle: 'Your Cart',
+          cartProducts: productList,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+  --------------------------
+
+
+
+
+
+
+
+
+
+  CERTO.... AGORA DEVO:
+
+
+
+
+  1) CRIAR UMA CÓPIA 
+
+  DE MEU CÓDIGO,
+
+
+  para 
+
+
+  ficar registrada essa maneira de fazer esses movimentos....
+
+
+
+
+
+
+  2) CRIAR UMA VERSÃO 'DO PROFESSOR' DO PROJETO
+
+
+
+
+
+  3) VER O VÍDEO DO PROFESSOR, 
+
+
+  VER A VERSÃO DELE DESSE CÓDIGO...
+
+
+
+
+
+
+  -------------------------------
+
+
+
+  OK.... FIZ TUDO ISSO...
+
+
+
+
+
+
+
+
+
+  --> professor começa com uma análise da nossa view de 'cart.ejs'...
+
+
+
+
+
+  ---> professor 
+
+
+  diz que 
+
+
+
+
+
+
+
+  VAMOS 
+
+  ACESSAR 
+
+
+
+  nossa 
+
+  data 
+
+
+  lá 
+
+
+
+  do 
+
+
+
+  'cart' 
+
+
+
+  LÁ 
+
+
+
+
+  DA DATABASE...
+
+
+
+
+
+
+  o view dele ficou similar ao nosso:
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <style>
+    
+         @media(min-width: 400px) {
+            .btn {
+              width: 7rem;
+            }
+         }
+    
+    </style>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <h1>Your Cart</h1>
+      <% if (cartProducts.length < 0) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% cartProducts.forEach(product => { %>
+            <li>
+              <h1><%= product.title %> (x<%= product.quantity %>)</h1>
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" name="id" value="<%= product.id %>">
+                <button class="btn" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% }) %>
+        </ul>
+        <% } %>
+
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+------> JÁ 
+
+
+
+A 
+
+'QUANTITY'
+
+
+ESTÁ RELACIONADA 
+
+
+
+AOS 
+
+'cart-items',
+
+
+
+
+CUJO VALOR DE 'quantity'
+
+atribuído 
+
+a cada 
+
+'product'/'product-item' 
+
+
+
+
+
+
+EXISTIRÁ NESSA TABLE DE 'cart-items'... 
+
+
+
+
+-----------------------------------------
+
+
+
+
+PARECE QUE AGORA EU FUI __MUITO BURRO___........
+
+
+
+
+
+
+
+
+
+
+----------> O PROFESSOR NOS EXPLICA QUE nós podemos 
+
+
+
+acessar,
+
+
+lá 
+
+
+na view,
+
+
+
+
+
+
+
+O VALOR 
+
+DA 'quantity' 
+
+de 
+
+cada 
+
+
+'cartitem'
+
+
+
+
+SIMPLESMENTE 
+
+POR 
+
+
+UMA 
+
+ESCRITA 
+
+d
+e 
+
+
+
+'<%= product.cartItem.quantity %>' 
+
+
+
+
+
+
+
+
+(
+
+
+
+)
+
+
+
+
+
+ou seja,
+
+
+
+escrevemos:
+
+
+
+1) a ENTRY RELACIONADA A ESSE 'cartItem' no INÍCIO da expressão  (ou seja, 'product', nesse caso...)
+
+
+
+
+
+
+
+FICARIA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+             <h1><%= product.title %> (x<%= product.cartItem.quantity %>)</h1>
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" name="id" value="<%= product.id %>">
+                <button class="btn" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% }) %>
+        </ul>
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+BEM... MAS EU AINDA ESTOU RECEBENDO UM ERRO...
+
+
+
+
+
+
+
+ex:
+
+
+
+Cannot read property 'quantity' of undefined
+
+
+
+
+
+
+
+
+
+
+
+--> acho que encontrei o problema...
+
+
+
+
+
+
+
+
+
+
+->[
+  product {
+    dataValues: {
+      id: 1,
+      title: 'EXEMPLO',
+      price: 221,
+      imageUrl: 'assas',
+      description: 'asasa',
+      createdAt: 2021-10-14T04:38:34.000Z,
+      updatedAt: 2021-10-14T04:38:34.000Z,
+      userId: 1,
+      cartItem: [cartItem]
+    },
+    _previousDataValues: {
+      id: 1,
+      title: 'EXEMPLO',
+      price: 221,
+      imageUrl: 'assas',
+      description: 'asasa',
+      createdAt: 2021-10-14T04:38:34.000Z,
+      updatedAt: 2021-10-14T04:38:34.000Z,
+      userId: 1,
+      cartItem: [cartItem]
+    },
+    _changed: {},
+    _modelOptions: {
+      timestamps: true,
+      validate: {},
+      freezeTableName: false,
+      underscored: false,
+      paranoid: false,
+      rejectOnEmpty: false,
+      whereCollection: [Object],
+      schema: null,
+      schemaDelimiter: '',
+      defaultScope: {},
+      scopes: {},
+      indexes: [],
+      name: [Object],
+      omitNull: false,
+      sequelize: [Sequelize],
+      hooks: {}
+    },
+    _options: {
+      isNewRecord: false,
+      _schema: null,
+      _schemaDelimiter: '',
+      include: [Array],
+      includeNames: [Array],
+      includeMap: [Object],
+      includeValidated: true,
+      attributes: [Array],
+      raw: true
+    },
+    isNewRecord: false,
+    cartItem: cartItem {
+      dataValues: [Object],
+      _previousDataValues: [Object],
+      _changed: {},
+      _modelOptions: [Object],
+      _options: [Object],
+      isNewRecord: false
+    }
+  }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> naquela linha de 
+
+
+'''  cartItem: [cartItem]'''',
+
+
+
+
+
+
+
+O MEU cartItem,
+
+
+do 
+
+
+MEU APLICATIVO,
+
+está
+
+assim:
+
+
+
+
+
+    'cart-item': [cart-item]
+
+
+
+
+
+
+
+
+
+------> DESCOBRI O PROBLEMA:
+
+
+
+
+
+
+
+
+(MEU CÓDIGO):
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const CartItem = sequelize.define('cart-item', { ///eis o problema
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true,
+    },
+    quantity: Sequelize.INTEGER
+
+});
+
+module.exports = CartItem;
+
+
+
+
+
+
+
+
+
+
+
+
+(CÓDIGO DO PROFESSOR):
+
+
+
+
+
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const CartItem = sequelize.define('cartItem', { ////EIS O PROBLEMA...
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  quantity: Sequelize.INTEGER
+});
+
+module.exports = CartItem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> o problema, portnato, estava nesse código de 'define' das 
+
+
+nossas tables/models,
+
+
+em que 
+
+escrevi 
+
+'cart-item' em vez de 
+
+'cartItem'...
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+OK.... DEU CERTO. AGORA CONSIGO VER A PAGE DE 
+
+'CART',
+
+
+
+com 
+
+
+os 
+
+products e a QUANTITY armazenada no 'cart-items'..
+
+
+
+
+
+
+
+
+
+------- 
+
+
+
+
+
+A PRÓXIMA ETAPA É 'CONSERTAR'
+
+
+O CÓDIGO 
+
+
+
+QUE 
+
+FAZ 
+
+
+O 
+
+
+
+
+
+AUMENTO DA QUANTITY DOS PRODUCTS....
+
+
+
+(ver a sintaxe do professor)... 
+
+
+
+
+
+
+
+
+
+
+--> É O CASE DE 
+
+'ADD AN ALREADY EXISTING ITEM TO THE CART'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> para isso,
+
+
+
+
+
+professor vai até 
+
+
+a escrita 
+
+de 
+
+
+'if(product) {
+
+}',
+
+
+
+lá no CONTROLLER DE SHOP,
+
+
+em 
+
+
+'postToCart'...
+
+
+
+
+
+
+------> VAMOS QUERER DAR 1 INCREMENT NO FIELD DE 'quantity'...
+
+
+
+
+
+
+
+
+--> SE ENTRARMOS NESSE FIELD AÍ, A PRIMEIRA COISA QUE 
+
+VAMOS QUERER 
+
+FAZER É 
+
+ACESSAR 
+
+A 
+
+'oldQuantity',
+
+
+que 
+
+será 
+
+
+representada 
+
+por 
+
+'product.cartItem.quantity' 
+
+
+
+
+
+
+
+
+(PROFESSOR 
+
+
+EXPLICA QUE 
+
+ISSO AÍ (o 'cartItem' dentro de 'product') É 
+
+ESSE 'EXTRA FIELD'
+
+que é 
+
+adicionado pelo 
+
+
+SEQUELIZE 
+
+
+___ PARA NOS DAR __ ACESSO 
+
+A ESSA TABLE 
+
+'IN-BETWEEN' de 'cart-items'...
+) 
+
+
+
+
+
+-----> CERTO, E AÍ CONSEGUIMOS ACESSO À 'quantity'...
+
+
+
+
+
+
+--> E O SEQUELIZE NOS DÁ ACESSO A MAIS DO QUE A IN-BETWEEN TABLE, NESSE CASE,
+
+PQ 
+
+__ELE VAI NOS DAR ACESSO __ AO FIELD de 'quantity'
+
+__PARA ESSE __ EXATO PRODUCT,
+
+
+E PARA NENHUM OUTRO (o que é bem conveniente)...
+
+
+
+
+
+
+
+ok.... 
+
+
+
+
+
+vamos escrevendo assim:
+
+
+
+
+
+if(product) {
+  const oldQuantity = product.cartItem.quantity;
+}
+
+
+
+
+
+
+
+
+
+
+
+--> isso feito,
+
+
+vamos simplesmente 
+
+
+
+
+definir aquela variável de 'newQuantity',
+
+
+que estava como '1' 
+
+anteriormente,
+
+como sendo 
+
+
+'oldQuantity + 1'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+if (product) {
+
+  const oldQuantity = product.cartItem.quantity;
+
+  newQuantity = oldQuantity + 1;
+}
+
+
+
+
+
+
+
+
+
+
+-------> ISSO FEITO, AGORA A ÚNICA COISA QUE NOS RESTA É ADICIONAR 
+
+ESSA 
+
+QUANTITY 
+
+
+AO 
+
+NOSSO 
+
+CART...
+
+
+
+
+
+
+--> para isso,
+
+
+professor 
+
+
+vai 
+
+
+escrever um return.... --> 
+
+
+
+
+
+
+
+ele 
+
+
+vai 
+
+
+
+
+'return fetchedCart.addProduct()',
+
+
+
+
+
+E AÍ VAI ESPELHAR O SEU CÓDIGO,
+
+
+
+VAI ESCREVER UM CÓDIGO PARECIDO COM O CASE 
+
+
+de 
+
+'!product' (nenhum product desse tipo específico encontrado no nosso 'cart', esse era o outro case)...
+
+
+
+
+
+
+
+
+
+
+
+--> POR ISSO VAI FICAR TIPO ASSIM:
+
+
+
+
+
+
+
+
+if (product) {
+
+  const oldQuantity = product.cartItem.quantity;
+
+  newQuantity = oldQuantity + 1;
+
+  return fetchedCart.addProduct(product, {
+    through: {quantity: newQuantity}
+  }
+  )
+
+} else { ///case de NÃO ENCONTRARMOS 1 PRODUCT desse tipo no nosso 'cart'/vinculado ao nosso 'cart'...
+
+
+  return Product.findById(productId)
+  .then(
+    product => {
+
+
+      return fetchedCart.addProduct(
+        product, {
+          through: {quantity: newQuantity}
+        }
+      )
+    }
+  )
+}
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CÓDIGO COMPLETO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
+
+  req.user
+    .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts({ where: { id: productId } }); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+    })
+    .then((products) => {
+    
+
+      let product;
+
+      if (products.length > 0) {
+        product = products[0];
+      }
+
+
+
+      if (product) {
+        const oldQuantity = product.cartItem.quantity;
+        newQuantity = oldQuantity + 1;
+        return fetchedCart.addProduct(product, {  ////código parecido com o de baixo, mas com um valor de QUANTITY diferente, valor que considera a EXISTÊNCIA PRÉVIA DE 1 objeto 'product' no nosso cart (reproduzido por 'cart-items'..)
+          through: {quantity: newQuantity}
+        })
+      } else {
+        return Product.findByPk(productId) ///executamos isto pq queremos ADICIONAR ESSE PRODUCT ESPECÍFICO, sua data, ao nosso cart....
+          .then((product) => {
+
+            return fetchedCart.addProduct(product, {
+              through: { quantity: newQuantity },
+            }); ///ver anotações em 'adicionando novos produts ao nosso cart', ou a aula '163' do professor....
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    })
+    .then(() => {
+      res.redirect('/cart');
+    })
+    .catch();
+};
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+O PROFESSOR FALA DESTE TRECHO AQUI, QUE TEM 
+
+MTS NESTED THEN BLOCKS:
+
+
+
+
+
+   .then((product) => {
+
+            return fetchedCart.addProduct(product, {
+              through: { quantity: newQuantity },
+            }); ///ver anotações em 'adicionando novos produts ao nosso cart', ou a aula '163' do professor....
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+
+
+
+
+
+
+
+
+--> SE QUEREMOS EVITAR ESSES 
+
+
+NESTED THEN BLOCKS,
+
+
+
+
+professor propõe 
+
+
+uma 
+
+
+versão 
+
+
+
+alternativa, que achei complexa demais...
+
+
+
+
+
+
+
+
+
+
+
+----> OK... NOSSO CÓDIGO ESTÁ FUNCIONANDO NICE....
+
+
+
+
+
+
+--> AGORA VAMOS QUERER CONSEGUIR __ DELETAR__ NOSSOS 
+
+
+PRODUCTS 
+
+
+
+DE NOSSO CARRINHO...

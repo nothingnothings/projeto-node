@@ -1,0 +1,280 @@
+
+
+
+
+
+
+
+
+--> QUAL TIPO DE APP VOCÊ ESTÁ RODANDO? 
+
+
+
+
+
+
+
+
+
+
+---> AO LONGO DO CURSO ,
+
+
+
+CONSTRUÍMOS UM MONTE DE DIFERENTES TIPOS DE APP....
+
+
+
+
+
+
+
+
+
+
+--> VIMOS 
+
+
+
+O USO DE 'SERVERSIDE VIEWS',
+
+
+um 
+
+servidor em que 
+
+o 
+
+
+backend e o frontend NÃO SÃO 'DECOUPLED'... ----> 
+
+
+
+
+
+LÁ QUANDO FAZÍAMOS O RENDER DE VIEWS,
+
+
+NÓS 
+
+
+
+USÁVAMOS/USAMOS:
+
+
+
+
+1) VANILLA HTML 
+
+
+
+
+
+2) TEMPLATING ENGINES (meio mais utilizado, engines como EJS)...
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS, VIMOS 
+O 
+
+
+
+
+BUILD DE __ APIs___ ... -->  CONSTRUÍMOS:
+
+
+
+
+
+1) UMA REST API 
+
+
+
+
+
+2) UMA GRAPHQL API ...
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+OK, MAS COMO FAZEMOS DEPLOY DESSES 2 TIPOS DE 
+
+APP,
+
+
+
+os 
+
+
+
+apps COM __ VIEW_ 
+
+
+e 
+
+
+SEM VIEW...
+
+
+
+
+
+
+
+
+
+--> ANTES DE MAIS NADA,
+
+
+TEMOS QUE 
+
+TER EM MENTE 
+
+
+A 'MANEIRA PELA QUAL O APP SE COMPORTA' (
+
+    QUAL 
+
+    DATA 
+
+    ELE 
+
+
+    ACEITA E RETORNA, ETC, NOSSA LÓGICA,
+
+    CÓDIGO QUE NÓS 
+
+    ESCREVEOMS...
+)
+
+
+
+
+
+
+
+
+
+
+
+--> SE DERMOS UMA OLHADA EM TUDO ISSO __ DE UM PONTO DE VISTA TÉCNICO,
+
+
+EM AMBOS TIPOS 
+
+
+DE 
+
+
+APP,
+
+
+
+
+NÓS:
+
+
+
+A) CONSTRUÍMOS UM 'NODE' SERVER NORMAL,
+
+
+
+
+
+B) USAMOS UM NODE FRAMEWORK (express, no nosso caso)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PORTANTO,
+
+
+
+ESSES 2 TIPOS DE APP __ POSSUEM _ 'THE SAME HOSTING REQUIREMENTS'.. (
+
+
+
+    ou seja,
+
+
+    não somos obrigados a escolher um FRAMEWORK DIFERENTE
+)
+
+
+
+
+
+
+
+
+
+
+---> ISSO SIGNIFICA QUE QUANDO NÓS MOVERMOS NOSSO CÓDIGO PARA UM WEBSERVER,
+
+LÁ 
+
+NESSE WEBSERVER VAMOS QUERER 
+FAZER 
+
+EXATAMETNE A MESMA COISA QUE 
+
+FIZEMOS LOCALMENTE: VAMOS COMEÇAR NOSSO NODE SERVER,
+E A´I
+
+'WAIT FOR INCOMING REQUESTs'.... --> ISSO SIGNIFICA QUE 
+
+
+NÃO VAMOS TER QUE 
+
+DIFERENCIAR 
+
+ENTRE ESSES 
+
+TIPOS DE APP (clássico/view, graphql e rest) 
+
+
+QUANDO O ASSUNTO É 
+
+DEPLOYMENT... ->  isso significa que 
+
+
+NAS 
+
+3 MODALIDADES DE PROJETO BACKEND,
+
+NÓS SIMPLESMENTE 
+
+EXECUTAMOS NOSSO CÓDIGO NODE, E AÍ ESTAMOS 'READY TO GO' (exceto no caso do REACT/REST API/GRAPHQL, pq aí você vai precisar de um server para SERVIR O FRONTEND, PREFERENCIALMENTE)...

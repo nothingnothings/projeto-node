@@ -1,0 +1,639 @@
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA QUE DEMOS UMA OLHADA EM __ COMO PODEMOS USAR SESSIONS 
+
+
+
+para 
+
+
+
+'SEPARAR' a data de nossos users em sessions,
+
+ 
+
+
+ E AS VANTAGENS 
+
+
+
+ DE SESSIONS...... ----> TAMBÉM OLHAMOS UM POUCO OS COOKIES,
+
+
+
+
+
+
+__ VIMOS O QUE __ É UM COOKIE,
+
+
+
+E COMO COOKIES PODEM/DEVEM SER USADOS COM SESSIONS PARA __ IDENTIFICAR 1 USER/CLIENT __ 
+
+
+E ENTAÕ 
+
+'STORE THE SENSITIVE DATA ON THE SERVER', deixando só a 
+
+data 
+'NÃO IMPORTANTE'
+
+
+no cookie/session cookie ARMAZENADO NO BROWSER DO USER... (cookie/SESSION COOKIE que é CONTRAPARTE DA SESSION ARMAZENADA NO SERVER, com as informações sensíveis....)
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+E AGORA, NO CASO, 
+
+
+PROFESSOR 
+
+APONTA QUE 
+
+
+
+___ ESSA DIFERENÇA 
+
+ENTRE 
+
+
+
+'SESSIONS' (serverside)
+
+
+
+E 
+
+
+'COOKIES' (clientside)
+
+
+
+
+É __________MUUUUUUUUUUUUUUUUUITO IMPORTANTE_______......
+
+
+
+
+
+
+
+
+
+-------> É IMPORTANTE ENTENDER ISSO...
+
+
+
+
+
+
+
+
+
+
+--> NÓS APRENDEMOS SOBRE _____cOMO SETTAR__ 1 COOKIE (no browser do user)
+
+
+
+E 
+
+__SOBRE__ COMO USAR/ARMAZENAR UMA 'SESSION' ( no serverside/database... )
+
+
+
+
+
+
+
+
+
+
+
+-----> BTW,
+
+
+
+SE VOCÊ ESTIVER SE PERGUNTANDO:
+
+
+
+
+
+
+''''OK, MAS COMO ESSE SESSION COOKIE, ESSE COOKIE SIMPLES AÍ,
+
+__ COMO ELE É SETTADO? ''' -----------> 
+
+
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+A 
+
+'
+COISA'/SISTEMA 
+
+QUE 
+
+ESTÁ 
+
+
+SETTANDO ESSE COOKIE ___ AUTOMATICAMENTE__, para nós,
+
+
+
+É 
+
+
+_JUSTAMENTE___ ESSA PACKAGE DE 
+
+
+'express-session',
+
+QUE 
+
+__ATUA__ POR MEIO 
+
+
+
+
+DO CÓDIGO 
+
+definidor de 
+
+
+'session',
+ 
+ que 
+
+
+ é 
+
+ este aqui:
+
+
+
+
+
+
+
+ app.use(session( 
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+
+  
+    resave: false,
+    saveUninitialized: false, 
+    store: store 
+
+  }
+)); 
+
+
+
+
+
+
+----------------
+
+ 
+
+
+
+
+
+
+ OU SEJA, 
+
+
+
+ ____
+
+É POR __MEIO DESSE MIDDLEWARE Aí,
+
+
+
+
+extraído da package de 'express-session',
+
+
+QUE 
+
+
+
+
+
+OCORRE O __STORE___ DO COOKIE/SESSION COOKIE 
+
+
+
+
+NO 
+
+
+
+BROWSER DE NOSSOS USER.... -----> --> -----> 
+
+
+
+
+
+
+
+
+BY THE WAY,
+
+É EXATAMENTE POR ESSA RAZÃO QUE 
+
+PODEMOS 
+
+
+SETTAR 
+
+
+'COOKIE RELATED CONFIGURATIONS'
+
+
+
+DENTRO DESSE 'config object' em 'app.use(session({}))',
+
+
+
+
+
+TIPO ISTO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+ app.use(session( 
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+
+  
+    resave: false,
+    saveUninitialized: false, 
+    store: store,
+    
+    cookie: { ////ISTO AQUI, 'cookie related configurations'...
+
+    }
+
+  }
+)); 
+
+
+----------------------------
+
+
+
+
+
+
+
+OK... ISSO SIGNIFICA QUE 
+
+
+
+ESSE MIDDLEWARE AUTOMATICAMENTE 
+
+SETTA 1 COOKIE PARA VOCê .... E ELE TBM __AUTOMATICAMENTE 
+
+
+
+__Lê__ O VALOR DO COOKIE para você...
+
+(
+
+    em outras palavras, ele faz TODO O 
+
+
+
+    'COOKIE SETTING __ AND__ PARSING'
+
+
+
+    PARA NÓS,
+
+
+    automaticamente...
+) --------> É EXATAMENTE 
+
+
+
+POR ISSO QUE 
+
+
+
+
+
+______ ACTUALLY____ RARAMENTE___ PRECISAMOS 
+
+
+
+FAZER MANAGE 
+
+
+DE COOKIES 
+
+
+
+POR CONTA PRÓPRIA.... ------> é pq 
+
+
+aquele 
+
+
+SESSION COOKIE (
+
+    e com isso, professor não quer 
+
+    dizer 
+
+
+
+1 COOKIE QUE 
+
+ 
+ _aCABA SENDO PERDIDO QUANDO VOCê 
+
+
+
+ __FECHA O BROWSER,
+
+
+ e sim o 
+
+
+
+ COOKIE 
+
+
+
+ QUE __ IDENTIFICA___ 
+
+
+
+UMA 'SERVERSIDE SESSION',
+
+
+
+
+ESSE TIPO DE COOKIE AÍ É __ 
+
+O 
+
+USO MAIS PROMINENTE/COMUM 
+
+
+
+DE COOKIES DE TODOS, é o 
+
+use-case 
+
+mais banal de cookies 
+
+da existência...
+) ------------>  
+
+
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+
+
+
+OS MAJOR USES DE COOKIES SÃO:
+
+
+
+
+
+
+
+
+1o (mais usado) ---> AUTHENTICATION, ESSE 'SERVERSIDE SESSION IDENTIFYING'... por meio do cookie.... SÃO OS FAMOSOS 'SESSION COOKIES'...
+
+
+
+
+
+
+
+2o (também bem usado) ---> ADVERTISEMENT.
+
+
+
+
+3o (também usado) --> TRACKING...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O ADVERTISEMENT E TRACKING são 
+
+coisas que 
+
+VOCê __TIPICAMENTE NÃO 
+
+
+IMPLEMENTA POR CONTA PRÓPRIA,
+
+
+
+E SIM __ USA __ 
+
+
+THIRD PARTY TOOLS,
+
+
+COMO o 
+'google' em si....
+
+
+
+
+
+
+
+-------> OK... MAS 
+
+
+O 
+
+USE-CASE N1,
+
+
+
+
+ESSES SESSION COOKIES,
+
+
+
+
+___ SÃO 1 COISA IMPORTANTE,
+
+
+
+
+E 
+
+
+__SESSIONS ___ EM SERVERS__ SÃO ___________________FREQUENTEMENTE___ USADOS 
+
+
+
+PARA _ AUTHENTICATION...,
+
+
+
+MAS COMO O PROFESSOR MENCIONOU ANTERIORMENTE,
+
+
+
+
+
+É __ EVIDENTE__ QUE 
+
+VOCÊ 
+
+
+
+__PODE USAR 
+
+AS SESSIONS 
+
+COMO 
+
+
+STORAGE 
+
+
+____________DE QUALQUER TIPO DE DATA ('any kind of data')
+
+
+QUE 
+
+
+VOCÊ 
+
+QUER STORE.... -----> 
+
+
+
+
+
+
+
+
+
+NÓS, AQUI, DE FATO QUEREMOS 
+
+
+
+ARMAZENAR A INFO ACERCA DE 
+
+
+'O USER ESTÁ LOGGED IN',
+
+
+
+
+
+
+MAS __ É EVIDENTE QUE __ VOCÊ 
+
+PODERIA/ PODE ARMAZNEAR 
+
+
+QUALQUER COISA,
+
+
+
+como por exemplos 
+
+
+OS 
+
+
+CARTS (shopping cart),
+
+
+
+
+
+
+CART DO USER,
+
+
+
+
+ALGO QUE 
+
+
+PERTENCE 
+
+
+
+
+AO 
+
+USER __ E QUE 
+DEVE 
+
+
+
+SER 
+'SHARED ACROSS REQUESTS' (requests daquele user específico),
+
+
+COMO 
+
+O 
+
+PROFESSOR MENCIONOU ANTERIORMENTE...

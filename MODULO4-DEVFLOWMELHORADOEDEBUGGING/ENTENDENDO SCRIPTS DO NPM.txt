@@ -1,0 +1,677 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> para esse módulo,
+
+
+PROFESSOR VOLTA AO NOSSO PROJETO DA ÚLTIMA COURSE SECTION.... (o com 'routes' e 'app.js')...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> E UMA COISA QUE NÓS CONSTANTEMENTE TIVEMOS DE FAZER, 
+
+
+NA ÚLTIMA LIÇÃO,
+
+É 
+
+SEMPRE 
+
+RODAR 
+
+'NODE APP.JS'
+
+
+
+PARA 
+
+
+___INICIAR NOSSO NODE APP com aquele arquivo... --> isso é certamente 
+
+ok 
+
+
+
+e nem 
+
+é 
+
+tanto trabalho assim,
+
+
+
+MAS NA VERDADE É POSSÍVEL 
+
+
+
+
+DEFINIR CERTOS SCRIPTS EM UM PROJETO NODEJS 
+
+
+
+QUE PODEM __ NOS AJUDAR__ COM INCONVENIENTES COMO ESSE....
+
+
+
+
+
+
+
+
+
+
+----> TAMBÉM PODEMOS USAR ESSES SCRIPTS PARA OUTRAS TAREFAS,
+
+
+
+mas, especialmente para isso,
+
+
+
+PODEM SER ÚTEIS AGORA...
+
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO, PRECISAMOS USAR 
+
+
+UMA FEATURE 
+
+QUE 
+
+
+AINDA NÃO UTILIZMAOS.... -----> 
+
+TEMOS QUE 
+
+USAR 
+
+O NPM, 
+QUE 
+
+VEM JUNTO COM O NODEJS...
+
+
+
+
+
+
+
+------> VAMOS USÁ-LO PARA INSTALAR TPPs no futuro,
+
+
+
+INSTALAR PACKAGES QUE NÃO FAZEM PARTE DAS CORE NODE MODULES,
+
+
+
+
+
+
+MAS JÁ PODEMOS 
+
+
+'INITIALIZE' 
+
+UM 
+
+'NODE PROJECT',
+
+
+
+ou em outras palavras,
+
+
+adicionar 
+
+
+CERTAS FEATURES A ELE...  (na verdade, JÁ TEMOS UM 'NODE PROJECT',
+
+mas 
+
+
+
+com 
+
+esse NPM, podemos 
+
+ADICIONAR CERTAS FEATURES EXTRAS A ELE...)
+
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+
+
+
+TEMOS QUE NAVEGAR ATÉ O NOSSO FOLDER E DIGITAR 
+
+
+'npm init' (clássico) -------->
+
+
+
+ISSO VAI CRIAR UM PACKAGE.JSOn,
+
+
+em que teremos nossos scripts...
+
+
+
+
+
+----> MAS QUANDO INICIAMOS 'npm init',
+
+
+
+
+
+
+
+também é pedido um 'ENTRY POINT'... --> nós deixamos isso como 
+
+
+'app.js',
+
+
+
+
+
+E ISSO NÃO É IMPORTANTE AGORA,
+
+MAS SERÁ NO FUTURO...
+
+
+
+
+
+
+
+
+
+
+--------> OK... COM ISSO,
+
+
+TEMOS aquele 
+PACKAGE.JSON...
+
+
+
+
+
+
+
+
+
+
+--> temos a key de 'scripts'.... ------>
+ 
+
+
+
+
+
+ esse arquivo usa o formato JSON,
+
+
+
+ JAVASCRIPT OBJECT NOTATION... 
+
+
+
+
+
+
+
+
+ --> todas as keys sao wrappadas 
+
+
+ com 
+
+ "" 
+
+
+
+ ,
+
+  etc etc....
+
+
+
+
+
+
+
+
+  --------> PACKAGE.JSON ---> É UMA CONFIG FILE PARA O NOSSO PROJETO, BASICAMENTE...
+
+
+
+
+
+
+
+
+
+  -----> OK, SEÇÃO DE SCRIPTS, ETC ETC...
+
+
+
+
+
+
+
+  ------> ADICIONAMOS NOSSOS PRÓPRIOS SCRIPTS... 
+
+
+
+
+
+  -----> COLOCAMOS UM SCRIPT DE 
+
+  'start'... ---> 
+
+
+  'START' É UM 
+
+
+
+  SCRIPTNAME __ ESPECIAL___....
+
+
+
+
+
+
+
+
+
+  -----> NA PARTE DA DIREITA, ESCREVEMOS 
+
+  UM __ 
+
+
+  CÓDIGO QUE DEVE SER EXECUTADO.... -----> 
+
+
+  NO CASO,
+
+  VAMOS 
+
+  COLOCAR 
+
+
+
+  'node app.js'...
+
+
+
+  ex:
+
+
+''''''
+
+
+
+  "scripts": {
+
+      "start": "node app.js"
+  }
+
+  '''''
+
+
+
+
+  AGORA, SE EXECUTARMOS 
+
+
+  'npm start',
+
+  VAMOS EXECUTAR 
+
+
+  nosso código... 
+
+
+
+
+
+
+
+
+
+
+
+  ---------> SE VOCÊ ALGUMA VEZ COMPARTILHAR 
+
+
+  ESSE PROJETO,
+
+
+
+  é bem comum sempre 
+
+  deixar 
+  'npm start' 
+
+
+  como o código que 
+  o inicia...
+
+
+
+
+
+
+
+
+
+
+
+  ---> PROFESSOR MENCIONOU QUE 'START' É UM 'SPECIAL KEYNAME'...
+
+
+
+
+
+
+  ---> E, DE FATO,
+
+
+  VOCê PODE ADICIONAR MAIS 
+
+  SCRIPTS, 
+
+
+  SEM SPECIAL NAMES..
+
+
+
+
+
+
+
+
+  VOCÊ PODE ESCOLHER QUALQUER NOME QUE VOCê QUISER,
+
+
+
+  SÓ WRAPPE ESSE NOME COM "",
+
+
+
+
+
+  e faça com que ele não tenha espaço algum...
+
+
+
+
+  ex:
+
+
+
+  "start-server"...
+
+
+
+
+
+
+
+
+  -------> OK.... MAS 
+
+
+  SE VOCÊ 
+
+
+  TEM 
+
+  2 SCRIPTS 
+
+
+  de 'node app.js'
+
+
+
+  DENTRO DESSE NEGÓCIO,
+
+  um 
+
+  com 
+
+
+  nome 
+
+  de 
+
+  'start'
+
+  e 
+
+  outro 
+
+  de 
+
+  'start-server',
+
+
+
+  TIPO ASSIM:
+
+
+    "scripts": {
+
+      "start": "node app.js",
+      "start-server": "node app.js"
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ALÉM DE SER REDUNDANTE,
+
+
+
+
+  ESSE CÓDIGO TAMBÉM VAI TE DAR UM __ ERRO___ -----> 
+
+
+
+
+  ERRO: 
+
+
+  'ISSO NÃO É UM KNOWN COMMAND'... ----> E, DE FATO,
+
+
+  NÃO É UM COMANDO 
+
+  SUPORTADO... ------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+SE VOCÊ SÓ ESCREVER 
+
+
+
+'npm start-server',
+
+ISSO __ NÃO SERÁ SUPORTADO___- ----------> ISSO PQ 
+
+
+
+SCRIPT NAMES 
+
+QUE 
+
+NÃO 
+
+SÃO OS 'DEFAULT'/QUE NÃO SÃO OS 'SPECIAL KEYNAMES' (como 'start', que é UM SPECIAL KEYNAME),
+
+
+
+
+VOCÊ É __OBRIGADO__ A 
+
+ESCREVER 
+
+
+
+'npm __RUN___ xxxxx'...
+
+
+
+
+
+
+--> nesse caso,
+
+teríamos de escrever 
+
+'npm run start-server',
+
+
+e não 
+
+
+
+'npm start-server' (NÃO É SUPORTADO)....
+
+
+
+
+
+
+
+O MESMO NÃO SE APLICA 
+
+
+À 
+
+'npm start',
+
+
+
+JUSTAMENTE PQ 
+
+'start' É UM SPECIAL SCRIPTNAME,
+
+
+
+
+
+
+E NÃO SE SUBMETE A ESSA REGRA..
+
+
+
+
+
+
+
+
+
+-----> ok, ainda assim, os 2 códigos são redundantes....
+
+
+
+
+
+
+
+
+---> VOCÊ 
+
+
+USA UM 
+
+
+
+MONTE ESSES SCRIPTS AÍ PARA TRIGGAR BUILD WORKFLOWS 
+
+EM 
+
+FRAMEWORKS COMO ANGULAR E REACT...
+
+
+
+
+
+
+
+-----> VEREMOS MAIS TARDE O USO 
+
+
+DO NPM 
+
+
+E ESSES SCRIPTS 
+
+QUANDO ESTUDARMOS O DEVELOPMENT/BUILD WORKFLOW DO NODEJS...

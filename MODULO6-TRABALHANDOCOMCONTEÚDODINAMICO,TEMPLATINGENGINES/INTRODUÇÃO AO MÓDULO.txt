@@ -1,0 +1,450 @@
+
+
+
+
+
+
+
+
+
+AGORA 
+
+QUE 
+
+SABEMOS OS CORE BASICS SOBRE O NODEJS 
+
+E O 
+
+EXPRESSJS,
+
+
+
+
+DEVEMOS 
+
+
+
+
+TRABALHAR UM PCO MAIS 
+
+
+SOBRE 
+
+
+'WHAT THE USER SEES',
+
+
+
+
+
+pq 
+
+OBVIAMENTE QUEREMOS CONSTRUIR UM APP 
+
+
+
+
+___ QUE __ ENTREGA ALGUM VALOR AOS NOSSOS USUÁRIOS...
+
+
+
+
+
+
+
+
+------> ATÉ AGORA, TUDO QUE FIZEMOS 
+
+FOI 
+
+
+
+O RETURN DE PÁGINAS HTML ESTÁTICAS.... -----> E TIPICAMENTE ISSO 
+
+NÃO É 
+
+A COISA 
+
+QUE 
+
+VOCê 
+
+
+
+
+FAZ EM REAL APPLICATIONS,
+pq
+
+
+raramente 
+
+VOCê  
+
+
+TERÁ
+ 
+ CÓDIGO 
+
+
+ HTML 
+
+ INTEGRALMENTE ESTÁTICO.... ------> EM VEZ DISSO,
+
+
+
+ É 
+
+ BEM COMUM QUE VOCÊ 
+
+ TENHA 
+
+ ALGUMA 
+
+ DATA __ MANAGEADA __ NO SEU SERVER,
+
+
+
+ DATA QUE 
+
+ VOCÊ 
+
+
+
+ VAI QUERER 
+ ENTÃO 
+
+
+ 'DYNAMICALLY OUTPUT 
+
+ IN YOUR HTML CODE',
+
+
+
+
+ NO HTML CODE QUE VOCê ENVIA 
+
+ DE VOLTA AOS SEUS USERS... ------> EXEMPLO PERFEITO 
+
+
+
+
+
+ SERIA UMA PAGE 
+
+
+
+ COM UMA LISTA DE PRODUCTS,
+
+
+
+
+ EM QUE 
+
+
+ ESSES PRODUCTS 
+
+
+ VÃO 
+
+ SER 
+
+ RETRIEVADOS __ DA DATABASE__, POR MEIO DA 
+
+ AÇÃO/OPERAÇÕES 
+
+
+
+
+
+DO SERVIDOR... ----> 
+
+
+
+
+
+
+
+
+
+OU, POR EXEMPLO,
+
+
+
+COM FORMS... --> NÓS JÁ TEMOS UMA 
+
+FORM 
+
+
+BEM SIMPLES,
+
+FORM EM QUE 
+
+
+
+PESSOAS PODEM 
+SUBMITTAR 
+
+
+
+
+
+UM NOVO 'PRODUCT TITLE'... ------> ATÉ AGORA 
+
+
+NÃO ESTAMOS 
+
+
+
+FAZENDO NADA COM ESSE TITLE,
+
+MAS EM UM 
+
+APP 
+
+DE 
+
+VERDADE 
+
+
+
+
+NÓS OBVIAMENTE FARÍAMOS O STORE DISSO EM ALGUM LUGAR, EM UMA DATABASE,
+
+
+PARA 
+
+ENTÃO 
+
+
+'KIND OF RETURN IT IN SOME OTHER PAGE',
+
+
+
+
+
+
+PAGE EM QUE 
+
+VOCê 
+
+TERÁ 
+
+
+ESSA 'LIST OF PRODUCTS' 
+
+que 
+
+o 
+
+professor 
+
+já mencionou...
+
+
+
+
+
+
+
+
+
+------> NESSE MÓDULO, PORTANTO, 
+
+
+
+
+DAREMOS UMA OLHADA EM 
+
+__COMO PODEMOS 
+
+'START MANAGING DATA ON A NODE/EXPRESS BACKEND'... ---> 
+
+
+
+POR ENQUANTO, VEREMOS COMO FAZER ISSO ___ SEM USAR __ UMA DATABASE... (no worries)...
+
+
+
+
+
+
+
+
+
+--> TEREMOS UM MODULE BEM EXTENSO SOBRE DATABASES 
+
+
+NESSE CURSO... (vamos aprender sobre como interagir com uma database...)
+
+
+
+
+
+
+
+
+
+---> POR ENQUANTO, VAMOS APENAS MANAGE DATA ASSIM...  
+
+
+
+
+
+
+-------> OU SEJA, APRENDEREMOS:
+
+
+
+
+
+
+1) MANAGING DATA (without a database)....
+
+
+
+
+
+
+2) RENDER DYNAMIC CONTENT (for now, dummy content) IN OUR VIEWS  
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+VAMOS 
+
+
+
+VER 
+
+
+COMO, NESSAS PAGES HTML QUE ESTAMOS RETORNANDO,
+
+
+
+
+DEIXAR 
+
+UNS CONTEÚDOS DINÂMICOS,
+
+
+
+
+TER UNS CONTEÚDOS ___ QUE __ 
+
+
+
+É 'DYNAMICALLY ENTERED INTO THEM BY THE SERVER'... ---> ISSO
+
+PARA 
+
+QUE 
+
+SE 
+
+TIVÉSSEMOS 
+
+
+
+
+__'ADDITIONAL DATA ON THE SERVER',
+
+
+ENVIARÍAMOS 
+
+UMA 
+
+ 
+ PÁGINA HTML DIFERENTE,
+
+
+ COM 
+
+ CONTEÚDO DIFERENTE... --------> PARA 
+
+
+
+
+ISSO, 
+
+
+PARA 
+
+
+
+SERVIR 
+
+
+
+ESSE CONTEÚDO DINÂMICO NAS NOSSAS PÁGINAS,
+
+VAMOS 
+
+USAR AQUILO 
+
+QUE 
+
+
+´E 
+
+
+CONHECIDO COMO 
+
+UMA 
+
+
+'TEMPLATING ENGINE'... ------> VAMOS APRENDER 
+
+
+
+
+SOBRE 
+
+
+ESSAS TEMPLATING ENGINES... --> HÁ MAIS DE 1 OPÇÃO...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS APRENDER SOBRE COMO FUNCIONAM 
+
+E COMO DEVEMOS A UTILIZAR..
+
+
+
+
+
+
+
+
+
+
+--> ANTES VAMOS VER COMO PODEMOS FAZER MANAGE DESSA DATA,
+
+PARA 
+
+DEPOIS 
+
+
+ENTENDER COMO 
+
+PODEMOS 'OUTPUT IT' 
+
+por meio 
+
+
+dessas templating engines...

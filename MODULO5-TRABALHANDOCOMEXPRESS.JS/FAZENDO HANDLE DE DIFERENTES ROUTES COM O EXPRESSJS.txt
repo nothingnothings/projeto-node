@@ -1,0 +1,1078 @@
+
+
+
+
+
+
+
+
+
+
+
+
+---> DEVEMOS VER AS OUTRAS FEATURES OFERECIDAS PELO EXPRESSJS,
+
+PARA CONSTRUÍRMOS UM APLICATIVO MAIS LEGAL....
+
+
+
+
+
+
+
+
+
+
+--> AGORA VAMOS QUERER COMEÇAR A HANDLAR 
+
+DIFERENTES ROUTES, diferentes urls.... --> 
+
+
+
+
+
+PARA ISSO, 
+
+
+
+
+
+PROFESSOR 
+
+
+__RETIRA NOSSA PRIMEIRA MIDDLEWARE,
+
+
+
+que não está fazendo coisa alguma...
+
+
+
+
+
+
+
+-------->
+
+EX:
+
+
+
+
+const express = require('express'); ///necessário.
+
+const app = express(); /////necessário.
+
+app.use((req, res, next) => {
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+app.listen(3000);
+                    
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+OK.... ------> E O PROFESSOR EXPLICA QUE ESSE ÚNICO MIDDLEWARE QUE SOBROU 
+
+
+_DEVERÁ __ SER TRIGGADO __ APENAS POR REQUESTS__ À url 
+
+DE 
+
+
+
+
+
+'localhost:3000/' (slash nothing)..
+
+
+
+
+
+
+
+
+
+
+--> OK, E COMO PODEMOS FILTRAR REQUESTS COMO ESSES?? ------> 
+
+
+
+
+
+
+
+
+BEM, O PROFESSOR MENCIONOU QUE 
+
+
+
+A FUNÇÃO '.USE()' TEM MÚLTIPLAS VERSÕES... (isso é visto na descrição, que diz '+4 overloads'...)
+
+
+
+
+
+
+
+
+--> ISSO BASICAMENTE SIGNIFICA QUE TEMOS ____ CINCO _ DIFERENTES___ MANEIRAS 
+
+
+
+DE USAR 
+
+
+
+
+
+
+
+
+
+O MÉTOOD 
+
+
+'.use()'....
+
+
+
+
+
+
+
+
+-------> PODEMOS VER UMA BOA EXPLICAÇÃO 
+
+SOBRE 
+
+ISSO 
+
+LÁ 
+
+NOS DOCS OFICIAIS DO 
+
+EXPRESSJS...
+
+
+
+
+
+
+
+
+
+--------> NA API REFERENCE,
+
+
+
+
+VEMOS 'app.use()'.... ------->
+
+
+
+
+
+
+
+
+
+AS 5 DIFERENTES VERSÕES SÃO FEITAS DE DIFERENTES COMBINAÇÕES...
+
+
+
+
+
+
+
+
+
+
+
+----> A PRIMEIRA VERSÃO, QUE QUEREMOS USAR,
+
+é 
+
+
+
+
+'app.use([path,] callback, [, callback...])'
+
+
+
+
+
+
+
+
+
+
+
+---> O PRIMEIRO ARGUMENTO É __OPCIONAL___ ,
+
+
+E´UM 'PATH',
+
+MAS _É EXATAMENTE O QUE QUEREMOS,
+
+
+
+POIS 
+
+ELE 
+
+NOS DEIXA 
+
+'FILTER OUT CERTAIN REQUESTS'... -----> ENTRETANTO, 
+
+ESSE 
+
+
+NEGÓCIO FUNCIONA DE UM JEITO UM POUCO DIFERENTE 
+
+
+DOS 
+'IF STATEMENTS'
+que 
+
+tínhamos antes... ---> MAS O PROFESSOR 
+
+
+DIZ QUE VOLTAREMOS A ISSO DEPOIS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO SEGUNDO ARGUMENTO,
+
+TEMOS 
+
+O 
+
+
+'CALLBACK',
+
+
+que é 
+
+A FUNÇÃO QUE 
+
+DEVERÁ 
+
+SER EXECUTADA...
+
+
+
+
+
+
+
+
+
+---> E COMO TERCEIRO ARGUMENTO, TEMOS __ OUTRO CALLBACK, SINALIZANDO _ QUE 
+
+É POSSÍVEL TER MAIS DE 1 CALLBACK.... (podemos ter quantos quisermos...)
+
+
+
+
+
+
+
+
+
+
+---> TAMBÉM PODEMOS TER QUANTOS 'PATH FILTERS' 
+
+
+quisermos....
+
+
+
+
+
+
+
+-------> VAMOS QUERER DEFINIR UM PATH 
+
+
+
+COMO PRIMEIRO ARGUMENTO, ENTÃO...
+
+
+
+
+
+
+
+--> escrevemos assim:
+
+
+
+
+
+
+app.use('/', ////////////EIS O CÓDIGO EM QUESTÃO...
+    
+    (req, res, next) => {
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+O PROFESSOR APONTA 
+
+
+QUE 
+
+'/' NA VERDADE É O PATH __ DEFAULT___ de 'app.use()',
+
+por isso 
+
+sua definição é meio DESNECESSÁRIA... -------> SE RECARREGARMOS 
+
+A PÁGINA,
+
+AINDA VEMOS 
+
+'HELLO'... 
+
+
+
+
+
+
+
+------> MAS O PROBLEMA SURGE SE DIGITARMOS 
+
+ALGO COMO 
+
+
+'localhost:3000/product' -----> MESMO 
+
+COM 
+
+
+ESSE PATH DIFERENTE,
+
+AINDA VEREMOS 
+
+'HELLO'.... ------> 
+
+
+
+
+
+
+ISSO SIGNIFICA QUE NOSSO MIDDLEWARE ESTÁ SENDO EXECUTADO 
+
+TANTO PARA 
+
+'/'
+
+como para 
+
+
+'/product'... --> NÃO QUEREMOS ESSE COMPORTAMENTO...
+
+
+
+
+
+
+
+
+
+
+------> ISSO ACONTECE PQ 
+
+ESSE PRIMEIRO PARÂMETRO 'PATH FILTER' 
+
+
+
+
+
+
+PEDE A VOCÊ ___ QUE __ O PATH __ COMEÇE__ COM AQUELE 
+
+'/',
+
+
+E NÃO 
+
+
+
+QUE ELE SEJA __ SÓ___ AQUILO LÁ ... (mesmo comportamento de 'exact' e etc, lá no REACT-ROUTER-DOM'...)
+
+
+
+
+
+
+
+
+
+-----> E É ÓBVIO QUE TODA ROUTE COMEÇA COM '/',
+
+
+
+por isso esse default é um lixo... --> PARA FAZER COM QUE 
+
+
+ESSE 
+
+DEFAULT 
+
+
+
+
+
+_ FUNCIONE NO NOSSO CÓDIGO,
+
+PARA QUE 
+
+ELE 
+
+NÃO 
+
+TRIGGUE PARA __ TODO E QUALQUER REQUEST QUE CHEGA AO NOSSO SERVER,
+
+
+
+O PROFESSOR 
+
+
+
+__DUPLICA __ NOSSO MIDDLEWARE 
+
+de 
+
+
+'app.use()'
+
+
+
+E DEFINE OUTRO __ANTES___ DO 
+
+
+de 
+
+path '/',
+
+QUE 
+
+
+VAI TRIGGAR PARA 
+
+TODOS OS REQUESTS 
+
+QUE 
+
+CHEGAM 
+
+A 
+
+'/product'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+            '/product',
+
+  console.log('test1; PRODUCTTEST'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+app.use(
+    '/',
+    
+    (req, res, next) => {
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+-----------------------------------
+
+
+
+OK... MAS ISSO __ DEU ERRADO___, NÃO ERA O QUE EU ESPERAVA...
+
+
+
+
+
+
+CÓDIGO ERRADO:
+
+
+
+app.use((req, res, next) => {
+            'test',
+
+
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<h1>Hello from product!</h1>');
+
+  next(); /////EIS O CÓDIGO EM QUESTÃO. 'ALLOWS THE REQUEST TO REACH THE NEXT MIDDLEWARE IN LINE, WHICH IS THE MIDDLEWARE/APP.USE BELOW THIS ONE....'
+});
+
+app.use((req, res, next) => {
+        '/',
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+  res.send('<h1>Hello from express!</h1>'); ////o 'send()' já setta nos headers UM CONTENT-TYPE DE 'html/text' POR DEFAULT.. (e é claro que você pode OVERWRITTAR ESSE COMPORTAMENTO POR MEIO DE CÓDIGOS COMO  'setHead' e 'setHeader'...)
+});
+
+
+
+-----------------------------------------
+
+
+
+
+
+TALVEZ SEJA PQ 
+
+
+
+EU ESQUECI DE DEFINIR OS 'send'/'next'...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+app.use((req, res, next) => {
+            '/product',
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<h1>Hello from product!</h1>');
+});
+
+app.use((req, res, next) => {
+        '/',
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+  res.send('<h1>Hello from express!</h1>'); ////o 'send()' já setta nos headers UM CONTENT-TYPE DE 'html/text' POR DEFAULT.. (e é claro que você pode OVERWRITTAR ESSE COMPORTAMENTO POR MEIO DE CÓDIGOS COMO  'setHead' e 'setHeader'...)
+});
+
+
+
+
+
+
+
+
+
+OK, MAS ESSE CÓDIGO AINDA ESTÁ RUIM... --> estou carregando 'hello from product'
+
+ATÉ MESMO QUANDO 
+
+
+
+CARREGO 
+
+'localhost:3000/' (slash nothing)...
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+aaah, eu sou um idiota; coloquei o PATH FILTER __DENTRO __ DA FUNÇÃO INTERNA DE '(req, res, next) => {}', QUANDO DEVE FICAR FORA....
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+OK... ISSO FUNCIONOU. FICOU ASSIM:
+
+
+
+
+
+app.use(
+    '/product', ///PATH FILTER. cumpre a mesma funçaõ de 'if(url === '/')' NO NODEJS NORMAL...
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<h1>Hello from product!</h1>');
+});
+
+app.use(
+    '/', ///////PATH FILTER.
+    (req, res, next) => {
+
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+  res.send('<h1>Hello from express!</h1>'); ////o 'send()' já setta nos headers UM CONTENT-TYPE DE 'html/text' POR DEFAULT.. (e é claro que você pode OVERWRITTAR ESSE COMPORTAMENTO POR MEIO DE CÓDIGOS COMO  'setHead' e 'setHeader'...)
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+CÓDIGO COMPLETO:
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express'); ///necessário.
+
+const app = express(); /////necessário.
+
+app.use(
+    '/product', ///PATH FILTER. cumpre a mesma funçaõ de 'if(url === '/')' NO NODEJS NORMAL...
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<h1>Hello from product!</h1>');
+});
+
+app.use(
+    '/', ///////PATH FILTER.
+    (req, res, next) => {
+
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+app.listen(3000); 
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO, É O MESMO COMPORTAMENTO DE 
+
+'REACT-ROUTER-DOM',
+
+
+só que SEM O 'exact'.... 
+
+
+
+
+
+
+
+----> DEVEMOS CHAMAR 
+
+
+
+
+
+o case de '/' 
+
+POR ÚLTIMO,
+
+
+e devemos nos lembrar de 
+
+
+USAR '.send()'
+
+
+NO BLOCK ANTERIOR A ELE,
+
+tudo para que 
+
+O INCOMING REQUEST __ ''''PARE'''''___ 
+
+
+no block 
+
+
+de 
+
+
+
+path 
+
+'/add-product'....
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK, MAS RESTA UM PROBLEMA:
+
+
+
+se deixarmos O CÓDIGO ASSIM,
+
+
+QUALQUER OUTRO PATH 
+
+
+
+QUE DIGITARMOS NA NOSSA URL __ VAI _ SER REDIRECIONADO __ 
+
+
+A 
+
+
+'/', o case de '/'..
+
+
+(página de 'hello from express'....) ----------> 
+
+
+
+OK, MAS É ASSIM QUE 
+
+
+PODEMOS 
+
+USAR 
+
+
+AUQELE 
+
+
+
+'MIDDLEWARE APPROACH'
+
+
+PARA ___ CONTROLAR___ O QUE ACABA SENDO MOSTRADO/PÁGINAS QUE ACABAM SENDO CARREGADAS...
+
+
+
+
+
+
+
+
+
+---> E A ORDEM DOS 'MIDDLEWARES',
+
+
+
+E TAMBÉM O __ FATO__ DE ESTARMOS CHAMANDO 'next()' ou 'send()'
+
+OU NÃO, 
+
+
+
+
+
+__TUDO ISSO IMPORTA... ----> IMPORTA UM MONTE... 
+
+
+
+
+
+
+
+
+
+
+
+
+----> BTW, 
+
+SE VOCÊ 
+
+
+
+
+
+
+ENVIA UMA RESPONSE, ESSE É UM EXCELENTE INDICADOR DE QUE VOCÊ NÃO VAI QUERER 
+
+CHAMAR 
+
+'NEXT' 
+
+depois... ---> ISSO PQ 
+
+VOCÊ NÃO VAI QUERER 
+
+
+
+
+EXECUTAR NENHUM OUTRO 'RESPONSE-RELATED CODE' depois de ter enviado sua response,
+
+EXATAMENTE COMO VIMOS COM O 
+ 
+ 'VANILLA NODEJS',
+
+
+
+
+ ___JUSTAMENTE PQ VOCÊ NÃO VAI QUERER 
+
+ ENVIAR MAIS DE 1 RESPONSE,
+
+ ISSO NÃO VAI FUNCIONAR E VAI RESULTAR EM UM ERRO...
+
+
+
+
+
+
+
+
+
+
+
+ -->OK, ESSE É O CÓDIGO QUE PODEMOS USAR AQUI,
+
+ É 
+
+ O CÓDIGO QUE 
+
+ NOS DEIXA ROUTEAR 
+
+
+
+ ___ NOSSOS REQUESTS__ EM DIFERENTES __ MIDDLEWARES__...  -------> 
+
+
+
+ E 
+
+
+ SE TIVÉSSEMOS/TIVERMOS UM 
+
+
+ MIDDLEWARE QUE 
+
+ DEVE/DEVA SER APLICADO A TODOS OUTROS MIDDLEWARES,
+
+
+
+ nós SIMPLESMENTE O ADICIONAMOS 
+
+
+
+
+
+ NO TOPO,
+
+
+ EM CIMA DE TODOS OS MIDDLEWARES, 
+
+
+ sem nada escrito no seu path 
+
+ (
+
+
+     pq aí o SEU PATH FILTER SERÁ CONSIDERADO COMO 
+
+     '/',
+
+     e justamente por ESTAR NO TOPO,
+
+
+     NO PRIMEIRO LUGAR,
+
+
+
+     ELE SERÁ APLICADO A TODOS OUTROS MIDDLEWARES DE NOSSA PÁGINA...
+
+
+ )
+
+
+
+
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+ const express = require('express'); ///necessário.
+
+const app = express(); /////necessário.
+
+
+
+
+app.use(
+    (req, res, next) => { ////////ESSE MIDDLEWARE FARÁ COM QUE ESSE HEADER SEJA SETTADO/ENVIADO EM TODAS AS ROUTES/PATH FILTERS DE NOSSO APP....
+       console.log('THIS ALWAYS RUNS/WILL ALWAYS RUN'); 
+        res.setHeader( 
+            {'Content-Type': 'EXEMPLO' }
+        )
+
+    }
+)
+
+app.use(
+    '/product', ///PATH FILTER. cumpre a mesma funçaõ de 'if(url === '/')' NO NODEJS NORMAL...
+    (req, res, next) => {
+            
+  console.log('test; IN THE MIDDLEWARE');
+  res.send('<h1>Hello from product!</h1>');
+});
+
+app.use(
+    '/', ///////PATH FILTER.
+    (req, res, next) => {
+
+
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+
+
+
+app.listen(3000); 
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ok........ -------> É ASSIM QUE OS MIDDLEWARE FUNCIONAM,
+
+E É ASSIM QUE 
+
+
+PODEMOS 
+
+TRABALHAR COM 
+
+
+
+OS MIDDLEWARE PARA FUNNELAR NOSSOS REQUESTS PARA OS LOCAIS CORRETOS....

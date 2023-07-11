@@ -1,0 +1,2465 @@
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER DEFINIR UM MODEL DE 'USER',
+
+MAIS UMA VEZ,
+
+
+MAS AGORA 
+
+
+
+USANDO 
+
+O 'MONGOOSE',
+
+
+E 
+
+
+FAZENDO SUA DEFINIÇÃO COMO UM 'MONGOOSE MODEL',
+
+
+em vez 
+
+de um model 
+
+
+normal, com métodos normais....
+
+
+
+
+
+
+
+
+
+
+
+COMEÇAMOS COM UM CÓDIGO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema();
+
+
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+
+
+    }
+)
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+PROFESSOR ADMITE QUE 
+
+JÁ TRABALHAMOS COM O 'ADMIN SIDE'
+
+
+e com 
+
+O PRODUTO BÁSICO,
+
+MAS ELE 
+
+
+
+
+
+DIZ QUE 
+
+AGORA DEVEMOS FOCAR 
+
+
+NA PARTE 
+
+
+DO 'CONSUMER',
+
+
+
+
+
+DO 
+
+
+USUÁRIO NORMAL,
+
+QUE VAI SER 1 'USEr',
+
+
+com um cart e várias orders....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS ADICIONAR 1 
+
+
+USER DE NOVO,
+
+
+VER COMO 
+ADICIONAR 
+
+1 MODEL DE 'USER',
+
+
+
+ver como podemos conectar esse MODEL A UM PRODUCT,
+
+
+
+E ASSIM POR DIANTE...
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI ATÉ 'user.js',
+
+esse arquivo aí ,
+
+
+ E VAI ESCREVENDO EXTAMENTE A MESMA COISA QUE NÓS...
+
+
+
+
+
+
+
+ ---->
+
+
+
+
+
+ eX:
+
+
+
+
+
+ const mongoose = require('mongoose');
+
+
+
+const Schema = mongoose.Schema;
+
+ const userSchema 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK, ELE ESCREVE EXATAMENTE ISTO:
+
+
+
+
+
+
+
+
+ 
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+
+
+    }
+);
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DENTRO DAQUELE 'object'
+
+DEVEMOS DESCREVER COMO 
+
+O 
+
+NOSSO 
+
+
+
+OBJECT/DOCUMENT 'user'
+
+DEVERÁ SE PARECER...
+
+
+
+
+
+
+
+
+--> VAMOS COLOCAR UM 
+
+FIELD 
+
+DE 
+
+'name',
+
+outro de 
+
+'email',
+
+
+
+
+
+
+OS 2 SÃO REQUIRED....
+
+
+
+
+
+
+
+
+
+---> NÓS ANTERIORMENTE, ANTES DE USAR O MONGOOSE,
+
+
+HAVÍAMOS DEFINIDO 
+
+1 
+
+'cart'... --> E O PROFESSOR 
+
+
+
+
+
+
+
+__________aINDA _ VAI QUERER __ 
+
+
+'EMBED' 
+
+
+
+OS CARTS 
+
+
+
+em 
+
+
+
+OBJETOS 'user',
+
+exatamente como antes... -------->
+
+
+
+
+OK, MAS COMO FAZEMOS ISSO, AUQI?
+
+
+
+
+
+
+
+
+--------> BEM, O PROFESSOR VAI SIMPLESMNETE 
+
+ESCREVER assim:
+
+
+
+
+
+
+
+
+
+cart: {
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+-----> DENTRO DESSA DEFINIÇÃO DO FIELD DE 'CART',
+
+
+
+O PROFESSOR 
+
+
+
+NOS EXPLICA QUE 
+
+
+__ ELE DEVERÁ SER UM 'EMBEDDED DOCUMENT',
+
+e que 
+
+NÓS PODEMOS DEFINIR EXATAMENTE ISSO,
+QUE 
+
+ELE 
+É UM 
+
+
+'EMBEDDED DOCUMENT',
+
+
+
+
+tudo por 
+
+meio 
+
+
+
+de uma escrita como:
+
+
+
+
+
+
+
+
+
+
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+    
+        cart: {
+
+            products: []  //////EIS O CÓDIGO EM QUESTÃO... --> isso basicamente SINALIZA AO MONGOOSE QUE VAMOS QUERER TER 1 'embedded document' DENTRO DE NOSSO DOCUMENT 'user', E QUE VAMOS QUERER QUE ESSE EMBEDDED DOCUMENT/EMBEDDED DOCUMENTS TENHAM __ ESSA __ PROPRIEDADE__ DE 'products', que segurará um ARRAY...
+        }
+
+
+    }
+);
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+------>  OK........--> AÍ, DENTRO DESSE ARRAY,
+
+VAMOS SIMPLESMENTE ______ INSERIR__ o QUE 
+
+
+DEVERÁ 
+
+EXISTIR/SER PERMITIDO __ DENTRO DESSE ARRAY.... -----> 
+
+
+
+
+NO CASO,
+VAMOS QUERER 
+
+
+__OBJETOS JAVASCRIPT,
+
+
+mas é claro que poderíamos definir outras coisas,
+
+COMO UM __ARRAY__ 
+DE 
+
+STRINGS (
+
+
+
+        aí ficaria assim:
+
+
+
+
+        cart: {
+
+            products: [String]
+        }
+
+
+
+
+)
+
+
+--------------------------------------------
+
+
+
+
+
+
+SE VOCÊ ESCREVER ASSIM,
+
+
+
+A ÚNICA COISA PERMITIDA DENTRO DO ARRAY 
+
+DESSA PROPRIEDADE/documento embeddado __ SERÁ __ STRINGS....
+
+
+
+
+
+
+
+
+
+------> MAS É CLARO QUE AQUI VAMOS QEURER QUE 
+
+A COISA QUE 
+
+SEJA ENFIADA DENTRO DE 
+
+'products'
+
+
+SEJA 
+
+
+_DOCUMENTS__.... ---->  OK, MAS COMO FAZEMOS ISSO, COMO DIZEMOS 
+
+AO 
+
+
+
+MONGOOSE QUE VAMOS QUERER TER 1 ARRAY DE 'documents' dentro de '[]'?
+
+
+
+
+
+
+------> BEM, para isso o professor 
+
+
+vai simplesmente escrever 
+
+'{}',
+
+
+
+todos os 
+
+'{}'
+
+
+
+dentro desse array terão um 
+
+
+'productId' ,
+
+UMA PROPRIEDADE 
+
+'productId',
+
+
+tipo asssim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+    
+        cart: {
+
+            products: [
+                {
+                    productId: ...
+                }
+            ] 
+        }
+
+
+    }
+);
+
+
+
+
+
+
+---------> OK, 
+
+
+
+
+ESSE 
+'productId'
+
+vai 
+
+SEGURAR/ACEITAR 1 OBJETO.......  ---> E AÍ, AO LADO DELE,
+
+TEREMOS 
+
+
+1 FIELD 
+DE 
+'
+quantity',
+
+
+
+
+
+E A QUANTITY 
+
+TERÁ 
+
+1 
+
+
+
+TYPE DE 'number',
+
+ 
+
+ E SERÁ REQUIRED TAMBÉM...
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+    
+        cart: {
+
+            products: [
+                {
+                    productId: ...
+
+                    , 
+
+                    quantity: {type: Number, required: true} ////////EIS O CÓDIGO EM QUESTÃO....
+                }
+            ] 
+        }
+
+
+    }
+);
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+OK... MAS A QUESTÃO AQUI É:
+
+
+
+
+
+O QUE DIABOS COLOCAREMOS COMO 
+
+
+'PERMITIDO',
+
+NESSE 
+
+
+FIELD DE 
+
+'productId: '?
+
+
+
+
+
+
+
+-----------> BEM, A PRIMEIRA COISA QUE O PROFESSOR VAI QUERER 
+
+FAZER 
+
+É 
+
+
+
+adicionar uma propriedaed 
+'type'
+
+LIMITANDO O SEU TYPE, o type
+
+
+
+
+
+DOS FIELDS QUE SERÃO aceitos nesse slot....
+
+
+
+
+
+
+
+
+
+
+ 
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+    
+        cart: {
+
+            products: [
+                {
+                    productId:  {type: ...}
+                    
+                    , 
+
+                    quantity: {type: Number, required: true} ////////EIS O CÓDIGO EM QUESTÃO....
+                }
+            ] 
+        }
+
+
+    }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR EXPLICA QUE COMO VALOR DISSO,
+
+DESSE 
+
+'type',
+
+
+
+
+
+NÓS VAMOS QUERER USAR 
+
+ O OBJETO 
+
+ de 
+
+ 'Schema',
+
+ PARA 
+
+ ENTÃO 
+
+
+
+ SELECIONAR 
+
+
+
+
+
+UM MONTE DE 
+
+'SPECIAL TYPES',
+
+
+
+
+como esse '.ObjectId()'....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+    
+        cart: {
+
+            products: [
+                {
+                    productId:  {type: Schema.Types.ObjectId} /////////EIS O CÓDIGO EM QUESTÃO.
+                    
+                    , 
+
+                    quantity: {type: Number, required: true} 
+                }
+            ] 
+        }
+
+
+    }
+);
+
+
+
+
+
+
+
+--------------------------
+
+
+
+OU SEJA,
+
+VAMOS 
+
+__IMPORTAr___ 
+
+
+
+
+
+1 OBJETO/função LÁ 
+
+DE 
+
+
+
+'mongoose',
+
+lá do OBJETO 
+
+'Schema',
+
+
+
+
+
+objeto que É USADO ESPECIFICAMENTE NESTE LUGAR AQUI,
+
+
+
+
+
+
+ISSO PQ __ ELE VAI 'ACTUALLY STORE AN OBJECT ID',
+
+
+
+
+
+
+ou seja,
+
+vai armazenar uma 
+
+'ACTUAL REFERENCE TO A PRODUCT'... 
+
+
+
+
+
+
+
+
+
+--> também 
+
+
+vamos definir que esse FIELD AÍ SERÁ 'REQUIRED'...
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const userSchema = new Schema(
+    {
+
+        name: {
+
+            type: String,
+            required: true
+        },
+
+
+        email: {
+
+            type: String,
+            required: true
+        },
+
+    
+        cart: {
+
+            products: [
+                {
+                    productId:  {type: Schema.Types.ObjectId, required: true} /////////EIS O CÓDIGO EM QUESTÃO.
+                    
+                    , 
+
+                    quantity: {type: Number, required: true} 
+                }
+            ] 
+        }
+
+
+    }
+);
+
+ 
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE 
+
+
+ESSE NOSSO 
+
+SCHEMA 
+
+É, PORTNATO,
+
+
+
+UM SCHEMA 
+
+
+'UM POUQUINHO MAIS COMPLEXO',
+
+
+
+
+ISSO PQ 
+
+
+
+TEMOS 
+
+1 
+
+'embedded document' (que é 'cart'),
+
+
+
+
+
+E AÍ PQ__ TAMBÉM __ TEMOS 1 
+
+
+array (products) 
+
+
+de 
+
+
+
+'EMBEDDED DOCUMENTS'... (que são nossos cartitems, na verdade....)
+
+
+
+
+
+
+
+
+
+--> MAS É EXATAMENTE ASSIM QUE UM 'USER' 
+
+DEVE SE PARECER, NA VERDADE....
+
+
+
+
+
+
+
+--> O PROFESSOR 
+
+EXPORTA NOSSO 
+
+
+MODEL DE 'user'
+
+
+POR MEIO DO CÓDIGO 
+
+
+
+'module.exports = mongoose.model('User', userSchema )' -------> 
+
+
+
+
+FAZEMOS ISSO PARA CRIAR A COLLECTION CORRESPONDENTE E TBM PQ QUEREMOS 
+SER
+CAPAZES 
+
+DE USAR 
+
+
+
+ESSE 
+
+'model' 
+
+LÁ 
+
+NOS NOSSOS CONTROLLERS E NO APP.JS...
+
+
+
+
+
+
+
+
+
+----> CERTO.... AGORA TEMOS TUDO DE QUE PRECISMAOS PARA DIZER AO MONGOOOSE 
+
+
+ 
+
+ COMO 1 USER DEVE SE PARECER...
+
+
+
+
+
+
+
+
+ ------> OK... -> AGORA, É CLARO, QUEREMOS 
+
+
+ __TRABALHAR COM 1 USER,
+
+ QUEREMOS 
+
+
+
+
+ ___CRIAR 1 USER/ter 1 user quando 
+
+
+ INICIAMOS 
+
+
+ NOSSO APP... -----> 
+
+
+
+
+ É POR ISSO QUE LÁ 
+
+ EM 
+
+
+ 'app.js'
+
+
+
+
+
+
+ NÓS VAMOS 
+
+
+
+
+
+
+CRIAR UM USER DENTRO DAQUELE CÓDIGO DO 
+
+
+
+'mongoose.connect()',
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+mongoose.connect( 
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+
+  (result) => {
+            /////CRIAR UM USER NESTE LUGAR AQUI....
+    app.listen(3000); 
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+-----------------------
+
+
+
+
+OU SEJA,
+
+VAMOS CRIAR ___ ESSE USER __ ANTES___ MESMO DE COMEÇARMOS O 'LISTENING'
+
+
+desse server.... 
+
+
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+ 
+ PROFESSOR IMPORTA O MODEL 'User' mais uma vez em 
+
+ 'app.js',
+
+
+ MAS DESSA VEZ 
+
+ SERÁ UM MODEL
+
+
+ MONGOOSE, TUNADO....
+
+
+
+
+
+
+
+
+
+ ----> COM ESSE IMPORT ADICIONADO, O PROFESSOR DIZ QUE 
+ 
+
+
+
+ ELE PODE CRIAR 1 NOVO USER 
+
+
+
+ no flow de nosso app 
+
+
+ POR MEIO DO SIMPLES CALL 
+
+ de 
+
+
+ 'new User()',
+
+
+ tipo assim:
+
+
+
+
+
+
+
+
+
+ const user = new User() 
+
+
+
+
+
+
+
+
+
+
+
+ ------> ISSO FEITO,
+
+
+ CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+ 
+mongoose.connect( 
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+
+  (result) => {
+
+
+            const user = new User();
+    app.listen(3000); 
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+E AGORA, EXATAMENTE COMO ANTES,
+
+PROFESSOR VAI QUERER 
+
+
+PASSAR 
+
+UM 
+
+
+___OBJETO __ JAVASCRIPT como parâmetro 
+
+dessa instanciação do 
+
+model 'User',
+
+
+PARA QUE 
+
+SEJA 
+
+
+__cRIADO__/começado 1 
+
+
+
+'user' document desses na nossa collection de 'Users'...
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+ 
+mongoose.connect( 
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+
+  (result) => {
+
+
+            const user = new User(
+                {
+                    name: 'Max', 
+                    email: 'max@test.com',
+                    cart: {
+                        products: []
+                    }
+                }
+            )
+
+        user.save(); ////ISSO VAI SALVAR UM DOCUMENT com essas características, lá na nossa COLLECTIOn...
+    app.listen(3000); 
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+CERTO... 
+
+
+ESSE SERÁ O NOSSO USER,
+
+
+
+BASICAMENTE...
+
+
+
+
+
+
+OK.... SALVAMOS TUDO ISSO...
+
+
+
+
+
+E ESSE USER SERÁ CRIADO, DE FATO,
+
+QUANDO INICIO/INICIAR O MEU SERVER....
+
+
+
+
+
+---> OK, QUANDO RESETTARMOS NOSSO SERVER, JÁ  VEREMOS 1 'USER'
+
+
+
+lá no mongodbcompass...
+
+
+
+
+
+
+
+
+
+----> OK, COM ESSE USER CRIADO,
+
+é 
+
+
+
+
+
+aquele '_id'
+
+
+de 
+
+
+
+'ObjectId(xxxx)' dentro dele 
+
+
+
+__EM QUE__ ESTOU INTERESSADO... (pq 
+
+vamos 
+
+
+
+usar aquele middleware que CHECA PELA EXISTÊNCIA 
+
+
+
+DE 
+
+1 USER 
+PRÉVIO NA NOSSA DATABASE,
+
+para evitar que 1 novo user seja sempre criado ao 
+
+
+
+enviarmos http requests de qualquer natureza ao nosso 
+
+
+server/app nodejs....
+)
+
+
+
+
+
+
+
+
+
+É 
+
+
+
+'ObjectId('6178b7fd9974750db83b0e20')'....
+
+
+
+
+
+
+
+
+--> PROFESSOR COPIA ESSE 
+
+
+
+ID,
+
+e 
+
+
+AÍ 
+
+
+
+PEGA AQUELE 
+
+MIDDLEWARE 
+
+LÁ 
+
+
+de 
+
+'
+''
+
+
+
+
+
+
+app.use((req, res, next) => { 
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+   req.user = new User(user.name, user.email, user.cart, user._id); 
+      next();
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
+
+
+
+''',
+
+
+
+
+
+AQUELE MIDDLEWARE EM QUE ELE 
+
+PROCURA 
+
+POR 
+
+UM 
+
+'user'
+
+
+que tenha aquele '_id',
+
+
+
+
+
+E QUE SE ELE NÃO ENCONTRAR NENHUM USER COM AQUELE ID,
+
+vai querer 
+
+CRIAR UM NOVO user desses. . ---> É CLARO QUE 
+
+PARA 
+
+ESSE 
+
+
+CÓDIGO FUNCIONAR,
+
+
+PROFESSOR 
+
+
+TEM QUE 
+
+ADAPTAR 
+
+1 POUCO 
+
+
+O CÓDIGO,
+
+
+
+
+
+
+fazendo com que 
+
+ele fique assim:
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+   req.user = user; //////EIS A MUDANÇA EM QUESTÃO.
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
+
+
+
+
+
+----------------------------
+
+
+
+OU SEJA,
+
+TIRAMOS AQUELE 
+
+CÓDIGO 
+
+VELHO DE NOSSO MODEL sem o mongoose,
+
+para 
+
+colocar essa definição de 
+
+'req.user = user',
+
+
+QUE VAI DEFINIR 
+
+o 
+objeto 
+
+'user'
+
+dentro do OBJETO REQUEST 
+
+
+de nosso browser/client 
+
+
+COMO 
+
+
+SENDO 
+
+ESSE 
+
+
+
+OBJETO/DOCUMENT 'user'
+
+
+___MONGOOSE,
+
+
+__ FORRADO_ DE 
+
+
+
+METHODS, ALÉM DA DATA NECESSÁRIA/DATA DO USUÁRIO QUE DESEJAMOS....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { //esta é a versão MONGOOSE de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+      req.user = user; ////com isso, DEFINIMOS UM OBJETO 'user' no nosso request COMO TENDO O VALOR DO OBJETO/DOCUMENT 'user' ''''MONGOOSADO''' (ou seja, com TODOS OS METHODS CONVENIENCE DO MONGOOSE, ALÉM DA DATA DO USER QUE QUERÍAMOS), extraído lá da collection de 'users'...
+      next();
+
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+
+
+
+
+
+
+ESSE 
+
+
+'req.user'
+
+
+
+
+agora 
+
+TERÁ 
+
+
+
+UM VALOR DESSE 
+
+
+'FULL MONGOOSE MODEL',
+
+o que significa que 
+
+
+
+AGORA 
+
+PODEMOS 
+
+
+CHAMAR 
+
+
+TODOS 
+
+
+OS 
+
+
+
+METHODS DE MODELS MONGOOSE 
+
+
+em 
+
+
+cima 
+
+
+desse 
+
+'req.user'
+
+aí.... (em qualquer lugar de nosso aplicativo node....)
+
+
+
+
+
+
+
+
+
+
+---> OK, ISSO 
+
+
+
+FUNCIONOU, AGORA 
+
+
+
+cada 
+
+
+'request' enviado por nosso client vai 
+
+TER 
+
+ESSE 
+
+OBJETO 'user'
+
+armazenado 
+
+dentro 
+
+
+
+
+do objeto 'user' no request...
+
+
+
+
+
+
+
+
+
+
+
+---------> MAS 1 PROBLEMA, AGORA, É QUE 
+
+TODA 
+
+VEZ 
+QUE 
+REINICIARMOS 
+
+
+NOSSO 
+
+SERVER 
+
+
+
+VAMOS ___ CRIAR 1 NOVO USER,
+
+o que não é bom....
+
+
+
+
+
+
+
+
+--> ISSO ACONTECE PQ TEMOS NOSSO CÓDIGO DE 'USER CREATION'
+
+
+definido lá embaixo,
+
+em 
+
+
+
+
+'''
+
+
+
+
+
+
+mongoose.connect( ///sempre ESCREVA ESSE CÓDIGO no seu 'app.js'/arquivo central, pq É ELE __ QUE __ VAI SETTAR SUA CONEXÃO À DATABASE MONGODB, mediada pelo mongoose...
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+
+  (result) => {
+        const user = new User(
+          {  //CRIA UM OBJETO/document 'user' na collection de 'users' com ESSES VALORES NOS FIELDS...
+            name: 'Max',
+            email: 'max@test.com',
+            cart: {
+              products: []
+            }
+          }
+        )
+        user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+    app.listen(3000); 
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+''''''
+
+
+
+
+
+
+
+
+
+
+NESTE TRECHO AQUI:
+
+
+
+
+
+
+
+.then(
+
+  (result) => {
+        const user = new User(
+          {  //CRIA UM OBJETO/document 'user' na collection de 'users' com ESSES VALORES NOS FIELDS...
+            name: 'Max',
+            email: 'max@test.com',
+            cart: {
+              products: []
+            }
+          }
+        )
+        user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+    app.listen(3000); 
+  } 
+)
+
+
+
+
+
+
+
+
+------> E NESSE CÓDIGO AÍ,
+
+NÃO ESTAMOS CHECANDO 
+
+
+'IF 
+
+
+WE 
+
+
+CREATE A NEW ONE OR NOT'.... ------> 
+
+
+
+
+
+
+É POR ISSO QUE 
+
+
+
+VAMOS QUERER __ CHECAR__ PELA 
+
+
+EXISTÊNCIA 
+
+
+
+____ DE 
+
+
+
+
+'user',
+
+
+CHECAR__
+
+
+
+
+SE JÁ TEMOS 
+
+
+1 
+
+USER 
+
+definido..... ----> VAMOS CHECAR __ SE TEMOS 1 USER DEFINIDO LÁ 
+
+
+NA 
+
+
+
+NOSSA DATABASE/COLLECTION de 'users'.... 
+
+
+
+
+
+
+
+
+
+--> para isso,
+
+
+professor se utilizará 
+
+do método 
+
+
+
+
+'User.findOne()',
+
+
+QUE 
+
+QUANDO 
+
+É CHAMADO 
+
+SEM PARÂMETROS,
+
+
+SEMPRE RETORNA __ O PRIMEIRO ELEMENTO 
+
+
+NA SUA QUERY.... (E como aqui só temos/teremos 1 ÚNICO USER NA NOSSA COLLECTION,
+
+vai sempre ser o mesmo 
+
+user...
+
+
+) ---> professor então 
+
+
+CHAINA UM 
+
+THEN BLOCK
+
+
+nesse 'findOne()',
+
+
+
+
+PARA 
+
+ENTÃO 
+
+
+ESCREVER UM IF CHECK 
+
+A 
+
+
+partir do 
+'user' que 
+
+ele retorna como parâmetro...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+.then(
+
+  (result) => {
+
+
+        User.findOne().then(
+            (user) => {
+
+                if(!user) {
+        
+        
+        
+        const user = new User(
+          { 
+            name: 'Max',
+            email: 'max@test.com',
+            cart: {
+              products: []
+            }
+          }
+        )
+        user.save();
+
+
+
+            }
+
+
+        app.listen(3000); 
+        )
+
+
+  } 
+)
+
+
+
+
+
+
+
+
+--> OU SEJA, SE NÃO TIVERMOS 1 'USER DEFINIDO',
+
+
+
+
+VAMOS QUERER DEFINÍ-LO... --> caso contrário, não vamos querer fazer nada, só 
+
+
+fazer o 'app.listen(3000)',
+
+
+o start de nosso server e listen to 
+
+
+aos incoming requests...
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK, CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+app.use((req, res, next) => { //esta é a versão MONGOOSE de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+  User.findById('6178b7fd9974750db83b0e20') ///dummy user...
+    .then((user) => {
+       
+      req.user = user; ////com isso, DEFINIMOS UM OBJETO 'user' no nosso request COMO TENDO O VALOR DO OBJETO/DOCUMENT 'user' ''''MONGOOSADO''' (ou seja, com TODOS OS METHODS CONVENIENCE DO MONGOOSE, ALÉM DA DATA DO USER QUE QUERÍAMOS), extraído lá da collection de 'users'...
+      next();
+
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+E:
+
+
+
+
+
+
+
+mongoose.connect( ///sempre ESCREVA ESSE CÓDIGO no seu 'app.js'/arquivo central, pq É ELE __ QUE __ VAI SETTAR SUA CONEXÃO À DATABASE MONGODB, mediada pelo mongoose...
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+  (result) => {
+
+
+
+    User.findOne().then(
+      (user) => {
+
+          if(!user) { ///só vai criar 1 novo document 'user' na nossa collection 'users' __ SE NENHUM USER FOR ENCONTRADO DENTRO DELA... (isso evita a criação de múltiplos users, nesse nosso DUMMY PROJECT)...
+            const user = new User(
+              {  //CRIA UM OBJETO/document 'user' na collection de 'users' com ESSES VALORES NOS FIELDS...
+                name: 'Max',
+                email: 'max@test.com',
+                cart: {
+                  products: []
+                }
+              }
+            )
+            user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+          }
+
+    app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+      }
+    )
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+REFRESHAMOS NOSSO 
+
+
+
+
+
+DATABASE E SERVER NODE,
+
+e aí 
+
+
+percebemos que tudo isso está funcionando....
+
+
+
+
+
+
+
+
+
+-> CERTO.... nosso 
+
+
+
+database não está criando users constantemente, agora...
+
+
+
+
+
+
+
+
+
+-----> OK............. É ASSIM QUE ADICIONAMOS 1 MODEL DE 'user'
+
+
+NO NOSSO APP,
+
+E É ASSIM QUE 
+
+
+BASICAMENTE 
+
+
+
+USAMOS ESSE MODEL.... --> MAS É CLARO QUE 
+
+
+
+__AGORA NÓS VAMOS QUERER __ USAR 
+
+
+
+ESSE MODEL __ EM CONJUNTO COM __OS 
+
+PRODUCTS (
+
+
+    ou seja, 
+
+    'RELATIONS', 
+
+    relations 
+
+
+
+
+    ENTRE 
+
+
+
+    OS USERS E OS PRODUCTS.... --> só não sei se serão 
+
+
+
+
+    RELATIONS por meio de EMBED 
+
+    ou por meio 
+
+    de 
+
+
+    REFERENCING...
+)
+
+
+
+
+
+
+------> VAMOS CONECTAR O MODEL DE 'PRODUCT'
+
+
+
+COM 
+
+O MODEL DE 'USER',
+
+basicamente...
+
+
+
+
+
+-_> FAREMOS ISSO NA PRÓXIMA LIÇÃO.

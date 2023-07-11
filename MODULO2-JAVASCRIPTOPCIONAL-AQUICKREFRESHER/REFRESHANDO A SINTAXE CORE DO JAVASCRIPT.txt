@@ -1,0 +1,722 @@
+
+
+
+
+
+
+
+
+PROFESSOR ESPERA QUE SAIBAMOS O QUE SÃO 
+
+
+VARIABLES, FUNCTIONS,
+
+
+
+
+
+
+IF STATEMENTS,
+
+LOOPS... --> 
+
+
+
+CORE 
+
+
+THINGS QUE 
+
+VOCÊ PRECISA 
+
+TER,
+
+PQ 
+
+
+ELAS 
+
+SÃO 
+
+
+CRUCIAIS 
+
+AO 
+
+
+JAVASCRIPT....
+
+
+
+
+
+
+
+
+
+-------> 
+
+
+
+
+TEMOS A SINTAXE 
+
+BÁSICA DE 
+
+'var'...
+
+
+
+
+
+
+
+var name = 'Max';
+
+
+
+
+
+---------------------------------
+
+
+
+ESSA É UMA VARIÁVEL...
+
+
+
+
+podemos 
+
+a outputtar com 
+
+
+'console.log(name);'
+
+
+
+
+
+
+
+--> PODEMOS 
+
+EXECUTAR/VER ESSE OUTPUT 
+NO CONSOLE 
+
+SE EXECUTARMOS 
+
+
+ESSE NOSSO ARQUIVO 
+
+com 
+
+
+'node play.js'... -------> 
+
+
+
+VEREMOS 
+
+
+'Max'
+
+
+
+OUTPUTTADO 
+
+NO NOSSO CONSOLE...
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+var age = 29;
+
+
+
+
+
+
+
+
+
+
+---> ISSO SERÁ UM NUMBER, E NÃO UMA STRING....
+
+
+
+
+
+
+var hasHobbies = true; 
+
+
+
+
+
+
+
+
+
+
+--> ISSO É UM BOOLEAN.... 
+
+
+
+
+
+
+
+--> NUMBERS SÃO NUMBERS, NUMBERS PODEM TER DECIMAL PLACES....
+
+
+
+
+
+
+-----------------------
+
+
+
+
+AGORA O PROFESSOR ESCREVE UMA FUNÇÃO COM 
+
+
+
+
+
+
+
+'function summarizeUser() {
+
+
+    return;
+}
+',
+
+
+
+
+
+
+
+
+FUNCTIONS PODEM RETORNAR VALORES COM O STATEMENT 'RETURN'...
+
+
+
+
+
+
+
+------> FUNÇÕES TAMBÉM PODEM RECEBER INPUTS COMO 
+
+
+'userName' e 'userAge' 
+
+
+
+e 
+
+'userHasHobbies'..
+
+
+
+ex:
+
+
+
+
+
+
+function summarizeUser(userName, userAge, userHasHobby) {
+
+
+    return;
+}
+
+
+
+
+
+
+------------------------
+
+
+
+
+ESSAS VARIABLES 
+
+SERÃO 
+
+CHAMADAS 
+
+AGORA 
+
+DE 
+
+'LOCAL 
+
+
+VARIABLES',
+
+
+
+são parâmetros,
+
+
+e ficam 
+
+disponíveis 
+
+APENAS DENTRO DE UMA FUNÇÃO,
+
+E NUNCA FORA DELA... 
+
+
+
+
+
+
+-----> E AÍ VOCÊ PODE 
+
+
+RETORNAR 
+
+
+algo como 
+
+
+
+
+
+
+
+'''
+
+
+
+
+function summarizeUser(userName, userAge, userHasHobby) {
+
+
+    return 'Name is' + userName + ', age is ' userAge + ' and the user has hobbies: ' + userHasHobbies';
+}
+
+
+
+
+'''
+
+
+
+
+
+
+AQUI, O PROFESSOR NOS EXPLCIA QUE 
+
+
+
+ESTÁ 
+
+
+
+
+
+RETORNANDO UM TEXT 
+
+
+
+QUE 
+
+BUILDA MANUALMENTE 
+
+
+POR 
+
+MEIO 
+ 
+ DO CONCATENATE 
+
+ DE 
+
+ STRINGS 
+
+
+ E 
+
+ ARGUMENTS/DYNAMIC VALUES 
+
+ nessa função...
+
+
+
+
+ ---------------------------
+
+
+
+
+
+
+
+
+ -----> AGORA PODEMOS TAMBÉM FAZER O CONSOLE.LOG 
+
+
+ do RESULT DE 
+
+ 'summarizeUser'
+
+
+
+
+ POR MEIO DE UM CÓDIGO COMO 
+
+
+
+ '
+
+
+
+ console.log(summarizeUser());',
+
+
+ OU ENTÃO 
+
+
+
+
+
+
+
+ 
+
+
+ 
+function summarizeUser(userName, userAge, userHasHobby) {
+
+
+    return 'Name is' + userName + ', age is ' userAge + ' and the user has hobbies: ' + userHasHobbies';
+}
+
+
+
+
+
+const summarizedUser = summarizeUser(par1, par2, par3);
+
+
+
+
+
+
+console.log(summarizedUser);
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR RESSALTA QUE PRECISAMOS PASSAR 3 PARÂMETROS AO CALL DESSA FUNÇÃO...
+
+
+
+
+
+--> POR ISSO ELE PODE ESCREVEr:
+
+
+
+
+
+
+
+
+var name = 'Max';
+var hasHobbies = true;
+var age = 29;
+
+
+ 
+function summarizeUser(userName, userAge, userHasHobby) {
+
+
+    return 'Name is' + userName + ', age is ' userAge + ' and the user has hobbies: ' + userHasHobbies';
+}
+
+
+
+
+
+const summarizedUser = summarizeUser(name, age, hasHobbies);
+
+
+
+
+
+
+console.log(summarizedUser);
+
+------------------------------------------
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+MAS É CLARO QUE 
+
+PODERÍAMOS ACESSAR 
+
+
+
+ESSAS VARIÁVEIS 
+
+
+NESSA FUNÇÃO DIRETAMENTE, 
+
+
+sem 
+
+
+ter de 
+
+
+as colocar nos parâmetros (pq elas são VARIÁVEIS GLOBAIS....)
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+var name = 'Max';
+var hasHobbies = true;
+var age = 29;
+
+
+ 
+function summarizeUser() { ////////ISSO TBM FUNCIONARIA....
+
+
+    return 'Name is' + userName + ', age is ' userAge + ' and the user has hobbies: ' + userHasHobbies';
+}
+
+
+
+
+
+const summarizedUser = summarizeUser(name, age, hasHobbies);
+
+
+
+
+
+
+console.log(summarizedUser);
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+PODERÍAMOS FAZER ISSO, SIM,
+
+
+
+mas 
+
+o 
+
+professor 
+
+
+explica que 
+
+
+essa é uma 
+
+
+PURE FUNCTION (isso estamos falando da FUNCTION 
+
+
+que tem este formato:
+
+
+''''
+function summarizeUser(userName, userAge, userHasHobby) {
+    ...
+}
+
+'''',
+
+
+E não 
+
+
+a funçaõ com variáveis globais, que recém escrevemos....
+
+
+
+
+)
+
+
+
+UMA FUNCTION QUE NÃO 
+
+DEPENDE 
+
+
+
+DE QUALQUER COISA DO LADO __ DE FORA _ DA FUNÇÃO,
+
+
+
+E SIM PEGA
+ 
+
+
+ 'ALL THE DATA IT WORKS WITH 
+
+
+
+ ___AS PART OF THE ARGUMENTS',
+
+
+ o que 
+
+ É UMA 
+
+ BOA MANEIRA 
+
+
+ DE 
+
+ ESCREVER FUNÇÕES.... ------> 
+
+
+
+
+
+
+ OK,
+
+
+
+ SE EXECUTARMOS ISSO COM O NODEJS,
+
+
+
+
+
+veremos no terminal 
+
+
+
+o output 
+
+de 
+
+
+'Name is Max, age is 29 and the user has hobbies: true'....
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+---> DEVEMOS ENTENDER COISAS COMO SCOPING(
+
+
+
+    ex:
+
+
+
+
+    não podemos usar este 'userName' 
+
+    do lado DE FORA DESSA FUNÇÃO:
+
+
+
+''''
+        function summarizeUser(userName, userAge, userHasHobby) {
+
+            ...
+        }
+
+
+
+
+        username --->  ISTO É __ INVÁLIDO___....
+
+
+''''
+)
+
+
+
+
+
+
+
+----> OK ,ESSAS 
+
+
+SÃO AS CORE FEATURES QUE TEMOS DE SABER...

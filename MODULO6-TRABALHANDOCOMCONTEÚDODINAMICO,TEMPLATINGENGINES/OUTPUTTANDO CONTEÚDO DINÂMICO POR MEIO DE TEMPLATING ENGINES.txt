@@ -1,0 +1,2153 @@
+
+
+
+
+
+
+
+
+
+---> NÓS ESTAMOS RENDERIZANDO NOSSO 
+
+
+TEMPLATE 
+
+
+
+
+DE 
+
+'shop.pug',
+
+MAS ATÉ AGORA 
+
+NÃO ESTAMOS RENDERIZANDO 
+
+
+
+
+QUALQUER CONTEÚDO DINÂMICO COM ESSE TEMPLATE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO, ENTRETANTO, É TODA A IDEIA POR TRÁS DESTE MÓDULO,
+
+
+FAZER O OUTPUT DE  CONTEÚDO DINÂMICO USANDO 
+
+
+
+TEMPLATING ENGINES...
+
+
+
+
+
+
+
+
+---> NÓS JÁ TEMOS NOSSA 
+
+'adminData',
+
+lá 
+
+
+
+em 'shop.js',
+
+
+
+
+
+_ com NOSSOS PRODUCTS,
+
+AQUELE 
+
+
+ARRAY 
+
+DE 
+
+'products', que são adicionados quando inputtamos algo e submittamos aquela form na página de 'admin/add-product'...
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK... PROFESSOR EXPLICA QUE VAMOS QUERER 
+
+
+
+
+PEGAR ESSES PRODUTOS LÁ EM 
+
+
+'shop.js'
+
+POR MEIO DE UM CÓDIGO 
+
+COMO 
+
+'const products = adminData.products;'....
+
+
+
+
+ex:
+
+
+
+
+
+const adminData = require('./admin');
+
+
+
+router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+
+
+        const products = adminData.products;
+      res.render('shop'); ////.render() --> É UM MÉTODO PROVIDENCIADO PELO EXPRESSJS, e que vai 'USE THE DEFAULT TEMPLATING ENGINE', a engine que definimos em 'app.set('view engine', 'pug')'... 
+    }
+);
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+
+
+
+--> E AGORA, É CLARO, VAMOS QUERER 
+
+PASSAR 
+
+
+
+ESSA CONSTANTE 
+
+'products',
+esse array aí,
+
+PARA _ DENTRO __ DE NOSSO TEMPLATE 
+
+
+'shop.pug'...
+
+
+
+
+
+
+
+
+
+
+------> VAMOS QUERER INJETAR ESSA CONST NESSE 
+
+ARQUIVO 'TEMPLATE',
+
+para que possamos O OUTPUTTAR DE ALGUMA FORMA, NELE...
+
+
+
+
+
+
+
+
+
+
+-------> PARA FAZER ISSO,
+
+
+
+PODEMOS SIMPLESMENTE __ PASSAR UM SEGUNDO PARÂMETRO 
+
+AO 
+
+ARGUMETNO 
+
+'
+.render(xxx, yyy)...
+
+
+
+
+
+
+----> NESSE SEGUNDO ARGUMENTO, 
+
+PASSAMOS __ DATA__ QUE DEVE ___ SER 
+
+ADICIONADA 
+
+DENTRO 
+
+DESSA VIEW ESPECÍFICA... (no caso, à view 'shop.pug'...)
+
+
+
+
+
+
+
+
+
+----> AQUI, PORTANTO, SIMPLESMENTE PASSAMOS 
+
+'products':
+
+
+
+
+
+    const products = adminData.products;
+
+      res.render('shop'. products); 
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+ res.render('shop', {products: products}); ////.render() --> É UM MÉTODO PROVIDENCIADO PELO EXPRESSJS, e que vai 'USE THE DEFAULT TEMPLATING ENGINE', a engine que definimos em 'app.set('view engine', 'pug')'... 
+                ///VAI RENDERIZAR O ARQUIVO 'shop.pug' LÁ NO FOLDER 'views', tudo graças aos códigos 'app.set()' que definimos LÁ EM 'app.js'..
+  
+              ////O SEGUNDO PARÂMETRO DE 'render' SERVE __ PARA INJETAR__ DATA ___ DENTRO DO ARQUIVO 'view' QUE VAMOS QUERER RENDERIZARA COM ESSE '.render()'...  (nesse caso, o ARRAY DE 'PRODUCTS'...)
+              ///essa data que queremos USAR NO NOSSO TEMPLATE___ DEVE SER, DENTRO DE UM OBJECT, MAPPEADA A UM KEYNAME... (nesse caso usamos 'products' mesmo..)
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... OU SEJA,
+
+vamos 
+
+escrever 
+
+realmente 
+
+
+'res.render('shop', {prods: products})'
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+OK... ISSO TERÁ SIDO PASSADO __ AO TEMPLATE DE  
+
+
+'
+shop.pug'...
+
+
+
+
+
+
+
+
+
+
+
+----> AGORA PODEMOS SIMPLESMENTE USAR O NOSSO TEMPALTE __ PARA 
+
+ACESSAR 
+
+esse 
+
+'prods'
+
+
+DENTRO 
+
+DESSA 
+
+DATA QUE 
+
+foi passada por meio 
+
+de 
+
+'res.render()'...
+
+
+
+-------------------------------------------------->  
+
+
+
+
+
+
+BTW, NÓS PODERÍAMOS/PODEMOS 
+
+
+
+ADICIONAR MAIS DE 1 FIELD NESSE OBJETO 
+
+'data': --->
+
+
+PODEMOS 
+
+
+
+ADICIONAR TAMBÉM 
+
+um 
+
+
+'docTitle: 'Shop',
+
+
+
+POR exemplo,
+
+
+
+
+
+
+__ SÓ PARA VER QUE PODEMOS UTILIZAR ESSE VALOR HARDCODADO, TAMBÉM...
+
+
+
+
+tipo assim:
+
+
+
+
+
+'res.render('shop', {prods: products,
+                        docTitle: 'Shop'})'
+
+
+
+
+
+
+
+----> professor diz que DEVEMOS COMEÇAR 
+
+TESTANDO 
+
+SE CONSEGUIMOS 
+
+USAR 
+
+ESSE 
+
+VALOR 
+
+DE 
+
+'docTitle'....
+
+
+
+
+
+
+
+
+
+-----> LÁ EM 
+
+
+
+'shop.pug',
+
+
+
+
+
+
+NAQUELA LINHA 
+DE 
+
+
+'title My Shop',
+
+
+
+EM QUE TEMOS NOSSO 
+
+'<title/>', em outras palavras,
+
+
+PROFESSOR DIZ QUE 
+PODEMOS 
+
+
+
+__USAR__ A 'CUSTOM TEMPLATING SYNTAX' 
+
+
+QUE 
+O 
+
+
+PUG NOS OFERECE...
+
+
+
+
+
+-----------> OK, MAS QUAL É ESSA SINTAXE? 
+
+
+
+
+
+
+
+
+
+
+
+---> SE VOCÊ QUER APENAS OUTPUTTAR UM TEXT EM ALGUM LUGAR, UM TEXT __ DINÂMICO__,
+
+você deve 
+recorrer 
+
+
+
+a simples '#{}', HASH TAG COM CURLY BRACES....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main 
+            h1 My Products 
+            p List of all my products
+
+
+
+
+-----------------
+
+
+
+
+
+E, DENTRO DESSAS CURLY BRACES,
+
+VOCÊ PODE 
+
+COLOCAR 
+
+
+
+__QUALQUER VALOR QUE ESTAMOS PASSANDO 
+
+A 
+
+ESSA 
+
+VIEW 
+por meio 
+
+de 
+
+'res.render()'...
+
+
+
+EX:
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main 
+            h1 My Products 
+            p List of all my products
+
+
+
+
+------------------------------
+
+
+
+
+--> NO NOSSO CASO,
+
+VAMOS USAR 
+
+
+'docTitle'....
+
+
+
+
+
+
+
+
+
+
+
+
+SALVAMOS TUDO ISSO E RECARREGAMOS.... 
+
+
+
+
+
+
+
+
+
+--------> VEREMOS A ALTERAÇÃO NA ABA 
+
+
+DA NOSSA PÁGINA,
+
+QUE 
+
+MUDARÁ 
+
+DE 
+
+
+'My Shop' 
+
+para 
+
+'SHOP',
+
+
+mostrando que 
+
+
+NOSSA ALTERAÇÃO 
+
+E USO 
+
+
+
+DESSA 
+
+DATA 'EMPRESTADA
+'
+
+
+
+
+REALMENTE FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+
+OK... FICOU ASSIM:
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main 
+            h1 My Products 
+            p List of all my products
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+PROFESSOR EXPLICA QUE ESSE FLOW DE CÓDIGO É IMPORTANTE, DEVE SER COMPREENDIDO...
+
+
+
+
+OK... AGORA VAMOS QUERER USAR 
+
+O 
+
+
+ARRAY 
+
+DE 
+
+'products'....
+
+
+
+
+
+
+
+
+--> PARA CONSEGUIRMOS FAZER ISSO,
+
+
+
+
+PROFESSOR 
+
+VAI 
+
+
+ATÉ 
+
+
+O MESMO NÍVEL DO HEADER (mesma indentation, SIBLING ELEMENTS),
+
+
+
+
+
+
+
+
+
+
+------> NO MESMO NÍVEL DO HEADER ELE 
+
+escreve 
+
+UM 
+
+
+ELEMENTO 
+
+'main',
+
+
+
+E AÍ NESSE ELEMENTO MAIN ELE VAI ESCREVER 
+
+UMA 
+
+ul 
+
+
+com 
+
+lis 
+
+_dINÂMICAS (bem parecido com o que vimos no REACT...)
+
+
+
+
+
+
+-> mas o que o professor vai fazer é um 
+
+POUCO DIFERENTE DE UMA UL comum,
+
+ELE VAI USAR UM __ GRID__, 
+
+
+UM GRID COM VÁRIOS 
+
+
+'<article/>',
+
+
+QUE 
+
+
+SERÃO NOSSOS ITEMS....
+
+
+
+
+
+
+EX:
+
+
+<div class="grid">
+    <article class="card product-item">
+        <header class="card__header">
+            <h1 class="product__title">Great Book</h1>
+        <div class="card__image">
+            <img src="xxxxx"></img>
+        </div>
+        <div class="card__content">
+            <h2 class="product__price">$19.99</h2>
+            <p class="product__description">A very interesting book about so many events</p>
+        <div>
+        <div class="card__actions">
+            <button class="btn">Add to Cart</button>
+        </article>
+</div>
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+OK... VAMOS REPLICAR ESSA ESTRUTURA NO .pug,
+
+
+
+
+
+MAS ___ É CLARO QUE RESPEITANDO O FATO DE QUE 
+
+
+
+__ VAMOS CONVERTER OS OBJECTS 'product' em 'products',
+
+
+QUE SERÃO CONVERTIDOS A ESSE CÓDIGO aí..
+
+
+
+
+
+
+
+--> o professor vai converter esse HARDCODED CODE 
+
+
+
+em um formato pug,
+
+mas é claro que depois alteraremos isso...
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main 
+            .grid 
+                article.card.product-item 
+                    header.card__header 
+                        h1.product__title Great Book 
+                    .card__image 
+                        img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                    .card__content 
+                        h2.product__price $19.99
+                        p.product__description A very interesting book about so many events
+                    .card__actions 
+                        button.btn Add to Cart
+
+
+
+
+
+
+---------------------------------
+
+
+
+OBS:
+
+
+SIDENOTE ---> 
+
+
+
+
+
+isto:
+
+
+
+------------------------------------------
+
+
+  <article class="card product-item">  (MÚLTIPLAS CLASSES APLICADAS A UM ELEMENTO)
+
+
+-------------------------------------------------
+
+
+
+  FICA ASSIM (concatenamos as 2 classes aplicadas a ele):
+
+
+----------------------------------
+
+  article.card.product-item 
+
+------------------------------
+
+
+
+
+
+
+
+
+OBS: 
+
+
+ESSAS 'AJUDAS' QUE RECEEBMOS 
+
+
+
+
+DO VISUAL STUDIO CODE EXISTEM POR CAUSA DE 
+
+'Emmet'... -----> 
+
+
+
+
+
+Emmet abbreviation and snippet expansions are enabled by default in html, 
+haml, pug, slim, jsx, xml, xsl, css, scss, sass, less and stylus files, 
+as well as any language that inherits from any of the above like handlebars and php.
+
+
+
+--------------------------------------
+
+
+
+
+
+
+hmm agora isso faz sentido....
+
+
+
+
+
+
+-----> ele funciona mt bem com PUG...
+
+
+
+
+
+
+
+
+-----> ok...
+
+
+ISSO TERÁ CRIADO UMA IMAGE E TUDO MAIS...
+
+
+
+
+
+
+
+
+
+-----> ACHO QUE CONSEGUI... FICOU ASSIM:
+
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main 
+            .grid 
+                article.card.product-item 
+                    header.card__header 
+                        h1.product__title Great Book 
+                    .card__image 
+                        img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                    .card__content 
+                        h2.product__price $19.99
+                        p.product__description A very interesting book about so many events
+                    .card__actions 
+                        button.btn Add to Cart
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+O PRICE E VÁRIAS DAS COISAS AQUI 
+
+ESTÃO 
+
+ESTÁTICAS, POR ENQUANTO... --> MAS MAIS TARDE 
+
+VAMOS AS 
+
+RENDERIZAR DE FORMA __ DINÂMICA...
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+----> OK, ISSO OUTPUTTARÁ 
+
+UMA 
+
+
+
+GRID DE 'PRODUCT CARDS',
+
+
+MAS NO MOMENTO,
+
+SÓ 
+
+
+COM 1 ÚNICO ELEMENTO,
+
+
+
+
+com 'STATIC CONTENT' (hardcodado)...
+
+
+
+
+
+
+
+
+
+--> e a image também está VAZANDO DO NOSSO CARD, O QUE É PÉSSIMO...
+
+
+
+
+
+
+
+
+
+
+OK, CONSERTEI UM POUCO...
+
+
+
+
+
+
+
+----- PROFESSOR DIZ QUE PARA DEIXAR ESSE OUTPUT 
+
+
+MENOS ESTÁTICO,
+
+
+DEVEMOS 
+
+'ITERATE THROUGH ALL THE PRODUCTS'.... ------->
+ 
+
+
+
+
+ E, VOCÊ DEVE SE LEMBRAR QUE 
+
+ 
+
+ NÓS JÁ TEMOS O 
+
+ ARRAY 
+
+ DE 
+
+ 'PRODUCTS',
+
+
+
+ pq eles foram passados PARA DENTRO DESSA VIEW 
+
+ por meio do 
+
+
+ código de 
+
+
+ '
+ res.render('shop', {prods: products})'
+
+
+
+
+
+
+
+
+
+ -----> PODEMOS ACESSAR ESSA LIST/ARRAY _ POR MEIO ___ 
+
+
+ DA KEY 
+
+ 'prods'
+
+ ....
+
+
+
+
+
+
+
+
+ ------> PARA CONSEGUIR FAZER ISSO, PRECISAMOS USAR UMA SINTAXE ESPECIAL PROVIDENCIADA PELO PUG.. 
+
+
+
+
+
+ USAMOS A KEYWORD 'each'
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+        main 
+            .grid 
+                each ////////ISTO AQUI... 
+                article.card.product-item 
+                    header.card__header 
+                        h1.product__title A Chair
+                    .card__image 
+                        img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                    .card__content 
+                        h2.product__price $19.99
+                        p.product__description A very interesting book about so many events
+                    .card__actions 
+                        button.btn Add to Cart
+
+
+
+------------------------------
+
+
+
+A KEYWORD 
+
+'each' 
+
+VAI __CRIAR UM LOOP__....
+
+
+
+
+
+
+
+
+---> AÍ, COM ESSE 'each',
+
+vocÊ primeiramnte 
+
+
+ESPECIFICA UM 
+
+
+'VALUE' 
+
+EM QUE 
+
+VOCÊ 
+
+VAI 
+QUERER 
+
+
+'STORE THE VALUE FOR THE CURRENT ITERATION' (tipo 'for (const key in keys)'...)
+
+
+
+
+
+
+
+
+-----> TIPO ASSIM:
+
+
+
+
+
+each product in prods
+
+
+
+
+
+
+
+
+OU SEJA, É O 
+
+
+''''ITEM'''' DENTRO DO ''''ARRAY/LIST'''' NA QUAL VOCÊ VAI QUERER LOOOPAR...
+
+
+
+
+
+
+
+
+
+-----> no caso, 
+
+esse 
+
+
+ARRAY É prods,
+
+por isso escrevemos:
+
+
+        main 
+            .grid
+                each product in prods
+                article.card.product-item 
+                    header.card__header 
+                        h1.product__title A Chair
+                    .card__image 
+                        img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                    .card__content 
+                        h2.product__price $19.99
+                        p.product__description A very interesting book about so many events
+                    .card__actions 
+                        button.btn Add to Cart
+
+                    
+
+-----------------------------------------
+
+
+
+
+
+ok...
+
+
+
+
+
+
+
+
+
+COMO JÁ ESTAMOS 'LOOPING THROUGH THE PRODS',
+
+
+
+
+___ PRECISAMOS __ INDENTAR 
+
+
+TODO 
+
+O TRECHO DO 
+
+'ARTICLE'
+
+
+__PARA DENTRO DESSE LOOP,
+
+
+para 
+
+que então 
+
+
+
+todos nossos objetos article que existirão
+
+
+__SEJAM__ RETORNADOS POR ESSE LOOP AÍ...
+
+(tipo o react, com lists e .map())...
+
+
+
+EX:
+
+
+
+
+
+        main 
+            .grid
+                each product in prods
+                    article.card.product-item 
+                        header.card__header 
+                            h1.product__title A Chair
+                        .card__image 
+                            img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                        .card__content 
+                            h2.product__price $19.99
+                            p.product__description A very interesting book about so many events
+                        .card__actions 
+                            button.btn Add to Cart
+
+
+
+
+--------------------------------
+
+OK...
+
+
+
+
+
+
+esse BLOCKZAO de 
+
+'article'
+será repetido 
+
+
+PARA CADA 'product'
+
+DENTRO 
+
+DESSE ARRAY 
+
+
+
+
+DE 
+
+'prods'...
+
+
+
+
+
+
+
+
+
+-----> E AGORA, PORTANTO,
+
+
+
+PODEMOS USAR 
+
+A VARIÁVEL
+ 
+
+
+ 'product' QUE ESTAMOS CRIANDO 'ON THE FLY' AQUI 
+
+
+
+ PARA OUTPUTTAR A DATA PERTINENTE,
+
+ A DATA 
+
+ DE CADA PRODUCT...
+
+
+
+
+ ex:
+
+
+
+
+
+
+         main 
+            .grid
+                each product in prods
+                    article.card.product-item 
+                        header.card__header 
+                            h1.product__title #{product.title}
+                        .card__image 
+                            img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                        .card__content 
+                            h2.product__price $19.99
+                            p.product__description A very interesting book about so many events
+                        .card__actions 
+                            button.btn Add to Cart
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DE NOVO, O PROFESSOR VAI OUTPUTTAR DINAMICAMENTE O title,
+
+
+
+por meio de 
+
+
+'#{product.title}'...
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+ok, é exatamente o que eu fazia com o react...
+
+
+
+
+
+
+---> JÁ AS IMAGES, O PRICE, E O RESTO DAS COISAS,
+
+provavelmente 
+
+vao ficar 
+
+
+
+'product.image',
+
+
+
+'product.desc',
+
+
+
+
+e coisas assim...
+
+
+também 
+
+'product.price'...
+
+
+
+
+
+
+
+------------------
+
+
+FICOU TIPO ASSIM:
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main
+            .grid 
+                each product in prods
+                article.card.product-item 
+                    header.card__header 
+                        h1.product__title #{product.title}
+                    .card__image 
+                        img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                    .card__content 
+                        h2.product__price #{product.price}
+                        p.product__description #{product.desc}
+                    .card__actions 
+                        button.btn Add to Cart
+
+
+
+
+
+
+
+
+
+--> E PROFESSOR EXPLICA QUE 
+
+QUANDO 
+
+
+
+
+ALTERAMOS ALGO NOS TEMPLATES,
+
+NÃO TEMOS QUE REINICIAR O SERVER INTEIRO,
+
+
+JUSTAMENTE PQ OS TEMPLATES NÃO SÃO 
+
+PARTE DO SERVERSIDE CODE,
+
+
+
+
+
+
+___ E SIM ___ SÃO 'BASICALLY TEMPLATES THAT ARE PICKED UP ON THE FLY
+
+ANYWAYS',
+
+
+ 
+ O QUE SIGNIFICA QUE SE VOCÊ OS ALTERAR,
+
+ O 
+
+
+ 'NEXT REQUEST THAT IS COMING' 
+
+ VAI 
+
+
+ AUTOMATICAMENTE PEGAR ESSA ÚLTIMA VERSÃO 
+
+ DO 
+
+ SEU 
+
+ TEMPLATE...
+
+
+
+
+
+
+
+
+ -----> COM ISSO, TIVEMOS UMA INTRODUÇÃO BÁSICA AO PUG.... -----> 
+
+
+
+
+
+É UMA SINTAXE ESTRANHA, BEM MÍNIMA... --> E VIMOS COMO 
+
+PODEMOS 
+
+OUTPUTTAR 
+
+
+
+'single values',
+
+
+como 
+
+TEXTS DINÂMICOS (como '#{product.title'}),
+
+
+
+
+
+
+E 
+
+TAMBÉM 
+
+LOOPS,
+ 
+ por meio 
+
+ de 
+
+ 'each xxx in array'...
+
+
+
+
+
+
+
+
+
+ ---------------> OK.. MAS É CLARO QUE PODERÍAMOS
+
+
+ TER UM 
+ CASE EM QUE 
+
+
+
+
+ __NÃO TEMOS NENHUM PRODUCT NA PÁGINA--->  
+
+
+
+
+
+ E POR ISSO É BOM TER UM 
+
+ CASE/CONDITIONAL CHECK 
+
+
+
+ PARA 
+
+ CASOS 
+
+
+ EM QUE 
+
+
+
+ ____ SUA LISTA DE PRODUCTS está
+
+ _vAZIA/
+
+
+ encontra-se vazia... ------> 
+
+
+
+
+
+
+ RENDERIZAR UM CONTÉUDO DE H1 COM 
+
+
+
+ 'No products found on store',
+
+
+  ou algo assim...
+
+
+
+
+
+
+
+  --> E PROFESSOR EXPLICA QUE __PODEMOS, SIM, __ FAZER UMA COISA DESSAS COM O PUG..
+
+
+
+
+
+
+
+  -----> PARA FAZER ISSO,
+
+
+
+  podemos simplesmente escrever um if statement no meio dele...
+
+
+
+
+
+
+
+
+  --> escrevemos:
+
+
+
+
+  main 
+     if products.length > 0 
+      .grid 
+        each product in prods
+        article.card.product-item 
+            header.card__header 
+                h1.product__title #{product.title}
+            .card__image 
+                img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+            .card__content 
+                h2.product__price #{product.price}
+                p.product__description #{product.desc}
+            .card__actions 
+                button.btn Add to Cart
+
+
+
+
+
+
+
+
+                --> OU SEJA,,
+
+
+
+                SE O 
+
+
+                LENGTH DO ARRAY PRODUCTS FOR 0,
+
+                VAMOS QUERER 
+
+                __ OUTPUTTAR __ ESSE CÓDIGO AÍ....
+
+
+
+
+
+
+    
+    CASO CONTRÁRIO,
+
+
+
+    VAMOS 
+
+    QUERER 
+
+
+
+
+
+ESCREVER/EXECUTAR 
+
+UM 
+'ELSE'
+
+
+BLOCK (no mesmo nível de 'if', para funcionar),
+
+
+
+E AÍ OUTPUTTAR 
+
+UM 
+
+
+'H1 no products'...
+
+
+
+
+
+ex:
+
+
+
+
+
+  main 
+     if prods.length > 0 
+      .grid 
+        each product in prods
+        article.card.product-item 
+            header.card__header 
+                h1.product__title #{product.title}
+            .card__image 
+                img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+            .card__content 
+                h2.product__price #{product.price}
+                p.product__description #{product.desc}
+            .card__actions 
+                button.btn Add to Cart
+    else 
+        h1 No Products
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main
+          if prods.length > 0
+            .grid 
+                each product in prods
+                article.card.product-item 
+                    header.card__header 
+                        h1.product__title #{product.title}
+                    .card__image 
+                        img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                    .card__content 
+                        h2.product__price #{product.price}
+                        p.product__description #{product.desc}
+                    .card__actions 
+                        button.btn Add to Cart
+          else
+            h1 No Products
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+AGORA QUANDO INICIAMOS 
+
+
+NOSSO 
+
+
+SERVER/APLICATIVO,
+
+
+vamos ver a página inicial com 
+
+'No Products',
+
+
+PQ NENHUM PRODUCT TERÁ SIDO ADICIONADO... --> se adicionarmos 1 objeto, no entanto, VEREMOS 
+
+ESSE OBJETO NA STARTING PAGE...
+
+
+
+
+
+
+
+
+CERTO... MAS HÁ UM ERRO DE SINTAXE DO PUG:
+
+
+
+Error: A:\projeto4 - NODEJS\MODULO6-TRABALHANDOCOMCONTEÚDODINAMICO,TEMPLATINGENGINES\novonovoprojeto5-templatingengines\views\shop.pug:22:1
+    20|             .grid 
+
+    21|                 each product in prods
+
+  > 22|                 article.card.product-item 
+
+--------^
+    23|                     header.card__header 
+
+    24|                         h1.product__title #{product.title}
+
+    25|                     .card__image 
+ 
+
+
+
+
+
+
+
+
+ -------------------------------
+
+
+
+ CONSERTEI:
+
+
+
+
+
+ doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title #{docTitle}
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+        main
+          if prods.length > 0
+            .grid 
+                each product in prods
+                    article.card.product-item 
+                        header.card__header 
+                            h1.product__title #{product.title}
+                        .card__image 
+                            img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                        .card__content 
+                            h2.product__price #{product.price}
+                            p.product__description #{product.desc}
+                        .card__actions 
+                            button.btn Add to Cart
+          else
+            h1 No Products
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---> OK... AGORA TEMOS AS 3 PARTES MAIS IMPORTANTES DO TRABALHO COM O PUG:
+
+
+
+
+
+
+1) OUTPUT DE SIMPLE TEXT 
+
+
+
+2) OUTPUT DE LIST (LOOPS com 'each' e 'in'...)
+
+
+
+3) OUTPUT DE CONTEÚDO CONDICIONAL (if statements)
+
+
+
+
+
+
+
+
+
+--> ESTE É O PUG, E É ASSIM QUE USAMOS TEMPLATING ENGINES NO EXPRESSJS,
+
+
+EM GERAL...
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+DEVEMOS REPLICAR ISSO LÁ NA PÁGINA DE 
+
+'add-product'....
+
+
+
+
+EU JÁ FIZ ISSO:
+
+
+
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Add Product
+        link(rel="stylesheet", href="/css/main.css")
+        link(rel="stylesheet", href="/css/forms.css")
+        link(rel="stylesheet", href="/css/product.css")
+    body 
+        header.main-header 
+            nav.main-header__nav
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a(href="/") Shop
+                    li.main-header__item 
+                        a.active(href="/") Add Product
+        main 
+            form.product-form(action="/admin/add-product", method="POST")
+                .form-control 
+                    label(for="title") Title 
+                    input(type="text", name="title")
+                button.btn(type="submit") Add Product
+
+
+
+
+
+---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+--> VOCÊ PODE, COMO PRÁTICA,
+
+
+INJETAR UM CÓDIGO DINAMICAMENTE 
+
+COM 
+
+#{}, como 
+
+O 
+
+'PAGE TITLE'...

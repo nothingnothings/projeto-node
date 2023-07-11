@@ -1,0 +1,2463 @@
+
+
+
+
+
+
+
+-> CERTO... agora é finalmente É HORA DE TRABALHAR COM AQUELE REACT APp
+
+
+QUE TEMOS COMO FRONTEND... 
+
+
+
+
+
+
+
+
+
+--> OK...--> É UM REACT APP...-> ESTAMOS INTERESSADOS NO SIGNUP DO USER....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA COMEÇAR, PROFESSOR ESTÁ INTERESSADO NO 'SIGNUP'....
+
+
+
+
+
+
+
+
+
+---> para isso,
+
+
+
+
+
+vamos até o 
+
+
+COMPONNET 'App.js'
+
+
+
+DO FRONTEND...
+
+
+
+
+
+-> LÁ TEMOS ESTE CÓDIgo:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  signupHandler = async (event, authData) => {
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    const fetchedResponse = await fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      // .then((res) => {
+        if (fetchedResponse.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (fetchedResponse.status !== 200 && fetchedResponse.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        // return res.json();
+      // })
+      // .then((data) => {
+        console.log(fetchedResponse);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      // })
+    } catch (err) {
+      // .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+
+        })
+      }
+    }
+        // });
+      // });
+
+
+
+
+
+
+
+
+      -------------------------
+
+
+
+
+
+
+
+
+
+
+É O SIGNUP HANDLER'
+
+
+
+
+que nos 
+
+interessa...
+
+
+
+
+
+
+
+
+
+
+
+-----> LÁ,  ESTÁVAMOS MANDANDO UM REQUEST 
+
+PARA 
+
+
+
+'localhost:8080/auth/signup',
+
+
+JUSTAMENTE 
+PARA 
+
+
+'CREATE A NEW USER', uma 
+
+route
+
+
+
+que havíamos definido no nosso app nodeexpress clássico/rest...
+
+
+
+
+
+
+
+
+
+
+
+-----> MAS ´E __ ÓBVIO_ _ QUE 
+
+
+
+
+ESSE REQUEST ERA FEITO 
+
+DESSA FORMA NO 
+
+'REST API 
+
+WORLD'....- ---> APRENDEMOS 
+
+
+
+
+QUE 
+
+
+AGORA 
+
+A ÚNICA 
+
+
+ROUTE/ENDPOINT DISPONÍVEL,
+
+PARA TODOS NOSSOS API REQUESTS 
+
+do frontend,
+
+é 
+
+
+
+
+'localhost:8080/graphlq',
+
+
+DE TIPO 'POST'...
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE TEMOS QUE 
+
+COLOCAR ISSO NESSE METHOD..
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  signupHandler = async (event, authData) => {
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    ///const fetchedResponse = await fetch('http://localhost:8080/auth/signup', {
+      const fetchedResponse = await fetch('http://localhost:8080/graphql', { ////EIS O CÓDIGO EM QUESTÃO.
+      method: 'POST', //EIS O CÓDIGO EM QUESTÃO.
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      // .then((res) => {
+        if (fetchedResponse.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (fetchedResponse.status !== 200 && fetchedResponse.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        console.log(fetchedResponse);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+
+    } catch (err) {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+
+        })
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... DEFINIMOS ESSE API ENDPOINT,
+
+
+e 
+
+
+também 
+
+
+o 
+
+'method' como sendo de POST....
+
+
+
+
+
+
+
+
+
+
+--> QUANTO AOS HEADERS,
+
+
+MANTEREMOS SUA FORMA ATUAL,
+
+ESSE HEADER DE 
+
+
+'Content-Type' 
+
+de tipo 
+
+'application/json',
+
+
+
+POIS __ AINDA__ VAMOS ___ ENVIAR__ 
+
+
+JSON _DATA __ AO NOSSO BACKEND... (o request ainda vai conter JSON DATA, o body será json data)...
+
+
+
+
+
+
+
+
+
+
+
+--> A ÚNICA DIFERENÇA EXTRA, NO CASO,
+
+SERÁ QUE 
+
+O 
+
+'BODY'
+
+
+VAI __ CONTER__ 
+
+
+'QUERY LANGUAGE' 
+
+
+em vez 
+
+
+
+desse 
+
+
+JSON.stringify() (que estava convertendo nossa data javascript em DATA JSON)....
+
+
+
+
+
+
+
+
+
+VAMOS TROCAR ISTO, PORTANTO:
+
+
+
+
+
+    body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+
+
+
+
+
+
+
+
+
+
+
+
+      ------> PARA ISSO,
+
+
+
+    
+
+
+PARA ESCREVER A 'QUERY LANGUAGE DO GRAPHQL',
+
+
+
+
+
+
+CAPAZ DE SER COMPREENDIDA PELO GRAPHQL,
+
+
+professor 
+
+
+
+EXPLICA QUE 
+
+
+
+VAI 
+
+CRIAR UMA CONSTANTE 
+
+CHAMADA 
+
+DE 
+
+
+'const graphqlQuery = ...'
+
+
+
+
+
+
+
+
+
+--> ESSA __ CONSTANTE_ SERÁ UM __ OBJETO __ JAVASCRIPT __ EM QUE __ OBRIGATORIAMENTE TEREMOS 
+
+DE 
+
+TER UMA 
+KEY 
+
+DE 
+
+'query'...
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+const graphqlQuery = {
+  query: 
+}
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ISSO 
+
+AÍ 
+
+É _ REQUIRED__ PARA __ 
+
+TODOS OS TIPOS DE COMUNICAÇÃO 
+
+
+DO 
+
+
+GRAPHQL,
+
+
+
+ATÉ MESMO 'MUTATIONS'...
+
+
+(ou seja, não só QUERIES....)
+
+
+
+ex:
+
+
+
+
+
+
+
+const graphqlQuery = {
+  query: 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... 
+
+
+
+
+essa query será 
+
+criada 
+
+
+
+COM DOUBLE BACKTICKS (template literal),
+
+
+
+
+E COM 
+
+
+UMA SINTAXE SIMILAR ÀQUELA QUE VIMOS LÁ NO INÍCIO DESTE MÓDULO...
+
+
+
+
+
+
+
+
+
+
+algo tipo:
+
+
+
+
+
+query: `
+
+
+
+mutation { ////escreva isto para EXPLICAR QUE VOCÊ VAI QUERER RODAR UMA MUTATIOn....
+  createUser ////ESCREVA __ O NOME __ DA MUTATION _ QUE VOCÊ VAI QUERER ACESSAR/EXECUTAR....
+}
+
+
+`
+
+
+
+
+
+
+
+CERTO. .. ->  
+
+
+mas é óbvio que 
+
+
+ESSE 
+
+'createUser'
+
+EXIGE 1 PARÂMETRO,
+
+
+
+pois 
+
+
+HAVÍAMOS DEFINIDO ASSIM, LÁ NO NOSSO SCHEMA/RESOLVER....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+query: `
+
+
+
+mutation { ////escreva isto para EXPLICAR QUE VOCÊ VAI QUERER RODAR UMA MUTATIOn....
+  createUser(
+      userInput: {email:   ,
+      name:    ,
+      password: 
+      }
+  )
+}
+
+
+`
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE __ NÓS VAMOS COLOCAR OS VALORES DE 'email'
+
+
+'name'
+
+E 
+
+'password'
+
+dinâmicos nesses slots aí...
+
+
+
+
+
+
+
+
+------> FAREMOS ISSO POR MEIO DE ${},
+
+
+
+e aí 
+
+acessamos 
+
+o 
+
+INPUT inputtado pelo user....
+
+
+
+tipo assim:
+
+"${}".... (VOCÊ TEM QUE INCLUIR ESSES DOUBLE QUOTE MARKS)...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+mutation { ////escreva isto para EXPLICAR QUE VOCÊ VAI QUERER RODAR UMA MUTATIOn....
+  createUser(
+      userInput: {email:  "${authData.email}",
+      name: "${authData.name}"    ,
+      password: "${authData.password}"
+      }
+  )
+}
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+          const graphqlQuery = { ///será INSERIDA NO NOSSO BODY...
+
+
+              query: `
+              mutation {
+                createUser(userInput: {email: "${authData.email}", name: "${authData.name}", password: "${authData.password}"})
+              }
+              
+              `
+          }
+          const fetchedResponse = await fetch('http://localhost:8080/graphql', {
+          method: 'POST',
+          body: JSON.stringify(graphqlQuery),
+
+
+          headers: {
+            'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL. -->ESSE HEADER TAMBÉM É USADO NA VERSÃO 'GRAPHQL' DE backends...
+          },
+
+
+
+
+
+
+
+
+
+
+
+-> TALVEZ SEJA ASSIM MSM...
+
+    
+
+
+
+-->  OK.... 
+
+
+
+
+
+
+
+
+COLOCAMOS 
+
+
+ESSA 'QUERY/MUTATION' 
+
+
+
+dentro do BODY 
+
+do 
+
+nosso request 
+
+
+no frontend... 
+
+
+
+
+
+
+
+-------------------------
+
+
+
+CERTO... AÍ O PROFESSOR NOS __ CONTA__ 
+
+
+
+1 DETALHE/CARACTERÍSTICA 
+
+
+DO 
+'GRAPHQL'... --> 
+
+
+
+
+nesse query/mutation,
+
+
+nós ainda PODEMOS ESCREVER 
+
+aquele 
+
+'{}' 
+
+
+DEPOIS__  DA DEFINIÇÃO DA MUTATION EM SI.... --> fazemos isso se QUEREMOS __ 
+
+
+RETORNAR__ ALGUNS FIELDS ___ ESPECÍFICOS __ 
+
+
+
+
+
+DAS COISAS QUE DEFINIMOS LÁ NO NOSSO SCHEMA.... (aparentemente, esse return é OPCIONAL)...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+          const graphqlQuery = { ///será INSERIDA NO NOSSO BODY...
+
+
+              query: `
+              mutation {
+                createUser(userInput: {email: "${authData.email}", name: "${authData.name}", password: "${authData.password}"})
+              } {
+                _id  ////EIS O CÓDIGO EM QUESTÃO.
+                email 
+              }
+              
+              `
+          }
+          const fetchedResponse = await fetch('http://localhost:8080/graphql', {
+          method: 'POST',
+          body: JSON.stringify(graphqlQuery),
+
+
+          headers: {
+            'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL. -->ESSE HEADER TAMBÉM É USADO NA VERSÃO 'GRAPHQL' DE backends...
+          },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> NO CASO,
+
+
+se escrevemos 
+
+
+'{
+  _id 
+  email
+}
+',
+
+
+VAMOS RETORNAR 
+
+
+ISSO AÍ,
+
+o 
+
+'_Id'
+
+
+e o 
+
+'email' 
+
+
+
+desse 
+
+
+
+user que foi criado.... 
+
+
+
+
+
+
+
+
+
+
+--> CERTO... É ÓBVIO, NO ENTANTO,
+
+QUE 
+
+ESSE OBJETO NÃO VAI SER 
+
+
+
+
+ENVIADO __ 'AS IT IS'... --> não ,
+
+
+pq 
+
+VAMOS 
+TER QUE 
+
+
+
+STRINGIFAR 
+
+ESSE 
+
+OBJETO,
+
+por meio de 
+
+'
+JSON.stringify()'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+body: JSON.stringify(graphqlQuery);
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+      signupHandler = async (event, authData) => { ///versão GRAPHQL do SEND DE REQUESTS a nosso backend.... (endpoint único, method de tipo POST, e inserção de 'GRAPHICAL QUERY' no body do request... são características do graphql no backend....).
+
+        try {
+    
+        
+        event.preventDefault();
+        this.setState({ authLoading: true });
+        // fetch('URL')
+        // const fetchedResponse = await fetch('http://localhost:8080/auth/signup', {
+
+          const graphqlQuery = { ///será INSERIDA NO NOSSO BODY...
+
+
+              query: `
+              mutation {
+                createUser(userInput: {email: "${authData.email}", name: "${authData.name}", password: "${authData.password}"})
+              }
+              
+              `
+          }
+          const fetchedResponse = await fetch('http://localhost:8080/graphql', {
+          // method: 'PUT',
+          method: 'POST',
+          // body: JSON.stringify({
+          //   name: authData.name,
+          //   email: authData.email,
+          //   password: authData.password,
+          //   confirmPassword: authData.confirmPassword,
+          // }),
+          body: JSON.stringify(graphqlQuery), //ainda vamos ter que STRINGIFAR nosso body com a query... (Exatamente como fazíamos/fazemos na REST API/app clássico nodeexpress...)
+
+
+          headers: {
+            'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL. -->ESSE HEADER TAMBÉM É USADO NA VERSÃO 'GRAPHQL' DE backends...
+          },
+        })
+          // .then((res) => {
+            if (fetchedResponse.status === 422) {
+              throw new Error(
+                'Validation failed. Make sure the email address is unused.'
+              );
+            }
+    
+            if (fetchedResponse.status !== 200 && fetchedResponse.status !== 201) {
+              throw new Error('Creating a user failed!');
+            }
+    
+            // return res.json();
+          // })
+          // .then((data) => {
+            console.log(fetchedResponse);
+            this.setState({
+              isAuth: false,
+              authLoading: false,
+            });
+            this.props.history.replace('/'); ///routing prop....
+          // })
+        } catch (err) {
+          // .catch((err) => {
+            console.log(err);
+            this.setState({
+              isAuth: false,
+              authLoading: false,
+              error: err,
+    
+            })
+          }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE 
+
+
+AQUELE IF CHECK 
+
+ALI DE 
+
+BAIXO 
+
+
+
+
+___ É DESNECESSÁRIO...
+
+(
+
+
+  aquele if check 
+
+  de 
+
+
+
+
+  ''
+
+
+              if (fetchedResponse.status === 422) {
+              throw new Error(
+                'Validation failed. Make sure the email address is unused.'
+              );
+            }
+    
+            if (fetchedResponse.status !== 200 && fetchedResponse.status !== 201) {
+              throw new Error('Creating a user failed!');
+            }
+
+
+
+      '''' 
+)
+
+
+
+
+
+
+
+--> NÃO 
+
+
+
+VAMOS DEFINIR ESSE STATUS CODE ALI,
+
+
+
+
+
+ISSO PQ 
+
+O STATUS CODE NUNCA VAI ESTAR COMO '422'.... --> nosso status code,
+
+quando 
+
+usamos 
+
+
+
+o   
+
+
+GRAPHQL 
+
+
+ 
+
+ __ VAI __ SER OU 200,
+
+
+ OU 500... (e nunca outros valores)... --> 
+
+ É POR ISSO 
+
+ QUE 
+
+
+ CORTAMOS 
+
+ ESSE 
+
+ CÓDIGO... 
+
+
+
+
+
+
+
+
+
+
+--> MAS NÓS NÃO ESTÁVAMOS USANDO THEN BLOCKS 
+
+COMO O PROFESSOR ESTÁ... -> 
+
+
+
+ou seja,
+
+nosso código vai ficar um pouquinho diferente.... 
+
+
+
+
+
+
+
+
+
+--> NO NOSSO 
+
+
+CÓDIGO,
+
+VAMOS 
+
+
+
+
+ACTUALLY 
+
+
+só escrever 
+
+
+algo como:
+
+
+
+
+
+
+
+
+
+
+
+          const fetchedResponse = await fetch('http://localhost:8080/graphql', {
+          method: 'POST',
+          body: JSON.stringify(graphqlQuery), //ainda vamos ter que STRINGIFAR nosso body com a query... (Exatamente como fazíamos/fazemos na REST API/app clássico nodeexpress...)
+          headers: {
+            'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL. -->ESSE HEADER TAMBÉM É USADO NA VERSÃO 'GRAPHQL' DE backends...
+          },
+        })
+
+
+
+
+
+
+
+
+
+
+
+          const manipulatedFetchedResponse = await fetchedResponse.json();
+
+
+
+
+          if( manipulatedFetchedResponse) {
+
+          }
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+NESSE 'manipulatedFetchedResponse',
+
+
+
+vamos checar 
+
+PELA PROPRIEDADE 
+de 
+
+'erros',
+
+
+E TAMBÉM 
+
+SE 
+
+
+
+O PRIMEIRO 'ERROR' NESSE ARRAY _ POSSUI __ UMA PROPRIEDADE 
+
+
+'status' 
+
+
+de 
+
+
+422,
+
+
+
+COMO HAVÍAMOS SETTADO 
+
+LÁ 
+
+
+
+
+NO NOSSO 
+
+
+'app.js'
+ 
+ DO BACKEND,
+
+
+ NO MIDDLEWARE DO 
+
+ GRAPHQL 
+
+ que 
+ setta 
+
+
+as funcionalidades DE ERROR HANDLING, Neste código aqui:
+
+
+
+
+      customFormatErrorFn(err) {
+
+
+    if (!err.originalError) {
+          return err;
+    }
+
+      const data = err.originalError.data; 
+
+      const message = err.message || 'An error occurred.'; 
+
+
+      const code = err.originalError.code || 500; 
+
+
+      return { 
+        message: message,
+        status: code, ///aqui
+        data: data
+      }
+
+
+    // return err; ///ESTE É O VALOR DEFAULT, que faz com que seja gerado aquele objeto de 'error response' DEFAULT, com 'path', 'errors: []' (array), 'message' e 'data'...
+  }
+
+
+
+
+
+
+
+
+  TAMBÉM NO RESOLVER DE 'createUser':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        console.log(password);
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+        if (!validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is too short!'})
+        }
+        
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid input!');
+                ///aqui
+                error.data = errors; ///vamos armazenar o ARRAY DOS ERROS DE VALIDATION DO NOSSO RUNTIME nessa propriedade de 'data', se quisermos... (na verdade, podemos armazenar o QUE QUISERMOS, essa é só uma recomendação)...
+                error.code = 422; ///exemplo de como podemos SETTAR O CODE QUE QUISERMOS, DATA QUE QUISERMOS, nesses errors....
+            
+            throw error;
+        }
+
+
+    
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok..... NO CASO, lá naquele if check,
+
+vamos escrever assim:
+
+
+
+
+
+         const manipulatedFetchedResponse = await fetchedResponse.json();
+
+
+
+
+          if( manipulatedFetchedResponse.errors && manipulatedFetchedResponse[0].status = 422) {
+                throw new Error("Validation failed. Make sure the email address is unused!");
+          }
+
+
+
+
+    
+    ---------------------
+
+
+
+
+
+
+    É CLARO QUE PODERÃO EXISTIR OUTROS ERROS,
+
+
+    por iso 
+
+    o 
+
+
+    PROFESSOR 
+
+
+
+    ADICIONA UM OUTRO IF CHECK,
+
+
+    que 
+
+    checa 
+
+    SÓ PELA EXISTÊNCIA do array de 'errors'... -> SE ESSE ARRAY EXISTIR,
+
+
+
+    VAMOS SÓ QUERER DAR UM ERRO GENÉRICO de 
+
+
+
+    'throw new Error('User creation failed!');'
+
+
+
+
+
+
+
+
+
+    EX:
+
+
+
+
+
+    
+         const manipulatedFetchedResponse = await fetchedResponse.json();
+
+
+
+
+          if( manipulatedFetchedResponse.errors && manipulatedFetchedResponse[0].status = 422) {
+                throw new Error("Validation failed. Make sure the email address is unused!");
+          }
+
+
+          if (manipulatedFetchedResponse.errors) {
+            throw new Error('User creation failed.');
+          }
+
+
+
+
+
+
+      -----------------------
+
+
+
+
+
+
+
+
+  O CÓDIGO FINAL FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+        signupHandler = async (event, authData) => { ///versão GRAPHQL do SEND DE REQUESTS a nosso backend.... (endpoint único, method de tipo POST, e inserção de 'GRAPHICAL QUERY' no body do request... são características do graphql no backend....).
+
+        try {
+    
+        
+        event.preventDefault();
+        this.setState({ authLoading: true });
+
+          const graphqlQuery = { ///será INSERIDA NO NOSSO BODY...
+
+
+              query: `
+              mutation {
+                createUser(userInput: {email: "${authData.email}", name: "${authData.name}", password: "${authData.password}"})
+              }
+              
+              `
+          }
+          const fetchedResponse = await fetch('http://localhost:8080/graphql', {
+          method: 'POST',
+
+          body: JSON.stringify(graphqlQuery), //ainda vamos ter que STRINGIFAR nosso body com a query... (Exatamente como fazíamos/fazemos na REST API/app clássico nodeexpress...)
+
+
+          headers: {
+            'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL. -->ESSE HEADER TAMBÉM É USADO NA VERSÃO 'GRAPHQL' DE backends...
+          },
+        })
+
+
+        console.log(fetchedResponse);
+
+
+
+          const manipulatedFetchedResponse = await fetchedResponse.json();
+
+
+
+
+          if(manipulatedFetchedResponse.errors && manipulatedFetchedResponse[0].status === 422) { ///ERROR HANDLING DO 'GRAPHQL'...
+            throw new Error("Validation failed. Make sure the email address is unused!");
+      }
+
+
+      if (manipulatedFetchedResponse.errors) { ///ERROR HANDLING DO GRAPHQL....
+        throw new Error('User creation failed.');
+      }
+
+
+      console.log(manipulatedFetchedResponse);
+            this.setState({
+              isAuth: false,
+              authLoading: false,
+            });
+            this.props.history.replace('/'); ///routing prop....
+          // })
+        } catch (err) {
+          // .catch((err) => {
+            console.log(err);
+            this.setState({
+              isAuth: false,
+              authLoading: false,
+              error: err,
+    
+            })
+          }
+        }
+
+
+
+------------------------------
+
+
+
+
+
+COM ISSO,
+
+TEMOS TUDO DE QUE PRECISAMOS 
+
+PARA 
+
+
+
+FAZER 'SIGNUP' de nosso users...
+
+
+
+
+
+
+
+
+
+--> RODAMOS NOSSO APP FRONTEND COM NPM START,
+
+
+
+
+
+__ E AÍ __ 
+
+
+
+VAMOS TESTAR.... 
+
+
+
+
+
+--> NAVEGAMOS ATÉ A PAGE DE SIGNUP,
+
+
+e aí 
+
+TESTAMOS 
+
+
+SE 
+
+
+
+
+
+
+EU TENTAR CRIAR 1 USER 
+
+
+
+
+
+QUE JÁ EXISTE, VOU RECEBER UM ERRO (ainda bem)....
+
+
+
+
+
+
+
+
+
+
+---> ENTRETANTO,
+
+O ERRO 
+
+
+
+QUE 
+
+RECEBEMOS É UM __ ERRO __ DIFERENTE DO ESPERADO.... --> É UM ERRO 
+
+ESTRANHO,
+
+
+ERRO DE 
+
+
+
+'Failed to load resource: the :8080/graphql:1 server 
+
+RESPONDED WITH A STATUS OF 405 (Method Not Allowed)'... 
+
+
+
+
+
+
+
+
+
+
+----> ESSE ERRO, NO CASO, 
+
+
+
+PODE SER 
+
+'TRICKY' PARA 
+
+CONSERTAR,
+
+
+
+SE VOCÊ RECÉM COMEÇOU COM O GRAPHQL...
+
+
+
+
+
+
+
+
+
+
+---->A  RAZÃO PARA ESSE ERRO É QUE 
+
+
+
+
+NÓS__  VAMOS RECEBER__ ESSE ERRO COMO RESPONSE __ AO __ REQUEST__ DE TIPO 
+
+
+'OPTIONS' 
+
+enviado ao nosso backend,
+
+
+__ E NÃO __ AO POST REQUEST_ _QUE FORMULAMOS LOGO DEPOIS DESSE REQUEST DE 'OPTIONS'...
+
+
+
+
+
+
+
+
+
+
+
+--> POR ISSO QUE ELE FALA sobre 
+
+'preflight' e blablabla... -->  PROFESSOR HAVIA EXPLICADO QUE 
+
+
+
+
+O 
+
+
+BROWSER 
+
+SEMPRE ENVIA UM REQUEST DE TIPO 'OPTIONS' 
+
+ANTES 
+
+DE 
+
+ENVIAR QUALQUER OUTRO TIPO DE REQUEST...  ----> O PROBLEMA,
+
+NO CASO, 
+
+
+É 
+QUE 
+
+O 
+
+
+
+'GRAPHQL API' 
+
+
+
+VAI 
+
+
+___AUTOMATICAMENTE 
+
+RECUSAR 
+
+
+QUALQUER __ COISA __ QUE 
+
+NÃO 
+
+SEJA__ 
+
+
+
+
+
+
+
+UM REQUEST DE TIPO 'POST' 
+
+OU 
+
+'GET'... -------> ISSO SIGNIFICA QUE 
+
+
+O 
+
+
+GRAPHQL 
+
+
+__ VAI AUTOMATICAMENTE_ _ 'DENY'__ O REQUEST DE 'OPTIONS' (Que api BURRA...)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> A SOLUÇÃO,
+ 
+
+ NO CASO,
+
+ É 
+
+ IR 
+
+
+ ATÉ 
+
+ AQUELE 
+
+
+ MIDDLEWARE 
+
+ EM QUE 
+
+ SETTAMOS 
+
+
+
+ OS 
+
+ 'CORS HEADERS',
+
+ LÁ 
+
+
+ EM 
+
+ 'app.js' 
+
+ do backedn...
+
+
+ ex:
+
+
+
+
+
+
+ app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+---> NESTE LOCAL AÍ,
+
+
+
+VAMOS TER QUE ADICIONAR ALGUMA NOVA LINHA DE CÓDIGO...
+
+
+
+
+
+
+
+
+
+--> NESSE LOCAL,
+
+
+VAMOS ADICIONAR 1 'IF CHECK'... --> if check 
+
+em que 
+
+teremos 
+
+
+
+'if 
+
+
+
+REQUEST.METHOD' (
+
+
+  se o method FOR DE__ OPTIONS_,
+
+
+)
+
+
+
+
+
+
+
+SE O REQUEST FOR DE OPTIONS,
+
+__ AÍ __ VOU QUERER 
+
+AUTOMATICAMENTE 
+
+RETORNAR 
+
+'res.sendStatus(200)' ... --> OU SEJA,
+
+VAMOS QUERER AUTOMATICAMENTE 
+
+
+
+ENVIAR 
+
+
+UMA RESPONSE COM STATUS CODE DE 200,
+
+
+
+para que 
+
+
+O REQUEST_ _ SEJA _ TIDO COMO 'BEM SUCEDIDO',
+
+em vez de 
+
+'FALHA'...
+
+
+
+ex:
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if(req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+OBS::: EU NEM SABIA Q ESSE METHOD DE 'sendStatus'
+
+EXISTIA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... VAMOS 'return' 
+
+JUSTAMENTE PARA QUE 
+
+O 
+
+
+CÓDIGO DE 'next()"
+
+
+NÃO 
+
+
+SEJA ___ EXECUTADO.... -----> ISSO FARÁ, ESSENCIALMENTE, COM QUE 'OPTIONS REQUESTS' __ NUNCA ___ CHEGUEM/ATINJAM O ENDPOINT DO GRAPHQL, que é o que REALMENTE DESEJAMOS, na verdade...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if(req.method === 'OPTIONS') {
+    return res.sendStatus(200); ////USAMOS ISTO APENAS __ EM PROJETOS COM 'GRAPHQL' ativado no backend... --> isso vai fazer com que OS REQUESTS DE TIPO 'OPTIONS' (disparados AUTOMATICAMENTE POR NOSSOS BROWSERS) NUNCA __ ATINJAM__ A ENDPOINT ÚNICA DO GRAPHQL (que é o que queremos, na verdade).... ---> isso evita um ERRO 405, no uso do graphql...
+  }
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->OK, VAMOS 'PULAR' ESSE REQUEST DE 
+
+
+TIPO 'OPTIONS',
+
+MAS AINDA ASSIM VAMOS 'GET A VALID RESPONSE'...
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO,
+
+
+VOLTAMOS AO NOSSO FRONTEND,
+
+
+
+
+
+
+
+
+
+
+
+
+E AÍ 
+
+
+TENTAMOS 
+
+
+
+CRIAR UM NOVO USER... --> AGORA O USER CREATION VAI FALHAR,
+
+
+
+
+
+MAS __ VAI FALHAR__ SIMPLESMENTE 
+
+POR CAUSA DO 
+
+
+NOSSO CÓDIGO DE ERROR HANDLING, O QUE SIGNIFICA QUE 
+
+
+NOSSA LÓGICA ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+--> MAS EU, NO CASO, RECEBI UM ERROR:
+
+
+
+
+
+ypeError: Cannot read properties of undefined (reading 'status')
+    at _callee2$ (App.js:336)
+    at tryCatch (runtime.js:63)
+    at Generator.invoke [as _invoke] (runtime.js:282)
+    at Generator.prototype.<computed> [as next] (runtime.js:116)
+    at asyncGeneratorStep (asyncToGenerator.js:3)
+    at _next (asyncToGenerator.js:25)
+
+
+
+
+
+
+
+
+
+
+
+    -> bem, eu consertei esse erro (removi algumas das OPERATIONS/QUERIES NO MEU SCHEMA....)
+
+
+
+
+
+
+
+
+    --> entretanto, ainda estou recebendo este erro:
+
+
+
+
+    App.js:394 
+{errors: Array(1)}
+errors: Array(1)
+0:
+locations: [{…}]
+message: "Query root type must be provided."
+[[Prototype]]: Object
+length: 1
+[[Prototype]]: Array(0)
+[[Prototype]]: Object
+
+
+
+
+
+
+
+
+--> mas eu não sei o que é 'query root type'... (deve ser 'RootQuery', ou algo assim...)
+
+
+
+
+
+
+--> na versão do professor, ele RECEBE DE VOLTA A DATA QUE ELE QUERIA, E O USER É CRIADO NA DATABASE.... (estou com alguma coisa errada)...
+
+
+
+
+--> parece que o add de um RootQuery REALMENTE É OBRIGATÓRIO.... ALGO ASSIM:
+
+
+
+
+
+ schema {
+             mutation: RootMutation
+             query: RootQuery
+ }
+
+
+
+
+ 
+
+type RootQuery {
+      hello: String
+}
+
+
+
+
+
+
+
+
+
+----------------
+
+
+CERTO...
+
+
+
+
+
+
+---> MAS SE FAÇO ISSO, RECEBO OUTRO ERRO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{errors: Array(5)}
+errors: Array(5)
+0:
+locations: Array(1)
+0: {line: 2, column: 15}
+length: 1
+[[Prototype]]: Array(0)
+message: "This anonymous operation must be the only defined operation."
+[[Prototype]]: Object
+1:
+locations: Array(1)
+0: {line: 3, column: 17}
+length: 1
+[[Prototype]]: Array(0)
+message: "Field \"createUser\" of type \"User!\" must have a selection of subfields. Did you mean \"createUser { ... }\"?"
+[[Prototype]]: Object
+2:
+locations: Array(1)
+0: {line: 4, column: 16}
+length: 1
+[[Prototype]]: Array(0)
+message: "This anonymous operation must be the only defined operation."
+[[Prototype]]: Object
+3:
+locations: Array(1)
+0: {line: 5, column: 17}
+length: 1
+[[Prototype]]: Array(0)
+message: "Cannot query field \"_id\" on type \"RootQuery\"."
+[[Prototype]]: Object
+4:
+locations: Array(1)
+0: {line: 6, column: 17}
+length: 1
+[[Prototype]]: Array(0)
+message: "Cannot query field \"email\" on type \"RootQuery\"."
+[[Prototype]]: Object
+length: 5
+[[Prototype]]: Array(0)
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+ESTE CÓDIGO AQUI FUNCIONOU:
+
+
+
+
+
+
+
+
+
+          const graphqlQuery = { ///será INSERIDA NO NOSSO BODY...
+
+
+              query: `
+              mutation {
+                createUser(userInput: {email: "${
+                  authData.email
+                }", name:"${authData.name}", password:"${
+              authData.password
+            }"}) {
+                  _id
+                  email
+                }
+              }
+              `
+          }
+
+
+
+
+
+
+
+
+
+    --> NOS RETORNOU '_id' 
+
+    e 
+
+    'email', dentro de um OBJETO, na key 'data'...
+
+
+
+
+
+
+
+
+
+    --> ESSA KEY 'data' é PROVIDENCIADA AUTOMATICAMENTE PARA A QUERY 
+
+    DE 
+    'createUser',
+
+
+
+    e é assim 
+
+
+
+
+    QUE LINKAMOS NOSSO 
+
+
+    FRONTEND COM O BACKEND 
+
+
+
+
+
+    NO GRAPHQL:
+
+
+
+
+
+
+    PRECISAMOS:
+
+
+
+
+
+
+
+
+    1) SETTAR AQUELE if check especial de 'if req.method === POST', lá no 'app.js' do backend...
+
+
+
+
+
+    2) ENVIAR 1 POST REQUEST, NO NOSSO FRONTEND, DIRECIONADO AO PATH/ENDPOINT DE 'localhost:8080/graphql' 
+
+
+
+
+    3) COLOCAR ESSE REQUEST COMO SENDO DE TIPO 'POST'
+
+
+
+
+    4) STRINGIFAR  O BODY DESSE REQUEST 
+
+
+    5) INCLUIR NO BODY DESSE REQUEST _ UMA 'VALID GRAPHQL EXPRESSION', que SEJA COMPATÍVEL COM AS QUERIES QUE DEFINIMOS NO NOSSO SCHEMA E NOS RESOLVERS...

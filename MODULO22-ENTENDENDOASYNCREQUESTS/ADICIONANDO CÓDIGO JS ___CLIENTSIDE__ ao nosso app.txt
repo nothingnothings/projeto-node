@@ -1,0 +1,2218 @@
+
+
+
+
+
+
+
+
+
+
+
+NO NOSSO PROJETO,
+
+
+
+
+NA PÁGINA DE 'ADMIN PRODUCTS',
+
+
+
+EM QUE PODEMOS
+
+
+
+'DELETE PRODUCTS',
+
+
+
+
+
+O PROFESSOR QUER IMPLEMENTAR 
+
+ESSA 
+
+
+
+FEATURE 
+DE 
+
+'DELETE A PRODUCT'
+
+
+
+
+
+DE FORMA DIFERENTE DA QUE USAMOS ATÉ AGORA....
+
+
+
+
+
+
+
+
+
+
+--> ATÉ O MOMENTO,
+
+
+QUANDO 
+
+CLICAMOS 
+
+
+
+EM 
+
+
+'DELETE',
+
+
+NÓS 
+
+
+
+INICIALIZAMOS 
+
+
+AQUELE 
+
+
+
+CÓDIGO DO CONTROLLER DE 'admin.js',
+
+
+
+controller de 
+'postDeleteProduct',
+
+
+QUE 
+
+É:
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+
+  const productId = req.body.id;
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ESSE CÓDIGO, COMO VOCÊ DEVE TER PERCEBIDO,
+
+
+EXECUTA 
+
+
+1 CÓDIGO DE 
+
+'unlink' 
+
+
+NA NOSSA DATABASE,
+
+
+e aí 
+
+FAZ 1 REDIRECT (RETURN __INDIRETO__ DE UMA NOVA PÁGINA HTML)
+ 
+
+
+
+
+
+
+
+ ----> NOSSA VERSÃO ATUAL MANDA 1 REQUEST AO SERVER,
+
+
+
+ E AÍ 
+
+ NOS MANDA __ UMA 'NEW VERSION DE NOSSA PAGE'... ,
+
+
+
+ SEM ESSE 
+
+ PRODUCT QUE FOI DELETADO.. --> ISSO SIGNIFICA QUE __ NOSSA PAGE REALMENTE É 
+
+
+ __ RECARREGADA,
+
+
+
+
+
+ NÓS perdemos 'state', essencialmente...
+
+
+
+
+
+
+
+
+
+
+
+ SE PROFESSOR DESEJA 
+
+
+
+ __CONSTRUIR __ UMA 'RESTFUL API',
+
+
+
+ ELE VAI QUERER 
+
+
+ QUE 
+
+
+
+ NOSSO ELEMENTO VISUAL DESSE PRODUCT SEJA DELETADO NO BROWSERSIDE, E QUE 
+
+ AÍ 
+
+ SEJA 
+
+
+
+ _DELETADO __ NA DATABASE, de forma assíncrona,
+
+ em resposta 
+
+ a 
+
+ esse delete visual... (send de JSON DATa)...
+
+
+
+
+
+
+
+
+
+
+
+
+ ----------> OK.... -------> professor admite que estamos RETORNANDO UMA NOVA PÁGINA HTML....
+
+
+
+
+
+
+
+
+
+
+ ---> PROFESSOR ADMITE QUE 
+ SERIA
+  
+  UMA 
+
+  EXCELENTE USER EXPERIENCE 
+
+SE NUNCA TIVÉSSEMOS QUE 
+
+
+'LEAVE THIS PAGE'...
+
+
+
+
+
+
+
+
+
+
+
+--> CLICAR EM DELETE --> SEND A INFORMATION DE QUE 'WE WANT TO GET RID OF THIS ITEM' AO SERVER, POR TRÁS 
+
+DAS CENAS... -->  O SERVER, POR SUA VEZ, 'WOULD STILL DO ITS THING' ---> E AÍ, QUANDO O SERVER TIVER ACABADO,
+
+ELE VAI RESPONDER,
+
+
+POR MEIO DE UMA 
+
+
+'JSON DATA' como response,
+
+
+
+COM UMA MENSAGEM DE SUCESSO OU ALGO ASSIM.... ------> E AÍ, UMA 
+
+VEZ QUE 
+
+
+OBTIVÉSSEMOS ESSA MESSAGE NO NOSSO BROWSER,
+
+
+
+NÓS PODEMOS, POR MEIO DO CÓDIGO 
+
+
+BROWSERSIDE JAVASCRIPT,
+
+
+___DELETAR___ 
+
+
+ESSE 
+
+ELEMENTO 'PRODUCT' ESPECÍFICO __ DE NOSSO DOM... (deletar o ARTICLE que segura esse product)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSEGUIMOS FAZER ISSO _ POR MEIO _DE 'CLIENTSIDE JAVASCRIPT'
+
+
+
+
+E 
+
+
+
+ALGUM 
+CÓDIGO 
+
+
+
+ESPECÍFICO NO NOSSO SERVERSIDE, 
+
+
+código que lida com json....
+
+
+
+
+
+
+
+
+
+
+------> E TUDO ISSO, ESSE FLOW AÍ,
+
+
+é aquilo que chamam de 
+
+
+'ASYNC JAVASCRIPT REQUESTS'... --------->  NA VERDADE, ESSA FEATURE VAI __ USAR__ ASYNC JAVASCRIPT REQUESTS...
+
+
+
+
+
+
+
+
+-------> OK... 
+
+
+
+
+
+
+
+
+
+
+
+O PROFESSOR EXPLICA QUE __ A LÓGICA __ NO NOSSO SERVERSIDE __________NÃO VAI __ MUDAR __TANTO ASSIM...
+
+
+
+
+
+
+
+
+
+
+
+
+----> MAS O QUE VAI MUDAR BASTANTE, NO CASO, É 
+
+
+
+___ A MANEIRA PELA QUAL FAZEMOS 'EXPOSE' 
+
+DE 
+
+
+NOSSAS ROUTEs... --------->
+
+
+
+
+
+
+
+
+
+
+
+ E, é claro, VAMOS TER QUE 
+
+
+
+ADICIONAR UMA LÓGICA NO NOSSO CLIENTSIDE,
+
+LÓGICA QUE 
+
+C
+ONSIGA __ RESPONDER__ àS RESPONSES EM FORMATO 'json'
+
+
+ENVIADAS 
+
+
+
+
+PELO 
+
+
+
+NOSSO SERVERSIDE...
+
+
+
+
+
+
+
+
+
+------> FAREMOS ISSO AGORA...
+
+
+
+
+
+
+
+--------> PARA ISSO, PROFESSOR VAI ATÉ O FOLDER DE 
+
+
+
+'js',
+
+
+
+em 'public',
+
+LOCAL EM QUE 
+
+TEMOS NOSSOS ARQUIVOS 
+
+JAVASCRIPT..
+
+
+
+
+
+
+
+
+--> LÁ, ELE ADICIONA UM NOVO ARQUIVO, 
+
+
+
+
+
+DE NOME 
+
+
+
+'admin.js'...
+
+
+
+
+
+
+
+
+----------> IMPORTANTE!!! ---> 
+
+ESSE ARQUIVO.. ----> O CÓDIGO JS QUE 
+
+TEMOS DENTRO DELE 
+
+
+
+__ VAI __RODAR NÃO NO SERVERSIDE,
+
+E SIM __ NO BROWSER...
+
+
+
+
+
+
+
+
+
+
+
+
+--_> NO CASO, 
+
+
+O PROFESSOR 
+
+VAI 
+
+
+IMPORTAR 
+
+
+
+ESSE ARQUIVO ESPECIAL 
+
+
+'admin.js'
+
+
+PARA DENTRO 
+
+DE 
+
+NOSSA VIEW 
+
+DE 
+
+
+'product-list.ejs'..
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product._id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+        </div>
+          </article>
+      
+    <% } %>
+</div>
+
+<%- include ('../includes/pagination.ejs'); %>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+<script src="/js/admin.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ELE IMPORTA 
+
+
+
+
+'<script src="/js/admin.js"></script>'...
+
+
+
+
+
+
+
+
+
+
+
+-----> ESSE SCRIPT SERÁ SERVIDO STATICALLY, PQ 
+
+ESTÁ LÁ NO FOLDER DE 'PUBLIC'...
+
+
+
+
+
+
+
+------> AÍ O PROFESSOR 
+
+
+NOS EXPLICA QUE 
+
+
+ESSE 
+
+
+
+SCRIPT VAI SER EXECUTADO NESSE ARQUIVO DE 
+
+'product-list.ejs'...
+
+
+
+
+
+
+
+
+
+
+
+------> E SE ESCREVEMOS 
+
+
+ESSE 
+
+'<script>' 
+
+
+
+NO FINAL DE NOSSO DOM,
+
+NÓS ASSEGURAMOS QUE 
+
+
+
+TODO O RESTO DO DOM 
+
+
+
+
+VAI OBRIGATORIAMENTE SER CARREGADO ANTES DE SER CARREGADO ESSE SCRIPT (ou seja, é a mesma coisa que escrever 'defer' 
+
+
+
+
+
+no <script>...
+
+
+
+)
+
+
+
+
+
+
+
+
+--------> OK.... 
+
+
+
+
+
+
+
+
+AGORA PODEMOS VOLTAR AO 'admin.js'
+
+
+E ADICIONAR UMA LÓGICA NOVA...
+
+
+
+
+
+
+
+
+
+E QUE LÓGICA QUEREMOS ADICIONAR?
+
+
+
+
+
+
+
+
+
+-> BEM, VAMOS QUERER REAGIR A UM CLICK NESSE BUTTON DE 
+
+
+'Delete'....
+
+
+
+
+
+
+
+
+
+--. PARA ISSO, PRECISAMOS ___ SELECIONAR__ NOSSO BUTTON, COM VANILLA JAVASCRIPT,
+
+
+
+
+tipo 
+
+
+'document.querySelector('btn');' 
+
+
+
+
+
+
+const button = document.querySelector('btn');
+
+
+
+
+
+
+
+
+---------> CERTO... MAS ANTES DISSO,
+
+
+O PROFESSOR
+
+
+NOS DIZ QUE 
+
+ESSE BUTTON 
+
+
+NÃO DEVERÁ 
+
+
+MAIS 
+
+SER 
+
+DE 
+
+
+TYPE 
+
+'submit',
+
+
+
+
+__ PQ _ NÃO VAMOS MAIS QUERER __ RECARREGAR NOSSA PAGE A PARTIR DO PRESS DELE...
+
+
+
+
+
+
+
+
+
+
+
+
+ex(button antigo):
+
+
+
+
+     <button class="btn" type="submit">Delete</button>
+
+
+
+
+
+
+
+
+
+     --> BUTTON NOVO:
+
+
+
+
+
+
+          <button class="btn">Delete</button>
+
+
+
+
+
+
+------> EM VEZ DISSO,
+
+
+
+
+
+PROFESSOR COLOCA UM 
+
+TYPE DE 
+
+'button' 
+
+nesse button...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <button class="btn" type="button">Delete</button>
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+NA VERDADE, O PROFESSOR ADMITE QUE 
+
+ELE __ VAI REMOVER __ ESSA FORM INTEIRA,
+
+
+ISSO PQ 
+
+_ NÃO VAMOS MAIS QUERER __ 
+
+
+UTILIZAR 
+
+
+
+
+
+A FEATURE DE 'submit' 
+
+do button nessa form....
+
+
+
+
+
+
+
+
+
+--> ESSA FORM, NO CASO, 
+
+
+
+ERA NECESSÁRIA PARA O 
+
+
+'SEND OF THE REQUEST__ _THROUGH _ THE BROWSER'... ------->  ERA NECESSÁRIA 
+
+
+PARA 
+
+
+
+ENVIAR UM REQUEST 
+
+
+NAQUELE FORMATO DE DATA 
+
+de 
+
+
+'x-www-form-urlencoded' 
+
+
+
+
+
+
+
+
+
+
+
+-_> NÓS NÃO VAMOS MAIS FAZER O SEND DE DATA 
+
+
+DESSA FORMA AÍ....
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE O PROFESSOR SE LIVRA DA FORM POR INTEIRO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ANTES:
+
+
+
+
+
+
+
+
+              <form action="/admin/delete-product" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="button">Delete</button>
+            </form>
+
+
+
+
+
+
+DEPOIS:
+
+
+
+
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="button">Delete</button>
+   
+
+
+
+
+
+
+
+
+
+
+--------> NOS LIVRAMOS DA FORM...
+
+
+
+
+
+--> E AGORA, EM VEZ 
+
+
+
+DE USAR ESSA 'FORM',
+
+
+O PROFESSOR 
+
+
+DIZ QUE 
+
+ELE 
+
+VAI 
+
+
+'GATHER THAT DATA', HERE,
+
+
+
+
+'MANUALLY'...
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE O PROFESSOR VAI 
+
+'LISTEN TO A CLICK IN THAT BUTTOn',
+
+
+
+e que 
+
+
+
+AÍ ELE 
+
+
+VAI 
+
+
+
+__ 'GATHER'
+
+
+o 
+
+
+'productId'
+
+
+e 
+
+
+a 
+
+'CSRFTOKEN' 
+
+(
+
+
+
+  contidos 
+
+  em
+
+
+
+  ''
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+
+''
+
+)
+
+
+
+
+
+__ _ MANUALMENTE (só não sei como),
+
+
+
+
+TUDO POR MEIO 
+
+DO 
+
+
+
+
+NOSSO 'CLIENTSIDE JAVASCRIPT'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> para isso, PROVAVELMENTE VAMOS PRECISAR DE ALGUNS querySelectors,
+
+
+E
+
+
+'getElementById()'...
+
+
+
+
+
+
+
+
+
+
+---------> ok.... COM A FORM REMOVIDA, PROFESSOR VOLTA AO 
+
+'
+admin.js'
+
+
+
+
+
+
+
+PÚBLICO 
+
+e 
+
+
+AÍ ELE 
+
+VAI QUERER:
+
+
+
+
+
+
+
+
+1) GET ACCESS TO ALL THESE DELETE BUTTONS 
+
+
+
+
+
+2) LISTEN TO A CLICK IN THESE BUTTONS (addEventListener)
+
+
+
+
+3) DO SOMETHING WHEN THESE BUTTONS GET CLICKED...
+
+
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+
+PROFESSOR DEFINE UMA FUNÇÃO EM 
+
+'admin.js',
+
+
+
+
+FUNÇAÕ DE 'deleteProduct'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const deleteProduct = () => {
+
+
+} 
+
+
+
+
+
+
+
+
+
+-----------> ELE VAI USAR 
+
+
+
+ARROW FUNCTIONS... ----> todos browsers modernos 
+
+
+
+suportam essa sintaxe...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ok, teremos uma function, que por enquanto só vai executar 
+
+
+ 
+
+ 'console.log('Clicked');'
+
+
+
+
+
+
+
+
+
+ -----> PROFESSOR VAI QUERER ATRIBUIR 
+
+ ESSE 
+
+ CÓDIGO CLIENTSIDE DE 
+
+ 'clicked'
+
+
+
+
+
+ NAQUELE BUTTON.... -----> PARA ISSO,
+
+
+
+ ELE ADICIONA 
+
+
+ UM LISTENER/ATTRIBUTE DE 
+
+
+ 'clicked=...',
+
+
+ E AÍ 
+
+ COLOCA 
+
+
+
+
+
+ essa function de 
+
+ 'deleteProduct()',
+
+
+ de forma tri simples... (não sabia que podíamos escrever assim...)
+
+
+
+
+
+
+
+ FICOU TIPO ASSIM:
+
+
+
+
+
+
+(admin.js):
+
+
+
+
+
+
+
+const deleteProduct = () => {
+  console.log('Clicked');
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+(VIEW de 'product-list-admin'):
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product._id %>?edit=true">Edit</a>
+
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit" onclick="deleteProduct()">Delete</button>
+        </div>
+          </article>
+      
+    <% } %>
+</div>
+
+<%- include ('../includes/pagination.ejs'); %>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+<script src="/js/admin.js" defer></script>
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+OU SEJA, FICOU TIPO ASSIM:
+
+
+
+
+
+
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit" onclick="deleteProduct()">Delete</button>
+
+
+
+
+
+    ----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+    SALVAMOS TUDO ISSO, E AÍ 
+
+    RECARREGAMOS A PAGE... 
+
+
+
+
+
+    --> QUANDO CLICARMOS EM 
+
+
+    '
+    delete', nos nossos products,
+
+
+
+    OBSERVAMOS 
+
+    'Clicked'
+
+
+
+    NO CONSOLE, NO BROWSER DEVTOOLS...
+
+
+
+
+
+
+
+
+
+--> OK, AGORA ESTAMOS REAGINDO A UM CLICK... ----> O PRÓXIMO PASSO,
+ 
+
+
+
+ AGORA, É 
+
+
+ DETERMINAR, NESSA FUNCTION DE 
+
+
+ 'deleteProduct',
+
+
+
+
+
+
+
+ 1) QUAL ID 
+
+
+
+
+ 2) QUAL CSRFTOKEN 
+
+
+
+
+
+
+
+ quais desses valores TEMOS PARA ESSE 'GIVEN PRODUCT' que fora clicado...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO, DE VOLTA ao 'admin.js',
+
+
+ QUANDO 
+
+
+ FOR CLICADO 
+
+
+ o 'button',
+
+ PROFESSOR 
+
+
+ VAI QUERRE 
+
+
+
+ '
+ GET 
+
+ ACCESS TO THE FIELD 
+
+
+
+ __NEXT TO THE BUTTON'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ TEMOS, NO CASO, ESTE CÓDIGO:
+
+
+
+
+
+
+   <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit" onclick="deleteProduct()">Delete</button>
+
+
+
+
+
+
+
+
+
+----> OU SEJA, SÃO OS 2 
+
+'VIZINHOS' 
+
+ADJACENTES 
+
+A ESSE BUTTON... 
+
+
+
+
+
+
+
+
+talvez por meio de um código clunky como 
+
+
+
+'const productId = document.querySelector('button').previousSibling;' 
+
+const csrfToken = productId.previousSibling;'
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ ISSO FUNCIONASSE..
+
+
+
+
+
+
+
+
+---> MAS O PROFESSOR USOU UMA SINTAXE ALTERNATIVA, do ejs...
+
+
+
+
+
+
+
+
+-----> ele foi lá no nosso 'button', no view, e escreveu isto:
+
+
+
+
+   <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit" onclick="deleteProduct(this)">Delete</button>
+
+
+
+
+
+
+
+
+
+
+
+  --> OU SEJA, ELE PASSOU 'this'
+
+
+
+  COMO PARÂMETRO DESSE CALL DE 
+
+
+  'deleteProduct()'...
+
+
+
+
+
+
+
+
+
+
+
+  -> PROFESSOR NOS EXPLICA que 
+
+  'this' 
+
+
+
+  É UMA SPECIAL KEYWORD,
+
+   
+
+
+   E AQUI_, NESSE CONTEXTO AQUI,
+
+
+
+
+   _ ELE VAI _ SE REFERIR __ AO OBJECT EM QUE CLICAMOS.... (no caso, 
+   
+   VAI SE __ REFERIR _ AO 
+   
+   
+   'BUTTON', esse elemento '<button>'...)
+
+
+
+
+
+
+
+
+
+
+   --------> OK.... --> COMO NÓS VAMOS CONSEGUIR PASSAR ESSE 
+
+   'this' 
+
+
+
+   
+   À FUNÇÃO DE 
+
+   'deleteProduct',
+
+
+
+   O PROFESSOR 
+
+
+
+   EDITA 
+
+   ESSA FUNÇÃO DE DELETE PARA 
+
+   ACEITAR 
+
+   O 
+
+   VALOR DESSE 'this'...
+
+
+
+   tipo assim:
+
+
+
+
+
+
+
+
+
+   const deleteProduct = (button) => { ///EIS O CÓDIGO EM QUESTÃO... --> isso será o elemento PASSADO por meio de 'this', E SERÁ O ELEMENTO 'button' no DOM, no final das contas...
+
+
+
+     console.log('clicked');
+     console.log(button);
+   }
+
+
+
+
+
+
+   ---------------------
+
+
+
+
+
+
+
+
+   -----> ok.... 
+
+
+ 
+
+ AGORA, QUANDO CLICAMOS NO BOTÃO DE 'delete',
+
+
+ RECEBEMOS ISTO NO CONSOLE:
+
+
+ <button class="btn" type="submit" onclick="deleteProduct(this)">Delete</button>
+
+
+
+
+
+
+
+
+ SINAL DE QUE 
+
+ AQUILO FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----> OK... AGORA VAMOS QUERER 
+
+ OBTER 
+
+ OS 
+
+
+ CAMPOS 
+
+ ADJACENTES 
+
+ A 
+
+ ESSE 'button',
+
+
+
+
+
+
+
+
+
+
+ COMO VISTO AQUI:
+
+
+
+    <input type="hidden" value="<%= csrfToken %>" name="_csrf"> 
+                <input type="hidden" name="id" value="<%= product._id %>"> 
+              <button class="btn" type="submit" onclick="deleteProduct(this)">Delete</button>
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO CASO, EU PENSEI EM ESCREVER ALGO ASSIM:
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+
+
+ const productId = button.previousSibling;
+ const csrfToken = productId.previousSibling;
+};
+
+
+
+
+
+
+
+
+
+
+------> ENTRETANTO, professor 
+
+DECIDE USAR OUTRO CÓDIGO, O CLÁSSICO CÓDIGO DO  
+
+
+
+
+'querySelector'
+
+SOBRE o 
+
+
+'parentNode', 
+
+
+
+o
+
+que é mais simples...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+
+
+ const productId = button.parentNode.querySelector() ///////EIS O CÓDIGO EM QUESTÃO.
+
+};
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+----> AQUI, NO CASO, ELE USA O 
+
+
+'ATTRIBUTE SELECTOR',
+
+
+PARA ENCONTRAR 
+
+
+'[name=id]' ------->  VAI ENCONTRAR 1 ELEMENT QUE TENHA 1 field 'name' COMO TENDO VALOR DE 'id'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+
+  console.log(button.parentNode.querySelector('[name=id]')
+};
+
+
+
+
+
+
+
+
+OK... FUNCIONOU. RECEBEMOS ISTO:
+
+
+
+
+
+
+<input type="hidden" name="id" value="619ae5f3aa434dc610188d65">
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+É CLARO QUE VAMOS QUERER FAZER A MESMA COISA COM 
+
+a csrftoken,
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+
+  console.log(button.parentNode.querySelector('[name=id]')
+
+  console.log(button.parentNode.querySelector('[name=_csrf]'))
+};
+
+
+
+
+--------------------------
+
+
+
+
+
+
+OK... ESSES CÓDIGOS REALMENTE FUNCIONARAM....
+
+
+
+
+
+
+
+-> PODEMOS ARMAZENAR ESSES VALORES EM CONSTS, PARA ENTÃO 
+
+
+OS 
+
+
+
+ENVIARMOS AO SERVERSIDE...
+
+
+
+
+
+
+
+
+----->  MAS NÃO MANIPULAMOS O NEGÓCIO DIREITO, AINDA... -> VAMOS QUERER SÓ O CAMPO 'value'
+
+DESSES 
+
+ELEMENTOS, POR ISSO 
+
+
+O PROFESSOR ESCREVE '.value',
+
+
+TIPO ASSIm:
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+
+  console.log(button.parentNode.querySelector('[name=id]').value)
+
+  console.log(button.parentNode.querySelector('[name=_csrf]').value)
+};
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const deleteProduct = (button) => { //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  console.log('Clicked');
+
+
+  console.log(button);
+
+  
+  console.log(button.parentNode.querySelector('[name=id]').value);
+
+
+
+
+  const productId = button.parentNode.querySelector('[name=id]').value
+
+
+
+const csrfToken = button.parentNode.querySelector('[name=_csrf]').value
+
+  console.log(button.parentNode.querySelector('[name=_csrf]').value);
+
+}
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... AGORA TEMOS 
+
+
+
+
+
+
+UMA MANEIRA DE CONSEGUIR ESSAS INFO...
+
+
+
+
+
+
+
+
+
+
+-------> COM ESSAS 2 PIECES OF INFORMATION, 
+
+
+
+PODEMOS FINALMENTE 
+'SEND OUR 
+
+
+
+
+__ ASYNC REQUESTS___ _ TO THE SERVER'... -----> E , PARA ISSO, É CLARO, PRECISAMOS 
+
+DE 
+UMA 
+
+
+ROUTE ADEQUADA,
+
+
+
+QUE CODAREMOS NA PRÓXIMA AULA....

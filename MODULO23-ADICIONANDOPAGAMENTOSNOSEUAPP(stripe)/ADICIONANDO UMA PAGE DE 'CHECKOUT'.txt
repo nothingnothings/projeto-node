@@ -1,0 +1,1091 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> PARA ADICIONAR PAGAMENTO AO NOSSO APP,
+
+
+DEVEMOS TRABALHAR COM AQUELE VIEW DE 
+
+
+'checkout.ejs'...
+
+
+
+
+
+
+
+
+
+
+
+---> esse arquivo está limpo, por enquanto....
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER IR ATÉ ESSA PAGE de 
+
+'checkout.ejs'
+
+
+
+__ANTES___ DE 
+
+
+
+NÓS __ 
+
+
+'ACTUALLY PLACE AN ORDER' ( ou seja, antes de clicar no button de 'place an order'...)
+
+
+
+
+(
+
+    esse button fica lá em 'cart'...
+)
+
+
+
+
+
+
+
+
+-------> PARA ISSO,
+ 
+ VAMOS PRECISAR REESTRUTURAR AS ROUTES DE NOSSO APP...
+
+
+
+
+
+
+
+
+ -------> 
+
+
+
+
+
+
+LÁ EM 'cart.ejs',
+
+
+
+
+COPIAMOS TODO O CONTEÚDO E COLAMOS 
+
+em 
+
+'checkout.ejs'...
+
+
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR FAZ ALGUNS AJUSTES, COMO REMOÇÃO DE ESTILOS...
+
+
+
+
+
+
+
+
+
+
+--> INCLUÍMOS A NAVIGATION,
+
+
+MAS O CONTEÚDO MAIN SERÁ COMPLETAMENTE DIFERENTE...
+
+
+
+
+
+
+
+
+fica tipo assim:
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+COM ISSO,
+
+
+
+
+ 
+
+ PODEMOS COMEÇAR ESSA PAGE...
+
+
+
+
+
+
+
+
+
+ --> PRECISAMOS ESCREVER O ROUTING ATÉ ESSA PAGE....
+
+
+
+
+
+
+
+
+
+ --> É O BUTTON DE 
+
+ 'place an order'
+
+
+ LÁ EM 
+
+ 'cart.ejs'...
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> PARA ISSO,
+
+
+ PRECISAMOS DE UMA NOVA ROUTE EM 
+
+ 'shop.ejs'...
+
+
+
+
+
+
+
+
+
+ --> LÁ NÓS 
+
+
+
+
+ temos aquela route de 
+
+
+
+
+
+
+'router.post('/create-order', isAuth, shopController.postOrder);' 
+
+
+
+
+
+
+
+
+
+
+
+
+--------> MAS NÃO VAMOS USAR ISSO AÍ, PQ É UMA POST ROUTE,....
+
+
+
+
+
+
+
+O QUE PRECISAMOS, AQUI, 
+
+
+
+NA VERDADE,
+
+É UMA NOVA ROUTE,
+
+
+
+
+
+
+
+uma route GET,
+
+que 
+
+
+
+chamarmeos 
+
+de 
+
+'checkout'...
+
+
+
+
+
+
+
+--> NESSA ROUTE, VAMOS QUERER ESTAR 'AUTHENTICATED',
+
+
+
+
+PQ SÓ VAMOS PODER COMPRAR ALGO SE ESTIVERMOS LOGGED IN.... 
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+router.get('/checkout', authCheckerAndRedirecter, shopController.getCheckoutPage);
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+E ESSA PAGE TERÁ A POSSIBILIDADE DE 'PLACE AN ORDER'
+
+
+E 
+
+ASSIM POR DIANTE...
+
+
+
+
+
+
+
+
+----> devemos trabalhar 
+
+
+um pouco no shopController,
+
+
+
+
+
+
+
+
+
+
+
+ADICIONAR UMA ORDER PARA RENDERIZAR A PAGE DE 'GET' 
+
+
+desse 
+
+checkout...
+
+
+
+
+
+
+
+professor escreve 
+
+
+
+'exports.getCheckoutPage = (req, res, next) => {
+
+
+            res.render('shop/checkout', {
+                    path: '/checkout',
+                    pageTitle: 'Checkout',
+                
+            })
+
+
+}
+
+
+
+
+
+
+
+
+
+
+OK, MAS É CLARO QUE PRECISAMOS DE ALGUMA DATA PARA O 'CHECKOUT'...
+
+
+
+
+
+
+
+
+
+--> MAS O QUE VOU QUERER 
+
+RETURN AQUI?
+
+
+
+
+
+BEM, NO FINAL DAS CONTAS VOU PRECISAR DA MESMA DATA QUE TENHO NO MEU 'CART'....
+
+
+
+
+
+
+
+
+
+
+-----> ok... isso significa que 
+VAMOS 
+
+PRECISAR 
+
+
+
+
+
+DO CÓDIGO DE RENDER DE 'getCart', essencialmente...
+
+
+
+
+
+
+--> É POR ISSO QUE COPIAMOS ESTA FAIXA INTEIRA DE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+  req.user
+    .populate('cart.products.productId') //////EIS O CÓDIGO EM QUESTÃO
+    .then((user) => {
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: user.cart.products,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
+    --> COPIAMOS 
+
+
+
+    ISSO E COLAMOS DENTRO DE 
+
+
+
+
+    'getCheckoutPage'....
+
+
+
+
+
+
+
+    ex:
+
+
+
+
+
+
+
+
+
+exports.getCheckoutPage = (req, res, next) => {
+  req.user
+    .populate('cart.products.productId') //////EIS O CÓDIGO EM QUESTÃO
+    .then((user) => {
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: user.cart.products,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+OK.... 
+
+
+MAS NÃO ACABAMOS POR AQUI,
+
+
+PQ 
+
+PRECISAMOS 
+
+
+TAMBÉM DO 
+
+
+'totalPrice'
+
+
+
+DESSE CART,
+
+
+
+
+que será 
+
+OBTIDO POR MEIO DA PROPRIEDADE 'price'
+
+
+DENTRO DE CADA PRODUCT...
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+podemos simplesmente usar 
+
+
+'.map().reduce()',
+
+
+PARA 
+
+ENTÃO 
+
+
+
+
+CONSEGUIR ESSES VALORES e entao calcular sua soma...
+
+
+
+
+
+
+
+
+fica tipo:
+
+
+
+
+
+totalPrice: user.cart.products.map(
+  (product) => {
+      return product.productId.price * product.quantity
+  }
+).reduce(
+  (prevValue, curValue) => {
+      return prevValue + curValue;
+  }, 0
+)
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getCheckoutPage = (req, res, next) => {
+  req.user
+    .populate('cart.products.productId') //////EIS O CÓDIGO EM QUESTÃO
+    .then((user) => {
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: user.cart.products,
+totalPrice: user.cart.products.map(
+  (product) => {
+      return product.productId.price * product.quantity
+  }
+).reduce(
+  (prevValue, curValue) => {
+      return prevValue + curValue;
+  }, 0
+)
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ISSO FEITO, PROFESSOR EXPLICA QUE PODEMOS SIMPLESMENTE COPIAR O TRECHO QUE 
+
+FAZ RENDER DAQUELA LIST OF ITEMS, LÁ 
+
+
+NO 'cart.ejs',
+
+
+
+
+E COLAR 
+
+
+
+LÁ EM 'checkout.ejs'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+        <ul class="cart__item-list">
+          <% products.forEach(p => { %>
+            <li class="cart__item">
+              <h1><%= p.productId.title %></h1>
+              <h2>Quantity: <%= p.quantity %></h2>
+              <h1>$ <%= p.productId.price %></h1>
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <input type="hidden" name="id" value="<%= p.productId._id %>">
+                <button class="btn danger" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% }) %>
+        </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -> ENTRETANTO, PROFESSOR REMOVE AQUELE BUTTON DE 'delete',
+
+  PQ 
+
+  ELE DIZ QUE 
+
+  'A ESSE PONTO, É TARDE DEMAIS PARA O USER'...
+
+
+
+
+
+
+
+
+
+  FICA TIPO ASSIM:
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+      </ul>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> É CLARO QUE TAMBÉM VAMOS PRECISAR DO 'TOTALPRICE'
+
+
+EM UM DOS FIELDS...
+
+
+
+
+
+
+
+
+
+
+--> OK, 
+
+
+SALVAMOS TUDO ISSO E 
+
+
+
+VEMOS O RESULTADO... 
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+          <h2>Total Price: <%= totalPrice %></h1>
+      </ul>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+--> faltou o styling, que consigo por meio do arquivo 
+
+
+'cart.css',
+
+lá em 'public > css'...
+
+
+
+
+
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+          <h2>Total Price: <%= totalPrice %></h1>
+      </ul>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+
+CERTO... FUNCIONOU, E FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <ul class="cart__item-list">
+        <% products.forEach(p => { %>
+          <li class="cart__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            <h1>$ <%= p.productId.price %></h1>
+          </li>
+          <% }) %>
+          <h2>Total Price: <%= totalPrice %></h1>
+      </ul>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+-----> ESSE VIEW SERÁ ACESSADO __ SOMENTE__ QUANDO CLICAMOS 
+
+
+EM 
+
+
+'order now',
+
+
+LÁ 
+
+
+NA PAGE DE 
+'
+cart.ejs'...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, MEU CÓDIGO DE 'cart.ejs'
+
+
+TEM QUE MUDAR, TENHO QUE TROCAR 
+
+
+
+
+
+
+AQUELE 
+
+
+
+'<button type="submit" class="btn">Place an Order</button>"
+
+
+
+
+
+POR UM 
+
+
+
+LINK, POR 
+
+
+UM 
+<a href> ,
+
+
+TIPO 'get',
+
+
+
+que faça contato 
+
+com a route de 
+
+
+'get' 
+
+
+de 
+
+
+'checkoutPage'...
+
+
+
+
+
+talvez eu tenha que ajustar os styles um pouco....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, FUNCIONOU...
+
+
+
+
+
+
+
+
+--> AGORA ESTAMOS ENTRANDO NA PAGE DE 'CHECKOUT'...
+
+
+
+
+
+
+
+
+
+------> PROFESSOR COLOCA O STYLING PADRÃO DO 'cart.ejs',
+
+
+
+
+
+
+
+
+
+
+-_> OK... AGORA TEMOS ESSE 'TOTAL',
+
+E AGORA 
+
+É 
+
+HORA DE ADICIONARMOS __ STRIPE___ 
+
+
+AO NOSSO APP...
+
+
+
+
+
+
+
+--> PARA ISSO, 
+
+PRECISAMOS PRIMEIRAMENTE SETTAR UMA CONTA COM O STRIPE...

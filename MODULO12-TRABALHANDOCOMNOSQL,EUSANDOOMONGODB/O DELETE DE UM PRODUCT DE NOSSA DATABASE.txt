@@ -1,0 +1,283 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA QUE SOMOS CAPAZES DE FETCHEAR TODOS OS PRODUCTS, ADICIONAR 1 PRODUCT E EDITAR 1 PRODUCT,
+
+
+devemos ver o delete....
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+
+PARA O DELETING,
+
+VOCÊ PODE IMPLEMENTAR 
+
+DIFERENTES 
+
+APPROACHES,
+
+
+como 
+
+
+
+
+
+
+__ UM METHOD EM 
+
+
+
+'Product'
+
+
+__ 
+
+
+
+
+
+
+PARA QUE 
+
+
+VOCÊ 
+
+
+CONSIGA CRIAR UM NOVO OBJETO 
+
+PRODUCT 
+
+
+com 
+
+
+
+um método 
+
+'.delete()',
+
+
+JUSTAMENTE PARA QUE VOCÊ CONSIGA EVENTUALMENTE CHAMAR 
+
+ESSE 
+
+MÉTODO 
+
+
+'.delete()' em cima 
+
+dele,
+
+exatamente 
+
+como 
+
+você 
+
+fez com 
+
+
+
+'.save()' há pouco tempo...
+
+
+
+
+
+
+
+
+
+
+-> MAS O PROFESSOR VAI USAR UM MÉTODO 
+
+STATIC.... --> 
+
+
+
+
+
+
+NESSE STATIC METHOD,
+
+
+
+MEU CÓDIGO FICOU ASSIm:
+
+
+
+
+
+
+
+static deleteProduct(productId) {
+
+
+    const db = getDb();
+
+   return db.collection('products').deleteOne({"_id": ObjectId(productId) })
+    .then(
+      (result) => {
+        console.log(result, 'LINE');
+      }
+    )
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+
+  }
+
+
+
+
+
+
+
+  ----------> 
+
+  PROFESSOR COMEÇA A ESCRITA DO CÓDIGO EXATAMENTE COMO EU FIZ...
+
+
+
+--> professor menciona que temos 'deleteMany', também...
+
+
+
+
+  --> ELE ESCREVE EXATAMENTE O QUE ESCREVI:
+
+
+
+
+
+
+
+------
+
+
+
+
+
+static deleteById(productId) {
+
+    const db = getDb();
+
+  return  db.collection('products').deleteOne({_id: new mongodb.ObjectId(productId)})
+  .then(
+      (result) => {
+
+
+                console.log('Deleted');
+      }
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+      }
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+--> OK,
+
+
+AÍ 
+
+ADICIONAMOS ESSE MÉTODO 
+
+
+LÁ 
+
+
+
+NO 
+
+
+controller 
+
+de 
+
+
+'postDeleteProduct'...
+
+
+
+FICA ASSIM:
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id; 
+  
+  
+  
+  Product.deleteProduct(productId)
+  .then(
+    (result) => {
+          console.log(result, 'LINE');
+          res.redirect('/admin/product-list-admin');
+
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  
+
+}
+
+
+
+
+
+
+
+
+
+
+----------
+
+
+OK, VOLTAMOS AO NOSSO APP E TESTAMOS ISSO....
+
+
+
+DEU CERTO.

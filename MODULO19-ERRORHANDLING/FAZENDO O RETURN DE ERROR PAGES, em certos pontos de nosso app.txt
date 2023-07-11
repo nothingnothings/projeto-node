@@ -1,0 +1,2014 @@
+
+
+
+
+
+
+
+
+
+----->  NA ÚLTIMA AULA,
+
+
+
+
+O PROFESSOR 
+
+
+HAVIA ESCRITO ISTO:
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => { 
+
+
+
+  if(!req.session.user) {
+    console.log('TEST');
+    return next();
+  }
+  console.log('TEST2');
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if(!user) { 
+        return next();
+  }
+      req.user = user; 
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err); ///////ISTO....
+  
+    });
+});
+
+
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+
+
+
+
+--> ELE TINHA ADICIONADO ESSE 
+
+
+'throw new Error'
+
+
+
+
+lá no APP.JS... 
+
+
+
+
+
+
+
+
+----------> E PARA MOSTRAR O QUE O 
+
+'THROW NEW ERROR' 
+
+FAZ,
+
+
+
+
+O PROFESSOR VAI ATÉ OUTRO LUGAR,
+
+
+
+VAI ATÉ O 
+
+'ADMIN.JS',
+
+
+nosso controller,
+
+
+
+E AÍ __ 
+
+
+
+
+MUDA UM CÓDIGOZINHO LÁ... -------> 
+
+
+
+
+
+
+
+
+ELE NOS EXPLICA QUE 
+
+LÁ 
+
+
+TEMOS 
+
+UM MONTE DE CÓDIGOS,
+
+1 
+
+DELES 
+O 
+
+DE 
+
+'ADD A PRODUCT',
+
+
+
+
+
+E LÁ 
+
+
+NO 
+
+
+
+
+'ADD A PRODUCT'
+
+
+NÓS __ TAMBÉM FAZEMOS/FAZÍAMOS __ O 'VALIDATE'
+
+
+
+DO USER INPUT,
+
+QUE 
+
+
+
+
+NÃO DEIXA DE SER OUTRA FORMA DE 'ERROR HANDLING/PREVENTION'....
+
+
+
+
+
+
+
+
+
+
+
+----------> ok.... -----> NÓS REALMENTE VALIDAMOS 
+
+
+ESSE 
+
+
+
+INPUT 
+
+LÁ 
+
+
+
+
+
+NAS NOSSAS ROUTES, EM CÓDIGOS COMO 
+
+
+ESTE:
+
+
+
+
+
+
+
+
+
+router.post(
+  '/add-product',
+  authCheckerAndRedirecter,
+
+  check('title')
+    // .isAlpha()
+    .isString()
+    .withMessage('Products must contain only letters.')
+    .trim()
+    .custom((value, { req }) => {
+
+      console.log(value);
+      return Product.findOne({ title: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen title already exists, please choose another one.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+  check('imageUrl')
+    .isURL()
+    .withMessage('Please input a valid URL')
+    .trim()
+    .custom((value, { req }) => {
+      console.log(value);
+      return Product.findOne({ imageUrl: value }).then((product) => {
+        console.log(product);
+        if (product) {
+          console.log(product, 'LINE');
+          return Promise.reject(
+            'A product with the chosen imageUrl already exists, please type another url.'
+          );
+        } else {
+          return value;
+        }
+      });
+    }),
+
+  check('price')
+    // .isNumeric()
+    .isFloat({ min: 1 })
+    .withMessage('Price must be a number, and must be greater than 0.')
+    .isDecimal({ force_decimal: true, decimal_digits: 2 })
+    .withMessage('Price must include cents.')
+    .toFloat(),
+
+  check('description')
+    .isAlpha()
+    .withMessage('Your description must contain only letters'),
+
+  adminController.postAddProduct
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--NESSE LOCAL 
+
+
+
+ADICIONAMOS 'ALL OUR VALIDATION LOGIC'...
+
+
+
+
+
+
+
+
+-------> CERTO... E LÁ EM 'admin.js'
+
+
+
+NÓS __ FAZEMOS O  __eXTRACT__ dessa 
+
+
+
+LÓGICA,
+ 
+
+ por meio de códigos como 
+
+
+
+
+ '
+ const price = req.body.price' (que 
+ 
+ 
+ VAI
+ 
+ 
+ receber o value que já foi VALIDADO POR NOSSA ROUTE, PQ 
+ 
+ 
+ NOSSA ROUTE É __ EXECUTADA __ ANTES__ DE 
+ 
+ 
+ NOSSO CONTROLLER... ESSE É O FLOW DE EXECUÇÃO...)
+
+
+
+
+
+
+
+
+
+
+ FLOW DE EXECUÇÃO 
+
+
+
+
+ app.js (com os models) ---> routes (com os models) --> controllers (com os models)...
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+------> O PROFESSOR ENTÃO 
+
+
+
+DECIDE 
+
+'FORÇAR UM ERRO',
+
+
+
+
+
+
+pq ele 
+
+vai 
+
+ir 
+
+até 
+
+os 
+
+PRODUCTS 
+
+
+
+
+E __ VAI _ 
+
+
+
+COPIAR O VALOR DE 
+
+1 
+
+DOS 
+
+
+
+'._id' 
+
+DOS 
+
+
+PRODUCT... 
+
+
+
+
+
+
+
+
+
+
+
+certo... ele pega um desses ._id dos product 
+
+
+
+e 
+
+
+
+aí 
+
+
+
+
+
+
+
+importa um negócio lá 
+
+
+do 
+
+
+
+
+pacote do 'mongoose'
+
+
+
+lá em 
+
+'admin.js' --------> ELE VAI QUERER USAR O OBJETO 'objectId()',
+
+
+PARA 
+
+
+
+
+
+CRIAR O MESMO PRODUCT OUTRA VEZ... (
+
+
+  isso pq cada product é determinado/identificado pelo ID.... ---> 
+
+
+  SE TENTARMOS CRIAR 
+
+
+  UM 
+
+
+
+  OUTRO PRODUCT, 
+
+  COM O MESMO ID 
+
+  DE 
+  1 
+  PRODUCT QUE JÁ EXISTE NA DATABASE,
+
+
+  VAMOS __ RECEBER __ CERTAMENTE__ 1 ERRO...
+)
+
+
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+ele vai 
+
+
+forçar esse erro por meio 
+
+
+de um código como 
+
+
+'const product = new Product(
+  {
+    _id: new mongoose.Types.ObjectId('1512958199jsafasfojni12'),
+    title: title,
+    price: price,
+    description: description,
+    imageUrl: imageUrl,
+    userId: req.user
+  }
+)
+
+product.save();'
+
+
+'
+
+
+
+
+
+
+
+
+
+
+----> CERTO, AÍ ELE RESETTA O APP E ENTÃO 
+
+
+
+ADICIONA UM NOVO PRODUCT,
+
+PARA 
+
+VER 
+
+SE 
+
+
+
+RECEBEMOS O ERRO... --> E VAMOS REALMENTE RECEBER ESSE ERROR...
+
+
+
+
+
+
+
+
+
+--> VAMOS VER AQUELE 'CÍRCULO' INFINITO 
+
+DE 
+
+RELOAD NA NOSSA PÁGINA,
+
+
+
+
+
+
+
+
+E AÍ SE DERMOS UMA OLHADA NO TERMINAL,
+
+
+
+VEREMOS 
+
+
+
+
+
+
+O OUTPUT DE UM ERRO ASSIM:
+
+
+
+
+
+{
+
+  MongoError: E11000 duplicate key error collection: shop.products index: _id_ dup key: { : ObjectId('ashsiah1ohit2152511')}
+}
+
+
+
+
+
+
+
+
+
+-------> OK.... É UM ERRO DE 'DUPLICATE KEY',
+
+
+O QUE FAZ SENTIDO, PQ TENTAMOS CRIAR 1 PRODUCT/OBJECT/DOCUMENT 
+
+
+
+
+COM 
+
+UM 
+
+
+'ALREADY EXISTING ID',
+
+
+
+
+
+E AÍ ISSO FEZ TUDO CRASHAR.... ------> E É CLARO QUE 
+
+
+
+ISSO 
+
+É 
+
+UM 
+
+
+'CONSTRUCTED SCENARIO'... -------> MAS 
+
+
+
+
+
+
+
+É CONSTRUCTED PQ O PROFESSOR QUER __ 
+GARANTIR QUE 
+
+ALGO DÊ ERRADO, agora.... -------> OK, MAS COMO PODEOMS 
+
+
+
+
+HANDLAR ESSE ERRO? ---------> 
+
+
+
+
+
+
+
+
+
+BEM, O PROFESSOR 
+
+
+
+COMEÇA 
+
+
+
+DELINEANDO O CÓDIGO DO CONTROLLER,
+
+
+
+esse código aqui:
+
+
+
+
+
+
+
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+    console.log(err); 
+  }
+)
+
+
+
+
+
+
+
+
+
+-----> NÓS FAZEMOS O CONSOLE.LOG DESSE ERROR.... -------> 
+
+
+
+
+E O PROFESSOR ESCREVE 'console.log('An error has occurred' )
+
+
+PARA 
+
+ASSEGURAR 
+
+QUE 
+
+
+ENTRAMOS NESSE CATCH BLOCK....
+
+
+
+
+
+
+
+
+--------> OK... --> VAMOS VER ESSE OUTPUT,
+
+
+O QUE 
+
+SIGNIFICA QUE 
+
+ESSE 
+
+CATCH BLOCK REALMENTE É DISPARADO QUANDO ALGO ACONTECE... --------> 
+
+
+
+
+
+
+E ISSO É ÓTIMO, DIZ O PROFESSOR,
+
+
+PQ 
+
+
+ISSO 
+
+SIGNIFICA QUE 
+AGORA TEMOS 
+UMA 
+
+
+
+
+
+__CHANCE__ DE HANDLAR__ ESSE ERRO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE CASO, EU ASSUMO QUE O PROFESSOR PROVAVELMENTE VAI QUERER 
+
+
+
+RETORNAR UMA PÁGINA DE 'WHOOPS, SOMETHING WENT WRONG'
+
+
+ao usuário...
+
+
+
+
+
+
+
+
+
+--------- O QUE PODERÍAMOS FAZER AQUI, É CLARO,
+
+
+É COMEÇAR PELO 
+
+
+
+RETURN 
+
+DE 
+
+UM 
+
+STATUS CODE DE 500 (erro geral),
+
+
+
+
+
+TIPO ALGO ASSIM:
+
+
+
+
+
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+    console.log(err); 
+    res.status(500).render(
+      '/500'
+    )
+  }
+)
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+PROFESSOR TAMBÉM EXPLCIA QUE PODERÍAMOS REDIRECIONAR O USER 
+
+A 
+
+QUALQUER OUTRA PAGE,
+
+
+
+OU PODERÍAMOS 
+
+
+
+RE-RENDERIZAR A PAGE 
+
+
+DE 
+
+
+
+'ADD A PRODUCT' (mantendo o velho input),
+
+
+SÓ 
+
+
+QUE 
+
+
+AÍ 
+
+COM 
+
+
+O 
+
+
+DISPLAY 
+
+DE 
+UMA MENSAGEM DE ERRO 
+
+
+nesse novo render da página (em uma div/modal...)
+
+
+
+
+
+
+
+
+------------------> O DISPLAY DE UMA MENSAGEM DE ERRO COM O RE-RENDER 
+
+
+DA PÁGINA 
+
+
+
+
+PODE __ FAZER___ SENTIDO _ SE 
+
+
+NÓS 
+'EXPECT' (esperamos) 
+
+
+QUE 
+
+
+
+ESSE 
+
+
+SERÁ UM PROBLEMA TEMPORÁRIO,
+
+
+
+
+
+
+
+POR ISSO É CLARO QUE 
+
+PODERÍAMOS 
+
+PEGAR
+ 
+
+
+ NOSSO CÓDIGO 
+
+
+
+
+
+ do re-render usado 
+
+ LÁ NO VALIDATING,
+
+
+
+
+
+
+ aí 
+
+ COPIAR 
+
+
+
+
+
+ ELE 
+
+
+
+ NO CATCH BLOCK,
+
+
+
+
+ ESCREVER ALGO ASSIM:
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+    console.log(err); 
+
+
+
+
+       return  res.status(500).render( 'admin/edit-product', { 
+              pageTitle: 'Add Product',
+              path: 'admin/add-product',
+              editing: false,
+              hasError: true,
+              product: {
+                title: title,
+                imageUrl: imageUrl,
+                price: price,
+                description: description
+              }
+              errorMessage: errors.array()[0].msg,
+              validationErrors: validationErrors,
+              prods: products
+        
+            
+            }
+        )
+
+
+
+
+
+  }
+)
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+STATUS CODE DE 500 --> INDICA QUE HOUVE UM PROBLEMA 
+
+
+NO SERVERSIDE.... 
+
+
+
+
+
+
+
+
+
+-------> OK... 
+
+
+
+
+
+MAS É CLARO QUE VAMOS EDITAR A ERROR MESSAGE, COLOCAR ALGO COMO 
+
+'AN ERROR HAS OCCURRED'... ou 'database operation failed'....
+
+
+
+
+----> VAMOS DEIXAR 'validationErrors' como um EMPTY ARRAY, PQ 
+
+NÃO VAMOS QUERER DEIXAR UMA RED BORDER AO REDOR DE COISA ALGUMA...
+
+
+
+
+
+
+
+
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+    console.log(err); 
+
+
+
+
+       return  res.status(500).render( 'admin/edit-product', { 
+              pageTitle: 'Add Product',
+              path: 'admin/add-product',
+              editing: false,
+              hasError: true,
+              product: {
+                title: title,
+                imageUrl: imageUrl,
+                price: price,
+                description: description
+              }
+              errorMessage: 'Database operation failed, please try again'
+              validationErrors: []
+              prods: products
+        
+            
+            }
+        )
+
+
+
+
+
+  }
+)
+
+
+
+
+
+
+------------------------
+
+
+
+
+SALVAMOS TUDO ISSO,
+
+
+E 
+AGORA 
+
+
+TESTAMOS... -------> 
+
+
+
+QUANDO TENTARMOS 
+
+
+
+
+ADICIONAR UM NOVO PRODUCT,
+
+
+VAMOS 
+
+RECEBER AQUELA DIV 
+
+
+COM 
+
+
+'Database Operation Failed, please try again',
+
+
+
+
+NA 
+
+
+MESMA PAGE DE  
+
+'ADD A PRODUCT'... --------> E ESSE É REALMENTE UM 
+
+
+
+ERROR HANDLING __ MELHOR___, PQ 
+
+
+ESTAREMOS 
+
+
+
+____ 'RETURNING THAT SAME PAGE',
+
+
+
+
+estamos dando uma mensagem 
+
+de ERRO 
+
+
+e 
+
+o 
+
+USER PODE 'TRY AGAIN'...
+
+
+
+
+
+
+
+-----> mas é claro que 
+
+
+
+
+
+
+esse erro vai continuar 
+
+acontecendo, pq temos um erro fundamental no nosso código;
+nós 
+
+forçamos esse erro, é verdade..... --> MAS 
+
+
+SE 
+
+
+
+ISSO, ESSE ERRO AÍ,
+
+
+
+TIVER SIDO CAUSADO POR UMA 'TEMPORARY NETWORK ISSUE',
+
+
+
+
+
+
+ESSA PODE SER UMA 'FINE WAY'
+
+
+
+DE 
+
+
+
+MANAGEAR ESSE ERRO.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> ENTRETANTO,
+
+
+ÀS VEZES VOCê PODE SE DEPARAr ___ COM PROBLEMAS MAIORES_,
+ 
+
+
+
+
+ E NESSAS VEZES __ VOCÊ ___ NÃO VAI QUERER __ USAR ESSA SOLUÇÃO AÍ;
+
+
+
+ VOCÊ NÃO VAI QUERER RETORNAR A MESMA PÁGINA, com esse 
+
+
+ modalzinho de erro....
+
+
+
+
+
+
+
+
+
+
+ --------> NESSES CASOS MAIS GRAVES,
+
+ VOCÊ VAI QUERER REALMENTE 'SHOW AN ERROR PAGE',
+
+
+ PARA COMUNICAR 
+
+ AO 
+
+ USER QUE 
+
+
+ ALGUMA COISA MAIOR/MAIS SÉRIA 
+
+ DEU ERRADO...
+ (
+
+   alguma coisa mais séria deu errado, estamos trabalhando nisso,
+
+
+   mas por enquanto você não será capaz de prosseguir...
+ )
+
+
+
+
+
+
+
+
+ --------->  OK....
+
+
+
+
+
+
+
+
+
+ ----> PARA CENÁRIOS 
+
+
+ COMO ESSE ,
+
+
+
+
+
+ VAMOS PRECISAR ADICIONAR UMA NOVA VIEW,
+
+
+
+ VIEW DE 
+
+ ERRO 
+
+
+ 404/500,
+
+
+
+
+
+ TIPICAMENTE NO ROOT DE NOSSAS VIEWS...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> EU ADICIONO UM ARQUIVO 
+
+ 500.ejs,
+
+
+
+
+
+
+
+
+
+
+ ___ QUE É UM 
+
+ VIEW 
+
+ QUE 
+
+
+ SERÁ 
+
+ RENDERIZADO PARA 
+
+ CASES 
+
+ DE 
+
+ ERROR 
+
+
+
+ ___ RELACIONADOS AO SERVERSIDE (bigger issues, 
+ 
+
+ TECHNICAL ISSUES,
+  
+
+  E NÃO 
+
+
+  SIMPLES 'NOT FOUND ROUTES', que 
+
+
+
+  era o negócio em que usamos 
+
+  '404.ejs.'..
+ 
+  )
+
+
+
+
+
+
+
+  ----> O PROFESSOR COPIA O CÓDIGO DE 
+
+  404.EJS,
+
+
+
+
+
+  E ÁI 
+
+
+  ELE VAI EDITANDO...
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+
+  <%- include ('./includes/head.ejs') %>
+</head>
+<body>
+    <%- include ('./includes/navigation.ejs') %>
+    <main>
+        
+        <h1>Some Error has Occurred!</h1>
+        <p>We're working on a fix, please sit tight!</p>
+    </main>
+
+<%- include ('./includes/end.ejs') %>
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... 
+
+
+AGORA QUE TEMOS ESSA ROUTE,
+ 
+ VAMOS QUERER 
+
+
+
+
+
+
+
+
+ A RENDERIZAR LÁ NAQUELE 
+
+
+
+ LUGAR....
+
+
+
+
+
+
+
+ tipo assim:
+
+
+
+
+
+
+
+
+ 
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+    console.log(err); 
+
+
+
+
+       return  res.status(500).render( '500'
+        )
+
+
+
+
+
+  }
+)
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+É BOM USAR ESSA PÁGINA 
+
+DE 
+
+
+'500'
+
+
+para 
+
+
+
+
+CASES EM QUE VOCÊ NÃO SABE SE VAI CONSIGAR HANDLAR ESSE ERRO EM ESPECÍFICO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... MAS 
+
+
+
+
+
+NÃO DEVEMOS ESCREVER ASSIM:
+
+
+
+
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+    console.log(err); 
+
+
+
+
+       return  res.status(500).render( '500'
+        )
+
+
+
+
+
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ESSA É A FORMA __ ERRADA_ DE FAZER ISSO..
+
+
+
+
+
+
+
+
+----> para fazer da forma CERTA,
+
+
+DEVEMOS 
+
+IR 
+
+ATÉ 
+
+O 
+
+
+ARQUIVO 'CONTROLLER' 
+
+
+
+de 
+
+
+
+
+'error.js',
+
+
+
+E AÍ 
+
+
+
+
+
+DEVEMOS COPIAR A LÓGICA 
+
+DO CONTROLLER DOS ERROS 
+
+404,
+
+
+que é 
+
+este:
+
+
+
+
+
+
+
+
+exports.error404 = (req, res, next) => {
+
+  res.status(404).render('404', {
+    pageTitle: 'Page not Found',
+    path: '',
+    isLoggedIn: req.session.isLoggedIn,
+  });
+};
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+------> NÓS COPIAMOS ESSE NEGÓCIO, E COLOCAMOS ASSIM:
+
+
+
+
+
+
+
+
+exports.error500 = (req, res, next) => {
+
+  res.status(500).render('500', {
+    pageTitle: 'Something went wrong',
+    path: '',
+    isLoggedIn: req.session.isLoggedIn,
+  });
+};
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS COMO CHAMAMOS 
+
+ESSE 
+
+
+
+
+CONTROLLER, NO NOSSO PROJETO? 
+
+
+
+
+
+
+
+
+
+-------> BEM.... ------> PROFESSOR DIZ QUE 
+
+
+
+DEVEMOS ___ ADICIONAR UMA __ROUTE__ NOVA PARA ESSE 
+
+
+
+'error500'
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+VAMOS 
+
+ATÉ 
+
+
+'app.js',
+
+
+
+ 
+
+ ONDE JÁ TÍNHAMOS AQUELE MIDDLEWARE 
+
+
+
+
+
+ de 
+
+
+
+
+ 'app.use(errorController.get404)',
+
+
+
+  
+
+
+
+
+(ESSE MIDDLEWARE ATIVAVA QUANDO O PATH/URL QUE 
+O 
+
+USER INPUTTAVA/INPUTTA NÃO __ ENCAIXA EM NENHUMA OUTRA ROUTE DE NOSSO APP... )
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... --> MAS  AÍ O PROFESSOR VAI QUERER COLOCAR UMA ROUTE PARA 
+
+
+ESSES 
+
+ERROS 
+
+'500',
+
+
+
+
+
+
+
+
+
+
+E ELE VAI FAZER ISSO POR MEIO DA ESCRITA DE 
+
+
+
+
+'app.get('/500', errorController.error500)' 
+
+
+
+
+
+
+
+
+
+
+
+
+----------> AGORA SÓ PRECISAMOS NOS ASSEGURAR QUE O USER _ SEJA__ REDIRECIONADO 
+
+
+A 
+
+ESSA ROUTE __ QUANDO 
+
+
+1 
+
+ERRO 
+
+
+500 acontecer,
+
+
+
+
+E É O QUE FAREMOS 
+
+LÁ 
+
+
+
+
+NAQUELE 
+
+
+CÓDIGO DE 
+
+
+
+
+''''''
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+
+
+  }
+)
+
+
+
+
+'''''''''
+
+
+
+
+
+
+
+
+
+
+------> ENFIM, NESSE CATCH BLOCK,
+
+O QUE 
+
+O 
+
+PROFESSOR VAI ESCREVER É UM __ REDIRECT_ À ROUTE 
+
+
+DE 
+
+
+'/500',
+PARA QUE 
+
+
+AQUELE CONTROLLER TRIGGUE E RENDERIZE A PAGE DE 
+
+
+
+'500.ejs'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {  
+
+
+
+        res.redirect('/500');
+
+  }
+)
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+SALVAMOS TUDO ISSO, E AGORA,
+
+QUANDO 
+
+
+OCORRER
+
+
+ESSE 
+'ERRO 
+
+DO SERVIDOR',
+
+
+
+
+SEREMOS 
+
+REDIRECIONADOS PARA AQUELA PAGE DE 
+
+
+
+
+'An error has occurred!',
+
+
+aquela view lá... ---------> E O PROFESSOR 
+
+
+
+
+
+NOS EXPLICA, RESUME, QUE 
+
+
+___ ESSA REALMENTE PODE SER 
+
+' 
+A DECENT WAY OF HANDLING __THIS __ FOR ___ BIGGER PROBLEMS...''

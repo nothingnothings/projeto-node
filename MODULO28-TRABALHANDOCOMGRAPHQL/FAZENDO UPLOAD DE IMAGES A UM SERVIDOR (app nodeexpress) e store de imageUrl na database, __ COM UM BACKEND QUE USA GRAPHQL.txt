@@ -1,0 +1,3464 @@
+
+
+
+
+
+
+
+
+COMO O UPLOAD DE DATA (no nosso caso, IMAGES) funciona,
+
+
+EM UMA 
+
+GRAPHQL?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> BEM, O FATO É QUE __ O GRAPHQL API _ SÓ __ FUNCIONA ___ COM 
+
+
+JSON DATA... --------> É CLARO QUE 
+
+
+VOCÊ PODE ENCONTRAR ARTIGOS 
+
+E 
+
+THIRD PARTY PACKAGES 
+
+QEU 
+
+PODEM 
+
+TE AJUDAR 
+
+
+
+
+A FAZER 'GET' DE DATA 
+
+
+
+ATRAVÉS 
+
+
+
+DE GRAPHQL,
+
+
+
+
+__ MAS NO FINAL DAS CONTAS,
+
+
+
+
+
+UMA DAS SOLUÇÕES MAIS LIMPAS 
+
+PARA 
+
+
+FAZER 
+
+O 
+
+'GET' 
+
+DESSA 
+
+
+DATA 
+
+ENVIADA PELOS USERS (que __NÃO ESTÁ EM UM FORMATO JSON) 
+
+
+
+É __ USAR 
+
+
+
+
+
+
+
+
+O APPROACH CLÁSSICO 
+
+DO 
+
+
+
+'SET DE UM ENDPOINT ALTERNATIVO'... --------> ESSE ENDPOINT ALTERNATIVO ___ TIPICAMENTE__ SERÁ 
+
+
+
+UM ENDPOINT __ DE TIPO REST (rest api),
+
+
+
+E 
+
+
+É 
+
+
+A ELE QUE VOCÊ ENVIARÁ 
+
+SUA IMAGE.... --------------> AÍ VOCÊ VAI DEIXAR ESSE ENDPOINT 
+
+
+
+__ ARMAZENAR__ A IMAGE __ NO BACKEND (app nodeexpress)
+
+E FAZER __ o 
+
+
+
+__RETURN__ DO PATH__ DA IMAGE/ATÉ A IMAGE..... ---------> ISSO FEITO,
+
+
+
+
+
+ESSE OUTRO API ENDPOINT VAI __ 'SEND ANOTHER REQUEST', UM REQUEST COM __ A PATH DESSA IMAGE e __ SUA OUTRA DATA,
+
+
+TUDO 
+
+
+
+AO SEU 'GRAPHQL ENDPOINT'... 
+
+
+
+
+
+
+
+(
+
+    ou seja,
+
+    acho que a rota ficaria/fica mais ou menos assim:
+
+
+
+
+
+
+
+
+
+
+
+DATA COMUM (title, content, email) ---> SEGUE PARA O GRAPHQL ENDPOINT PADRÃO....
+
+
+
+
+
+
+IMAGE, MÚSICA, ETC (arquivo) ---> SEGUE PARA UM ENDPOINT REST API ----> ENDPOINT REST API __ FAZ O STORE DESSE ARQUIVO NO BACKEND NODEEXPRESS (que está rodando o graphql e essa rest api endpoint)  E RETORNA O _ PATH__ A ESSA IMAGE, dentro do backend ---> ESSE PATH (e outros pedaços de data) É __ RETORNADO _ __ AO GRAPHQL, AO 'ENDPOINT REGULAR' do graphql... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> E ESSA É A SOLUÇÃO QUE O PROFESSOR VAI IMPLEMENTAR, AQUI...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+
+
+DECIDIU __ IMPLEMENTAR 
+
+
+
+ISSO , ESSA ROUTE/ENDPOINT,
+
+
+
+__ DIRETAMENTE__ 
+
+
+
+
+NO 
+
+'app.js' (backend),
+
+
+
+
+
+JUSTAMENTE 
+
+PQ 
+
+
+
+ESSA SERÁ ___ A ÚNICA __ OUTRA ROUTE __ QUE ADICIONAREMOS NESSE NOSSO PROJETO GRAPHQL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ, VAMOS REGISTRAR UMA NOVA ROUTE,
+
+
+
+ROUTE PARA 
+
+'incoming put requests',
+
+ISSO 
+
+PQ 
+
+O 
+
+PROFESSOR 
+
+
+
+
+PLANEJA __ ENVIAR__ ESSA IMAGE POR MEIO DE UM 
+
+'REQUEST DE TIPO PUT'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> é por isso que ele escreve,
+
+
+
+LOGO ANTES 
+
+
+DO 
+
+middleware 
+de 
+
+
+'authGraphql':
+
+
+
+
+
+
+app.put() ///EIS O CÓDIGO EM QUESTÃO. única outra ROUTE além de nosso ENDPOINT GRAPHQL...
+
+
+app.use(graphqlAuth); ////////ISTO SEMPRE DEVE SER SETTADO__ LOGO __ ANTES DO MIDDLEWARE QUE DEFINE SEU 'ÚNICO ENDPOINT GRAPHQL' ( ou seja, esse código mais abaixo, de 'app.use()') ... 
+
+
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VAMOS ENVIAR 
+
+
+ESSE REQUEST A UMA URL/PATH CUSTOMIZADO,
+
+
+
+
+
+
+O PROFESSOR ESCOLHE O NOME 
+
+'post-image'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+app.put('/post-image') ///EIS O CÓDIGO EM QUESTÃO. única outra ROUTE além de nosso ENDPOINT GRAPHQL...
+
+
+app.use(graphqlAuth); ////////ISTO SEMPRE DEVE SER SETTADO__ LOGO __ ANTES DO MIDDLEWARE QUE DEFINE SEU 'ÚNICO ENDPOINT GRAPHQL' ( ou seja, esse código mais abaixo, de 'app.use()') ... 
+
+
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DENTRO DESSE MIDDLEWARE,
+
+VAMOS TER NOSSO CÓDIGO MIDDLEWARE TRADICIONAL....
+
+
+
+é o clássico:
+
+
+
+
+
+app.put('/post-image', (req, res, next) => {
+
+
+
+
+
+})
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+------> DENTRO DESSE NEGÓCIO, A PRIMEIRA COISA QUE VAMOS FAZER __ É CHECAR__ SE AINDA __ NÃO 
+
+
+TEMOS UMA 
+
+'file' 
+
+
+NO NOSSO REQUEST...
+
+
+
+
+(
+
+    ué, ainda vamos usar o MULTEr?
+)
+
+
+
+
+
+
+
+
+--> sim, pelo visto ainda temos o 'multer' no lugar....
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+
+  }
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+AINDA TEMOS O MULTER.... --> E O MULTER AINDA TEM AQUELE CÓDIGO DE 
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    console.log(file.fieldname, 'LINE');
+
+    cb(null, uuid() + '-' + file.originalname); ///vamos usar isso como substituto de  ''   cb(null, new Date().toISOString() + file.originalname);''
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  console.log(file);
+
+  console.log(req.body.title, 'LINE3');
+
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    if (
+      req.body.title.length >= 6 &&
+      req.body.title.match(/^[A-Za-z]+$/) &&
+      req.body.content.length >= 6
+    ) {
+      console.log('IMAGE UPLOADED')
+      return cb(null, true);
+    } else {
+      return cb('Invalid data inputted, file was not saved.', false);
+    }
+  } else {
+   return cb(null, false); 
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> o multer ainda vai 'TAKE OUR MULTIPART FORM DATA REQUEST',
+
+
+
+
+__ VAI ___ EXTRAIR ___ ESSE ARQUIVO CONTIDO NESSE REQUEST,
+
+E AÍ __ VAI 
+
+
+O 
+
+ARMAZENAR 
+
+
+
+
+NO FOLDER DE 'images'... --> NÓS AINDA POSSUIMOS ESSA ESTRUTURA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE TODOS NOSSOS ARQUIVOS AINDA VAO SER EXTRAÍDOS,
+
+
+
+
+
+E O MULTER AINDA __ VAI __ POPULAR __ ESSE OBJETO 'request'
+
+
+COM TODAS 
+
+AS INFORMAÇÕES 
+
+SOBRE 
+
+O ARQUIVO QUE FOI EXTRAÍDO,
+
+armazenados 
+
+na propriedade 
+
+'file'...
+
+
+
+
+
+
+
+
+
+--> CERTO.... e se ACONTECER
+ 
+
+
+ de esse 
+
+ 'req.file'
+
+
+ NÃO ESTIVER 'SET' (undefined),
+
+
+
+ VAMOS QUERER __ SIMPLESMENTE __ RETORNAR UMA RESPONSE __ 
+
+
+ COM STATUS DE 
+
+
+
+ '200' (sucesso? ) ---> E UMA MESSAGE DIZENDO 
+
+ 'no file provided'... -----> É CLARO QUE VOCÊ PODERIA 
+
+
+
+ PROVIDENCIAR 
+
+ UMA MENSAGEM DE ERRO AQUI (como '422'),
+
+
+
+
+ MAS ESTE CENÁRIO É 
+
+ 'FINE' PARA O PROFESSOR,
+
+
+
+
+ 
+
+
+ PQ POSTERIORMENTE 
+
+
+ VEREMOS UMA SITUAÇÃO, LÁ NO __ EDIT__ DE UM POST,
+
+  
+
+  em que 
+
+
+  ISSO SERÁ BENÉFICO (situação em que o user poderá FACULTATIVAMENTE ADICIONAR UMA NOVA IMAGE) ----> 
+
+
+  É POR ISSO QUE VAMOS DEIXAR 
+  '200',
+
+
+  PQ 
+
+  __ O FATO DE NÃO ANEXAR UMA IMAGE, o fato de não ter nada (undefined)
+
+  em 
+
+  'file'
+
+
+  TAMBÉM 
+
+
+
+  NÃO FAZ COM QUE __ 
+
+
+  SEU REQUEST SEJA CONSIDERADO INVÁLIDO (ainda vai receber response com status de 200)....
+
+
+
+
+  ex:
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+            return res.status(200).json({message: 'No file provided!'})
+
+  }
+
+
+})
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+    return res.status(200).json({message: 'No file provided!'}) ////O FATO DE O USER NÃO TER PROVIDENCIADO UMA IMAGE/FILE não será considerado como uma 'FALHA NO REQUEST', no nosso código... --> isso pq o send de uma image será FACULTATIVO... (tanto no CREATE, como no EDIT de um post)...
+
+  }
+
+
+})
+
+app.use(graphqlAuth); ////////ISTO SEMPRE DEVE SER SETTADO__ LOGO __ ANTES DO MIDDLEWARE QUE DEFINE SEU 'ÚNICO ENDPOINT GRAPHQL' ( ou seja, esse código mais abaixo, de 'app.use()') ... 
+
+////ESTE MIDDLEWARE TAMBÉM __ É O LOCAL__ EM QUE __ VAMOS FAZER 'TEST' DOS NOSSOS QUERIES/MUTATIONS/SUBSCRIPTIONS, que são executados por meio daqueles resolvers/methods nos resolvers do arquivo 'resolvers.js'... --> VER PROPRIEDADE 'graphiql'... 
+app.use('/graphql', graphqlHTTP(  ////ESSE É O __ ENDPOINT ÚNICO __ DO GRAPHQL ---> ele vai receber __ TODOS OS REQUESTS__ de seu app, tanto GET como POST.... -----> OBS::: NUNCA USE/ESCREVA 'app.post()' (limitar apenas a post requests), E SIM _ USE 'app.use()' (para que consigamos receber tanto requests de tipo GET como POST)...
+
+{ ///este objeto config é OBRIGATÓRIO... (e esses 2 items/keys, com POINTERS AOS NOSSOS ARQUIVOS, TAMBÉM...)
+
+  schema: graphqlSchema, //vamos precisar do nosso schema para settar o endpoint...
+  rootValue: graphqlResolver, ///vamos settar nosso RESOLVER aqui... também é necessário para settarmos o endpoint....
+
+
+
+
+  graphiql: true, ///SE VOCÊ DEFINIR ESSA PROPRIEDADE COMO 'true', VOCÊ ADQUIRE_ _UMA FERRAMENTA ESPECIAL DO GRAPHQL.... --> essa ferramneta/propriedade É __ JUSTAMENTE_ _ A RAZÃO __ DE NÃO USARMOS 'app.post()' (LIMITAR A POST REQUESTS esse middleware) NO LUGAR __ DE 'app.use()' (sintaxe que permite que TODOS OS TIPOS DE REQUEST CHEGUEM A ESSA ROUTE/MIDDLEWARE).... --> basta acessar 'localhost:8080/graphql' NA BARRA DE ENDEREÇOS, PARA ENCONTRAR ESSA API...
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK, TALVEZ TENHAMOS ADICIONADO UMA NOVA IMAGE,
+
+TALVEZ NÃO... --> e esse é um bom JEITO 
+DE 
+
+'HANDLAR'
+
+
+AMBOS OS CASES....
+
+
+
+
+
+
+
+
+
+
+--> SE NÓS REALMENTE TIVERMOS ESSA PROPRIEDADE 
+
+'file'
+
+
+
+NO NOSSO OBJETO REQUEST,
+
+
+
+VAMOS PODER FAZER 'get'
+
+
+DE ALGUNS DADOS DELA...
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE VAMOS QUERER __ 'CLEAR AN EXISTING IMAGE',
+
+
+se 
+essa 
+
+image existir previamente...
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+
+VAMOS QUERER 
+
+
+USAR 
+
+
+A LÓGICA 
+
+DE UMA 
+
+FUNÇÃO/CONTROLLER QUE 
+
+EU JÁ HAVIA CODADO NO PASSADO...
+
+
+
+
+
+--> era isto aqui:
+
+
+
+    fs.unlink(post.imageUrl, (err) => {
+      console.log(err);
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> vou querer ADAPTAR ESSE CÓDIGO,
+
+PARA QUE 
+
+
+ENCAIXE 
+
+NESSE MEU MIDDLEWARE 
+
+
+
+de 
+
+
+'app.put('/post-image')':
+
+
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { 
+  if(!req.file) { 
+
+    return res.status(200).json({message: 'No file provided!'}) 
+
+  }
+
+
+
+ fs.unlink()
+
+
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------> MAS É CLARO QUE 
+
+ESSE 
+
+
+
+'fs.unlink()'
+
+
+
+DEPENDE 
+
+DA 
+
+PACKAGE 
+
+de 
+
+'path',
+
+
+PARA QUE SEJA CONSTRUÍDO O PATH ATÉ O ARQUIVO NO BACKEND QUE VOCÊ QUER 'DESVINCULAR E DELETAR'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PRIMEIRAMENTE,
+ 
+
+
+ O PROFESSOR 
+
+
+ VAI PROCURAR PELA EXISTÊNCIA DE UM FIELD Em 
+
+
+ 'req.body'
+
+ CHAMADO 
+
+ DE 
+
+
+ 'oldPath'.... --> ESSE 
+
+
+
+ PATH 
+
+
+
+ SERÁ 
+
+ __PASSADO__ 
+
+
+
+ NO INCOMING REQUEST_ A 
+
+
+ ESSE 
+
+
+
+ NOSSO ENDPOINT REST de 'post-image',
+
+
+
+
+
+ __VAI SER __ PASSADO_ SE 
+
+
+
+ DE FATO __ O POST QUE FOI EDITADO 
+
+
+
+
+ PELO 
+ USER 
+
+ __JÁ TINHA UMA IMAGE....
+
+
+
+ ex:
+
+
+
+
+
+
+
+ 
+app.use('/post-image', (req, res, next) => { 
+  if(!req.file) { 
+
+    return res.status(200).json({message: 'No file provided!'}) 
+
+  }
+
+
+if(req.body.oldPath) {
+
+
+}
+
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+    return res.status(200).json({message: 'No file provided!'}) ////O FATO DE O USER NÃO TER PROVIDENCIADO UMA IMAGE/FILE não será considerado como uma 'FALHA NO REQUEST', no nosso código... --> isso pq o send de uma image será FACULTATIVO... (tanto no CREATE, como no EDIT de um post)...
+
+  }
+
+
+  if (req.body.oldPath) { ///entraremos nesse IF BLOCK se for constatado que o USER ESTÁ EDITANDO UM POST QUE __ JÁ POSSUIA UMA IMAGE VINCULADA A SI... (é um dos cases de 'edit/update a post')....
+    ///se entrarmos nesse block, vamos querer APAGAR A VELHA IMAGE QUE ESTAVA VINCULADA A ESSE POST....
+    ///faremos isso por meio de 'fs.unlink', e por meio do 'path' (será usado para construir o caminho até essa velha image/arquivo)...
+    fs.unlink(
+      req.body.oldPath, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
+
+
+
+
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+-> OU SEJA,
+
+VAMOS DELETAR A 'OLD IMAGE',
+
+E MANTER A 'NEW IMAGE', que vai ser ARMAZENADA POR CONTA DO MULTER...
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+AO FINAL 
+
+DESSE MIDDLEWARE,
+
+VAMOS QUERER __ RETORNAR _ UMA RESPONSE __ COM UM 
+
+
+
+
+STATUS CODE DE 
+
+'201' (data created)....
+
+
+
+ex:
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+    return res.status(200).json({message: 'No file provided!'}) ////O FATO DE O USER NÃO TER PROVIDENCIADO UMA IMAGE/FILE não será considerado como uma 'FALHA NO REQUEST', no nosso código... --> isso pq o send de uma image será FACULTATIVO... (tanto no CREATE, como no EDIT de um post)...
+
+  }
+
+
+  if (req.body.oldPath) { ///entraremos nesse IF BLOCK se for constatado que o USER ESTÁ EDITANDO UM POST QUE __ JÁ POSSUIA UMA IMAGE VINCULADA A SI... (é um dos cases de 'edit/update a post')....
+    ///se entrarmos nesse block, vamos querer APAGAR A VELHA IMAGE QUE ESTAVA VINCULADA A ESSE POST....
+    ///faremos isso por meio de 'fs.unlink', e por meio do 'path' (será usado para construir o caminho até essa velha image/arquivo)...
+    fs.unlink(
+      req.body.oldPath, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
+
+  return res.status(201).json(
+      {
+          message: 'File stored.'
+      }
+  )
+
+
+
+
+
+
+
+
+})
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+PORÉM, MAIS IMPORTANTE DO QUE ESSA MESSAGE DE 'file stored',
+
+
+VAMOS QUERER __ 
+
+
+ARMAZENAR,
+
+NESSE 
+
+
+
+RESPONSE QUE RETORNAMOS AO USER,
+
+
+
+uma key (que pode ter qualquer nome) que chamaremos 
+
+
+
+
+de 'filePath',
+
+
+E QUE 
+
+CONTERÁ 
+
+
+
+
+
+
+o valor de 'req.file.path' ( o path do NOVO ARQUIVO QUE VAMOS QUERER ARMAZENAR LÁ NA NOSSA DATABASE, DENTRO DE 1 POST)...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+app.use('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+    return res.status(200).json({message: 'No file provided!'}) ////O FATO DE O USER NÃO TER PROVIDENCIADO UMA IMAGE/FILE não será considerado como uma 'FALHA NO REQUEST', no nosso código... --> isso pq o send de uma image será FACULTATIVO... (tanto no CREATE, como no EDIT de um post)...
+
+  }
+
+
+  if (req.body.oldPath) { ///entraremos nesse IF BLOCK se for constatado que o USER ESTÁ EDITANDO UM POST QUE __ JÁ POSSUIA UMA IMAGE VINCULADA A SI... (é um dos cases de 'edit/update a post')....
+    ///se entrarmos nesse block, vamos querer APAGAR A VELHA IMAGE QUE ESTAVA VINCULADA A ESSE POST....
+    ///faremos isso por meio de 'fs.unlink', e por meio do 'path' (será usado para construir o caminho até essa velha image/arquivo)...
+    fs.unlink(
+      req.body.oldPath, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
+
+  return res.status(201).json(
+      {
+          message: 'File stored.',
+          filePath: req.file.path ///eis o código em questão.
+      }
+  )
+
+
+
+
+
+
+
+
+})
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+O RETURN DESSA RESPONSE É IMPORTANTE,
+
+
+PENSO EU... -----> PROVAVELMENTE SERÁ HANDLADO LÁ NO NOSSO FRONTEND.... ---> a partir 
+
+do 
+
+return 
+dessa response,
+
+
+
+
+O FRONTEND VAI PROVAVELMENTE ENVIAR UM REQUEST (query) 
+
+
+
+
+
+AO GRAPHQL API ENDPOINT (único)....
+
+
+
+
+
+
+
+
+
+
+
+------> OK.... --> PODEMOS TRABALHAR NO 
+
+
+
+
+FRONTEND A PARTIR DESSA RESPONSE....  -----> 
+
+
+
+
+
+LÁ NO FRONTEND,
+
+VAMOS USAR 
+ESSE 
+
+
+'REST API' ENDPOINT ... --> E ISSO JÁ TE MOSTRA__ QUE _ É POSSÍVEL,
+
+
+SIM,
+
+__USAR 
+
+'REST API' 
+
+E 
+
+'GRAPHQL API'
+
+
+
+
+____ EM CONJUNTO___.... --> NÃO HÁ UMA 'HARD DECISION',
+
+PQ VOCÊ 
+
+PODE USAR 
+
+
+
+
+OS 2 
+
+PARA 
+
+CADA PROBLEMA QUE SURGE ( DEPENDE DO QUE VOCê QUER).... -----> OK... VAMOS QUERER 
+
+USAR 
+
+ISSO 
+
+
+
+NO FRONTEND,
+
+
+LÁ 
+
+
+
+NO HANDLER DE 
+
+
+
+'finishEditHandler' -->  lá em 'Feed.js'... ---------> 
+
+
+
+LÁ 
+
+
+
+NESSE LOCAL__,
+
+
+
+
+TEMOS ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+finishEditHandler = async (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+
+    try {
+      this.setState({ editLoading: true });
+
+      let graphqlQuery = {
+        query: `
+        mutation {
+          createPost(
+            userInput: {
+                  title: "${postData.title}",
+                  content: "${postData.content}",
+                  imageUrl: "Dummy"
+            }
+         ) {
+          post {
+            title
+            content 
+            _id
+            imageUrl
+            createdAt
+            updatedAt
+            creator {
+                name
+            }
+          },
+          creator {
+            name 
+            _id
+          }
+        }
+        }
+      `,
+      };
+      let url = 'http://localhost:8080/graphql';
+      let method = 'POST';
+
+      if (this.state.editPost) {
+        // url = `http://localhost:8080/feed/post/${postData.id}`;
+        // method = 'PUT';
+
+        graphqlQuery = {
+          query: `
+          mutation {
+
+          }
+        `,
+        };
+      }
+
+      console.log(this.props.token);
+      // for (var pair of formData.entries()) {
+      //   // console.log(pair[0] + ', ' + pair[1]);
+      // }
+
+      const editAndAddResults = await fetch(url, {
+        method: method,
+
+        // body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          'Content-Type': 'application/json' ///colocamos isto na VERSÃO __ 'GRAPHQL' de nosso código, pois é necessário lá... (é necessário em muitas outras hipóteses, também, mas neste curso, passou a ser necessário quando trocamos para um bakcned GRAPHQL..)
+          
+          
+          
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE, não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ  ENVIANDO DATA por meio daquele 'formData.append()'... APENAS precisamos settar, nesse case, UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+
+        // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+        //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+        //                       'multipart/form-data'
+        // }
+      });
+      // .then((res) => {
+
+
+      // if (editAndAddResults.status === 400) {
+      //   throw new Error(
+      //     'Please input values that are valid and not equal to previous ones.'
+      //   );
+      // }
+
+      // if (
+      //   editAndAddResults.status !== 200 &&
+      //   editAndAddResults.status !== 201
+      // ) {
+      //   throw new Error('Creating or editing a post failed!');
+      // }
+
+      if(editAndAddResults.errors && editAndAddResults[0].status === 400) {
+        throw new Error(
+          'Please input values that are valid and not equal to previous ones.'
+        )
+      }
+
+
+      if(
+        editAndAddResults.errors
+      ) {
+        throw new Error('Creating or editing a post failed!')
+      }
+
+      // return res.json();
+      // })
+      // .then((data) => {
+
+      const manipulatedEditAndAddResults = await editAndAddResults.json();
+
+      // const post = {
+      //   _id: manipulatedEditAndAddResults.post._id,
+      //   title: manipulatedEditAndAddResults.post.title,
+      //   content: manipulatedEditAndAddResults.post.content,
+      //   creator: manipulatedEditAndAddResults.post.creator,
+      //   createdAt: manipulatedEditAndAddResults.post.createdAt,
+      // };
+
+      console.log(manipulatedEditAndAddResults);
+
+      const post = {
+        _id: manipulatedEditAndAddResults.data.createPost.post._id,
+        title: manipulatedEditAndAddResults.data.createPost.post.title,
+        content: manipulatedEditAndAddResults.data.createPost.post.content,
+        creator: manipulatedEditAndAddResults.data.createPost.post.creator,
+        createdAt: manipulatedEditAndAddResults.data.createPost.post.createdAt,
+      };
+
+
+      console.log(post, 'Line');
+      this.setState((prevState) => {
+        let updatedPosts = [...prevState.posts];
+        if (prevState.editPosts) {
+          const postIndex = prevState.posts.findIndex((post) => {
+            return post._id === prevState.editPost._id;
+          });
+          updatedPosts[postIndex] = post;
+        } else if (prevState.posts.length < 2) {
+          updatedPosts = prevState.posts.concat(post);
+        }
+        return {
+          posts: updatedPosts,
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+        };
+      });
+
+      this.loadPosts();
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      //   console.log(err);
+      this.setState({
+        isEditing: false,
+        editPost: null,
+        editLoading: false,
+        error: err,
+      });
+      this.loadPosts();
+      // });
+    }
+  };
+
+
+
+
+  ------------------------------
+
+
+
+
+
+
+  NÓS NÃO VAMOS MAIS TER O ANEXO DE 'content' e 'title'
+
+
+  naquele 
+
+  FORMDATA QUE 
+
+  CRIAMOS COM 
+
+
+
+
+  'const formData = new formData()'.... -> ENTRETANTO,
+
+
+  NÓS ___ AINDA VAMOS ANEXAR ___  NOSSA IMAGE 
+
+  NESSA FORMDATA.... --> 
+
+
+
+
+  FAREMOS ISSO 
+
+
+  POR MEIO DO CÓDIGO 
+
+
+
+
+  'formData.append('image', postData.image) 
+
+
+
+
+
+
+
+
+
+
+  --> ALÉM DISSO,
+
+
+  O PROFESSOR 
+
+
+
+
+
+  TAMBÉM VAI QUERER EXECUTAR AQUELE CHECK DE 
+
+
+
+  'if (this.state.editPost)',
+
+
+
+  PARA 
+
+
+  CHECAR 
+
+
+
+  _SE ESTAMOS NO 'EDIT MODE'.... --------> SE ESTIVERMOS 
+
+
+
+
+  NO 
+
+
+  'EDIT MODE',
+
+  VAMOS QUERER 
+
+
+
+
+  ANEXAR 
+  O 
+
+
+
+  FIELD DE 'oldPath',
+
+  QUE SERÁ 
+
+
+
+  this.state.editPost.imagePath 
+
+
+
+
+
+
+
+
+  ex:
+
+
+
+
+
+formData.append('image', postData.image);
+  if (this.state.editPost) {
+
+      formData.append('oldPath', this.state.editPost.imageUrl);
+  }
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+---> ok.... QUANDO CRIARMOS UM NOVO POST, AGORA,
+
+
+
+NÓS TAMBÉM VAMOS QUERER QUE ESSA PROPRIEDADE 
+
+
+
+de 'imageUrl'
+
+
+SEJA ADICIONADA.... PORTANTO:
+
+
+
+
+
+
+      const post = {
+        _id: manipulatedEditAndAddResults.data.createPost.post._id,
+        title: manipulatedEditAndAddResults.data.createPost.post.title,
+        content: manipulatedEditAndAddResults.data.createPost.post.content,
+        creator: manipulatedEditAndAddResults.data.createPost.post.creator,
+        createdAt: manipulatedEditAndAddResults.data.createPost.post.createdAt,
+        imagePath: manipulatedEditAndAddResults.data.createPost.post.imageUrl
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+
+      --> é esse 'imagePath' aí....
+
+
+
+
+
+
+
+
+
+      --> com isso, agora temos nossa FORMDATA settada....
+
+
+
+
+
+
+
+
+
+      ---------> certo... agora, ANTES DE __ ENVIARMOS__ O QUERY GRAPHQL 
+
+
+
+      ao nosso endpoint graphql,
+
+
+
+
+
+      VAMOS __ QUERER __ ENVIAR UM __ REQUEST_ __
+
+
+
+      AO ENDPOINT DE 
+
+      'localhost:8080/post-image',
+
+
+
+      AO 
+
+
+      ENDPOINT QUE RECÉM CRIAMOS NO 'app.js'.... -------> O METHOD SERÁ DE PUT, pq foi isso que definimos lá naquele 
+
+      middleware de 
+
+
+
+
+
+
+
+
+
+      app.put('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+    return res.status(200).json({message: 'No file provided!'}) ////O FATO DE O USER NÃO TER PROVIDENCIADO UMA IMAGE/FILE não será considerado como uma 'FALHA NO REQUEST', no nosso código... --> isso pq o send de uma image será FACULTATIVO... (tanto no CREATE, como no EDIT de um post)...
+
+  }
+
+
+  if (req.body.oldPath) { ///entraremos nesse IF BLOCK se for constatado que o USER ESTÁ EDITANDO UM POST QUE __ JÁ POSSUIA UMA IMAGE VINCULADA A SI... (é um dos cases de 'edit/update a post')....
+    ///se entrarmos nesse block, vamos querer APAGAR A VELHA IMAGE QUE ESTAVA VINCULADA A ESSE POST....
+    ///faremos isso por meio de 'fs.unlink', e por meio do 'path' (será usado para construir o caminho até essa velha image/arquivo)...
+    fs.unlink(
+      req.body.oldPath, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
+
+
+  return res.status(201)
+  .json(
+    {
+      message: 'File stored.',
+      filePath: req.file.path ////esse path é o path DA NOVA IMAGE QUE O USER RECÉM SUBMITTOU AO NOSSO BACKEND/ENDPOINT REST API, neste mesmo request.... (vamos querer armazenar esse path lá no 'post' a que ele pertence, lá na database mongodb...)
+    }
+  )
+
+
+
+
+
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> PORTANTO, O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+      const formData = new FormData(); ///ainda USAREMOS ISSO PARA CONSEGUIR UPLOADAR NOSSAS IMAGES, MESMO EM UMA 'GRAPHQL API' (pq ainda vamos usar uma rest api, CONJUNTAMENTE COM ESES GRAPHQL API, para fazer o MANAGE DO STORE DE NOSSAS IMAGES)....
+
+      formData.append('image', postData.image);
+
+
+      if (this.state.editPost) {
+        formData.append('oldPath', this.state.editPost.imagePath);
+      }
+
+
+
+    const imageSend = await  fetch('localhost:8080/post-create', 
+
+      {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          
+        }
+      }
+      )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> quanto aos __ HEADERS__, 
+
+VAMOS COLOCAR 'Authorization: this.props.token'.... --> 
+
+
+professor explica uqe PODEMOS
+
+
+
+SIMPLESMENTE 
+
+
+RODAR 
+
+'app.use(graphqlAuth)'
+
+
+_ANTES__ 
+
+
+DO RUN __ DESSE 
+
+
+
+'app.put('/post-image')',
+
+
+
+
+LÁ EM 'app.js' (root de nosso app),
+
+TUDO PARA QUE 
+SEJA CHECADO 
+
+O 
+
+
+TOKEN DESSE USER lá 
+
+
+
+em '/post-image'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+app.use(graphqlAuth); ////////ISTO SEMPRE DEVE SER SETTADO__ LOGO __ ANTES DO MIDDLEWARE QUE DEFINE SEU 'ÚNICO ENDPOINT GRAPHQL' ( ou seja, esse código mais abaixo, de 'app.use()') ...  (no nosso caso, vamos colocar AINDA ANTES do código que ENVIA NOSSA 'IMAGE' AO MULTER.... ) --> ah e o endpoint graphql não é EXATAMENTE ÚNICO, não é mesmo... (esse endpoint do multer é um OUTRO ENDPOINT, de tipo 'graphql')....
+
+app.put('/post-image', (req, res, next) => { ////VAMOS USAR ISTO PARA FAZER MANAGE DE NOSSO UPLOAD DE IMAGES (por meio de uma 'rest api') AO MESMO _ TEMPO EM QUE__ FAZEMOS MANAGE DE NOSSO APP COM NOSSA GRAPHQL API (ou seja, esse é o ÚNICO ENDPOINT QUE EXISTIRÁ ALÉM DO CLÁSSICO '/graphql' de tipo POST)....
+  
+  if (!req.isAuth) {
+    throw new Error('Not authenticated'); ///também vamos checar pela AUTH do user aqui...
+  }
+  
+  
+  
+  
+  if(!req.file) { ///AINDA USAREMOS/DEPENDEREMOS DO 'MULTER' PARA FAZER O MANAGE DE NOSSAS IMAGES/FILES, mesmo usando o GRAPHQL no nosso backend...
+
+    return res.status(200).json({message: 'No file provided!'}) ////O FATO DE O USER NÃO TER PROVIDENCIADO UMA IMAGE/FILE não será considerado como uma 'FALHA NO REQUEST', no nosso código... --> isso pq o send de uma image será FACULTATIVO... (tanto no CREATE, como no EDIT de um post)...
+
+  }
+
+
+  if (req.body.oldPath) { ///entraremos nesse IF BLOCK se for constatado que o USER ESTÁ EDITANDO UM POST QUE __ JÁ POSSUIA UMA IMAGE VINCULADA A SI... (é um dos cases de 'edit/update a post')....
+    ///se entrarmos nesse block, vamos querer APAGAR A VELHA IMAGE QUE ESTAVA VINCULADA A ESSE POST....
+    ///faremos isso por meio de 'fs.unlink', e por meio do 'path' (será usado para construir o caminho até essa velha image/arquivo)...
+    fs.unlink(
+      req.body.oldPath, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
+
+
+  return res.status(201)
+  .json(
+    {
+      message: 'File stored.',
+      filePath: req.file.path ////esse path é o path DA NOVA IMAGE QUE O USER RECÉM SUBMITTOU AO NOSSO BACKEND/ENDPOINT REST API, neste mesmo request.... (vamos querer armazenar esse path lá no 'post' a que ele pertence, lá na database mongodb...)
+    }
+  )
+
+
+})
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+certo.... --> ISSO SIGNIFICA QUE LÁ NO FRONTEND DEVEMOS,
+
+OBRIGATORIAMENTE,
+
+
+
+ADICIONAR 
+
+
+AQUELES HEADERS DE 'Authorization' (para acontecer a validation da token nesse header)... --> já 
+
+
+'
+Content-Type' nós não precisamos settar, eu acho...
+
+
+
+
+
+
+
+---> E NO BODY, COLOCAMOS NOSSA FORM DATA....
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+      const formData = new FormData(); ///ainda USAREMOS ISSO PARA CONSEGUIR UPLOADAR NOSSAS IMAGES, MESMO EM UMA 'GRAPHQL API' (pq ainda vamos usar uma rest api, CONJUNTAMENTE COM ESES GRAPHQL API, para fazer o MANAGE DO STORE DE NOSSAS IMAGES)....
+
+      formData.append('image', postData.image);
+
+
+      if (this.state.editPost) {
+        formData.append('oldPath', this.state.editPost.imagePath);
+      }
+
+
+
+    const imageSend = await  fetch('localhost:8080/post-create', 
+
+      {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          Authorization: 'Bearer ' + this.props.token
+        }
+      }
+      )
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ VAMOS 
+
+MANIPULAR O RESULTADO DISSO AÍ,
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+      const formData = new FormData(); ///ainda USAREMOS ISSO PARA CONSEGUIR UPLOADAR NOSSAS IMAGES, MESMO EM UMA 'GRAPHQL API' (pq ainda vamos usar uma rest api, CONJUNTAMENTE COM ESES GRAPHQL API, para fazer o MANAGE DO STORE DE NOSSAS IMAGES)....
+
+      formData.append('image', postData.image);
+
+
+      if (this.state.editPost) {
+        formData.append('oldPath', this.state.editPost.imagePath);
+      }
+
+
+
+    const imageSend = await  fetch('localhost:8080/post-create', 
+
+      {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          Authorization: 'Bearer ' + this.props.token
+        }
+      }
+      )
+
+
+
+
+
+
+const manipulatedImageSend = await imageSend.json();
+
+
+
+
+
+
+
+
+--> isso feito,
+
+
+
+
+
+VAMOS 
+
+ESCREVER 
+
+
+
+
+'const imageUrl = manipulatedImageSend.filePath',
+
+
+
+PARA 
+
+PEGAR 
+
+EXATAMENTE O 
+
+
+
+
+VALOR DO URL/PATH DESSA IMAGE...
+
+(
+
+
+    e vamos ter 
+    essa propriedade 
+
+
+    'filePath'
+
+
+
+    JUSTAMENTE DEVIDO AO CÓDIGO QUE HAVÍAMSO SETTADO 
+
+
+    NO BACKEND,
+
+
+    AQUELE CÓDIGO DE 
+
+
+
+
+'res.status(201).json(
+    {
+        message: 'File stored.',
+
+        filePath: req.file.path
+    }
+)
+
+)'
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... -------> AÍ, NO CASO,
+
+
+
+PODEMOS USAR ESSA 
+
+DATA RECÉM  RECEBIDA (E armazenada em 'const imageUrl')
+
+
+
+
+__EM UMA __ GRAPHQL QUERY....
+
+
+
+
+
+
+--> O PROFESSOR TAMBÉM __ INVERTE__ A ORDEM DE EXECUÇÃO DAS COISAS;
+
+
+
+coloca 
+
+o 
+
+
+
+
+
+SEND DA DATA 'COMUM' AO GRAPHQL 
+
+
+___ ANTES__ DO SEND DA IMAGE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOSSO CÓDIGO ESTÁ MEIO BAGUNÇADO....
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLIC QUE O EDIT É ALGO QUE VEREMOS __ MAISTARDE.. --> AGORA VMREMOS O CREATE DE POSTS.....
+
+
+
+
+
+
+
+
+
+
+
+
+--> agora acabei de ver um problema... --> todos nossos posts estõa com 'DELETE' sumido.... (sinal que 
+
+
+
+
+algo aconteceu) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> tenho que consertar isso com minhas próprias mãos...
+
+
+
+
+
+
+
+
+
+--> OS BUTTONS DE 'DELETE' E 'EDIT' 
+
+
+não estão funcionando devido a ESTE CÓDIGO: (código em 'Post.js', cada post tem 1 desses....)
+
+
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    (async () => {
+      const postUserIdResult = await fetch(`http://localhost:8080/feed/post/buttons/${props.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.token}`,
+      },
+      body: JSON.stringify({
+        userId: props.userId,
+      }),
+    });
+    const manipulatedPostUserIdResult = await postUserIdResult.json();
+
+    console.log(manipulatedPostUserIdResult);
+      console.log(manipulatedPostUserIdResult.created);
+      // setLoadedPostData(true);
+      setCreated(manipulatedPostUserIdResult.created);
+      console.log(created);
+    })()
+
+  }, [])
+
+
+
+
+
+-----------> COMO NO´S __ NÃO USAMOS MAIS ESSE 
+
+
+LINK/ENDPOINT,
+
+
+usamos 
+
+só  o 
+
+
+'graphql' 
+DE TIPO POST,
+
+
+
+ISSO NÃO ESTÁ MAIS FUNCIONANDO... -->_ TENHO QUE ALTERAR TUDO ISSO,
+
+COLOCAR O 
+
+
+
+
+ENDPOINT GRAPHQL...
+
+
+
+
+
+
+
+
+VAI FICANDO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    (async () => {
+      // const postUserIdResult = await fetch(`http://localhost:8080/feed/post/buttons/${props.id}`, {
+
+
+        const graphqlQuery = {
+          query: `
+          {
+            getCreationStatus(userId: "${props.userId}")
+          }
+          `
+        }
+
+
+        const postUserIdResult = await fetch(`http://localhost:8080/graphql`, { ///versão graphql...
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.token}`,
+      },
+      body: 
+      // JSON.stringify({
+      //   userId: props.userId,
+      // }),
+            JSON.stringify(graphqlQuery),
+    });
+    const manipulatedPostUserIdResult = await postUserIdResult.json();
+
+    console.log(manipulatedPostUserIdResult);
+      console.log(manipulatedPostUserIdResult.created);
+      // setLoadedPostData(true);
+      setCreated(manipulatedPostUserIdResult.created);
+      console.log(created);
+    })()
+
+  }, [])
+
+
+
+
+
+
+
+
+
+
+
+--------------
+
+
+
+
+
+ok, CONSERTEI ESSE CÓDIGO DO 'DISPLAY DOS BUTTONS' (os buttons de 'edit' e 'delete' APARECEM SE O USER 
+
+REALMENTE FOI O RESPONSÁVEL POR SUA CRIAÇÃO... ou seja, se ele está 'authorized'...)
+
+
+
+
+
+
+
+
+
+--> usei uma combinação de códigos, 
+
+
+mas o que 
+
+realmente 
+
+importou foi o código do RESOLVER e do SCHEMA:
+
+
+
+
+
+
+     getCreationStatus: async function(args, req) {
+
+
+        
+  const postId = args.postId;
+
+  const userId = args.userId;
+
+
+  console.log(postId);
+
+
+  const foundPost = await Post.findOne(
+    {
+      _id: ObjectId(postId)
+    }
+  );
+
+  console.log(foundPost);
+
+  if (!foundPost) {
+        const error = new Error('Post could not be found');
+        error.statusCode = 404;
+        throw error;
+
+  }
+
+
+  const foundUser = await User.findOne(
+    {
+      _id: ObjectId(userId)
+    }
+  );
+
+    console.log(foundUser);
+
+  if (foundUser._id.toString() === foundPost.creator.userId.toString()) {
+    console.log('ENTERED', foundUser._id.toString(), foundPost.creator.userId.toString());
+    return {
+        created: true
+    }
+
+    } else {
+        return {
+            created: false
+        }
+    }
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+      getCreationStatus(userId: String!, postId: String!): PostAuth
+}
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+O PRÓXIMO PASSO, AGORA,
+É FAZER COM QUE O 
+
+
+ADD/EDIT DE UM POST REALMENTE 
+
+
+SUPORTE O UPLOAD DE UMA IMAGE/FILE...
+
+
+
+
+
+
+
+
+
+
+ESTAVA FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+finishEditHandler = async (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+
+    try {
+      this.setState({ editLoading: true });
+
+      //Set up data (with image!)
+      // let url = 'URL';
+
+      ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+      // let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+      // formData.append('title', postData.title);
+      // formData.append('content', postData.content);
+      // formData.append('image', postData.image);
+
+      // console.log(postData.image);
+
+      // let url = 'http://localhost:8080/feed/post';
+
+
+
+
+
+      const formData = new FormData(); ///ainda USAREMOS ISSO PARA CONSEGUIR UPLOADAR NOSSAS IMAGES, MESMO EM UMA 'GRAPHQL API' (pq ainda vamos usar uma rest api, CONJUNTAMENTE COM ESES GRAPHQL API, para fazer o MANAGE DO STORE DE NOSSAS IMAGES)....
+
+      formData.append('image', postData.image);
+
+
+      if (this.state.editPost) {
+        formData.append('oldPath', this.state.editPost.imagePath);
+      }
+
+
+
+    const imageSend = await  fetch('localhost:8080/post-create', 
+
+      {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${this.props.token}`,
+        }
+      }
+      );
+
+
+const manipulatedImageSend = await imageSend.json();
+
+
+
+const imageUrl = manipulatedImageSend.filePath;
+
+
+
+
+      let graphqlQuery = {
+        query: `
+        mutation {
+          createPost(
+            userInput: {
+                  title: "${postData.title}",
+                  content: "${postData.content}",
+                  imageUrl: "${imageUrl}"
+            }
+         ) {
+          post {
+            title
+            content 
+            _id
+            imageUrl
+            createdAt
+            updatedAt
+            creator {
+                name
+            }
+          },
+          creator {
+            name 
+            _id
+          }
+        }
+        }
+      `,
+      };
+
+
+      // for (var pair of formData.entries()) {
+      //   // console.log(pair[0] + ', ' + pair[1]);
+      // }
+
+      const editAndAddResults = await fetch('localhost:8080/graphql', {
+        method: 'POST',
+
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          'Content-Type': 'application/json' ///colocamos isto na VERSÃO __ 'GRAPHQL' de nosso código, pois é necessário lá... (é necessário em muitas outras hipóteses, também, mas neste curso, passou a ser necessário quando trocamos para um bakcned GRAPHQL..)
+          
+          
+          
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE, não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ  ENVIANDO DATA por meio daquele 'formData.append()'... APENAS precisamos settar, nesse case, UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+
+      });
+
+      if(editAndAddResults.errors && editAndAddResults[0].status === 400) {
+        throw new Error(
+          'Please input values that are valid and not equal to previous ones.'
+        )
+      }
+
+
+      if(
+        editAndAddResults.errors
+      ) {
+        throw new Error('Creating or editing a post failed!')
+      }
+
+      // return res.json();
+      // })
+      // .then((data) => {
+
+      const manipulatedEditAndAddResults = await editAndAddResults.json();
+
+
+      console.log(manipulatedEditAndAddResults);
+
+      const post = {
+        _id: manipulatedEditAndAddResults.data.createPost.post._id,
+        title: manipulatedEditAndAddResults.data.createPost.post.title,
+        content: manipulatedEditAndAddResults.data.createPost.post.content,
+        creator: manipulatedEditAndAddResults.data.createPost.post.creator,
+        createdAt: manipulatedEditAndAddResults.data.createPost.post.createdAt,
+        imagePath: manipulatedEditAndAddResults.data.createPost.post.imageUrl
+      };
+
+
+      console.log(post, 'Line');
+      this.setState((prevState) => {
+        let updatedPosts = [...prevState.posts];
+        if (prevState.editPosts) {
+          const postIndex = prevState.posts.findIndex((post) => {
+            return post._id === prevState.editPost._id;
+          });
+          updatedPosts[postIndex] = post;
+        } else if (prevState.posts.length < 2) {
+          updatedPosts = prevState.posts.concat(post);
+        }
+        return {
+          posts: updatedPosts,
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+        };
+      });
+
+      this.loadPosts();
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      //   console.log(err);
+      this.setState({
+        isEditing: false,
+        editPost: null,
+        editLoading: false,
+        error: err,
+      });
+      this.loadPosts();
+      // });
+    }
+  };
+
+
+
+
+
+  -----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+  AGORA VAMOS CONSERTAR O 'ADD DE UM POST'... o edit é algo que veremos DEPOIS...
+
+
+
+
+
+
+
+
+
+  --> DE CARA, RECEBEMOS UM ERROR:
+
+
+  Fetch API cannot load localhost:8080/post-create. URL scheme "localhost" is not supported.
+
+
+
+
+  -> sim.... é pq a route é 'post-image',
+
+
+  E NÃO 'post-create'...
+
+
+
+
+
+
+
+
+
+
+
+  --> OK... MAS NÓS AINDA RECEBEMOS ESSE ERRO:
+
+
+  Fetch API cannot load localhost:8080/post-image. URL scheme "localhost" is not supported.
+
+
+
+
+
+
+
+
+
+
+
+  ----> hmmm isso não aconteceu no código do professor....
+
+
+
+
+
+
+
+  --> AH... ENTENDI... a escrita estava errada, mesmo:
+
+
+  ('http://localhost:8080/post-image'
+
+
+
+
+
+  --> ESSA É A ESCRITA CERTA (http no começo)....
+
+
+
+
+
+
+
+
+  --> RECEBI OUTRO ERROR:
+
+
+
+  A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\app.js:69      
+      req.body.title.length >= 6 &&
+                     ^
+
+TypeError: Cannot read properties of undefined (reading 'length')
+    at fileFilter (A:\projeto4 - NODEJS\MODULO28-TRABALHANDOCOMGRAPHQL\NOVONOVOPROJETO24-BACKEND GRAPHQL (e sem websockets)\app.js:69:22)
+
+
+
+
+
+
+
+    --> acho que esse erro é do MULTER.....
+
+
+
+
+
+
+
+
+
+
+
+    --> O PROBLEMA EXISTE NESTE PEDAÇO DO CÓDIGO:
+
+
+    const fileFilter = (req, file, cb) => {
+  console.log(file);
+
+  console.log(req.body.title, 'LINE3');
+
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    if (
+      req.body.title.length >= 6 &&
+      req.body.title.match(/^[A-Za-z]+$/) &&
+      req.body.content.length >= 6
+    ) {
+
+
+
+
+
+
+      --> ISSO ACONTECE PQ 
+
+      ESSA 
+
+      'VALIDATION'
+
+
+      fajuta aqui 
+      
+
+      _eSTÁ _ CHECANDO _ __
+
+
+
+
+      POR PROPRIEDADES 
+
+      NO NOSSO OBJETO 'REQUEST' (
+
+
+        mas isso 
+
+        é algo que NÃO ESTAMOS FAZENDO MAIS,
+
+
+        pq 
+
+        agora 
+
+        ESTAMOS _ _ ENVIANDO ISSO __ NA NOSSA QUERY, que fica dentro do body do request,
+
+
+        MAS QUE _ NÃO É O REQUEST BODY EM SI....
+      )
+
+
+
+
+--> TIREI ESSA VALIDATION FAJUTA....
+
+
+
+
+
+
+
+
+
+--> CONSERTEI...
+
+
+
+
+
+
+
+
+
+DEPOIS DISSO,
+
+
+OBTIVE OUTRO ERRO,
+
+
+
+
+
+UM ERRO ESTRANHO DE 
+
+
+
+
+''
+
+Syntax Error: Invalid character escape sequence:
+
+''
+
+
+
+--> ISSO ERA CAUSADO PELO PASS DA DATA DE 'imageUrl'
+ 
+
+ na forma crua,
+
+ sem chamar '.replace()'
+
+ para 
+ substituir a sintaxe bugada do path, que 
+
+ vai ficar armazenado lá na nossa database....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      let graphqlQuery = {
+        query: `
+        mutation {
+          createPost(
+            userInput: {
+                  title: "${postData.title}",
+                  content: "${postData.content}",
+                  imageUrl: "${imageUrl.replace(/\\/g, '/')}" ---> ISTO CONSERTOU O PROBLEMA....
+
+
+
+
+
+
+
+
+
+
+
+
+--> agora tenho que testar algo.... --> tenho que ver 
+
+SE 
+
+
+
+ARQUIVOS 'IMAGE' SÃO ADICIONADOS MESMO QUANDO A VALIDATION DE NOSSOS FIELDS ___ FALHA__.....
+
+
+
+
+
+
+
+
+
+touché.... eu tinha razão.... 
+
+
+
+
+(
+
+
+
+  preciso executar algum check especial 
+
+  lá 
+
+
+  naquele 
+
+  'fileFilter'
+
+  do 
+
+  multer para _ _IMPEDIR__ QUE 
+
+
+
+  UMA FILE/IMAGE SEJA ADICIONADA QUANDO O USER FALHAR NO VALIDATION/ ADD DE UM POST...
+)
+
+
+
+
+
+
+
+
+
+--> também tenho outro erro:
+
+
+Unhandled Rejection (TypeError): Cannot read properties of null (reading 'created')
+
+
+
+
+
+
+
+
+
+--> isso acontece quando LOGGO PELA PRIMEIRA VEZ NO MEU APP... (
+
+
+  é alguma coisa com o load dos buttons de 'edit/delete' em cada post...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI O PROBLEMA:
+
+
+
+
+
+  useEffect(() => {
+    (async () => {
+      // const postUserIdResult = await fetch(`http://localhost:8080/feed/post/buttons/${props.id}`, {
+
+      const userId = localStorage.getItem('userId');
+
+
+        const graphqlQuery = {
+          query: `
+          {
+            getCreationStatus(userId: "${userId}", postId: "${props.id}") {
+                  created
+            }
+          } 
+          `
+        }
+
+
+        const postUserIdResult = await fetch(`http://localhost:8080/graphql`, { ///versão graphql...
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.token}`,
+      },
+      body: 
+      // JSON.stringify({
+      //   userId: props.userId,
+      // }),
+            JSON.stringify(graphqlQuery),
+    });
+    const manipulatedPostUserIdResult = await postUserIdResult.json();
+
+
+    console.log(manipulatedPostUserIdResult);
+      // console.log(manipulatedPostUserIdResult.data.created);
+      // setLoadedPostData(true);
+
+
+    
+
+
+      setCreated(manipulatedPostUserIdResult.data.getCreationStatus.created);
+
+    })()
+
+  }, [])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> eu passei a pegar esse 'userId'
+
+
+  passado na query
+
+
+  __ LÁ __ DO MEU LOCAL STORAGE (pq acho que é bem mais rápido do que pegar lá do 'props' de 'props.userId')....
+
+
+
+
+
+
+
+
+
+  --> é por isso que eu escrevi 
+
+
+  'const userId = localStorage.getItem('userId');'....
+
+
+
+
+
+
+
+
+
+  CERTo....
+
+
+
+
+
+
+
+
+
+
+
+  a próxima questão é fazer com que o MULTER __ IMPEÇA O UPLOAD DO ARQUIVO/FILE QUANDO 
+
+  CONSTATAR 
+
+
+
+
+  QUE 
+
+
+
+
+
+AS INFO PASSADAS NA QUERY SÃO __ INVÁLIDAS_....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> para fazer isso, provavelmente vou ter que INVERTER A ORDEM DO SEND DOS REQUESTS,
+
+LÁ 
+
+
+EM 
+'Feed.js'... 
+
+
+(
+
+
+  enviar o STORE NO DATABASE ANTES, PARA SÓ ENTÃO 
+
+
+  criar o post....
+)
+
+
+
+
+
+
+
+
+
+
+
+--> não, não vou conseguir fazer isso.... o flow da data não faz sentido...
+
+
+melhor só continuar com as aulas do professor...
+
+
+
+
+
+
+
+
+
+
+-> PRÓXIMO DESAFIO É FAZER COM QUE O BOTÃO DE 'VIEW' FUNCIONE;
+
+
+FAZER COM QUE O 'SHOW A SINGLE POST' funcione....
+
+
+
+
+
+
+
+
+There's a tiny bug in the code.
+
+When fetching all posts (in the loadPosts method in your frontend code), we have to ensure that we also fetch the imageUrl, such that we can store it for the fetched posts and use it when we edit a post.
+
+Your GraphQL query should look like this (in loadPosts):
+
+const graphqlQuery = {
+      query: `
+        {
+          posts(page: ${page}) {
+            posts {
+              _id
+              title
+              content
+              imageUrl
+              creator {
+                name
+              }
+              createdAt
+            }
+            totalPosts
+          }
+        }
+      `
+    };
+    fetch('http://localhost:8080/graphql', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(graphqlQuery)
+    })
+Note that imageUrl was added to the fields we retrieve for every post!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> tentar fazer isso sozinho..
+
+
+
+
+
+
+
+
+
+

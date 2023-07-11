@@ -1,0 +1,1576 @@
+
+
+
+
+Hmm mais alguns erros de estilo, tenho que consertar depois. (dessa vez no MOBILE NAV...)
+
+
+
+
+
+
+--> também tenho um erro no botão de 'cancel',
+
+
+quando clico em 
+
+
+'New post' (quero que seja executada uma function que _ FECHE__ o meu modal e backdrop...)
+
+
+
+(consertei)....
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> VAMOS ANALISAR ESSE REACT APP.. --> VAMOS VER QUAIS 
+
+
+REST API ENDPOINTS QUEREMOS 
+
+ADICIONAR AO NOSSO BACKEND...
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+------> primeiramente,
+
+
+
+devemos 
+
+
+
+ver....
+
+
+
+TEMOS:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR EXPLICA QUE 
+
+
+
+O ARQUIVO 'App.js'
+
+
+no frontend react é 
+
+BASICAMETNE 
+
+
+
+A 'ENTRY FILE'
+
+
+
+
+em que 
+
+
+
+nosso 
+
+app react 'começa'/começa a renderizar as primeiras telas....
+
+
+
+
+
+
+
+
+--> E NESSE ARQUIVO TEMOS LOCAIS EM QUE TEMOS 
+
+
+LÓGICA 
+
+
+
+QUE DEVEOMS TRABALHAR MAIS 
+
+TARDE...(
+
+
+    como o 'loginHandler',
+
+
+
+    que é uma DAS NOSSAS API ROUTES, COM CERTEZA...
+)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('URL')
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ok... precisamos de uma 'URL'...
+
+
+
+--> E É EVIDENTE QUE PRECISAMOS ABRIR NOSSO APP EM OUTRA JANELA DO VISUAL STUDIO CODE,
+
+
+
+
+digo o app NODEEXPRESS...
+
+
+
+
+
+
+-----> OK.... 
+
+
+
+
+
+
+
+
+----> TEMOS A MESMA COISA COM O 'SIGNUP':
+
+
+
+
+
+
+
+
+
+
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch('URL')
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------->NO FOLDER DE 'PAGES',
+
+
+
+  ENCONTRAMOS UM FOLDER DE 'FEED',
+
+   
+
+
+__ E 
+
+
+O ARQUIVO 
+
+'Feed.js'
+
+
+É O ARQUIVO 
+
+
+
+RESPONSÁVEL PELA PAGE INICIAL, 
+
+COM OS BUTTONS DE 
+
+'UPDATE' 
+
+
+E 
+
+'NEW POST'...
+
+
+
+
+
+
+
+
+
+
+
+---------> LÁ 
+
+NESSA PAGE DE 
+
+'Feed',
+
+JÁ TEMOS ALGUMAS ROUTES 
+PRESENTES,
+
+
+COMO A ROUTE DE 
+
+
+'FETCH THE CURRENT STATUS OF THE USER'... (
+
+
+
+
+
+
+
+
+
+isso é visto no COMPONENTDIDMOUNT,
+
+
+NESTE TRECHO AQUI:
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  }
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS VAMOS FAZER FETCH nessa url aí,
+
+e aí 
+
+
+
+vamos 
+
+TENTAR CONSEGUIR O 
+
+
+
+STATUS DO USER...
+
+
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE TEMOS OUTROS 
+
+
+LUGARES EM QUE PRECISAMOS DE API ROUTES,
+
+
+
+COMO 
+
+
+
+
+
+
+NO METHOD DE 'loadPosts',
+
+
+LÁ EM 
+
+
+'Feed.js':
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchErrors);
+  };
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+AÍ, NO CASO, TEMOS O 'REACH OUT' A UMA URL QUE TAMBÉM FAZ 
+
+
+
+SERVE DE ALGUNS POSTS...
+
+
+
+
+
+
+
+--> MAS TAMBÉM 
+
+
+TEMOS 
+
+
+
+MAIS COISAS ALI EMBAIXO,
+
+
+
+como 
+
+
+em 
+
+'statusUpdateHandleR',
+
+
+com este código:
+
+
+
+
+
+
+
+  statusUpdateHandler = (event) => {
+    event.preventDefault();
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Can't update status!");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+--> TAMBÉM em 
+
+
+
+'finishEditHandler',
+
+
+
+QUE É O LOCAL EM QUE EDITAMOS/ADICIONAMOS NOVOS POSTS...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => { ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    let url = 'URL';
+
+    if (this.state.editPost) {
+      url = 'URL';
+    }
+
+    fetch(url)
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+  ---------------------------------
+
+
+
+
+
+
+
+
+
+
+--------> POR FIM, TEMOS O 'deletePostHandler',
+
+QUE TAMBÉM NECESSITA DE API ROUTES:
+
+
+
+
+
+
+
+
+
+  deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+
+
+
+
+  ---------------------
+
+
+
+
+
+
+
+
+
+
+
+  ------> JÁ TEMOS UM MONTE DE FETCH METHODS,
+
+
+  MAS NENHUM DELES TEM UMA 'URL' 
+
+  DEFINIDA... --> ISSO PQ 
+
+
+
+
+  ESSA É A NOSSA TAREFA:
+
+
+
+  PRECISAMOS 
+
+
+  SETTAR 
+
+
+ROUTES/API ROUTES 
+
+
+PARA 
+
+
+ESSES 
+
+
+
+CALLS DE 'fetch()' no nosso backend...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, É CLARO, PRECISAMOS __ CRIAR __ UM NOVO _ SERVER/APP NODEEXPRESS...
+
+
+
+
+
+
+
+
+
+
+
+----> JÁ NO ARQUIVO/PAGE 
+
+de 
+
+
+'SinglePost',
+
+
+
+
+NÓS CARREGAMOS 1 ÚNICO POST QUANDO CARREGAMOS NELE (é essa página aí)...
+
+
+
+
+
+
+
+
+--> E LÁ, DE FATO,
+
+TAMBÉM 
+TEMOS 
+
+
+
+O 'REACH OUT'
+
+ao backend,
+
+para FETCHEAR 
+
+1 POST ESPECÍFICO DE NOSSA DATABASE... ....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+
+
+  --------------------------------
+
+
+
+
+  OK.... 
+
+
+
+
+  ENTÃO, DEVEMOS COMEÇAR...
+
+
+
+
+
+
+
+
+
+
+  QUAIS ENDPOINTS PRECISAMOS?
+   
+
+
+
+
+
+
+
+
+
+   BEM, ANTES DISSO,
+
+
+   VOU QUERER 
+
+
+   COMEÇAR 
+
+   1 SERVIDOR 
+
+
+
+   'REST API' 
+
+
+
+   nodeEXPRESS 
+
+
+   __ DO ZERO__...
+
+
+
+
+
+   -----------------------------------------------
+
+
+começo com 
+
+'npm init' em ' folder vazio....
+
+
+
+
+
+
+
+
+
+crio um folder de 
+
+
+
+
+
+
+
+
+
+
+
+
+NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> INSTALO O NODEMON 
+
+
+
+
+--> INSTALO O 'express'...
+
+
+
+
+
+
+
+
+---> CRIO FOLDERS DE 'CONTROLLERS',
+
+
+'ROUTES'
+
+
+
+
+
+e um arquivo 'app.js'...
+
+
+
+
+
+
+
+
+
+--> agora tenho que escrever esse arquivo 
+
+app.js...
+
+
+
+
+
+
+
+
+--> PRECISO INSTALAR, ALÉM DISSO, O BODYPARSER... 
+
+(parsear as JSON REQUESTS E RESPONSES)...
+
+
+
+-----> FICA TIPO ASSIM, POR ENQUANTO:
+
+
+
+
+
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CLARO QUE AINDA FALTOU ESCREVER ROUTES/API ROUTES LÁ NO ARQUIVO routes de 'feed.js',
+
+
+E TAMBÉM 
+
+
+COLOCAR ESSA ROUTE DENTRO 
+
+DO 
+
+
+MEU app.js,
+
+
+
+em um middleware assim:
+
+
+app.use(feedRoutes);
+
+
+
+   ---------------------------------------
+
+
+
+
+
+
+
+
+   O CÓDIGO DO 'app.js' ficou assim:
+
+
+
+
+
+
+
+
+   const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+
+const feedRoutes = require('./routes/feed');
+
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+app.use('/feed', feedRoutes)
+
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E O CÓDIGO DO 'feed.js' (arquivo route)
+ 
+
+ FICOU ASSIM:
+
+
+
+
+
+
+
+ const express = require('express');
+
+const router = express.Router();
+
+router.get('/posts', feedController.getPosts);
+
+router.post('/post', feedController.createPost);
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SÓ FALTOU O CONTROLLER...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post.' }],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title;
+  const content = req.body.content;
+
+  console.log('REQUEST RECEIVED');
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString,
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+OK... ESSE ERA O NOSSO CONTROLLER DO MÓDULO ANTERIOR, igualzinho...
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+
+
+--> OK...
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR DIZ QUE 
+
+
+JÁ TEMOS UMA ROUTE PARA 
+
+'GET ALL POSTS',
+
+
+
+
+
+E JÁ TEMOS UMA 
+
+
+ROUTE PARA 'CREATE A NEW POST'...
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, 
+
+
+VAMOS PRECISAR _ DE ROUTES PARA:
+
+
+
+
+
+
+
+1) 'GET A SINGLE POST'
+
+
+
+2) 'EDIT A SINGLE POST' 
+
+
+
+
+3) 'DELETE A SINGLE POST'
+
+
+
+
+
+
+-----> E TODAS ESSAS ROUTES VÃO EXISTIR NESSE ARQUIVO route de 
+
+'feed.js'....
+
+
+
+
+
+
+
+
+
+--> VAMOS ESCREVER PROVAVELMENTE ASSIM:
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+//GET /feed/posts
+router.get('/posts', feedController.getPosts);
+
+//POST /feed/post
+router.post('/post', feedController.createPost);
+
+//PATCH /feed/post 
+
+router.patch('/post', feedController.editPost);
+
+
+//GET  /feed/post/:postId
+
+router.get('/post', feedController.getSinglePost);
+
+
+//DELETE /feed/post/:postId
+
+router.delete('/post', feedController.deletePost);
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+MAIS ALGUMA ROUTE?
+
+
+
+--> VAMOS PRECISAR DE ROUTES PARA 
+
+
+'LOGGING A USER IN'
+
+
+'
+SIGNING USERS UP' (creating new users)
+
+
+
+
+
+
+'VIEWING THE STATUS OF A USER' (GET)
+
+
+
+
+
+
+
+
+'EDITING THE STATUS OF A USER' (PATCH)
+
+
+
+
+
+
+
+
+--> para isso, para essas routes RELATIVAS AO USER,
+
+VAMOS PRECISAR DE OUTRO ARQUIVO 'route',
+
+
+provavelmente de nome 
+
+
+'auth.js'...
+
+
+
+
+
+
+
+--> escrevi isto:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+
+
+
+router.post('/signup', );
+
+
+
+
+router.get('/status/:userId', )
+
+
+///EDIT STATUS 
+
+router.patch('/status/:userId', )
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+--> faltou o código para 'login'....
+
+
+
+
+
+
+
+
+
+
+--> JÁ TEMOS AS ROUTES PARA 'GET POSTS' 
+
+
+E 
+
+PARA 
+
+
+
+
+'CREATE NEW POST',
+
+QUE SÃO ESTAS :
+
+
+
+router.get('/posts', feedController.getPosts);
+
+
+router.post('/post', feedController.createPost);
+
+
+
+
+
+
+
+
+-------> VAMOS CONTINUAR COM ESSAS ROUTES,
+
+
+
+
+ESCREVER O CÓDIGO NECESSÁRIO NOS SEUS CONTROLLERS,
+
+PARA QUE
+
+CONSIGAMOS FAZER 
+
+'GET' 
+DE 
+
+POSTS' 
+
+
+
+E 
+
+'CREATE' 
+
+
+DE POST...

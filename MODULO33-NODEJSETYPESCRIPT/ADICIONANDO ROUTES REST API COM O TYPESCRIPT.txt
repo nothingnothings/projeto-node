@@ -1,0 +1,2021 @@
+
+
+
+
+
+
+
+
+
+
+
+-> AGORA DEVEMOS __ DEFINIR COMO UM 'todo'
+
+
+
+(que fica dentro do array de 'todos')
+
+
+DEVE 
+
+
+__ SE __ PARECER.... -----> (
+
+
+    ISSO PQ 
+
+    NÃO VAMOS QUERER QUE CADA TODO SEJA 
+
+    UMA SIMPLES STRING....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-_> acho que cada TODO VAI SER UM __ OBJETO__..
+
+
+
+
+
+
+
+
+
+
+
+---> PARA CRIAR UM 'TYPE' 
+
+de 
+objeto 
+
+
+CUSTOM,
+
+
+devemos recorrer 
+
+À 
+
+feature 
+do 
+
+'type alias'...
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS ESCREVER ASSIM:
+
+
+
+
+
+
+
+
+
+
+type todo = {
+
+
+    propriedade1: 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+type Todo = {
+
+
+
+}
+
+
+// const todos: string[] = []; ///array de STRINGS....  (porém só inicialmente, pq vamos querer que seja um ARRAY DE OBJETOS 'todo' --> type aliasing)....
+
+
+
+
+const todos: Array<Todo> = []; ///SINTAXE COMPLETA DE COMO ASSIGNAR O TYPE 'todo' COMO INNERTYPE DESSE GENERIC TYPE (que é o array em si)....
+
+
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+
+    res.status(200).json(
+        {
+            todos: todos //vamos retornar esse array, na nossa response..
+        }
+    )
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... MAS COMO __ NÓS VAMOS DEFINIR UM __ OBJECT,
+
+
+
+
+
+PROFESSOR DIZ QUE PREFERE CRIAR UMA 'INTERFACE',
+
+
+
+
+e não 
+um 
+
+'type alias' (há pouca diferença entre essas 2 figuras, quando estamos codando coisas fáceis.... --> entretanto ,
+
+
+as interfaces EXPÕEM METHODS DE CLASSES QUE NÃO EXISTEM NOS TYPE ALIASES...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR _ _PENSA__ EM DEFINIR ESSA INTERFACE AQUI EM 'routes.js'... -----> 
+
+
+
+
+
+
+ENTRETNATO,
+
+
+
+ELE MUDA DE 
+
+IDEIA 
+
+
+E 
+
+DECIDE 
+
+CRIAR UM FOLDER 
+
+
+
+
+PARA 
+
+
+
+ISSO,
+
+folder de 
+
+
+
+'models'....
+
+
+
+
+
+
+
+
+
+
+DENTRO DESSE FOLDER,
+
+
+
+PROFESSOR CRIA UM ARQUIVO DE 
+
+
+'todo.js',
+
+
+
+EM QUE 
+
+AGORA 
+
+ELE 
+
+VAI 
+
+DEFINIR 
+
+ESSA 
+
+
+INTERFACE...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+export interface Todo {
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+(
+
+
+    E SIM,
+     
+
+     PODEMOS DEFINIR INTERFACES LÁ NOS NOSSOS MODELS 
+
+    mongoose/express,
+
+
+    não há nada impedindo isso...
+)
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+export interface Todo {  ////ISSO É RECOMENDADO.....
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> VAMOS DEIXAR ISSO COMO 'NAMED EXPORT', em vez de DEFAULT EXPORT (pq eu acho que o professor ainda vai querer usar mongoose com esse app, e se usarmos mongoose, vamos querer usar múltiplos exports nesse arquivo de 'todo.js')....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO... -------> 
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+ELE ESCREVE/DEFINE O TODO TYPE:
+
+
+
+
+
+
+
+
+ESSE TODO VAI TER UMA PROPRIEDADE 
+
+de 
+
+'id',
+
+
+
+e 
+
+outra de 'text',
+
+
+AMBAS STRINGS...
+
+
+
+
+ex:
+
+
+
+
+
+export interface Todo {  ////ISSO É RECOMENDADO.....
+
+    id: string;
+    text: string;
+
+}
+
+
+-----------------------
+
+
+
+AGORA, COM ISSO EXPORTADO,
+
+
+VAMOS 
+
+ATÉ 
+
+O ARQUIVO 
+
+
+
+
+
+
+
+
+DOS CONTROLLERS de 'todo.ts'
+
+
+E VAMOS 
+
+IMPORTAr_ _ ESSE NEGÓCIO_>...
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+import { Request, Response, NextFunction } from 'express'; ///soluciona nosso problema de 'auto-correct'....
+
+
+import { Todo } from '../models/todo'; ///SERÁ USADO LOGO ABAIXO, naquele array genérico (para deixar menos genérico)....
+
+
+const todos: Array<Todo> = []; ///SINTAXE COMPLETA DE COMO ASSIGNAR O TYPE 'todo' COMO INNERTYPE DESSE GENERIC TYPE (que é o array em si)....
+
+
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+
+    res.status(200).json(
+        {
+            todos: todos //vamos retornar esse array, na nossa response..
+        }
+    )
+
+
+
+
+}
+
+
+
+
+
+
+
+
+---------------> 
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+ISSO FUNCIONARÁ, EU ACHO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> COMO ESTAMOS USANDO UM NAMED IMPORT,
+
+
+precisamso 
+
+
+
+
+de 
+
+'{ Todo } from '../models/todo' 
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+CERTO... 
+
+
+ESSA É A SINTAXE IMPORT/EXPORT TÍPICA DO 
+
+ES6 --> javascript moderno....
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... ESSE É O MODEL DE 'todo',
+
+
+
+que é simplesmente uma INTERFACE QUE ELE DEFINIU NO ARQUIVO MODEL de 'todo.ts'....
+
+
+
+
+
+
+
+
+
+
+
+-> IMPORTAMOS ISSO 
+
+
+
+NO ARQUIVO DE 'todo.ts' dos controllers,
+
+
+
+
+
+
+
+
+E AÍ 
+
+
+o professor 
+
+
+ESCREVE ESTE CÓDIGO:
+
+
+
+
+
+
+
+const todos: Todo[] = []; ////////ISSO VAI DEFINIR O INNER TYPE DESSE ARRAY COMO SENDO ESSE OBJETO 'Todo'...
+
+
+
+
+
+
+
+
+
+--> ESSE CÓDIGO É BASICAMETNE UM SHORTCUT DE 
+
+
+
+'''
+
+
+
+const todos: Array<Todo> = []; ///SINTAXE COMPLETA DE COMO ASSIGNAR O TYPE 'todo' COMO INNERTYPE DESSE GENERIC TYPE (que é o array em si)....
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... ISSO FEITO,
+
+LÁ EM 
+
+
+
+'routes.ts',
+
+
+
+
+VAMOS 
+
+
+
+COLOCAR 
+
+
+
+UMA NOVA ROUTE, 
+
+ROUTE 
+
+PARA 
+
+'ADD A TODO' --> 
+
+
+VAI 
+
+SER 
+
+UM 
+
+'/todo',
+
+
+
+
+PARA UM REQUEST DE TIPO 'POST'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... FICOU ASSIM:
+
+
+
+
+
+
+router.post(
+  '/todos',
+
+  createTodo
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE VAMOS __ QUERER__ 
+
+
+
+
+
+EDITAR ESSE 'createTodo',
+
+
+LÁ NO CONTROLLER:
+
+
+
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+    const newTodo = new Todo(
+        {
+            
+        }
+    )
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> ESSA FUNÇÃO/CONTROLLER DE CREATETODO,
+
+
+no caso,
+
+
+
+
+VAI _ INSTANCIAR __ O MODEL DE 
+
+'Todo',
+
+que foi importado aqui...
+
+
+
+
+
+
+
+
+
+----->  para isso,
+
+para instanciar,
+
+
+
+
+chamamos
+
+
+
+
+'const newTodo = new Todo(
+    {
+
+
+    }
+)
+
+
+'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> MAS ISSO __ ESTÁ ERRADO... --> ESTÁ ERRADO __ PQ ISSO __ NÃO É UM MODEL MONGOOSE.... --> 
+
+não, em vez disso,
+
+
+DEVEMOS __ SÓ CRIAR UM __ NOVO OBJETO PADRÃO (
+
+
+
+    com 'const newTodo = {}' ,
+
+
+
+),
+
+
+
+
+
+objeto PADRÃO 
+
+para 
+
+
+então 
+
+
+ir definindo as propriedades dele, de acordo com a interface/model de 'Todo'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+    const newTodo = {
+        text: 'Max',
+        id: 
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ENTRETANTO,
+
+
+AQUI 
+
+ESQUECEMOS UMA COISINHA:
+
+
+
+
+esquecemos 
+
+
+de 
+
+
+COLOCAR UMA SINTAXE TYPESCRIPT ESPECÍFICA,
+
+
+
+SINTAXE QUE __ NOS OBRIGA__ A 
+
+
+
+
+'ADD THE CORRECT DATA TO THIS OBJECT, OBJECT THAT WILL BE OF "TODO" TYPE' --> 
+
+
+
+
+
+
+
+para isso,
+
+devemos 
+
+
+usar a sintaxe 
+
+clássica 
+
+de 
+
+
+
+
+
+'const newTodo: Todo = {}; ////' 
+                ^^^^ ESTE TRECHO AQUI....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            EX:
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                id: 'String',
+                text: 'EXEMPLO' 
+    }
+
+}
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+SE VOCê DEIXAR UM OBJETO VAZIO,
+
+com essa diretriz de 
+
+
+'const newTodo: Todo',
+
+
+ISSO 
+
+
+_ NÃO SERÁ PERMITIDO/TYPESCRIPT VAI APITAR,
+
+
+
+PQ ISSO 
+
+NÃO VAI MATCHEAR 
+
+O 
+
+TODO TYPE QUE 
+
+o professor 
+
+
+definiu 
+
+
+lá no model...
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---> ESSA É TODA IDEIA POR TRÁS DO TYPESCRIPT:
+ 
+
+ TE FORÇAR A ESCREVER CÓDIGO LIMPO E CLARO,
+
+ CÓDIGO EM QUE VOCÊ NÃO OMITE DATA.... -----> VOCÊ NÃO OMITE DATA,
+ PQ 
+
+ SE 
+
+ VOCê 
+
+
+ OMITE DATA,
+
+ ISSO TIPICAMENTE LEVA A ERROS, E QUEREMOS 
+
+ EVITAR 
+
+ ERROS...
+
+
+
+
+
+
+
+ --> ok... isso serve para nos AJUDAR, PORTANTO...
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+ export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+    // const newTodo = new Todo( ///sintaxe ERRADA (isso não é um model mongoose, e sim um model normal)....
+    //     {
+    //     }
+    // )
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                id: 'String',
+                text: 'EXEMPLO' 
+    }
+
+}
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+--> MAS O PROFESSOR NÃO VAI FAZER HARDCODE DESSES VALORES NESSAS PROPRIEDADES... --> 
+
+
+
+em vez disso,
+
+ele 'randomiza' o id 
+
+
+por meio do código de 
+
+
+'new Date().toISOString()',
+
+
+
+
+
+
+
+
+
+e o text 
+
+ELE DIZ QUE 
+
+VAI RECEBER LÁ DO INCOMING REQUEST,
+
+
+
+
+por meio de 
+
+algo como 
+
+'req.algumaCoisa'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA CONSEGUIRMOS DEFINIR ESSA PROPRIEDADE E A PARSEAR,
+
+
+PRECISAMOS SER CAPAZES DE  'PARSE THE REQUEST BODY',
+
+
+coisa que 
+
+fazemos com o BODYPARSER,
+
+
+lá no 'app.js':
+
+
+
+
+
+app.use(bodyParser.json()); ////vamos precisar disso para parsear nossos BODIES, com a json data enfiada neles...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... ISSO FUNCIONARÁ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+    // const newTodo = new Todo( ///sintaxe ERRADA (isso não é um model mongoose, e sim um model normal)....
+    //     {
+    //     }
+    // )
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                // id: 'String',
+                // text: 'EXEMPLO' 
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso...
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... o professor importa o bodyParser, coisa bem simples...
+
+
+
+
+
+
+
+
+
+
+
+
+aí ele escreve o 
+
+
+'app.use(bodyParser.json())'.... 
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR APONTA QUE CONSEGUIMOS 'AUTO-COMPLETION' para o body-parser __ MESMO NÓS __ NÃO TENDO AUTO-COMPLETION PARA ELE....
+
+
+
+
+
+
+
+
+
+
+
+-> isso é actually ___ 'SOME EXTRA CONVENIENCE' 
+
+
+
+adicionada 
+
+
+
+__ PELO TYPESCRIPT E O IDE.... --> (eles até mesmo analisam ARQUIVOS JAVASCRIPT, o código, para ver se ELES PODEM 'INFER' QUAIS FEATURES VOCê É CAPAZ DE UTILIZAR LÁ... )---> 
+
+
+E às VEZES 
+
+
+
+A INFERENCE PODE SER FEITA, PELO SEU IDE, MESMO COM APENAS CÓDIGO IDE....
+
+
+
+
+
+
+
+
+
+-----> ok.... constataram que 
+
+
+
+realmente existe um método '.json()' dentro dessa library de 'bodyParser'....
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA __TER__ SUPORTE TYPESCRIPT PERFEITO (ver tudo, até mesmo os ARGUMENTS QUE VOOCÊ PODE PROVIDENCIAR),
+
+
+VOCÊ SEMPRE DEVE INSTALAR
+
+
+
+o 
+
+
+
+'@types' 
+
+
+
+PARA ___ CADA_ LIBRARY/PACKAGE COM QUE VOCÊ ESTÁ TRABALHANDO...
+
+
+
+
+
+
+
+-_> É POR ISSO QUE O PROFESSOR 
+
+VAI 
+
+INSTALAR 
+
+ESSE TYPE DO 
+
+
+
+
+
+'BODYPARSER'
+
+
+
+com 
+
+npm intall --save-dev @types/body-parser
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... NOSSO PACKAGE.JSON FICOU ASSIM:
+
+
+
+
+
+
+{
+  "name": "novonovoprojeto30-exemplodenodecomtypescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.2.2",
+    "mongoose": "^6.1.4",
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.5"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------- 
+
+
+
+
+
+
+
+OK... AGORA VAMOS QUERER __ USAR __ O FRONTEND __ PARA __ DEFINIR 1 propriedade 'text' (req.body.text)
+
+
+LÁ
+
+
+
+
+NO NOSSO REQUEST...
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+-----> COM ISSO, TEREMOS REGISTRADO ESSE MIDDLEWARE.... -------> VAMOS SER CAPAZES DE PARSEAR BODIES 
+
+
+
+
+
+DOS NOSSOS REQUESTS,
+
+E AÍ USAR 
+
+A JSON DATA 
+
+em outros 
+
+locais de nosso 
+
+
+
+
+código....
+
+
+
+
+
+
+
+
+
+
+
+OK... E O PROFESSOR FEZ EXATAMENTE O QUE EU FIZ:
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+    // const newTodo = new Todo( ///sintaxe ERRADA (isso não é um model mongoose, e sim um model normal)....
+    //     {
+    //     }
+    // )
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                // id: 'String',
+                // text: 'EXEMPLO' 
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso...
+    }
+
+}
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE AGORA PODEMOS ADICIONAR VALIDATION, SE ASSIM O DESEJARMOS.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> O APPROACH PARA INSTALAR A VALIDATION (por meio de express-validator) é EXATAMENTE O MESMO PROCEDIMENTO QUE FIZEMOS 
+
+VÁRIAS VEZES AO LONGO DO CURSo,
+
+
+COM 
+
+A 
+
+SIMPLES ADIÇÃO DAS LIBRARIES/TYPES DO TYPESCRIPT para esse package (para ter o AUTO-COMPLETE, no caso)....
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, INSTALO O EXPRESS-VALIDATOR 
+
+
+e também 
+
+
+
+o 
+
+
+
+
+
+'npm install --save-dev @types/express-validator'....
+
+
+
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+O PROFESSOR NÃO VAI IMPLEMENTAR TUDO DE 'express-validator',
+
+mas eu vou....
+
+
+
+
+
+
+
+
+--> VOU ATÉ O ARQUIVO 'routes.ts'
+
+
+E IMPORTO O EXPRESS-VALIDATOR....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAI FICAR TIPO ASSIM:
+
+
+
+
+import { Router } from 'express';
+
+import { getTodos, createTodo } from '../controllers/todo';
+
+import { check, body } from 'express-validator';
+
+const router = Router();
+
+router.get(
+  '/',
+
+  getTodos
+);
+
+router.post(
+  '/todos',
+
+  check()
+
+  createTodo
+);
+
+export default router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO QUE ESCREVEMOS, EM GERAL,
+
+
+NÃO SERÁ 
+
+TÃO DIFERENTE 
+
+DO CÓDIGO QUE ESCREVEMOS ANTES... ---> A ÚNICA DIFERENÇA É QUE PODEMOS 
+ADICIONAR 
+ESSES 
+
+
+
+'TYPES EXTRAS',
+
+
+como 
+
+esse 
+
+type de 
+
+
+
+'Todo'
+
+
+que 
+
+
+CRÍAMOS COM 
+
+
+
+
+
+
+
+''
+
+
+export interface Todo {  ////ISSO É RECOMENDADO.....
+
+    id: string;
+    text: string;
+
+
+}
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... NO CÓDIGO DO PROFESSOR, LÁ NO CONTROLLER,
+
+
+
+
+ele vai simplesmente fazer PUSH 
+
+
+
+
+
+
+
+DESSE 'NOVO OBJETO TODO' 
+
+para 
+
+dentor 
+
+
+do 
+
+ARRAY DE TODOS QUE EXISTE DENTRO DA MEMÓRIA:
+
+
+
+
+
+
+
+const todos: Array<Todo> = []; ///SINTAXE COMPLETA DE COMO ASSIGNAR O TYPE 'todo' COMO INNERTYPE DESSE GENERIC TYPE (que é o array em si)....
+
+
+
+
+// const todos: Todo[] = []; /É UM SHORTCUT PARA A SINTAXE LOGO ACIMA.... (de definição de inner type do generic type que é o array...)
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+
+    res.status(200).json(
+        {
+            todos: todos //vamos retornar esse array, na nossa response..
+        }
+    )
+
+
+
+
+}
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                // id: 'String',
+                // text: 'EXEMPLO' 
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso...
+    }
+
+
+
+    todos.push(newTodo); ////EIS O CÓDIGO EM QUESTÃO.
+
+}
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+AGORA VAMOS:
+
+
+
+
+1) ADICIONAR UMA ROUTE PARA 'REPLACE A TODO' 
+
+
+
+
+
+2) ADICIONAR UAM ROUTE PARA 'REPLACE A TODO' 
+
+
+
+
+
+3) FALAR SOBRE A ESTRUTURA GERAL DOS FOLDERS DE SEU APP.... (pq a estrutura pode ficar um pouco CLUNKY com todos esses arquivos javascript-typescript extras)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ALGO ASSIM:
+
+
+
+
+
+
+
+export const createTodo = (req: Request, res: Response, next: NextFunction) => { ///outro named export...
+
+
+    // const newTodo = new Todo( ///sintaxe ERRADA (isso não é um model mongoose, e sim um model normal)....
+    //     {
+    //     }
+    // )
+
+        const errors = validationResult(req); 
+      
+        if (!errors.isEmpty()) {
+          console.log(errors);
+          const error = new Error('Validation failed, entered data is incorrect.');
+          error.statusCode = 422;
+          throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+      
+        }
+
+
+
+
+
+
+            //////VVVVVVV --> esse trecho aí, se o escrevemos, é a coisa que VAI NOS 'FORÇAR A DEFINIR ESSE OBJECT EM UM FORMATO COMPATÍVEL COM O MODELO/INTERFACE DE Todo, definido lá no nosso MODEL....""
+    const newTodo: Todo = {
+                // id: 'String',
+                // text: 'EXEMPLO' 
+                id: new Date().toISOString(),
+                text: req.body.text ///precisamos do BODYPARSER para isso...
+    }
+
+
+    todos.push(newTodo); ///esse todo vai passar a existir NA MEMÓRIA DE NOSSO APP, lá naquele array...
+}
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E NO NOSSO 'routes.ts':
+
+
+
+
+
+
+
+
+router.post(
+  '/todos',
+  [
+  body('text')
+  .trim()
+  .isLength({ min: 6 })
+  .withMessage('Text should be more than 6 characters long.')
+  
+  ],
+  createTodo
+);
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+AGORA VAMOS QUERER FAZER A MESMA COISA COM REPLACE/UPDATE/EDIT 'todo'...
+
+
+
+
+
+NA PRÓXIMA AULA....

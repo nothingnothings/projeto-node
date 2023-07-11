@@ -1,0 +1,3309 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA TEMOS NOSSO SETUP BÁSICO EM 'feed.js',
+
+
+
+E AGORA 
+
+
+TEMOS 
+
+
+'THE BASIC SETUP FOR A NODEEXPRESS REST API'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+const feedController = require('../controllers/feed');
+
+
+
+
+
+
+router.get('/posts', feedController.getPosts);
+
+
+
+
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E (app.js):
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser'); ///PRECISO DISSO PARA 'PARSE INCOMING REQUEST BODIES'...
+
+
+const app = express();
+
+
+
+const shopRoutes = require('./routes/feed');
+
+
+
+
+app.use('/feed', shopRoutes);
+
+
+
+
+
+
+
+
+app.listen(8080); ///usamos '8080' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+TEMOS 1 ROUTE E SEU CONTROLLER RESPECTIVO,
+
+
+E AGORA 
+
+
+PRECISAMOS 
+
+
+RETORNAR ALGUMA 
+
+DATA 
+
+
+NESSE 
+
+
+
+
+controller....
+
+
+
+
+
+--> CONTROLLER DE 
+
+
+''
+
+
+exports.getPosts = (req, res, next) => {
+
+
+
+}
+
+
+
+
+
+
+''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> VAMOS QUERER RETORNAR ALGUMA DATA.... -> APRNDEMOS QUE REST APIs 
+
+
+
+
+são 'all about data'    .....
+
+
+
+
+
+
+
+
+
+
+
+--> NÃO VAOMS CHAMAR 'res.render()',
+
+PQ NÃO VAMOS RENDERIZAR UMA VIEW...
+
+
+
+
+
+
+
+
+
+
+
+------> OK.... --> REST APIs 
+
+
+simplesmente 
+
+NAÕ RENDERIZAM VIEWS,
+
+
+PQ NÃO RETORNAM HTML...
+
+
+
+(e uma rendered view é html...) 
+
+
+
+
+
+
+
+
+
+
+--> EM VEZ DISSo,
+
+
+vamos fazer algo que 
+
+FIZEMOS 
+
+
+NO MÓDULO 
+
+'ASYNC REQUESTS'
+
+
+de nosso curso....
+
+
+
+
+
+
+
+
+--> VAMOS RETORNAR UMA 
+
+
+'res.json()',
+
+UMA __ RESPONSE _ EM FORMATO JSON...
+
+
+
+
+
+
+
+
+
+
+---> CERTo... --> res.json() é um MÉTODO 
+
+
+FORNECIDO PELO EXPRESSJS,
+
+
+
+QUE 
+
+NOS DEIXA 
+
+'CONVENIENTLY RETURN A RESPONSE WITH JSON DATA',
+
+
+COM OS 
+
+HEADERS CORRETOS JÁ SETTADOS, E ASSIM POR DIANTE...
+
+
+
+
+
+
+
+
+
+
+--> OK... 
+
+
+
+
+passamos um parâmetro de '{}', 
+
+OBJETO JAVASCRIPT,
+ QUE 
+
+ SERÁ 
+
+
+
+ CONVERTIDO 
+
+ PARA O FORMATO JSON,
+
+
+
+
+ E ENTÃO ENVIADO AO 
+
+
+ CLIENT QUE 
+
+
+ ENVIOU O REQUEST de 'get' a '/feed/posts'...
+
+
+
+
+
+
+
+
+
+
+
+ --> O PROFESSOR VAI ADICIONAR 
+
+
+
+
+
+
+isto aqui:
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+
+
+
+res.json(
+    {
+        posts: [{title: 'First Post', content: 'This is the first post'}]
+    }
+)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... PROFESSOR VAI ENVIAR SÓ ESSA DUMMY DATA...
+
+
+
+
+
+
+--> ISSO VAI ENVIAR UMA 'JSON RESPONSE'...
+
+
+
+
+
+--> PODEMOS, É CLARO, ANEXAR UM 
+
+STATUS ('.status()')' 
+
+
+
+A ESSA RESPONSE RETORNADA AO USER,
+
+
+
+como 
+
+'200' (request received...)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+res.status(200).json(
+    {
+        posts: [{title: 'First Post', content: 'This is the first post'}]
+    }
+)
+}
+
+
+
+
+
+---------------------
+
+
+
+VAMOS QUERER 
+
+
+
+SETTAR ESSE 
+
+
+
+STATUS CODE, EXPLICITAMENTE, ASSIM MESMO...
+
+
+
+
+
+
+
+
+
+
+------> 200 É O DEFAULT, MAS PROFESSOR EXPLICA UQE VEREMOS 
+
+
+
+
+MAIS TIPOS DE STATUS CODES AO LONGO DESTE MÓDULO, 
+E QUE 
+
+QUEREMOS 
+
+
+SER CLAROS UQNATO AO STATUS CODE QUE 
+
+
+NOSSA RESPONSE RETORNA,
+
+
+
+TUDO PARA QUE 
+
+NO CLIENT TENHAMOS 
+
+
+'A EASIER WAY HANDLING IT'... ------> ISSO PQ AGORA 
+
+
+DEVEMOS TER EM MENTE QUE 
+
+
+'NOW THE CLIENT HAS TO RENDER THE USER INTERFACE, ALL BASED 
+
+
+ON YOUR RESPONSE'... --------> PORTANTO,
+
+
+ 
+
+ ESPECIALMENTE ERROR CODES _ SÃO SUPER ÚTEIS/IMPORTANTES__
+
+
+
+
+DE SEREM ENVIADOS DE VOLTA AO CLIENT,
+
+TUDO 
+
+PARA QUE 
+
+O 
+
+CLIENT 
+
+CONSIGA 
+
+
+
+'
+JUST HAVE A LOOK AT THE STATUS CODE'
+
+
+
+e então consiga 
+
+decidir 
+
+
+'''SHOULD I RENDER MY NORMAL USER INTERFACE BECAUSE THE REQUEST 
+SUCCEEDED, OR DID I GET AN ERROR, AND I WANNA RENDER AN APPROPRIATE 
+ERROR INTERFACE..?'''
+
+
+
+
+
+
+
+
+---------> ANTERIORMENTE NO CURSO,
+
+
+NÓS __ SEMPRE__ ENVIÁVAMOS _'THE WHOLE INTERFACE'
+
+AO CLIENT,
+
+
+
+
+O QUE FAZIA COM QUE O CLIENT 'DIDNT HAVE TO WORRY ABOUT RENDERING 
+AN ERROR INTERFACE, WHEN IT HAPPENS'...
+
+
+
+
+
+
+
+----> MAS AGORA QUE O ___ BROWSER__ VAI TER QUE __ RENDERIZAR 
+
+
+ESSA INTERFACE DE ERROR, __O  SET__ DO 'RIGHT STATUS CODE'
+
+
+SE TORNA __ ESSENCIAL... (para ser usado em modais, mensagens, avisos, etc...)
+
+
+
+
+
+
+
+
+
+----> OK... COM ISSO,
+
+
+TEMOS UMA LÓGICA NO LUGAR PARA 
+
+'RETURN SOME DUMMY DATA'...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ESCREVE 'npm start'
+PARA 
+
+INICIAR NOSSO SERVIDOR,
+
+
+
+
+
+
+
+
+E AÍ ELE DIZ QUE DEVEMOS ABRIR NOSSO BROWSER E 
+
+DIGITAR 
+
+
+'localhost:8080/feed/posts'...
+
+
+
+
+
+
+
+
+
+
+--> SE FIZERMOS ISSO,
+
+VAMOS RECEBER UMA PÁGINA COM:
+
+
+
+
+{"posts":[{"title":"First Post","content":"This is the first post"}]}
+
+
+
+
+
+
+
+
+
+
+
+--> E SE ABRIRMOS AS DEVTOOLS,
+
+
+
+
+
+
+E SE ENTÃO SEGUIRMOS ATÉ A 
+
+ABA 
+DE 
+
+
+'NETWORK,'
+
+
+VAMOS VER 
+
+
+NOSSO REQUEST 
+
+DE 
+
+
+'posts',
+
+
+
+
+
+E AÍ A RESPONSE... --> SE VOCÊ CLICAR EM 'RESPONSE',
+
+
+
+VOCÊ VERÁ A 'RESPONSE BODY'...
+
+
+
+
+
+
+
+
+
+--> MAS SE VOCÊ CLICAR NA OPÇÃO 'headers',
+
+VOCÊ VERÁ QUE 
+
+JÁ 
+
+TERÁ 
+
+SIDO 
+
+
+
+
+
+ANEXADO, no 'RESPONSE HEADERS',
+
+ 1 HEADER 
+
+DE 
+
+
+
+
+'Content-Type: application/json' 
+
+
+
+
+
+
+
+
+
+--> ISSO FOI SETTADO AUTOMATICAMENTE 
+
+
+PELO EXPRESSJS,
+
+
+por meio do método 
+
+
+
+'res.json()'..
+
+
+
+
+
+
+
+
+
+-----> E NÓS, DE FATO,
+ 
+ CONSEGUIMOS DE VOLTA O CONTENT DEFINIDO EM 
+
+
+ '.json()' (aquele '{}' com as várias propriedaeds/keys... )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> BEM, OBVIAMENTE 
+
+
+ NOSSOS USERS NUNCA ACESSARIAM/ACESSARÃO 
+
+
+
+ NOSSA PAGE 
+
+ DESSA FORMA,
+
+ por meio de um simples 
+
+
+
+ 'localhost:8080/feed/posts',
+
+
+
+
+
+
+
+ ISSO PQ ___ 
+ NÓS __ VAMOS COLOCAR 
+
+ 1 
+
+ 'AUTHENTICATION'... MAS TAMBÉM PQ 
+
+
+
+ 'THIS, OF COURSE,
+
+ IS NOT HOW WE INTEND OUR API TO BE USED'... ------------> EM VEZ DISSO,
+
+
+
+
+
+
+
+
+ __ VAMOS __CONSTRUIR UMA USER INTERFACE DE VERDADE,
+
+
+ QUE 
+
+
+ ENTÃO 
+
+
+
+ 'WILL USE THIS DATA BEHIND THE SCENES',
+
+
+ TUDO 
+
+ PARA QUE 
+
+
+ SEJA POSSÍVEL 
+
+
+
+ RENDERIZAR 'A BEAUTIFUL UI', AUTOMATICAMENTE, POR MEIO DAQUELA DATA 
+
+ retornada por 
+
+'.json({})'
+
+
+
+
+
+
+
+
+--> E É EXATAMENTE POR ISSO QUE 
+
+ACESSAR 
+
+A 
+
+DATA DIRETAMENTE,
+
+POR MEIO DO RETURN DE PÁGINAS COM APENAS DATA RETORNADA POR MEIO DE 'json()'
+
+
+
+__ NÃO É UMA BOA IDEIA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, MAS ANTES DE VOLTARMOS À PARTE DO 'USER INTERFACE',
+
+
+O PROFESSOR QUER NOS MOSTRAR _ COMO PODEMOS_ FACIL E CONVENIENTEMENTE 
+
+__ TESTAR__ NOSSA API ROUTE__ _ MESMO 
+
+SEM INPUTTAR 
+
+
+
+ESSA URL 
+
+DE 
+
+
+'localhost:8080/feed/posts'
+
+
+NO BROWSER....
+
+
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+PROFESSOR 
+
+
+DIZ QUE DEVEMOS ESCREVER ALGO _ QUE __ NÃO PODEMOS 
+
+
+'ENTER INTO THE BROWSER',
+
+
+
+NO CASO 
+
+
+
+__ UMA ROUTE _ DE TIPO POST.... (não consegue ser 'DIGITADA NO BROWSER'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> POST ROUTES...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK, ISSO PQ _ ALÉM DE 'GET POSTS',
+
+
+nós tipicmaente, em vários apps,
+
+
+
+VAMOS TER ALGUMAS 
+
+
+
+
+
+ROUTES QUE 
+
+
+
+__ NOS PERMITEM 'ADD NEW POSTS'...
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+É POR ISSO QUE O PROFESSOR VAI CRIAR 1 NOVO 
+
+
+CONTROLLER,
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+
+
+}
+
+
+
+
+
+
+
+
+--> DENTRO DESSE CÓDIGO, É ÓBVIO QUE ASSUMIRÍAMOS QUE 
+
+
+'WE REACHED OUT TO THE DATABASE'... 
+
+
+
+
+
+
+
+
+--> e nós vamos, no futuro,
+
+assegurar isso (vamos usar o código do mongoose....).
+
+
+
+
+
+
+---> ENTRETANTO, 
+
+POR ENQUANTO,
+
+
+
+O PROFESSOR 
+
+VAI SÓ 
+
+
+
+COLOCAR UM COMMENT DIZENDO QUE VAMOS CRIAR 
+
+ESSE POST NA DATABASE, ETC ETC...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+E AÍ, O PROFESSOR VAI APENAS 'RETURN A RESPONSE, RESPONSE THAT ASSUMES 
+THAT WE __ DID __ CREATE THE POST'...
+
+
+
+
+
+
+
+
+
+--> TIPO ISSO:
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+
+
+    res.json({});
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+-_> É CLARO  QUE ELE PRECISA:
+
+
+
+
+1) COLOCAR UM OBJETO, para então colocar data nessa response...
+
+(tipo um '{message: xxxx}')
+
+
+
+
+
+
+
+
+
+
+2) DEPOIS, ELE PRECISA SETTAR UM STATUS CODE NESSE .json, por meio de '.status()'...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+
+
+    res.status(201).json({
+
+                message: 'Post created successfully'
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+CERTO.... --> MAS PROFESSOR DIZ QUE TAMBÉM VAMOS QUERER 
+
+'SEND BACK SOME POST DATA',
+
+por isso 
+
+
+COLOCAMOS UMA KEY de nome 
+
+'post:'....
+
+
+
+
+
+ECX:
+
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+
+
+    res.status(201).json({
+
+                message: 'Post created successfully',
+                post: 
+
+    });
+
+
+
+}
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+E O PROFESSOR NOS EXPLICA QUE 
+
+
+ESSA KEY de 'post'
+
+
+
+CONTERÁ __ DATA_ QUE VOU QUERER __ 
+
+
+
+
+PARSEAR__ DE NOSSO 'INCOMING REQUEST'... (objeto 'req')...
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE PROFESSOR VAI 
+
+ESCREVER 
+
+'const title',
+
+
+QUE SERÁ 
+
+
+'req.body.title'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+    const title = req.body.title;
+
+    res.status(201).json({
+
+                message: 'Post created successfully',
+                post: 
+
+    });
+
+
+
+}
+
+
+-------------------------------
+
+
+
+
+
+SIM, ESSA DATA DO 'TITLE'
+
+
+SERÁ 
+
+
+
+__PARSEADA __ DO BODY DE NOSSO REQUEST,
+
+
+
+
+COISA QUE 
+
+FIZEMOS 
+
+
+
+VÁRIAS VEZES AO LONGO DO CURSO...
+
+
+
+
+
+
+
+--> TAMBÉM VAMOS QUERER EXTRAIR O 'CONTENT' em si,
+
+
+
+
+
+tipo 
+
+
+'const content = req.body.content;'....
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+    const title = req.body.title;
+
+    res.status(201).json({
+
+                message: 'Post created successfully',
+                post: {
+
+                        title: title,
+                        content: content
+
+                }
+
+    });
+
+
+
+}
+
+
+
+
+-------------------------------------
+
+
+
+
+O PROFESSOR TAMBÉM VAI QUERER ADICIONAR UM FIELD DE 
+
+'id',
+
+
+
+
+
+DE FORMA PARECIDA COM A QUE O MONGODB FAZ...
+
+
+
+
+
+
+
+
+
+--> vai escrever 
+
+'id: new Date().toISOString()'
+
+
+
+
+
+
+
+
+
+-----> EX:
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+        ///Create post in DB...
+
+    const title = req.body.title;
+
+    res.status(201).json({
+
+                message: 'Post created successfully',
+                post: {
+
+                        title: title,
+                        content: content,
+                        id: new Date().toISOString()
+
+                }
+
+    });
+
+
+
+}
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+--> NOSSO POST NÃO FOI 'REALMENTE CRIADO NO SERVIDOR',
+
+
+
+MAS 
+
+
+__ AINDA ASSIM, ESSE É UM BOM COMEÇO,
+
+
+pq 
+
+essa response 
+
+
+
+ACABA DIZENDO AO USER QUE 
+
+O REQUEST FOI 
+
+
+RECEBIDO,
+
+
+
+
+
+
+e que 
+
+
+algo aconteceu no servidor (uma response foi enviada...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> 201 --> ISSO DIZ: 
+
+
+
+'SUCCESS, A RESOURCE WAS CREATED on the SERVER/DATABASE'...
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+CERTO... .
+
+
+
+
+
+
+
+
+
+
+COM ISSO, ESTAMOS MANDANDO ESSE CODE DE SUCESSO...
+
+
+
+
+
+
+
+
+
+
+OK, MAS O QUE ESTÁ FALTANDO, AGORA?
+
+
+
+
+
+
+
+__BEM, O QUE ESTÁ FALTANDO É 
+
+
+
+'A WAY TO PARSE THAT DATA' (a data de 'req.body.title' e 'req.body.content')...
+
+
+
+
+
+
+
+
+
+
+
+
+---> BEM, PARA ISSO VAMOS __ PRECISAR__ DO BODYPARSER,
+
+EU ACHO....
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+vamos até 'app.js'
+
+E ESCREVEMOS 
+
+
+
+
+'const bodyParser = require(body-parser)'
+
+
+
+
+
+
+
+
+
+
+------> AÍ EU ACHO QUE O PROFESSOR VAI ESCREVER 
+
+
+
+
+'app.use(bodyParser.urlencoded({extended: false}))'
+
+
+
+
+
+
+
+
+
+(ESSE É O CÓDIGO QUE HAVÍAMOS USADO AO LONGO DO CURSO, PARA CONSEGUIR PARSEAR 
+
+
+INPUTS NOS NOSSOS INPUT FIELDS COMO ___ tEXT__ nos nossos controllers...)
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+
+IMPORTAMOS BODYPARSER EM UMA AULA ANTERIOR,
+
+MAS QUE AGORA 
+
+PRECISAMOS 
+
+
+'SET IT UP'....
+
+
+
+
+
+
+--> OK, MAS 
+
+
+
+
+AQUI __ TEMOS _ QUE NOS LEMBRAR DE ALGO IMPORTANTE:
+
+
+
+
+
+
+
+
+
+
+AQUI, NO CASO, 
+
+
+
+
+COMO ESTAMOS TRBALHANDO COM REST APIs,
+
+
+TEMOS QUE 
+
+
+
+TER EM MENTE __ QUE _ 
+
+
+
+NÓS __ _ESTAMOS TRABALHANDO COM 'INCOMING JSON DATA'...
+
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE NÓS VAMOS __________esPERAR__ QUE 
+
+
+NOSSO CLIENTS VÃO SE ___ COMUNICAR__ COM NOSSA API BACKEND (rest)
+
+
+
+
+COM __ REQUESTS/POR MEIO DE REQUESTS__ QUE 
+
+CONTÉM 
+
+
+__JSON DATA,
+
+
+
+EXATAMENTE DA MESMA FORMA QUE NOSSA API 
+
+__RETORNA _ JSON DATA__ NAS RESPONSES 
+
+ENVIADAS 
+
+
+AO FRONTEND...
+
+
+
+
+
+
+
+
+
+
+-------------------> OK.... ENTÃO VAMOS PRECISAR PARSEAR 
+
+
+JSON DATA NO BACKEND... -> MAS COMO FAZEMOS ISSO? 
+
+
+
+
+
+
+
+
+
+
+---> JSON DATA É O FORMATO QUE VAMOS QUERER __ USAR,
+
+TANTO PARA REQUESTS 
+
+
+COMO PARA RESPONSES...
+
+
+
+
+
+
+
+
+
+
+---> PORTNATO,
+
+
+O PROFESSOR VAI USAR O BODYPARSER, SIM,
+
+
+
+
+
+
+
+
+
+
+
+
+mas quando ELE INICIALIZAR 
+
+
+O BODYPARSER,
+
+
+ELE NÃO VAI INICIALIZAR 
+
+DA FORMA COMUM... ele vai ESCREVER 
+
+
+
+
+ESSE 'use' 
+
+do BODYPARSER
+
+de forma 
+
+DISTINTA...
+
+
+
+
+
+
+
+
+
+
+---------> ok....
+
+
+antigamente o professor 
+
+
+
+escrevia:
+
+
+
+'app.use(bodyParser.urlencoded())' ----------> E O PROFESSOR DIZ QUE 
+
+
+
+ISSO É 
+
+
+RAELMENTE 
+
+
+
+
+__ÓTIMO __ PARA 
+
+
+
+
+
+
+
+'DATA FORMATS/REQUESTS __ QUE SEGURAM DATA NA FORMA/FORMATO DE 
+
+x-www-form-urlencoded' ------>  E ESSA É A 
+
+
+
+'FORMA DEFAULT'
+
+
+QUE 
+
+
+NOSSA DATA TEM,
+
+
+___ SE ELA FOR __ SUBMITTADA __________ POR MEIO __ DE UMA 'FORM'... (form, POST REQUESTS __ POR MEIO DE FORMS__....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO.... 
+
+
+
+MAS É AÍ QUE O NEGÓCIO FICA INTERESSANTE:
+
+
+
+
+
+
+
+
+
+**** COMO AQUI ___ NÓS NÃO VAMOS _ USAR AS FORMS PARA ___ RECARREGAR A PÁGINA (
+
+    pq é isso que as forms fazem, elas SUBMITTAM DATA AO SERVER/BACKEND 
+
+    E ENTÃO __ RECARREGAM A PÁGINA, ESSE É O COMPORTAMENTO DEFAULT... E QUANDO 
+    ESSA DATA 
+
+    É ENVIADA, ELA É ENVIADA NESSE FORMATO 
+
+
+    'x-www-form-urlencoded'...
+)
+
+
+
+
+
+
+
+
+
+--> COMO NÓS __ 'DONT HAVE FORM DATA',
+
+
+
+o que 
+
+
+DEVEMOS USAR,
+
+
+
+COM ESSE 
+
+
+'bodyParser',
+
+É 
+
+
+O MÉTODO 
+
+ESPECIAL
+
+
+
+
+'.json()',
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+app.use(bodyParser.json()); -----------> 
+
+
+
+
+
+
+
+
+
+
+
+
+ESSE MÉTODO É GENIAL PQ ___ ELE __ É 
+
+CAPAZ 
+
+
+DE 
+
+'PARSE JSON DATA FROM INCOMING 
+REQUESTS'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const bodyParser = require('body-parser'); ///PRECISO DISSO PARA 'PARSE INCOMING REQUEST BODIES'...
+
+
+
+
+
+const app = express();
+
+const feedRoutes = require('./routes/feed');
+
+
+
+// app.use(bodyParser.urlencoded()); ///x-www-form-urlencoded <form> ------> USADO EM APPS NODEEXPRESS __ COMUNS__, apps que __ RECARREGAM A PAGE QUANDO UMA FORM É SUBMITTADA.... (e que NÃO TRABALHAM COM O SEND DE JSON DATA NOS REQUESTS E RESPOSNES...) --> E ISSO __ NÃO FUNCIONA COM REST APIs (SPAS e apps de tipo MOBILE...)
+
+
+
+app.use(bodyParser.json()); //////application/json  nas suas RESPONSES E REQUESTS.... --> USADO EM REST APIs, apps REACT, apps MOBILE, apps com 'DECOUPLED FRONTEND AND BACKEND'...  --> APPS SEM RELOAD DE PAGE...
+
+
+
+
+app.use('/feed', feedRoutes);
+
+
+
+
+
+
+
+
+app.listen(8080); ///usamos '8080' em vez de '3000', em REST APIs como esta....
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> 'application/json' VAI APARECER NO __ HEADER__ de suas responses/requests... -----> 
+
+
+
+
+
+
+
+E É EXATAMENTE POR MEIO DESSE BODY PARSER QUE 
+
+SEREMOS CAPAZES DE ___PARSEAR__ A 
+
+
+DATA 
+
+
+
+
+QUE 
+
+
+
+FICARÁ 'APPENDED' AO REQUEST QUE 
+
+
+CHEGA AO NOSSO SERVER...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... PRECISAMOS DESSE MIDDLEWARE PARA SERMOS CAPAZES 
+
+
+DE 
+
+
+PARSEAR INCOMING JSON DATA,
+
+
+
+TUDO PARA QUE 
+
+
+CONSIGAMOS 
+
+EXTRAIR 
+
+ESSA 
+
+DATA LÁ 
+
+
+
+EM CONTROLLERS COMO 
+
+'createPost',
+
+
+DE CÓDIGO:
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post' }],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  ///Create post in DB...
+
+  const title = req.body.title;
+
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString(),
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------> no caso, é esse 
+
+
+
+'bodyParser.json()'
+
+
+QUE VAI NOS DEIXAR 
+
+PARSEAR 
+
+COISAS COMO 
+'const title = req.body.title'...
+
+
+
+
+
+
+
+
+
+
+
+--------> PQ ESSE FIELD DE 'body'
+
+
+NO NOSSO REQUEST__ VAI SER ADICIONADO POR MEIO __ 
+
+DESSE 
+
+PACOTE E MÉTODO 
+
+
+'bodyParser.json()'...
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CERTO.... com isso,
+
+
+PODEMOS EXTRAIR TODA ESSA DATA....
+
+
+
+
+
+
+
+
+
+--> MAS COMO PODEMOS TESTAR TUDO ISSO?
+
+
+
+
+
+
+
+
+
+--> BEM, NÓS __ NÃO PODEMOS 
+
+
+
+
+
+CRIAR UMA FORM QUE FAZEMOS 'SUBMIT',
+
+isso 
+
+pq 
+
+
+SE FIZÉSSEMOS ISSO,
+
+
+VOLTARÍAMOS AO MUNDO DO 
+
+
+'www-form-urlencoded'..., data desse formato aí....
+
+
+
+
+
+
+
+
+----------------> E SE FIZÉSSEMOS UMA FORM DESSAS, NÃO SERIA UM 
+
+TEST MT REALISTA,
+
+
+
+PQ __ VOCê NÃO USA FORMS DESSA FORMA 'CLÁSSICA' QUANDO 
+
+
+
+VOCÊ 
+
+
+TRABALHA COM REST APis...
+
+
+
+
+
+
+
+
+
+
+
+-------> EM VEZ DISSO,
+
+
+
+VOCÊ PODE USAR ___ UMA TOOL _ MUITO _ CONVENIENTE,
+
+QUE 
+
+É 
+
+O 
+
+
+'POSTMAN'....
+
+
+
+
+
+
+
+-------> POSTMAN...
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR EXPLICA QUE VAMOS TRABALHAR COM UMA FRONTEND EM BREVE...
+
+
+
+
+
+
+
+
+
+
+------> NÃO VAMOS FICAR 'PRESOS COM UMA HELPING TOOL'
+
+
+ao longo do resto do curso...
+
+
+
+
+
+
+
+
+--> MAS AINDA ASSIM,
+
+
+O POSTMAN 
+É UMA 
+
+
+'API DEVELOPMENT TOOL'
+
+
+
+MUITO ÚTIL,
+
+
+
+
+QUE VOCÊ DEVE CONHECER...
+
+
+
+
+
+
+--> ELA É GRÁTIS....
+
+
+
+
+
+
+
+
+--> BAIXE O POSTMAN....
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ NÃO PRECISA PAGAR...
+
+
+
+
+
+
+
+
+
+
+
+-------> COM O POSTMAN,
+
+
+
+
+
+VOCÊ ACABA NA STARTING PAGE deles...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> FECHE A JANELA DO POSTMAN,
+
+
+E AÍ VOCÊ TERÁ A USER INTERFACE 
+
+DO POSTMAN...
+
+
+
+
+
+
+
+
+
+
+--> EXISTEM DOCS DO 
+
+
+POSTMAN....
+
+
+
+
+
+-_> MAS O QUE INTERESSA É QUE VOCÊ PODE DIGITAR UMA URL EM UM FIELD ALI,
+
+
+DEPOIS ESCOLHER O HTTP METHOD QUE VOCê QUER USAR...
+
+
+
+
+
+
+
+
+----> SELECIONE O METHOD, E AÍ ENVIE O REQUEST...
+
+
+
+
+
+
+
+
+
+--> VOCÊ TAMBÉM PODE SETTAR SEUS PRÓPRIOS HEADERS,
+
+
+
+
+
+
+
+
+
+
+
+E AÍ __ VOCÊ VAI VER A RESPONSE 
+
+
+
+AO SEU REQUEST 
+
+
+NA ÁREA 
+
+INFERIOR..
+
+
+
+
+
+
+
+
+----> PROFESSOR VAI ENVIAR UM REQUEST 
+
+A 
+
+'localhost:8080/feed/posts'...
+
+
+
+
+
+
+
+--> É MELHOR BAIXAR O 'DESKTOP AGENT'
+
+do postman,
+
+para poder usar 'localhost' (não sei se é realmente necessário, mas parece melhor...)
+
+
+
+
+
+
+
+
+
+
+--------> PRIMEIRAMENTE, PRECISAMOS CRIAR ESSA ROUTE/ENDPOINT DE 
+
+
+
+'POST' (/feed/posts)'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const express = require('express');
+
+
+
+const router = express.Router();
+
+
+
+const feedController = require('../controllers/feed');
+
+
+
+
+
+
+router.get('/posts', feedController.getPosts);
+
+
+
+router.post('/posts', feedController.createPost);
+
+
+
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+CERTO...
+
+
+
+agora testo o postman...
+
+
+
+
+
+
+
+
+
+--------> OK, MAS O PROFESSOR CRIA UMA ROUTE PARA 
+
+'/post' 
+
+em vez de 
+
+'posts'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, MAS O POSTMAN AINDA PRECISA __ BAIXAR_....
+
+
+
+
+
+
+
+
+
+
+
+-----> DE ACORDO COM A ESTRUTURA DE SEUS REQUESTS 
+
+que você envia com o postman,
+
+
+
+o número de ABAS que você pode editar nele AUMENTA... --> COMO 
+
+
+
+
+ESTAMOS TRATANDO DE UM 'POST REQUEST'
+
+aqui,
+
+
+
+NÓS _ FICAMOS _ COM ESSA ABA DE 'BODY',
+
+por exemplo... (que é AUSENTE NOS REQUESTS DE TIPO GET ENVIADOS POR ESSA API DO POSTMAN...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> GET REQUESTS NÃO PODEM SEGURAR UM BODY...
+
+
+
+
+
+
+
+
+
+--> SE VOCÊ CLICA EM 'BODY'
+
+NO POSTMAN,
+
+
+
+
+
+
+VOCê 
+
+
+
+VÊ AS OPÇÕES DE 
+
+
+
+() form-dta  ()x-www-form-urlencoded () raw () binary
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE 
+
+NÃO PRECISAMOS DOS OUTROS TIPOS, SÓ DE 
+
+
+'raw'...
+
+
+
+
+
+
+
+
+--> AÍ, QUANDO VOCÊ SELECIONA 
+
+
+'raw',
+
+
+VOCÊ 
+
+
+TEM QUE __ SELECIONAR O __ TYPE___  do negócio... ---> VAMOS ESCOLHER 
+
+
+'JSON'
+
+
+(
+
+    outras opções são 
+
+    TEXT,
+
+    XML,
+
+
+    HTML,
+
+
+    JAVASCRIPT....
+)
+
+
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... json, application/json..
+
+
+
+
+
+
+
+
+
+
+
+
+-->  AGORA, DENTRO DESSE BODY que vamos escrever por meio do postman,
+
+
+
+
+
+ESCREVEMOS NOSSA DATA EM UM FORMATO JSON....
+
+
+
+por isso 
+
+escrevemos assim:
+
+
+
+
+
+
+{
+
+
+    "exemplo": "ssssss",
+    "exemplo2": 2222222
+}
+
+
+
+
+
+
+
+
+(OK, ESTOU LOGGADO NO DESKTOP APP...)
+
+
+
+
+
+-------------------------------------
+
+
+
+CERTO...
+
+
+
+
+
+
+
+--> AÍ TEMOS KEY-VALUE PAIRS,
+
+
+
+EM QUE 
+
+AS KEYS TEM QUE 
+
+SER WRAPPADAS EM 
+
+
+""
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO NÓS ESPERAMOS FAZER GET DE KEYS 
+
+de nome 
+
+
+
+'content'
+ 
+ e 
+
+ 'title',
+
+ escrevemos algo assim:
+
+
+
+
+
+
+ {
+    "title": "EXEMPLO",
+    "content": "EXEMPLO2"
+}
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+GANHEI UM ERRO:
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>ReferenceError: content is not defined<br> &nbsp; &nbsp;at exports.createPost (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\controllers\feed.js: 16: 16)<br> &nbsp; &nbsp;at Layer.handle [as handle_request
+] (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\layer.js: 95: 5)<br> &nbsp; &nbsp;at next (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\route.js: 137: 13)<br> &nbsp; &nbsp;at Route.dispatch (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\route.js: 112: 3)<br> &nbsp; &nbsp;at Layer.handle [as handle_request
+] (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\layer.js: 95: 5)<br> &nbsp; &nbsp;at A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\index.js: 281: 22<br> &nbsp; &nbsp;at Function.process_params (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\index.js: 335: 12)<br> &nbsp; &nbsp;at next (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\index.js: 275: 10)<br> &nbsp; &nbsp;at Function.handle (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\index.js: 174: 3)<br> &nbsp; &nbsp;at router (A:\projeto4 - NODEJS\MODULO24-TRABALHANDOCOMRESTAPIs-OBASICO\NOVONOVOPROJETO21-PROJETOCOMRESTAPIIMPLEMENTADO\node_modules\express\lib\router\index.js: 47: 12)</pre>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> o professor RECEBOU AQUELA MESSAGE DE SUCCESS,
+
+O QUE É BIZARRO...
+
+
+
+
+
+
+
+
+--> QUAL FOI O PROBLEMA,
+
+EU PERGUNTO...
+
+
+
+
+
+
+
+ERA ISTO:
+
+
+exports.createPost = (req, res, next) => {
+  ///Create post in DB...
+
+  const title = req.body.title;
+  const content = req.body.content;
+
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString(),
+    },
+  });
+};
+
+
+
+
+
+
+
+
+--> EU HAVIA ESQUECIDO DE ESCREVER 
+
+
+'const content = req.body.content'
+
+
+
+
+NESSA RESPONSE... na 'EXPECTATIVA DE NOSSO REQUEST',
+
+
+
+no caso....
+
+
+
+
+
+
+
+
+
+
+
+--> parece que 
+
+NOSSO 
+
+
+
+OBJETO 'request'
+
+NÃO PODE 
+
+TER 
+
+'UNNECESSARY DATA' (não pode ter fields QUE NÃO ACABAM USADOS POR NOSSO SERVER...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA, NO CASO, 
+
+RECEBO ESTA RESPONSE, em 'json', 
+
+
+DE MEU SERVIDOR:
+
+
+
+{
+    "message": "Post created successfully",
+    "post": {
+        "title": "EXEMPLO",
+        "content": "EXEMPLO2",
+        "id": "2021-11-27T04:14:44.128Z"
+    }
+}
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ----> ISSO DEU CERTO.....
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE ESSA 
+
+'IS THE DATA WE WOULD TYPICALLY USE IN OUR RECEIVING CLIENT'...
+
+
+
+
+
+
+TAMBÉM É POSSÍVEL OBSERVAR OS HEADERS QUE 
+
+FORAM 
+
+
+
+ENVIADOS 
+
+
+NA RESPONSE... ----> HEADERS 
+
+
+COMo 
+
+
+
+'connection: keep-alive' 
+
+
+
+e 
+
+
+
+'content-type: application/json; charset=UTF-8'
+
+
+
+date -> 
+
+etag -> 
+
+
+
+
+
+
+--> ESSES HEADERS FORAM AUTOMATICAMENTE SETTADOS  
+
+
+
+
+PELO EXPRESS, especialmente esse 'application/json'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E É ASSIM QUE PODEMOS CONVENIENTEMENTE 
+
+TESTAR TODOS OS NOSSOS ENDPOINTS,
+
+
+PQ 
+
+
+PODEMOS 
+
+SÓ 
+
+INPUTTAR 
+
+NOSSOS 
+
+
+
+ENDPOINTS 
+
+
+nessa url bar ali,
+
+aí 
+
+TROCAR 
+
+OS 
+
+HTTP METHODS, 
+
+
+escrever alguma data necessária,
+
+e aí ver os results... (
+
+
+
+    PASS ANY EXTRA HEADERS OR BODIES WE MIGHT NEED...
+) -----> PORTANTO, 
+
+ISSO 
+
+NOS DÁ 
+TUDO DE QUE 
+
+PRECISAMOS 
+
+
+PARA 
+
+
+TESTAR NOSSA API BACKEND...
+
+
+
+
+
+
+
+
+
+--> AINDA VAMOS USAR NOSSO FRONTEND PARA _ VER __ O QUE O USER VER,
+
+
+
+
+MAS O POSTMAN É 
+
+
+
+
+UMA TOOL QUE VOCÊ UTILIZARÁ __ UM MONTE__ QUANDO VOCÊ ESTIVER TRABALHANDO COM REST APIs...
+
+
+
+
+
+
+
+
+Put simply, there are no differences between REST and RESTful 
+as far as APIs are concerned. REST is the set of constraints. RESTful refers 
+to an API adhering to those constraints. It can be used in web services, 
+applications, and software.

@@ -1,0 +1,3756 @@
+
+
+
+
+
+
+
+
+
+
+
+------->  O PROFESSOR DECIDE DELETAR TODOS OS PRODUCTS ANTIGOS,  POIS ELES 
+
+
+
+ESTÃO ARMAZENADOS DE UMA 
+
+
+
+MANEIRA INCORRETA (ainda usam imageUrl)....
+
+ 
+
+
+
+
+
+
+
+ --> DE VOLTA AO NOSSO APP,
+
+
+ lá 
+
+
+ em 
+
+ 'postAddProduct' (controller),
+
+
+
+
+
+
+O PROFESSOR AGORA QUER HANDLAR 
+
+
+
+AQUELE 
+
+
+ARQUIVO 'image'
+
+
+DE FORMA CORRETA..
+
+
+
+
+
+
+ATÉ AGORA, TEMOS 
+
+ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  const title = req.body.title;
+  const image = req.file;
+
+
+  const price = req.body.price;
+  const description = req.body.description;
+
+
+  const userId = req.user._id; ////importante
+
+  if (validationErrors.length > 0) {
+
+ 
+
+    Product.find({ userId: userId }).then((products) => {
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+   
+
+      title: title,
+      price: price,
+      description: description,
+      image: image,
+      userId: userId, 
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        console.log(req.session, 'EXAMPLE');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        console.log('TEST52');
+        error.httpStatusCode = 500;
+        console.log(req.session, 'EXAMPLE');
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+------> ELE EXPLICA QUE 
+
+
+
+
+'image' 
+
+
+
+
+AGORA ESTÁ COMO 
+
+
+'req.file'.... --------> 
+
+
+
+
+
+
+
+
+AÍ ELE NOS EXPLICA QUE 'image' (essa const)
+
+
+SERÁ _ UM OBJETO __ 
+
+
+
+
+COM VÁRIAS INFORMAÇÕES, COM ESTAS INFORMAÇÕES:
+
+
+
+
+
+
+
+
+originalname,
+
+
+
+
+'path' ------> DIZ O LOCAL EM QUE ESSA FILE FOI ARMAZENADA, ORIGINALMENTE...
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS O QUE QUEREMOS FAZER, AGORA, É 
+
+
+
+'SAVE THAT FILE'...
+
+
+
+
+
+
+
+
+
+
+--> OK, ANTES DE MAIS NADA, PROFESSOR VAI QUERER CHECAR 
+
+SE 
+
+ESSA 
+
+'image'
+
+
+ESTÁ 'SET' ...  (por meio de if(image) {}) -----> ISSO PQ SE ELA ESTIVER 
+
+UNDEFINED,
+
+
+ISSO SIGNFIICA QUE 
+
+
+O MULTER __ DECLINOU__  A 'INCOMING FILE'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESCREVI ISTO AQUI:
+
+
+
+
+
+
+
+
+
+app.use(
+  // multer(
+  //   /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  //   // {dest: 'images'} ///VERSÃO 'SIMPLES' DE CONFIGURAR O MULTER... não é tão boa, pq não te dá coisas como o CONFIG DAS SUAS FILENAME, etc.... (coisa vista naquela config constant de 'fileStorage', logo acima...)
+  //   {
+  //     storage: fileStorage, //versão mais completa/recomendada. ----> É A VERSÃO QUE USA A 'STORAGE ENGINE' que críamos previamente, como visto logo acima...
+  //     fileFilter: fileFilter,
+  //   }
+  // ).single('image')
+
+  (req, res, next) => {
+
+
+  upload(req, res, (error) => {
+
+    if(error instanceof multer.MulterError) {
+      console.log('MULTER ERROR HAS OCCURRED');
+    } else if (error) {
+      console.log('AN UNKNOWN ERROR HAS OCCURRED');
+    }
+
+  })
+}
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> E AÍ RECEBI ISTO NO CONSOLE:
+
+
+
+AN UNKNOWN ERROR HAS OCCURRED
+
+
+
+
+
+
+
+
+
+
+
+----> ISSO É SINAL DE QUE __ 
+
+
+NÃO É O MULTER O CULPADO POR ESSE 'NÃO UPLOAD' de nossas files...
+
+
+
+alguma coisa está entrando 'na frente' do upload da file pelo multer...
+
+
+
+
+
+
+
+
+O ERRO É ESTE:
+
+
+
+
+
+
+
+
+
+[Error: ENOENT: no such file or directory, open 'A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\images3\352813-090218.jpg-2021-11-16T18:45:19.365Z'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'A:\\projeto4 - NODEJS\\MODULO20-FILEUPLOADEDOWNLOAD\\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\\images3\\352813-090218.jpg-2021-11-16T18:45:19.365Z',
+  storageErrors: []
+
+
+
+
+
+
+
+
+
+
+
+---> pelo visto o path está todo errado....
+
+
+
+
+
+-->  path: 'A:\\images3\\352813-090218.jpg-2021-11-16T18:46:19.712Z',
+
+
+
+
+
+TENHO QUE 'CONSTRUCT A PATH',
+
+
+por meio daquele 
+
+
+
+pacote 'path' 
+
+
+do 
+
+
+node mesmo...
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA É/ERA CAUSADO POR ESSE 'DOUBLE SLASH' NO MEU PATH... coisa bizarra...
+
+
+
+aí encontrei um cara no stackoverflow que disse isto:
+
+
+
+
+3
+
+You can use the following code in order to get rid of this error...
+
+try:- path.replace("\\","/");
+
+This will definitely solve your problem.
+
+
+
+https://stackoverflow.com/questions/43735383/nodejs-multer-file-upload-path-contains-double-slashes
+
+
+
+
+
+
+
+
+
+
+Additionally, you should never use the originalname (at least as-is --
+
+ you could hash the name I suppose if you really wanted/needed to) since that is
+ 
+  a client-supplied value and could contain malicious characters to trick you into 
+  overwriting sensitive/important files.
+
+
+
+
+
+--> mais informações:
+
+
+
+
+There are no double slashes in the actual string. What you are seeing is the string literal version since the object being shown was passed to util.inspect(), which formats string values in this way. One advantage to showing the literal version in this way is that it allows you to easily see control characters (e.g. \n, \t, etc.) more easily. You can also copy and paste it as-is in code and it will just work without modifications. – 
+mscdex
+ May 2 '17 at 10:29
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> RESOLVI O PROBLEMA!!!! --_> 
+
+
+
+
+After new Date().toISOString() add replace() to change ":" to an accepted character.
+
+Windows OS doesn't accept files with a ":"
+
+The person on Youtube is using MAC OS
+
+E.g
+
+new Date().toISOString().replace(/:/g, '-')
+
+
+
+
+
+
+
+
+
+
+----> É PQ NOSSOS ARQUIVOS ESTÃO SENDO ARMAZENADOS ASSIM:
+
+
+A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\images\LIXO.png-2021-11-16T18:59:25.074Z
+
+
+
+
+
+
+
+
+
+
+--> AQUELE 'new Date().toISOString()'
+
+
+
+ESTÁ PRODUZINDO UMA DATA COM VÁRIOS ':', o que 
+
+NÃO É SUPORTADO PELO WINDOWS....
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO DETECTADOR DE ERROS FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+app.use(
+  // multer(
+  //   /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+  //   // {dest: 'images'} ///VERSÃO 'SIMPLES' DE CONFIGURAR O MULTER... não é tão boa, pq não te dá coisas como o CONFIG DAS SUAS FILENAME, etc.... (coisa vista naquela config constant de 'fileStorage', logo acima...)
+  //   {
+  //     storage: fileStorage, //versão mais completa/recomendada. ----> É A VERSÃO QUE USA A 'STORAGE ENGINE' que críamos previamente, como visto logo acima...
+  //     fileFilter: fileFilter,
+  //   }
+  // ).single('image')
+
+  (req, res, next) => {
+
+
+  upload(req, res, (error) => {
+
+    if(error instanceof multer.MulterError) {
+      console.log('MULTER ERROR HAS OCCURRED');
+    } else if (error) {
+      console.log('AN UNKNOWN ERROR HAS OCCURRED');
+      console.log(error);
+    
+    }
+
+  })
+  next();
+}
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> E AGORA O UPLOAD DE ARQUIVOS,
+
+E SEU SAVE NO FILESYSTEM DO 
+
+
+___ NODEEXPRESS APP__ 
+
+
+ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+--> SÓ FALTA CONSEGUIR __ FAZER __ 1 UPLOAD DO ARQUIVO __ 
+
+
+
+à DATABASE MONGODB, em vez de armazenar no filesystem...
+
+
+
+
+
+
+
+
+
+--> OUTRO PROBLEMA: 
+
+
+
+
+nosso arquivo SEMPRE ESTÁ SENDO SALVO, ATÉ MESMO 
+
+QUANDO TEMOS 
+
+ALGUM __ ERRO _ DE VALIDATION (mesmo problema de antes,portanto).
+
+
+
+
+
+
+
+
+
+
+--> para resolver esse problema, provavelmente precisamos escrever algum código que 
+
+integre
+ 
+
+ o 
+
+
+ 'express-validator'
+
+
+ com o 
+
+
+ 'multer'....
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS TAMBÉM TEMOS _OUTRO__ PROBLEMA.... --> o final 
+
+ dos arquivos ('.png', '.jpg', etc) 
+
+
+
+ NÃO ESTÁ SENDO ADICIONADO... ---> isso aconteceu PQ 
+
+
+
+
+ NÓS MUDAMOS A ORDEM DE NOMEAÇÃO DO NEGÓCIO, COLOCAMOS 
+
+
+
+
+ ''
+
+   filename: (req, file, cb) => {
+      ///OBS::: SE VOCÊ SETTAR/configurar/definir o FILENAME de seus arquivos storados __ por meio dessa key de 'filename:', o multer AUTOMATICAMENTE __ VAI PARAR__ DE ARMAZENAR UM 'RANDOM HASH' (auto-generated random hash) LÁ NAQUELA PROPRIEDADE 'filename', em 'req.file' (o que ficará nesse lugar, no caso, é o FILENAME que você DEFINIU AQUI, e não mais aquele hash randomizado...)
+      cb(
+        null,
+        file.originalname + ///////O SEGUNDO ARGUMENTO É 'WHAT YOUR FILENAME SHOULD BE' (é como deve ser CHAMADO o arquivo que você vai armazenar naquela 'destination') ---> e '.originalName' é um MÉTODO EXISTENTE DENTRO DO OBJETO 'file' QUE NOS DÁ O ACTUAL FILENAME do arquivo que o user uploadou...
+          '-' +
+          new Date().toISOString().replace(':', '#')
+        // file.filename /NESSA CONCATENAÇÃO, VAMOS USAR o 'file.filename' JUSTAMENTE PQ 'filename' é uma PROPRIEDADE DENTRO DO OBJETO 'req.file' QUE VAI CONTER A 'RANDOM HASH' GERADA PARA __ CADA 1 DESSES ARQUIVOS (hash única)... ---> faremos isso para que NÃO HAJA CONFUSÃO ENTRE NOSSAS FILES ARMAZENADAS NO NOSSO NODEAPP... ----------> MAS ESSE MÉTODO/APPROACH DE 'UNIQUENESS' NÃO VAI FUNCIONAR, POR ISSO O PROFESSOR DECIDIU SÓ USAR 'new Date().toISOString()'..
+      );
+    },
+
+
+
+
+
+'''
+
+
+
+
+
+QUANDO DEVIA SER O CONTRÁRIO, DEVIA 
+
+ser 
+
+
+'new Date().toISOString().replace(':', '#')' 
+
+
+
++ 
+
+'-' 
+
+
++ 
+
+
+file.originalName...
+
+
+
+
+
+
+
+
+
+
+--> OUTRO PROBLEMA É QUE OS ARQUIVOS ESTÃO SENDO ARMAZENADOS __ EM BRANCO__ (???? essa package 
+
+do multer é horrível...)
+
+
+
+
+
+
+
+
+
+
+---> OUTRO PROBLEMA (esse eu entendi como resolver) é que UMA LONGA FITA DE '%20' ESTÁ SENDO ADICIONADA NA URL BAR, QUANDO CLICAMOS EM 'submit' ---> ISSO ESTÁ ACONTECENDO POR CAUSA 
+
+
+
+
+DE 
+
+
+'enctype="multipart/form-data"'
+
+
+
+NA VIEW... -_> QUANDO VOCÊ COLOCA ISSO NA FORM,
+
+
+
+
+
+VOCê 
+
+
+
+FAZ COM QUE 
+
+
+
+
+SUA VIEW FIQUE 'SUPER SENSÍVEL'; todos os espaços em branco 
+
+
+nas linhas 
+
+
+são COMPUTADOS E TRANSFORMADOS em '%20',
+
+e repassados a url submittada a 'post'... -------> PARA 
+
+
+
+CONSERTAR ISSO, VOCê TEM QUE IR REMOVENDO OS ESPAÇOS..
+
+
+
+
+
+
+
+
+--> CONSEGUI CONSERTAR ESSE PROBLEMA... 
+
+
+
+A PARTE QUE ESTAVA UMA BOSTA ERA 
+
+O 
+
+        <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
+
+
+
+
+
+
+
+
+
+
+
+
+    ---> CONSERTADO ESSE PROBLEMA,
+
+    PASSAMOS 
+
+    PARA 
+    O 
+
+
+    PROBLEMA 
+
+
+
+    __DOS ARQUIVOS _ 
+
+    ESTAREM __ COMPLETAMENTE VAZIOS (sem images)
+    ,
+
+    QUANDO ARMAZENADOS NAQUELE FOLDER...
+
+
+
+
+
+
+
+
+--> obtive um breve problema de 
+
+''Error: Error connecting to db: connection <monitor> to 34.198.25.25:27017 closed''
+
+
+
+
+
+
+
+
+--> é um problema do mongodb, acontece quando nosso IP MUDA/MUDOU... --> temos que ir até o site do mongodb atlas 
+
+e dar whitelist 
+
+no nosso novo ip....
+
+
+
+--> fiz isso... testei e... funcionou.
+
+
+
+
+
+
+
+
+
+
+
+
+--> entretanto, o problema da 'csrfToken' PERSISTE... --> Agora tenho esse problema
+
+
+
+NA MINHA ROUTE DE LOGIN, TAMBÉM...
+
+
+
+
+
+
+
+
+
+--> o problema da CSRFTOKEN __ ERA DEVIDO __ AO BODYPARSER QUE EU HAVIA REMOVIDO DE MEU CÓDIGO... (ele 
+
+
+precisa 
+
+ficar 
+
+no meu código, pq ele 
+
+é 
+o 
+
+responsável pelo handle de todo 
+
+
+o conteúdo 'TEXTO' que é submittado ao meu app, por meio de input fields em forms...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... sigo com o problema 
+
+
+
+DO 
+
+
+
+_STORE __ DE 
+
+
+
+ARQUIVOS 
+
+EM BRANCO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I found that using multer alongside bodyParser can cause req.file to be undefined. Make sure to check that also if you're having issues.
+
+
+
+
+
+
+
+
+
+
+
+--> não sei se é esse o problema, de verdade...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA, NA VERDADE,
+ 
+ É 
+ O CÓDIGO DE 'FILENAME',
+
+ ESTE AQUI:
+
+
+
+
+
+
+         new Date().toISOString().replace(':', '$') + '-' + file.fieldname
+
+
+
+
+
+  --------------
+
+
+
+
+
+
+
+
+  É ISSO AÍ QUE ESTÁ CAUSANDO TODO O PROBLEMA... só não sei a razão disso...
+
+
+
+
+
+
+
+  FINALMENTE, CONSEGUI UMA VERSÃO DESSE CÓDIGO QUE __PRESTA__...
+
+
+
+
+
+  FICOU ASSIM:
+
+
+
+     Date.now() + '-' + file.originalname ///ESTA VERSÃO __ PRESTA__.... vai adicionar essa image no nosso server, com esse pequeno 'Date.now()' para diferenciar entre arquivos....
+
+
+
+
+
+
+
+
+
+
+
+
+--------> código inteiro ficou assim:
+
+
+
+
+
+
+
+
+
+const fileStorage = multer.diskStorage(
+  ///É POR MEIo de 'multer.diskStorage()' QUE VAMOS __ CRIAR UMA 'STORAGE ENGINE'.. --> e essa storage engine será , então, utilizada NAQUELE MIDDLEWARE DO MULTER, VISTO LOGO ABAIXO... tipo naquele objeto {storage: fileStorage}...
+  {
+    destination: (req, file, cb) => {
+      /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+
+      cb(null, imagePath); ///o 'null' é relativo AO 'ERRO' QUE VOCÊ PASSA COMO PRIMEIRO ARGUMENTO DESSE CALLBACK...
+    },
+    filename: (req, file, cb) => {
+
+      console.log(file.fieldname, 'LINE');
+      ///OBS::: SE VOCÊ SETTAR/configurar/definir o FILENAME de seus arquivos storados __ por meio dessa key de 'filename:', o multer AUTOMATICAMENTE __ VAI PARAR__ DE ARMAZENAR UM 'RANDOM HASH' (auto-generated random hash) LÁ NAQUELA PROPRIEDADE 'filename', em 'req.file' (o que ficará nesse lugar, no caso, é o FILENAME que você DEFINIU AQUI, e não mais aquele hash randomizado...)
+      cb(
+        null,
+       ///////O SEGUNDO ARGUMENTO É 'WHAT YOUR FILENAME SHOULD BE' (é como deve ser CHAMADO o arquivo que você vai armazenar naquela 'destination') ---> e '.originalName' é um MÉTODO EXISTENTE DENTRO DO OBJETO 'file' QUE NOS DÁ O ACTUAL FILENAME do arquivo que o user uploadou...
+         
+          // new Date().toISOString().replace(':', '$') + '-' + file.fieldname ///ESSE __CÓDIGO__ NÃO FUNCIONA... (salva os arquivos em BRANCO, com nomes errados)....
+
+          Date.now() + '-' + file.originalname ///ESTA VERSÃO __ PRESTA__.... vai adicionar essa image no nosso server, com esse pequeno 'Date.now()' para diferenciar entre arquivos....
+
+      
+        // file.filename /NESSA CONCATENAÇÃO, VAMOS USAR o 'file.filename' JUSTAMENTE PQ 'filename' é uma PROPRIEDADE DENTRO DO OBJETO 'req.file' QUE VAI CONTER A 'RANDOM HASH' GERADA PARA __ CADA 1 DESSES ARQUIVOS (hash única)... ---> faremos isso para que NÃO HAJA CONFUSÃO ENTRE NOSSAS FILES ARMAZENADAS NO NOSSO NODEAPP... ----------> MAS ESSE MÉTODO/APPROACH DE 'UNIQUENESS' NÃO VAI FUNCIONAR, POR ISSO O PROFESSOR DECIDIU SÓ USAR 'new Date().toISOString()'..
+      );
+    },
+  }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> certo..... mas nós AINDA NÃO ACABAMOS, É CLARO...
+
+
+
+
+
+
+
+
+
+
+
+1) A FILE REALMENTE ESTÁ SENDO ARMAZENADA EM 'IMAGES' (folder) lá 
+
+
+NO FILESYSTEM DE NOSSO APP NODEEXPRESS....
+
+
+
+
+
+
+2) ENTRETANTO, AINDA ESTAMOS RECEBENDO A PÁGINA DE 'ERRO 500',
+
+
+o que quer dizer que houve um erro, provavelmente....
+
+
+
+
+
+
+
+
+
+3) E NÓS AINDA __ NÃO ESTAMOS ARMAZENANDO_ _ 
+
+
+ESSE ARQUIVO IMAGE NA NOSSA DATABASE...
+
+
+
+
+
+
+4) NOSSAS IMAGES __SÃO ADICIONADAS_;armazenadas no filesystem de nosso servidor MESMO QUANDO 
+
+
+A VALIDATION DE NOSSO APP FALHA (ex: 'price must be a number, and must be greater than 0')...
+
+
+(ele SÓ NÃO ARMAZENA SE TENTAMOS ARMAZENAR 1 TIPO  DE FILE INVÁLIDO/BLOQUEADO POR NOSSO 'filter' do multer, lá em 'app.js'...)
+
+
+
+
+devo continuar vendo a aula do professor, para ver o que ele faz...
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+CONTINUANDO O VÍDEO DO PROFESSOR...
+
+
+
+
+
+
+
+
+--> NO NOSSO APP, LÁ NO CONTROLLER 
+
+DE 
+
+'ADMIN.JS',
+
+
+
+
+EU VOU QUERER
+
+
+
+
+
+
+FAZER O HANDLE DO ARQUIVO DE IMAGEM CORRETAMENTE... 
+
+
+
+
+
+
+
+
+
+
+
+professor relembra o 
+
+
+
+'const image = req.file' 
+
+
+
+
+
+
+
+
+
+--> FILE É 
+
+
+
+
+UM OBJETO COM ESTE FORMATO:
+
+
+
+
+{
+  fieldname: 'image',
+  originalname: 'Agendamento impossibilitado.png',
+  encoding: '7bit',
+  mimetype: 'image/png',
+  destination: 'A:\\projeto4 - NODEJS\\MODULO20-FILEUPLOADEDOWNLOAD\\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\\images',
+  filename: '1637120223164-Agendamento impossibilitado.png',
+  path: 'A:\\projeto4 - NODEJS\\MODULO20-FILEUPLOADEDOWNLOAD\\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\\images\\1637120223164-Agendamento impossibilitado.png',
+  size: 102958
+}
+
+
+
+
+
+
+
+
+-------> NESSE OBJETO, TEMOS INFORMAÇÕES 
+
+
+
+SOBRE O ARQUIVO, E SOBRE ONDE 
+
+ELA FOI ARMAZENADA... (
+
+
+  ou seja, em que 
+
+  LUGAR ESSE ARQUIVO PODE SER ENCONTRADO/FOI ARMAZNADO...
+)
+
+
+
+
+
+
+
+------------->  AGORA, NO CASO, VAMOS QUERER ____SALVAR__ ESSE 
+
+ARQUIVO NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+-----> ANTES DE TUDO,
+
+
+
+PROFESSOR VAI QUERER 
+
+
+ESCREVER UM CHECK DE 
+
+
+
+
+------------------------------------
+
+const image = req.file;
+
+
+
+
+if (!image) {
+
+
+
+},
+
+
+
+--------------------------------------
+
+
+
+
+
+
+--> ELE VAI CHECAR SE A IMAGE ESTÁ SET... -->  SE A IMAGE ESTIVER 
+
+
+COMO 
+
+'UNDEFINED',
+
+
+
+
+ISSO SIGNIFICA QUE O 
+
+MULTER ___ DECLINOU__ 
+
+
+A 
+
+'INCOMING FILE'... ----------->
+
+
+
+
+
+
+
+
+SE SABEMOS QUE ELE __DECLINOU__ O ARQUIVO,
+
+
+PODEMOS 
+
+
+
+
+JUSTAMENTE 
+
+
+__RETORNAR__ 
+
+
+
+UMA ____ RESPONSE__ AO USER... --------> VAMOS RETORNAR UMA 
+
+RESPONSE 
+
+
+COM 
+
+STATUS 
+
+CODE 
+
+
+de 
+422 (INVALID INPUT.... POR PARTE DO USUÁRIO)...
+
+
+
+
+
+
+
+lembre-se:
+
+
+
+
+
+1xxx --> standard responses  ('continue')
+
+
+
+2xxxx --> success responses
+
+
+
+3xxx --> redirect responses 
+
+
+4xxx --> CLIENTSIDE ERROR/PROBLEM responses...
+
+
+
+
+5XXX --> SERVERSIDE ERROR/PROBLEM RESPONSES...
+
+
+
+
+
+
+
+----------> COMO VAMOS 
+
+TER 
+
+
+1 
+
+'INVALID INPUT',
+
+
+
+VAMOS QUERER 
+
+
+RETORNAR UMA __ RESPONSE DE 
+
+
+'status 422'
+
+
+
+COM UM 
+
+
+
+__RE-RENDER DA PAGE 
+
+DE 
+
+
+'edit/add-product',
+
+
+COM UMA 'errorMessage' de 
+
+
+'Invalid image type',
+
+ou algo assim,
+
+
+
+
+PARA O USER...
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+
+  const image = req.file;
+
+    if(!image) { ///se image estiver como UNDEFINED, isso significa que o multer RECUSOU o arquivo...
+
+
+          
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: 'admin/add-product',
+        editing: false,
+        errorMessage: 'Attached file is not an image.',
+        validationErrors: validationErrors,
+          prod: {
+            price: price, 
+            description: description,
+            title: title
+          }
+      });
+
+
+
+    }
+
+
+
+
+
+
+
+
+....
+
+}
+
+
+
+
+
+
+
+
+
+OK, ISSO __ DEU CERTO__....
+
+
+
+
+
+
+
+
+
+--> agora um modal de 
+
+
+
+'Attached file is not an image'
+ 
+
+
+ ESTÁ SENDO MOSTRADO _ QUANDO O USER_ _ SUBMITTA ALGO QUE NÃO É UMA IMAGE ...
+
+(além disso, a file REALMENTE NÃO ESTÁ SENDO ARMAZENADA NO FILESYSTEM DO NODEEXPRESS, O QUE É ÓTIMO... sinal de que o FILTER do multer FUNCIONA...)
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO....
+
+
+
+
+
+
+
+AGORA SÓ FALTA VINCULAR OS 'VALIDATION ERROS' (dos outros fields)
+
+
+
+
+
+ao 'NÃO QUERO QUE SEJA SALVO ESSE ARQUIVO'....,
+
+
+
+
+E TAMBÉM __ 
+
+
+
+FALTA 
+
+O 
+
+'ACTUAL STORE' 
+
+
+
+dos arquivos 
+
+
+
+NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO.... 
+
+
+
+
+
+
+
+
+
+---->  PROFESSOR EXPLICA QUE AGORA DEVEMOS 
+TRABALHAR NO 
+
+CASE 
+DE 
+
+
+
+'NÓS TEMOS UMA IMAGE, E QUEREMOS A ARMAZENAR....''
+
+
+
+
+
+
+
+
+
+
+------> O PROFESSOR EXPLICA QUE 
+
+
+___ A FILE __ JÁ ESTÁ SENDO ARMAZENADA NO NOSSO 'FILE SYSTEM'... ----> E 
+
+
+
+O PROFESSOR
+
+
+
+
+
+RELATA QUE 
+
+
+
+__________ESSA É ___ REALMENTE__ 
+
+
+A 
+
+MANEIRA___ IDEAL__ 
+
+
+
+DE 
+
+
+ARMAZENAR ARQUIVOS/IMAGES nos seus apps... ---> SEMPRE É 
+
+
+IDEAL:
+
+
+
+
+
+
+1) ___ARMAZENAR__ SEUS ARQUIVOS __ NA MÁQUINA DO SERVIDOR DO APP NODEEXPRESS...
+
+
+
+
+
+
+
+2) VOCÊ __ NÃO DEVE__ ARMAZENAR__ DATA DE ARQUIVOS (arquivos, na verdade) 
+
+
+NAS DATABASES.... ------> ARQUIVOS NÃO DEVEM SER ARMAZENADOS EM DATABASES ____ 
+
+
+PQ _______ ELES SÃO MT __ GRANDES.... -----> É 
+
+
+
+INEFICIENTE DEMAIS ____ ARMAZENAR__ ARQUIVOS __ GRANDÕES EM DATABASES.... --->  
+
+
+
+
+--------------------------------
+
+
+NÃO DEVEMOS ARMAZENAR 
+
+FILES 
+
+EM DATABASES 
+
+PQ __ O QUERY___ DESSES ARQUIVOS, LÁ DAS DATABASES, É _ HORRÍVEL,
+
+DEMORADO, INEFICIENTE...
+
+---------------------------------
+
+
+
+
+
+3) ARMAZENE FILES NO __FILE SYSTEM__ DE SEU 
+
+SERVER,
+
+COMO ESTAMOS FAZENDO AGORA, AQUI...
+
+
+
+
+
+
+
+4) MAS É __ CLARO__ QUE ___ALGUMA __ COISA, ALGO RELATIVO A ESSAS FILES,
+
+__ DEVE__ SER ARMAZENADO __ NA SUA DATABASE... ---------> A COISA QUE VAMOS QUERER __ ARMAZENAR _ 
+NA DATABASE __ 
+
+
+É:
+
+*************O 'PATH' __ A ESSE ARQUIVO__ QUE VOCÊ ARMAZENOU LÁ __ NO SEU SERVER/BACKEND NODEEXPRESS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESUMINDO:
+
+
+
+
+FAÇA:
+
+
+
+A) ARMAZENE OS FILES UPLOADADOS PELOS __ USERS__ (e os que você quer hostear) __ NO FILESYSTEM___ DE SEU APP NODEEXPRESS...
+
+
+
+
+B) ARMAZENE NA DATABASE ___ APENAS ___ OS 'PATHS' AOS FILES UPLOADADOS, FILES QUE __RESIDEM EFETIVAMENTE__ NO SEU SERVER/BACKEND...
+
+
+
+
+
+
+
+
+
+------->  OK, MAS COMO 
+
+
+FAZEMOS 
+
+
+
+
+'B"? 
+
+
+
+
+
+
+
+
+------> BEM, PARA CONSEGUIR ARMAZENAR O 'PATH' DAS FILES SUBMITTADAS PELOS USERS E ARMAZENADAS 
+
+NO SEU BACKEND/SERVER,
+
+
+___ VOCÊ _ PODE 
+
+, DIZ O PROFESSOR,
+
+
+FACILMENTE __ CONSTRUIR __ 
+
+ESSA INFORMAÇÃO 
+
+POR MEIO 
+
+
+DAS PROPRIEDADES 
+
+CONTIDAS 
+
+DENTRO 
+
+
+
+DE 
+
+
+'req.file'...
+
+
+
+
+
+
+---> 
+
+
+
+
+
+A INFORMAÇÃO CONTIDA DENTRO DO OBJETO 'file'
+
+
+
+
+VAI __ SER INSTRUMENTAL NA 
+
+OBTENÇÃO 
+
+
+DOS 'paths' 
+
+
+
+QUE VAMOS QUERER 
+
+ARMAZENAR NA NOSSA DATABASE....
+
+
+
+
+
+
+------> ok.... isso significa que __ QUANDO 1 PRODUCT__ FOR ARMAZENADO _ NA NOSSA _DATABASE,
+
+
+VAMOS QUERER __ 
+
+
+ARMAZENAR__ , DENTRO DE CADA 'product document',
+
+
+
+o 'PATH' à IMAGE __ QUE 
+
+CORRESPONDE A ESSE PRODUCT....
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONTINUANDO NOSSO CÓDIGO:
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+
+  const image = req.file;
+
+    if(!image) { ///se image estiver como UNDEFINED, isso significa que o multer RECUSOU o arquivo...
+
+
+          
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: 'admin/add-product',
+        editing: false,
+        errorMessage: 'Attached file is not an image.',
+        validationErrors: validationErrors,
+          prod: {
+            price: price, 
+            description: description,
+            title: title
+          }
+      });
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ------------> SE NÓS CONSEGUIMOS __ PASSAR__ POR 
+
+    ESSE 
+
+    IF CHECK de '!image',
+
+
+
+
+
+    ESSA VALIDATION AÍ,
+
+
+
+
+
+
+
+
+    __vAMOS ___ SABER__ QUE 
+
+    TEMOS UMA 
+
+
+    'VALID FILE'
+
+
+    e 
+
+
+    'VALID INPUT DATA'....
+
+
+
+
+    (
+
+      ok... mas aqui tenho um problema... ------> meu código 
+
+
+      SEMPRE SALVA A IMAGE, MESMO QUANDO OS INPUTS DOS INPUT FIELDS QUE NÃO 
+
+      SÃO A IMAGE SÃO INVÁLIDOS...
+    )
+
+
+
+
+
+
+--> vou testar o código do professor, ver se ele tem o mesmo problema...
+
+
+
+
+
+
+
+
+--> TESTEI O CÓDIGO DO PROFESSOR... ELE TEM O MESMO PROBLEMA; ELE AINDA NÃO NOS ENSINOU A CONSERTAR ESSE PROBLEMA DA VALIDATION... --> isso significa que 
+
+
+
+
+O FATO DE ALGUM DOS INPUT FIELDS ESTAR COMO 'INVALID' 
+
+
+NADA 
+
+IMPORTA NO STORAGE DE NOSSAS FILES..... (
+
+  o que é mt ruim, pois 1 user 
+
+
+  que inputta dados INVÁLIDOS nos input fields AINDA VAI TER SUA IMAGE ARMAZENADA NO FILESYSTEM DE NOSSO APP....
+)
+
+
+
+
+
+
+
+
+
+--> a pergunta é: 
+
+como resolver isso?
+
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+OK... PROFESSOR CONTINUA:
+
+
+
+
+
+
+'SE PASSARMOS PELO VALIDAITON DE NOSSA FILE SUBMITTADA, 
+
+
+SABEMOS 
+
+QUE 
+
+
+TEMOS 
+
+1 
+
+VALID FILE E VALID INPUT DATA'... ----------------> 
+
+
+
+
+AÍ, A PARTIR DISSO,
+
+
+
+VOU QUERER CRIAR MINHA 
+
+
+'imageUrl' (uma const)
+
+
+
+__NOVAMENTE... --------> 
+
+
+
+ESSA 'imageUrl'
+
+
+SERÁ __ PRECISAMENTE__ 
+
+
+O 'path' 
+
+
+
+
+
+a minha FILE ARMAZENADA no filesystem do app nodeexpress,
+
+
+
+QUE 
+
+DEVERÁ SER ARMAZENADO NA MINHA DATABASE MONGODB....
+
+
+
+
+
+
+
+
+
+
+-------> professor começa escrevendo isto:
+
+
+
+
+const image = req.file;
+
+const imageUrl = image.....
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+--> OU SEJA, ELE VAI USAR AQUELE 'OBJETO file' (obtido por meio do uSO DE 'multer'),
+
+
+
+
+
+PARA ENTÃO EXTRAIR ALGUMA PROPRIEDADE DE SEU INTERIOR...
+
+
+
+
+
+
+
+
+-------> DENTRO DESSE OBJETO, temos a propriedade 'path',
+
+QUE 
+
+É 
+
+
+A PROPRIEDADE QUE __ REALMENTE__ NOS INTERESSA... --> PROFESSOR EXPLICA QUE 
+É 
+
+ESSE 
+
+'PATH' 
+
+QUE NOS INTERESSA,
+
+
+
+PQ 
+
+ESSE 
+
+
+
+É O 'PATH' 
+
+
+NO OPERATING SYSTEM DO SERVIDOR,
+
+
+
+
+E É __ JUSTAMNETE 
+
+
+
+'O PATH QUE EU VOU QUERER USAR, ___ MAIS __ TARDE,__ QUANDO EU 
+
+QUISER FAZER ___ O FETCH __ DESSA IMAGE....''
+
+
+
+(
+
+
+  ou seja, eu acho que
+
+  vamos usar a DATABASE para ENCONTRAR o path/local desse arquivo 
+
+  no SERVER/app nodeexpress...
+)
+
+
+
+
+
+
+
+
+
+---> OK... PROFESSOR ESCREVE:
+
+
+
+
+
+const imageUrl = image.path
+
+
+
+
+
+
+
+
+
+
+--------> vamos querer armazenar essa const NA NOSSA DTABASE...
+
+
+
+O
+
+
+CÓDIGO FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl; ///versão que ainda usava urls..
+  // const image = req.body.image; ////versão que usa o FILE UPLOAD de uma IMAGE...
+  const image = req.file;
+
+  console.log(image, 'POSTADDPRODUCT');
+
+  const price = req.body.price;
+  const description = req.body.description;
+
+
+
+    if(!image) { ///se image estiver como UNDEFINED, isso significa que o multer RECUSOU o arquivo... --> se ele RECUSOU O ARQUIVO, vamos querer RE-RENDERIZAR A PAGE DE ADD/EDIT PRODUCT e aí __ INFORMAR O USER (por meio de 'errorMessage') QUE __ ELE INPUTTOU/SUBMITTOU UMA IMAGE INVÁLIDA (ao mesmo tempo que enviamos um RESPONSE STATUS DE 422, invalid input...)
+
+
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: 'admin/add-product',
+        editing: false,
+        errorMessage: 'Attached file is not an image.',
+        validationErrors: validationErrors,
+          prod: {
+            price: price, 
+            description: description,
+            title: title
+          }
+      });
+
+
+    }
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+
+  const imageUrl = req.file.path;
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    // req.file === null; não funciona.
+    // console.log(req.file, 'EXEMPLO'); /
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+      console.log(req.session, 'EXAMPLE');
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl,  ////por meio desse código/referência a essa const, armazenamos o PATH A ESSE ARQUIVO (que é o que interessa) lá na nossa database... (é o path AO ARQUIVO ARMAZENADO LÁ NO NOSSO SERVER/APP NODEEXPRESS...., no filesystem dele...)
+      // image: image, ////NUNCA ARMAZENE 'A IMAGE EM SI' nas suas databases... (o store de arquivos em databases É INEFICIENTE E RUIM... SEMPRE PREFIRA __ ARMAZENZA O 'PATH' A ESSA IMAGE, IMAGE QUE DEVE SER ARMAZENADA NO SEU APP NODEEXPRESS/backend servidor...) -------> no caso, vamos __ ARMAZENAR A 'FILE' da image NO BACKEND, no folder de 'images', e APENAS __ ARMAZENAREMOS __ O PATH__ ('req.file.path') NA NOSSA DATABASE, dentro dos documents 'product'...
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        console.log(req.session, 'EXAMPLE');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        console.log('TEST52');
+        error.httpStatusCode = 500;
+        console.log(req.session, 'EXAMPLE');
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> SALVAMOS TUDO ISSO,
+
+
+
+E AÍ 
+
+
+
+
+O PROFESSOR TESTA O ADD 
+
+
+
+DE 
+
+
+1 PRODUCT... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... ----> QUANDO FIZERMOS ISSO, VEREMOS:
+
+
+
+
+
+
+
+1) O PRODUCT __ REALMENTE__ FOI ADDADO NA NOSSA __DATABASE, na collection de 'products'...
+
+
+
+
+
+
+2) entretanto, lá nas LISTAS DE PRODUCTS, A IMAGE FICA BUGADA, ELA __ NÃO APARECE__ (fica 'missing image')...
+
+
+
+
+
+
+3) lá na database, o formato do product fica assim:
+
+
+{
+    "_id": {
+        "$oid": "6195409c557e0c1837b77560"
+    },
+    "title": "EXEMPLO",
+    "price": 2200,
+    "description": "asasasasasas",
+    "imageUrl": "A:\\projeto4 - NODEJS\\MODULO20-FILEUPLOADEDOWNLOAD\\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\\images\\1637171355594-Deep_Striker_Sentinel.jpg",
+    "userId": {
+        "$oid": "619326d1482ffb8a77b2cfcb"
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+4) PRECISAMOS ___ **** USAR*** ESSE PATH EM 'imageUrl', no nosso product,
+ lá 
+ 
+ 
+ NA NOSSA DATABASE, para __BUSCAR__ ESSA IMAGE__ LÁ NO NOSSO BACKEND/APP NODEEXPRESS.... --> é assim que vamos conseguir 
+
+ outputtar
+
+
+
+ essa image no nosso app...
+
+
+
+
+
+
+
+ (mas não sei como fazer isso....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------------------------------------------
+
+
+
+
+
+
+
+
+
+OK.... PROFESSOR DIZ QUE VAMOS TRABALHAR NISSO LOGO LOGO...
+
+
+
+
+
+
+
+-->  caminho que foi armazenado:
+
+
+
+  path: 'A:\\projeto4 - NODEJS\\MODULO20-FILEUPLOADEDOWNLOAD\\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\\images\\1637171355594-Deep_Striker_Sentinel.jpg',
+
+
+
+
+
+
+
+
+
+
+
+
+  --------> OK.... --> MAS É CLARO QUE __ SE 
+
+
+  INSPECIONARMOS
+
+
+
+
+  ESSA IMAGE 
+
+
+
+
+  LÁ NO NOSSO 'PRODUCT' NO FRONTEND,
+
+
+
+  VAMOS VER ALGO ASSIM:
+
+
+
+
+  <img src="A:\projeto4 - NODEJS\MODULO20-FILEUPLOADEDOWNLOAD\NOVONOVOPROJETO18-FILEUPLOADEDOWNLOAD\images\1637171355594-Deep_Striker_Sentinel.jpg" alt="EXEMPLO">
+
+
+
+
+
+
+
+
+
+
+
+  -------->  basicamente, nosso app/frontend ESTÁ FALHANDO 
+
+  EM BUSCAR 
+
+  ESSE 
+
+  PATH AÍ,
+
+
+
+
+  pq ele está buscando ___ NO LUGAR Errado... 
+
+
+
+
+
+
+
+
+  --> DE FATO, SE ABRIRMOS A ABA 'NETWORK',
+
+
+  VAMOS VER QUE 
+
+  ESSE ELEMENTO 'IMAGE' 
+
+
+
+  está nos retornando um ERRO 404...
+
+
+
+
+
+
+
+
+  -----> OK.... AGORA QUE SOMOS CAPAZES __ DE ___ ARMAZENAR__ DATA_,
+
+
+
+
+
+  DEVEMOS __ TAMBÉM ___ 
+
+
+  APRENDER COMO PODEMOS 
+
+
+
+  'SERVE DATA'... (servir lá de NOSSO BACKEND/NODE EXPRESS, A PARTIR DOS 'PATH' armazenados em nossos 'product', lá na nossa database...)
+
+
+
+
+
+
+  ------->  MAS ANTES __ 
+
+
+  DE __ 
+
+
+
+
+
+
+  TRABALHARMOS NO 
+
+
+  'SERVE DE DATA/IMAGE',
+
+
+
+
+
+  DEVEMOS 
+
+
+
+  TAMBÉM CONSERTAR 
+
+
+
+
+  O CONTROLLER DE 'EDIT',
+
+  pq 
+
+  ele 
+
+
+  TAMBÉM NÃO ESTÁ MAIS FUNCIONANDO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------> OK... POR ENQUANTO, O CÓDIGO DE 'EDIT' ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl;
+
+  const image = req.file;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+  } else {
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+
+      .then((product) => {
+
+        ////throw new Error('Dummy'); //////ESSE É O EXEMPLO USADO PELO PROFESSOR... é necessário esse THROW MANUAL DE UM ERROR (isso é só um exemplo, pq você não vai escrever assim...)
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {   //////// O __ ERRO__ DO 'throw new Error('Dummy')' (_ E QUALQUER OUTRO ERROR DESSE TIPO, do tipo que 'THROWS AN ERROR') É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); ///É ISSO QUE VAI FAZER O REPASSE DO ERRO A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js.... (é o middleware que  tem 4 argumentos, 'error, req, res, next'...)
+      });
+  }
+};
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+--> NÓS REMOVEMOS ALGUMAS COISAS, AQUI... 
+
+
+
+
+
+
+
+-----> não vamos mais querer ALTERAR A 
+
+URL, 
+
+POR ISSO 
+
+
+
+AQUELE CÓDIGO DE 'save()' ficou assim:
+
+
+
+
+
+
+
+      .then((product) => {
+
+        ////throw new Error('Dummy'); //////ESSE É O EXEMPLO USADO PELO PROFESSOR... é necessário esse THROW MANUAL DE UM ERROR (isso é só um exemplo, pq você não vai escrever assim...)
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+
+          return product.save();
+        }
+      })
+
+
+
+
+
+
+
+
+
+--------> 
+
+
+O PROFESSOR 
+
+
+VAI QUERER 
+
+
+DEFINIR, AQUI,
+
+
+UM 
+
+
+
+COMPORTAMENTO DE 
+
+
+
+'SE NÓS __ NÃO ESCOLHEMOS NENHUM ARQUIVO IMAGE, 
+
+VAMOS QUERER MANTER O ARQUIVO IMAGE ANTIGO, o path ANTIGO 
+
+dessa image'... --------> SÓ VAMOS QUERER __ OVERWRITTAR__ 
+
+
+
+O ARQUIVO/IMAGE VELHO ATRIBUÍDO A ESSE PRODUCT_ _ SE ESCOLHERMOS/UPLOADARMOS__ 
+
+
+UM NOVO ARQUIVO... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, O QUE O PROFESSOR FAZ É 
+
+
+
+
+
+CHEGAR LÁ NO CONTROLLER DE 'editProduct'
+
+
+
+
+
+
+e aí 
+
+
+ELE 
+
+
+VAI 
+
+
+
+
+
+
+QUERER TIRAR 
+
+
+
+'const imageUrl = req.body.imageUrl' 
+
+
+
+
+
+E COLOCAR 
+
+
+
+'const image = req.file;' 
+
+
+
+
+NO SEU LUGAR...
+
+
+
+
+
+
+
+
+CERTO... FICA ASSIM, POR ENQUANTO:
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl;
+
+  const image = req.file; ///////EIS O CÓDIGO EM QUESTÃO.
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+  } else {
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+
+      .then((product) => {
+
+        ////throw new Error('Dummy'); //////ESSE É O EXEMPLO USADO PELO PROFESSOR... é necessário esse THROW MANUAL DE UM ERROR (isso é só um exemplo, pq você não vai escrever assim...)
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {   //////// O __ ERRO__ DO 'throw new Error('Dummy')' (_ E QUALQUER OUTRO ERROR DESSE TIPO, do tipo que 'THROWS AN ERROR') É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); ///É ISSO QUE VAI FAZER O REPASSE DO ERRO A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js.... (é o middleware que  tem 4 argumentos, 'error, req, res, next'...)
+      });
+  }
+};
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+CERTO... O PROFESSOR ARMAZENOU 'req.file'
+
+
+
+nessa CONST 
+
+de 
+
+'image'
+
+
+JUSTAMENTE __ PQ __ ESSA 
+
+IMAGE 
+
+
+SERÁ 
+
+
+
+___A COISA QUE ELE CHECARÁ (if check) 
+
+
+
+
+
+
+PARA __ SABER __ SE A IMAGE VINCULADA ÀQUELE PRODUCT ESPECÍFICO PRECISA 
+
+
+SER ALTERADA/overwrittada.....
+
+
+
+
+
+(
+
+
+
+
+  pq se a IMAGE UPLOADADA PELO USER __ NÃO EXISTIR,
+
+
+  VAMOS __ QUERER RODAR UM CÓDIGO ALTERNATIVO, QUE NÃO altera 
+
+  a 
+
+  IMAGE vinculada 
+
+
+  a esse product....
+)
+
+
+
+
+
+
+
+
+
+
+
+'IF IT IS UNDEFINED, I KNOW NO FILE WAS SAVED'....
+
+-----> O QUE SIGNIFICA QUE VAMOS QUERER __ MANTER  O ARQUIVO VELHO (obs: o mesmo se aplica se eu quiser uploadar um PDF, A IMAGE VELHA SERÁ MANTIDA PQ O ARQUIVO NOVO É UNDEFINED/INVÁLIDO...)
+
+
+
+
+
+
+
+
+
+
+
+--------->  ISSO FEITO,
+ 
+ O QUE 
+
+ O 
+
+
+ PROFESSOR VAI ALTERAR, 
+
+ no controller 
+ de 
+
+
+
+ 'editProduct',
+
+
+ É O CÓDIGO DE SAVE...
+
+
+
+
+
+
+
+ ANTES ESTAVA ASSIM:
+
+
+
+
+  else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          product.imageUrl = imageUrl; ////TINHA ISTO
+          return product.save();
+        }
+
+
+
+
+
+
+
+
+
+
+AGORA FICA ASSIM:
+
+
+
+
+
+
+
+  else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+              //agora NÃO TEM MAIS...
+          return product.save();
+        }
+
+
+
+---------------------------------
+
+
+
+
+
+ISSO PQ __ NÃO VAMOS QUERER __ UPDATAR __ 
+
+
+O 
+
+'PATH' 
+
+À IMAGE, essencialmente... (pq vamos querer DEIXÁ-LO IGUAL...)
+
+
+
+
+
+
+
+
+--> e vamos querer  tirar essa linha 'product.imageUrl = imageUrl' 
+
+
+
+APENAS NA HIPÓTESE/case de  'IMAGE IS UNDEFINED/INVÁLIDA'....
+
+
+
+
+
+
+
+
+
+------> MAS SE PASSAMOS PELA VALIDATION,
+
+
+
+
+
+QUANDO FORMOS __ ARMAZENAR__ O PRODUCT/updatar o product,
+
+
+
+
+
+
+
+
+
+
+
+vamos querer escrever algo assim:
+
+
+
+
+
+
+
+  else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+              if(image) {
+
+                product.imageUrl = image.path;
+              }
+          return product.save();
+        }
+
+
+
+
+
+
+
+
+
+
+
+(OU SEJA, VAMOS QUERER __ UPDATAR__ O 'imageUrl' do product para QUE FIQUE IGUAL AO PATH DA FILE UPLODADA,
+
+
+DA PROPRIEDADE 'req.file.path'... )
+
+
+
+
+
+
+
+
+
+--> OK, MAS ISSO ACABA CRIANDO UM PROBLEMA PARA NÓS... --> O PROBLEMA É:
+
+
+
+
+E O ARQUIVO ANTIGO (image antiga)? ELE VAI CONTINUAR VIVENDO NO SERVIDOR (no filesystem do nodeexpress)?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl;
+
+  const image = req.file;  //usado nos nossos CHECKS, para saber se O 'PATH' de nosso arquivo (e, consequentemente, o arquivo atribuído 'for a given product') realmente precisa ser alterado... (ver aquele if check lá embaixo..)
+  const description = req.body.description;
+  const price = req.body.price;
+
+
+  const path = image.path;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  if (validationErrors.length > 0) {
+
+
+    Product.find({ userId: userId }).then((products) => {
+
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+  } else {
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+
+      .then((product) => {
+
+       
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          if(image) {
+            product.imageUrl = imageUrl; /////CÓDIGO MAIS RECENTE, USADO COM O 'MULTER'... ---> vai EDITAR/OVERWRITTAR O PATH A IMAGE ANTIGA (atribuída a esse product) SE CONSTATAR QUE ALGUMA FILE VÁLIDA (não undefined/inválida) TIVER SIDO ENVIADA AO NOSSO APP...
+          }
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {  
+        console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); 
+      });
+  }
+};
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+ok...
+
+
+
+
+vou testar isso...
+
+
+
+
+
+
+
+
+
+--> ENCONTREI OUTRO PROBLEMA NO MEU APP...
+
+
+
+
+
+
+
+
+
+--> a route de 'cart' 
+
+
+está 
+
+
+
+
+EXIBINDO A PÁGINA DE 'ERRO 500'....
+
+
+
+
+
+
+(ok, consertei...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> certo... MAS O PROBLEMA É QUE __ NOSSO __ 
+
+
+
+APP 
+
+AINDA NÃO ESTÁ DISPLAYANDO 
+
+
+AS 
+
+IMAGES 
+
+
+
+DOS NOSSOS PRODUCTS... (ainda não fiz a vinculação correta entre o app nodeexpress - database mongodb...)
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ok... mas tenho um problema mais grave em mãos:
+
+
+
+
+
+quando eu TENTO EDITAR ALGUM PRODUCT,
+
+
+
+RECEBO A PAGE DE 'ERRO 500'... ---------> erro bem sério, pq não sei de onde está vindo...
+
+
+
+
+
+
+
+
+
+
+
+----> era bem simples, 
+
+
+era a ausência 
+
+das variáveis 
+
+
+
+
+  const errors = validationResult(req);
+
+  validationErrors = errors.array();
+
+
+
+
+
+
+
+  ,
+
+
+
+  LÁ DO EXPRESS-VALIDATOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---> continuando...
+
+
+
+
+
+
+
+
+  ---> AGORA AQUELE 'UPDATE CONDICIONAL' 
+
+
+
+  DO PATH (a imagem em si, na verdade)
+
+
+  FUNCIONA,
+
+
+
+
+
+
+  OU SEJA,
+
+
+  NÃO SERÁ UPDATADO O PATH DO PRODUCT SE 
+
+
+  FOR CONSTATADO QUE O USER NÃO SUBMITTOU IMAGE ALGUMA...
+
+
+
+
+
+
+
+
+
+
+
+  --> certo... mas na verdade encontramos MAIS UM ERRO... --> AGORA QUANDO
+
+  TENTO UPDATAR,
+
+
+  RECEBO NOVAMENTE 1 ERRO....
+
+  (
+
+
+    'cannot read property 'path' of undefined'..
+  )
+
+
+
+
+
+
+
+
+
+  --> com efeito, é um problema lá no meu controller de 'editProduct'...
+
+
+
+
+
+
+
+
+
+  --> consertei.... estava faltando '_id: product._id'
+   
+
+
+   NESTE LUGAR:
+
+
+
+
+
+
+
+
+
+        return res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        errorMessage: null,
+        validationErrors,
+        prod: {
+
+          title: product.title,
+          price: product.price,
+          description: product.description,
+          _id: product._id ///////////AQUi.
+        }
+      });
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> DE FATO, agora meu 
+
+product SÓ É UPDATADO SE 
+
+O 
+
+USER REALMENTE 
+
+
+QUISER/realmente tiver uploadado/submittado uma image...
+
+  
+
+
+
+--> O PROBLEMA É QUE 
+
+
+A ANTIGA IMAGE ___ CONTINUA VIVENDO NO 
+
+
+MEU SERVERSIDE.... (o que 
+
+pode 
+
+ser 
+
+bem 
+
+suboptimizado....) 
+
+
+
+
+
+
+
+--> OUTRO PROBLEMA É O __ MESMO DE ANTES:
+
+
+
+
+
+IMAGES ACABAM ADDADAS AO MEU SERVERSIDE (nodeexpress)
+
+
+
+MESMO QUANDO ELAS FALHAM NA VALIDATION DOS OUTROS INPUTS...
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+mas o que interessa é que NOSSA DATABASE, 
+
+
+AQUELA PROPRIEDADE DE 'imageUrl'
+ 
+
+
+ NOS 
+
+
+ NOSSOS PRODUCTS,
+
+
+
+ ACABA SENDO UPDATADA 
+
+
+
+
+
+ QUANDO 
+
+
+
+ SUBMITTAMOS 1 NOVA IMAGE 
+
+
+
+ EM 1 PRODUCT...
+
+
+
+
+
+
+
+
+
+
+ --> OK... AGORA NÓS ESTAMOS 
+
+ 'HANDLANDO OS FILE UPLOADS DA MANEIRA QUE PRECISAMOS OS HANDLAR'..
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS É CLARO QUE O HANDLE DE FILE UPLOADS É 
+
+
+ APENAS __ 1 DAS COISAS__ QUE PRECISAMOS FAZER... 
+
+
+
+
+
+
+
+
+ --> A OUTRA COISA É SERMOS CAPAZES DE 
+
+
+
+ 'DISPLAY THAT IMAGE, DOWNLOAD IT, KINDOF'...
+
+
+
+
+
+
+
+
+
+ --> ISSO SERÁ O NOSSO FOCO, NAS PRÓXIMAS AULAS...
+
+
+
+
+
+
+
+
+ UMA MENSAGEM FINAL:
+
+
+
+
+
+
+
+
+ In the postEditProduct controller action, we already removed imageUrl from the data we return to the view if validation fails.
+
+You should do the same for postAddProduct.
+
+Your validation-failed responses should look like this:
+
+return res.status(422).render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: false,
+    hasError: true,
+    product: {
+        title: title,
+        price: price,
+        description: description
+    },
+    errorMessage: 'Attached file is not an image.',
+    validationErrors: []
+});
+
+
+

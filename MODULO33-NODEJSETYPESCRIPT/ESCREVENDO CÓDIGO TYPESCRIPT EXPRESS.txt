@@ -1,0 +1,721 @@
+
+
+
+
+
+
+
+
+
+
+
+
+COM O BÁSICO FORA DO CAMINHO,
+
+DEVEMOS COMEÇAR COM NOSSO CÓDIGO DE 'app.ts',
+
+
+
+E CRIAR UM APP BEM BÁSICO REST API,
+
+só para mostrar como o 
+
+
+
+
+
+TYPESCRIPT FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+(app.js):
+
+
+
+
+
+
+
+// import express from 'express'; //import ES6+  --> PODEMOS USAR ESSA SINTAXE COM ARQUIVOS TYPESCRIPT, PQ ELA SERÁ AUTOMATICAMENTE CONVERTIDA em 'const xx = require(xxx)' pelo TYPESCRIPT, lá nos arquivos '.js' criados a partir dos '.ts'...
+
+
+
+
+
+
+
+// import express = require('express'); ///// FUSÃO DE SINTAXES DE IMPORTS...
+
+
+
+import express from 'express';
+
+const app = express();
+
+
+
+import bodyParser from 'body-parser';
+
+
+
+import routes from './routes/routes';
+
+
+
+
+
+
+// app.listen( ///ESSA SINTAXE É __ ERRADA_, E O TYPESCRIPT NOS AVISARÁ DISSO...
+// {
+//     porta: 'assaas'
+// }
+// );
+
+
+
+
+
+
+
+app.use(bodyParser.json()); ////vamos precisar disso para parsear nossos BODIES, com a json data enfiada neles...
+
+
+
+
+app.use(
+    (req, res, next) => {
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Method', 'POST, GET, PUT, PATCH, DELETE OPTIONS');  //////o método de tipo 'OPTIONS' sempre é necessário quando queremos USAR O BROWSERSIDE PARA __ENVIAR ____ REQUESTS DE TIPO 'POST'... (ou, vice-versa, quando queremos RECEBER REQUESTS DE TIPO 'POST' de nosso browser/client/usuário)...
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); ///content-type ---> usado para CONSEGUIR ENVIAR REQUESTS COM JSON DATA... ---> 'Authorization -->  USADO PARA FAZER COM QUE NOSSOS REQUEST OBJECTS consigam SEGURAR UM HEADER ADICIONAL QUE TERÁ 'AUTHORIZATION DATA' acerca de nossos users...
+        next(); ///necessário
+
+    }
+)
+
+
+
+
+
+app.use(routes);
+
+
+
+
+app.listen(3000
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O ARQUIVO 'routes.ts':
+
+
+
+
+import { Router } from 'express';
+
+const router = Router();
+
+router.get('/');
+
+export default Router;
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA PRECISO DE CONTROLLERS...
+
+
+
+
+
+
+
+
+--> E MODELS TAMBÉM....
+
+
+
+
+
+
+
+--> SERÁ UM APP 'toDo',
+
+
+explica o professor....
+
+
+
+
+
+
+
+-----> NO FOLDEDR DE 'ROUTES',
+
+
+ele escreve um 
+
+
+
+arquivo de 'todos.ts'... --> 
+
+
+
+
+mas é o nosso arquivo 'routes.js/ts',
+
+
+no caso...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE VAI IMPORTAR ISTO:
+
+
+
+
+import { Router } from 'express';
+
+
+
+
+
+
+
+
+
+const router = Router();
+
+
+
+
+
+
+
+
+
+export default router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+CERTO.... ATÉ AÍ, TUDO BEM....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+em app.ts,
+
+professor importa 
+
+
+
+'import routes from './routes/routes' ---------> 
+
+
+
+
+CONSEGUIREMOS IMPORTAR O 'DEFAULT' desse arquivo aí, por meio disso..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----. AÍ ELE ESCREVE O CLÁSSICO 
+
+
+
+'app.use(routes)',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> CERTO, AÍ 
+
+
+
+NO ARQUIVO DE 'routes.js'
+
+PODEMOS REGISTRAR AS ROUTES QUE VAMOS QUERER...
+
+
+
+ex:
+
+
+
+
+import { Router } from 'express';
+
+import { getTodos } from '../controllers/todo';
+
+const router = Router();
+
+router.get('/',
+
+getTodos
+
+);
+
+
+
+
+
+
+
+
+
+export default router;
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... OUTRA COISA BOA É QUE 
+
+
+
+
+VAMOS GANHAR AUTO-COMPLETION NESSES PARAMETERS DE 'req, res e next'....
+
+
+
+
+
+
+
+(
+
+
+    MAS ISSO NÃO ESTÁ ACONTECENDO LÁ NO MEU 'CONTROLLER'.. -> lá esses 3 constructs não estão sendo reconhecidos...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DESCOBRI A SOLUÇÃO:
+
+
+
+
+
+
+2
+
+If you are using express:
+
+import { Request, Response } from 'express'
+app.get('/api', (req: Request, res: Response) => {..}
+You can be general and write the code as: (not advised)
+
+app.get('/api', (req: any, res: any) => {..}
+
+
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+--> claro que tem um cara chato, embaixo:
+
+
+
+
+
+The types should be inferred automatically. If they are not it indicates
+ that configuration problem or missing package. Explicit annotation of inline
+  callback parameters can hide errors, increases coupling, and is verbose.
+
+
+
+
+
+
+
+
+
+
+
+
+--> essa ainda é a melhor solução....
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Request, Response, NextFunction } from 'express'; ///soluciona nosso problema de 'auto-correct'....
+
+
+
+
+
+
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+
+
+    
+
+
+}
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK, DIGAMOS QUE QUEREMOS _ RETORNAR NOSSOS TODOS quando essa route de '/' 
+
+FOR ALCANÇADA...
+
+
+
+
+
+
+
+
+--> ESSES TODOS VÃO EXISTIR NA MEMÓRIA (só um dummy example ) DE NOSSO 
+
+
+APP BACKEND...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+import { Request, Response, NextFunction } from 'express'; ///soluciona nosso problema de 'auto-correct'....
+
+
+const todos = [];
+
+
+
+
+export const getTodos = (req: Request, res: Response, next: NextFunction) => {
+
+    res.status(200).json(
+        {
+            todos: todos
+        }
+    )
+    
+
+
+}
+
+
+
+
+
+-------------------------
+
+
+
+
+É __ CLARO __ QUE 
+
+ O 
+
+
+
+
+
+ TYPESCRIPT VAI APITAR (pq temos um GENERIC TYPE, que se´ra aquele array de 'todos', em que não definimos o INNER TYPE, AINDA)..
+
+
+
+
+
+
+
+
+
+
+ ex (para solucionar esse problema):
+
+
+
+
+ 
+
+ const todos: string[] = []; ///array de STRINGS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+--> ESSE ARRAY INICIARÁ COMO 
+
+
+TYPE DE 'GENERIC',
+
+
+
+
+E VAMOS QUERER___ 
+
+
+DEFINIR UM __ TYPE __ DELE,
+
+
+PQ AÍ 
+
+ISSO 
+
+NOS DEIXA 
+
+ESCREVER CÓDIGO MAIS LIMPO,
+
+CÓDIGO EM QUE 
+
+__eVITAMOS __ ERROS (erros por meio do pass de DATA NO FORMATO INCORRETO)...
+
+
+
+
+
+
+
+
+
+-> VAMOS IMPLEMENTAR ESSA FEATURE NESSE ARRAY,
+
+E A´I
+
+VAMOS CONTINAUR COM A REST API 
+
+NO RESTO DAS LIÇÕES....

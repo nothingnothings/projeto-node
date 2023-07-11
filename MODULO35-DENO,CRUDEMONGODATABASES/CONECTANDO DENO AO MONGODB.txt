@@ -1,0 +1,1398 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK, VAMOS QUERER ADICIONAR UMA DATABASE DE VERDADE,
+
+
+POR ISSO VAMOS RECORRER AO MONGODB....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR TEM UM MÓDULO INTEIRO SOBRE O MONGODB,
+
+
+
+
+já sabemos sobre ela,
+
+é uma 
+
+NOSQL DATABAS.e..
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CRÍAMOS UM CLUSTER, ETC ETC... --> entramos na nossa conta...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS TER QUE USAR AQUELE USER LÁ, que já críamos, 
+
+
+que vamos COLOCAR DENTRO DA URL QUE 
+
+
+VAMOS INSERIR 
+
+
+
+NO NOSSO APP...( no backend)...
+
+
+
+
+
+
+
+
+
+
+--> LÁ EM 'NETWORK ACCESS',
+
+você também tem que HABILITAR O SEU IP ATUAL (DO SEU BACKEND) 
+
+
+na 'whitelist'...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ASSIM QUE terminarmos tudo isso,
+
+
+
+PODEMOS CONECTAR NOSSO DENO APP 
+
+
+ao 
+
+
+'mongoose/mongodb'...
+
+
+
+
+
+
+
+
+
+
+
+
+-_> PARA ISSO,
+
+
+
+TEREMOS DE USAR__ OUTRO MODULO THIRD PARTY 
+
+do deon..
+
+
+
+
+
+
+
+
+
+
+
+--> É O MODULO DE 'mongo',
+
+
+
+
+LÁ EMBAIXO, na pagina de 'third party module'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> AS INSTRUÇÕES SÃO ESTAS:
+
+
+
+
+
+
+https://deno.land/x/mongo@v0.29.0
+
+
+
+
+
+
+
+
+import {
+  Bson,
+  MongoClient,
+} from "https://deno.land/x/mongo@LATEST_VERSION/mod.ts";
+
+
+
+
+
+
+
+
+
+
+--> NO CASO, ESCREVEMOS ASSIM:
+
+
+
+
+import {
+  Bson,
+  MongoClient,
+} from "https://deno.land/x/mongo@0.29.0/mod.ts";
+
+
+
+
+
+
+------> mas essa é uma versão que o PROFESSOR NÃO USOU...
+
+
+
+--> devemos usar só 'mongo'..
+
+
+
+
+--> ah, é essa mesma...
+
+
+
+
+
+
+------> FAZ O TRABALHO COM UMA DATABASE MONGODB __ BEM FÁCIL___ 
+
+
+
+
+
+
+
+
+
+
+
+-----> professor explica QUE TEMOS UM DOC BEM SIMPLES,
+
+
+
+MAS QUE 
+
+
+
+ISSO 
+
+
+É 
+
+
+SIMPLESMNETE UM 'WRAPPER' PARA 
+
+O 
+
+
+'NATIVE RUST MONGODB LIBRARY' --> rust é uma linguagem de programação 
+
+QUE 
+
+ESTÁ 
+
+
+
+SENDO CONSTRUÍDA PELO 'DENO' UNDER THE HOOD... 
+ (rust é usda pelo deno, ele é construído com ela)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE 
+
+
+ A ___ 'MONGODB LIBRARY' PARA _o 'RUST'
+
+
+ TAMBÉM _ FUNCIONA COM O DENO...  -----> ISSO SIGNIFICA QUE VOCê SÓ VAI PRECISAR DE UM WRAPPER,
+
+
+
+ e essa package de 
+
+
+ 'deno_mongo' 
+
+ É EXATAMENTE ISSO, UM 'WRAPPER'...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> SIGNIFICA QUE VOCÊ SERÁ CAPAZ DE O UTILIZAR COM CÓDIGO TYPESCRIPT sem se precoupar  com mais nad.a.
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+ import {
+  Bson,
+  MongoClient,
+} from "https://deno.land/x/mongo@v0.29.0/mod.ts";
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ESCREVEMOS ISSO AÍ....
+
+
+
+
+
+
+
+
+
+
+
+
+--> nesse código, professor explica uqe é legal que A VERSION ESTÁ SENDO INCLUÍDA NA URL... ---> ISSO SIGNIFICA QUE 
+
+
+
+
+__ 1 MES DEPOIS, 2 MESES DEOPIS,
+
+
+
+
+
+
+ESSE CÓDIGO AINDA VAI FUNCIONAR... ------> PROFESSOR COPIA ESSA URL,
+
+
+
+
+cola no nosso projeto,
+
+
+
+NO LOCAL EM QUE 
+
+
+
+
+QUEREMOS FAZER 'CONNECT TO THE DATABASE'... --> O PROFESSOR EXPLICA UQE 
+
+
+
+
+
+
+CABE A NÓS DECIDIR 
+
+EM QUE LUGAR DO CÓDIGO DEVERÁ SER FEITO ESSE 'CONNECT TO THE DATABASE',
+
+
+
+
+MAS QUE 
+
+ELE 
+
+VAI 
+
+ADICIONAR UM NOVO FOLDER,
+
+
+com um arquivo 'db.ts',
+
+
+
+E QUE 
+
+ELE VAI 
+
+
+
+
+COLOCAR 
+
+
+
+A LÓGICA DE 'database management'
+
+
+DENTRO DESSE FOLDER, NESSE ARQUIVO..
+
+
+
+
+
+
+
+
+
+
+(
+
+
+    esse é um padrão de ARMAZENAMENTO OPCIONAL,
+    MAS UM 
+
+    QUE O PROFESSOR
+    prefere...
+)
+
+
+
+
+
+
+
+
+
+--> AÍ ELE ESCREVE:
+
+
+ import {
+  Bson,
+  MongoClient,
+} from "https://deno.land/x/mongo@v0.29.0/mod.ts";
+
+
+
+
+
+
+
+-----------
+
+
+
+
+
+
+
+
+
+DEPOIS DISSO, TEMOS OS DOCS NOS MOSTRANDO_ _ COMO CONECTAR_ NOSSO BACKEND__ A ESSE SERVER..
+.
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> PARA CONECTAR, ESCREVEMOS:
+
+
+
+
+
+
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/postFeed?retryWrites=true&w=majority';
+
+
+
+
+import { MongoClient, Bson } from 'https://deno.land/x/mongo@v0.29.0/mod.ts'
+
+
+
+const client = new MongoClient();
+client.connectWithUri(MONGODB_URI);
+
+
+
+
+const db = client.database('todos');
+const users = db.collection('todos');
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO.... --> ISSO ESSENCIALMENTE __ eSTABELECERÁ _ UMA CONEXÃO ENTRE NOSSO BACKEND E A NOSSA DATABASe.....
+
+
+
+
+
+
+
+
+
+
+
+
+--> FICOU TIPO ASSIm:
+
+
+
+
+
+
+
+
+import {
+    Bson,
+    MongoClient,
+  } from "https://deno.land/x/mongo@v0.29.0/mod.ts";
+  
+
+
+
+  const MONGODB_URI = 'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/todos?retryWrites=true&w=majority';
+
+
+  
+
+
+  
+
+const client = new MongoClient();
+client.connectWithUri(MONGODB_URI);
+
+
+
+
+const db = client.database('todos');
+const users = db.collection('todos');
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+POR MEIO DESSAS 4 LINES,
+
+
+
+CONSEGUIMOS ESTABELECER UMA CONEXÃO A UMA DATABASE,
+
+e até mesmo a uma COLLECTIOn...
+
+
+
+
+
+
+
+MONGODB FUNCIONA COM COLLECTIONS E DOCUMENTS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... -> lá em 'db.ts'
+
+
+TEMOS TUDO ISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> usamos o objeto 'client' 
+
+PARA 
+
+
+
+NOS CONECTARMOS A UMA 'url' -----> COLOCAMOS A URL DE NOSSO CLUSTER 
+
+
+MONGODB.. -----> 
+
+
+
+
+CONECTAMOS NOSSA FULL URL COM O USERNAME E O PASSWORD, ETC ETc..
+
+
+
+
+
+
+-> TAMBÉM ESCREVEMOS O NOME DA DATABASE EM QUE VAMOS QUERER ARAMZEANR TODOS ESSES 'Todos'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK..... ---> COM ISSO,
+
+AGORA O CLIENT 
+
+VAI TENTAR SE CONECTAr___ A ESSA 'URL'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... vai ficando assim:
+
+
+
+
+
+
+
+
+
+
+
+import {
+    Bson,
+    MongoClient,
+  } from "https://deno.land/x/mongo@v0.29.0/mod.ts";
+  
+
+
+
+  const MONGODB_URI = 'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/todos?retryWrites=true&w=majority';
+
+
+  
+
+
+  
+
+const client = new MongoClient();
+client.connectWithUri(MONGODB_URI);
+
+
+
+
+const db = client.database('todos');
+const users = db.collection('todos');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR RENOMEIA ESSE ARQUIVO DE 'db.ts'
+
+PARA 
+
+
+'db_client.ts',
+
+
+
+
+PARA DEIXAR BEM CLARO QUE ISSO SERÁ USADO NOS NOSSOS CONTROLLERS....
+
+
+
+
+
+
+
+
+
+
+-> A NAMING CONVENTION DO DENO É UQE 
+
+
+
+
+VOCÊ SEMPRE DEVE ESCREVER SEUS FILE NAMES 
+
+
+
+
+
+''ASSIM____assim''''.... -----> É O CONTRÁRIO DO ESTILO DO NODE, QUE PEDE '_" ....
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO NÃO TRAZ DIFERENÇAS, É SÓ ESTILO....
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK... SETTADA NOSSA DATABASE AQUi,
+
+
+
+
+
+agora QUEREMOS ASSEGURAR QUE 
+
+
+CONSEGUIMOS 
+
+
+USAR ESSA DATABASE
+NO LADO DE FORA 
+
+
+
+
+desse arquivo 'db_client.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA FAZER isso,
+
+
+
+
+
+
+
+
+
+--> PROFESSOR CRIA UMA NOVA FUNCTION, DE 
+
+'getDb(){}',
+
+
+
+
+
+
+E AÍ _ FAZ O RETURN DE 'db '(que é client.database('todos)' ) 
+
+
+
+
+
+
+ex:
+
+
+
+const db = client.database('todos');
+
+getDb() {
+        return db;
+}
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE ELE ESTÁ USANDO 
+
+
+
+ESSE APPROACH __ JUSTAMENTE__ PQE ELE PLANEJA
+ 
+
+ WRAPPAR__ ESSA OUTRA FUNCIONALIDADE 
+
+
+
+
+
+
+
+ EX:
+
+
+
+OK, MAS PQ O PROFESSOR ESTÁ USANDO ESSE APPROACH....?
+
+
+
+
+
+
+
+
+
+
+------> é pq ele vai querer usar esse arquivo de 'helpers'
+
+__ PARA __ EXPORTAR__ TNATO 
+
+
+
+O  MÉTODO 'connect()' como o mehod 'bee'.
+
+
+
+
+
+
+
+--> VAMOS USAR A SINTAXE CLÁSSICA DE __IMPORT ---> FAREMOS ISSO PARA QUE 
+
+
+
+TODOS NOSSOS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> porfessor vai quere ter ESSAS 2 FUNÇÕES colocadas detro
+
+
+UM OBJETO CHAMADO DE 
+
+
+
+
+
+
+
+
+
+
+------ DE VOLTA À DATABASE:, e  ao código backend...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use( ///MIDDLEWARE USADO PARA __ SOLUCIONAR O PROBLEMA __ DE 'CORS' (set de headers conferindo acesso)...
+    async (ctx, next) => {
+        ctx.response.headers.set('Access-Control-Allow-Origin', '*'); /////vamos usar isso, esse method 'set',  para __ SETTAR NOSSOS HEADERS__, headers na RESPONSe... -> por meio deste 'set', deixamos QUALQUER TIPO DE DOMAIN ENVIAR REQUESTS AO NOSSO SERVEr...
+        ctx.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); 
+        ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization'); 
+        await next(); ////respeitará a ORDEM DE EXECUÇÃO.
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+VAMOS QUERER EXPORTAR TANTO 'connect(){}' 
+
+
+C
+OMO 
+
+
+'getDb()':
+
+
+
+
+
+
+
+
+
+
+
+
+
+import {
+    Bson,
+    MongoClient,
+  } from "https://deno.land/x/mongo@v0.29.0/mod.ts";
+  
+
+
+
+  const MONGODB_URI = 'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/todos?retryWrites=true&w=majority';
+
+
+  
+
+ export function connect() {
+    const client = new MongoClient();
+    client.connectWithUri(MONGODB_URI);
+
+
+    const db = client.database('todos');
+  }
+
+
+
+
+
+ export  function getDb() {
+    return db; 
+  }
+
+
+
+
+const db = client.database('todos');
+const users = db.collection('todos');
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------------> AGORA ACONTECERÁ A MESMA SITUAÇÃO COM O NODE:
+
+
+ teremos 1 funçao/método que será uada PARA CONeCTAR INIALMENTE....
+ (LÁ Em 'app.ts"),
+
+
+
+ AO PASSO QUE A SEGUNDA 
+
+
+ FUNÇÃO,' getDb()'
+ ,
+
+
+
+ SERÁ USADA 
+
+ PARA REALIZAR 
+
+ ATVIDIDADES DIVERSAS NO MEU BACKEND.... (nos controllers, em outras palavras)....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR USA ESES MÉTODOS PARA NOS __ assegurar_ QUE VAMOS _ REALMENTE__ FICAR CONECTADOS 
+
+AO DATABASE...
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR VAI ATE´O APP.ts
+
+e eimporta 
+
+
+'{ connect} from 'helpers/db_clinet;"
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E, LÁ EM 'function getDb()',
+
+VAMOS SEMPRE FAZER 'GET' DA 
+
+
+DATABASE _ MAIS RECENTE POSSÍVE,
+
+
+
+
+tip oassim:
+
+
+
+
+
+
+
+function getDb() {
+    return db;
+} 
+
+
+
+
+
+
+
+
+
+
+-_> FIZEMOS ISSO PARA QUE SEMPRE CONSIGAMOS UMA 'CONNECTED DATABASE' 
+
+
+
+
+
+
+QUANDO TENTARMOS FAZER 'REACH OUT' a ela.... ---> VAMOS CONSEGUIR UMA 'CONNECTED DATABASe'
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ PODEMOS EXPORTAR 'connect()
+ 
+
+ ' 
+
+ 'db()'....
+
+
+
+
+
+
+
+
+ -> LÁ EM 'app.ts'
+
+
+ VAMOS QUERER IMPORTAR A FUNÇÃO DE 'connect()'.....
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+ import { Application } from "https://deno.land/x/oak/mod.ts";  ///// 'THIRD PARTY MODULE/LIBRARY' do _DENO__, a library de 'OAK' (middleware que é '''TIPO O EXPRESS DO DENO''', usado para FACILITAR O WRITE DE RESPONSES AOS SEUS USERS, E O SETUP DO SEU WEBSERVER)...
+
+const app = new Application();
+
+
+
+import todoRoutes from './routes/todos.ts';
+
+
+
+import { connect } from './helpers/db_client.ts';
+
+
+
+
+
+connect(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> VAMOS EXECUTAR ESSE 'connect()'
+
+logo no início, que faará com que fique assim:
+
+
+
+
+
+
+
+
+
+
+
+export function connect() {
+  const client = new MongoClient();
+  client.connectWithUri(MONGODB_URI);
+
+  const db = client.database('todos');
+}
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... ACHO QUE ENTENDI...
+
+
+
+
+
+
+
+
+
+
+--> É ASSIM QUE VAMSO FAZER O 'CONNECT INICIAL'...
+
+
+
+
+
+
+
+
+
+
+--> AGORA BASTA USARMOS esse 'getDb()',
+
+ARMAZEANER SEU RESULTADO EM UMA CONST,
+
+para entaõ
+
+
+
+
+
+
+
+CONSEGUIRMOS EXECUTAR OPERAÇÕES SOBRE OS DOCUMENTS 
+
+
+
+ARMAZENADOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NOS CONTROLLERS, VAMOS IMPORTAR 'getDb()'....
+
+
+
+
+
+
+
+--> VAMOS CHAMAR ESSA FUNÇÃO SEMPRE QUE QUISERMOS TER ACESSO à database (pra fazer store, delete, update, etc)....

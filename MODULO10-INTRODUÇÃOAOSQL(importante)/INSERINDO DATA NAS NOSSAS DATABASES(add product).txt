@@ -1,0 +1,804 @@
+
+
+
+
+
+
+
+
+
+--> FAZER O ADD DE PRODUCTS NO NOSSO 
+
+DATABASE SQL 
+
+
+
+__TAMBÉM É BEM SIMPLES.... -----> 
+
+
+
+NÓS TEMOS 
+
+
+AQUELE NOSSO CONTROLLER 
+
+
+
+de 'admin.js',
+
+
+
+QUE É ONDE 
+
+
+
+INTERAGIMOS 
+
+
+
+COM O PRODUCT,
+PQ 
+
+É ALI QUE O CRÍAMOS... 
+
+
+
+
+
+
+--> isso é 
+
+visto lá 
+
+
+em 
+
+'postAddProduct':
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+    const newProduct = new Product(null, req.body.title, req.body.imageUrl, req.body.description, req.body.price ); 
+    newProduct.save();  //é código assíncrono, no final das contas...
+    res.status(302).redirect('/');
+  };
+
+
+
+
+
+
+
+---> NESSE CÓDIGO, 
+
+NÓS ESSENCIALMENTE 
+
+
+CRIÁVAMOS/CRÍAMOS UM 
+
+
+NOVO PRODUCT E ENTÃO CHAMAMOS 
+
+'save'
+
+PARA 
+O 
+
+ADICIONAR À DATABASe... 
+
+
+
+
+
+
+--> E O PROFESSOR QUER DEIXAR 
+
+
+
+
+
+ESSE FORMATO AÍ INTACTO....
+
+
+
+
+
+
+
+
+----> MAS AGORA O PROFESSOR VAI QUERER 
+
+ALTERAR 
+
+
+UM POUCO 
+
+O CÓDIGO 
+
+
+
+DE 
+
+
+'save(){}'...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+
+O save(){} deverá REACH OUT A database 
+
+E ENTÃO 
+
+SALVAR NOSSOS DADOS LÁ....
+
+
+
+
+
+
+
+ele vai escrever:
+
+
+
+
+
+
+save() {
+  db.execute()
+}
+
+
+
+
+
+
+
+
+
+--> AÍ ELE VAI EXECUTAR UMA SQL QUERY...
+
+
+
+
+
+
+
+--> COM O SEQUEL, 
+
+JÁ VIMOS 
+
+
+
+O  
+
+'SELECT'..
+
+
+
+
+
+
+
+--> AGORA VEMOS 
+O 
+
+
+'INSERT INTO'...
+
+
+
+INSERT INTO + 'products' + FIELDS EM QUE VAMOS QUERER ENFIAR NOSSOS VALORES...
+
+
+
+
+
+
+vai FUNCIONANDO
+
+
+
+'INSERT INTO products (title, price, imageUrl, description) ....' 
+
+
+
+
+
+
+
+--> VOCÊ NÃO PRECISA ESPECIFICAR O 'id'
+
+
+PQ 
+
+ISSO 
+
+VAI SER GERADO AUTOMATICAMENTE PQ 
+
+DEIXAMOS 
+
+MARCADA 
+
+
+A 
+
+CHECKBOX 
+
+DE 
+
+
+
+
+'auto increment',
+
+
+
+QUE FAZ COM QUE SEJA GERADO AUTOMATICAMENTE PELA DATABASE ENGINE...
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO,
+
+
+
+PROFESSOR VAI USAR A KEYWORD DE 'values',
+
+
+E AÍ 
+
+OS 
+
+NOSSOS VALORES... 
+
+
+
+
+
+
+-----> OK....
+
+
+
+
+
+EU HAVIA ESCRITO ASSIM:
+
+
+
+'INSERT INTO products (title, price, imageUrl, description) VALUES (`${this.title}, etc etc `)' 
+
+
+
+
+
+
+
+
+
+
+
+
+--> E AGORA, PROFESSOR DIZ QUE 
+
+
+
+
+EXISTE UM APPROACH PARA 
+
+'SAFELY INSERT VALUES',
+
+
+
+
+APPROACH QUE 
+
+EVITA 
+
+
+O PROBLEMA 
+
+
+DE 
+
+'SQL INJECTION',
+
+
+
+QUE É UM 
+
+ATTACK PATTERN 
+
+
+
+
+__ EM QUE __ 
+
+
+
+
+OS USERS PODEM INSERIR __ DATA ESPECIAL NOS 
+
+
+
+SEUS INPUT FIELDS, NA SUA WEBPAGE,
+
+
+
+
+QUE RODAM COMO 'SQL QUERIES,'
+
+
+
+
+__NÓS __ DEVEMOS __ USAR 
+
+
+UM 
+
+
+
+APPROACH __ 
+
+
+
+
+MUITO COMUM,
+
+APPROACH __ EM QUE __ USAMOS 
+
+
+
+APENAS 
+
+
+_________QUESTION_ __ MARKS
+
+
+____ NESSE LOCAL___.....
+
+
+
+
+
+
+--> VAMOS COLOCAR '?' EM CADA 
+
+
+1 DOS SLOTS EM QUE VAMOS ENFIAR DATA...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+'INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> CERTO... ESSA É A SINTAXE ___ CORRETA__.... 
+
+
+
+
+MAS PARA  COMPLETAR 
+
+
+
+ESSA ESTIPULAÇÃO DOS VALORES,
+
+
+PROFESSOR EXPLICA UQE 
+
+
+DEVEMOS 
+
+
+
+__PASSAR__ O SEGUNDO VALOR/ARGUMENTO 
+
+
+DE 
+
+'.execute(),'
+
+que 
+
+
+
+
+__SERÁ __ UM ___ARRAY_ CONTENDO __ OS VALORES QUE SERÃO INJETADOS NO LUGAR __ 
+
+DESSES 
+
+'?"/question marks...
+
+
+
+
+
+--> É CLARO QUE 
+
+
+
+VOCÊ 
+
+
+TEM QUE RESPEITAR A ORDEM 
+
+
+
+DOS ARGUMENTOS... 
+
+
+
+
+
+
+
+
+
+
+E 
+
+
+
+
+HÁ AINDA OUTRO DETALHE:
+
+
+
+
+
+
+
+É 
+
+ESSA PACKAGE DE 
+
+'mysql2'
+ QUE 
+
+
+
+
+VAI FAZER ESSE TRABALHO 
+
+
+DE 
+
+TRANSPLANTAR 
+
+
+A ESCRITA DE 
+
+'[${this.xxx}, ${this.xxxx}]' 
+
+PARA 
+
+DENTRO 
+
+DOS 
+'?'...
+
+
+
+
+
+
+
+____AUTOMATICAMENTE,
+
+
+SEM VOCÊ PRECISAR MEXER UM DEDO...
+
+
+
+
+--> BASTA ESCREVER 
+
+
+''
+'INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?), [..... especifique OS VALORES que você vai querer que sejam enfiados dentro dos '?']' 
+
+
+
+
+
+
+
+
+
+
+
+--> ESSA PACKAGE DE 
+
+'mysql2'
+
+VAI 
+
+'safely ESCAPE OUR INPUT VALUES',
+
+
+
+__ PARA 
+
+
+
+'BASICALLY PARSE IT FOR HIDDEN SQL COMMANDS',
+
+
+O QUE FARÁ COM QUE SEJAM __REMOVIDOS __ DO FLOW DO SEU APP..
+
+
+
+
+---> FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [this.title, this.price, this.description, this.imageUrl]);  ///  TUDO GRAÇAS AO PACOTE 'mysql2', é ele que FORRA os '?' nos values COM ESSES VALORES AÍ...., OS VALORES PASSADOS NESSE ARRAY..
+
+
+
+
+-------------------------------
+
+
+ISSO FEITO,
+
+
+
+
+
+PROFESSOR VOLTA 
+
+AO CÓDIGO 
+
+de 
+
+'postAddProduct':
+
+
+
+exports.postAddProduct = (req, res, next) => {
+    // products.push({ title: req.body.title });
+  
+                                  //id, title, imageUrl, description, price
+    const newProduct = new Product(null, req.body.title, req.body.imageUrl, req.body.description, req.body.price ); 
+    newProduct.save();  //é código assíncrono, no final das contas...
+    res.status(302).redirect('/');
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE 
+ELE VAI QUERER 
+
+
+__ADICIONAR UM 
+
+
+'.then().catch()'
+
+
+
+ÀQUELE 
+
+
+'newProduct.save()',
+
+
+PARA 
+
+ENTÃO __ REDIRECIONAR _ NOSSO ADMIN 
+
+QUANDO 
+
+O 
+
+ADD 
+
+DESSE PRODUCT 
+TIVER TERMINADO...
+
+
+(SÓ REDIRECIONAR DEPOIS QUE O INSERT TIVER COMPLETADO....)
+
+
+
+ex:
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+
+  
+                             
+    const newProduct = new Product(null, req.body.title, req.body.imageUrl, req.body.description, req.body.price ); 
+    newProduct.save()
+    .then(
+      () => {
+        res.redirect('/');
+      }
+    )
+    res.status(302).redirect('/');
+  };
+
+
+
+------------------
+
+
+
+
+
+
+
+
+COM ISSO,
+
+
+
+SALVAMOS TODOS 
+
+NOSSOS ARQUIVOS 
+
+
+e então 
+
+
+
+
+
+
+__ ADICIONAMOS ALGUM PRODUCT... --> 
+
+
+
+SOMOS REDIRECIONADOS,
+
+
+E O NEGÓCIO FUNCIONOU...
+
+
+
+
+
+--> mas não sei se isso funciona na MINHA VERSÃO DO CÓDIGO...
+
+
+
+
+
+
+--> CONSEGUI, FUNCIONOU,
+ficou assim o código:
+
+
+
+
+----> 
+
+  save() {
+
+
+     return findProductInDatabase(this.id) ////ESTE 'return' foi importante...
+        .then(
+          ([rows, fieldData]) => {
+         const returnedData = [...rows];
+         console.log(returnedData.length === 0, 'ZZZZ');
+            if(returnedData.length === 0) {
+              db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [this.title, this.price, this.description, this.imageUrl]);  ///  TUDO GRAÇAS AO PACOTE 'mysql2', é ele que FORRA os '?' nos values COM ESSES VALORES AÍ...., OS VALORES PASSADOS NESSE ARRAY..
+            } else {
+              console.log(rows, 'LINE');
+              db.execute(`UPDATE products SET title='${this.title}', price=${this.price}, description='${this.description}', imageUrl='${this.imageUrl}' WHERE id=${this.id} `)
+
+            }
+
+          }
+        )
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> como próximo passo,
+
+
+PROFESSOR DIZ QUE 
+
+DEVEMOS 
+
+
+
+SER CAPAZES DE CLICAR NO 
+
+
+
+
+BOTÃO DE 
+
+'details',
+
+
+E AÍ __RETRIEVE __ DATA 
+
+
+
+PARA _ UM 
+
+
+'SINGLE DOCUMENT/ENTRY/RECORD'
+
+na nossa database....
+
+
+
+
+

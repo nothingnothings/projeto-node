@@ -1,0 +1,999 @@
+
+
+
+
+
+
+
+
+
+--> NÓS JÁ ADICIONAMOS NOSSA 'MULTER CONFIGURATIOn',
+
+
+
+POR MEIO 
+
+
+DAQUELE 
+
+CÓDIGO SETTADOR DE 'STORAGE ENGINE',
+
+
+
+QUE É ESTE AQUI:
+
+
+
+
+const fileStorage = multer.diskStorage(  ///É POR MEIo de 'multer.diskStorage()' QUE VAMOS __ CRIAR UMA 'STORAGE ENGINE'.. --> e essa storage engine será , então, utilizada NAQUELE MIDDLEWARE DO MULTER, VISTO LOGO ABAIXO... tipo naquele objeto {storage: fileStorage}...
+  {
+    destination: (req, file, cb) => {  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+
+      
+
+   cb (null, 'images'); ///o 'null' é relativo AO 'ERRO' QUE VOCÊ PASSA COMO PRIMEIRO ARGUMENTO DESSE CALLBACK...
+      
+    },
+    filename: (req, file, cb) => {///OBS::: SE VOCÊ SETTAR/configurar/definir o FILENAME de seus arquivos storados __ por meio dessa key de 'filename:', o multer AUTOMATICAMENTE __ VAI PARAR__ DE ARMAZENAR UM 'RANDOM HASH' (auto-generated random hash) LÁ NAQUELA PROPRIEDADE 'filename', em 'req.file' (o que ficará nesse lugar, no caso, é o FILENAME que você DEFINIU AQUI, e não mais aquele hash randomizado...)
+      cb(null, file.originalname ///////O SEGUNDO ARGUMENTO É 'WHAT YOUR FILENAME SHOULD BE' (é como deve ser CHAMADO o arquivo que você vai armazenar naquela 'destination') ---> e '.originalName' é um MÉTODO EXISTENTE DENTRO DO OBJETO 'file' QUE NOS DÁ O ACTUAL FILENAME do arquivo que o user uploadou...
+      +
+      '-' 
+      + 
+     new Date().toISOString()
+     // file.filename /NESSA CONCATENAÇÃO, VAMOS USAR o 'file.filename' JUSTAMENTE PQ 'filename' é uma PROPRIEDADE DENTRO DO OBJETO 'req.file' QUE VAI CONTER A 'RANDOM HASH' GERADA PARA __ CADA 1 DESSES ARQUIVOS (hash única)... ---> faremos isso para que NÃO HAJA CONFUSÃO ENTRE NOSSAS FILES ARMAZENADAS NO NOSSO NODEAPP... ----------> MAS ESSE MÉTODO/APPROACH DE 'UNIQUENESS' NÃO VAI FUNCIONAR, POR ISSO O PROFESSOR DECIDIU SÓ USAR 'new Date().toISOString()'..
+        
+        );
+    }
+  }
+)
+
+
+
+
+
+
+
+
+
+
+--------> CERTO....  
+
+
+
+
+
+
+
+--> ESSA 'STORAGE ENGINE':
+
+
+
+
+
+
+1) CONTROLA O 'STORAGE DESTINATION' ( folder no nosso app em que serão armazenadas as files)
+
+
+
+
+2) CONTROLA O 'FILE NAME' 
+
+de cada 
+
+file que é armazenada (fica com o formato 'file.originalName' + '-' + new Date.toISOString() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> CERTO... OUTRA FEATURE É 
+
+
+
+O __ ADD DE UM 'FILTER' AO MULTER,
+
+
+PARA QUE __ APENAS __ CERTOS
+ 
+
+ TIPOS 
+
+
+ DE 
+ ARQUIVOS 
+
+
+
+ ___ 
+
+ SEJAM PERMITIDOS... 
+
+
+
+
+
+
+
+
+
+
+
+ ---> PARA ISSO,
+
+
+
+
+ DEVEMOS 
+
+ IR 
+
+
+ ATÉ O OBJETO 
+
+ EM QUE 
+
+ CONFIGURAMOS O MULTER (em que temos 'storage: fileStorage'),
+
+
+
+
+ E AÍ 
+
+
+
+ TEMOS 
+ QUE 
+
+
+
+
+ ADICIONAR A KEY DE 
+
+ 'fileFilter'...
+
+
+
+
+
+
+
+
+
+ tipo ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ const fileStorage = multer.diskStorage(  ///É POR MEIo de 'multer.diskStorage()' QUE VAMOS __ CRIAR UMA 'STORAGE ENGINE'.. --> e essa storage engine será , então, utilizada NAQUELE MIDDLEWARE DO MULTER, VISTO LOGO ABAIXO... tipo naquele objeto {storage: fileStorage}...
+  {
+    destination: (req, file, cb) => {  /// o SET DE 'dest/destination' (destination) FARÁ COM QUE ___ SEUS FILE UPLOADS SEJAM DIRECIONADOS A ESSA PASTA/LOCAL... (e se você adicionar essa propriedade de 'dest', VOCÊ DEIXARÁ DE TER AQUELA KEY DE 'buffer' em 'req.file'...)
+
+      
+
+   cb (null, 'images'); ///o 'null' é relativo AO 'ERRO' QUE VOCÊ PASSA COMO PRIMEIRO ARGUMENTO DESSE CALLBACK...
+      
+    },
+    filename: (req, file, cb) => {///OBS::: SE VOCÊ SETTAR/configurar/definir o FILENAME de seus arquivos storados __ por meio dessa key de 'filename:', o multer AUTOMATICAMENTE __ VAI PARAR__ DE ARMAZENAR UM 'RANDOM HASH' (auto-generated random hash) LÁ NAQUELA PROPRIEDADE 'filename', em 'req.file' (o que ficará nesse lugar, no caso, é o FILENAME que você DEFINIU AQUI, e não mais aquele hash randomizado...)
+      cb(null, file.originalname ///////O SEGUNDO ARGUMENTO É 'WHAT YOUR FILENAME SHOULD BE' (é como deve ser CHAMADO o arquivo que você vai armazenar naquela 'destination') ---> e '.originalName' é um MÉTODO EXISTENTE DENTRO DO OBJETO 'file' QUE NOS DÁ O ACTUAL FILENAME do arquivo que o user uploadou...
+      +
+      '-' 
+      + 
+     new Date().toISOString()
+     // file.filename /NESSA CONCATENAÇÃO, VAMOS USAR o 'file.filename' JUSTAMENTE PQ 'filename' é uma PROPRIEDADE DENTRO DO OBJETO 'req.file' QUE VAI CONTER A 'RANDOM HASH' GERADA PARA __ CADA 1 DESSES ARQUIVOS (hash única)... ---> faremos isso para que NÃO HAJA CONFUSÃO ENTRE NOSSAS FILES ARMAZENADAS NO NOSSO NODEAPP... ----------> MAS ESSE MÉTODO/APPROACH DE 'UNIQUENESS' NÃO VAI FUNCIONAR, POR ISSO O PROFESSOR DECIDIU SÓ USAR 'new Date().toISOString()'..
+        
+        );
+    }
+  }
+)
+
+
+
+
+
+
+
+
+
+
+app.use(multer(  
+ { storage: fileStorage, 
+
+    fileFilter:  //////////EIS O CÓDIGO EM QUESTÃO.
+ 
+ } //versão mais completa/recomendada. ----> É A VERSÃO QUE USA A 'STORAGE ENGINE' que críamos previamente, como visto logo acima...
+  ). 
+
+single('image'));
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO.... fileFilter __tAMBÉM __ SERÁ UMA 'FUNCTION',
+
+
+
+
+EXATAMENTE COMO O ERA 
+
+
+
+'destination' e 'fileName'.... 
+
+
+
+
+
+
+
+
+
+
+--------> O PROFESSOR NOS CONTA QUE 
+
+
+___ VAI __CRIAR 
+
+ESSE 
+
+'fileFilter'
+
+
+EM UMA 
+
+
+
+___CONST SEPARADA,
+
+PQ 
+
+ELE 
+
+QUER
+
+
+
+DEIXAR AS COISAS MAIS FÁCEIS DE LER...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const fileFilter = ...
+
+
+
+
+app.use(multer(  
+ { storage: fileStorage, 
+
+    fileFilter  //////////EIS O CÓDIGO EM QUESTÃO.
+ 
+ } //versão mais completa/recomendada. ----> É A VERSÃO QUE USA A 'STORAGE ENGINE' que críamos previamente, como visto logo acima...
+  ). 
+
+single('image'));
+
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO...
+
+
+
+O 
+
+'fileFilter'
+
+
+
+VAI __SIMPLESMENTE__ SER UMA FUNÇÃO 
+
+
+
+
+ARROW FUNCTION,
+
+
+
+
+
+EM QUE 
+
+VAMOS OBTER, NOVAMENTE,
+
+
+
+'req, file, cb' 
+
+
+(
+
+  O REQUEST,
+
+
+  A DATA DE 'file' 
+
+  e 
+
+
+
+  1 CALLBACK... -----> CALLBACK QUE TEREMOS DE CHAMAR DEPOIS....
+)
+
+
+
+
+
+
+
+
+
+
+
+----> AÍ, DENTRO DE 'fileFilter',
+
+
+
+
+
+VAMOS CHAMAR DIRETAMENTE O CALLBACK...
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+const fileFilter = (req, file, cb) => {
+
+
+  cb(null)
+}
+
+
+
+
+
+
+
+
+
+-------> VAMOS PASSAR 'null' para o ERROR,  é claro,
+
+
+
+E AÍ, COMO SEGUNDO PARÂMETRO,
+
+
+
+PASSMAOS 
+
+
+
+'true'... 
+
+
+
+
+
+
+
+DIGITAMOS 'true' -----> SE QUEREMOS _____aCEITAR__ AQUELE 'CASE' 
+
+
+DAQUELE 'FILE TYPE'.... ------>  ou seja, dizemos 'esse file type passa, pode armazenar no nosso filesystem/database'...
+
+
+
+
+------> DIGITAMOS 'false'
+
+SE QUEREMOS 
+
+BLOQUEAR 
+
+ESSE TIPO DE ARQUIVO,
+
+SE NÃO QUEREMOS QUE ELE SEJA ARMAZENADO...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const fileFilter = (req, file, cb) => {
+
+
+  cb(null, true);
+  cb(null, false);
+}
+
+
+
+
+
+
+
+
+
+
+
+----------> CERTO... MAS ___ COMO DIABOS_ DETERMINAMOS 
+
+
+SE QUEREMOS 'STORE IT OU NÃO'?
+
+
+
+
+
+
+
+-----> BEM, PROFESSOR DIZ QUE __ PODEMOS__ ESCREVER QUALQUER LÓGICA QUE 
+
+QUISERMOS,
+
+DENTRO 
+
+
+DO BODY DESSE FILEFILTER...
+
+
+
+
+
+
+
+--> NO NOSSO CASO,
+
+
+PROFESOSR 
+
+
+VAI QUERER 
+
+
+escrever UM IF CHECK de 
+
+
+
+
+
+'if(file.mimetype === 'image/png')' .....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OU SEJA, CADA 'file' (objeto)
+
+
+TEM 
+
+
+
+1 PROPRIEDADE 
+
+'mimetype',
+
+
+
+QUE 
+
+
+VAI 
+
+TE DIZER CLARAMENTE QUAL 
+É 
+
+
+
+O __ TIPO __ DAQUELE ARQUIVO...
+
+
+
+
+
+
+
+
+------> 
+
+
+
+
+
+
+
+o professor 
+
+
+VAI QUERER ESCREVER UMA SÉRIE DE CHECKS, CHECKS PARA O CASE DE 'TRUE'...
+
+
+
+
+--> ele escreve:
+
+
+
+
+
+
+if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') 
+
+
+
+
+
+
+
+
+
+--------> OU SEJA,
+
+
+SE TIVERMOS QUALQUER UM DESSES TIPOS DE FILE,
+
+
+
+
+
+__ VAMOS QUERER 
+
+CHAMAR 
+
+AQUELE 
+
+'
+cb(null, true);'
+
+
+
+
+
+
+
+--> CASO CONTRÁRIO, VAMOS QUERER CHAMAR O 
+
+'cb()'
+
+
+COM O 
+
+
+'FALSE'
+
+como segundo valor.... (isso para TODOS OS FILETYPES QUE NÃO SEJAM PNG, JPG E JPEG, NESSE NOSSO EXEMPLO)...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const fileFilter = (req, file, cb) => {
+
+
+  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+
+
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+
+
+
+app.use(multer(  
+ { storage: fileStorage, 
+
+    fileFilter: fileFilter
+ 
+ } 
+  ). 
+
+single('image'));
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+OK, AÍ PASSAMOS ISSO COMO VALOR 
+
+
+DAQUELA KEY DE 'fileFilter',
+
+
+TUDO NORMAL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK........ ----> COM ISSO SETTADO,
+
+AGORA 
+
+TEMOS 
+
+
+UMA LÓGICA SETTADA QUE DEVE 
+
+'FILTER FOR INVALID FILES'... 
+
+
+
+
+
+
+
+
+
+--> ENTÃO SE VOLTARMOS E SUBMITTARMOS UMA FORM,
+
+
+
+
+
+
+
+VAMOS VER AQUELA PÁGINA DE ERRO 500 (na verdade, eu NÃO VEREI ISSO, pq meu código ainda tem aquele problema do 'isLoggedIn' + csrfToken...)
+
+
+
+
+
+
+
+
+
+
+------->  SE TENTAMOS SUBMITTAR 1 FILE DE TYPE DIFERENTE,
+
+VAMOS FALHAR, SINAL QUE ISSO FUNCIONOU...
+
+
+
+
+
+
+
+
+--> É ASSIM QUE PODEMOS 'FILTER OUT FILES'... ------> 
+
+
+
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+-------> MAS AINDA NÃO ESTAMOS ARMAZENANDO NOSSAS FILES APROPRIADAMENTE... ESSE É O PRÓXIMO PASSO...
+
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI.... CONSEGUI FAZER O ERROR HANDLING (show da page de 'erro 500') 
+
+
+
+
+quando 
+
+
+acontece um UPLOAD INVÁLIDO DE UM ARQUIVO... 
+
+
+
+
+
+
+----> para isso,
+
+
+LI ESTE SITE:
+
+
+
+
+
+https://stackoverflow.com/questions/57126277/multer-and-csrf-protection
+
+
+
+
+
+
+
+
+--> E ESTA EXPLICAÇAÕ:
+
+
+
+
+I have figured out all the explanations.
+
+multer looks at each input in order. If there's an error in the image field (like my "invalid file" error), it will throw an error, but in my error handling middleware, my req.body will only contain the form data up to, but excluding, the image field.
+
+That means I can move, in my form html, the hidden csrf input field anywhere before the image input field.
+
+So now, when multer throws an error, I have access to the current csrf value with req.body._csrf . Note that in this case, I should not use req.csrfToken() in the error handling middleware, since that will set a new token to be used in the next rendered view. Here, it is a "post" route, so I need to use the csrf token that was first loaded in the html ("get" route).
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+--> PARA RESOLVER O PROBLEMA,
+ 
+
+
+ ESCREVI O SEGUINTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+ app.use( 
+(error, req, res, next) => {
+
+      if(req.method === 'POST') {
+
+        res.status(500).render('500', {
+
+          pageTitle: 'Error!',
+          path: '/500',
+          isLoggedIn: true,
+          csrfToken: req.body._csrf
+    
+      })
+      } else {
+        console.log(req.session, 'ENTER');
+
+        res.status(500).render('500', {
+    
+          pageTitle: 'Error!',
+          path: '/500',
+          isLoggedIn: req.session.isLoggedIn
+      })
+        }
+}
+); 
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+ou seja, eu me utilizo de um check pelo method de 'POST' para 
+
+
+RENDERIZAR AQUELA VERSÃO DA PÁGINA que 
+
+
+tem 
+
+'isLoggedIn: true' (hardcode)
+
+
+
+e 
+
+
+
+'csrfToken: req.body._csrf'  (token antigo, armazenado no REQUEST DE TIPO POST prévio ao request  de tipo 'get'...)
+
+
+
+
+
+
+
+
+--> CASO CONTRÁRIO, SE FOR UM GET REQUEST, VAMOS QUERER 
+
+O COMPORTAMENTO NORMAL DE RENDER DA VIEW,
+
+
+representado por 
+
+'''''
+
+
+
+else {
+        console.log(req.session, 'ENTER');
+
+        res.status(500).render('500', {
+    
+          pageTitle: 'Error!',
+          path: '/500',
+          isLoggedIn: req.session.isLoggedIn
+      })
+        }
+
+
+
+
+''''
+
+
+-----------------------
+
+
+
+
+(mais tarde, eventualmente, eu removi esse check aí, pq a session começou a funcionar normalmente...)
+
+
+
+
+ok... isso deu certo, MAS 
+
+
+
+
+NOSSOS ARQUIVOS DE IMAGE _ AINDA__ NÃO ESTÃO SENDO ARMAZENADOS_ __
+
+
+
+NO NOSSO SERVIDOR/nem no filesystem de nosso app...
+
+
+
+
+DEVO CONTINUAR VENDO AS AULAS DO PROFESSOR...

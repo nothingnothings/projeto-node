@@ -1,0 +1,180 @@
+ok....
+
+
+
+CONTINUAMOS COM 
+
+O 
+
+CALLBACK 
+
+
+
+LÁ 
+
+
+
+DO 
+
+
+WRITEFILE....
+
+
+
+
+
+
+
+
+
+
+
+---------> é um nested eventListener ((err) => {
+
+})
+
+dentro 
+
+
+de um EVENTLISTENER (req.on) 
+
+
+
+DENTRO DE UM EVENTLISTENER (
+
+    http.createServer(() => {
+
+    })
+)
+
+
+
+
+
+
+
+
+
+
+
+
+esse é um padrao bem comum do nodeJS,
+
+
+
+NÓS TEMOS  ESSA 'EVENT-DRIVEN ARCHITECTURE',
+
+
+em que voce vai dizer ao nodejs '''please do something'''' -> aí o nodejs 
+
+
+VAI OFFLOAD ISSO AÍ NO OPERATING SYSTEM, que vai fazer aquela acao;.... enquanto o OS vai fazendo aquela acao,
+
+o NODEJS CONTINUA O EVENTLOOP DELE MESMO,
+
+CONTINUA 
+
+FAZENDO LISTEN TO A 'EVENT CALLBACKS',
+
+e aí eventualmente  VAI 'DISPATCH TINY ACTIONS', 
+
+para que 
+
+
+nunca 
+
+
+bloqueie a execucao do código, e aí só voltar a um processo QUANDO ELE ]
+
+TIVER ACABADO...
+
+
+
+
+
+
+O NODEJS É ALTA PERFORMANCE PQ 
+
+
+--> NODEJS NUNCA BLOQUEIA  
+
+
+SEU CÓDIGO,
+
+
+
+SEMPRE CONTINUA RODANDO,
+
+
+
+
+AÍ EVENTUALMENTE COMES BACK E FAZ ALGO NO CALLBACK, COMO 
+
+
+
+O SEND DE UMA RESPONSE (QUE É UM PROCESSO SUPER RÁPIDO,
+
+ELE SÓ ENFIA 
+
+UNS 
+HEADERS 
+
+E 
+
+''OFF YOU GO''...) --> TESTAMOS NOSSO CÓDIGO:
+
+
+
+
+
+OK... ELE FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+---> WRITEFILE FUNCIONA,
+
+E DEVEMOS O UTILIZAR NO LUGAR DE WRITEFILESYNC,
+
+DEVIDO À PRÓPRIA NATUREZA 
+
+
+SÍNCRONA 
+
+DO 
+
+NODEJS... ----------->
+
+
+
+
+é um conceito crucial od nodejs esssa 'event-driven' execution...
+
+
+
+
+COM ISSO, WRAPPAMOS ESTE MÓDULO COM ESSAS CORE BASICS,
+
+
+e agora 
+
+vamos 
+
+para uma route mais fácil,
+
+em que 
+
+nao vamos escrever todos esses detalhes com nossas mãos (express.js)..
+
+
+
+
+
+ENTRETANTO, É CRUCIAL QUE VOCE ENTENDA OS CONCEITOS QUE FORAM MOSTRADOS AGORA...
+

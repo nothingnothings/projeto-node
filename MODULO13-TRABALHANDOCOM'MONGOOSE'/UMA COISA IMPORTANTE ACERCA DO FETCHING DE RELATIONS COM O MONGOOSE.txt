@@ -1,0 +1,1659 @@
+
+
+
+
+
+
+
+
+--> NA ÚLTIMA AULA,
+
+
+VIMOS 
+
+
+
+COMO __ ADICIONAR/ESTABELECER RELATIONS ENTRE models/documents/collections com o MONGOOSE,
+
+
+tudo por meio 
+
+
+de 
+
+
+
+'ref' nos FIELDS dos models que vamos definindo.... (e coisas como 'objectId', 'userId', esse tipo de fields, em nossos documents/models, tudo para estabelecer references aos outros models....)
+
+
+
+
+
+
+
+
+
+
+
+
+-_> MAS AGORA O 
+
+
+
+PROFESSOR QUER NOS MOSTRAR ALGO QUE __ NÃO É __REALMENTE__ NECESSÁRIO AQUI,
+
+MAS 
+
+
+QUE 
+
+É 
+ALGO MUITO LEGAL,
+
+
+E ALGO QUE 
+
+
+DEVEMOS SABER.... --------> DEVEMOS TER EM MENTE QUE, NO NOSSO PRODUCT MODEL,
+
+
+
+de 
+
+código:
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const productSchema = new Schema(
+  {        
+
+
+    title: {
+
+      required: true,
+      type: String
+    },
+
+    price: {
+      required: true,
+      type: Number
+    },
+
+
+    description: {
+      required: true,
+      type: String
+    },
+
+    imageUrl: {
+      required: true,
+      type: String
+    },
+
+    userId: { ////// USADO PARA DEFINIR RELATION ENTRE os models/collection de 'User' e 'Product', por meio desse ID aí (relations por meio de REFERENCING...).
+      required: true, 
+      type: Schema.Types.ObjectId, /////// use isto, esse DATA TYPE, se você pretende fazer REFERENCING entre duas collections/models....
+      ref: 'User'  /////// AQUI VOCê DEVE ESPECIFICAR O __ NOME __ DA DATABASE/COLLECTION que você vai querer __CONECTAR/RELATE a essa database/model de 'product'... (você deve colocar a inicial maiúscula, EXATAMENTE COMO VOCÊ definiu o nome dessa collection/model, lá em 'user.js', nesse caso...)
+    } 
+  }
+)
+
+
+
+
+
+module.exports = mongoose.model('Product', productSchema); ////ESSE É O CÓDIGO QUE EXPORTA/DEFINE NOSSO 'model' A PARTIR __ DO SCHEMA __ que definimos logo acima... --> É ESTE CÓDIGO QUE VAI __CONECTAR__ NOSSO 'SCHEMA' A UM 'NAME'..... (que, nesse caso, será 'Product'...)
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+NESSE PRODUCT MODEL AÍ,
+
+
+
+estamos 
+
+
+FETCHEANDO NOSSO 
+
+
+'userId'... ----> certo,
+
+e É 
+
+isso que 
+
+
+ESTABELECE A RELATION (de tipo 'referencing') 
+
+
+
+ENTRE 
+
+
+
+
+
+OS PRODUCTS E OS USERS........  -----------------> 
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... MAS 
+
+DIGAMOS 
+
+
+
+QUE 
+QUANDO NÓS FAZEMOS FETCH 
+DE 
+
+'ALL PRODUCTS',
+
+
+exatamente 
+
+
+como fizemos 
+
+
+lá 
+
+
+
+no controller de 'admin.js',
+
+
+no controller 
+
+de 
+
+'getProducts',
+
+QUE 
+
+
+TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  Product.
+  find()
+  .then(
+    (products) => {
+
+
+        res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products
+      })
+
+    }
+)
+
+
+};
+
+
+
+''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+
+
+
+--> CERTO... NESSE LOCAL AÍ,
+
+estávamos/estamos usando 
+
+
+'.find()'
+
+
+
+nesse model 
+
+de 
+
+'Product',
+
+para conseguir 
+
+
+FAZER FETCH DE TODOS OS PRODUCTS... ---> 
+
+
+
+
+MAS DIGAMOS QUE 
+
+
+
+
+
+_____QUEREMOS __ ACTUALLY 
+
+
+'GET ALL THE USER DATA FOR THE 
+
+RELATED user' (o user relacionado aos products, related por meio do 'userId' field colocado DENTRO DE CADA 'product'...),
+
+
+
+,
+
+OU SEJA,
+
+
+DIGAMOS QUE 
+
+QUEREMOS 
+
+
+PEGAR 
+
+'all the user data for the related user, user related to that product',
+
+
+E NÃO __ SÓ 
+
+
+O 
+
+
+'_id' 
+
+
+desse user (que fica/ficou armazenado no field de 'userId', nos nossos 'product')..... --------> 
+
+
+
+
+
+
+
+ISSO PQ 
+
+
+
+POR ENQUANTO, NESSE EXATO MOMENTO,
+
+
+
+SE NÓS 
+
+CONSOLE.LOGGARMOS 
+
+
+nossos 
+
+
+'product',
+
+
+
+VEREMOS QUE 
+
+SUA ESTRUTURA 
+
+
+INTERNA É ESTA:
+
+
+
+
+
+
+
+
+{
+    "_id": {
+        "$oid": "6178c95a034366e935717476"
+    },
+    "title": "ASAS",
+    "price": 22121,
+    "description": "ASSAAS",
+    "imageUrl": "ASAS",
+    "userId": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+
+
+---------> OU SEJA,
+
+
+DENTRO DELES 
+
+
+temos, de fato,
+
+
+o 
+
+
+'userId',
+
+
+
+___ENTRETANTO__ NÃO TEMOS A 'DATA ESPECÍFICA' ACERCA 
+
+
+DESSE 
+
+
+USER,
+
+
+não temos 
+
+
+
+dados/data 
+
+
+como 
+
+
+
+'''
+
+
+{
+    "_id": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "name": "Max",
+    "email": "max@test.com",
+    "cart": {
+        "products": []
+    },
+    "__v": 0
+}
+
+
+
+'''',
+
+
+
+
+
+OU SEJA,
+
+NÃO TEMOS 
+
+
+A INFO ESPECÍFICA DO USER... (que está armazenada em CADA OBJETO 'user', lá na collection de 'users'...)
+
+
+
+
+
+------> e percebemos isso no console.log,
+
+que 
+
+
+__REALMENTE__ 
+
+não 
+
+nos dá mais do que o 'userId'
+
+
+desse user...
+
+
+
+
+
+
+-------> CERTO...... MAS O PROBLEMA, AQUI, É QUE __ ESSE 
+
+'userId'
+
+
+àS VEZES NÃO BASTARÁ... EXISTIRÃO CASOS EM QUE 
+
+VAMOS 
+
+PRECISAR MAIS DO QUE SÓ 
+
+O 
+
+'userId',
+
+
+
+
+Às vezes 
+
+
+VAMOS QUERER 
+
+
+'FETCH THE RELATED DATA (user data, nesse caso)' JUNTO 
+
+DO 
+
+ID, TAMBÉM...  -------> E É CLARO QUE 
+
+
+
+
+
+____PODERÍAMOS/PODEMOS___ FAZER 
+
+
+
+ISSO 
+
+MANUALMENTE... -> poderíamos,
+
+por exemplo,
+
+
+
+
+APENAS 
+
+escrever 
+
+
+DENTRO DESSE 
+
+
+
+THEN BLOCK
+
+
+
+um 
+
+
+código 
+
+
+
+PARA LOOPAR __ POR DENTRO DOS PRODUCTS (for of loop)
+
+
+
+PARA ENTÃO 
+
+
+
+
+
+ESCREVER __ QUERIES__ EM QUE 
+
+
+
+
+CONSEGUIMOS/CONSEGUIRÍAMOS 
+
+OS 
+
+'users'
+
+
+
+
+por meio de 
+
+'findById',
+
+
+
+
+tudo com 
+
+OS 
+
+IDS 
+
+que 
+
+NÓS 
+
+
+JÁ TÍNHAMOS RECEBIDO EM CADA 
+
+'product'.... ---------> MAS 
+
+
+
+
+
+É ÓBVIO QUE 
+
+ISSO 
+
+
+AÍ,
+
+ESSE APPROACH MANUAL,
+
+
+É 
+
+
+BEM __CUMBERSOME__,
+
+
+você 
+
+tem que 
+
+escrever toda a lógica de loop,
+
+
+e aí os 
+
+queries 
+
+
+
+para conseguir 
+
+a data 
+
+
+de 
+
+cada 
+
+
+'user' na collection de 'users'... -------> É POR ISSO QUE 
+
+
+O 
+
+
+
+
+MONGOOSE TEM OUTRO 
+
+UTILITY METHOD MT 
+
+
+ÚTIL,
+
+
+
+
+
+
+METHOD QUE PODE SER ACRESCENTADO ___APÓS__ 
+
+o 
+
+
+call 
+
+de 
+
+'.find()',
+
+
+QUE 
+
+É 
+
+
+
+
+
+
+
+
+'.populate()' ---------->  O POPULATE TE DEIXA DIZER AO 
+
+
+'MONGOOSE'
+
+
+
+
+QUE 
+
+ELE 
+
+
+
+DEVE 
+
+
+
+''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT 
+
+THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... 
+
+
+
+
+
+
+
+
+
+
+
+--> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL...
+
+
+
+
+
+
+
+PARA CONSEGUIR ISSO,
+
+
+
+ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+
+  Product.
+  find()
+  .populate() /////////EIS O CÓDIGO EM QUESTÃO.
+  .then(
+    (products) => {
+
+
+        res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products
+      })
+
+    }
+)
+
+};
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+OK.... MAS É CLARO QUE 
+
+O 
+
+
+POPULATE É UM MÉTODO MEIO COMPLEXO.... ---> 
+
+
+
+
+
+
+
+
+
+
+
+no 'populate()',
+
+
+
+o 
+
+
+
+PRIMEIRO PARÂMETRO 
+
+É 
+
+O 
+
+
+'PATH QUE VOCÊ QUER 'POPULATE' '''.... (ou seja, o FIELD que vocÊ vai querer que fique preenchido pelas informações detalhadas...)
+
+
+
+
+
+
+---> NO NOSSO CASO,
+
+
+O PROFESSOR VAI QUERER QUE 
+
+
+__O FIELD DE 
+
+'userId'
+
+
+
+FIQUE 
+
+
+PREENCHIDO 
+
+
+
+POR ESSA DETAILED INFORMATION ACERCA DO USER,
+
+
+por isso 
+
+
+ele 
+
+
+vai 
+
+
+escrever assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+
+  Product.
+  find()
+  .populate('userId') /////////EIS O CÓDIGO EM QUESTÃO.
+  .then(
+    (products) => {
+
+
+        res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products
+      })
+
+    }
+)
+
+};
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE VOCÊ TAMBÉM PODERIA APONTAR A 'nested paths' 
+
+
+
+NO SEU DOCUMENT, se você os tivesse.... ( ou seja, vocÊ poderia escrever, como parâmetro,
+coisas como 
+
+
+
+'userId.user', para 
+
+
+
+___ ENFIAR ESSAS INFORMATIONS DENTRO DESSE objeto 'user' dentro do field 'userId',
+
+
+por exemplo...
+
+)
+
+
+
+
+
+
+
+
+
+--> CERTO....  
+
+
+
+
+
+
+
+
+AÍ SALVAMOS TUDO ISSO...
+
+
+
+
+
+
+
+--> SE  AGORA EXAMINARMOS 
+
+
+
+O CONSOLE.LOG,
+
+veremos 
+
+
+
+ESTE OUTPUT AQUI:
+
+
+
+
+
+
+
+
+
+
+
+
+[
+  {
+    _id: new ObjectId("6178c95a034366e935717476"),
+    title: 'ASAS',
+    price: 22121,
+    description: 'ASSAAS',
+    imageUrl: 'ASAS',
+    userId: {
+      cart: [Object],
+      _id: new ObjectId("6178c60a90464c24983b0847"),
+      name: 'Max',
+      email: 'max@test.com',
+      __v: 0
+    },
+    __v: 0
+  }
+]
+
+
+
+
+
+
+
+
+
+
+
+-----> OU SEJA, COMO VOCÊ PODE PERCEBER:
+
+
+   userId: {
+      cart: [Object],
+      _id: new ObjectId("6178c60a90464c24983b0847"),
+      name: 'Max',
+      email: 'max@test.com',
+      __v: 0
+    },
+
+
+
+
+
+
+
+
+--> O FIELD DE 'userId'
+
+
+FOI __ POPULADO__ pelo 
+
+conteúdo do 'user' relacionado a esse 
+
+'product'... (e parece 
+
+que 
+
+as 
+
+REGRAS DE nosso 'model', as REGRAS DESSE FIELD AÍ, que deveria ser apenas de 'type: Schema.Types.ObjectId', FORAM __iGNORADAS_...)
+
+
+
+
+
+
+
+
+
+
+
+------> E É CLARO QUE __ 
+
+ESSE MÉTODO __ É 
+
+_______MUITO ÚTIL__ NO 
+
+
+FETCH DE DATA,
+
+
+
+PQ 
+
+
+ELE __ TE DÁ 
+
+
+'ALL THE DATA IN ONE STEP',
+
+
+
+
+o que 
+
+
+
+TE POUPA DE TER QUE 
+
+ESCREVER 
+
+'NESTED QUERIES'
+
+
+
+por conta própria...
+
+
+
+
+
+
+--> BTW,
+
+
+
+
+VOCê ___tAMBEM __PODE SELECIONAR/RESTRINGIR QUAL 
+
+
+
+TIPO DE 
+
+'DATA'
+
+
+
+DEVE SER RECEBIDA POR MEIO de 'populate',
+
+
+
+
+
+ESSA RESTRIÇÃO É FEITA POR MEIO DOS OUTROS PARÂMETROS 
+
+
+DESSE METHOD,
+
+
+
+
+
+analogamente ao comportamento de 'find()' (que TAMBÉM DEIXA VOCÊ PASSAR VÁRIOS PARÂMETROS, QUE RESTRINGEM OS DOCUMENTS fetcheados por ele, de acordo com os critérios definidoss por você....)
+
+
+
+
+
+
+
+
+
+
+
+------------> PROFESSOR EXPLICA 
+
+AINDA 
+
+
+
+__OUTRO__ MÉTODO 
+
+QUE PODE SER CHAINADO 
+
+com 
+
+'.find()',
+
+
+
+
+
+
+MÉTODO CHAMADO 
+DE 
+
+'.select()' --------->  
+
+
+
+
+
+
+O 'SELECT' 
+
+TE DEIXA 
+
+
+
+
+
+______ DEFINIR QUAIS FIELDS __ VOCÊ QUER 
+
+'SELECT/UNSELECT'.... ------> OU SEJA,
+
+
+
+
+TE DEIXA ___ ESPECIFICAR___ QUAIS FIELDS __ 
+
+
+
+
+DEVEM __ SER RETRIEVADOS __ LÁ DA DATABASE, 
+
+
+nesses objetos/documents de 'product', nesse caso........
+
+
+
+
+
+ex:
+
+
+
+
+Product.find()
+.select('')
+.populate('userId')
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+OK, MAS COMO ELE FUNCIONA, EXATAMENTE? 
+
+
+
+
+
+
+--> sua sintaxe é tipo assim:
+
+
+
+Product.find()
+.select('title price')
+.populate('userId')
+
+
+
+
+
+
+
+
+
+
+
+--> POR MEIO DESSA ESCRITA AÍ (field names 'SOLTOS' no meio do parâmetro) ,
+
+
+você 
+
+estaria/está dizendo 
+
+
+
+''''RETORNE OBJETOS/valores dos documents  'product',
+
+
+mas esses objetos deverão ter ___aPENAS___ OS FIELDS DE 'title' e 'price' '''''.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E O PROFESSOR NOS EXPLICA, AINDA, QUE 
+
+
+PODEMOS ___ NEGAR O RETRIEVE __ DE FIELDS __ EXPLICITAMENTE,
+
+
+tudo por meio 
+
+
+
+
+de escritas como 
+
+
+'-_id', ou '-price' 
+
+
+
+
+(
+
+OU SEJA, SE VOCÊ __ NÃO QUER RECEBER ALGUM DOS FIELDS,
+
+NÃO QUER __MESMO,
+
+VOCÊ 
+
+
+DEVE SÓ adicionar um '-' (menos) 
+
+NA FRENTE 
+
+
+DO NOME DE SEU FIELD....
+
+
+)
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+Product.find()
+.select('title price -_id')
+.populate('userId')
+
+
+
+
+
+
+
+
+
+
+(essa sintaxe, no caso, VAI RETRIEVAR os fields de 'title' e 'price', e vai DEIXAR DE LADO  o field de '_id' nos products que forem retrievados... )
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+OK, MAS PQ O PROFESSOR MENCIONOU ESSE 
+
+'.select()'?  --------> É PQ 
+
+
+
+
+
+
+O SEGUNDO PARÂMETRO 
+
+
+
+de 
+
+'.populate()', método explicado anteriormente,
+
+
+
+
+É ___ IGUALZINHO A '.select()';
+
+
+É UM 
+
+
+
+
+PARÂMETRO EM QUE 
+
+__VOCÊ 
+
+
+PASSA UMA STRING DIZENDO 
+
+
+QUAIS FIELDS DAQUELE 'RELATED DOCUMENT/object'
+
+
+
+VOCÊ VAI QUERER POPULANDO 
+
+
+
+O field de 'userId' (nesse caso aí),
+
+
+E QUAIS 
+
+
+FIELDS __ VOCÊ __ NÃO VAI QUERER...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+Product.find()
+.populate('userId', 'name title -_id')
+.then(
+    (products) => {
+
+    }
+)
+
+
+
+
+
+
+
+
+OU SEJA, AQUI TEMOS O MESMO CÓDIGO DE ANTES,
+
+mas 
+agora 
+
+
+
+usando O SEGUNDO PARÂMETRO DE 
+
+'.populate()'...
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+IMPORTANTE!!!
+
+
+
+
+
+OBS:::: O ___   '_id' 
+
+
+dos 
+
+
+RELATED OBJECTS/DOCUMENTS ___SEMPRE__ SERÁ
+
+
+
+RETRIEVED por '.find()', mesmo com o '.select()'/segundo parâmetro de '.populate()',
+
+
+
+
+_____________ A NÃO SER ___ QUE VOCÊ _______eXPLICITAMENTE___ 
+
+
+
+O EXCLUA, por meio de 
+
+'-_id'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DEIXA O CÓDIGO ASSIM, PARA TESTAR:
+
+
+
+
+Product.find() ////MÉTODO DO MONGOOSE.... --> sintaxes alternativas (que te dão o CURSOR em vez de um array) ---> 'Product.find().cursosr().eachAsync()'       __ E ____ 'Product.find().cursor().next()' -------> ESSAS 2 VERSÕES VAO TE DAR O _CURSOr__ EM VEZ DE UM ARRAY COM TODOS OS DOCUMENTS... (comportamento contrário àquele do 'mongodb driver' comum, portanto...)
+.select('title price -_id') ////É A MESMA COISA QUE O SEGUNDO PARÂMETRO DE '.populate()', mas atua sobre OS PRODUCTS RETRIEVADOS por meio de '.find()', e não a DATA RETRIEVADA LÁ DO 'RELATED OBJECT' (que é 'user', no caso desse call inferior de '.populate()')....
+.populate('userId', 'name') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ... ---> JÁ O SEGUNDO PARÂMETRO CUMPRE A MESMA TAREFA DE '.select('fields a serem retrievados de sua database...')'; OU SEJA, NELE VOCÊ PASSA, COMO PARÂMETRO, UMA STRING DIZENDO __QUAIS __ PRODUCTS __ DEVEM SER __RETRIEVADOS DA DATABASE... (é um parâmetro opcional, exatamente como '.select()' o é...)
+.then( 
+    (products) => {
+
+
+    }
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+SE RECARREGARMOS NOSSA PAGE,
+
+
+CONSTATAREMOS QUE 
+
+ALGUMA DATA VAI ESTAR FALTANDO, COMO A 'imageUrl',
+
+
+TUDO 
+
+
+POR CONTA 
+
+DESSE CÓDIGO de 
+
+
+'.select()',
+
+
+QUE RESTRINGIU O RETRIEVE ÀPENAS 
+
+
+aos 
+
+fields 
+
+de 
+
+'title' 
+
+e 
+
+'price',
+
+
+
+nesse call em questão.
+
+
+
+
+
+
+
+
+
+OK... ESSE ERA APENAS 1 PEQUENO SIDENOTE ACERCA 
+
+
+DO 
+
+
+DATA FETCHING COM O MONGOOSE.....
+ (
+
+
+
+     ERA ALGO QUE 
+
+     PROFESSOR QUERIA NOS MOSTRAR... ----> PROFESSOR 
+
+
+
+     APONTA QUE 
+
+     NÃO PRECISAMOS 
+
+     DISSO AQUI,
+
+
+     QUE ISSO É 
+
+     ALGO QUE NA VERDADE 
+
+     QUEBRA O NOSSO APP,
+
+
+
+MAS QUE É ALGO LEGAL DE SE SABER...
+
+ )
+
+
+
+
+
+
+
+
+
+ --> AGORA SABEMOS QUE PODEMOS 
+
+
+ 'AUTOMATICALLY POPULATE RELATED 
+
+ FIELDS',
+
+ que podemos 
+
+
+ 'FETCH THE RELATED DATA'
+
+
+
+ por meio 
+
+ de 
+
+
+ '.populate()'.... -----> E também 
+
+
+ APRENDEMOS QUE PODEOMS __ CONTROLAR__ 'WHICH FIELDS 
+
+
+ ARE RETURNED',
+
+
+ TANTO 
+
+
+
+ PARA O 
+
+ 'MAIN DOCUMENT' (retrievado por meio de '.find()' )
+
+
+
+ COMO 
+
+ TAMBÉM 
+
+ PELOS 
+
+
+ 'populated documents', 
+
+
+
+ documents POPULADOS 
+
+
+ pelos 'related documents' (no caso, 'user') ao seu document em questão(no caso, 'product')
+
+
+
+
+
+
+
+
+
+ --> COM ISSO,
+
+
+ DEVEMOS 
+
+
+ VOLTAR 
+
+
+
+ AO 
+
+
+ DESENVOLVIMENTO DO APP,
+
+
+
+ particularmente 
+
+
+ ao add 
+
+ de features como 
+
+
+ CART 
+
+ e 
+
+ ORDERS...

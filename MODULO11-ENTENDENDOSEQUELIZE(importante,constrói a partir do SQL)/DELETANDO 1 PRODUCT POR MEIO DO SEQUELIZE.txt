@@ -1,0 +1,537 @@
+
+
+
+
+
+
+
+AGORA VAMOS NOS CERTIFICAR DE QUE TAMBÉM CONSEGUIMOS 
+
+
+
+DELETAR PRODUCTS/RECORDS DE 
+
+NOSSA 
+
+
+DATABASE SQL....
+
+
+
+
+
+
+
+
+
+--> EM 
+
+
+ADMIN.JS,
+
+
+nosso controller,
+
+
+
+
+TEMOS 
+
+
+AQUELE 
+
+CONTROLLER 
+
+
+de 
+
+
+''
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+  Product.deleteProduct(req.body.id);
+  console.log('TEST');
+  res.redirect('/');
+};
+
+
+
+
+
+'''''
+
+
+
+
+
+--> ISSO __AINDA NÃO ESTÁ USANDO O SEQUELIZE....
+
+
+
+
+
+
+
+
+
+
+
+--> temos que alterar seu código para o utilizar...
+
+
+
+
+
+
+
+
+
+---> 
+
+
+
+
+COMEÇAMOS ASSIM:
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+  Product.deleteProduct(req.body.id);
+  console.log('TEST');
+  res.redirect('/');
+};
+
+
+
+
+
+
+
+You can delete an instance by calling destroy:
+
+const jane = await User.create({ name: "Jane" });
+console.log(jane.name); // "Jane"
+await jane.destroy();
+// Now this entry was removed from the database
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ok.... então provavelmente 
+
+
+teremos 
+
+
+de 
+
+escrever algo como 
+
+
+
+
+
+Product.destroy(
+{
+
+  where: {
+    id: productId
+  }
+}
+)
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO, FUNCIONOU,
+
+
+ESCREVI 
+
+
+ASSIM:
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+  const productId = req.body.id;
+
+
+  Product.destroy(
+    {
+      where: {id: productId}
+    }
+  )
+  .then(
+    (result) => {
+      console.log(result);
+      res.redirect('/products')
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+};
+
+
+
+
+------------------------------
+
+OK....
+
+
+
+
+
+
+
+-------> PROFESSOR COMEÇA FAZENDO A MESMA COISA...
+
+
+
+--> ele escreve 
+
+
+
+
+'Product.destroy()',
+
+
+
+
+
+
+
+
+AÍ 
+
+
+
+ELE __ DIZ QUE 
+
+
+ESSE MÉTODO NOS DEIXA 
+
+
+
+
+USAR OPTIONS PARA 
+
+
+
+'NARROW DOWN' 
+
+qual 
+
+
+record vamos querer deletar...
+
+
+
+
+
+
+
+---> TAMBÉM PODEMOS USAR UM APPROACH 
+
+DIFERENTE;
+
+
+EM VEZ 
+
+DE 
+
+CHAMAR 
+
+'destroy'
+
+assim,
+
+
+
+
+chamar destroy e passar uma condition 
+
+
+
+de qual 
+
+product encontrar (o que é fine),
+
+
+
+
+
+
+
+
+
+
+
+PODEMOS __ USAR, EM VEZ DISSO,
+
+
+
+
+
+
+'Product.findByPk(productId)'... -------> 
+
+
+
+PODEMOS 
+
+USAR 
+ISSO 
+
+E ENTÃO 
+
+CHAINAR 
+
+THEN 
+
+
+blocks 
+
+
+
+PARA 
+
+
+
+
+__ 
+
+
+
+
+EXECUTAR 
+
+
+
+
+
+
+
+ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+Product.findByPk(productId)
+.then(
+  (product) => {
+        product.destroy();
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+-->  product.destroy(); ___vAI ___DESTRUIR ___ O 
+
+
+
+PRODUCT QUE FOI ENCONTRADO (representado por 'product' em minúsculo)...
+
+
+
+
+
+---> AÍ, PODEMOS RETORNAR 
+
+ESSE NEGÓCIO 
+
+PARA 
+
+
+
+
+ADICIONAR OS CASES 
+
+DE 
+THEN/CATCH,
+
+
+que 
+
+vão 
+
+
+console.loggar 
+
+'DELETED PRODUCT'
+
+
+ou 
+
+
+nossa mensagem de erro, exatamente como fizemos com o edit a product...
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id;  
+
+
+
+  Product.findByPk(productId)
+  .then(
+    (product) => {
+        return product.destroy(); //esse return nos ajuda com O HANDLE DO then e catch blocks logo abaixo, que dependem dele...
+    }
+  )
+  .then(
+    (result) => {
+        console.log('DELETED PRODUCT');
+        res.status(302).redirect('/admin/products');
+    }
+  )
+  .catch(
+    (err) => {console.log(err)}
+  )
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO, AGORA TUDO ISSO ESTÁ FUNCIONANDO... PODEMOS DELETAR NOSSOS ITEMS 
+
+SEM PROBLEMAS...
+
+
+
+
+
+--> AGORA PODEMOS:
+
+
+
+1) MANAGE OUR PRODUCTS 
+
+
+2) VÊ-LOS NAS PÁGINAS 
+
+DE 
+
+ADMIN E 
+
+
+USER...
+
+
+
+
+
+
+-_> MAS UMA COISA QUE AINDA NÃO VIMOS SÃO 'RELATIONS'...
+
+
+
+
+
+
+--> ISSO PQ 
+
+NÓS NÃO TEMOS APENAS 
+
+'PRODUCTS',
+
+MAS 
+
+TAMBÉM 
+
+
+UM 
+
+'CART',
+
+E 
+
+,
+
+EVENTUALMENTE,
+
+'USERS'...

@@ -1,0 +1,723 @@
+
+
+
+
+
+
+
+
+
+---> PROFESSOR MENCIONOU NO INÍCIO DESTE MÓDULO QUE 
+
+
+PARA CONSEGUIRMOS 
+
+'PUT DYNAMIC CONTENT 
+
+
+INTO OUR 
+
+HTML PAGES',
+
+
+
+nós usaríamos ALGO CHAMADO DE 
+
+'TEMPLATING ENGINES'...
+
+
+
+
+
+ELAS FUNCIONAM ASSIM:
+
+
+
+
+
+1) NÓS TEMOS UM 'HTMLish Template', 
+
+
+
+
+COM ISSO, O PROFESSOR QUER DIZER QUE TIPICAMENTE VOCÊ ESCREVE UM ARQUIVO/CÓDIGO QUE 
+
+CONTÉM UM MONTE DE HTML... ------> HTML STRUCTURE, MARKUP,
+
+
+SEUS IMPORTS DE JAVASCRIPT E CSS.... ----> TODAS ESSAS COISAS SÃO TIPICAMENTE INCLUÍDAS...
+
+
+------>  MAS É CLARO QUE VOCÊ AINDA TEM UNS 'BLANKS' DENTRO 
+
+DESSE 
+
+ARQUIVO,
+
+
+VOCÊ AINDA TEM ALGUNS 'PLACEHOLDERS'.... -----> AÍ, TIPICAMENTE,
+
+VOCÊ 
+
+TEM O SEU APP,
+
+
+
+COMO O NOSSO 'DUMMY ARRAY' de 'products 'que ESTAMOS USANDO ,
+
+
+
+
+E AÍ VOCÊ GERALMENTE TERÁ UMA 
+
+
+
+
+'''TEMPLATING ENGINE'''',
+
+A QUAL 
+
+
+
+__ ENTENDE_ _UMA CERTA SINTAXE..., SINTAXE PELA QUAL 
+
+ELA 
+
+'SCANS YOUR HTMLish TEMPLATE',
+
+
+
+
+
+
+TEMPLATE EM QUE 
+
+VAI, ENTÃO, 
+
+'REPLACE PLACEHOLDERS/CERTAIN SNIPPETS',
+
+
+DEPENDENDO 
+
+DE QUAL 
+
+
+ENGINE 
+
+VOCÊ ESTÁ USANDO... ----> VAI SUBSTITUIR ESSES TEMPLATES POR 'REAL HTML CONTENT'... ------> MAS O DIFERENCIAL, AQUI, 
+
+É 
+
+QUE 
+
+ESSE 
+'REAL HTML CONTENT' 
+
+
+outputtado
+
+
+__sERÁ 'GENERATED ON THE FLY' 
+
+
+
+PELAS TEMPLATING ENGINES, NO SERVIDOR MSM.... ------> ELES VÃO OUTPUTTAR ESSE REAL HTML CONTENT 
+
+
+
+___ON THE FLY,
+
+LEVANDO EM CONSIDERAÇÃO 
+
+AQUELE 
+
+
+'DYNAMIC CONTENT'... (por exemplo, você poderia/pode 
+
+OUTPUTTAR 
+
+UMA  
+
+ORDERED LIST COM _ _LIST ITEMS__ 
+
+
+
+PARA __ OS DADOS QUE VOCÊ TEM 
+
+
+NO SEU NODE/EXPRESS app, COM A AJUDA 
+
+
+DE UMA TEMPLATING ENGINE ) -------> E, COM EFEITO,
+
+O 
+
+RESULTADO 
+
+
+SERÁ 
+
+''' A DYNAMIC, ON THE FLY, GENERATED 
+
+HTML  FILE'',
+ 
+
+ A QUAL 
+
+ SERÁ 
+
+
+
+ ENVIADA DE VOLTA AOS SEUS USERS... -----> ISSO QUER DIZER QUE OS USERS 
+
+ NUNCA 
+ ENXERGAM 
+
+ OS 
+ TEMPLATES,
+
+ NUNCA ENXERGAM OS PLACEHOLDERS... (tudo isso acontece no server),
+
+
+
+
+ A ÚNICA COISA QUE 
+
+
+
+
+ ELES CONSEGUEM 'IS A NORMAL HTML PAGE',
+
+
+
+
+
+
+ ___ MAS ESSA HTML PAGE __ NÃO SERÁ HARDCODADA POR VOCÊ, e sim 
+
+ será 
+
+
+ 'GENERATED ON THE FLY' por meio dessas templating engines..
+
+
+
+
+
+
+
+
+
+
+ ------> OK... E AGORA NÓS TEMOS UM PUNHADO DE DIFERENTES 
+
+
+
+ TEMPLATING ENGINES DISPONÍVEIS A NÓS... ---> 
+
+
+ E, NA VERDADE,
+
+ VOCÊ 
+
+
+
+ TEM AINDA MAIS OPÇÕES DO QUE ESSAS QUE O PROFESSOR 
+
+ NOS MOSTRA...
+
+
+
+
+
+
+
+
+ --> existem mt alternativas..
+
+
+
+
+
+
+
+
+
+
+ --> AS 3 OPÇÕES MAIS USADAS SÃO:
+
+
+
+
+
+ 1) EJS 
+
+
+
+
+
+ 2) PUG (JADE, nome antigo)
+
+
+
+
+
+
+ 3) HANDLEBARS...
+
+
+
+
+
+
+
+
+
+ ----> SÃO 3 DIFERENTES 'TEMPLATING ENGINES',
+
+
+ os quais 
+
+
+ USAM 
+
+ SINTAXES DIFERENTES E OFERECEM 
+
+ DIFERENTES FEATURES,
+
+
+
+
+
+ DIFERENTES FILOSOFIAS... ----> COM ELES 
+
+ VOCÊ 
+
+
+ PODE CRIAR 
+
+ ESSES 
+
+ 'TEMPLATES',
+
+
+
+
+INJETAR SEU CONTEÚDO DINÂMICO NELES 
+
+PARA 
+
+CONSEGUIR 
+
+
+
+'OUTPUT HTML CONTENT OUT OF THEM'...
+
+
+
+
+
+
+
+
+----> AQUI TEMOS 
+
+UM 
+
+BREVE TRECHO 
+
+DE COMO 
+
+SUA SINTAXE SE PARECE (mas o professor 
+
+vai apresentar/mostrar um pouco DAS 3 LINGUAGENS NESSE MÓDULO...):
+
+
+
+
+
+
+
+
+EJS se parece ASSIM:
+
+
+
+
+
+
+<p><%= name %></p>
+
+
+
+
+
+
+
+
+(OU SEJA, VOCÊ ESCREVE 
+
+
+MARKUP HTML NORMAL,
+
+MAS AÍ VOCê 
+
+ESCREVE 
+
+
+essa sintaxe de 
+
+
+'<%='   %>',
+
+
+
+
+
+E AÍ DENTRO 
+
+DISSO 
+
+O 
+
+DYNAMIC CONTENT QUE VOCÊ QUER OUTPUTTAR...
+
+)
+
+
+
+
+
+
+
+
+
+--> ou seja,
+
+se tivéssemos/temos 
+
+
+__UMA VARIÁVEL 'NAME' 
+
+SENDO 
+
+INJETADA 
+
+NO NOSSO 
+
+
+
+___ 'TEMPLATE' (veremos como essa injection funciona),
+
+
+
+
+
+O VALOR DESSA VARIÁVEL ACABARIA SENDO OUTPUTTADO NESSE LUGAR,
+
+
+
+
+E AÍ 
+
+
+
+
+ACABARÍAMOS/ACABAMOS ENVIANDO DE VOLTA 
+
+
+UMA FILE HTML 
+
+
+com 
+
+
+
+'<p>{nomeDINAMICO}</p>'...
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+2) PUG 
+
+
+
+
+
+
+--> sintaxe do pug:
+
+
+
+
+
+p #{name} -------> ELE NÃO USA 
+
+
+HTML 
+
+DE VERDADE,
+
+
+
+ 
+ E SIM 
+
+ O 
+ SUBSTITUI 
+
+ POR UMA 
+
+ 'MINIMIZED VERSION'
+
+
+
+ do html,
+
+
+UMA VERSÃO 
+
+
+
+__aBREVIADA, mínima,
+
+
+
+NA QUAL 
+
+
+
+
+
+__TAMBÉM __ TE DEIXA__ OUTPUTTAR
+
+
+CONTEÚDO DINÂMICO COM 
+
+
+
+
+ESSA SINTAXE....
+
+
+
+
+(tipicamente 
+
+
+
+
+algo como 
+
+
+' p #{name} ')
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+3) HANDLEBARS:
+
+
+
+
+
+
+
+
+--> DE NOVO, VOCÊ TEM MARKUP COMUM, aqueles '<p>',
+
+
+
+MAS 
+
+
+
+DESSA VEZ VOCÊ TEM 'DOUBLE CURLY BRACES' como DEFINIDORES DOS SEUS TEMPLATES/PLACEHOLDERS... DEFINEM
+ 
+ OS LOCAIS EM QUE SERÁ INJETADO SEU CONTEÚDO DINÂMICO....
+
+
+
+
+ ex:
+
+
+
+ <p>{{ name }}</p>
+
+
+
+
+
+
+
+ -------- 
+
+
+
+
+
+
+
+ HANDLEBARS -----> É UM POUCO PARECIDO COM O EJS,
+
+
+ MAS NA VERDADE __ TEM UM 
+
+ POUCO MENOS FEATURES DO QUE ELE... 
+
+
+
+
+
+ (NA VERDADE, SEGUE UMA FILOSOFIA DIFERENTE,
+ 
+
+
+e isso leva a ter menos features... ---> AINDA ASSIM, É BEM PARECIDO COM O EJS...
+ )
+
+
+
+
+
+
+
+
+ JÁ O 
+
+ 'PUG' É 
+
+ O OUTLIER AQUI,
+
+
+ PQ 
+
+
+ USA 
+
+
+ UMA SINTAXE DIFERENTE DE HTML... 
+
+
+
+
+
+
+
+
+
+ RESUMO:
+
+
+
+
+
+
+
+
+ 1) EJS --> USA HTML NORMAL E 'plain javascript' NOS SEUS TEMPLATES, única diferença é aquela grafia de <%=  %> 
+            ----------> PLACEHOLDERS --> TE DEIXAM USAR 'PLAIN JAVASCRIPT' neles... (isso significa que você pode escrever coisas como IF STATEMENTS, for loops, etc...)
+
+
+**USES NORMAL HTML with '<%= =>'
+
+
+** ALL JAVASCRIPT FEATURES ARE SUPPORTED, PLAIN JAVASCRIPT IS SUPPORTED...( in templates)...
+
+
+
+
+
+
+2) PUG  --> 'USES A MINIMAL HTML VERSION', E UMA ___ LANGUAGE DE TEMPLATE__ CUSTOMIZADA__... ---> 
+É UMA LINGUAGEM QUE É __ EXTENSÍVEL (EXTENSIBLE), MAS QUE GERALMENTE SÓ OFERECE UM PUNHADO DE COISAS/operações javascript QUE VOCÊ PODE FAZER ( if statements e lists estão inclusas, ITERATIONS TAMBÉM.... )
+
+
+**DIFFERENT HTML SYNTAX 
+
+** SOME JAVASCRIPT FEATURES ARE SUPPORTED (BUT NOT ALL)
+
+
+
+
+
+
+
+3) HANDLEBARS ---> USA HTML NORMAL, MAS TAMBÉM USA UMA 'CUSTOM TEMPLATE LANGUAGE', COMO O PUG, COM 
+
+'LIMITED JAVASCRIPT FEATURES'... ( de novo, inclui coisas como IF STATEMENTS E LISTS, mas não coisas mais avançadas..)
+
+
+
+
+
+** USES NORMAL HTML SYNTAX, with <p>{{name}}</p>
+
+
+
+
+** SOME JAVASCRIPT FEATURES ARE SUPPORTED  (BUT NOT ALL)
+
+
+
+
+
+
+
+
+--> DEVEMOS 
+
+
+
+
+VER 
+
+
+
+
+ESSAS TEMPLATING ENGINES,
+
+
+EXAMINAR 
+
+SEU MEIO DE INSTALAÇÃO,
+
+antes 
+
+de 
+
+escolhermos uma para 
+
+USAR AO LONGO DESTE CURSO..
+
+
+
+
+
+
+
+
+--> NO FINAL DESTE MÓDULO,
+
+ENCONTRAMOS 
+
+
+MAIS RESOURCES SOBRE ESSAS 3 ENGINES...

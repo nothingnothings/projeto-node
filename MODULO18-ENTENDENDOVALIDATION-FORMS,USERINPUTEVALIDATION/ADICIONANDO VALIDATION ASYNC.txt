@@ -1,0 +1,1613 @@
+
+
+
+
+
+
+
+
+
+
+
+
+-----> NOSSA SIGNUP VALIDATION ESTÁ BEM BOA,
+
+MAS 
+
+HÁ 
+
+ALGO QUE 
+
+
+
+AINDA ESTAMOS VALIDANDO DE UMA FORMA MEIO ESTRANHA... ----------> 
+
+
+
+
+
+
+
+
+O PROFESSOR ESTÁ FALANDO, NO CASO,
+
+
+
+DO 
+
+CHECK 
+
+
+
+SE 
+
+
+
+
+'THE EMAIL IS TAKEN OR NOT'... ----------> ISSO 
+
+
+
+
+
+
+__PQ___ 
+
+
+
+
+A MANEIRA 
+
+
+PELA QUAL ESTAMOS FAZENDO ISSO, NO MOMENTO,
+
+É 
+
+
+LÁ NO CONTROLLER 
+
+DE 
+
+'auth.js',
+
+
+NAQUELE 
+
+
+'postSignup',
+
+QUE TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+
+  if(!errors.isEmpty()) { 
+    return res.status(422).render(
+                //OU SEJA, SE NÓS/USER (validation failed)_ __ FALHARMOS_, VAMOS QUERER __ SIMPLESMENTE 'RENDER THE PAGE AGAIN'.. ( E NÃO VAMOS REDIRECIONAR, E SIM __ APENAS RENDERIZAR A PAGE DE 'SIGNUP' MAIS UMA VEZ)...
+
+                'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: errors.array()[0].msg ////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                }
+
+    ); 
+
+  }
+
+
+
+
+
+
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    req.flash('error', 'Passwords do not match, please try again.'); ////uso de 'req.flash()', pacote 'connect-flash'... --> sempre usar esse pacote COM NOSSAS SESSIONS, com 'express-session'...
+    return res.redirect('/signup');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) 
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+            return transporter.sendMail(
+              //essa é a função que REALMENTE ENVIA 1 EMAIL/emails ao user/emails da web...
+              {
+                to: email, 
+                from: 'arthur.panazolo@acad.pucrs.br',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfullly signed up!</h1>',
+              }
+            );
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+OK.... NESSE LOCAL,
+
+
+
+
+
+
+___ NÓS ___ DE FATO CHECAMOS
+
+pela 
+
+
+EXISTÊNCIA 
+
+
+
+DE 
+
+1 EMAIL igual ao que o user inputtou 
+
+LÁ 
+
+
+EM 
+
+
+'''
+
+User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      } else {
+        return bcrypt
+          .hash(password, 12) 
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+
+
+
+
+'''''''
+
+
+
+
+
+
+
+
+
+--> BEM... LOGICAMENTE,
+
+
+
+
+FARIA
+ 
+
+ SENTIDO __ 'CHECK' ISSO AÍ __ COMO PARTE 
+
+ DE 
+
+ NOSSA 
+
+ VALIDATION (lá nos arquivos 'route'),
+
+
+ CERTO? --------------> 
+
+
+
+
+
+
+
+ E A BOA NOTÍCIA, AQUI, É QUE __ PODEMOS FAZER ISSO_,
+
+
+
+
+
+
+PODEMOS ___ PEGAR ESSE CÓDIGO DE 
+
+
+
+'''
+
+
+
+User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      }
+
+''',
+
+
+
+EM QUE 
+
+
+
+
+__ACHAMOS 1 
+
+
+USER,
+
+
+
+
+
+
+
+__ AGARRAMOS __ 
+ESSE 
+
+CÓDIGO 
+
+
+
+
+E ENTÃO 
+VAMOS 
+
+ATÉ 
+O 
+
+ARQUIVO 
+
+'auth.js' (ROUTE)....
+
+
+
+
+
+
+
+
+
+
+--------> LÁ,
+
+
+
+
+
+VAMOS QUERER ___ INICIALMENTE___ IMPORTAR___ 
+
+
+NOSSO 
+
+
+MODEL DE 
+
+'User',
+
+
+pq 
+
+vamos o utilizar...
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+escrevemos 
+
+
+
+
+const User = require('../models/user');
+
+
+
+
+
+
+
+
+
+
+
+
+-->  AÍ, 
+
+
+
+
+LÁ NO CÓDIGO 
+
+
+
+DE 
+
+
+VALIDATION 
+
+da route de 
+
+'SIGNUP',
+
+
+temos 
+
+este código:
+
+
+
+
+
+
+router.post(
+  '/signup',
+
+  [
+
+  check('email') 
+    .isEmail(), /
+
+
+
+ check('password', 
+ 'Your password has to be made of only letters and numbers, and of 6 or more characters.'). ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS... 
+ isLength({min: 6}).
+ isAlphanumeric(),
+
+
+
+  body('confirmPassword').custom( ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, {req, loc, path}) => {
+                if(value !== req.body.confirmPassword) { 
+
+                  throw new Error('Passwords do not match.');
+                } else {
+                  return value;
+                }
+
+        }
+  )
+
+
+      ]
+
+,
+ 
+  authController.postSignup
+);
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+NESSE CÓDIGO AÍ,
+
+
+TEMOS 
+
+AQUELE 
+
+FIELD 
+
+DE 
+
+'email',
+
+
+
+
+EM QUE 
+
+
+TEMOS AQUELE 
+
+
+
+CUSTOM VALIDATOR ('.custom()'),
+
+
+
+
+QUE 
+
+
+
+
+CHECA __ 
+
+
+
+
+'''
+
+
+.custom((value, {req}) => { ///ESTE É UM EXEMPLO DE 'ADD A CUSTOM VALIDATOR'; VOCÊ DEVE ESCREVER SEU PRÓPRIO VALIDATOR QUANDO VOCÊ ACHAR QUE VALIDATORS COMO 'isEmail()', 'isEmpty()', 'isIn()' e OUTROS VALIDATORS BUILTIN não forem suficientes para suas necessidades...
+  //     if (value === 'test@test.com')  {           
+  //       throw new Error('This email address sucks, please choose another one.');
+  //     }
+  //   return true;
+  // }
+
+ // )
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+---> O PROFESSOR REMOVE 
+
+
+ESSE 
+
+
+VALIDATOR 'CUSTOM',
+
+pq 
+
+
+ele só quer que o tenhamos como REFERÊNCIA....
+
+
+
+
+
+
+
+
+
+--> AGORA VAMOS 
+
+
+ADICIONAR 1 CHECK,
+
+
+POR MEIO DE 
+
+'.custom()',
+
+
+
+QUE __ FAZ MAIS SENTIDO DO QUE ESSE ANTERIOR...
+
+
+
+
+
+
+
+
+-------> VAMOS 
+
+
+
+
+ADICIONAR AQUELE CÓDIGO DE 
+
+
+
+
+''
+
+
+
+
+User.findOne({ email: email.toLowerCase() }) 
+    .then((user) => {
+      if (user) {
+        req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+        return res.redirect('/signup');
+      }
+
+
+
+
+
+
+
+''',
+
+
+
+EM QUE 
+
+
+FAZEMOS
+ 
+
+
+ __FIND__ DE 1 USER 
+
+ COM 
+
+ AQUELE 
+
+
+ EMAIL ADDRESS.... -->  
+
+
+
+
+
+
+
+
+
+
+
+
+
+É CLARO QUE VOU TER QUE ____ ADAPTAR__ ESSE CÓDIGO....
+
+
+
+
+
+
+
+
+--> essa parte aqui:
+
+
+
+
+User.findOne({ email: email.toLowerCase() }) 
+
+
+
+
+
+
+
+
+--> a parte da direita, o 'email.toLowerCase()',
+
+
+
+
+DEVE SER SUBSTITUÍDA POR 
+
+
+
+'value.toLowerCase()',
+
+PQ 
+
+
+ESSE NEGÓCIO AÍ OBVIAMENTE É 
+
+O 
+
+
+
+VALUE PELO QUAL 
+
+
+
+VOCÊ ESTÁ 'VALIDATING'...  (pq o 'value' realmente será o EMAIL FIELD...)
+
+
+
+
+
+
+
+
+
+-----> ok, estamos procurando 
+
+
+por esse email.... --> E AÍ, 
+
+SE TIVERMOS 
+
+
+
+ESSE 
+
+'user',
+
+
+
+lá naquele 
+
+block 
+
+
+de 
+
+
+(user) => {
+      if (user) {
+
+
+
+
+
+
+          ,
+
+
+
+
+AÍ NÃO VAMOS QUERER 
+
+
+USAR 
+
+
+AQUELE CÓDIGO DE 
+
+
+
+' req.flash(
+          'error',
+          'An User with that Email already exists, please choose another one.'
+        );
+',
+
+
+
+
+QUE 
+
+É 
+
+UM NEGÓCIO BEM CLIENTSIDE,
+
+
+
+
+
+E SIM __ VAMOS __ QUERER __ 
+
+
+
+
+
+
+
+
+___ PEGAR __ AQUELA 
+
+
+
+
+ERROR MESSAGE DE 
+
+
+'Email already exists, please pick a different one'... ,
+
+
+
+
+
+VAMOS PEGAR ___ 
+
+
+
+ESSA 
+MESSAGE 
+
+
+DE 
+
+ERROR 
+
+
+
+E AÍ __ VAMOS __ 
+
+FAZER 
+
+O 
+
+RETURN 
+
+
+DE UMA MALUQUICE,
+
+UM 
+
+RETURN 
+
+DE 
+
+
+
+UMA 
+
+'Promise.reject('Email already exists, please pick a different one')' 
+
+
+
+
+
+
+
+
+--> TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.post(
+  '/signup',
+
+  [
+
+  check('email') 
+    .isEmail()
+    .withMessage('Please enter a valid email.')
+    .custom(
+        (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+            User.findOne({email: value}) ///////EIS O CÓDIGO EM QUESTÃO.
+            .then(
+                (user) => {
+
+                            if (user) {
+                                return Promise.reject('Email already exists, please pick a different one')
+                            }
+
+                }
+            )
+        }
+    )
+    
+    
+    , 
+
+
+
+ check('password', 
+ 'Your password has to be made of only letters and numbers, and of 6 or more characters.'). ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS... 
+ isLength({min: 6}).
+ isAlphanumeric(),
+
+
+
+  body('confirmPassword').custom( ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, {req, loc, path}) => {
+                if(value !== req.body.confirmPassword) { 
+
+                  throw new Error('Passwords do not match.');
+                } else {
+                  return value;
+                }
+
+        }
+  )
+
+
+      ]
+
+,
+ 
+  authController.postSignup
+);
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+OU SEJA,
+
+VAMOS ESCREVER UMA 'REJECT CALL'
+
+DE UM OBJETO PROMISE... ----------> 
+
+
+
+
+
+
+
+
+
+
+UMA PROMISE É UM 'BUILT IN JAVASCRIPT OBJECT',
+
+
+
+
+E __ POR MEIO DO 'REJECT',
+
+
+
+NÓS 
+
+
+BASICAMENTE 
+
+
+
+FAZEMOS 'THROW' 
+
+DE 
+
+1 
+
+ERROR 
+
+__DENTRO __ 
+
+DESSA PROMISE...
+
+
+
+
+
+
+--> E AÍ VAMOS FAZER 'REJECT'
+
+com essa 
+
+message de error 
+
+aí...
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+O QUE ISSO SIGNIFICA,
+
+
+
+ESSE 
+
+WRITE DE 
+
+
+
+
+
+'return Promise.reject('mensagem')'
+
+
+
+
+É 
+
+
+QUE 
+
+
+O PROFESSOR 
+
+
+PODE 
+
+
+
+____ ADICIONAR__ UM '.catch()'
+
+
+
+BLOCK 
+
+
+
+LOGO APÓS 
+
+
+ESSE BLOCK DE 
+
+'.custom',
+
+
+
+
+
+__ PARA ___ 
+
+
+FAZER CATCH DESSE ERROR.... ---------> MAS ELE EXPLICA QUE ___ NÃO VAI FAZER ISSO
+
+
+
+
+NESSE LUGAR... -------> EM VEZ DISSO,
+
+
+ELE 
+
+SO´
+
+FECHA 
+
+
+
+ESSE 
+
+
+
+'.custom()',
+
+
+
+
+ 
+
+
+ E AÍ __ ELE 
+
+
+
+
+ VAI 
+
+ ACTUALLY__ FAZER 'return'
+
+
+
+ DE 
+
+
+
+ 'User.findOne({})',
+
+
+ ESSE CALL INICIAL DE 
+
+
+
+
+ 'User.findOne()'
+
+
+ DENTRO 
+
+ DE 
+
+
+ '.custom()'...
+
+
+
+
+
+
+
+
+ TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+ router.post(
+  '/signup',
+
+  [
+
+  check('email') 
+    .isEmail()
+    .withMessage('Please enter a valid email.')
+    .custom(
+        (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+           return User.findOne({email: value}) ///////EIS O CÓDIGO EM QUESTÃO.
+            .then(
+                (user) => {
+
+                            if (user) {
+                                return Promise.reject('Email already exists, please pick a different one')
+                            }
+
+                }
+            )
+        }
+    )
+    
+    
+    , 
+
+
+
+ check('password', 
+ 'Your password has to be made of only letters and numbers, and of 6 or more characters.'). ////EIS O CÓDIGO EM QUESTÃO. É ASSIM QUE ADICIONAMOS UMA ERROR MESSAGE 'GERAL' A UM DE NOSSOS CHECKS... 
+ isLength({min: 6}).
+ isAlphanumeric(),
+
+
+
+  body('confirmPassword').custom( ///aqui usamos um CUSTOM VALIDATOR (validator escrito por nós, lógica escrita por nós) PARA __ CHECAR__ SE OS FIELDS DE 'password' e 'confirmPassword' realmente MATCHEIAM...
+        (value, {req, loc, path}) => {
+                if(value !== req.body.confirmPassword) { 
+
+                  throw new Error('Passwords do not match.');
+                } else {
+                  return value;
+                }
+
+        }
+  )
+
+
+      ]
+
+,
+ 
+  authController.postSignup
+);
+
+
+
+
+
+
+
+
+---------------------------
+
+
+OK, MAS A PERGUNTA É:
+
+
+
+
+O QUE 
+
+ESSE 
+
+
+'RETURN'
+
+
+VAI FAZER?
+
+
+
+
+
+
+
+
+
+------> BEM, O QUE ACONTECERÁ É QUE 
+
+
+A 
+
+PACKAGE DE 
+
+
+'express-validator'
+
+
+
+
+
+__ VAI CHECAr__ POR 
+
+
+
+
+
+1 custom validator (esse validator de '.custom()' ),
+ 
+
+
+
+
+ E 
+
+
+ VAI 
+
+
+ __ESPERAR__ QUE 
+
+
+ ELE 
+
+
+ RETORNE 
+
+
+ OU 
+
+
+ TRUE 
+
+ OU FALSE.... (é isso que ele faz)... -----------> 
+
+
+
+
+
+
+
+
+OU SEJA,
+
+
+
+O 'express-validator'
+
+
+VAI 
+
+ESPERAR:
+
+
+
+OU: 
+
+
+
+
+1) PELO THROW DE 1 ERROR....
+
+
+
+
+2) PELO RETURN DE UMA PROMISE... ------> ESSE É O CASO 
+
+
+
+COM 
+
+
+'User.findOne()',
+
+
+PQ __ 
+
+ESSA FUNÇÃO 
+
+
+REALMENTE__ VAI RETORNAR 1 PROMISE... -----> isso pq ___ CADA__ '.then()' BLOCK __ 
+
+IMPLICITAMENTE RETORNA UMA NOVA 'PROMISE'...
+
+
+
+
+
+
+
+
+
+-----> é aí que o negócio fica interessante: ___SE NÓS __ RETORNAMOS UMA PROMISE,
+
+
+nesse validator 'custom', COMO _eSTAMOS FAZENDO AQUI__ (com aquele 'return User.findOne()') , 
+
+
+
+
+
+O __ EXPRESS-VALIDATOR_ _VAI SIMPLESMENTE 
+
+ESPERAR 
+
+__PELA CONCLUSÃO __ DESSA PROMISE... -------> E SE ESSA PROMISE 
+
+
+
+
+
+É CONCLUÍDA/fulfilled com 'BASICAMENTE NADA', ou seja,
+
+
+NENHUM CÓDIGO DE ERRO,
+
+
+_____ AÍ O ___ express-validator __ TRATA/TRATARÁ__ 
+ESSA 
+
+
+VALIDATION COMO 
+
+'SUCCESSFUL'... ------->  JÁ 
+
+
+
+
+
+SE NÓS ENTRAMOS NAQUELE 
+
+BLOCK 
+
+DE 
+
+
+
+'''
+
+
+  if (user) {
+                                return Promise.reject('Email already exists, please pick a different one')
+                            }
+
+
+''',
+
+
+
+
+
+
+__ SE ENTRAMOS NESSE BLOCK AÍ QUE __ RESOLVE __ NOSSA PROMISE COM UMA 
+
+
+'REJECTION',
+
+
+
+
+
+AÍ O __ EXPRESS-VALIDATOR__ VAI 
+
+
+REALMENTE ____dETECTAR__ ESSA 
+
+REJECTION 
+
+___ 
+
+
+
+______ E AÍ __ VAI ARMAZENAR___ 
+
+ESSA 'message' 
+
+
+
+
+
+
+COMO 1 ''ERROR''..... ----> a message será armazenada como uma ERROR MESSAGE, NO FINAL DAS CONTAS... ----------> 
+
+
+
+
+
+E É ASSIM, PORTANTO, 
+
+QUE __ PODEMOS 
+
+'ADD OUR OWN ASYNCHRONOUS 
+
+VALIDATION',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ASYNC VALIDATION ___ PQ __ NÓS/NOSSO APP ___ TEM QUE FAZER 
+'REACH OUT' 
+
+
+À 
+
+DATABASE__ PARA VERIFICAR SE AQUELE EMAIL JÁ EXISTE EM ALGUM 'USER',
+
+
+
+algo que __ OBVIAMENTE ___ NÃO É UMA AÇÃO INSTANTÂNEA... -----> MAS MESMO 
+
+
+ISSO 
+
+NÃO 
+
+SENDO UMA 
+
+
+TASK INSTANTÂNEA,
+
+
+O 
+
+
+
+EXPRESS-VALIDATOR AINDA VAI 
+
+'KIND OF WAIT' por nós, aqui, 
+
+
+nesse 
+
+bloco 
+
+de 
+
+'.custom()'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, ISSO SIGNIFICA QUE AGORA TEMOS NOSSA PRÓPRIA 
+
+'ASYNC VALIDATION' no lugar,
+
+
+
+
+
+
+E AGORA 
+
+NÓS 
+
+
+
+AINDA VAMOS 
+
+
+'CHECK FOR EMAIL EXISTENCE',
+
+
+
+
+
+MAS AGORA __ NÃO FAREMOS ISSO MAIS NO CONTROLLER (na verdade, vou sim, pq é 
+
+
+um CLIENTSIDE VALIDATION),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> professor argumenta que NÃO PRECISAMOS DO CÓDIGO DE 'CHECK PELA EXISTÊNCIA DE UM USER COM ESSE EMAIL'
+
+
+
+LÁ 
+
+
+nos nossos controllers 
+
+
+justamente pq 
+
+
+'I DO CHECK FOR ITS EXISTENCE, AHEAD OF TIME, IN 
+
+MY 
+
+AUTH.JS ROUTE, WITH THE HELP OF THAT VALIDATION MIDDLEWARE'...
+
+
+
+
+
+
+
+
+
+The point of flash is to be able to set messages 
+whilst also being able to redirect, as redirect is a function of
+ req rather than res. You might want to instead have a root level function 
+ that sets the error as a res.locals attribute so that you can access it directly 
+ from your EJS/HBS templates.
+
+
+
+
+
+------------------------
+
+
+OK,
+
+
+MAS O QUE INTERESSA 
+
+É 
+
+
+QUE 
+
+
+
+ESSE 
+
+
+NOSSO CÓDIGO, ESSA FUNCIONALIDADE TODA,
+
+
+
+AGORA 
+
+ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+
+
+
+------> OK... ISSO ESTÁ FUNCIONANDO, E É ASSIM QUE VOCÊ PODE 
+
+ADICIONAR 
+
+
+
+'ASYNC VALIDATION'
+
+
+no seu projeto...
+
+
+
+

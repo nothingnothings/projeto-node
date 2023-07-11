@@ -1,0 +1,1929 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS COMEÇAR COM O ESTUDO DE ALGUMAS STANDARD LIBRARIES... --> 
+
+
+PARA ISSO,
+
+
+PROFESSOR VAI COMEÇAR 
+
+COM A LIBRARY 
+DE 
+
+'HTTP'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ESSA LIBRARY NOS AJUDARÁ COM O 'SPIN UP'
+
+de um 
+
+WEB SERVER....
+
+
+
+
+
+
+
+
+
+-------> E JÁ NOS DOCS DESSA LIBRARY, 
+
+
+
+TEMOS UM DUMMY CODE PARA FAZER ISSO:
+
+
+
+
+
+
+
+
+
+
+
+
+import { serve } from "Https://deno.land/std/http/server.ts";
+const server = serve({port: 8000});
+console.log("http://localhost:8000/");
+for await(const req of server) {
+    req.respond({body: 'Hello World\n"});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI REPLICAR ESSE CÓDIGO, E AÍ VAI __ EXPLICAR EXATAMENTE O QUE ESTÁ ACONTECENDO NELE/NAS SUAS LINHAS....
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+///////////// 'STANDARD LIBRARY' DO DENO, USADA PARA __ 'SPIN UP A WEB SERVER', de protocolo HTTP....
+
+import { serve } from "https://deno.land/std/http/server.ts";
+const server = serve({port: 8000});
+console.log("http://localhost:8000/");
+for await(const req of server) {
+    req.respond({body: 'Hello World\n'})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, IMEDIATAMENTE JÁ OBSERVAMOS UMA IMPORTANTE DIFERENÇA EM RELAÇÃO AO NODE... =--------> 
+
+
+
+
+É 
+
+A __ SINTAXE_ DE IMPORT --->  é uma sintaxe de import 'es6+' ....
+
+
+
+
+
+
+
+
+
+
+--> MAS TAMBÉM TEMOS OUTRA DIFERENÇA NESSA SINTAXE DE IMPORT.. -> ESTAMOS __ IMPORTANDO__ DE UM 
+
+
+
+ENDEREÇO, 
+
+DE UMA URL... (e nunca fizemos isso anteS)...
+
+
+
+
+
+
+
+-------> NO DENO, PODEMOS __ IMPORTAR__ DE URL...
+
+
+
+
+
+
+
+
+
+-->  o node realmente suporta A SINTAXE DE 'import xx from yyy',
+
+
+MAS _ ELE NUNCA _ SUPORTOU/NÃO SUPORTA 
+
+
+
+
+
+
+A SINTAXE DE IMPORTS__ COM URLS ...... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+URL IMPORTS --> ESSE É UM __ DIFERENCIAL __ DO DENO--->  NÃO VAMOS IMPORTAR DE UM 
+
+'LOCAL FILE MODULE'',
+
+
+
+
+e sim 
+
+
+
+___DE UMA URL NA WEB... -----> APONTAMOS A UMA FILE __ EM UM OUTRO__ SERVER,
+
+PARA __ ENTÃO IMPORTAR ESSA FILE NO NOSSO PROJETO...
+
+
+(
+
+    hmmm.... isso não é, tipo, inseguro?
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS ISSO É ALGO QUE O __ DENO FAZ__... --> O DENO __ QUER QUE VOCê USE IMPORTS COMO ESSE ------> 
+
+
+
+A IDEIA DO DENO __ NÃO É QUE VOCÊ 
+
+VAI 
+
+
+
+BAIXAR TUDO QUE VOCÊ QUER UTILIZAR NO SEU PROJETO e então 
+
+
+armazenar tudo isso localmente,
+
+
+
+e sim 
+
+
+
+
+
+
+
+
+__ QUE __, EM VEZ DISSO,
+
+VOCÊ 
+
+
+
+
+
+__ POSSA __ IMPORTAR __ DE QUALQUER 
+
+JAVASCRIPT/TYPESCRIPT file  
+
+
+
+
+
+
+-__ EM QUALQUER SERVER,
+
+
+
+e que 
+
+AÍ 
+
+VOCÊ 
+
+
+
+CONSIGA 
+
+
+COMEÇAR A USAR ESSAS 'EXPORTED FEATURES'
+
+
+
+
+NOS SEUS ARQUIVOS.... -------> ESSA É UMA __ CORE PHILOSOPHY DO DENO,
+
+
+
+E É ALGO 
+
+
+
+
+
+__ BEM DIFERENTE__ DO NODE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok...
+
+
+
+
+
+
+
+
+de novo, temos essa sintaxe:
+
+
+
+
+import { serve } from "Https://deno.land/std/http/server.ts"...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> PSÉ,
+
+SE QUISERMOS 
+
+
+
+USAR ESSA LIBRARY DE 'http',
+
+
+
+
+__ VAMOS QUERER _ IMPORTAR ESSA FUNÇÃO 'serve' ESPECÍFICA,
+
+que 
+
+existe 
+
+DENTRO DESSE ARQUIVO 
+
+'server.ts'
+
+
+
+LÁ __ NO 'deno.land', nessa url aí... -------> 
+
+
+
+
+
+
+
+
+
+
+SE QUISERMOS FAZER ISSO,
+
+
+vamos até 
+
+
+nosso arquivo app.ts 
+
+
+E ESCREVEMOS EXATAMENTE ISSO:
+
+
+
+import { serve } from "https://deno.land/std/http/server.ts";
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ISSO FUNCIONARÁ, TEORICAMENTE...
+
+
+
+
+
+
+
+
+
+--> ISSO VAI IMPORTAR ESSA FUNCTION, DESSE ARQUIVO REMOTO...
+
+
+
+
+
+
+
+
+
+
+
+-----------> MAS SE ENTRARMOS NESSE ARQUIVO 'server.ts',
+
+
+
+
+VEREMOS OUTRAS COISAS...
+
+
+
+
+
+
+
+
+
+
+--> OBS:::: VOCÊ __ SÓ _ PODE IMPORTAR __ AS COISAS QUE SÃO 'EXPORTED'
+
+
+nesse arquivo que existe nessa url... (url de "https://deno.land/std/http/server.ts";
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS SE ENTRARMOS NO 'SERVER.TS',
+
+
+
+
+
+
+VEMOS 
+
+QUE 
+
+
+
+
+'serve'
+
+
+É UMA DAS FUNCTIONS QUE É EXPORTADA...
+
+
+
+
+
+
+
+
+
+
+
+------->
+
+
+'export function serve',
+
+etc etc..
+
+
+
+
+
+
+-> COMO ELA É EXPORTADA NESSA LINHA,
+
+PODEMOS A IMPORTAR 
+
+
+COM 
+
+ESSE 
+
+
+'URL IMPORT', no nosso código...
+
+
+
+
+
+
+
+
+--> OK... É ASSIM QUE PODEMOS 'IMPORT',
+
+
+
+E COM ISSO __ NÃO PRECISAMOS __ FAZER DOWNLOAD, NEM 'NPM INSTALL' 
+
+
+
+ESSA FUNCTION.... --------> E ESSA FUNCTION __ TAMBÉM 
+
+
+NÃO É 
+
+'BUILTIN' 
+
+
+
+no DENO.... -------> ISSO SIGNIFICA QUE ___ 
+
+
+
+
+
+ESSA FUNCTION, EXTRAÍDA DESSE ARQUIVO NESSA URL,
+
+
+__ NÃO É ALGO COMO 
+
+
+
+O 
+
+
+
+MODULE 'fs' 
+
+LÁ NO NODE (que é algo que JÁ VEM COM O NODE),
+ 
+
+
+
+ E SIM QUE 
+
+
+ É ALGO QUE 
+
+ EXISTE EM UM SERVER REMOTO,
+
+
+
+
+ E QUE É ASSIM QUE PODEMOS O IMPORTAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> 'serve' --> É UMA FUNCTION  QUE 
+
+
+ NOS DEIXA 
+
+
+ 'SPIN UP A HTTP SERVER'....
+
+
+
+
+
+
+
+
+
+
+ -> E AÍ, NÓS VAMOS SPIN UP UM DESSES SERVERS POR MEIO DA ESCRITA DE 
+
+
+
+
+
+
+
+ 'serve()' -------> 
+
+
+
+
+ DENTRO DE 'serve',
+
+
+ PASSAMOS 
+
+
+
+
+ 1 OBJETO 
+
+ para 
+
+ CONFIGURAR ESSE CALL...
+
+
+
+
+
+
+
+
+
+ 1) OBJETO CONFIG ----> nesse objeto, PODEMOS __ ESPECIFICAR A _PORT__ PELA QUAL VAMOS QUERER 'LISTEN'...
+
+
+
+ --> NO MODO DE DEVELOPMENT,
+ PODEMOS DEFINIR ESSA PORT COMO '3000', como sempre fazemos....
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+ import { serve } from "https://deno.land/std/http/server.ts";
+
+
+
+ serve(
+     {
+         port: 3000
+     }
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK... MAS AÍ O 'serve()'
+
+
+ VAI ___ NOS RETORNAR _ UM _ SERVER, UM OBJETO 'SERVER',
+
+
+ que 
+
+ PODEMOS ENTÃO ARMAZENAR EM UMA CONSTANTE:
+
+
+
+
+
+
+
+///////////// 'STANDARD LIBRARY' DO DENO, USADA PARA __ 'SPIN UP A WEB SERVER', de protocolo HTTP....
+
+import { serve } from "https://deno.land/std/http/server.ts"; ////OUTRO DIFERENCIAL DO DENO... ELE NOS PERMITE REALIZAR 'URL IMPORTS' (ou seja, importar FUNCTIONS DE ARQUIVOS CONTIDOS EM URLS NA INTERNET, em servidores remotos... --> aqui estamos IMPORTANDO A FUNCTION 'serve' LÁ DESSE ARQUIVO 'server.ts', contido nessa url do deno...)
+const server = serve({port: 3000}); ///// 1o argumento de 'serve' __ É UM OBJETO, objeto em que você DEFINE A PORT EM QUE VOCÊ VAI QUERER FAZER 'LISTEN TO', NESSE SEU SERVER....
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+CERTO... ----> 
+
+
+E AÍ, ESSE SERVER, É CLARO,
+
+
+VAI 
+
+TER VÁRIOS 
+
+'INCOMING REQUESTS' 
+
+chegando a ele.. ------> NO NODEJS,
+
+
+
+
+NÓS AGORA ESPECÍFICARÍAMOS UMA 
+
+
+
+'CALLBACK FUNCTIOn' 
+
+
+a 
+ser executada 
+
+
+A PARTIR DE QUALQUER REQUEST....(
+
+
+
+
+    como visto 
+
+
+
+
+
+    naquele código de 
+
+
+    'app.listen(3000)',
+
+
+    DO __ EXPRESS...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS O DENO, EM VEZ DISSO,
+
+
+FAZ 
+'EMBRACE'
+
+DAS FEATURES MODERNAS JAVASCRIPT....  ELE FAZ ESSE EMBRACE PARA __ TODAS SUAS 'CORE CAPABILITIES',
+
+
+
+
+
+
+__ E O SERVER NÃO É EXCEÇÃO:
+
+
+
+
+
+
+
+
+
+
+
+NO EXAMPLE SNIPPET nós observamos __COMO É FEITO O 'LISTEN TO' 
+
+
+a requests que chegam no nosso backend deno, formatado através desse 'HTTP LIBRARy':
+
+
+
+
+
+
+import { serve } from "https://deno.land/std/http/server.ts"; ////OUTRO DIFERENCIAL DO DENO... ELE NOS PERMITE REALIZAR 'URL IMPORTS' (ou seja, importar FUNCTIONS DE ARQUIVOS CONTIDOS EM URLS NA INTERNET, em servidores remotos... --> aqui estamos IMPORTANDO A FUNCTION 'serve' LÁ DESSE ARQUIVO 'server.ts', contido nessa url do deno...)
+const server = serve({port: 3000}); ///// 1o argumento de 'serve' __ É UM OBJETO, objeto em que você DEFINE A PORT EM QUE VOCÊ VAI QUERER FAZER 'LISTEN TO', NESSE SEU SERVER....
+
+
+
+
+console.log("http://localhost:3000/");
+for await(const req of server) {
+    req.respond({body: 'Hello World\n'})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> temos esse 
+
+
+'for await (const req of server) {
+    ...
+}
+
+'
+
+
+
+
+
+
+
+
+
+
+-> OU SEJA,
+
+
+VAMOS __ USAR __ ESSE 'STRANGE CONSTRUCT' (palavras do professor )
+
+
+PARA 
+
+FAZER 'LISTEN TO INCOMING REQUESTS'...
+
+
+
+
+
+
+
+
+
+
+----->  É ESTA FEATURE AQUI:
+
+
+https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/for-await...of
+
+
+
+
+for await...of
+
+
+
+
+
+
+A declaração for await...of cria um loop que itera sobre objetos iteráveis ​​assíncronos, 
+
+bem como sobre iteráveis ​​síncronos, incluindo: String, Array, Array-como objetos
+
+ (e.g., arguments or NodeList), TypedArray, Map, Set, e iteráveis async/sync. 
+ 
+ 
+ Invoca um hook de iteração personalizado com instruções a serem executadas para 
+ 
+ 
+ 
+ o valor de cada propriedade do objeto.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É UMA JAVASCRIPT FEATURE,
+
+
+
+
+
+
+UMA FEATURE CHAMADA DE 
+
+
+
+'ASYNC ITERABLES'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O 'server', no caso desse trecho de código aí,
+
+é 
+
+
+
+um desses negócios, é um 
+chamado 
+
+
+'ASYNCHRONOUS ITERABLE'... ------> ISSO SÓ SIGNIFICA, SIMPLESMNETE,
+
+
+
+
+QUE 
+
+É 
+
+
+
+'COMO UM ARRAY CHEIO DE PROMISES'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E É BASICAMENTE COMO SE ELE FOSSE __ UM ___ ARRAY__ INFINITO,
+
+
+ARRAY INFINITO DE PROMISES....
+
+
+
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE 
+
+ESSE 
+
+
+__ SERVER__ VAI _ GERAR_/GERA  ___ NOVAS __ PROMISES,
+
+
+
+PROMISES àS QUAIS PODEMOS 'AWAIT',
+
+justamente 
+
+
+por meio desse 
+
+
+'await' 
+
+em 
+
+
+
+'for await (const req of server) {}' 
+    ^^^^
+
+
+
+
+
+
+    ,
+
+
+
+
+
+
+    E AÍ __ A NOVA __ PROMISE,
+
+
+
+
+
+__ QUE É EVENTUALMENTE 'RESOLVED',
+
+
+
+
+__ É __ _ GENERATED __ PARA TODO E CADA __ 'INCOMING REQUEST' -----> E É EXATAMENTE ISSO 
+
+
+
+QUE O 
+
+'server' (deno server)
+
+
+FAZ,
+
+
+'UNDER THE HOOD'.. ----------> E É CLARO QUE VOCÊ 
+
+
+
+PODERIA CONSTRUIR TUDO ISSO 
+
+
+SÓ COM 
+
+'VANILLA JAVASCRIPT,'
+
+
+
+
+
+
+
+
+JUSTAMENTE PQ 
+
+
+'async iterables'
+
+
+são __ UMA FEATURE __ DO VANILLA ___ JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+
+---------> TEMOS UM LINK PARA A DOCUMENTAÇÃO DAS ASYNC ITERABLEs..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... SE EXECUTARMOS ESSE CÓDIGO 
+
+
+QUE TEMOS 
+
+ALI,
+
+ESSE CÓDIGO DE :
+
+
+
+
+
+import { serve } from "https://deno.land/std/http/server.ts"; ////OUTRO DIFERENCIAL DO DENO... ELE NOS PERMITE REALIZAR 'URL IMPORTS' (ou seja, importar FUNCTIONS DE ARQUIVOS CONTIDOS EM URLS NA INTERNET, em servidores remotos... --> aqui estamos IMPORTANDO A FUNCTION 'serve' LÁ DESSE ARQUIVO 'server.ts', contido nessa url do deno...)
+const server = serve({port: 3000}); ///// 1o argumento de 'serve' __ É UM OBJETO, objeto em que você DEFINE A PORT EM QUE VOCÊ VAI QUERER FAZER 'LISTEN TO', NESSE SEU SERVER....
+
+
+
+
+console.log("http://localhost:3000/");
+for await(const req of server) {
+    req.respond({body: 'Hello World\n'})
+}
+
+
+
+
+
+
+
+
+
+
+
+,
+
+
+
+
+VAMOS 
+
+
+ACABAR EXECUTANDO ESSE CÓDIGO 
+
+
+
+
+__ PARA TODO E QUALQUER 
+
+'INCOMING REQUEST'...
+
+
+
+
+
+
+
+
+
+
+------> E AQUELE CÓDIGO ALI EMBAIXo,
+
+
+
+AQUELE 
+
+
+
+'req.respond({body: "hello world\n"})
+
+
+
+
+
+
+
+
+
+
+é simplesmENTE 
+
+
+A MANEIRA DENO DE ENVIAR DE VOLTA UMA 'RESPONSe'...
+
+
+
+
+
+
+
+
+
+-----> RESUMINDO:
+
+
+
+
+
+
+
+
+
+
+NO OBJETO 'request',
+
+QUE É GERADO 
+
+PARA CADA 'INCOMING REQUEST,'
+
+
+
+TEMOS 
+
+
+ESSE METHOD DE 
+
+
+
+'respond',
+
+QUE 
+
+É UM METHOD __ QUE __ 
+
+
+QUER UM __ OBJECT__ ,
+
+
+OBJECT __ EM QUE __ VAMOS 
+
+ESPECIFICAR 
+
+
+
+
+
+
+1 'body',
+
+
+
+BODY PARA 
+A 
+
+RESPONSE QUE SERÁ ENVIADA DE VOLTA __ PELO _ DENO... --> 
+
+
+
+
+
+
+
+
+
+
+ENTÃO É ASSIM QUE FAZEMOS ISSO---> 
+
+
+
+
+
+ESSA FUNÇÃO DE 
+
+
+'for await (const req of server) {}' 
+
+
+NOS 
+
+DEIXA 
+
+FAZER 
+
+'LISTEN TO' aos requests,
+
+
+aí 
+
+
+___ FAZER__ ALGO COM ELES __ (dentro do function body)
+
+
+E AÍ,
+
+FINALMENTE,
+
+
+
+
+
+__ RESPONDEr__ 
+
+
+
+COM 
+
+'res.respond()' -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OUTRA COISA DIGNA DE NOTA, AQUI,
+
+É QUE 
+
+
+
+ESTAMOS VENDO
+ 
+
+
+ 'await'
+
+
+
+ NO __ TOP LEVEL_ 
+
+
+ DE NOSSO CÓDIGO/ARQUIVO, ALGO __ QUE NÃO É PERMITIDO __ NO 
+
+ VANILLA JAVASCRIPT ES5 (e que SÓ É PERMITIDO, AQUI, PQ ESTAMOS ESCREVENDO código ES6+ )
+
+
+
+
+
+
+
+
+
+
+
+
+ ------ for await -> ISSO NÃO ESTÁ SENDO WRAPPADO EM QUALQUER ASYNC FUNCTION (como frequentemente necessário, em outros códigos) -----> 
+
+
+ ISSO SIGNIFICA QUE 
+
+
+ O DENO SUPORTA 'OUT-OF-THE-BOX'
+
+
+
+ TOP-LEVEL AWAIT... --> VOCÊ PODE USAR 
+
+
+
+ 'await'
+  
+  NO LADO DE FORA DE ASYNC FUNCIONTS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> EM VERSÕES MODERNAS DO NODEJS, 
+
+
+
+  ESSE TOP-LEVEL AWAIT 
+
+  TAMBÉM É SUPORTADO...
+
+
+
+
+
+
+
+
+
+
+  --> SE SALVARMOS TUDO ISSO E RODARMOS NOSSO 
+
+
+
+
+  CÓDIGO COM 
+
+  'deno run app.ts',
+
+
+
+
+
+
+
+  __ ELE _ VAI__ CERTAMENTE CRASHAR ------> vai crashar _ PQ 
+
+
+
+  _ NÃO RODAMOS NOSSO CÓDIGO COM O SET DAS PERMISSOES ESPEC´FIICAS PARA 
+
+  O 
+
+
+
+  'LISTEN TO REQUESTS' 
+
+
+
+  (
+
+      pq o professor havia mencionado, anteriormente,
+
+      que 
+
+      O SET 
+
+      DE 
+
+      PERMISSÕES DE SEGURANÇA NOS NOSSOS RUNS DE ARQUIVOS DENO/projetos  DENO 
+
+
+
+
+
+      é necessário nas hipóteses de:
+
+
+
+      1) READ/WRITE FILES 
+
+
+      2) LISTEN TO REQUESTS... 
+
+
+      3) alguma outra coisa....
+  )
+
+
+
+
+
+
+
+
+  -----> para que nosso código funcione,
+
+  PROVAVELMENTE PRECISAREI DE ALGO COMO 
+
+
+
+
+  'node --allow-listen run app.ts' 
+
+
+
+
+
+
+
+
+
+
+
+
+  --------------> MAS ANTES DE CRASHAR,
+
+
+
+
+  PERCEBEMOS QUE _ O DENO __ BAIXOU UM MONTE DE COISAS....
+
+
+
+
+
+
+
+
+
+
+
+  --> MAS EU ACTUALLY RECEBI UM MONTE DE ERRORS:
+
+
+  Check file:///A:/projeto4%20-%20NODEJS/MODULO34-UMAINTRODUCAOAODENO/PROJETODENO/app.ts
+error: TS2345 [ERROR]: Argument of type '{ port: number; }' is not assignable to parameter of type 'Handler'.     
+  Object literal may only specify known properties, and 'port' does not exist in type 'Handler'.
+    at file:///A:/projeto4%20-%20NODEJS/MODULO34-UMAINTRODUCAOAODENO/PROJETODENO/app.ts:65:23
+
+TS2504 [ERROR]: Type 'Promise<void>' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+for await(const req of server) {
+                       ~~~~~~
+    at file:///A:/projeto4%20-%20NODEJS/MODULO34-UMAINTRODUCAOAODENO/PROJETODENO/app.ts:71:24
+
+TS2773 [ERROR]:     Did you forget to use 'await'?
+    for await(const req of server) {
+                           ~~~~~~
+        at file:///A:/projeto4%20-%20NODEJS/MODULO34-UMAINTRODUCAOAODENO/PROJETODENO/app.ts:71:24
+
+Found 2 errors.
+PS A:\projeto4 - NODEJS\MODULO34-UMAINTRODUCAOAODENO\PROJETODENO>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR EXPLICA QUE 
+
+O NOSSO 
+
+CRASH ACONTECEU POR CAUSA DAQUELA URL de 
+
+
+
+'https://deno.land/xxxxx'....
+
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE 
+
+
+
+QUANDO VOCÊ EXECUTA ARQUIVOS DENO COM IMPORTS URL COMO ESSE,
+
+O 
+
+
+DENO VAI 'GO AHEAD'
+
+
+E VAI TENTAR FAZER REACH OUT 
+
+A 
+
+ESSE SERVEr.- -> AÍ ELE VAI TENTAR _ BAIXAR__ ESSE ARQUIVO E TODAS AS DEPENDENCIES 
+DESSE ARQUIVO.. ----> 
+
+
+
+ISSO SIGNIFICA QUE 
+TODOS OS OUTROS ARQUIVOS 
+
+QUE 
+
+SÃO IMPORTADOS POR ESSE ARQUIVO QUE FOI IMPORTADO 
+
+
+VÃO SER BAIXADOS... -> ISSO FEITO,
+
+ELE 
+
+BAIXA 
+ESSES ARQUIVOS NA SUA LOCAL MACHINE,
+
+
+
+E AÍ _ CACHEIA __ ESSES ARQUIVOS LOCALMENTE, TUDO PARA QUE 
+
+ELE NÃO TENHA QUE RE-BAIXAR 
+
+ESSES 
+
+SCRIPTS 
+
+
+na segunda e posteriores vezes em que 
+
+vocÊ 
+
+executar seu projeto (só para ACELEARAR A EXECUTION TIME).... -----> TAMBÉM 
+
+
+
+PARA CERTIFICAR QUE 
+
+ELE NÃO ACABE COM TODA SUA BANDWIDTH ------> COM ESSE APPROACH,
+
+
+
+VOCÊ 
+
+TAMBÉM PODE 'DEVELOP ON A PLANE',
+
+assumindo que 
+
+VOCÊ 
+
+
+_ FEZ O PRE-DOWNLOAD DE TODOS OS ARQUIVOS NECESSÁRIOS...
+
+
+
+
+
+
+
+
+
+--------> CERTO... -----> MAS 
+
+
+
+MESMO ASSIM,
+
+ELE 
+
+CRASHOU... ---> CRASHOU POR CAUSA DE UMA 
+
+
+
+
+___PERMISSION ERROR ----> (
+
+
+
+    'Network access to 0.0.0.0:3000' DENIED...
+)
+
+
+
+
+
+
+
+
+
+
+
+'run again with the allow-net flag'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> MAS A CAUSA DE MEUS ERROS É DISTINTA...
+
+
+
+
+
+
+
+
+
+
+
+--> O __ CÓDIGO__ DO 'http'
+
+
+
+STANDARD LIBRARY_ _M UDOU ---> 
+
+
+
+
+
+
+
+agora é assim:
+
+
+
+
+
+
+
+
+
+import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
+
+serve(() => new Response("Hello World\n"));
+
+console.log("http://localhost:8000/");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> FICOU TIPO ASSIM:
+
+
+
+import { serve } from "https://deno.land/std@0.119.0/http/server.ts"; ////OUTRO DIFERENCIAL DO DENO... ELE NOS PERMITE REALIZAR 'URL IMPORTS' (ou seja, importar FUNCTIONS DE ARQUIVOS CONTIDOS EM URLS NA INTERNET, em servidores remotos... --> aqui estamos IMPORTANDO A FUNCTION 'serve' LÁ DESSE ARQUIVO 'server.ts', contido nessa url do deno...)
+serve(() => new Response("Hello World\n"), {port: 3000}); ///// 1o argumento de 'serve' __ É UM HANDLER, objeto em que você DEFINE A RESPONSE QUE VOCÊ VAI QUERER MANDAR....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+com isso, ainda estou settando aquela port de 3000,
+
+e ainda 
+
+estou enviando essa response de 'hello world'..
+
+
+
+
+
+
+
+
+
+
+
+--> E PARA FAZER MEU ARQUIVO COMPLETO 'app.ts'
+
+
+
+SER EXECUTADO,
+
+preciso tanto de 
+
+
+
+'--allow-write' 
+
+
+COMO 
+
+
+'--allow-net'.....
+
+
+
+
+
+ex:
+
+deno run --allow-net --allow-write app.ts
+
+
+
+
+---> AGORA É SÓ ENTRAR NO ENDEREÇO DE 'localhost:3000'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, TODAS AS FEATURES_ FUNCIONARAM...
+
+
+
+
+
+
+
+
+
+
+
+-> estou pegando o jeito do DENO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> professor mencionou o '--allow-net' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ISSO PERMITE O RECEIVE DE 'NETWORK REQUESTS'...
+
+
+
+
+
+
+
+
+
+--> EXECUTADO O ARQUIVO COM ESSAS 'PROPER PERMISSIONS',
+
+
+conseguimos 
+abrir 
+
+localhost:3000 no browser, e receber 'hello world'...
+
+
+
+
+
+
+
+-> E NOSSO SERVER VAI CONTINUAR RODANDDO, EXATAMENTE COMO 
+UM 
+
+
+PROCESSO NODE... (keeps listening)...
+
+
+
+
+
+
+
+
+
+--> PARA TERMOS UMA COMPARAÇÃO 'SIDE-BY-SIDE',
+
+devemos codar o mesmo sv,
+
+mas com 
+
+
+o framework NODE...
+
+
+
+
+
+
+
+--> tentar por conta própria....

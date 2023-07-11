@@ -1,0 +1,2519 @@
+
+
+
+
+
+
+
+
+
+
+--> AGORA QUE SOMOS CAPAZES DE FETCHEAR TODOS OS PRODUCTS DE UMA COLLECTION,
+
+por meio 
+
+
+de códigos 
+
+
+como 
+
+
+''
+
+(product.js):
+
+
+
+  static getProducts() {
+
+
+    const db = getDb();
+
+
+     return db.collection('products').find().toArray()
+     .then(   
+      (products) => {
+
+          return db.collection('products').find().toArray()
+          .then(
+            (products) => {
+                  console.log(products);
+                  return products;
+            }
+          )
+          .catch(
+            (err) => {
+              console.log(err);
+            }
+          )
+
+
+
+
+
+
+
+
+
+E 
+
+
+
+(shop.js):
+
+
+
+
+
+
+Product.getProducts()  
+  .then(
+
+
+
+    (products) => {
+
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/products',
+        productCSS: true,
+        activeShop: true,
+        hasProducts: products.length > 0,
+      });
+    }
+        
+
+
+  )
+
+
+
+
+  ---------------------------------
+
+
+
+
+
+
+
+
+AGORA DEVEMOS IMPLEMENTAR O CÓDIGO PARA O FETCH DE 1 ÚNICO PRODUCT 
+
+EM 
+
+1 
+
+COLLECTION.... ---> 
+
+PARA ISSO,
+
+
+PROFESSOR 
+
+ESTÁ 
+
+
+DE VOLTA 
+
+
+
+
+
+
+______ AO 'SHOP.JS',
+
+o controller,
+
+
+
+
+
+E AGORA É 
+
+AQUELA 
+
+
+
+FUNCTION/controller 
+
+de 
+
+'''''''
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+    const prodId = req.params.productId;
+
+};
+
+
+''''
+
+
+
+
+
+
+QUE ELE VAI QUERER ALTERAR....
+
+
+
+
+
+
+
+
+---> AÍ, NESSE LOCAL,
+
+
+
+NÓS CONSEGUÍAMOS O 
+
+
+'productId'
+
+como 
+
+PARTE 
+
+
+DA URL,
+
+
+
+ 
+
+ E AÍ __ 
+
+ AGORA NÓS GOSTARÍAMOS DE USAR 
+
+ NOSSO 
+
+ 'PRODUCT MODEL'
+
+ PARA 
+
+
+ __SOMEHOW__ ENCONTRAR 
+
+ O 
+
+ 'FITTING PRODUCT'
+
+
+
+ POR 
+
+
+ MEIO 
+
+
+ DE UM ID... -----> ISSO ERA ANTIGAMENTE,
+
+ QUANDO 
+
+ ESTÁVAMOS 
+
+ FUÇANDO COM UMA DATABASE SQL,
+
+ e com 
+
+ métoods 
+
+ como 
+
+
+ 'Product.findByPk()',
+
+
+ TÍPICOS DO SEQUELIZE....
+
+
+
+
+
+
+
+ ---------> DEVIDO A ISSO,
+
+ DEVEMOS 
+
+ TRABALHAR NO NOSSO MODEL,
+
+
+ alterar 
+
+ o 
+
+ método 
+
+ de 
+
+ 'findProduct'...
+
+
+
+
+
+
+
+
+ --> SE VOCÊ TIVER ALGUM CONHECIMENTO DE MONGODB, 
+
+ VOCê PODE TENTAR IMPLEMENTAR ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+começamos com 
+
+
+
+static findProduct() {
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+--> bem, eu tenho algumas anotações...
+
+
+
+
+
+
+
+
+
+mas nenhuma delas fala de 'RETRIEVE A SINGLE PRODUCT FROM A MONGODB DATABASE'....
+
+
+
+
+
+
+
+
+
+--> até pq, o problema, aqui, é 
+
+
+
+QUE 
+
+
+
+
+OBJETOS INSERIDOS 
+
+
+EM UMA DATABASE MONGODB 
+
+
+_NÃO POSSUEM UM 
+
+'ID'
+
+
+
+
+
+---> TALVEZ UMA SOLUÇÃO SEJA __ INSERIR __ UM ID 
+
+EM 
+
+CADA 
+
+
+
+
+PRODUCT QUE É ADICIONADO 
+
+AO 
+
+NOSSO 
+
+
+DATABASE,
+
+
+alguma coisa como 
+
+
+
+'Math.random() * Math.random()',
+
+
+
+algo assim,
+
+
+
+
+PARA 
+
+ENTÃO 
+
+
+
+CRIAR UM ID 
+
+ALEATÓRIO/pseudo aleatório,
+
+
+
+que então 
+
+
+é/será armazenado MANUALMENTE 
+
+na nossa database...
+
+
+
+
+
+
+
+
+
+--> para isso, provavelmente 
+
+terei que escrever algo assim:
+
+
+
+
+  save() {
+   const db = getDb();
+
+
+
+   const identifiedProduct = {
+
+    ...this, 
+    id: Math.random() * Math.random()
+   }
+
+
+ return db.collection('products')
+ 
+//  .insertOne(this)
+.insertOne(identifiedProduct)
+   .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   )
+  }
+
+
+
+
+
+
+
+
+
+
+------> COMO VOCÊ PODE VER,
+
+
+eu adicionei um id aleatório por meio do uso 
+
+de um 
+
+SPREAD OPERATOR 
+
+
+e 
+
+um 
+
+'Math.random()',
+
+
+
+
+
+E AÍ REALMENTE,
+cada 
+
+
+
+product passa a ter um 
+
+id 
+
+único lá no nosso server...
+
+
+
+
+
+
+
+
+OK... AGORA SÓ PRECISO FAZER UM 'find()',
+
+usando como 
+
+
+
+critério 
+
+ESSE ID AÍ...
+
+
+
+
+
+---------------------------
+
+
+
+
+NOVAMENTE,
+
+RECEBI 1 ERRO:
+
+
+TypeError: db.collection(...).find(...).then is not a function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI CONSERTAR..
+
+
+
+
+
+ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+    (código de 'product.js'):
+
+
+
+
+
+  static getSingleProduct(id) {
+
+
+    const db = getDb();
+
+
+    const parsedId = +id;
+
+
+   return db.collection('products').findOne({id: parsedId})
+   .then(
+     (product) => {
+
+      console.log(product, 'LINE2');
+      return product;
+     }
+   )
+   .catch(
+     (err) => {
+
+      console.log(err);
+     }
+   )
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+(código do controller):
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+  const productId = req.params.productId;
+  console.log(productId);
+
+
+  Product.getSingleProduct(productId)
+  .then(
+    (product) => {
+
+        if(!product) { ////EIS O CÓDIGO QUE CONSERTA O PROBLEMA DE 'product.title' is undefined....
+          return;
+        }
+
+
+          console.log(product, 'LINEE');
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+
+
+}
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+
+AGORA O PROFESSOR COMEÇA SUA VERSÃO... 
+
+
+
+
+
+
+
+
+
+ELE DIZ QUE ALÉM DO MÉTODO STATIC que fetcha 
+
+todos os products,
+
+
+
+
+ELE VAI ADICIONAR OUTRO MÉTODO 
+
+
+ESTÁTICO,
+
+chamado 
+de 
+
+
+'findProduct'...
+
+
+
+
+
+
+
+aí ele vai escrever um código bem parecido com o anterior,
+
+
+vai escrever:
+
+
+
+
+
+
+
+
+static findById(productId) {
+
+  const db = getDb()
+}
+
+
+
+
+---------------
+
+
+
+- --> ISSO VAI NOS DAR ACESSO à DATABASE CONNECTION QUE DESEJAMOS, COMO ANTS....
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR VAI ESCREVER:
+
+
+
+static findById(productId) {
+
+  const db = getDb();
+
+
+
+
+
+
+  return db.collection('products').find()
+}
+
+
+
+
+
+
+
+
+--> ISSO PQ __ ELE VAI QUERER ENCONTRAR __APENAS 1 PRODUCT...
+
+
+
+
+
+---------> MAS ELE ESCREVE UM CÓDIGO UM POUCO DIFERENTE DO NOSSO,
+PQ USA 
+
+
+
+
+'find({critério})'
+
+
+em vez 
+
+
+de 
+
+
+'findOne({critério})' --> ESTE FOI O MÉTODO QUE USAMOS, É UM POUCO DIFERENTE DO DELE...
+
+
+
+
+
+
+
+
+
+
+---> OK... 
+
+
+MAS A VERSÃO 
+
+DO PROFESSOR FICOU ASSIM:
+
+
+
+
+
+
+
+
+static findById(productId) {
+
+  const db = getDb();
+
+
+
+
+
+
+  return db.collection('products').find({_id: productId})
+}
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+ELE 
+
+VAI QUERER 
+
+
+PROCURAR/ENCONTRAR 
+
+
+1 PRODUCT QUE 
+
+TENHA 
+
+1
+ ID 
+
+ EQUIVALENTE 
+
+
+ a esse 
+
+
+ do product em que o user clicou (E cujo id foi transmitido à parte 'params' da url...)
+
+
+
+
+
+
+
+
+
+ -> COM ISSO,
+
+ PROFESSOR ESTARÁ RETORNANDO __ TEORICAMENTE__ TODOS OS PRODUCTS 
+
+ COM 
+
+ ESSE ID AÍ...
+
+  
+
+
+
+  --> MAS __ ELE __ SABE/TEM CERTEZA 
+
+  DE QUE 
+
+
+
+
+  O PRODUCT será 
+
+
+
+  APENAS 1, 
+
+  será único, 
+  esse id 
+
+
+  é único,
+
+
+
+  VAMOS GANHAR 
+
+  APENAS 
+
+  1 
+
+
+
+  PRODUCT.... --> MAS NA VERDADE, EU __AINDA NÃO VOU CONSEGUIR 
+
+
+  '''ONLY ONE PRODUCT''' --> isso pq 
+
+  O 
+
+
+
+  'find()'
+
+
+  ___SEMPRE__ VAI NOS 
+
+  DAR 
+  UM 
+
+  'CURSOSR',
+
+
+  PQ __ O 'find()'/mongodb 
+
+
+  __NÃO TEM COMO 
+
+  SABER QUE 
+
+  AQUI 
+
+  VOCê VAI QUERER 
+
+  APENAS 
+
+  1 
+
+  ÚNICO PRODUCT... -------> PARA EVITAR 
+
+
+
+
+  O 'get' desse cursor,
+
+
+  PROFESSOR 
+
+  DIZ QUE 
+
+  PODEMOS 
+
+
+  ESCREVEr 
+
+
+
+  '.next()' NO FINAL DE 'find()',
+
+
+  PARA QUE 
+
+
+  __ CONSIGAMOS O 'next document', que NESSE CASO AQUI,
+
+  é o 
+
+  'LAST DOCUMENT' que foi retornado pelo find... 
+
+
+
+
+
+
+  O CÓDIGO, PORTANTO, VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+  static findById(productId) {
+
+  const db = getDb();
+
+
+
+
+
+
+  return db.collection('products').find({_id: productId}).next()
+  .then()
+  .catch()
+}
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+COMO SEMPRE,
+
+VAMOS QUERER CONSOLE.LOGGAR QUAISQUER ERROS,
+
+E AÍ 
+
+
+EM 
+
+'then' 
+
+eu vou ter MEU 'product',
+
+E AÍ 
+
+VOU QUERER O CONSOLE.LOGGAR E TAMBÉM O RETORNAR...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+  static findById(productId) {
+
+  const db = getDb();
+
+
+
+
+
+
+  return db.collection('products').find({_id: productId}).next()
+  .then(
+
+      (product) => {
+
+        console.log(product);
+        return product;
+      }
+
+
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+    }
+  )
+}
+
+
+
+
+
+
+
+
+
+----> COM ISSO,
+
+VOLTAMOS 
+
+
+
+AO 
+
+CONTROLLER 
+
+
+DE 
+
+
+'getProductDetailPage'.... ----> 
+
+
+
+
+
+
+
+
+
+EU OU VOU CONSEGUIR 
+
+
+UM ERRO,
+
+OU VOU CONSEGUIR 
+
+
+1 PRODUCT... -----> 
+
+
+
+
+
+
+
+
+OK... CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+ 
+
+  const productId = req.params.productId;
+  console.log(productId);
+
+
+  Product.getSingleProduct(productId)
+  .then(
+    (product) => {
+
+        if(!product) {
+          return;
+        }
+
+
+          console.log(product, 'LINEE');
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+
+
+---------------------------------
+
+
+
+
+
+
+--> CLICAMOS 
+
+EM 
+
+DETAILS, 
+
+e aí 
+
+
+o negócio não funciona..... ---->
+
+
+
+
+isso acontece pq 
+
+O 
+
+
+productId
+
+
+QUE 
+
+ESTÁ SENDO FORWARDADO 
+
+
+
+
+está __ERRADO___.... ---->
+
+
+
+
+EU COLOQUEi 
+
+
+
+'product.id',
+
+
+
+MAS 
+
+O 
+
+CORRETO SERIA 
+
+
+'product._id'....
+
+
+
+
+
+
+
+
+
+
+--> EU DEVO FAZER ESSA ALTERAÇÃO NO MEU CÓDIGO TBM,
+
+
+PQ 
+
+
+USAR O 
+
+ID 
+
+DOS OBJECTS DO MONGODB É BEM MELHOR DO QUE USAR O MEU ID 
+
+BOOTLEG QUE 
+
+INVENTEI 
+
+lá 
+
+
+em 
+
+'Product.save()'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+         <form action="/cart" method="POST">
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+
+
+
+
+
+
+
+  
+
+  EU TENTO 
+
+  TROCAR 
+
+
+  'product.id' 
+  por 
+
+
+  'product._id',
+
+
+  mas 
+
+  APARENTEMENTE 
+
+  ALGO 
+
+  ESTÁ DANDO ERRADO.... --> 
+
+
+  ESTÁ 
+
+  DANDO 
+  ERRADO 
+  PQ 
+
+
+
+  LÁ 
+
+
+
+NA NOSSA DATABASE 
+
+ESSE FIELD 
+
+DE 
+
+
+'_id'
+ 
+
+ ESTÁ COM UM VALOR DE 
+
+
+ 'new ObjectId("616e403a6063b4846e1ae4b1")',
+
+
+
+
+
+ AO PASSO 
+
+
+ que 
+
+
+
+ NA NOSSA PÁGINA ELE ESTÁ ASSIM:
+
+
+
+ value="616e403a6063b4846e1ae4b1"
+
+
+
+
+
+
+
+
+
+
+ ---> eu preciso escrever alguma lógica que faça 
+
+ com 
+
+ que 
+ esses 
+
+ 2 valores 
+
+ 'batam',
+
+ PARA QUE 
+ ENTÃO 
+
+
+ EU CONSIGA 'encaixar' o productId com 
+
+
+ o 
+
+ '_id'
+
+ do product que está na minha database...
+
+
+
+
+ --> talvez executar essa lógica lá em 
+
+
+ 'Product',
+
+
+ no nosso model,
+
+
+ dentro 
+
+ de 
+
+ 'getSingleProduct'?
+
+
+
+
+
+
+
+
+
+ -->     const id = new ObjectId(productId);
+
+
+
+
+
+
+
+
+ --->ok, mas com isso recebi OUTRO ERRO:
+
+
+
+ ReferenceError: ObjectId is not defined
+
+
+
+
+
+
+
+
+ --------> fiz alguma coisa errada....
+
+
+
+
+
+
+
+
+
+
+ --> ENCONTREI UMA RESPOSTA:
+
+
+ You need to require the ObjectId function before using it:
+
+
+
+var ObjectId = require('mongodb').ObjectID;
+
+
+
+
+
+
+
+
+
+
+
+ MESMO COM 
+
+
+ ESSE IMPORT,
+
+ O NEGÓCIO AINDA NÃO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ OK... AGORA FUNCIONOU....
+
+
+
+ código ficou assim:
+
+
+
+
+
+
+
+
+           <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+
+
+        </div>
+
+
+
+
+
+
+
+
+E 
+
+ASSIM:
+
+
+
+
+
+  static getSingleProduct(productId) {
+
+
+    const db = getDb();
+
+    console.log(productId, 'LINE5');
+    const test = ObjectId(productId);
+
+
+   return db.collection('products').findOne({"_id": ObjectId(productId)})   ///minha versão do código.
+   .then(
+     (product) => {
+
+      console.log(product, 'LINE2');
+      return product;
+     }
+   )
+   .catch(
+     (err) => {
+
+      console.log(err);
+     }
+   )
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+  const productId = req.params.productId;
+  console.log(productId);
+
+
+  Product.getSingleProduct(productId)
+  .then(
+    (product) => {
+
+        if(!product) {
+          return;
+        }
+
+
+          console.log(product, 'LINEE');
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+
+
+}
+
+
+
+
+---------------------------------------
+
+
+
+EM TODOS OS LUGARES DO APP QUE USAMOS 
+
+'product.id',
+
+agora devemos usar 
+
+
+'
+product_id'....
+
+
+
+
+
+
+--------------
+
+
+
+CERTO...
+
+
+SALVAMOS 
+
+
+
+TUDO ISSO....
+ 
+
+
+
+
+ E AGORA O CÓDIGO ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+ -> O DO PROFESSOR, NO ENTANTO,
+
+ NÃO ESTÁ... -> 
+
+ O
+
+
+ app do professor 
+
+
+
+
+ solta um erro.... É O MESMO __ERRO QUE _ EU HAVIA ENCONTRADO 
+
+
+ MAIS 
+
+ CEDO,
+
+ aquele 
+
+
+ erro de 
+
+
+
+
+ 'Cannot read property 'title' of null',
+
+
+ AQUELE 
+
+
+ ERRO QUE 
+
+
+
+ É 
+
+ RESOLVIDO POR MEIO 
+
+ DAQUELE 
+
+ CÓDIGO 
+
+ de 
+
+ 'if (!product) {
+
+
+ }',
+
+
+
+
+ LÁ 
+
+
+ NO MEU 
+
+
+ CONTROLLER 
+
+ (
+
+
+   basta observar este código:
+
+
+
+
+
+
+
+
+  const productId = req.params.productId;
+
+
+
+  Product.getSingleProduct(productId)
+  .then(
+    (product) => {
+
+        if(!product) { ///ESTE CÓDIGO AQUI.
+          return;
+        }
+
+
+          console.log(product, 'LINEE');
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    }
+       
+  )
+
+
+
+
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+ -------------------> OK.... QUERO VER A SOLUÇÃO DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+ ------> QUAL O PROBLEMA? ---> cannot read property 'title' of null ... -->
+  
+
+
+
+
+
+
+
+  PROFESSOR 
+
+  APONTA QUE 
+
+  'null'
+
+
+  ESTÁ 
+
+
+  __SENDO PRINTADO NO CONSOLE,
+
+  TBM..--> ESSE 
+
+
+
+  NULL 
+
+
+  DEVE ESTAR 
+
+  SENDO 
+
+  EMANADO 
+
+
+
+
+  DO 
+
+
+
+  MODEL DE 
+
+  'product',
+
+
+  quando 
+
+
+
+
+  FAZEMOS AQUELE 
+
+  '
+  findById',
+
+
+
+  aquele 
+
+  código 
+
+  de 
+
+
+
+  'db.collection('products').find({_id: prodId})'...
+
+
+
+
+
+
+
+
+
+  -------> PROFESSOR DIZ QUE 
+
+  ISSO 
+
+
+  __PARECE__ INDICAR QUE 
+
+  'NÃO ENCONTRAMOS NENHUM PRODUCT PARA AQUELE product._id'...
+
+
+
+
+
+
+
+
+  --> MAS OQ PODE SER A RAZÃO PARA ISSO?
+
+
+
+
+
+
+
+
+
+  --> EU 
+
+  SEI A RAZÃO... --> 
+
+
+  A RAZÃO PARA ISSO 
+
+  É 
+
+  QUE 
+
+  O 
+
+  'ID'
+
+
+  É 
+
+  ARMAZENADO DE UMA MANEIRA UM POUCO DIFERENTE 
+
+
+
+  NA NOSSA DATABASE,
+
+
+
+  ele 
+
+  é 
+
+  armazenado assim:
+
+
+
+''''''''                                      '''''''''
+     _id: new ObjectId("616e403a6063b4846e1ae4b1")
+
+
+
+
+
+
+
+
+
+E, NA NOSSA PAGE,
+
+estamos 
+
+outputtando o 
+
+'_id'
+
+
+ASSIM:
+
+
+
+"616e403a6063b4846e1ae4b1"
+
+
+
+
+
+
+
+--> E A INCOMPATIBILIDADE ENTRE ESSES 
+
+
+
+
+2
+ VALORES DE '_id'
+
+ está fazendo 
+ COM QUE 
+
+
+ AQUELE 
+
+
+ MÉTODO 
+
+ de 
+
+ 'db.collection(xxxX).find({_id: productId})'
+
+
+
+
+
+ _ FIQUE TOTALMENTE INÚTIL,
+  
+  pq 
+  os 
+
+  FORMATOS DOS IDS 
+
+  ESTÃO DIFERENTES...
+
+
+
+
+
+-----> A RAZÃO 
+
+PARA 
+
+ESSE 
+
+FORMATO 
+
+SER 
+
+__ARMAZENADO DE FORMA DIFERENTE 
+
+
+LÁ 
+
+
+NA DATABASE É QUE 
+
+
+__ ESSA DATA DE 
+
+
+'new ObjectId()' é 
+
+
+
+ACTUALLY ________ UM EXEMPLO DE FORMATO '.BSON'...
+
+
+
+
+
+
+
+
+
+
+
+
+  ----------> para RESOLVER ESSE PROBLEMA,
+
+
+  EU FIZ AQUELE 
+
+  IMPORT 
+
+  de 
+
+
+
+
+
+  
+const ObjectId = require('mongodb').ObjectId;
+
+
+
+
+
+
+
+
+E AÍ USEI 
+
+
+
+
+NO MEU MODEL DE PRODUCT,
+
+NESTE TRECHO:
+
+
+
+
+    console.log(productId, 'LINE5');
+    const test = ObjectId(productId);
+
+
+   return db.collection('products').findOne({"_id": ObjectId(productId)})   ///minha versão do código.
+   .then(
+     (product) => {
+
+      console.log(product, 'LINE2');
+      return product;
+     }
+   )
+   .catch(
+     (err) => {
+
+      console.log(err);
+     }
+   )
+
+
+
+
+
+
+
+
+
+
+   ----------------------------------------
+
+
+
+
+
+
+
+
+   ------> O MONOGDB 
+
+
+
+
+   ARMAZENA 
+
+
+   DATA 
+
+
+
+   EM UM FORMATO 
+
+   'BSON'.. -> 
+
+
+   esse formato BINÁRIO 
+
+   DE 
+
+
+   BSON 
+
+   é usado 
+
+
+
+
+__ PQ É MAIS RÁPIDO,
+
+
+MAS 
+
+TBM 
+
+
+
+__ PQ 
+
+O 
+
+MONGODB 
+
+
+__PODE ARMAZENAR__ ALGUNS TIPOS ESPECIAIS 
+
+DE 
+
+DATA 
+
+
+
+DENTRO DE SUA DATABASE... --> 
+
+
+E O 
+
+
+
+'ObjectId()'
+
+
+é UM DESSES TYPES ESPECIAIS.... -> É UM 
+
+
+TYPE 
+
+
+
+ADICIONADO PELO 
+
+'mongodb',
+
+
+
+E QUE 
+
+
+__ __ NÃO É UM DEFAULT JAVASCRIPT TYPE (na verdade,
+
+ele nem mesmo existe no javascript),
+
+
+
+E 
+
+
+ELE 
+
+É 
+
+SIMPLESMNETE 
+
+
+
+UM 
+
+
+'ID OBJECT'
+
+que 
+
+o 
+
+
+mongodb 
+
+USA,
+
+
+
+
+É 
+
+
+UM 
+
+
+OBJETO QUE 
+
+
+GERENCIA E 'MANAGES' 
+
+IDS __ QUE __ PODEM  ____ PARECER__ ALEATÓRIOS,
+
+
+
+mas que 
+
+
+NA VERDADE __ NÃO SÃO___... -------> ISSO QUER DIZER QUE 
+
+SE VOCÊ 
+
+CRIAR 
+
+
+1 
+
+ID AGORA E 1 ID UM SEGUNDO DEPOIS,
+
+
+
+seu 
+
+segundo 
+
+id 
+
+terá 
+uma 
+
+LETRA DIFERENTE DO ANTERIOR, 
+
+1 LETRA 
+
+
+'ALPHABETICALLY HIGHER'
+
+que 
+o valor 
+
+
+do 
+
+_id anterior.... --> MAS ISSO É SÓ UMA TECNICALIDADE...
+
+
+
+
+
+
+
+
+ 
+
+ --> OK, OBJECTID É UM OBJECT PROVIDENCIADO PELO MONGODB...
+
+
+
+
+
+
+
+--> E NÃO HÁ COMO COMPARAR UM 
+
+'ObjectId(string)' com uma 'string'....
+
+
+
+
+
+
+--> É POR ISSO 
+
+QUE 
+
+
+O PROFESSOR 
+
+
+VAI USAR 
+
+UMA 
+
+
+
+SINTAXE ESPECIAL 
+
+
+PARA 
+
+'EQUIPARAR' 
+
+
+ESSES 
+
+VALORES DE ID...
+
+
+
+
+
+
+
+
+
+
+__MAS EM VEZ DE IMPORTAR___ 
+
+
+'
+const ObjectId = require('mongodb').ObjectId; ',
+
+
+
+
+
+
+O PROFESSOR VAI __ACTUALLY___ 
+
+
+
+
+
+
+
+__IMPORTAR_ O MONGODB __ INTEIRO,
+
+por meio 
+
+do código 
+
+de 
+
+
+
+'const mongodb = require('mongodb');' 
+
+
+
+
+
+
+
+(ISSO LÁ EM 'product.js', nosso model)....
+
+
+
+
+
+
+
+--> AGORA, MUNIDO DESSE PACKAGE DE 
+
+'mongodb' em uma CONSTANTE,
+
+
+
+
+PROFESSOR DIZ QUE PODEMOS 
+
+A UTILIZAR 
+
+PARA 
+
+
+
+
+
+__ 
+
+
+escrever 
+
+
+'mongodb.ObjectId(productId)'...
+
+
+
+
+
+
+
+(OU SEJA, É EXATAMENTE O MESMO CÓDIGO QUE EU HAVIA ESCRITO,
+
+MAS COM UM 
+
+
+IMPORT 
+
+GERAL DE 'mongoDb' para ACESSAR 
+
+ESSE 
+
+MÉTODO/PROPRIEDADE 
+
+de 
+
+'ObjectId',
+
+QUE 
+
+É USADA 
+
+
+
+__PARA CONVERTER__ STRINGS de '_id' 
+
+em 
+
+
+OBJECTIDs compatíveis com os 'ObjectId' 
+
+que 
+
+temos 
+
+
+nas nossas databases 
+
+
+MONGOdb...
+)
+
+
+
+
+
+
+
+
+-------> O CÓDIGO DO PROFESSOR, QUE FAZ A MESMA COISA QUE O NOSSO, MAS QUE É DIFERETNE,
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+const mongodb = require('mongodb');
+
+
+
+   return db.collection('products').find({_id: new mongodb.ObjectId(productId)})   ///minha versão do código.
+   .then(
+     (product) => {
+
+      console.log(product, 'LINE2');
+      return product;
+     }
+   )
+   .catch(
+     (err) => {
+
+      console.log(err);
+     }
+   )
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+OK, SALVAMOS TUDO ISSO,
+
+
+E AGORA 
+
+
+ESSE CÓDIGO FUNCIONA.... pq estamos conseguindo equiparar os valores de '_id'.... --> 
+
+PQ 
+
+AGORA 
+
+ESTAMOS 
+
+
+
+COMPARANDO 2 
+
+OBJETOS 
+
+'ObjectId',
+
+em vez de 
+
+
+
+
+
+1 string e um objeto 'ObjectId' (armazenado no server), que era o que 
+
+estava 
+
+
+causando o problema...
+
+
+
+
+
+
+
+
+É MT IMPORTANTE 
+
+TER EM MENTE QUE 
+
+
+
+O MONGODB ARMAZENA OS IDS DE SEUS DOCUMETNS EM 
+
+
+
+
+'_id',
+
+
+e que 
+
+
+ELE 
+
+USA 
+
+
+
+
+ESSE 
+
+
+
+TIPO ESPECIAL DE OBJETO,
+
+esse 
+
+'ObjectId',
+para 
+
+FORMATAR E ARMAZENAR 
+
+OS 
+
+VALORES DESSES '_id'....

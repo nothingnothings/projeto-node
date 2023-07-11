@@ -1,0 +1,869 @@
+
+
+
+
+
+
+
+
+NÓS JÁ CONSEGUIMOS ADICIONAR O CÓDIGO PARA FAZER COM QUE O 
+
+'ADD' DE 1 POST  
+
+
+
+
+SEJA REFLETIDO NO COMPONENT 'FEED' 
+
+DE 
+
+___tODOS OS USERS__ CONECTADOS AO NOSSO APP....
+
+
+
+
+
+
+
+
+
+
+--> AGORA É HORA DE FAZER A MESMA COISA COM O 
+
+'EDIT' DE 1 PRODUCT....
+
+
+
+
+
+
+
+
+
+--> para isso, obviamente vamos começar 
+
+
+
+
+PELO CONTROLLER DE 'editPost',
+
+
+no nosso backend...
+
+
+
+
+
+---> lá, no presente,
+
+
+
+temos este código:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT....
+
+
+
+  try {
+
+
+  
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+
+
+
+ const post = await Post.findOne({ _id: ObjectId(postId) }); ///eis o código em questão.
+
+
+
+ console.log(post, 'LINEASASas');
+
+ console.log(post.creator.userId, userId)
+
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+
+      
+
+    const newPost = await post.save();
+
+
+    // .then((result) => {
+    //   console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: newPost,
+      });
+    // })
+
+  } catch (err) {
+          ///reutilização de error catching logic...
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+  }
+
+
+};
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+VAMOS QUERER 
+
+
+
+
+INSTANCIAR 
+
+
+
+
+1 objeto 'io' 
+
+
+
+NESSE 
+
+
+
+
+controller aí,
+
+para que 
+
+seja 
+
+DISPARADO UM REQUEST WEBSOCKETS (daquele tipo 'emit')
+
+
+
+A TODOS OS OUTROS USERS DE NOSSO APP..
+
+
+
+-> TENTAREI FAZER ISSO SOZINHO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> consegui...
+
+
+
+
+
+--> os códigos ficaram assim:
+
+
+
+
+
+
+
+
+
+
+(backend, controller):
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT....
+
+
+
+  try {
+
+
+  
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+
+
+
+ const post = await Post.findOne({ _id: ObjectId(postId) }); ///eis o código em questão.
+
+
+
+ console.log(post, 'LINEASASas');
+
+ console.log(post.creator.userId, userId)
+
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+
+      
+
+    const newPost = await post.save();
+
+
+    // .then((result) => {
+    //   console.log(result);
+
+
+
+        io.getIo().emit('posts', 
+          {
+              action: 'edit',
+              post: post
+          }
+        
+        )
+
+
+
+
+
+
+      res.status(200).json({
+        message: 'Post updated!',
+        post: newPost,
+      });
+    // })
+
+  } catch (err) {
+          ///reutilização de error catching logic...
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+  }
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TRECHO ESPECÍFICO:
+
+
+
+
+
+
+
+
+
+
+
+
+        io.getIo().emit('posts', 
+          {
+              action: 'edit',
+              post: post
+          }
+        
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo....
+
+
+
+
+
+já no frontend, temos isto:
+
+
+
+
+
+
+
+(Feed.js, componentDidMount):
+
+
+
+
+
+
+
+
+
+
+
+
+  openSocketToOurBackend.on('posts',
+  
+      
+
+  (data) => {/// data é a data QUE ACTUALLY RECEBEMOS DO 'REQUEST DISPARADO POR NOSSO BACKEND', request de tipo 'WEBSOCKET'...
+
+    if (data.action === 'edit') { ////vamos querer aceitar data EMITIDA _ APENAS__ DO REQUEST _ DISPARADO POR NOSSO BACKEND QUE TENHA ESSE VALOR de string 'create' DENTRO DE SUA KEY 'action'.... ( ou seja, só aquele código do 'SOCKETIO' que escrevemos la no controller de 'createPost'...)
+      console.log('ENTEREDPOSTEDIT');
+      const post = {
+        ...data.post
+      }
+      console.log(post, 'YOUREDITEDPOST');
+      // post.creator.name = data.postCreator;
+      // console.log(post, 'YOURPOST');
+      this.updatePost(post);
+
+    }
+
+
+  }
+  
+  );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  E O MÉTODO 'updatePost',
+
+
+  ficou assim:
+
+
+
+
+
+
+
+
+
+  
+
+updatePost = (post) => {
+  this.setState(prevState => {
+              const updatedPosts = [...prevState.posts];
+
+              // const yourPost = {
+              //   ...post
+              // }
+              // console.log(yourPost);
+              // const userId = yourPost.creator.userId;
+              // yourPost.creator.userId = {
+              //   userId: userId,
+              //   name: postCreator
+              // };
+              
+
+              // if(prevState.postPage === 1 && prevState.posts.length === 5) {
+              //     // updatedPosts.pop();
+              //     // updatedPosts.unshift(post);
+              //     // updatedPosts.unshift(yourPost);
+              //     updatedPosts.pop();
+              // } else {
+              //     // updatedPosts.unshift(post);
+              //   updatedPosts.unshift(yourPost);
+              // }
+
+
+     const updatedPostIndex = updatedPosts.findIndex(
+          (p) => {
+                return post._id === p._id
+          }
+        )
+
+    
+        updatedPosts[updatedPostIndex] = post;
+
+              return {
+                  posts: updatedPosts,
+                  // totalPosts: prevState.totalPosts + 1
+              }
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok.... 
+
+
+
+MAS AINDA ESTOU COM AQUELE BUG,
+
+O BUG 
+
+
+DE 
+
+
+'SOME O 'created by' 
+
+'
+
+
+
+QUANDO 
+
+UM POST É EDITADO.... --> tenho que resolver este problema com 
+
+o 
+
+pass 
+
+da data relativa ao 'name' no creator....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI.... ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT....
+
+
+
+  try {
+
+
+  
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+
+
+
+ const post = await Post.findOne({ _id: ObjectId(postId) }); ///eis o código em questão.
+
+
+
+ console.log(post, 'LINEASASas');
+
+ console.log(post.creator.userId, userId)
+
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+
+      
+
+    const newPost = await post.save();
+
+
+    // .then((result) => {
+    //   console.log(result);
+
+
+
+
+    const yourPost = await Post.findOne({_id: ObjectId(postId)}).populate('creator.userId'); //isto resolveu.
+
+
+
+    // console.log(yourPost.creator, 'YOURPOST');
+
+    console.log(yourPost, 'yourPost')
+
+
+        io.getIo().emit('posts', 
+          {
+              action: 'edit',
+              post: yourPost
+              
+              // postCreator: yourPost.creator.userId.name
+          }
+        
+        )
+
+
+
+
+
+
+      res.status(200).json({
+        message: 'Post updated!',
+        post: newPost,
+      });
+    // })
+
+  } catch (err) {
+          ///reutilização de error catching logic...
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+  }
+
+
+};
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+não sei se ficou ideal, pois usei 2 calls async (2 'findOne' em Post; 1 para EDITAR O POST, outro para POPULAR o 'userId' desse post, para que fosse possível extrair o NAME do poster...)
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+Código do professor ficou bem parecido, com apenas 2 diferenças:
+
+
+
+
+
+
+1) ele chamou 'populate'
+
+NO _ PRIMEIRO CALL __ DE 'Post.find()' (e usou apenas 1 CALL DE FIND, não 2, como nós)...
+
+
+
+
+
+
+
+
+
+
+2) ELE __ USOU UM IF CHECK 
+
+de 
+
+
+
+
+'if (updatedPostIndex > -1) {
+    updatedPosts[updatedPostIndex] = post;
+}
+
+return {
+
+    posts: updatedPosts
+}
+',
+
+
+
+
+
+
+LÁ NO 'updatePost' --> ELE USOU 
+
+ESSE 
+
+IF CHECK 
+
+
+PQ 
+
+
+EVENTUALMENTE O 'updatedPostIndex'
+
+
+PODE NOS RETORNAR ''' -1'''' (-1 SIGNIFICA que nenhum elemento com O CRITÉRIO QUE VOCÊ PASSOU  foi encontrado)... --> se nenhum elemento/post for encontrado, vamos quere que o ARRAY DE POSTS (frontend) FIQUE IDÊNTICO, POR ISSO O PROFESSOR ESCREVEU 'return {posts: updatedPosts}' ...
+
+
+
+
+
+
+
+
+
+
+
+OK... PRONTO.
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+ok... agora está funcionando.
+
+
+
+
+--> posts editados estão aparecendo como editados para todos nossos users, agora...

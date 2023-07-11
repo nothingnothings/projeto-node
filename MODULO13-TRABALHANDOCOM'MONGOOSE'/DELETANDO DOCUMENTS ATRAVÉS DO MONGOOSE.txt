@@ -1,0 +1,371 @@
+
+
+
+
+
+
+
+
+
+---> 
+
+
+
+POR ÚLTIMO, DEVEMOS 
+
+VER __ COMO __ PODEMOS 
+
+
+DELETAR __ DATA com o mongoose...
+
+
+
+
+
+
+
+
+------> AÍ TEREMOS A ÚLTIMA PARTE DAS CRUD OPERATIONS...
+
+
+
+
+
+
+
+
+
+
+-> TEMOS O CONTROLLER DE 'postDeleteProduct',
+
+que é:
+
+
+
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id; 
+  
+  
+  
+  Product.deleteProduct(productId)
+  .then(
+    (result) => {
+          console.log(result, 'LINE');
+          res.redirect('/admin/product-list-admin');
+
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... --> vou querer TIRAR 
+
+
+ESSE MÉTODO 
+
+
+
+usado com o MONGODB DRIVER ORIGINAL,
+
+esse 
+
+
+'Product.deleteProduct'... ----> 
+
+
+
+
+
+VAMOS USAR, NO LUGAR DISSO,
+
+
+
+
+
+
+
+
+
+
+o BUILTIN METHOD 
+
+
+DO 
+
+
+
+
+MONGOOSE.... ----> 
+
+
+
+
+
+MÉTODO 'DELETE' no mongoose ---> NÃO É UM MÉTODO QUE 
+EXISTE 
+
+
+BUILTIN NO MONGOOSE...
+
+
+
+
+
+
+
+
+-------> O MONGOOSE NÃO NOS DÁ UM MÉTODO ASSIM.... ------> MAS É CLARO QUE 
+
+TEMOS 
+
+
+'.findByIdAndRemove()',
+
+
+E ISSO É EXATAMENTE O QUE DESEJAMOS FAZER, AQUI...
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+5
+
+
+Estou procurando a diferença entre os dois e não consigo achar. São sinônimos?
+
+
+7
+
++50
+TL;DR - Os dois fazem a mesma coisa de maneiras diferentes, mas recomenda-se usar o findByIdAndDelete().
+
+A pequena diferença é que o findByIdAndDelete() usa a função nativa do MongoDB findOneAndDelete() para remover e a findByIdAndRemove() usa a função nativa do MongoDB findAndModify() para fazer a mesma coisa. Esta função (findAndModify()) foi descontinuada (deprecated) e a documentação do Mongoose recomenda utilizar a findByIdAndDelete().
+
+This function differs slightly from Model.findOneAndRemove() in that findOneAndRemove() becomes a MongoDB findAndModify() command, as opposed to a findOneAndDelete() command. For most mongoose use cases, this distinction is purely pedantic. You should use findOneAndDelete() unless you have a good reason not to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... CONSEGUI. FOI __MUITO__ FÁCIL....
+
+
+
+
+
+
+
+
+
+
+-> EU SÓ ESCREVI ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+
+  const productId = req.body.id; 
+  
+  
+
+
+
+
+  Product.findByIdAndDelete(productId)
+  .then(
+    (result) => {
+
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> O PROFESSOR USOU 
+
+
+'findByIdAndRemove()',
+
+
+MAS 
+O
+ 
+
+
+
+'findByIdAndDelete()'
+
+
+
+é MELHOR DO QUE ELE,
+ 
+ E É 
+
+ O MÉTODO USADO HOJE EM DIA...
+
+
+
+
+ --------------
+
+
+
+
+
+
+
+
+
+ -->OK, É ASSIM 
+
+
+ QUE TRABALHAMOS COM O MONGOOSE,
+
+
+
+ E É ASSIM QUE 
+
+ EXECUTAMOS 
+
+ OPERAÇÕES
+  
+
+  BÁSICAS 
+
+
+  'CRUD'
+
+
+  COM ELE...
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS 
+
+
+NOVAMENTE ADICIONAR 1 'USER'
+
+
+no nosso app,
+
+PARA ENTÃO VER 
+
+
+
+___COMO PODEMOS 
+
+
+'RELATE DIFFERENT ENTITIES' 
+
+
+
+com 
+
+
+
+
+O MONGOOSE.... (
+
+  ou seja,
+
+  ver COMO PODEMOS 
+
+  MANAGEAR RELATIONS COM O MONGOOSE....
+
+
+) 
+
+
+
+
+
+
+
+
+----> POR FIM, VAMOS ADICIONAR 1 'CART'
+ 
+
+ E 
+
+ 'ORDERS'
+
+
+ mais uma vez...

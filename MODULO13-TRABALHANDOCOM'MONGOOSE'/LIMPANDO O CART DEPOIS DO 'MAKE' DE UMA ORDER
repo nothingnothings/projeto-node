@@ -1,0 +1,204 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+
+começa 
+
+
+PELO Código 
+
+
+de 
+
+
+'return order.save()'..
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+FOI ATÉ O 
+
+
+MODEL DE 'User'
+
+ 
+
+
+ E ADICIONOU UM NOVO METHOD,
+
+
+
+ de 
+
+
+ 'clearCart',
+
+
+
+
+ QUE 
+
+
+ escreveu assim:
+
+
+
+
+
+
+
+
+
+
+ userSchema.methods.clearCart = function() {
+
+
+     this.cart = {
+        products: [] 
+     };
+
+
+
+     return this.save();
+ }
+
+
+
+
+
+
+
+
+ --> OK, FOI 
+
+ EXATAMENTE O CÓDIGO QUE EU HAVIA ESCRITo...
+
+
+
+
+
+ ---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+AÍ O PROFESSOR ESCREVE O CLÁSSICO CÓDIGO 
+
+
+
+de clear 
+
+
+e aí 
+
+
+
+um redirect...
+
+
+
+
+
+
+
+
+--> TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        // product: product.productId,
+        product: { ...product.productId._doc } /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+    order.save().then((result) => {
+      return req.user.clearCart().then((result) => {
+        res.status(302).redirect('/orders');
+      });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+CERTO... FUNCIONOU...
+
+
+
+
+NOSSO CART AGORA ESTÁ FICANDO VAZIO APÓS 
+
+UMA ORDER BEM SUCEDIDA...
+
+
+VAMOS PARA A ÚLTIMA AULA...

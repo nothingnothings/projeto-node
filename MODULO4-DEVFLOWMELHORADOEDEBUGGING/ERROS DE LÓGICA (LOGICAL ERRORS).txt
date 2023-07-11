@@ -1,0 +1,637 @@
+
+
+
+
+
+
+
+
+
+--> O TERCEIRO TIPO DE ERRO É O PIOR DELES,
+
+O 
+
+
+
+LOGICAL ERRORS --> 
+
+
+
+
+com esse tipo de erro,
+
+
+NÃO RECEBEREMOS UMA MENSAGEM DE ERRO,
+
+
+O APP 
+
+SÓ NÃO VAI FUNCIONAR 
+
+DA MANEIRA QUE QUEREMOS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO EXEMPLO DE ERRO DE LÓGICA,
+
+
+
+professor troca o código de 
+
+
+
+'const message = parsedBOdy.split('=')[1]'
+
+
+POR 
+
+
+
+'const message = parsedBOdy.split('=')[0]'
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+--> SE FIZERMOS ISSO,
+
+O NEGÓCIO NO NOSSO ARQUIVO GRAVADO FICARÁ
+ 
+
+
+ 'message',
+
+
+
+
+ o que é um ERRO DE 
+
+
+ LÓGICA 
+
+
+ (
+
+
+     pq 
+
+     vamos querer o 'INPUT',
+
+
+     e naõ 
+
+     a parte 
+
+
+     'message' 
+
+     em 
+
+
+
+     'message=xxxxx'....
+
+
+
+
+ )
+
+
+
+
+
+
+
+
+
+
+ --> O APP NÃO ESTÁ 
+
+
+
+ SE COMPORTANDO DA MANEIRA QUE QUEREMOS... --> E ESSES ERROS 
+
+
+
+
+ SÃO DE DIFÍCIL DETECÇÃO,
+
+ NÃO É 
+
+ TOTALMENTE ÓBVIA USA DETECÇÃO...
+
+
+
+
+
+
+
+
+
+
+ -----> como podemos 
+
+ VER ERROS COMO ESSES ?
+
+
+
+
+
+
+ COM A AJUDA 
+
+ DO 
+
+
+ 'JS DEBUGGER' --> 
+
+
+
+
+
+ JS DEBUGGER TEM UMA INTEGRAÇÃO
+
+
+ MT BOA 
+
+
+
+ COM O VISUAL STUDIO CODE.... 
+
+
+
+
+
+
+ PROFESSOR RECOMENDA SEU USO.... 
+
+
+
+
+
+
+
+
+
+ --> DEVEMOS SELECIONAR O ARQUIVO 
+
+ 'app.js'
+
+
+
+ E ENTÃO 
+
+
+
+ DEVEMOS CLICAR EM 
+ 'debug'
+
+ no visual studio code... --> DEPOIS ,
+
+
+ EM START DEBUGGING...
+
+
+
+
+
+
+
+
+
+
+ --> ISSO FEITO, ELE VAI PEDIR POR UM ENVIRONMENT... ---> VAMOS ESCOLHER O NODEJS...
+
+
+
+
+
+
+
+
+
+ ---> COMO RESULTADO DISSO,
+
+ VAMOS 
+
+ VER UMA BARRA EMBAIXO,
+
+
+ 
+
+ laranja... ---> ISSO INDICA QUE VOCÊ ESTÁ NO MODO DE 
+
+
+
+
+
+ DEBUGGING... 
+
+
+
+
+
+
+
+ TAMBÉM 
+
+
+
+
+ TEMOS UM TERMINAL 'DEBUG CONSOLE',
+
+ que significa que 
+
+ o 
+
+ DEBUGGER ESTÁ 'ATTACHED AND LISTENING'.... 
+
+
+
+
+
+
+
+
+
+ --> ISSO SIGNIFICA QUE 
+
+
+
+ VOCÊ PODE 
+
+ 'LOOK INTO YOUR CODE AS IT IS RUNNING'... 
+
+
+
+
+
+
+
+
+
+ --> MAS PARA VER O SEU CÓDIGO ENQUANTO ELE ESTÁ RODANDO,
+
+ VOCÊ PRECISA DEFINIR 
+
+ AQUELAS 
+
+
+ COISAS, OS 
+
+ 'BREAKPOINTS'
+
+ no seu arquivo...
+
+
+
+
+ (BOLINHA VERMELHA  nas linhas).....
+
+
+
+
+
+
+
+
+ ----> SABEMOS QUE O PROBELMA 
+
+ PRVOVAVELMENTE ESTÁ EM 
+
+
+
+ ''''''''
+
+
+
+         return req.on('end', () => {
+          const parsedBody = Buffer.concat(body).toString().split('=')[1];
+          console.log(parsedBody);
+        //   fs.writeFileSync('message.txt', parsedBody); ///versão síncrona. meio ruim.
+        fs.writeFile('message.txt', parsedBody,  ///versão assíncrona, que aceita 3 PARÂMETROS, SENDO O ÚLTIMO DELES __ UMA CALLBACK FUNCTION A SER EXECUTADA QUANDO TIVER ACABADO O 'WRITE' DO ARQUIVO (evento 'end do write')....
+         (err) => {   //writeFile também te deixa FAZER ERROR HANDLING (escrever cases de 'falta de permission' por exemplo, no write de arquivos.. --> aí você pode handle it gracefully, mandando uma response com error code ao usuário, show de outras páginas, etc etc...)
+            res.writeHead(302, {
+                Location: '/',
+              });
+              return res.end();
+            
+        });
+
+
+
+''''''''
+
+
+
+
+AÍ,
+
+
+
+PARA VER O NOSSO ERRO/PROBLEMA,
+
+VAMOS 
+
+
+COLOCAR UM BREAKPOINT 
+
+
+
+em 
+
+
+'''
+
+          const parsedBody = Buffer.concat(body).toString().split('=')[1];
+
+
+          ''''
+
+
+
+
+
+
+
+
+
+
+
+
+COM ISSO ,
+
+
+AGORA 
+
+TEREMOS 
+
+
+
+NOSSO 
+
+
+
+BREAKPOINT POSICIONADO SOBRE ELE. .. ---> 
+
+
+
+AGORA QUANDO RODARMOS NOSSO CÓDIGO,
+
+EEL 
+
+
+
+
+VAI 
+
+
+
+__PARAR__ NESSA LINHA ESPECÍFICA,
+
+
+VAI 
+
+
+'STOP ALI'... -----> 
+
+
+
+
+
+E AÍ 
+
+PODEMOS EXAMINAR COMO NOSSO CÓDIGO 
+
+ESTÁ 
+DENTRO 
+
+
+DALI... ----> E AÍ PODEMOS 
+
+
+
+
+
+EXAMINAR NOSSO 
+
+
+CÓDIGO NESSE EXATO MOMENTO.... --> ISSO SIGNIFICA QUE 
+
+PODEMOS 
+
+
+
+___VER EXATAMNETE O QUE ESTÁ DENTRO DE CADA VARIÁVEL,
+
+BASTA
+
+FAZER 
+'HOVER'
+
+EM CIMA DELAs...
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ---> PODEMOS 
+
+
+
+DESCOBRIR BEM MAIS DETALHES 
+
+SOBRE 
+
+
+
+O FLOW DE NOSSO CÓDIGO.... --> a parte 
+
+
+da 
+
+
+
+ESQUERDA 
+
+
+
+NOS 
+
+MOSTRA AS VARIABLES 
+
+que temos 
+
+no nosso código,
+
+
+
+
+E SEUS VALORES NAQUELE DETERMINADO MOMENTO...
+
+
+
+
+(
+
+
+    nós estamos com 
+
+
+    'this' 
+    e 
+
+    'message' 
+
+    como undefined,
+
+
+
+    enquanto que 
+
+
+    'parsedBody'
+
+    ESTÁ COMO 
+
+    "message=Text"....
+
+
+)
+
+
+
+
+
+
+
+
+
+----> VOCê TAMBÉM PODE DEFINIR 'WATCHERS' ali na aba da ESQUERDA,
+
+
+
+COMO 
+
+
+'message' -------> ISSO AÍ 
+
+
+
+
+
+VAI TE MOSTRAR 
+
+OS VALORES DESSAS VARIÁVEIS 
+
+EM QUE 
+
+VOCÊ ESTÁ 
+
+INTERESSADO...
+
+
+
+
+
+
+
+
+-------> TAMBÉM 
+
+
+
+
+HÁ O CALLSTACK,
+
+
+QUE NOS MOSTRA 
+
+COMO O PROCESSO 
+
+
+'GOES THROUGH YOUR CODE'..
+
+
+
+
+
+
+-----> mas mt desse 
+
+código no callstack 
+
+é 
+
+
+CÓDIGO DO NODEJS,
+
+e não o seu...
+
+
+
+
+
+
+--> O PAINEL ALI DE CIMA 
+
+TE 
+DEIXA 
+
+
+'STEP THROUGH YOUR CODE STEP-BY-STEP',
+
+
+
+
+
+botões
+ 
+ de 
+
+ 'step into the next line',
+
+
+
+
+
+
+ --> PODEMOS NAVEGAR ASSIM NO NOSSO CÓDIGO...
+
+
+
+
+
+
+
+
+ -----> VAMOS VER UM EXEMPLO DE USO 
+
+ BEM FEITO DO DEBUGGER NA PRÓXIMA LIÇÃO...

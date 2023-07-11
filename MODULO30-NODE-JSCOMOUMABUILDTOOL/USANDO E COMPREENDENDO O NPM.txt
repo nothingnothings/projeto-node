@@ -1,0 +1,926 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS, PRIMEIRAMENTE, ENTENDER O 'NPM' 
+
+um pouco melhor....
+
+
+
+
+
+
+
+
+
+
+1) É O NODE PACKAGE MANAGER...
+
+
+
+
+
+
+
+2) no final das contas, é um CLI --> COMMAND LINE INTERFACE..
+
+SEMPRE O UTILIZAMOS NO TERMINAL,
+
+
+por meio 
+de códigos como 
+
+'npm install',
+
+'npm run',
+
+
+
+'npm start'.
+
+
+
+
+
+
+
+
+
+
+
+3) A IDEIA POR TRÁS DE PACKAGES/TOOLS como npm,
+
+
+
+VISTA EM TODA PROGRAMMING LANGUAGE, por sinal,
+
+É QUE 
+
+
+
+NÓS __ TALVEZ TENHAMOS ALGUMA 'ISOLATED FUNCTIONALITY',
+
+
+
+ALGUM CÓDIGO __ QUE 
+
+
+PENSAMOS EM ALGUMA HORA,
+
+
+
+QUE __ 'FAZ ALGO ÚTIL'.... 
+
+
+
+
+
+
+
+
+ex: 'ISOLATED FUNCTIONALITY' (in NODE CODE)....
+
+
+
+
+
+
+
+
+EX: GENERATE A RANDOM NUMBER 
+
+
+
+
+
+
+
+
+-----> mas é claro que 
+
+
+
+PODEMOS _ __ USAR ISSO NO NOSSO 'WEBAPP.... -> 
+
+
+ENTRETANTO,
+
+PODE SER O CASO QUE 
+
+QUEREMOS 
+
+__USAR__ 
+ESSE CÓDIGO 
+
+
+__ EM OUTROS APPS/PROJETOS... ------> ISSO É POSSÍVEL PQ 
+ESSE CÓDIGO/FUNCIONALIDDE 
+
+
+
+NÕA DEPENDE DA BUSINESS LOGIC DO PROJETO QUE 
+
+
+
+
+
+NÓS ESTÁVAMOS CODANDO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> BEM, SE QUEREMOS COMPARTILHAR ESSE CÓDIGO, 
+
+
+INTERNAMENTE OU EXTERNAMETE,
+
+podemos 
+
+
+
+
+USAR 
+
+
+A FUNCIONALIDADE DE 'PACKAGE'  --------> PODEMOS ENFIAR ISSO EM UMA PAKCAGE,
+
+
+
+POR MEIO DO 
+
+
+'NPM '-->  ISSO PQ O NPM PODE SER USADO 
+
+
+PARA MAIS DO QUE 
+
+
+
+
+APENAS 
+
+
+'INSTALL PACKAGES', pois ELE PODE SER USADO PARA __ CREATE AND SHARE PACKAGES... -------->
+
+
+
+
+
+
+
+
+
+
+
+TUDO ISSO ACONTECE POR MEIO DAQUELE 'npm repository',
+
+QUE 
+
+
+É 
+
+UM __CLOUD SERVICE_ DE GRAÇA,
+
+EM QUE 
+
+
+__ VOCê PODE 'HOST 
+
+
+AS PACKAGES QUE VOCê CRIOU',
+
+
+
+
+E É TAMBÉM O SERVICE USADO PARA 
+
+ _ FETCHEAR_ PACKAGES,
+
+
+
+ POR MEIO 
+
+
+ DO COMANDO 
+
+ 'npm install'...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ok... esse repositório CONTÉM MILHARES DE PACKAGES... -> 
+ SE VOCÊ 
+
+ TIVER ALGUM 
+
+ PROJETO  NODE,
+
+
+
+ VOCÊ PODE USAR __ QUALQUER UMA DESSAS PACKAGES,
+
+
+
+ BASTA 
+
+
+
+ USAR O COMANDO DE 'npm install',
+
+
+
+ POR MEIO DAQUELE CLI... --> É ASSIM QUE 
+
+ VOCÊ
+  
+
+
+  ADICIONA PACKAGES AO SEU PROJETO...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> EVIDENTEMNETE,
+
+
+
+  EXISTEM 'PRIVATE REPOSITORIES ' NO NPM,
+
+
+  REPOS QUE DEVEM SER PAGOS....
+
+
+
+
+
+
+
+
+
+
+  --> MAS É CLARO QUE VOCÊ SEMPRE PODE USAR 
+
+
+  PACKAGES PÚBLICOS,
+
+  E TAMBÉM COMPARTILHAR PACKAGS...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> DEVEMOS DAR UMA OLHADA NA PÁGINA DO NPMJS.COM...
+
+
+
+
+
+
+
+
+  --> LÁ PODEMOS PROCURAR POR QUALQUER PACKAGE..
+
+
+
+
+
+
+
+
+
+
+  ----> lá vemos todo tipo de packages...
+
+
+
+
+
+
+
+
+
+  -> PACKAGES QUE USAM EXPRESS, ETC ETC...
+
+
+
+
+
+
+
+
+
+  --> SE CLICAMOS EM UMA PACKAGE,
+
+  VEMOS OS DOCS,
+
+   AS VERSÕES QUE FORAM LANÇADAS,
+
+
+   etc etc...
+
+
+
+
+
+
+
+
+
+   --> VOCê PODE TARGETTAR UMA VERSÃO ESPECÍFICA 
+
+   DE 
+
+   UM PCAKGE,
+
+
+
+
+   PARA INSTALAR APENAS UMA VERSÃO ESPECÍFICA...
+
+
+
+
+
+
+
+   ex:
+
+
+   npm install express@VERSIONNUMBER
+
+
+
+
+
+
+
+
+   --> PARA ISSO,
+
+   VOCÊ DEVE ESCREVER 'O NOME DA PACKAGE + @ + VERSIONNUMBER'...
+
+
+
+
+
+
+
+
+
+
+
+   -> COMO EXCEMPLO,
+
+
+   PROFESSOR ESCREVE:
+
+
+
+
+   'npm install --save express@4.16.3'
+
+
+
+
+
+
+
+
+
+   -> ISSO VAI INSTALAR A VERSÃO 4.16.3 
+
+
+   do express.. 
+
+
+
+
+
+
+
+   --> SE NÃO ESCOLHERMOS VERSÃO ALGUMA, PEGAREMOS A LATEST...
+
+
+
+
+
+
+
+
+
+
+
+   --> SE 
+
+
+
+   FUÇARMOS A PAGE DA PAKCGE,
+
+
+    
+
+
+
+
+PODEOMS VER AS DEPENDENCIES PRÉVIAS 
+
+DE QUE 
+
+
+ESSA 
+
+
+
+PACKAGE DEPENDE...  (é uma CHAIN DE DEPENDENCIES)..
+
+
+
+
+
+
+
+
+
+
+---> E É EXATAMENTE POR ISSO QUE NOSSO FOLDER 'node_modules'
+
+FICA TÃO GRANDE....
+
+
+
+
+
+
+
+
+
+
+
+
+--> TAMBÉM É POSSÍVEL VER COISAS COMO 'repository',
+
+O LUGAR EM QUE 
+
+HÁ O SOURCE CODE PARA ESSA PACKAGE,
+ ETC ETC...
+
+
+
+
+
+
+
+
+
+
+
+
+ -> MAS SE VOCê 
+
+
+ QUER 
+
+
+
+ DESCOBRIR 
+
+
+
+
+ OUTROS COMANDOS ALÉM DE 
+
+
+ 'install' ,
+
+
+ VOCÊ 
+
+
+ PODE SÓ 
+
+
+
+ EXECUATR 
+
+
+ 'npm help'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> NPM É BEM PROFUNDO... --> NPM, CREATE E MANAGE DE PACKAGES 
+
+
+
+
+ É UM TÓPICO À PARTE....
+
+
+
+
+
+
+
+
+
+
+
+ -> VEMOS TODOS OS CLI COMMANDS.... --> SE CLICARMOS EM 1 DELES,
+
+
+ VEMOS EXEMPLOS 
+
+ DE COMO 
+
+ PODEOMS 
+
+ USAR 
+
+
+
+
+
+ CADA 1 DELES....
+
+
+ ex:
+
+
+ '-g' --> tag GLOBAL, INSTALAR ALGO GLOBALMENTE,
+
+
+ etc etc...
+
+
+
+
+
+
+
+
+ ----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> ok, vemos TODAS AS MANEIRAS DE CONFIGURAR NOSSO APP DE DIFERENTES MANEIRSA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> NPM INSTALL --SAVE 
+
+
+ npm install --save-dev 
+
+
+
+
+
+
+
+
+
+ --> ESSES DOCS SÃO IMPORTANTES...
+
+
+
+
+
+
+
+
+
+
+
+ --> npm help --> 
+
+
+ VEMOS UMA LISTA 
+
+
+
+
+
+ DOS AVAILABLE COMMANDS... 
+
+
+
+
+
+
+
+ se eu rodar 
+
+ 'npm install --help' ---> VOU GANHAR AJUDA ESPECÍFICA SOBRE ESSE COMANDO AÍ.....
+
+
+
+
+
+ --> também 
+
+ ganho algumas info 
+
+ SOBRE 
+
+ _ _AS OPTIONS __ que podem ser usadas 
+
+ com cada comando...
+
+
+
+
+
+
+
+ ----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ --> OS COMANDOS QUE VOCÊ PODE RODAR COM O NPM 
+
+ SÃO UMA COISA PODEROSA QUE O NPM TE DEIXA FAZER..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> VOCÊ TAMBÉM PODE RODAR SCRIPTS COM O NPM.... 
+
+
+
+
+
+
+
+
+
+ -> E ISSO, EM GERAL,
+
+
+ ESTÁ RELACIONADO COM 
+
+
+
+
+ O COMANDO DE 'npm init',
+
+ QUE 
+
+ É 
+
+
+ O COMANDO QUE 'DEIXA SEU APP SOB O CONTROLE DO NODE'.... --> 
+
+
+ ISSO 
+
+ TE DÁ UM 'package.json',
+
+ QUE 
+ TE 
+ DEIXA 
+
+
+
+
+ ___ CONFIGURAR SEU PROJETO... -> 
+
+
+ VOCÊ 
+
+
+ MANTÉM UMA LISTA DE SUAS DEPENDENCIES,
+
+
+ E TAMBÉM 
+
+ UMA LISTA 
+
+ DE SCRIPTS,
+
+ que você 
+
+ pode 
+
+ customizar do jeito que vocÊ quiser... --> ISSO É MT FORTE,
+
+
+ FORTE PARA 
+
+ CONSTRUIR 
+
+ PROJETOS....
+
+
+
+
+
+
+
+
+
+
+ -> LÁ NO REACT APP,
+
+
+ PROFESSOR EXEMPLIFICA 
+
+
+
+
+ por meio daqueles  
+
+
+ SCRIPTS 
+
+ de 
+
+
+ 'start': 'react-scripts start' 
+
+
+ 'build': 'react-scripts build',
+
+
+ 'test': react-scripts test' 
+
+
+
+ 'eject': 'react-scripts-eject'...
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR EXPLICA QUE 
+
+
+
+ ESSES SCRIPTS UTILIZAM UMA DEPENDENCY,
+
+
+
+ o 'react-scripts',
+
+
+
+
+
+ que 
+
+
+
+ É 
+
+
+
+
+ A DEPENDENCY QUE SEGURA O CÓDIGO QUE VAI 'ACTUALLY DO SOMETHING'... --. e isso tem a ver com o próximo tópico,
+
+ QUE 
+
+ é 
+
+ a CAPACIDADE DO NODEJS RODAR NA SUA MÁQUINA, e não ser limitado a apenas 'SPIN UP A WEB SERVER'...
+
+
+
+
+
+
+
+
+ When installing a package with npm install --save or --save-dev (or --save-prod, which replaces --save), you end up with entries in your package.json file, that look something like this:
+
+"express": "^4.16.3"
+What does the ^ mean?
+
+You can learn about all available version annotations/ syntaxes here: https://docs.npmjs.com/misc/semver#versions
+
+This post on Stackoverflow provides a great summary: https://stackoverflow.com/a/25861938
+
+
+
+
+
+Major, minor and patch represent the different releases of a package.
+
+npm uses the tilde (~) and caret (^) to designate which patch and minor versions to use respectively.
+
+So if you see ~1.0.2 it means to install version 1.0.2 or the latest patch version such as 1.0.4. If you see ^1.0.2 it means to install version 1.0.2 or the latest minor or patch version such as 1.1.0.
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+

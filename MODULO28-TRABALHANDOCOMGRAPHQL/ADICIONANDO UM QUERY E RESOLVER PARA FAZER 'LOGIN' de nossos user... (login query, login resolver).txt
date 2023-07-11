@@ -1,0 +1,1875 @@
+
+
+
+
+
+
+
+
+
+
+OK... AGORA QUE SOMOS CAPAZES DE CRIAR NOVOS USERS 
+
+
+
+NO NOSSO 
+
+
+
+
+APP COM BACKEND GRAPHQL,
+
+
+
+É HORA __ 
+
+DE 
+
+CONSEGUIR FAZER 
+
+'LOGIN' 
+
+DELES...
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR INDAGA:
+
+
+
+
+como a authentication funciona em um 'MUNDO GRAPHQL'?
+
+
+
+
+
+
+
+
+
+
+
+-> bem, para isso, devemos começar pelo AJUSTE DE NOSSO 'loginHandler',
+
+
+
+
+HANDLER RESPONSÁVEL,
+
+
+NO FRONTEND,
+
+
+PELO LOGIN DE NOSSO 
+
+USER...
+
+
+
+
+
+
+--> ANTIGAMENTE,
+
+
+
+NOSSO CÓDIGO ESTAVA/ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+  loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+   const loginResult = await fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        ///EIS O CÓDIGO EM QUESTÃO.
+      }
+    );
+      // .then((res) => {
+        if (loginResult.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (loginResult.status !== 200 && loginResult.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+
+
+
+        const decryptedResult = await loginResult.json();
+        // return res.json();
+      // })
+      // .then((data) => {
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          token: decryptedResult.token,
+          authLoading: false,
+          userId: decryptedResult.userId,
+        });
+        localStorage.setItem('token', decryptedResult.token);
+        localStorage.setItem('userId', decryptedResult.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      // })
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+      // .catch((err) => {
+
+      // });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS TER QUE ALTERAR ISSO AÍ,
+
+
+
+SEGUIR OS SEGUINTES PASSOS:
+
+
+
+
+
+
+    2) ENVIAR 1 POST REQUEST, NO NOSSO FRONTEND, DIRECIONADO AO PATH/ENDPOINT DE 'localhost:8080/graphql' 
+
+
+
+
+    3) COLOCAR ESSE REQUEST COMO SENDO DE TIPO 'POST'
+
+
+
+
+    4) STRINGIFAR  O BODY DESSE REQUEST 
+
+
+    5) INCLUIR NO BODY DESSE REQUEST _ UMA 'VALID GRAPHQL EXPRESSION', que SEJA COMPATÍVEL COM AS QUERIES QUE DEFINIMOS NO NOSSO SCHEMA E NOS RESOLVERS...
+
+
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+NO FRONTEND, PROVAVELMENTE O CÓDIGO FICARÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+  const graphqlQuery = {
+        //sempre será esta estrutura..
+    query: ` 
+        
+    mutation {  //SERÁ ESTA QUERY STRING AQUI, eu acho....
+      loginUser(
+        userLoginInput: {
+          email: ${authData.email} 
+          password: ${authData.password}
+        } {
+          token
+          userId
+        }
+      ) 
+    }
+    `
+  }
+
+  const loginResult = await fetch(
+    'http://localhost:8080/graphql',
+
+    {
+      body: JSON.stringify(graphqlQuery),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    }
+  );
+
+
+
+
+        if (loginResult.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (loginResult.status !== 200 && loginResult.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+
+
+
+        const decryptedResult = await loginResult.json();
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          token: decryptedResult.token,
+          authLoading: false,
+          userId: decryptedResult.userId,
+        });
+        localStorage.setItem('token', decryptedResult.token);
+        localStorage.setItem('userId', decryptedResult.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      // })
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+      // .catch((err) => {
+
+      // });
+  };
+
+
+
+
+
+
+
+
+
+  ----------------------
+
+
+
+
+
+
+
+  OK... MAS É CLARO QUE PARA QUE ESSA QUERY FUNCIONE, NO NOSSO REQUEST,
+
+  PRECISAMOS 
+
+  __ALTERAR__ O CÓDIGO RECEPCIONADOR NO 'SCHEMA' 
+
+  e 
+
+  no 
+
+  'resolvers.js' (que são tipo os controllers)
+
+  do 
+
+
+  nosso 
+
+  backend....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  TALVEZ NO 'SCHEMA.JS'
+
+
+  FIQUE ASSIM:
+
+
+
+
+
+
+
+
+
+
+  
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+   _id: ID!
+   name: String!
+   email: String!
+   password: String
+   status: String!
+   posts: [Post!]!
+}
+
+
+
+
+input UserInputData {
+      email: String!
+      name: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      loginUser(userInput: userLoginInput): User!
+}
+
+
+input userLoginInput {
+      email: String!
+      password: String!
+}
+
+
+
+
+
+
+type RootQuery {
+      hello: String
+}
+
+
+
+ schema {
+             mutation: RootMutation
+             query: RootQuery
+ }
+
+`
+
+
+
+
+
+
+---------------------------
+
+
+
+E É CLARO QUE, NOS RESOLVERS,
+
+TEREMOS UM CÓDIGO COMPLETAMENTE DIFERENTE PARA ESSE MÉTODO DE 
+
+
+'loginUser'...
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO, ATÉ AGORA, ESTAVA ASSIM:
+
+
+
+
+
+
+    createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        console.log(password);
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+        if (!validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is too short!'})
+        }
+        
+
+        if(errors.length > 0 ) {
+            // const error = new Error(errors[0].message); ///vai retornar a 'message' property NO PRIMEIRO 'error' object no nosso array.... (assim entregamos mais information acerca do validation error ao useR).... ---> esse código dá mais info que o throw GENÉRICO do professor...
+            // const error = new Error('Invalid input'); ///throw genérico de error, se for constatado QUALQUER ERRO DE INPUT, nas hipóteses acima....
+            
+                const error = new Error('Invalid input!');
+                error.data = errors; ///vamos armazenar o ARRAY DOS ERROS DE VALIDATION DO NOSSO RUNTIME nessa propriedade de 'data', se quisermos... (na verdade, podemos armazenar o QUE QUISERMOS, essa é só uma recomendação)...
+                error.code = 422; ///exemplo de como podemos SETTAR O CODE QUE QUISERMOS, DATA QUE QUISERMOS, nesses errors....
+            
+            throw error;
+        }
+
+
+
+
+
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+         
+        //  const user = await new User(
+            const user = new User( ///talvez esse '''await'''' não seja necessário, com essa INSTANCIAÇÃO...
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+
+
+
+
+         return { ///devemos seguir o SCHEMA de 'createUser', que demanda QUE SEJA RETORNADO UM OBJETO 'User' COM UM DETERMINADO __ LAYOUT__...
+             ...savedUser._doc, /////'._doc' FAZ COM QUE TODAS AS PROPRIEDADES/DATA __ 'REAL' DESSE DOCUMENT SEJAM __ RETORNADAS (ou seja, DEIXAMOS DE LADO A 'METADATA' DESSE DOCUMENT, QUE SERÁ INÚTIL PARA __ O FIM DE 'RETURN SOME DATA TO THE USER; RETURN THE DATA OF THE USER THAT WAS CREATED, TO THE USER'...)
+                _id: savedUser._id.toString(), ///esse field LÁ NO NOSSO 'TYPE' DE USER, LÁ NO SCHEMA DO GRAPHQL, está como 'STRING', por isso precisamos CONVERTER ESSE _id de valor 'ObjectId()', LÁ DA DATABASe_, PARA UM FORMATO __ 'string'....
+
+            }
+     
+
+        // return 'String';
+     
+     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> entretanto, acho que AINDA VOU PRECISAR DAQUELE PACKAGE DO 'jsonwebtoken', QUE ME _ PERMITIA_ _ 
+
+CRIAR 1 JSON WEBTOKEN... (ainda me lembro disso) .... -> entretanto, agora PROVAVELMENTE 
+
+ESSA JSON WEB TOKEN SERÁ CRIADA _ LÁ __ NO 'RESOLVERS', em algum método...
+
+
+
+
+
+
+
+
+
+
+
+
+     --> E AGORA, ADICIONAREMOS MAIS 1 MÉTODO....
+
+
+     o método 'loginUser'....
+
+
+
+
+
+     ex:
+
+
+
+
+
+
+
+
+
+
+
+        loginUser: async function(args, req) { ///escrita recomendada dessa função...
+
+
+       const { email, password } = args.userInput; //com isso, ficaremos com esses DOIS VALORES ARMAZENADOS EM CONSTS...
+
+       const errors = [];
+
+
+       const user = await User.findOne({email: email});
+
+
+        if (!user) {
+            errors.push(
+                {
+                   message: 'No user could be found for that email',
+                   statusCode: 404 
+                }
+            )
+
+        }
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+        if (!validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is too short!'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+
+        const passwordCompareResult = await compare(password, user.password);
+
+
+        if (!passwordCompareResult) {
+            const error = new Error('Invalid password entered!');
+            error.data = errors;
+            error.code = 422; 
+        }
+
+
+        const token = jwt.sign(
+            {
+                email: user.email,
+                _id: user._id
+            },
+           'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+            {
+                expiresIn: '1h'
+            }
+        )
+
+        console.log(token);
+
+        return { //acho que será assim o retorno de nossa data, mas não tenho certeza...
+            ...user._doc,
+            _id: user._id.toString(),
+            token: token
+        }
+
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> QUASE FIZ ESSE METHOD FUNCIONAR...
+
+
+
+--> A ÚNICA COISA QUE AINDA ESTÁ BUGADA/ERRADA 
+
+
+é 
+
+
+o 
+
+
+STORAGE de 
+
+'userId' 
+
+
+e 
+
+
+'token' 
+
+
+(2 KEYS, A JSON WEBTOKEN e essa key utilitária) 
+
+
+
+
+NO LOCAL STORAGE DO BROWSER DO USER...
+
+
+
+
+
+
+(
+
+
+
+
+
+    pq o valor desse negócio, armazenado lá ,
+
+    está ficando como 'undefined'....
+)
+
+
+
+
+
+
+
+tenho que ver como consertar isto...
+
+
+
+
+
+
+
+
+
+OK.... CONSEGUI... ERA SÓ UM CÓDIGO UM POUCO ERRADO NO FRONTEND...
+
+
+
+
+
+
+
+
+
+-> ISSO SIGNIFICA QUE AGORA ESTOU CONSEGUINDO FAZER STORAGE 
+
+
+de 
+
+minha 
+
+jwt 
+
+
+
+NO BROWSER DO USER....
+
+
+
+CÓDIGO FRONTEND FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+  const graphqlQuery = {
+        //sempre será esta estrutura..
+    query: ` 
+        
+    mutation {
+      loginUser(
+        userInput: {
+          email: "${authData.email}" 
+          password: "${authData.password}"
+        }) {
+          token
+          _id
+        }
+    }
+    `
+  }
+
+  const loginResult = await fetch(
+    'http://localhost:8080/graphql',
+
+    {
+      body: JSON.stringify(graphqlQuery),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      ///EIS O CÓDIGO EM QUESTÃO.
+    }
+  );
+
+
+  const manipulatedLoginResult = await loginResult.json();
+
+
+
+  console.log(manipulatedLoginResult);
+
+        if (manipulatedLoginResult.errors && manipulatedLoginResult.errors[0].status) {
+          throw new Error('Validation failed. Please make sure that the email has not been used before, and that the inputted data is valid.');
+        }
+
+        if (manipulatedLoginResult.errors) {
+          throw new Error('Could not log you in!');
+        }
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          // token: decryptedResult.token,
+          token: manipulatedLoginResult.data.token,
+          userId: manipulatedLoginResult.data._id,
+          authLoading: false,
+          // userId: decryptedResult.userId,
+        });
+        localStorage.setItem('token', manipulatedLoginResult.data.loginUser.token);
+        localStorage.setItem('userId', manipulatedLoginResult.data.loginUser._id);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      // })
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+      // .catch((err) => {
+
+      // });
+  };
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+DEVO VER A AULA DO PROFESSOR, VER SE ELE 
+
+
+MUDOU ALGUMA COISA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... .
+
+
+
+
+
+
+ELE COMEÇA:
+
+
+
+SERÁ QUE 
+
+
+
+
+A AUTHENTICATION NO MUNDO 'GRAPHQL'
+
+
+muda tanto assim?
+
+
+
+
+
+
+
+
+
+--> CONTINUAMOS COM O MESMO FUNCIONAMENTO DAS REST APIs, 
+
+
+OU DEVEMOS USAR 'SESSIONS' DE NOVO? (que é o que fazemos quando temos um APP NODEEXPRESS __ CLÁSSICO__....)
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, 
+
+DEVEMOS LEMBRAR AQUELE 
+
+SLIDE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+REST API --> STATELESS, CLIENT-INDEPENDENT API for EXCHANGING DATA ...
+
+
+
+
+
+
+
+
+
+GRAPHQL API -->  STATELESS, CLIENT-INDEPENDENT API FOR EXCHANGING DATA _______ WITH HIGHER QUERY FLEXIBILITY...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+'GRAPHQL API '
+
+
+
+TAMBÉM 
+
+
+É 
+
+
+STATELESS E CLIENT-INDEPENDENT... --> OU SEJA,
+
+
+
+AINDA VAMOS FAZER 'AUTHENTICATE'
+
+
+POR MEIO DO USO 
+
+DE UMA 
+
+TOKEN,
+
+
+TOKEN 
+
+
+
+QUE ANEXAMOS A TODO E CADA REQUEST QUE DEVERÁ 
+
+'BE ABLE TO ACCESS PROTECTED RESOURCEs'.... -------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+E, UMA ACTION DE 'LOGIN' É,
+
+
+
+
+__ NO FINAL __ DAS CONTAS,
+
+
+
+'JUST A NORMAL QUERY',
+
+
+
+
+UMA _ QUERY_ EM QUE __ ENVIAMOS UMA 'USER DATA'
+
+
+
+
+E __ EM QUE _ QUEREMOS 
+
+
+ENTÃO __ FAZER 'GET BACK' 
+
+DE UMA __ TOKEN...
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE VOLTAMOS AO NOSSO SCHEMA,
+
+
+
+
+
+LÁ NO BACKEND,
+
+
+
+
+
+
+e la´
+
+escrevemos 
+
+
+
+ALGO NOVO 
+
+LÁ 
+
+NAQUELA 
+
+
+'RootQuery'... 
+
+
+
+
+(
+
+
+    ou seja,
+
+
+    PROFESSOR NÃO VAI USAR __ UMA __ MUTATION__ PARA 
+
+
+    O NOSSO 'LOGIN',
+
+    E __ SIM _ UMA 
+
+    'QUERY',
+
+
+    representada por 'loginUser',
+
+
+    DENTRO DE 
+
+    'RootQuery'...
+)
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR COMEÇA ASSIM:
+
+
+
+
+
+
+
+
+type RootQuery {
+    loginUser()
+}
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+-> AÍ, DENTRO DE 'loginUser',
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+
+
+
+
+ELE VAI QUERER 'SOME DATA' ---> 
+
+
+
+
+AÍ ELE 
+
+
+
+EXPLICA QUE 
+
+
+PODERIA FAZER A MESMA COISA QUE FEZ COM 'UserInputData',
+
+
+USAR 
+
+
+
+um 
+
+
+'input'
+
+
+
+PARA __ DEFINIR __ COMO __ DEVE __ SE PARECER_ _ 
+
+
+ESSE 
+
+
+slot/parâmetro dessa query de 'loginUser'.... -----> MAS 
+
+
+
+
+COMO ELE 
+
+
+QUER NOS MOSTRAR, AGORA,
+
+
+
+___ COMO USAR 'MULTIPLE ARGUMENTS',
+
+
+
+
+ELE 
+
+
+DECIDE FAZER O CODE DIRETAMENTE NESSE LOCAL AÍ..
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+type RootQuery {
+    loginUser(email: String!, password: String!)
+}
+
+
+
+
+
+
+
+
+
+
+------> ISSO FEITO,
+
+PROFESSOR VAI QUERER _ RETORNAR_ NÃO UM OBJETO 
+
+
+'User',
+
+
+
+(
+
+
+    que 
+
+    era 
+
+    aquele 
+
+    grande objeto/type 
+
+
+
+    com 
+
+
+
+    esta estrutura:
+
+
+
+
+
+type User {
+   _id: ID!
+   name: String!
+   email: String!
+   password: String
+   status: String!
+   posts: [Post!]!
+   token: String!
+}
+
+
+
+
+)
+
+
+
+
+
+
+--> EM VEZ DISSO,
+
+ELE VAI QUERER 
+
+RETORNAR UM OBJETO/estrutura 
+
+APENAS 
+
+COM 
+
+
+__ O '_id'
+
+
+e o 'TOKEN' 
+desse user,
+
+
+
+
+PQ ESSAS SÃO OS 2 PEDAÇOS DE INFO DE QUE O PROFESSOR PRECISA, AQUI...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE ELE DEFINE UM NOVO 'type',
+
+
+
+de nome 
+
+
+'AuthData',
+
+
+COM ESTA ESTRUTURA:
+
+
+
+
+
+
+
+type AuthData {
+    token: String!
+    userId: String!
+}
+
+
+
+
+
+------------
+
+
+POR FIM, ELE VINCULA ESSE TYPE ao RETURN desse 'loginUser':
+
+
+
+
+
+
+type RootQuery {
+    loginUser(email: String!, password: String!): AuthData! 
+}
+
+
+
+
+
+
+
+
+
+
+--> ESSA É A DATA QUE 
+
+VAMOS QUERER 'RETURN' QUANDO ALGUÉM ENVIAR DATA 
+
+
+
+
+
+
+para 'login'....
+
+
+
+
+
+
+
+
+
+
+-> CLARO QUE ISSO EXIGE UMA REESTRUTURAÇÃO BÁSICA DE NOSSO CÓDIGO, MAS TUDO BEM...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+type Post {
+   _id: ID!
+   title: String!
+   content: String!
+   imageUrl: String!
+   creator: User!
+   createdAt: String!
+   updatedAt: String!
+}
+
+type User {
+   _id: ID!
+   name: String!
+   email: String!
+   password: String
+   status: String!
+   posts: [Post!]!
+}
+
+
+type AuthData {
+      userId: String!
+      token: String!
+}
+
+
+input UserInputData {
+      email: String!
+      name: String!
+      password: String!
+}
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+}
+
+
+
+type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+}
+
+
+
+ schema {
+             mutation: RootMutation
+             query: RootQuery
+ }
+
+`
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+O MEU FRONTEND FICA TIPO ASSIM:
+
+
+
+  const graphqlQuery = {
+ 
+    query: ` 
+        
+    query {
+      loginUser(
+        email: "${authData.email}" 
+        password: "${authData.password}"
+     ) {
+          token
+          userId
+        }
+    }
+    `
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE AGORA VAMOS PRECISAR DE UM RESOLVER PARA ISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> VOLTAMOS AOS RESOLVERS,
+
+E AÍ ESCREVEMOS:
+
+
+
+
+
+
+
+
+loginUser: async function(args, req) {
+
+
+
+}
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE O OBJETIVO 
+
+DENTRO 
+
+DESSE METHOD 
+É 
+
+
+
+'FIND A USER FOR THAT EMAIL ADDRESS, AND THEN CONFIRM THE PASSWORD'....
+
+
+
+
+
+
+
+--> É POR ISSO QUE ELE ESCREVE TIPO ISTO:
+
+
+
+
+
+
+
+loginUser: async function(args, req) {
+
+
+        const {email, password} = args.data; //acho que será isto, mas não tenho certeza...
+
+    const user = await User.findOne({email: email});
+
+
+
+    if (!user) {
+        const error = new Error('User not found.');
+        error.code = 404;
+        throw error;
+    }
+
+
+
+
+
+
+}
+
+
+
+
+
+
+CERTO.... AJUSTEI UM BOCADO O MEU CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+        loginUser: async function(args, req) { ///escrita recomendada dessa função...
+
+        console.log(args);
+    //    const { email, password } = args; //com isso, ficaremos com esses DOIS VALORES ARMAZENADOS EM CONSTS...
+
+       const errors = [];
+
+
+       const user = await User.findOne({email: args.email});
+
+
+        if (!user) {
+            errors.push(
+                {
+                   message: 'No user could be found for that email',
+                   statusCode: 404 
+                }
+            )
+
+        }
+
+        if (!validator.isEmail(args.email) || validator.isEmpty(args.email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(args.password)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+        if (!validator.isLength(args.password, {min: 6})) {
+            errors.push({message: 'Password is too short!'})
+        }
+
+        if(errors.length > 0 ) {
+                const error = new Error('Invalid data entered!');
+                error.data = errors;
+                error.code = 422; 
+            throw error;
+        }
+
+        const passwordCompareResult = await compare(args.password, user.password);
+
+
+        if (!passwordCompareResult) {
+            const error = new Error('Invalid password entered!');
+            error.data = errors;
+            error.code = 422; 
+            throw error;
+        }
+
+
+        const token = jwt.sign(
+            {
+                email: user.email,
+                _id: user._id
+            },
+           'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+            {
+                expiresIn: '1h'
+            }
+        )
+
+        console.log(token);
+
+        return { //acho que será assim o retorno de nossa data, mas não tenho certeza...
+            ...user._doc,
+            userId: user._id.toString(),
+            token: token
+        }
+
+     }
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+OK... PROFESSOR GEROU A TOKEN EXATAMENTE COMO FIZEMOS...
+
+
+
+
+
+
+
+const token = jwt.sign(
+    {
+        userId: user._id.toString(),
+        email: user.email
+    }
+)
+
+
+
+
+
+
+
+
+-> só fiz uma coisa errada... --> esqueci de chamar '.toString()'
+
+
+NESSE MEU 'userId'... (não sei se faz alguma diferença no resultado da token)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> certo.... 
+
+
+
+
+
+
+
+
+
+
+--> É QUASE A MESMA COISA QUE FIZEMOS NO MÓDULO DO 'REST API'....
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+
+
+RETORNA A TOKEN E O 'USERID',
+
+TUDO PARA QUE 
+
+MATCHEMOS NOSSO SCHEMA EXATAMENTE....
+
+
+
+
+
+
+
+---------------------------------------
+
+
+EX:
+
+
+
+
+
+        return { //acho que será assim o retorno de nossa data, mas não tenho certeza...
+            ...user._doc,
+            userId: user._id.toString(),
+            token: token
+        }
+
+
+
+
+
+
+
+------> OK,
+
+COM ISSO AGORA TEMOS 
+UMA 
+
+'LOGIN QUERY' NO LUGAR;
+
+
+
+
+
+É FEITO UM 'GET REQUEST' ( com o pass de info) 
+
+
+PARA 
+
+FAZER 
+O 
+
+GET 
+
+DA TOKEN,
+
+VOCÊ PODERIA DIZER...
+
+
+
+
+
+
+
+-_> AGORA PRECISAMOS ___ VINCULAR __ ESSE 
+
+NEGÓCIO 
+
+
+
+
+
+
+AO NOSSO FRONTEND E O TESTAR... (já fiz isso sozinho....)....

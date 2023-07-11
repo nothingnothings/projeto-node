@@ -1,0 +1,1131 @@
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+--> AGORA VAMOS FAZER SERVE 
+
+
+
+DE PÁGINAS HTML POR MEIO DO NODEJS/EXPRESSJS.... ------------->
+
+
+
+
+
+
+
+
+
+JÁ EDITAMOS UM POUCO OS ARQUIOVS HTML.... 
+
+
+
+
+
+
+
+-----> AGORA QUEREMOS SERVIR ESSES 
+
+
+
+VIEWS/HTML FILES 
+
+
+
+
+
+
+
+
+
+__NAS NOSSAS ROUTES/POR MEIO DE NOSSAS ROUTES... 
+
+
+
+
+
+
+
+
+
+--> COMO ISSO FUNCIONA? 
+
+
+
+
+
+
+
+
+
+---> BEM, COMEÇAMOS 
+
+PELO ARQUIVO 
+
+
+
+
+ROUTE 
+DE 
+
+'shop.js'...
+
+
+
+
+
+
+
+
+EM VEZ 
+
+DE 
+
+
+
+__ENVIAR ___ AQUELA MESSAGE/TEXT 
+
+
+de 
+
+
+
+'''
+
+
+  (req, res, next) => {
+    console.log('test2; IN ANOTHER MIDDLEWARE');
+    res.status(200).send('<h1>Hello from express!</h1>');
+  }
+
+
+  '''',
+
+
+
+
+
+  AGORA 
+  VAMOS QUERER, EM VEZ DISSO,
+
+
+  ENVIAR __ UMA FILE,
+
+  COM 
+
+
+
+
+  'res.sendFile()'... (método bem conveniente)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------> 'sendFile()' NOS DEIXA JUSTAMENTE FAZER ISSO,
+
+  NOS DEIXA 
+
+  'SEND A FILE BACK TO THE USER'.... --------> 
+
+
+
+
+
+  Express.js res.sendFile() Function - GeeksforGeekshttps://www.geeksforgeeks.org › ex...
+Traduzir esta página
+3 de set. de 2021 — The res.sendFile() function basically transfers the file at the given path and it sets the Content-Type response HTTP header field based on ...
+
+
+
+
+
+
+
+
+
+---> COMO 
+
+
+
+
+PODEMOS VER NA DESCRIPTION DE 'res.sendFile()', no IDE,
+
+
+__ VEMOS QUE ___ ELE ___ 'AUTOMATICALLY SETS THE CONTENT-TYPE RESPONSE HEADER FIELD'... ------> 
+
+
+
+
+
+
+
+VAMOS VER SE ISSO FUNCIONA PARA NÓS OU NÃO (vamos ver se o response header realmente 
+fica 
+
+settado de forma correta...)
+
+
+
+
+
+
+
+
+-------> OK...
+
+
+
+
+
+
+escrevemos:
+
+
+
+
+
+  (req, res, next) => {
+    console.log('test2; IN ANOTHER MIDDLEWARE');
+    res.status(200).sendFile(); /////////EIS O CÓDIGO EM QUESTÃO.
+  }
+
+
+
+
+
+
+  -------------------
+
+
+
+
+  AGORA SÓ TEMOS QUE APONTAR AO ARQUIVO QUE QUEREMOS ENVIAR/send....
+
+
+
+
+
+
+
+
+
+  ---> OK.... A QUESTÃO AQUI É:
+
+
+
+
+  COMO 
+
+  O 
+
+  'PATH' 
+
+
+
+ 
+  SE PARECE AQUI...? --------> 
+
+
+
+  O ARQUIVO 
+
+  QUE
+
+  DESEJAMOS 
+
+
+  ESTÁ 
+
+
+  NO 
+
+  FOLDER 
+
+  'views',
+
+
+  MAS COMO 
+
+  NOSSO PATH 
+
+  DEVERÁ SE PARECER, AQUI?
+
+
+
+
+
+
+  ------> BEM, PROFESSOR DIZ QUE PODERÍAMOS TENTAR 
+
+  USAR 
+
+
+  '/',
+
+  E AÍ __'HOPE'
+
+
+  QUE 
+
+
+
+
+  ESSE PATH 
+
+  ESTÁ 
+
+
+  SENDO IMAGINADO DE UMA PERSPECTIVA DO ARQUIVO 
+
+  'app.js',
+
+  QUE NO FINAL DAS CONTAS É 
+
+
+  O 
+
+  ARQUIVO QUE INICIA NOSSO SERVER INTEIRO...
+
+
+
+
+
+  ------> MAS ISSO NÃO VAI FUNCIONAR... -----> 
+
+
+
+
+
+
+
+
+
+  ERROR: 'ENONET': NO SUCH FILE OR DIRECTOY, stat '/views/shop.html'. 
+
+
+
+
+
+
+
+  --> A RAZÃO PARA ISSO É QUE 
+  ESSE PATH 
+
+  AÍ ,
+
+
+
+  de '/views/shop.html',
+
+
+
+  __ESTÁ INCORRETO....
+
+
+
+
+
+
+  --> PROFESSOR TENTA TAMBÉM 
+ 
+  './views/shop.html'...
+
+
+
+
+
+
+
+
+  ---> REINICIAMOS... --> GANHAMOS UM ERRO 
+  DE 
+
+  'PATH MUST BE ABSOLUTE'...
+
+
+
+
+
+
+
+  --> OK, AGORA CAGOU-SE... -------> 
+
+  PROVAVELMENTE 
+
+  VAMOS PRECISAR 
+
+  IMPORTAR 
+
+
+  AQUELE 
+
+  PACOTE 
+
+
+  ROOT DO 
+
+
+  NODEJS,
+
+  que 
+
+  é 
+
+  o 
+
+
+  'const path = require('path')',
+
+
+  PARA ENTÃO 
+
+  RODAR UM CÓDIGO COMO 
+
+
+  '__dirname', 'views', 'add-product.html'...
+
+
+
+
+
+
+
+
+
+
+  --> MAS ISTO AQUI TAMBÉM NÃO DEU CERTO:
+
+
+  res.status(200).sendFile(path.join(__dirname, 'views', 'shop.html'));
+
+
+
+
+
+
+
+
+  ------------------
+
+
+
+  --> ESSE PATH.JOIN AÍ __NÃO FUNCIONOU, 
+
+  TALVEZ PQ 
+  EU COMPUS 
+
+  UM 
+
+  'relative path',
+
+
+  e não um ABSOLUTE PATH....( como o negócio me pede)...
+
+
+
+
+
+
+
+
+
+  --> ACHO QUE O QUE PRECISO É 
+
+  DE 
+
+  'path.resolve('....')' -----> 
+
+
+  A COISA QUE VAI AQUI DENTRO 
+
+  PROVAVELMENTE 
+
+
+  É 
+
+  O CAMINHO __ A PARTIR__ DESSE FOLDER __ EM QUE __ ESTOU (ou seja, 'routes',)
+
+
+  __ ATÉ _ O ARQUIVO QUE DESEJO....
+
+
+
+  ex:
+
+
+
+
+
+
+   res.status(200).sendFile(path.resolve('../novonovoprojeto4', 'views', 'shop.html'));
+
+
+
+
+
+
+
+
+
+   ----------------------------
+
+
+
+   CONSEGUI, ESSE CÓDIGO REALMENTE FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+
+   o problema de 
+
+
+   'res.sendFile('/views/shop.html')' 
+
+
+
+   É 
+
+   QUE 
+
+
+
+   '/views/shop.html'
+
+
+   SE REFERE 
+
+
+
+   AO ROOT FOLDER NO NOSSO OPERATING SYSTEM,
+
+   E NÃO 
+
+   A 
+
+   ESSE 
+
+
+
+   PROJECT FOLDER... ------> É POR ISSO QUE PARA CONSTRUIR 
+
+   UM 
+
+   PATH 
+
+   A 
+
+
+   ESSE 
+
+
+   ARQUIVO 
+
+
+   __DEVEMOS ___ IMPORTAR__ 
+
+   O 
+
+
+
+   MODULE 
+
+   DE 
+
+   'path',
+
+   por meio 
+
+   de 
+
+
+
+   'const path = require('path');'
+
+
+
+
+
+
+
+
+
+   ----> AÍ USAMOS 
+
+
+   'path.join()',
+
+
+   DIZ O PROFESSOR... 
+
+
+
+
+
+
+
+
+   --> ESSE MÉTODO RETORNA UM PATH, MAS ELE CONSTRÓI UM PATH POR MEIO 
+
+   DO CONCATENATE 
+
+   DOS DIFERENTES 
+
+
+
+
+   SEGMENTS DESSE PATH... ---> PRIMEIRO SEGMENT QUE DEVEMOS PASSAR É UMA 
+
+
+
+'GLOBAL VARIABLE' 
+
+
+EXPOSTA 
+
+
+PELO NODEJS 
+
+em si...   
+
+
+
+
+
+----->  É O '__dirname' --> É UMA VARIÁVEL 
+
+QUE 
+
+SIMPLESMENTE 
+
+
+
+SEGURA 
+
+'THE ABSOLUTE PATH '
+
+
+
+NO NOSSO OPERATING SYSTEM 
+A 
+
+ESSE 
+
+
+
+___ 'PROJECT FOLDER'__.. --> AÍ 
+
+
+
+VAMOS 
+
+
+ADICIONAR 
+
+UMA 
+VÍRGULA 
+
+E AÍ 
+
+'views' 
+
+
+e aí 
+
+'shop.html'...
+
+
+ex:
+
+
+
+
+
+res.sendFile(path.join(__dirname, 'views', 'shop.html')) 
+
+
+
+
+
+
+
+
+
+
+---> USAMOS PATH.JOIN PQ ISSO 
+
+VAI AUTOMATICAMENTE CONSTRUIR UM PATH 
+
+
+
+
+DE UM MODO QUE __ ESSE PATH TAMBÉM FUNCIONARÁ 
+
+
+
+
+EM 
+
+
+
+__SISTEMAS WINDOWS __ E LINUX___ ---> 
+PQ 
+
+
+COMO VOCÊ 
+
+PODE 
+
+
+IMAGINAR,
+
+
+em linux systems 
+
+
+VOCÊ 
+
+
+
+
+
+
+USA CAMINHOS COMO 
+
+'/user/products'...
+
+
+
+
+
+
+
+
+--> JÁ NO WINDOWS, NÓS USAMOS 
+
+\  \   \ 
+
+
+(BACK SLASHES)... 
+
+
+
+
+
+
+
+BACK SLASHES PARA NOSSOS PATHS... 
+
+
+
+
+
+
+
+----> PORTANTO, 
+
+SE VOCÊ 
+
+TENTAR 
+
+
+CONSTRUIR 
+
+
+
+ISSO COM 
+
+
+'\\\\\\\',
+
+VAI FUNCIONAR NO WINDOWS,
+
+MAS NÃO NO LINUX... --> E É POR ISSO QUE USAMOS 
+
+
+'path.join()'....
+
+
+
+
+
+
+
+
+
+---> VOCÊ PODE IMAGINAR QUE 
+
+ISSO FUNCIONARIA,
+
+
+
+
+MAS 
+
+__ O __dirname
+
+
+
+
+
+e O 
+
+
+
+JOIN NÃO VAI SOLUCIONAR NOSSO PROBLEMA... ------> ISSO PQ 
+
+
+
+
+O 
+
+'VIEWS 'ESTÁ LOCALIZADO 
+
+EM 
+UM 
+
+FOLDER 
+
+
+
+
+'SIBLING' DO ROUTES'...  (e não dentro de 'routes')---> A SOLUÇÃO 
+
+é 
+
+
+SIMPLESMENTE 
+
+ADICIONAR 
+
+UM 
+
+'../' 
+
+
+
+
+
+NO MEIO DOS SEGMENTS QUE DEVEM SER UNIDOS... ---> ISSO FARÁ COM QUE NÓS '
+
+GO UP ONE LEVEL',
+
+
+
+para que 
+
+
+SUBAMOS 1 NÍVEL E PARA QUE POSSAMOS ENTÃO SELECIONAR 'VIEWS'...
+
+
+
+
+EX:
+
+
+
+
+
+
+   console.log(path.join(__dirname, '../', 'views', 'shop.html'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ____ OK, ISSO FUNCIONA...
+
+
+   VAI NOS DAR:
+
+
+
+   A:\projeto4 - NODEJS\MODULO5-TRABALHANDOCOMEXPRESS.JS\novonovoprojeto4\views\shop.html
+
+
+
+
+
+
+
+
+
+
+   SUCESSO...
+
+
+
+
+
+
+
+
+
+
+   EX:
+
+
+
+
+   
+    console.log(path.join(__dirname, '../', 'views', 'shop.html'));
+    console.log(path.resolve('../novonovoprojeto4', 'views', 'shop.html'));
+    // res.status(200).sendFile(path.resolve('../novonovoprojeto4', 'views', 'shop.html')); ///COM ISSO, PODEMOS ENVIAR PÁGINAS HTML AO NOSSO USER. É UM METHOD DO EXPRESSJS, e AUTOMATICAMENTE SETTA NOSSO HEADER 'Content-Type'.... (só que às vezes setta de forma ERRADA.)
+    // res.status(200).sendFile(path.resolve('../novonovoprojeto4', 'views', 'shop.html')); ///RESOLVE --> USADO PARA CONSTRUIR ABSOLUTE PATHS... --> ESSE FORMATO TAMBÉM FUNCIONA, NESSE NOSSO EXEMPLO...
+    res.status(200).sendFile(path.join(__dirname, '../', 'views', 'shop.html')); /////ISTO FORMULA RELATIVE PATHS E __ ABSOLUTE PATHS___ (para isso, precisamos de '__dirname', como visto nesse exemplo...)
+
+
+
+
+
+
+
+
+    ------------------------------
+
+
+
+
+
+
+OK... AGORA VEREMOS NOSSA PÁGINA, ELA CARREGOU DIREITINHO...
+
+
+
+
+
+
+
+
+--> AGORA VAMOS FAZER A MESMA COISA COM 
+
+
+'add-product'... 
+
+(só que por conta própria..)
+
+
+
+
+
+
+
+
+---------------
+
+
+
+CREIO QUE VÁ FICAR TIPO ASSIm (só faltou o IMPORT DE 'path'...):
+
+
+
+
+
+
+    router.get('/add-product', (req, res, next) => { ///esse path de 'add-product' NÃO VAI CONFLITAR COM O DE BAIXO PQ os METHODS QUE TRIGGAM ESSAS 2 ROUTES SÃO DIFERENTES (um é 'post', o o outro é get...)
+    console.log('test; IN THE MIDDLEWARE');
+    res
+    .status(200)
+    .sendFile(
+        path.join(__dirname, '../', 'views', 'add-product.html') //////EIS O CÓDIGO EM QUESTÃO.
+    )
+  });
+
+
+
+
+
+
+
+
+  --------------------------------
+
+
+
+
+  OK... FUNCIONOU...
+
+
+
+
+
+
+
+
+  --------------------------
+
+
+  AGORA SÓ FALTA O STYLING... ------> 
+
+
+
+
+
+
+
+  QUANTO AO CONTENT-TYPE HEADER,
+
+  ELE FOI ASSIGNADO CORRETAMENTE PELO EXPRESSJS,
+
+
+
+  ele foi lá e colocou 
+
+
+  'Content-Type': 'text/html'; charset="UTF-8"
+
+
+
+
+
+
+
+
+
+  -----> OK... AGORA SABEMOS COMO PODEMOS 'SERVE SIMPLE HTML FILES' 
+
+  para 
+AS 
+
+DIFERENTES 
+
+ROUTES/PAGES EM QUE 
+
+TEMOS...
+
+
+
+
+
+---> PROFESSOR NOS DÁ UM DESAFIO... ---> professor 
+
+QUER QUE ADICIONEMOS UMA NOVA PÁGINA, 
+
+UMA PÁGINA 
+
+
+
+PARA 
+
+'PAGE NOT FOUND'... ---> ESSA PAGE DEVERÁ SER SERVIDA SE 
+
+
+
+
+ALGUMA HORA REACHARMOS AQUELE MIDDLEWARE/ROUTE DE 
+
+
+''
+
+
+app.use(
+  (req, res, next) => { ///CLÁSSICO USE-CASE DE UM __ RETORNADOR DE PÁGINA DE 'ERRO 404'... ---> PAGE NOT FOUND... ---> COMO ESSE MIDDLEWARE ESTÁ DEFINIDO BEM NO FINAL DESSE ARQUIVO 'app.js', ELE __ SÓ SERÁ EXECUTADO SE NENHUM OUTRO MIDDLEWARE FOR ATIVADO A PARTIR DO PATH/URL besteirol/inexistente que o usuário inputtou...
+      res.status(404).send('<h1>PAGE NOT FOUND!</h1>'); ///EXEMPLO DE CHAINING DE METHODS JUNTO DE 'send' (aqui usamos 'status' antes, para definir um STATUS CODE DE 404, page not found...)
+  }
+)
+
+'',
+
+que 
+
+é 
+o nosso 'FALLBACk'
+
+
+
+deste projeto, na verdade...
+
+
+
+
+
+
+CONSEGUI, ACHO...
+
+
+ficou tipo assim:
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not Found</title>
+</head>
+<body>
+    <main>Page not found, please<a href="/">&nbsp;return to the Home Page</a></main>
+</body>
+</html>
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+E NO 'APP.JS', ficou assim:
+
+
+
+
+
+
+
+app.use(
+  (req, res, next) => { ///CLÁSSICO USE-CASE DE UM __ RETORNADOR DE PÁGINA DE 'ERRO 404'... ---> PAGE NOT FOUND... ---> COMO ESSE MIDDLEWARE ESTÁ DEFINIDO BEM NO FINAL DESSE ARQUIVO 'app.js', ELE __ SÓ SERÁ EXECUTADO SE NENHUM OUTRO MIDDLEWARE FOR ATIVADO A PARTIR DO PATH/URL besteirol/inexistente que o usuário inputtou...
+      // res.status(404).send('<h1>PAGE NOT FOUND!</h1>'); ///EXEMPLO DE CHAINING DE METHODS JUNTO DE 'send' (aqui usamos 'status' antes, para definir um STATUS CODE DE 404, page not found...)
+ 
+      res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+ 
+    } 
+)
+
+
+
+
+---------------------------------
+

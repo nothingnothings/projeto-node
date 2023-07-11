@@ -1,0 +1,140 @@
+
+
+
+
+
+
+
+
+
+--> VAMOS TRABALHAR COM A PÁGINA DE 
+
+
+
+'adminProducts',
+
+
+
+
+A PÁGINA DE LISTA DE PRODUCTS 
+
+
+
+
+
+
+DO ADMIN... 
+
+
+
+
+
+
+
+
+
+--> LÁ NÓS TAMBÉM VAMOS QUERER 
+
+DISPLAYAR NOSSOS PRODUCTS,
+
+
+PARA QUE 
+CONSIGAMOS 
+
+
+
+INTERAGIR COM ELES....
+
+
+
+
+
+
+--> DEVEMOS TENTAR FAZER ISSO SOZINHOS...
+
+
+
+
+
+
+
+
+--> EU JÁ HAVIA FEITO ISSO:
+
+exports.getProductsAdminPage = (req, res, next) => {
+  Product.findll().then(([rows, fieldData]) => {
+    res.render('admin/product-list-admin', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: rows,
+    });
+  });
+
+};
+
+
+
+
+--> OK... MAS ISSO NÃO FETCHEOU PRODUCT ALGUM... NÃO SEI PQ....
+
+
+
+
+--> devo consertar esse problema....
+
+
+
+
+
+
+
+
+
+CONSERTEI COM ESTE CÓDIGO:
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  Product.findAll().then((products) => {
+    res.render('admin/product-list-admin', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: products
+    });
+  })
+  .catch(
+      (err) => {
+          console.log(err);
+      }
+  )
+}
+
+
+-------------
+
+
+
+
+
+
+
+
+-> AGORA SÓ FALTA O 'EDIT' E O 'DELETE' 
+
+
+
+
+DE MEU PRODUCT,
+
+
+por meio 
+
+
+desses buttons em cada product...
+
+
+veremos isso NA PRÓXIMA AULA....

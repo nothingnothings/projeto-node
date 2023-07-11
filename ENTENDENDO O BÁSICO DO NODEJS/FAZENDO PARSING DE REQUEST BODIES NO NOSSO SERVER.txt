@@ -1,0 +1,2791 @@
+
+
+O estranho é que o BODY do request,
+
+quando acessado,
+
+
+
+RETORNA 
+
+'UNDEFINED'...
+
+
+
+A data que escrevemos em 'message' deverá 
+
+ser 
+
+a 
+
+data que inputtamos lá no input field....s
+
+
+
+
+
+
+OK, MAS COMO FAZEMOS ISSO?
+
+
+
+
+
+
+
+
+
+
+
+BEM, TEMOS 
+
+O 
+
+'request.url' 
+
+
+
+e 
+
+
+'request.method'.......
+
+
+
+
+
+
+
+VOCÊ PODE __iMAGINAR__ QUE 
+
+
+EXISTE ALGO COMO 
+
+'request.data',
+
+
+'req.data'...
+
+
+
+
+
+
+
+
+
+-----> VOCÊ PODE IMAGINAR ISSO, 
+
+MAS ISSO __ NÃO EXISTE___.... -------> 
+
+
+
+EM VEZ DISSO,
+
+
+A 'INCOMING DATA'
+
+
+
+É 
+
+
+BASICAMENTE 
+
+'SENT AS A STREAM OF DATA',
+
+
+
+
+
+
+
+E ISSO É UM 'SPECIAL CONSTRUCT'
+
+
+
+QUE O JAVASCRIPT conhece ____EM GERAL__,
+
+
+
+
+MAS QUE o
+
+
+NODEJS __ ESPECIFICAMENTE __ USA PRA CARAMBA....
+
+
+
+
+
+----->MAS O QUE É UMA 'STREAM OF DATA',
+
+
+NO FINAL DAS CONTAS?
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE 
+
+HÁ 
+
+
+UM CONCEITO CONECTADO 
+
+A 
+
+'streams of data',
+
+
+
+
+que SÃO OS 
+
+
+__BUFFERS__...-----> O PROFESSOR 
+
+EXPLICA QUE 
+
+VAMOS DAR UMA 
+
+OLHADA 
+
+
+
+EM AMBOS,
+aqui...
+
+
+
+
+
+
+
+
+
+------> DEVEMOS PEGAR NOSSO INCOMING REQUEST COMO UM EXEMPLO... --> isso pq existem OUTRAS STREAMS,
+
+como por exemplo quando trabalhamos com 
+
+FILES...  (tbm podemos trabalhar com streams, não só files).... ----> 
+
+
+
+
+
+VAMOS 
+
+
+
+CONTINUAR COM REQUESTS, AQUi...
+
+
+
+
+
+
+
+
+
+
+
+
+NOSSO EXEMPLO SERÁ 
+
+UM 
+
+'INCOMING REQUEST'...
+
+
+
+
+
+Ex: INCOMING REQUEST ...
+
+
+
+
+
+
+--> nossa stream AQUI É BASICAMENTE UM 'ONGOING PROCESS'...
+
+
+
+
+--> O REQUEST É SIMPLESMENTE LIDO PELO 
+
+'NODEJS'
+
+
+
+em 
+
+
+'CHUNKS'.... (pode-se dizer que são CHUNKS) ----> 
+
+
+
+
+
+POR CHUNKS, QUEREMOS DIZER 
+
+__ EM MÚLTIPLAS PARTES__...
+
+
+
+
+
+
+
+
+tipo assim.... 
+
+
+
+
+
+
+
+
+stream 
+start  --> requst body part 1 -----> req body part 2 --> req body part 3 --> req body part 4 --> FULLY PARSED...
+
+
+
+
+
+
+
+
+
+
+-------> É LIDO EM PARTES, MÚLTIPLAS PARTES.... ----> 
+
+
+
+
+
+e isso,
+
+essa divisão,
+ 
+ é feita 
+
+
+ JUSTAMENTE 
+ PARA QUE 
+
+
+ CONSIGAMOS 
+
+
+ ___TEORICAMENTE__ 'START WORKING ON THE INDIVIDUAL CHUNKS'
+
+
+  
+
+  ___________ SEM TER QUE __ ''ESPERAR PELA LEITURA DO REQUEST INTEIRo'.... ----> 
+
+
+
+  BEM, PARA 
+
+
+  um request 
+
+
+  _________SIMPLES, COMO ESTE 
+
+
+
+  COM O QUAL ESTAMOS TRABALHANDO,
+
+
+  
+  ESSE 'READ DO REQUEST INCOMPLETO, ainda por fazer'
+
+
+
+  __NÃO É ALGO QUE É REALMENTE 
+
+  NECESSÁRIO (isso pq só temos a data de 1 ÚNICO INPUT FIELD, por isso 
+  
+  
+  n demora mt tempo para parsear essa data).. --------> 
+
+
+
+  CERTO,
+
+
+
+  MAS CONSIDERE 
+
+
+  UM 
+
+  _______ARQUIVO____ SENDO UPLOADADO... --------> 
+
+
+
+
+  UM ARQUVO 
+
+
+  SENDO UPLOADADO 
+
+
+  VAI SEMPRE LEVAR
+   
+
+
+UM TEMPINHO,
+
+
+E É AÍ QUE 
+
+O 
+
+STREAMING 
+
+DE 
+DATA 
+
+
+
+FAZ SENTIDO... --------> FAZ SENTIDO 
+
+
+
+PQ 
+
+ELE PODERIA 
+
+TE PERMITIR 
+
+
+COMEÇAR A 'WRITE THIS DATA TO YOUR DISK',
+
+
+
+O HDD em que 
+
+SEU APP ESTÁ RODANOD, EM QUE SEU 
+
+
+NODE APP ESTÁ RODANDO,
+
+
+
+
+__ AO MESMO ___ TEMPO EM QUE A DATA ESTÁ 'COMING IN'... --------> 
+
+
+
+VOCÊ FAZ ISSO 
+
+
+PARA QUE 
+
+VOCÊ NÃO SEJA OBRIGADO A 'PARSE THE ENTIRE FILE' (coisa que leva algum tempo, tempo 
+
+que você teria de esperar, caso só fosse trabalhar com o arquivo 'fully loaded'...) 
+
+
+
+__ANTES___ DE 
+
+FAZER ALGO 
+
+COM A DATA 
+
+UPLOADADA PELO USUÁRio...
+
+
+
+
+
+
+
+
+--------> MAS É ASSIM QUE 
+
+
+O NODE 
+
+'HANDLA'
+
+
+__TODOS OS REQUESTS__ QUE ATINGEM O SERVER;
+
+
+ELE FAZ ASSIM PQ 
+
+ELE 
+
+
+'DOESNT KNOW IN ADVANCE' 
+
+
+O QUAÕ COMPLEXOS 
+
+E GRANDES 
+
+
+
+SERÃO OS REQUESTS... ------> 
+
+
+
+
+
+
+
+OK..
+ 
+
+ RECAPITULANDO:
+
+
+
+
+
+
+ stream 
+start  --> requst body part 1 -----> req body part 2 --> req body part 3 --> req body part 4 --> FULLY PARSED...
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+>>> VANTAGEM === VOCÊ PODE COMEÇAR A TRABALHAR COM A DATA recebida no request
+
+MAIS CEDO... -----> O PROBLEMA DO SEU CÓDIGO, NO ENTANTO,
+
+
+É QUE 
+
+VOCÊ/NÓS 
+
+
+
+___NÃO SOMOS CAPAZES DE 
+
+'ARBITRARILY WORK WITH THESE CHUNKS'.... (nao posso ESCOLHER '''QUANDO''' MEU CÓDIGO SERÁ EXECUTADO 
+
+
+--------> EM VEZ DISSO,
+
+
+
+___PARA '''''ORGANIZAR'''' ESSES INCOMING CHUNKS, QUE VÃO COMPONDO A 'FINAL DATA' PROGRESSIVAMENTE,
+
+
+VOCÊ 
+
+USA 
+
+
+AQUILO QUE 
+
+
+TODO MUNDO CHAMA 
+
+DE 
+
+'BUFFER'... você usa BUFFERS...
+
+
+
+
+
+
+
+
+------> 'BUFFER' ---> UM 'BUFFER' 
+
+É 
+
+
+PARECIDO COM UMA PARADA DE ÔNIBUS (bus stop)... ----->
+
+
+
+SE VOCÊ 
+
+PENSAR EM 
+
+ONIBUS,
+
+
+
+
+ELES ESTÃO SEMPRE 
+
+
+
+VIAJANDO POR AÍ... ---> MAS PARA 
+
+USERS 
+
+SEREM 
+
+
+CAPAZES ____ DE TRABALHAR/VIAJAR EM ONIBUS,
+
+
+
+PARA SEREM CAPAZES __ DE SUBIR__ EM ONIBUS,
+ 
+
+ E TAMBÉM 
+
+ SAIR DO BUS,
+
+
+
+ _______ VOCÊ PRECISA 
+ DE 
+
+
+ 'BUS STOPS'... --------> 
+
+
+
+
+ VOCÊ 
+
+ PRECISA DE 
+
+
+ PARADAS DE ÔNIBUS 
+
+
+ EM QUE 
+ VOCê 
+
+
+ PODE 
+
+ 'TRACKAR' OS SEUS ONIBUS, BASICAMENTE...
+
+
+
+
+
+
+
+
+
+
+
+ --> É ISSO QUE É UM BUFFER --> É UM 'CONSTRUCT' QUE 
+
+ TE 
+
+ DEIXA 
+
+
+ 'HOLD MULTIPLE CHUNKS'
+
+
+ E 
+
+ AÍ 
+ TE DEIXA __ TRABALHAR __ COM ELES___ 
+
+ ANTES__ DE 
+
+ OS 'SOLTAR' (before they are released, ONCE YOU ARE DONE...)...
+
+
+
+
+
+
+
+
+
+
+
+---> E VOCÊ TRABALHA JUSTAMENTE COM ESSES 'BUFFERS', PARA PODER MANIPULAR 
+
+
+SUAS 'STREAMS OF DATA'.. -------> 
+
+
+
+
+
+
+
+
+ISSO É BEM ABSTRATO,
+
+MAS 
+
+É 
+
+BEM FÁCIL DE USAR...
+
+
+
+
+
+
+
+
+
+-------> VOLTANDO AO NOSSO CÓDIGO,
+
+
+
+
+veremos isso em prática..
+
+
+
+
+
+
+
+LÁ NAQUELE CÓDIGO DE 
+
+
+'if (url === '/method'....)',
+
+
+
+
+
+
+TEMOS ISTO:
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+            
+       
+                fs.writeFileSync('message.txt', 'DUMMY'); ///versão __SÍNCRONA___ de 'write a file'... depois professor vai explicar melhor a diferença entre isto e 'writeFile' (A VERSÃO ASSÍNCRONA)... 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+
+
+
+    OK... 
+
+
+
+    QUANDO RECEBEMOS UMA 'POSTED MESSAGE',
+
+
+
+    __ANTES___ DE 
+
+    ENVIAR A RESPONSE (
+
+
+        por meio de linhas como 
+
+        'res.writeHead()'
+
+        e 
+
+        'return res.end()'
+    ),
+
+
+
+
+
+
+E __ ANTES __ 
+
+
+
+DE 'WRITING TO THAT FILE' ('fs.writeFileSync()'),
+
+
+
+
+
+NÓS VAMOS QUERER CONSEGUIR 
+
+NOSSA 
+
+'REQUEST DATA',
+
+
+
+certo?
+
+
+
+
+
+
+
+------> E NÓS FAZEMOS ISSO, CONSEGUIMOS ESSA REQUEST DATA,
+
+
+
+CONSEGUIMOS ISSO 
+
+
+POR MEIO 
+
+
+
+de uma referência a 'req' 
+
+
+e 
+
+
+aí 
+
+
+
+
+
+PELO _ REGISTER __ DE UM EVENTLISTENER__ 
+
+
+
+por meio da dot notation...
+
+
+
+
+
+
+
+-------> NÓS NÃO USAMOS NENHUM EVENT LISTENER ATÉ AGORA, MAS 
+
+DEVEMOS 
+
+NOS LEMBRAR QUE 
+
+O 
+
+NODEJS 
+
+
+USA 
+
+
+'HEAVILY'
+
+ESSES 
+
+EVENTLISTENERS... (por exemplo, com 'createServer()', o nodeJS cria implicitamente um event listener para nós....)
+
+
+
+
+
+
+
+
+
+--> AGORA, VAMOS CRIAR UM 
+
+
+___EVENT LISTENER _ POR CONTA PRÓPRIA,
+
+
+POR MEIO 
+
+DO 
+
+CALL 
+
+de 
+
+'.on()'....
+
+
+
+ex:
+
+
+
+
+
+
+'req.on()'.....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+                req.on(); ////////EIS O CÓDIGO EM QUESTÃO.
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+-------------------------
+
+
+
+
+
+
+
+
+O '.on()'
+
+
+
+
+NOS DEIXA
+
+
+
+FAZER 'LISTEN TO'
+
+
+A CERTOS EVENTS.... ----> 
+
+
+
+
+
+E O EVENT A QUE 
+
+VAMOS QUERER 
+
+'LISTEN TO'
+
+aqui 
+é 
+
+O 
+
+EVENT 
+
+
+
+
+de 
+
+
+'data'...
+
+
+
+ex:
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+                req.on('data'); ////////EIS O CÓDIGO EM QUESTÃO.
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+-----------------------------------------
+
+
+
+OK..... VAMOS 
+
+FAZER 
+
+'LISTEN TO' 
+
+AO 
+
+EVENT 
+
+
+DE 
+
+'DATA'... --------> ESSE EVENT, POR SUA VEZ, SERÁ 
+
+
+'FIRED'
+
+
+
+__SEMPRE ___ QUE UM NOVO 'CHUNK' 
+
+
+
+ESTIVER ___ 'READY TO BE READ' (pronto para ser LIDO)... ---->   OU SEJA,
+
+
+
+
+
+AQUELA COISA DE BUFFERS LÁ,
+
+
+bem,
+
+
+esse 'req.on('data')'
+
+
+
+BASICAMENTE NOS AJUDA COM ISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+----> BEM... NESSE 
+
+'req.on()',
+
+
+PRECISAMOS ADICIONAR UM __ SEGUNDO ARGUMENTO__,
+
+
+
+
+QUE SERÁ JUSTAMENTE __ A 
+
+
+
+____ FUNCTION__ QUE 
+
+DEVERÁ 
+
+
+
+____ SER EXECUTADA 
+
+
+'FOR EVERY 
+ 
+__"DATA" __ EVENT'.... ------> OU SEJA,
+
+É UM FUNCIONAMENTO 
+
+
+
+SIMILAR A 'createServer'(pq createServer SEMPRE VAI EXECUTAR essa nossa função anônima/interna de 'reqListener', aquele '(req, res) => {}' A PARTIR DE CADA INCOMING REQUEST QUE ATINGE NOSSO SERVER...)
+
+
+
+
+
+
+
+----> aqui, no caso,
+
+
+
+
+ESSE NEGÓCIO, 
+
+ESSE SEGUNDO PARÂMETRO,
+
+
+
+VAI SER __ EXECUTADO __ 
+
+
+'FOR EVERY INCOMING DATA PIECE'
+
+
+
+
+
+da nossa STREAM DE DATA...  ---------> 
+
+
+
+
+
+É POR ISSO QUE O PROFESSOR VAI USAR UMA ARROW FUNCTION ES6 
+
+
+
+
+como segundo parâmetro,
+
+
+
+função que realmente será executada 
+
+
+a partir 
+
+DE 
+
+TODO 
+
+EVENT 
+'data'
+
+QUE OCORRER 
+
+
+
+NESSE LISTENER 
+
+DE 
+
+'req.on()'...
+
+
+
+
+
+
+
+---------> O PROFESSOR EXPLICA QUE PODERÍAMOS USAR A FUNCTION KEYWORD,
+
+se quiséssemos, no lugar 
+dessa 
+
+arrow function...
+
+
+
+
+
+
+ 
+----------> CERTO... ---> 
+
+
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+                req.on('data', () => {
+
+                }); ////////EIS O CÓDIGO EM QUESTÃO.
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+-------------------------------------------
+
+
+
+
+
+CERTO...
+
+
+
+
+E 
+
+COMO VOCÊ PODE VER,
+
+
+
+
+em 
+'data',
+
+esse listener 
+
+aí 
+
+
+___RECEBE UM 'CHUNK OF DATA' 
+
+como parâmetro... ------> É POR ISSO 
+
+
+
+QUE VAMOS ESCERVER 
+
+
+'chunk'....
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+                req.on('data', (chunk) => {     ////////EIS O CÓDIGO EM QUESTÃO.
+
+                }); 
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+-----------------------------------
+
+
+
+
+
+E ESSE 'CHUNK' É ALGO COM OQUE PODEMOS TRABALHAR,
+
+dentro 
+
+daquele 
+'{}" --------> 
+
+
+
+
+E AGORA 
+
+TEMOS 
+
+QUE 
+
+FAZER ALGO COM ESSE CHUNK,
+
+
+PARA SERMOS CAPAZES 
+
+DE 
+
+INTERAGIR COM ELE....
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PROFESSOR CRIA UMA CONSTANTE 
+
+DE 
+
+NOME 
+
+'body'.... (no lado de FORA desse listener)...
+
+
+
+
+
+
+
+
+------> BEM, O BODY DEVERÁ SER UM 'EMPTY ARRAY' ... ------> 
+
+
+
+
+ISSO FEITO,
+
+
+
+DENTRO 
+
+DAQUELA FUNÇÃO INTERNA 
+
+de 
+
+
+
+'req.on()'
+
+
+VAMOS 
+
+ESCREVEr 
+
+
+
+'body.push()',
+
+
+
+pARA EMPURRAR 
+
+
+
+
+DATA/ALGUMA COISA DENTRO DE 
+'chunk'
+
+
+
+PARA 
+
+DENTRO DESSE ARRAY AÍ..
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; ////EIS O CÓDIGO EM QUESTÃO.
+                req.on('data', (chunk) => {     
+
+                            body.push(); ///EIS O CÓDIGO EM QUESTÃO.
+                }); 
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+
+
+ok....
+
+
+
+
+
+VAMOS, PORTANTO, QUERER 
+
+FAZER 
+
+'push' 
+
+dessa data ao nosso array..
+
+
+
+
+
+
+
+
+body.push() -----------> 
+
+
+
+
+
+com 'push',
+
+
+estamos mudando o 'OBJECT BEHIND THAT body constant, e não a constant body em si...'' 
+
+
+
+
+
+
+
+
+
+--------> OK, AGORA PODEMOS 'PUSH' 
+
+UM NOVO ELEMENTO 
+
+NESSE ARRAY,
+
+
+
+para fazer com que ele 
+
+
+DEIXE DE FICAR 'EMPTY'.. 
+
+
+
+
+
+-> E O QUE O PROFESSOR VAI FAZER 'PUSH' 
+
+NESSE 
+
+ARRAY VAZIO É 
+
+
+O 
+
+
+VALOR 
+de 
+
+
+
+'chunk', basicamente....
+
+
+ex:
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; ////EIS O CÓDIGO EM QUESTÃO.
+                req.on('data', (chunk) => {     
+
+                            body.push(chunk); ///EIS O CÓDIGO EM QUESTÃO.
+                }); 
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+-------------------- 
+
+
+
+
+
+
+
+--> AGORA,
+
+
+
+O 
+
+
+
+NODEJS 
+
+
+VAI EXECUTAR 
+
+
+
+ISSO VÁRIAS VEZES,
+
+ATÉ 
+
+QUE 
+
+ELE ESTEJA 
+
+'DONE', DONE COM __ O GET __ DE ___ TODA ___ A DATA__ 
+
+
+DE NOSSO REQUEST.... -------> 
+
+
+
+E ISSO,
+
+
+ESSA 
+
+REPETIÇAO
+
+
+DESSE PROCESSO 
+
+DE 
+
+'get'
+
+__ PODE __ ACONTECER__ 1 ÚNICA VEZ,
+
+COMO TAMBÉM PODE ACONTECER 
+
+MÚLTIPLAS VEZES.... (depende 
+
+
+da COMPLEXIDADE/TAMANHO DA DATA QUE 
+
+
+ESTAMOS RECEBENDO POR MEIO DO NOSSO REQUEST).......
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; ////EIS O CÓDIGO EM QUESTÃO.
+                req.on('data', (chunk) => {     
+
+                            body.push(chunk); ///EIS O CÓDIGO EM QUESTÃO. ESSE  CÓDIGO VAI SE 'REPETIR' MÚLTIPLAS VEZES, ATÉ QUE NOSSA DATA SEJA PARSEADA/MANIPULADA POR INTEIRO, pelo nodejs...
+                }); 
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+PARA VER COMO 
+
+
+
+ESSE PROCESSO/ATO 
+
+É 
+
+
+REALIZADO MÚLTIPLAS VEZES (são os 'bus stops', no final das contas; bus stops que existem DEVIDO AOS __ BUFFERS__, que 'fatiam' nossa DATA STREAM...) 
+
+
+
+
+
+
+-----> PARA VER COMO ISSO É REALIZADO MÚLTIPLAS VEZES,
+
+
+PROFESSOR 
+
+ESCREVE UM CONSOLE.LOG de 
+
+'chunk'...
+
+
+
+ex:
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; ////EIS O CÓDIGO EM QUESTÃO.
+                req.on('data', (chunk) => {     
+                                console.log(chunk); ///SERÁ EXECUTADO MÚLTIPLAS VEZES/re-executado múltiplas vezes, tudo devido ao COMPORTAMENTO DAS 'DATA STREAMS' e dos 'Buffers' (bus stops das data streams), que são o conceito/construct do javascript QUE _ FAZ __ COM QUE __ NOSSA DATA ANEXADA AO REQUEST SEJA ''''PROGRESSIVAMENTE OBTIDA''', obtida aos poucos...
+                            body.push(chunk); ///EIS O CÓDIGO EM QUESTÃO. ESSE  CÓDIGO VAI SE 'REPETIR' MÚLTIPLAS VEZES, ATÉ QUE NOSSA DATA SEJA PARSEADA/MANIPULADA POR INTEIRO, pelo nodejs...
+                }); 
+            
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK.... ISSO FEITO,
+
+
+EVENTUALMENTE VAMOS __ FINALMENTE__ VER o
+
+
+QUE 
+
+ESTÁ/FICA 
+
+DENTRO 
+
+DESSE 
+
+'chunk'/o que são esses CHUNKS ... --->
+
+
+
+
+
+
+VEMOS ISTO AQUI:
+
+
+<Buffer 6d 65 73 73 61 67 65 3d 61 73 73 61 61 73 61>
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+É ISSO AÍ QUE FOI PRINTADO PELO CONSOLE.LOG()... 
+
+
+
+
+
+
+------> ok, mas para 
+
+completar 
+
+o 
+
+'req.on()',
+
+
+SOMOS 
+
+OBRIGADOS 
+
+A CHAMAR 
+
+UM 
+
+
+'req.on('end')' 
+
+
+LOGO DEPOIS DE SUA ESCRITA... ----> ISSO É ___ OUTRO ___ EVENT LISTENER,
+
+
+EVENT LISTENER QUE DEVEMOS OBRIGATORIAMENTE ADICIONAR...
+
+
+
+
+
+----> é o 'END LISTENER',
+
+ 
+
+ QUE __ SERÁ DISPARADO 
+
+
+ 'ONCE ITS DONE PARSING THE INCOMING REQUEST DATA ou INCOMING REQUESTS em geral'----> 
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+        if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; 
+                req.on('data', (chunk) => {     
+                                console.log(chunk); 
+                            body.push(chunk); 
+                }); 
+
+                req.on('end', xxxx); ///EIS O CÓDIGO EM QUESTÃO.
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+ AQUI, 
+
+
+
+
+NO CASO,
+
+
+
+
+ESSE '.on()'
+
+VAI DE NOVO EXECUTAR UMA FUNÇÃO QUE DEFINIMOS COMO SEGUNDO ARGUMENTO.... --> 
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+      if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; 
+                req.on('data', (chunk) => {     
+                                console.log(chunk); 
+                            body.push(chunk); 
+                }); 
+
+                req.on('end', () => {}); ///EIS O CÓDIGO EM QUESTÃO.
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+
+
+
+
+
+
+
+e, nessa function,
+
+
+
+NÓS __ PODEMOS AGORA 
+
+'RELY ON ALL THE CHUNKS BEING READ IN'...  ---> ISSO 
+
+PQ 
+
+AGORA 
+
+TODOS 
+
+OS 
+
+CHUNKS JÁ TERÃO SIDO 
+
+
+'STORED IN THE BODY' (Aquela const de 'body = []' )....
+
+
+
+
+
+
+
+-------> BEM, PARA 
+
+
+
+INTERAGIR COM ISSO, COM ESSES CHUNKS,
+
+
+
+NÓS ___ AGORA __ PRECISAMOS 
+
+
+'BUFFER THEM'... -------> DEVEMOS NOS LEMBRAR 
+
+
+DAQUELE 
+
+
+CONCEITO 
+
+DA 
+
+'BUS STOP'.... --------> NÓS TEMOS TODOS 
+
+ESSES 
+
+
+
+
+'CHUNKS' ,
+
+
+CHUNKS QUE DEVEMOS TRANSFORMAR PARA 
+
+SERMOS CAPAZES 
+
+
+DE 
+
+TRABALHAR COM ELES... ------->
+
+
+
+
+TUDO PARA QUE SEJA POSSÍVEL 
+
+
+'HAVE ONE PLACE WHERE THE BUS STOPS, SO THAT 
+
+WE CAN INTERACT WITH IT'....
+
+
+
+
+
+
+----> É POR ISSO QUE AQUI O PROFESSOR 
+
+VAI CRIAR UMA NOVA CONSTANT,
+ 
+
+ DE NOME 
+
+ 'parsedBody',
+
+
+
+
+
+
+ ex:
+
+
+
+
+ const parsedBody 
+
+
+
+
+
+
+
+
+
+ E AÍ, 
+
+ DENTRO DESSA CONSTANTE,
+
+
+ O PROFESSOR 
+
+ VAI 
+ USAR 
+
+ O 
+
+ OBJETO 
+
+ 'Buffer' (Que realmente existe...)
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+       if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; 
+                req.on('data', (chunk) => {     
+                                console.log(chunk); 
+                            body.push(chunk); 
+                }); 
+
+                req.on('end', () => {
+
+                    const parsedBody = Buffer           ///EIS O CÓDIGO EM QUESTÃO.
+                }); 
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+----------------------------
+
+
+
+
+BUFFER, BTW,
+
+
+É UM OBJETO 
+
+
+
+
+DISPONÍVEL GLOBALMENTE,
+
+
+
+
+
+DISPONIBILIZADO PELO NODEJS...  ----> E AÍ,
+
+
+
+
+
+O PROFESSOR NOS EXPLICA QUE ELE PODE USR 
+
+
+'concat'
+
+PARA __ CONCATENAR __ 
+
+
+O 
+
+
+'body',
+
+QUE É JUSTAMENTE 
+
+
+AQUELE 
+
+
+
+
+ARRAY  que '''está com os chunks'' (pq os chunks NÃO APARECEM NORMALMENTE NO CONSOLE.LOG, POR ALGUMA RAZÃO)...
+
+
+
+
+
+OK, O CÓDIGO FICA ASSIM:
+
+
+
+
+
+       if (url === '/message' && req.method === 'POST') {
+
+
+
+                const body = []; 
+                req.on('data', (chunk) => {     
+                                console.log(chunk); 
+                            body.push(chunk); 
+                }); 
+
+                req.on('end', () => {
+
+                    const parsedBody = Buffer.concat(body); ///EIS O CÓDIGO EM QUESTÃO.
+                }); 
+                fs.writeFileSync('message.txt', 'DUMMY'); 
+                res.writeHead(302, 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+
+
+---------------------------- 
+
+
+
+
+
+
+ISSO VAI:
+
+
+
+
+__ NO FINAL DAS CONTAS,
+
+
+'CREATE A NEW BUFFER' 
+
+E ENTÃO 
+VAI 
+
+'ADD ALL THE CHUNKS FROM INSIDE MY BODY TO IT'...
+
+
+
+
+
+
+
+
+
+--> PARSEDBODY,
+PORTANTO,
+
+
+AGORA SERÁ UM 'BUFFER'....
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+nosso código havia ficado:
+
+
+
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+
+
+        const body = [];
+
+        req.on('data', 
+        
+                (chunk) => {
+                        console.log(chunk);
+                        body.push(chunk);
+                }
+        )
+        req.on('end', 
+        
+        () => {
+                const parsedBody = Buffer.concat(body);
+        }
+        )
+}
+
+
+
+
+
+---------------------------------
+
+
+
+OK.... ESSE 
+
+
+
+'parsedBody'
+
+
+
+
+SERÁ __ UM __ ''''BUFFER'''' ------->
+
+
+
+BUFFERS PRECISAM SER __ CONVERTIDOS ___ 
+
+PARA 
+
+SEREM 
+
+USADOS 
+
+COMO DATA...
+
+
+
+
+
+
+--> e podem ser convertidos EM DIVERSOS FORMATOS.... ------>
+
+
+
+
+no nosso caso,
+
+professor 
+
+
+vai 
+
+usar 
+
+'toString()'
+
+
+PARA 
+
+___ O CONVERTER__ EM UMA STRING....____
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+
+
+        const body = [];
+
+        req.on('data', 
+        
+                (chunk) => {
+                        console.log(chunk);
+                        body.push(chunk);
+                }
+        )
+        req.on('end', 
+        
+        () => {
+                const parsedBody = Buffer.concat(body).toString(); /////EIS O CÓDIGO EM QUESTÃO.
+        }
+        )
+}
+
+
+----------------------------------
+
+
+
+
+OK..........
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+
+
+
+
+'toString()'
+
+
+
+
+é UM
+
+
+
+
+__UTILITY METHOD__ DO NODEJS 
+
+
+
+EM QUE 
+
+
+
+'WE DO SOMETHING TO OUR BUFFERED CHUNKS'... ------>
+
+
+
+
+
+
+
+BUFFER --> É O NOSSO 'BUS STOP'... ----> E AGORA,
+
+
+FAZEMOS 
+
+UMA 
+
+COISA 
+
+
+
+
+COM ESSE 'STOPPED BUS',
+
+
+nós 
+
+
+O CONVERTEMOS EM UMA STRING... --------> 
+
+
+
+
+E __ ISSO AQUI__, ESSE 'CONVERT EM UMA STRING'__ 
+
+
+SÓ ___ FUNCIONA__ _ PQ 
+
+O 
+
+PROFESSOR ______ SABE________ QUE 
+
+
+A 
+
+'INCOMING DATA'
+
+
+SERÁ 
+
+
+UM 'TEXT',
+
+
+
+
+
+justamente pq o BODY DAQUELE REQUEST 
+
+__SERÁ __ 100% TEXT...
+
+
+
+
+
+
+
+------> SE O BODY FOSSE UM __ ARQUIVO___, TERÍAMOS DE FAZER ALGO DIFERENTE,
+
+TERÍAMOS DE RODAR UMA OPERAÇÃO DIFERENTE,
+
+
+
+mas como 
+
+NÃO É UM ARQUIVO, POSSO FAZER ISSO (e eu sei que não é um ARQUIVO, que é TEXTO, pq sou EU QUE ESTOU ESCREVENDO O CÓDIGO....)
+
+
+
+
+
+
+
+
+------> OK.... --> ESSE É O 'PARSED BODY'... ----> 
+
+
+
+
+E, FINALMENTE,
+
+
+
+
+
+COM ESSE 'PARSEDBODY'
+
+
+PODEREMOS TRABALHAR;
+
+
+É 
+
+COM 
+
+ESSE 
+
+'PARSEDBODY'
+
+
+
+que vamos trabalhar... ---> VAMOS USAR ESSE 
+'PARSED BODY'
+
+
+
+PARA 
+
+
+___'WRITÁ-LO'
+
+
+NO NOSSO 
+
+ARQUIVO 
+
+'message.txt'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+
+
+        const body = [];
+
+        req.on('data', 
+        
+                (chunk) => {
+                        console.log(chunk);
+                        body.push(chunk);
+                }
+        )
+        req.on('end', 
+        
+        () => {
+                const parsedBody = Buffer.concat(body).toString(); /////EIS O CÓDIGO EM QUESTÃO.
+                console.log(parsedBody);
+        }
+        );
+        fs.writeFileSync('message.txt', parsedBody); ////EIS O CÓDIGO EM QUESTÃO.
+        res.statusCode = 302;
+        res.setHeader('Location', '/');
+        return res.end();
+}
+
+
+
+
+------------------------------
+
+
+
+OK... MAS O PROBLEMA É QUE 
+
+
+ISSO __ NÃO VAI FUNCIONAR__------> não vai funcionar 
+
+
+pq 
+
+
+
+'parsedBody'
+
+NÃO CONSEGUE SAIR DAQUELE 'req.on()'
+
+ 
+
+
+ ----> precisamos usar 
+
+ esse 
+
+ 'parsedBody' 
+
+
+ no nosso 
+
+
+ 'writeFileSync'...
+
+
+
+
+
+
+
+ OK.. MAS POR OUTRO LADO, AQUELE CONSOLE.LOG NOS RENDEU:
+
+
+
+
+
+
+
+ message=kjoo
+
+
+
+
+
+
+
+ ----> OK, VIMOS 'message=kjoo'... ---> E É __CLARO QUE VAMOS QUERER 'WRITE' APENAS 
+
+ O 
+
+ 'kjoo'... ------> 
+
+
+
+ PROFESSOR 
+
+
+ NOS EXPLICA QUE 
+
+
+
+
+ RECEBEMOS 
+
+
+
+ 'message=kjoo'
+
+
+
+
+ JUSTAMENTE 
+
+ POR CONTA DISTO:
+
+
+
+
+            res.write('<input type="text" name="message"></input>');
+
+
+
+
+
+
+
+
+----> COMO VOCÊ PODE PERCEBER,
+
+NÓS NOMEAMOS (name)
+
+
+
+ESSE INPUT COMO 
+
+'message',
+
+
+
+E O ELEMENTO '<form>'
+
+VAI AUTOMATICAMENTE 
+
+
+'SEND A REQUEST',
+
+
+
+em que 
+
+
+ELE VAI 'TAKE ALL INPUT DATA'
+
+
+E ENTÃO VAI COLOCAR 
+
+
+ESSA 
+
+
+
+DATA __ DENTRO DO REQUEST BODY,
+
+
+
+
+dentro dele, na forma de KEY-VALUE PAIRS (sendo cada key o 'NAME' 
+
+que você colocou em um input... e os 'values' serão A COISA QUE O USER INPUTTOU...
+)
+
+
+
+
+
+
+----------> ou seja:
+
+
+
+
+
+            res.write('<input type="text" name="banana"></input>');
+
+
+
+ficaria 
+
+
+
+
+'banana=ssdadasasjiasjxi',
+
+
+
+
+lá naquele console.log de 'parsedBody'...
+
+
+
+
+
+---> OK.. MAS PRECISAMOS RODAR ALGUNS MÉTODOS 
+
+JS 
+
+PARA 
+
+SPLITTAR ESSE NEGÓCIO, FICAR SÓ COM O 'value'...
+
+
+
+
+--> para isso,
+
+provavelmente vai ficar assim:
+
+
+
+
+const parsedBody = Buffer.concat(body).toString().split('=')[1];
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+ISSO VAI SPLITTAR E SELECIONAR O ELEMENTO DE INDEXADOR 1...
+
+
+
+
+
+
+
+
+-----------> VAMOS ARMAZENAR O INPUT NO NOSSO FILE... ---> para 
+
+isso,
+
+VAMOS 
+
+CRIAR UMA NOVA CONST,
+
+
+
+
+
+E AÍ RODAR EXATAMENTE O QUE EU RODEI....
+
+
+ex:
+
+
+
+
+const parsedBody = Buffer.concat(body).toString();
+
+
+const message = parsedBody.split('=')[1];
+
+
+
+
+----------------------------------------------
+
+
+
+
+OK..... ----> E ____PARA __ CONSEGUIR FAZER 'WRITE' DO NOSSO 
+
+ARQUIVO,
+
+
+O QUE 
+
+O PROFESSOR 
+
+VAI 
+
+FAZER 
+
+É 
+
+MOVER AQUELA 
+
+
+LINHA 
+
+DE 
+
+
+'fs.writeFileSync('message.txt', message)' 
+
+
+
+
+__PARA DENTRO DA FUNÇÃO INTERNA-PARÂMETRO 
+
+
+DE 
+
+'req.on('end')...
+
+
+
+
+
+
+
+
+
+
+
+FICA ASSIM(antes):
+
+
+
+
+
+
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+
+
+        const body = [];
+
+        req.on('data', 
+        
+                (chunk) => {
+                        console.log(chunk);
+                        body.push(chunk);
+                }
+        )
+        req.on('end', 
+        
+        () => {
+                const parsedBody = Buffer.concat(body).toString(); 
+                const message = parsedBody.split('=')[1];  /////EIS O CÓDIGO EM QUESTÃO.
+        }
+        );
+        fs.writeFileSync('message.txt', message); ////EIS O CÓDIGO EM QUESTÃO.
+        res.statusCode = 302;
+        res.setHeader('Location', '/');
+        return res.end();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+DEPOIS:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if (url === '/message' && method === 'POST') {
+
+
+
+        const body = [];
+
+        req.on('data', 
+        
+                (chunk) => {
+                        console.log(chunk);
+                        body.push(chunk);
+                }
+        )
+        req.on('end', 
+        
+        () => {
+                const parsedBody = Buffer.concat(body).toString(); 
+                const message = parsedBody.split('=')[1];  /////EIS O CÓDIGO EM QUESTÃO.
+                       fs.writeFileSync('message.txt', message); ////EIS O CÓDIGO EM QUESTÃO.
+        }
+        );
+                        //removido o 'writeFileSync()' QUE estava aqui; foi colocado dentro do 'req.on('end')'...
+        res.statusCode = 302;
+        res.setHeader('Location', '/');
+        return res.end();
+}

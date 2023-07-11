@@ -1,0 +1,1510 @@
+
+
+
+
+
+
+PARA IMPLEMENTAR 1 SESSION,
+
+
+PROFESSOR 
+
+DIZ QUE 
+
+DEVEMOS 
+
+USAR 
+
+
+1 
+TPP (third party package)...
+
+
+
+
+
+
+
+
+
+
+
+
+------> VAMOS PRECISAR DE OUTRO TPP...
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS PRECISAR DE 
+
+
+1 
+
+PACKAGE PARA 
+
+O 
+
+'MANAGE DE SESSIONS'...
+
+
+
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+
+
+VAMOS INSTALAR 
+
+
+O
+ PACKAGE DE 
+
+
+ '
+ express-session',
+
+
+
+
+ POR MEIO 
+
+ DO 
+
+ CÓDIGO 
+
+
+
+
+ 'npm install --save express-session'..
+
+
+
+
+
+
+
+------> PROFESSOR EXPLICA QUE 
+
+
+
+'express-session' É ACTUALLY _ UMA PACKAGE__ QUE 
+
+
+É 
+
+
+'PART OF THE OFFICIAL EXPRESSJS SUITE',
+
+
+
+MAS 
+
+
+que por ALGUMA BIZARRA RAZÃO 
+
+
+__NÃO É 'BAKED INTO' 
+
+
+
+o express em si....
+
+
+
+
+
+
+
+
+
+
+
+
+-> OK... INSTALAMOS 
+
+com 
+
+
+
+ 'npm install --save express-session'..
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK........ INSTALAMOS ESSE NEGÓCIO...
+
+
+
+
+
+
+
+
+--> ESTAMOS PRONTOS PARA O UTILIZAR....
+
+
+
+
+
+
+
+--> PARA O UTILIZAR,
+
+VAMOS ATÉ 
+
+__ O 
+
+'APP.JS',
+
+
+PQ 
+
+VAMOS QUERER 
+
+
+
+
+
+
+___INICIALIZAR ESSA/__NOSSA __ SESSION __ 
+
+
+
+BEM 
+
+
+
+CEDO NA EXECUÇÃO 
+
+
+DE 
+
+
+NOSSO APP, 
+
+NO SEU RUNTIME....
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+--> VAMOS QUERER 
+
+
+
+__INICIALIZAR ESSA SESSION __ BEM NO MOMENTO EM QUE 
+
+INICIALIZAMOS NOSSO SERVER.... --> nesse momento,
+
+
+VAMOS QUERER 
+
+
+
+
+
+INICIALIZAR __ PELO MENOS, NO MÍNIMO,
+
+
+
+
+O __ MIDDLEWARE DE 
+
+'session',
+
+
+
+
+
+
+
+TUDO ISSO PARA QUE ENTÃO 
+
+
+A 'SESSION' POSSA SER USADA 
+
+
+___ EM TODO E QUALQUER INCOMING REQUEST que 
+
+chega ao nosso 
+
+
+
+app node....
+
+
+
+
+
+
+
+
+
+---------> É POR ISSO 
+
+
+
+QUE 
+
+
+O PROFESSOR 
+
+
+
+
+
+
+VAI QUERER __ CRIAR UMA CONSTANT 
+
+
+bem 
+
+
+no início de 
+
+'app.js',
+
+
+
+
+
+
+
+
+
+ELE BASICAMENTE VAI QUERER IMPORTAR 1 NEGÓCIO...
+
+
+
+
+
+
+
+
+
+--> vai escrever assim:
+
+
+
+
+
+
+
+
+
+
+const session = require('...');'
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+--> AÍ ELE VAI REQUIRE o 
+
+'express-session'....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const session = require('express-session');'
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+const session = require('express-session'); //// instalado/incorporado ao nosso project por meio de 'npm install --save express-session'...  ------> ESSA PACKAGE VAI NOS DEIXAR 'SETTAR 1 SESSION' PARA O NOSSO APP, session QUE __ SERÁ INCORPORADA/CONSIDERADA/USADA __ EM TODO __  REQUEST SUBSEQUENTE QUE FIZERMOS AO NOSSO app node....
+
+
+
+
+
+
+
+
+
+
+
+---------> 
+
+
+
+
+OK... O CÓDIGO COMPLETO FICOU ASSIm:
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+
+
+
+
+const mongoose = require('mongoose'); // isto DEPRECA o arquivo 'database.js', pois faz toda sua função/atribuições AUTOMATICAMENTE (conecta-nos à database NOSQL/mongodb...)....
+
+
+const session = require('express-session'); //// instalado/incorporado ao nosso project por meio de 'npm install --save express-session'...  ------> ESSA PACKAGE VAI NOS DEIXAR 'SETTAR 1 SESSION' PARA O NOSSO APP, session QUE __ SERÁ INCORPORADA/CONSIDERADA/USADA __ EM TODO __  REQUEST SUBSEQUENTE QUE FIZERMOS AO NOSSO app node....
+
+
+// const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const authRoutes = require('./routes/auth');
+
+
+
+
+
+
+
+
+const errorController = require('./controllers/error');
+
+
+// const MongoClient = require('mongodb'); ////USO DE DATABASES NOSQL.... --> forma ERRADA de usar isso... ver código logo abaixo, e arquivo 'database.js', no folder 'util'...
+
+
+
+////DEPRECADO PELO USO DE 'mongoose', que foi importado logo acima, com 'const mongoose = require('mongoose');'...
+// const mongoConnect = require('./util/database').mongoConnect; ///use isto em conjunto com 'getDb()' (EXECUTE O 'mongoConnect' para CONECTAR SEU APP AO MONGODB; mongoConnect é uma função auxiliar criada lá em 'database.js'... 'getDb()' TAMBÉM É UMA FUNÇÃO AUXILIAR CRIADA LÁ EM 'database.js', MAS É UMA FUNÇÃO QUE DEVERÁ SER CHAAMDA NOS MÓDULOS DE SEU APP NODEJS, para executar OPERAÇÕES COM A DATABASE a partir do '_db' que ficou defined/undefined em razão da EXECUÇÃO dessa função 'mongoConnect'...)
+      //importe sempre 'mongoConnect' no seu 'app.js', e nunca 'getDb()'; o 'getDb()' é para ser usado NOS SEUS MÓDULOS, NOS SEUS CONTROLLERS, etc...s
+
+// const sequelize = require('./util/database');  //uso de databases SQL...
+
+// const Product = require('./models/product'); //uso de databases SQL
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const OrderItem = require('./models/order-item');
+// const Order = require('./models/order');
+
+const User = require('./models/user');
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// app.use((req, res, next) => { //esta é a versão 'NORMAL MONGODB DRIVER' de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+//   User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+//     .then((user) => {
+//    ////////////  req.user = user; //////////CÓDIGO VELHO, SEM OS METHODS necessários...
+//    req.user = new User(user.name, user.email, user.cart, user._id); ///////////CÓDIGO NOVO, COM OS METHODS NECESSÁRIOS...
+//       next();
+//       // console.log(req.user, 'TEST3');
+   
+   
+//     })
+
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+//   // next();
+//     // console.log('TEST2');
+// });
+
+
+
+
+app.use((req, res, next) => { //esta é a versão MONGOOSE de CHECK por 1 user na nossa database.....  agora, no caso, estamos usando a versão DO MONGOOSE DE ESCRITA DE CÓDIGO SQL/queries NOSQL (ver código de 'mongoose.connect()', lá no FINAL DESTE ARQUIVO).
+  User.findById('6178c60a90464c24983b0847') ///dummy user...
+    .then((user) => {
+       
+      req.user = user; ////com isso, DEFINIMOS UM OBJETO 'user' no nosso request COMO TENDO O VALOR DO OBJETO/DOCUMENT 'user' ''''MONGOOSADO''' (ou seja, com TODOS OS METHODS CONVENIENCE DO MONGOOSE, ALÉM DA DATA DO USER QUE QUERÍAMOS), extraído lá da collection de 'users'...
+      next();
+
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Product.belongsTo( //uso de databases SQL
+//   User,
+
+//   {
+//     constraints: true,
+//     onDelete: 'CASCADE',
+//   }
+// );
+// User.hasMany(Product);
+
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+
+// User.hasMany(Order);
+// Order.belongsTo(User);
+
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
+
+app.use((req, res, next) => {
+  // console.log(req.user, 'LINE666666'); 
+                              next();});
+
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.use(errorController.error404);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// sequelize //uso de databases SQL
+//   .sync()
+//   .then((result) => {
+//     return User.findByPk(1);
+//   })
+//   .then((user) => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+
+//     return user;
+//   })
+//   .then((user) => {
+//     return user.createCart();
+//   })
+//   .then((cart) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+
+
+
+
+// mongoConnect(   ///uso de databases NOSQL....
+
+////versão de connect to databse que VOCÊ NÃO DEVE USAR....
+
+
+//   (client) => { //callback function.... examinar arquivo de 'database.js', no folder 'util'...
+
+//     console.log(client);
+//     app.listen(3000);
+//   }
+
+// ); 
+
+
+
+// mongoConnect(   ////deprecado pelo uso de 'mongoose.connect()', que É A MESMA COISA QUE ESTE CÓDIGO, MAS COM A ATUAÇÃO DE 'MONGOOSE' NO WRITE DE NOSSAS QUERIES (é ele que vai formular nossas queries, a partir de uma linguagem 'object Document mapping' ...)
+//   () => { 
+
+
+
+
+//     app.listen(3000);
+
+//   }
+
+// ); 
+
+
+
+mongoose.connect( ///sempre ESCREVA ESSE CÓDIGO no seu 'app.js'/arquivo central, pq É ELE __ QUE __ VAI SETTAR SUA CONEXÃO À DATABASE MONGODB, mediada pelo mongoose...
+  ('mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority')
+)
+.then(
+  (result) => {
+
+
+
+    User.findOne().then(
+      (user) => {
+
+          if(!user) { ///só vai criar 1 novo document 'user' na nossa collection 'users' __ SE NENHUM USER FOR ENCONTRADO DENTRO DELA... (isso evita a criação de múltiplos users, nesse nosso DUMMY PROJECT)...
+            const user = new User(
+              {  //CRIA UM OBJETO/document 'user' na collection de 'users' com ESSES VALORES NOS FIELDS...
+                name: 'Max',
+                email: 'max@test.com',
+                cart: {
+                  products: []
+                }
+              }
+            )
+            user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+          }
+
+    app.listen(3000); ////sempre execute isso, que inicia nosso backend NODE, DEPOIS das connections/manipulações com a database, manipulações que envolvam o USER...
+      }
+    )
+  } 
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+OK...
+
+
+
+
+
+
+
+
+
+-_> isso feito,
+
+
+
+
+
+
+
+TEREMOS ESSA PACKAGE QUE RECÉM INSTALLAMOS....
+
+
+
+
+
+
+
+
+--> COM ISSO INSTALADO,
+
+
+
+
+PROFESSOR DIZ QUE PODEMOS SETTAR ESSE CÓDIGO LOGO ALI EMBAIXO,
+
+
+
+
+abaixo 
+
+de 
+
+
+'
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+''
+
+
+
+
+
+-----> OK... VAMOS ESCREVER 
+
+
+NOSSO CÓDIGO DEFINIDOR/ESTABELECEDOR DE 
+
+
+
+UMA 'SESSION' logo abaixo 
+
+dessas 2 linhas...
+
+
+
+
+
+
+
+--> FAREMOS ISSO POR MEIO DO REGISTER 
+
+DE 
+
+
+
+OUTRO 
+
+
+__MIDDLEWARE, com 'app.use()'...
+
+
+
+
+
+
+
+
+
+
+
+------> PROFESSOR 
+
+
+ESCREVe 
+
+
+
+
+'app.use(
+    session()
+)' 
+
+
+
+
+
+
+
+
+
+--> OU SEJA, VAMOS PASSAR 'session' (essa const aí )
+
+
+
+
+COMO PARÂMETRO,
+
+
+
+E AÍ VAMOS __ 
+ 
+
+
+ a EXECUTAR.... (parênteses...)
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+const sessions = require('sessions');
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+app.use(sessions()); ////////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+OK... COMO PARÂMETRO DE 
+
+'session()',
+
+
+vamos __ passar 
+
+
+1 OBJETO JAVASCRIPT,
+
+
+OBJETO EM QUE 
+
+
+
+
+
+CONFIGURAREMOS O SETUP DE NOSSA 'SESSION'... -----> POR EXEMPLO,
+
+
+ 
+
+
+
+
+
+
+
+ VAMOS/PODEMOS DEFINIR 
+
+
+ A 
+
+ IMPORTANTE 
+ KEY 
+
+ de 
+
+ 'secret'...
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ 
+const sessions = require('sessions');
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+app.use(sessions(
+    {
+    secret: '' ////////EIS O CÓDIGO EM QUESTÃO.
+} 
+
+)); 
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+PROFESSOR EXPLICA QUE ESSE 'SECRET'
+
+
+
+SERÁ __ UTILIZADO PARA 'SIGNING THE HASH',
+
+
+PROCESSO QUE VAI 
+
+
+
+
+
+ARMAZENAR SECRETAMENTE NOSSO ID NO COOKIE....
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+-> PROFESSOR EXPLICA QUE __ DENTRO __ DE 'secret'
+
+NÓS __ PODEMOS/DEVEMOS _eSCREVER QUALQUER COISA... ------> TIPICAMENTE,
+
+O QUE 
+DEVE SER INPUTTADO 
+AQUI 
+
+
+
+SÃO _ LONGAS STRINGS... ------> O PROFESSOR 
+
+
+
+
+VAI NOMEAR APENAS 
+
+'my secret',
+
+MAS É 
+
+ÓBVIO QUE 
+
+NO MODO 
+
+DE 
+
+'production'
+
+
+
+O 
+
+
+
+__ VALOR DESSE NEGÓCIO DEVERÁ __ SER UMA LOOOONGA STRING....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const sessions = require('sessions');
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+app.use(sessions(
+    {
+    secret: 'my secret' ////////EIS O CÓDIGO EM QUESTÃO.
+} 
+
+)); 
+
+
+
+
+
+
+
+
+
+OU:
+
+
+
+
+
+
+
+const sessions = require('sessions');
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
+app.use(sessions(
+    {
+    secret: 'asihasoihsoaighih21912u9021u90gas90hasg90ha90gh1092h2t901h90ghd90sgh901ht190h290h19fmsapdkxzpcnxlzvnlkb2190' ////////EIS O CÓDIGO EM QUESTÃO.
+} 
+
+)); 
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+OK... ACHO QUE ESTOU ENTENDENDo...
+
+
+
+
+
+
+
+
+------> OK ..... EM PRODUCTION ISSO DEVERÁ 
+
+
+
+SER UMA STRING BEEEM LONGA...
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+--> OK... AÍ TEMOS A 
+
+
+
+
+KEY de 
+
+'resave',
+
+
+
+
+QUE DEVE ___SER SETTADA COMO 
+
+'false'...
+
+
+
+
+
+
+
+-----> OK, MAS O QUE ISSO FAZ? -------> ISSO  FAZ COM QUE 
+
+
+
+
+________A SESSION NÃO SEJA 
+
+'SAVED' 
+
+
+
+quando cada request fica 'DONE' (ou seja,
+
+
+
+faz com que a session NÃO SEJA __SALVADA_ A CADA 
+
+
+RESPONSE QUE É ENVIADA 
+
+PELO SERVIDOR... pq é isso que termina 
+
+os 
+
+requests, o send efetivo de uma 'response'... 
+
+
+) ----->  ISSO FARÁ,
+
+
+
+EM OUTRAS PALAVRAS,
+
+
+
+
+COM _ QUE __ 
+
+
+
+
+
+
+
+AS SESSIONS/SUA SESSION ___ APENAS__ SEJA 
+
+
+'SAVED'
+
+
+
+__SE ALGO FOR ALTERADA 
+
+
+nela;
+
+
+por outro lado,
+
+evita que 
+
+a session
+
+SEJA 
+
+SALVA 
+
+
+'A CADA REQUEST TERMINADO/cuja response é recebida' 
+
+
+(
+
+    ISSO, OBVIAMENTE, 
+
+
+    RESULTA EM UM __ AUMENTO DE PERFORMANCE CONSIDERÁVEL,
+
+    pq 
+
+    o 
+
+    SERVER N VAI TER QUE SALVAR 
+
+
+
+AS SESSION __ TODA VEZ QUE 1 REQUEST TERMINA O 'REQUEST CYCLE' de req-res....
+)
+
+
+
+
+
+
+
+-----> ok....
+
+
+
+
+
+ALÉM DISSO,
+
+
+TEMOS 
+
+
+A PROPRIEDADE 
+
+DE 
+
+'saveUnitializedValue',
+
+
+
+
+QUE ___ VOCÊ __ DEVE 
+
+
+
+SETTAR __ COMO 
+
+'FALSE'
+
+
+
+
+PQ __ ISSO VAI __ BASICAMENTE ___
+
+
+
+
+___GARANTIR__, também,  QUE 
+
+
+NENHUMA 
+SESSION 
+
+ACABE 
+
+
+'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ 
+
+
+
+__-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request,
+
+o 
+
+
+que afastaria a necessidade de 'save' dessa session para salvar as changes...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+CERTO... E ERA ISSO,
+
+ESSAS 
+
+
+ERAM 
+
+
+AS 
+
+'CORE THINGS' 
+que você 
+
+
+PRECISA settar...
+
+
+
+
+VOCê TBM 
+
+
+
+PODERIA __
+CONFIGURAR _ 
+
+
+O 
+
+
+
+'SESSION COOKIE' 
+
+
+em si... -------> 
+
+
+
+
+VOCÊ PODE DEFINIR COISAS ESPECÍFICAS 
+
+
+DELE,
+
+
+
+com 
+
+
+
+uma 
+
+
+'MaxAge',
+
+
+
+
+OU ENTÃO 
+
+
+
+
+
+
+
+DEFINIR UMA KEY DE 
+
+'Expires:'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+app.use(session( ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node...
+  {
+    secret: 'my secret', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+
+  
+    resave: false,//////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+    saveUnitialized: false ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+  
+  
+  cookie: {
+      MaxAge: ...,  /////EIS O CÓDIGO EM QUESTÃO.
+    Expires: ...
+  }
+  
+  }
+)); 
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR EXPLICA QUE PODERÍAMOS CONFIGURAR ESSE COOKKIE,
+
+
+SIM,
+
+
+
+
+MAS QUE __tBM PODEMOS USAR AS 'DEFAULT SETTINGS'...
+
+
+
+
+
+
+
+--> OK... MAS O QUE INTERESSA, AGORA, É QUE O MIDDLEWARE 
+
+
+CRIADOR/INSTAURADOR 
+
+DE 
+
+
+
+1 session no nosso APP (app.js) 
+
+
+
+__FOI INITIALIZED,
+
+
+e que 
+
+agora ESTAMOS PRONTOS PARA A UTILIZAR....
+
+
+
+
+
+
+
+
+--> VAMOS COMEÇAR A USAR A 'SESSION'
+
+
+NA NOSSA PRÓXIMA AULA...
+
+
+
+
+
+
+
+--> 

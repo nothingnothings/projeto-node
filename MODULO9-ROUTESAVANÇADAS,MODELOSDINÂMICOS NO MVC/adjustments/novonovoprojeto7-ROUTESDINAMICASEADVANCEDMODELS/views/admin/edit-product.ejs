@@ -1,0 +1,55 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+  <% if (editing) { %>
+  <h1 class="centered">Edit Selected Product</h1>
+    <form action="/admin/edit-product/<%= prod.id %>" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="imageUrl" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+    <% } else {%>
+        <h1 class="centered">Add a New Product</h1>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="image" id="titleUrl"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description"></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+        <%  } %>
+</main>
+
+<%- include('../includes/end.ejs'); %>

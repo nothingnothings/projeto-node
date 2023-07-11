@@ -1,0 +1,711 @@
+https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA TRABALHARMOS COM O SQL,
+
+
+
+
+
+
+PRECISAMOS 
+
+DE UMA 
+
+
+'SQL BASED DATABASe'... -----> VAMOS USAR 
+
+
+
+O 
+
+
+'MySQL' 
+
+
+PQ PODEMOS INSTALAR __ E O UTILIZAR __ DE GRAÇA...
+
+
+
+
+
+
+
+
+
+(pelo menos na versão BÁSICA)...
+
+
+
+
+
+
+
+
+
+--> OK... BAIXAMOS E INSTALAMOS O MYSQl....
+
+
+
+--> O COMMUNITY EDITION...
+
+
+
+
+
+
+
+
+--> VAMOS PRECISAR DO 
+
+
+
+'MYSQL COMMUNITY SERVER',
+
+e do 
+
+
+
+'MySQL WORKBENCH'....
+
+
+
+
+
+
+
+
+-------> PROFESSOR DIZ QUE PODERÍAMOS USAR O 'COMBINED INSTALLER',
+
+
+
+
+
+
+
+
+
+
+mas ele prefere esses pacotes individuais...
+
+
+
+
+
+
+
+
+
+
+----->  INSTALLATION INSTRUCTIONS.. --> para caso de problemas com 
+
+seu operating system...
+
+
+
+
+
+
+
+-------------
+
+
+
+
+
+
+
+
+
+
+----> ok... NÃO PRECISAMOS FAZER LOGIN...
+
+
+
+
+
+
+
+
+
+
+-->  ACABADO O DOWNLOAD, EXECUTAMOS O INSTALLER.....
+
+
+
+CUSTOMIZAR INSTALLATION... --
+> 
+
+
+SELECIONE
+
+
+
+
+MYSQL SERVER,
+
+
+
+
+deixe de lado o 'mySQL test'....
+
+
+
+
+(ISSO LÁ NO 
+'PRODUCT CONFIGURATION'..)
+
+
+ESCOLHA A OPÇÃO 'LEGACY PASSWORD',
+
+
+PQ 
+
+É 
+
+ESSA QUE É SUPORTADA
+ 
+
+
+ PELA 
+
+ PACKAGE 
+
+ QUE INSTALAREMOS LOGO LOGO... (a outra opção NÃO É SUPORTADA AINDA....)
+
+
+
+
+
+
+
+
+
+
+ LEGACY PASSWORD --> SOA INSEGURO,
+
+
+ mas 
+
+ é super seguro...
+
+
+
+
+
+
+
+
+
+
+ VAMOS PRECISAR DE UM PASSWORD 
+
+ PARA 
+
+
+
+ O NOSSO ROOT USER,
+
+
+
+
+K4tsuhir00ht0m0
+
+
+
+
+ --> COMECE O MYSQL 
+
+ server quando o install acabar.. 
+
+
+
+
+
+
+
+
+ --> QUANDO ISSO ACABAR, O PROGRAMA VAI INICIAR UM SV 
+
+
+
+
+
+ 'SQL'
+
+
+
+ COM O SETUP QUE 
+
+
+
+ ESCOLHEMOS nas configuration steps....
+
+
+
+
+
+
+
+ --------> SE VOCÊ INSTALOU O WORKBENCH, VOCÊ ESTÁ 'DONE'...
+
+
+
+
+
+
+ WORKBENCH É UM VISUAL CLIENT QUE PODEMOS USAR PARA __ CONECTAR__ ___ COM A NOSSA DATABSE,
+
+
+ PARA INSPECIONAR ESSA DATABASE __FORA DO NOSSO NODE APP,
+ o que 
+
+
+ FAZ O DEBUGGING 
+
+
+
+ __ E DEVELOPMENT UM POUCO MAIS FÁCIL (dev dessa DATABASE NOSQL....)
+
+
+
+
+
+
+
+
+
+
+ --> CERTO... ---> INSTALE A WORKBENCH DO SQL...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK.. abri o workbench.....
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> PODEMOS TESTAR NOSSO SETUP POR MEIO 
+
+ DO START DO WORKBENCH..
+
+
+
+
+
+
+
+ AÍ, NESSE MYSQL WORKBENCH,
+
+
+ já seremos capazes de ver nossa INSTÂNCIA 
+
+
+ 'mySQL'
+  
+
+
+  rodando 
+
+
+
+  ali...
+
+
+
+  'Local Instance MySQL 80'....
+
+
+
+
+
+
+  -----> OK.... ISSO ESTÁ FUNCIONANDO... localhost:3306...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  A PORTA É localhost:3306....
+
+
+
+
+
+
+
+
+
+
+  ---------> DURANTE A INSTALAÇÃO, RECEBEMOS UM PROMPT DE 
+
+  'sempre executar 
+
+
+  o mySQL SERVER DURANTE O STARTUP'...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> PARA CONECTAR __ SEU COMPUTADOR __ 
+
+
+  À DATABASE 
+
+
+  'SQL',
+
+  VOCÊ 
+
+  DEVE SIMPLESMENTE 
+
+
+
+  CLICAR NAQUELA INSTANCE 
+
+
+
+  DO 
+
+  SQL (o quadrado em que há 'localhost:3306')
+
+
+  E ENTÃO 
+
+
+
+
+  COLOCAR AQUELE PASSWORD 
+
+
+  que vocÊ definiu..
+
+  katsuhiro...
+
+
+
+
+
+
+
+
+
+
+  --> CERTO.... ISSO ABRIU UMA 
+
+  JANELA 
+
+
+
+
+
+  que parece do word.. 
+
+
+
+
+
+
+  -> ESSA É A SQL INSTANCE...
+
+
+
+
+
+
+
+  --> AGORA ESTAMOS CONECTADOS 
+
+
+  AO NOSSO 'DATABASE SYSTEM'... --> TEREMOS UMA 
+
+
+  JANELA VAZIA...
+
+
+
+
+
+
+
+
+
+  --> PROFESSOR EXPLICA QUE NÃO VAMOS MEXER MUITO NESSE ARQUIVO/SISTEMA DA DATABASE EM BRANCO....
+
+
+
+
+
+
+
+
+  --> EM VEZ DISSO,
+
+
+
+  VAMOS 
+
+  TRABALHAR COM NOSSA DATABASE __ DENTRO DO NOSSO __ APLICATIVO NODE....
+
+
+
+
+
+
+
+
+  ----> MAS ESSE WORKBENCH/ferramenta DE VISUALIZAÇÃO DO SISTEMA DA DATABASE 
+
+
+  vai nos 
+
+
+  DEIXAR 
+
+
+  'CONVENIENTLY LOOK INTO OUR DATABASe'
+
+
+
+  de tempos em tempos,
+
+
+
+  PARA VER O QUE __ FICA/FICARÁ ARMAZENADO LÁ..
+
+
+
+
+
+
+  ---> O QUE PODEMOS FAZER, JÁ, AQUI,
+
+
+  É 
+
+  CLICAR NA 
+
+  OPÇÃO 
+
+  DE 
+
+  'schemas'
+
+  LÁ EMBAIXo...
+
+
+
+
+
+
+
+
+
+  temos uma 
+
+
+
+
+SCHEMA,
+
+que é 
+
+a 
+'
+sakila'... --> ESSE SCHEMA TEM VÁRIOS EXEMPLOS 
+
+
+DE ESTRUTURAS/RECORDS e tables.... 
+
+
+
+
+
+
+
+
+
+
+
+
+-------> NESSA OPÇÃO DE SCHEMAS,
+
+podemos definir uma 
+
+
+NOVA SCHEMA... --->  SCHEMA ---> É UMA 
+
+
+'NOVA DATABASE COM A QUAL VAMOS TRABALHAR'...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+
+CRIA UM CHAMADO DE 
+
+
+'node-complete'...
+
+
+
+
+
+
+
+--> botão direito --> create schema...
+
+
+
+
+
+
+
+
+
+--> ISSO VAI CRIAR UMA DATABASE, COM A QUAL PODEREMOS TRABALHAR MAIS TARDE...
+
+
+
+
+
+
+
+
+
+vemos:
+
+
+
+CREATE_SCHEMA 'node-complete'...
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO.... ----> 
+
+
+
+a opção de 
+
+
+'node-complete-course'
+
+
+tem, agora,
+
+
+
+
+
+
+ESSAS OPÇÕES/ENTRIES:
+
+
+
+
+tables 
+
+views 
+
+
+stored procedures 
+
+
+functions
+
+
+
+
+
+
+
+
+--> MAIS TARDE 
+
+PODEREMOS 
+
+
+
+CONECTAR E ARMAZENAR NOSSA DATA EM TABLES QUE CRÍAMOS NESSE LUGAR....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK.. COM ISSO,
+ 
+
+ PODEMOS CONTINUAR..- -> PODEMOS PROSSEGUIR COM NOSSO CÓDIGO, E AÍ COMEÇAR A INTERAGIR 
+
+ COM O MYSQL... -----> VAMOS INTERAGIR COM ESSA DATABASE LÁ DE DENTRO DE NOSSO NODE/EXPRESS APP....

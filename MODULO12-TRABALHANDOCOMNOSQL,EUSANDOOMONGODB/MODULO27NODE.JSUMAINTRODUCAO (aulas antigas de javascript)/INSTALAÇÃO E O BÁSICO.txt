@@ -1,0 +1,523 @@
+para instalar o node.js, 
+
+
+
+
+NÓS PODEMOS SIMPLESMENTE ABRIR UM NOVO FOLDER...
+
+
+
+Um folder com nada dentro.... (tipo o nosso, agora)...
+
+
+
+
+
+DENTRO DESSE FOLDER, devemos ADICIONAR UM SCRIPT...
+
+
+
+
+
+
+'app.js'...
+
+
+
+
+Dentro desse script, podemos escrever 
+
+
+um CÓDIGO QUE NÃO DEPENDERÁ DOS 'BROWSER APIs' para ser executado......
+
+
+
+
+não precisa deles pq SERÁ EXECUTADO PELO 'NODE.JS'...
+
+
+
+Por exemplo, podemos adicionar um script bem simples, 
+
+
+
+
+'console.log('Hello world!')'
+
+
+
+
+
+
+
+-----------> O OBJETO 'CONSOLE' e o método 'LOG' nele SÃO PROVIDENCIADOS 
+
+___PELO BROWSER___, mas o node.js TAMBÉM PROVIDENCIA ISSO...
+
+
+
+
+Isso significa que essa __É UMA FUNCIONALIDADE___ QUE PODEMOS TANTO 
+
+USAR NO BROWSERSIDE como no 'node.js'... ('node.jsside'...)...
+
+
+
+
+
+
+O 'console.log' NÃO É PARTE DA 'CORE LANGUAGE', NEM É PARTE 
+
+DA __ENGINE EM SI__, MAS 
+
+TAMBÉM É PROVIDENCIADA COMO 
+
+___UMA API____ PELOS 2 AMBIENTES.... (browserside e nodejsside)
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+CERTO.
+
+
+MAS SE SALVARMOS ESSE CÓDIGO, SURGE UMA PERGUNTA: 
+
+
+
+COMO PODEMOS EXECUTAR ESSE ARQUIVO SE NÃO O CARREGARMOS EM UM BROWSER...? Se não o carregarmos eu um arquivo 'html'...?
+
+
+
+
+
+
+A RESPOSTA É:
+
+
+
+POR MEIO DO USO DE 
+
+'NODE.JS'...
+
+
+--------------------------------------
+
+
+
+Nós já instalamos o node.js...
+
+
+
+
+---> instalamos o node.js para usar o webpack....
+
+
+
+--> baixe a versão mais recente.....
+
+
+
+
+------> depois que você instalou, você pode 
+
+RODAR O 'APP.JS' com a ajuda do node.js...
+
+
+
+
+ABRA O TERMINAL....
+
+
+
+
+
+O COMANDO QUE VOCÊ DEVE USAR É 
+
+'node'...
+
+
+
+
+VOCÊ DEVE ESCREVER 
+
+
+
+
+'node' + FILENAME DO SCRIPT QUE VOCÊ QUER EXECUTAR....
+
+
+
+
+-------------------------------------------------
+
+
+
+
+ex:
+
+
+
+node app.js
+
+
+
+----------------------------------------------
+
+
+
+
+ISSO VAI DIZER AO NODE.JS, QUE FOI INSTALADO NO SEU SISTEMA, 
+
+PARA EXECUTAR ESSE ARQUIVO...
+
+
+
+
+----------------------------------------
+
+
+
+ISSO QUER DIZER QUE É __bASICAMENTE___ O QUE O BROWSER FAZ COM OS ARQUIVOS QUE 
+ELE ENCONTRA NO CÓDIGO HTML....
+
+
+
+--------------------------------------------------
+
+
+
+Se digitarmos 'enter', veremos 
+
+
+'Hello world!' como output do terminal...
+
+
+
+Isso aconteceu PQ O NODE.JS EXECUTOU AQUELE ARQUIVO 'app.js'...
+
+
+
+--------------------------------------------------------------------
+
+
+
+E É CLARO QUE SE VOCÊ TENTAR FAZER ALGO QUE O NODE.JS ___NÃO ENTENDE__, como 
+
+usar 
+
+'querySelectors' (uma função tipicamente usada no DOM, para selecionar elementos),
+
+
+
+
+SE VOCÊ DIGITAR 
+
+
+
+'document.querySelector('button');' 
+
+
+
+DENTRO DO 'app.js'
+
+
+
+
+
+E ENTÃO 
+
+
+TENTAR EXECUTAR 
+
+
+'app.js'
+
+
+POR MEIO DE 
+
+'node app.js',
+
+
+VOCÊ RECEBERÁ UM ___ERRO__:  'referenceError: document is not defined at...'.
+
+
+
+
+
+
+
+É POR ISSO QUE O PROFESSOR NOS EXPLICOU ANTES SOBRE OS 'MISSING BROWSER APIs' NO node.js...
+
+
+
+----------------------------------
+
+
+
+
+APESAR DE QUERY SELECTORS (e outras funções do DOM) não existirem, 
+
+MUITAS DAS __CORE FEATURES___ AINDA EXISTEM NO NODE.JS....
+
+
+
+
+
+
+Nós podemos, por exemplo, CRIAR UMA NOVA VARIÁVEL OU CONSTANTE COM 
+
+A KEYWORD 'let' e 'const'
+
+
+
+
+
+-----------------------------------
+
+
+
+A SINTAXE FUNCIONA, OS BACK TICKS FUNCIONAM TAMBÉM....
+
+
+
+
+---> ISSO, PORTANTO, É O JAVASCRIPT RODANDO ___fORA___ DO BROWSER...
+
+
+
+
+
+
+-----> VOCÊ PODE USAR NODE.JS COM QUALQUER COISA QUE VOCÊ QUISER...
+
+
+
+Você geralmente encontrará o node.js NO CONTEXTO DE 'WEBSERVICE' pq, 
+DE FATO, VOCÊ PODE USAR 'node.js' como uma 
+
+'SERVERSIDE LANGUAGE'...  -----> você pode ESCREVER UM WEBSERVER COM ELE, 
+
+e também escrever TODA A LÓGICA DO 'WEBSERVER' de 'HANDLING OF INCOMING REQUESTS' 
+
+e de 'SENDING BACK RESPONSES'....  ----> VOCÊ PODE FAZER TUDO ISSO COM NODE.JS,
+ 
+ MAS VOCê NÃO ESTÁ LIMITADO A isso....
+
+
+
+
+---> no final das contas, VOCÊ PODE EXECUTAR ___QUALQUER CÓDIGO JAVASCRIPT___ QUE 
+VOCÊ QUISER 
+
+NO NODE.JS...
+
+
+
+-----> node.js também te DÁ CERTAS FERRAMENTAS (as quais veremos mais tarde) QUE 
+
+TE PERMITEM ESCREVER UM ARQUIVO OU LER UM ARQUIVO...
+
+
+
+
+
+---> VOCê TAMBÉM PODE USAR O 'NODE.JS' para ESCREVER SEUS PRÓPRIOS 
+
+'UTILITY SCRIPTS'... ----> esses scripts podem fazer UMA INFINIDADE DE COISAS:
+
+PODEM REALIZAR TAREFAS NO SEU SISTEMA... -----> ex de tarefa:
+
+
+um SCRIPT QUE BAIXA OS 'MAIS RECENTES BANK STATEMENTS' de um SERVIDOR 
+E ENTÃO OS ARMAZENA EM ARQUIVOS.... 
+
+(ou qualquer outra coisa que você quiser...)...
+
+
+
+
+-----> VOCÊ PODE ESCREVER SEUS PRÓPRIOS UTILITY SCRIPTS COM NODE.JS...
+
+
+
+
+----> VOCÊ PODE ESCREVER CÓDIGO NODE.JS QUE ___PARSEIA__ um arquivo 
+
+EXCEL E ENTÃO LÊ OS DADOS DENTRO DELE....
+
+
+
+---> TUDO ISSO É POSSÍVEL COM NODE.JS... ESPECIALMENTE SE VOCÊ ADICIONAR 
+
+'THIRD PARTY LIBRARIES' no seu node.js....
+
+
+
+
+
+---> é evidente que TPLs TAMBÉM EXISTEM PARA APLICATIVOS 'NODE.JS'... (não são exclusivos a aplicativos BROWSERSIDE)...
+
+
+
+
+
+----> MAS NÓS NEM PRECISAMOS VER EXEMPLOS MAIS COMPLEXOS...
+-----> se dermos uma olhada 
+
+no APLICATIVO DE 'PRACTICE' que críamos mais cedo, 
+
+
+PODEMOS JÁ OBSERVAR __DIVERSOS __ USOS DE 'node.js'...
+
+
+
+
+---> A 'WEBPACK.CONFIG.JS' ------> NO FINAL DAS CONTAS, ISSO É UM 
+ARQUIVO .JS (javascript)... ----> QUEM VOCÊ ACHA QUE 
+ESTÁ EXECUTANDO ESSE ARQUIVO 
+
+'WEBPACK.CONFIG.JS'? -----> O NODE.JS!  (pq nós não estamos importando o 'webpack.config.js' PARA DENTRO DE UM HTML, ou para dentro do browser; NÃO, estamos importando isso PARA DENTRO DO NODE.JS...)
+
+
+
+-------------------------------
+
+
+
+
+
+por exemplo, aquela coisa 
+
+'module.exports = {}'
+
+
+
+SERIA UMA COISA QUE O HTML/O BROWSER NÃO CONSEGUIRIA ENTENDER....
+
+
+
+
+A MESMA COISA PARA OS IMPORTS ESTRANHOS DE 
+
+
+'const path = require('path');'
+
+e 
+
+'const cleanPlugin = require('clean-webpack-plugin');'
+
+
+
+
+(TODOS ELES SÃO PARSEADOS E EXECUTADOS PELO NODE.JS)
+
+-----------------------------------
+
+
+
+
+ESSES IMPORTS ESTRANHOS USAM ___A SINTAXE NODE.JS___....
+
+
+
+PROFESSOR NOS ENSINARÁ DAQUI A POUCO...
+
+
+
+
+
+A COISA QUE ESTá executando ESSE ARQUIVO WEBPACK.CONFIG.JS É 
+
+___UM SCRIPT___ DO NODE.JS...
+
+
+
+qunado executamos 
+
+
+'npm run build:dev'    ('build:dev': 'webpack-dev-server';)'
+
+
+
+NÓS 
+
+ACABAMOS USANDO A FERRAMENTA 
+
+'WEBPACK'  ou o 'webpack-dev-server'....
+
+
+
+AÍ, O QUE ACONTECE É QUE, por trás das cenas, 
+
+O NODE.JS É UTILIZADO 
+
+
+___PARA EXECUTAR __ CERTOS SCRIPTS DO JAVASCRIPT....
+
+
+
+Scripts __que nÃO RODAM NO BROWSER__E  que 
+
+TAMBÉM UTILIZAM MÉTODOS DO 'node.js' PARA LER SEUS ARQUIVOS..... (pq o NODE.JS É CAPAZ DE FAZER 'READ' DO SEU LOCAL FILE SYSTEM... é capaz de ler arquivos E DE PARSEÁ-LOS...)
+
+
+
+
+
+Portanto, é isso que o webpack faz por trás das cenas, ele usa o 
+
+NODE.Js PARA LER SEUS ARQUIVOS....
+
+
+
+ELE USA 'NODE.JS' PARA DAR UMA OLHADA NO ARQUIVO 'WEBPACK.CONFIG.JS' E ENTÃO 
+
+USAR ESSA CONFIGURAÇÃO QUE ESTÁ ALI DEFINIDA...
+
+
+
+
+
+ISSO SIGNIFICA QUE O WEBPACK RODA NO __NODE.JS___......
+
+
+
+O WEBPACK é escrito ___COM CÓDIGO JAVASCRIPT___ PARA USAR SEU CÓDIGO JAVASCRIPT,
+ 
+ mas ___usa O NODE.JS___ PQ, É ÓBVIO, ELE __NÃO RODA DENTRO DE UM BROWSER__...
+
+
+
+ ------------------------------------
+
+ Nós não carregamos o 'webpack' em um browser; não, nós carregamos os RESULTADOS ('THE FINISHED RESULT') 
+
+ NA NOSSA PÁGINA HTML.... ( e não o script webpack em si...).
+
+
+
+
+ISSO QUER 
+
+DIZER QUE NÓS JÁ HAVÍAMOS USADO NODE.JS IMPLICITAMENTE quando usamos A FERRAMENTA WEBPACK...
+ --------------------------------------------
+
+
+
+
+
+ Agora devemos ver o que podemos fazer com o node.js FORA DE UM 'WEBSERVER ENVIRONMENT'...
+
+
+
+ Depois disso veremos como usar node.js para escrever NOSSO PRÓPRIO SIMPLES WEBSERVER.....
+
+
+ nosso webserver, webserver page e COMO RECEBER INCOMING REQUESTS...

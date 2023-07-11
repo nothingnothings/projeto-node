@@ -1,0 +1,2123 @@
+
+
+
+
+
+
+
+
+
+
+
+----------> AQUI, NO CASO, 
+
+TEMOS UMA SIGNUP FORM 
+
+
+BEM SIMPLES,
+
+BEM TÍPICA... ---->  TEMOS QUE 
+
+INPUTTAR 
+
+
+1
+ 
+
+ EMAIL,
+
+
+ INPUTTAR 
+
+ 1 
+
+ PASSWORD,
+
+
+ AÍ 
+
+
+ CONFIRMAR ESSE PASSWORD 
+
+
+
+
+ E AÍ CLICAR 'SIGNUP'.... 
+
+
+
+
+
+
+
+
+
+
+ -----> CERTO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ok............. NA 
+
+
+
+ ACTION DE 
+
+
+
+ 'postSignup',
+
+
+
+ VAMOS __ QUERER__ 
+
+
+
+
+ ARMAZENAR 1 NOVO 'USER'
+
+ NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+ -------> OK... --> MAS QUE ETAPAS ISSO INCLUI? ------> INCLUI O USO 
+
+
+
+
+ DE MONGODB,
+
+
+
+ do MONGOOSE, para isso...
+
+
+
+
+
+
+ --> MAS OBVIAMENTE, ANTES DISSO,
+
+
+ VAMOS QUERER ___ EXTRAIR__ 
+
+
+ A INFO 
+
+
+
+ DO USER (seu email e password)
+
+
+ LÁ 
+
+
+
+
+
+ DO 
+
+
+
+ 'incoming request'...
+
+
+
+
+
+
+
+ -----> PARA ISSO,
+
+
+ PROVAVELMENTE USAREMOS 
+
+
+
+ 'req.body.email' 
+
+
+ e 
+
+
+
+'req.body.password'...
+
+
+
+
+
+
+
+
+
+
+
+--> COMECEI COM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+
+
+
+ const { email, password, confirmPassword } = req.body;
+
+
+
+    if ( password !== confirmPassword ) {
+
+        console.log("Passwords do not match.")
+      return res.status(400).json(
+        {message: "Passwords don't match!"}
+      );
+
+
+    }
+
+
+    const user = {
+      email,
+      password
+    }
+
+
+    console.log(user);
+
+
+
+}
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+--> JÁ EXTRAÍMOS A INFORMAÇÃO, PORTANTO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR  EXPLICA QUE __ A PRIMEIRA COISA QUE FARÍAMOS AQUI,
+
+
+
+NO ENTNATO,
+
+SERIA 
+
+'VALIDATE THE USER INPUT'.... --------> isso realmente é importante... -->
+
+
+
+
+
+faríamos 
+
+
+
+COISAS COMO 
+
+
+
+_____CHECAR__ SE ESSE É UM 'VALID EMAIL ADDRESS',
+
+
+
+
+
+___ E SE O 'PASSWORD' E O 'CONFIRM PASSWORd'
+
+
+
+
+MATCHEIAM... (fiz isso agora)... -----> PROFESSOR 
+
+
+DIZ QUE 
+
+
+FAREMOS ISSO 
+
+
+TBM... --> TEREMOS 
+
+
+1 
+
+MÓDULO INTEIRO 
+
+SOBRE 
+
+
+'VALIDATION',
+
+
+
+'VALIDATE USER INPUT',
+
+
+
+
+
+ISSO Pq 
+
+
+
+
+
+você pode 
+
+FAZER 1 
+
+MONTE DE COISAS LEGAIS 
+
+
+
+PARA RESOLVER O PROBLEMA DO VALIDATE,
+
+
+POR 
+
+ISSO 
+
+
+VAMOS DEDICAR 1 MÓDULO INTEIRO A ISSO...
+
+
+
+
+
+
+
+
+
+
+---> POR ENQUANTO INGNORAREMOS ISSO,
+
+
+
+
+
+POR ENQUANTO NÃO TEREMOS 
+
+QUE 
+
+
+ENFIAR 
+
+
+1 
+
+
+EMAIL VÁLIDO,
+
+
+NEM PASSWORD VÁLIDO,
+
+
+NEM 'CONFIRMPASSWORD'...
+
+
+
+
+
+
+
+
+
+
+--> AINDA VAMOS PRECISAR DOS VALUES, AQUI... 
+
+
+
+
+
+
+
+
+
+
+--> PRÓXIMA ETAPA 
+
+É 
+
+'CREATE A NEW USER',
+
+
+
+
+
+
+POR MEIO DESSES VALORES....
+
+
+
+
+
+
+
+
+
+
+
+
+--------> MAS PROFESSOR DIZ QUE __ EXISTE _ UMA 
+
+ETAPA __ 
+
+QUE 
+
+
+PRECISAMOS _ FAZER 
+
+
+_____ANTES 
+
+
+DE 
+
+FAZERMOS 
+
+ESSE 
+
+
+'CREATE A NEW USER'... ------->
+
+
+
+
+
+
+
+
+
+
+
+
+
+QUE ETAPA PODERIA SER? ---------> BEM, 
+
+
+A 
+
+
+
+ETAPA É:
+
+
+
+
+
+
+
+
+1) CHECAR ___ SE __ JÁ EXISTE __ 1
+ 
+
+
+ USER 
+
+ PARA 
+
+ ESSE 
+
+ 'EMAIL ADDRESS' (que é basicamente o nosso 'username', no caso de nosso app...)
+
+ aí... 
+
+
+
+
+
+
+
+
+
+
+
+
+ --> PARA ISSO,
+
+ TEREMOS 
+
+ DE USAR __ MÉTODOS MONGOOSE... -_> PROVAVELMENTE 
+
+
+ vamos 
+
+
+ usar 
+
+
+
+
+
+ 'User.find({email: email})'
+
+
+
+
+
+
+ --------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CREIO QUE SERÁ ALGO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+
+
+
+ const { email, password, confirmPassword } = req.body;
+
+
+
+    if ( password !== confirmPassword ) {
+
+        console.log("Passwords do not match.")
+      return res.status(400).json(
+        {message: "Passwords don't match!"}
+      );
+
+
+    }
+
+
+    User.find({email: email}) /////TALVEZ ESTE CÓDIGO...
+    .then(
+        (user) => {
+
+
+            if(user) { ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+                    
+                    return res.status(400).json(
+                        {message: 'An user with that email already exists, please use a different email address.'}
+                    )
+                
+
+            } 
+        }       
+    )
+
+
+
+
+
+
+
+    console.log(user);
+
+
+
+}
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+ESSA RESPONSe que envia 'json' realmente funciona, mas é bem feia....
+
+
+
+
+
+
+
+
+
+
+--->  OK..... 
+
+
+
+
+
+
+
+CONTINUANDO.... 
+
+
+
+
+
+
+
+----> 
+
+
+
+
+
+
+
+
+
+COMO O PROFESSOR ESCREVEU ESSE CÓDIGO?
+
+
+
+
+
+
+
+
+--> ele 
+
+
+
+DIZ QUE PARA ___ ENCONTRAR SE 1 USER COM ESSE 'EMAIL'
+
+EXISTE NA 
+
+
+NOSSA DATABASE,
+
+
+DEVEMOS 
+
+
+FAZER __ DUAS___ COISAS/podemos fazer DUAS COISAS....-----------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO PQ __ QUANDO USAMOS 
+
+
+O MONGODB,
+
+
+
+
+___ VOCê __ PODE/PODERIA___ CRIAR 
+
+
+
+
+
+
+
+
+
+1 
+
+
+'index'
+
+
+
+
+NA DATABASE MONGODB, 
+
+
+LÁ 
+
+
+NO SEU 
+
+
+
+FIELD DE 
+
+
+
+'email'.... ------> VOCÊ CRIARIA 1 'index'
+
+
+
+
+
+no field de 'email',
+
+
+E AÍ __ DARIA__ 
+
+
+
+A ESSE 'INDEX'
+
+
+
+AQUELA PROPRIEDADE/ATRIBUTO DE 
+
+
+
+
+'unique'... -------> ISSO, NO CASO, É ___ ALGO QUE 
+
+
+VOCÊ __ CERTAMENTE__ PODE FAZER,
+
+
+
+PODE FAZER __ SE VOCê _ JÁ 
+
+SABE 
+
+
+__COMO O MONGODB FUNCIONA.... (
+
+    se você tem UM POUCO MAIS DE XP,
+
+    VOCÊ PODE SEGUIR ESSE CAMINHO... 
+) 
+
+
+
+
+
+
+
+-------> NO CURSO DE MONGODB DO PROFESSOR,
+
+ 
+ ELE NOS MOSTRA ESSE CENÁRIO/APPROACH DO 'index',
+
+
+ 'index' para 
+
+ o 
+
+ field de 
+
+ 'email' 
+
+
+ no nosso 'user',
+
+
+ EM QUE 
+
+ AÍ COLOCAMOS ESSE ATTRIBUTTE 
+
+
+
+ de 'unique'...
+
+
+
+
+
+
+
+
+
+ -----> MAS O PROFESSOR VAI NOS MOSTRAR O APPROACH ALTERNATIVO,
+
+
+
+ APPROACH QUE EU UTILIZEI, EM QUE 
+
+ VAMOS SIMPLESMENTE USAR O MODEL 
+
+
+ 'USER'
+
+
+ para 
+
+ tentar 
+
+ ENCONTRAR 
+
+
+ ALGUM 
+
+
+ USER COM ESSE 
+
+
+
+ 'email' específico, lá na collection de 'users'....
+
+
+
+
+
+
+
+
+
+
+ --> É POR ISSO QUE O PROFESSOR ESCREVE ISTO:
+
+
+
+
+
+ 
+
+exports.postSignup = (req, res, next) => {
+
+
+
+ const { email, password, confirmPassword } = req.body;
+
+
+
+
+    User.find({email: email}) /////TALVEZ ESTE CÓDIGO...
+    .then(
+        (user) => {
+
+
+            if(user) { ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+    
+
+            } 
+        }       
+    )
+
+
+
+
+
+
+
+    console.log(user);
+
+
+
+}
+
+
+
+
+
+
+
+----------------
+
+
+
+a única DIFERENÇA, AQUI,
+
+
+
+
+É _ QUE O USER VAI USAR 
+
+'.findOne()'
+
+
+EM VEZ 
+DE 
+
+'.find()',
+
+
+
+
+
+
+MAS DÁ NA MESMA .... ------->  (não dá, não... o 'findOne()' do professor funciona, ao passo que o nosso '.find()', NÃO.)
+
+
+
+professor 
+
+vai 
+
+
+procurar 
+
+
+com 
+
+
+'User.findOne({email: email})'
+
+
+
+
+
+
+
+
+
+------> SE FOR ENCONTRADO,
+
+
+
+
+VAMOS QUERER __ 
+
+
+
+
+
+
+RETORNAR 1 CÓDIGO QUE __ NÃO VAI CRIAR 1 USER,
+
+
+PQ 
+
+ELE 
+
+
+JÁ VAI EXISTIR... (tipo o que eu havia escrito)...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+exports.postSignup = (req, res, next) => {
+
+
+
+ const { email, password, confirmPassword } = req.body;
+
+
+
+
+    User.find({email: email}) /////TALVEZ ESTE CÓDIGO...
+    .then(
+        (user) => {
+
+
+            if(user) { ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+    
+
+            } 
+        }       
+    )
+
+
+
+
+
+
+
+    console.log(user);
+
+
+
+}
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+
+--> e se TIVERMOS 
+
+1 USER,
+
+
+
+
+VOU QUERER RETORNAR UMA RESPONSE PARA 
+
+O 
+
+USER 
+
+
+VOLTAR (redirect)
+
+
+AO 
+
+
+'/signup',
+
+TUDO __ PARA INFORMAR AO USER QUE 
+
+
+
+
+
+ISSO NÃO FUNCIONOU (não vamos informar mt agora, sem o SHOW DE UMA ERROR MESSAGE, mas isso faremos NO FUTURO, PROFESSOR VAI 
+
+NOS MOSTRAR 
+
+
+NO FUTURO 
+
+ALGUMAS MANEIRAS DE FAZER __ SHOW __ DE ERRORS __ AOS 
+
+USERS...
+
+
+  )
+
+
+
+
+
+
+
+
+  ------> CERTO... MAS __ SE PASSARMOS __ POR ESSE IF CHECK,
+
+
+  SABEREMOS __ QUE 
+
+
+
+
+
+  'NENHUM USER PARA ESSE EMAIL EXISTE 
+
+
+
+  NO NOSSO DATABASe'.... ------> 
+
+
+
+
+
+
+
+
+
+  E QUANDO ESSE FOR O CASO,  VOU QUERER O CRIAR...
+
+
+
+
+
+
+
+
+
+  -> E NÓS VAMOS __cRIAR 1 USER POR MEIO DAQUELA 
+
+  ESCRITA CLÁSSICA,
+
+
+  a 
+
+  escrita de 
+
+
+
+
+  'const user = new User({
+        email: email,
+        password: password
+
+
+
+  })
+
+
+  user.save();'
+
+
+
+
+
+
+
+
+  CERTO.. ACHO QUE É ISSO QUE FAREMOS...
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+  
+exports.postSignup = (req, res, next) => {
+
+
+
+ const { email, password, confirmPassword } = req.body;
+
+
+
+    if ( password !== confirmPassword ) {
+
+        console.log("Passwords do not match.")
+      return res.status(400).json(
+        {message: "Passwords don't match!"}
+      );
+
+
+    }
+
+
+
+
+    User.find({email: email}) /////TALVEZ ESTE CÓDIGO...
+    .then(
+        (user) => {
+
+
+            if(user) { ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+                    return res.status(400).json(
+                        {message: 'An user with that email already exists, please use a different email address.',
+                }
+                    )
+                
+
+            } else {
+
+
+              const user = new User({
+                email: email,
+                password: password
+              })
+
+
+              user.save();
+
+
+
+            }
+        }       
+    )
+
+
+
+}
+
+
+
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+
+
+FOI EXATAMENTE ISSO QUE O PROFESSOR FEZ... 
+
+
+
+
+
+
+
+
+
+
+----> 1 DETALHE IMPORTANTE:
+
+
+
+
+
+LÁ NO MODEL DE 'user',
+
+
+TEMOS O SEGUINTE CÓDIGO:
+
+
+
+
+
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  cart: { products: [
+    {
+      productId: { type: Schema.Types.ObjectId, 
+        ref: 'Product', /////AQUI DEFINIMOS UMA RELATION/reference AO MODEL/COLLECTION de 'products'...
+        required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+}
+}
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, NESSE 
+
+
+USER 
+
+MODEL, POR ENQUANTO,
+
+TEMOS 
+
+
+
+1 FIELD DE 
+
+
+'name' 
+
+
+e 
+
+
+'email',
+
+MAS __NENHUM FIELD ___ 
+
+
+DE/para __ 
+
+
+
+'password'.... -------> É POR ISSO QUE 
+
+
+
+O PROFESSOR __ VAI ALTERAR_ 
+
+ESSE 
+
+MODEL 
+
+DE 
+
+'user',
+
+ELE __ VAI 
+
+
+
+
+TIRAR AQUELE FIELD DE 
+
+'name'
+
+e colocar um field de 
+
+
+
+
+
+'PASSWORD' no lugar....
+
+
+
+
+
+
+
+
+
+
+------------> 
+
+
+  
+
+
+  E ESSE FIELD DE 'PASSWORD'
+
+  VAI SER DE TIPO STRING,
+
+
+  E VAI 
+
+  SER ABSOLUTAMENTE 'required'...
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+  
+const userSchema = new Schema({
+  // name: {
+  //   type: String,
+  //   required: true,
+  // },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  password: {
+    type: String,
+    required: true
+  },
+
+  cart: { products: [
+    {
+      productId: { type: Schema.Types.ObjectId, 
+        ref: 'Product', /////AQUI DEFINIMOS UMA RELATION/reference AO MODEL/COLLECTION de 'products'...
+        required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+}
+}
+);
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+OK.... MUDEI 1 POUCO MEU 'USER MODEL.'...
+
+
+
+
+
+
+COM ESSA MUDANÇA NO 
+
+'userModel',
+
+VOLTAMOS AO CONTROLLER 
+
+DE 
+
+
+'postSignup',
+
+
+
+
+
+
+
+__ E AÍ __ VAMOS __ 
+
+
+
+
+
+
+EXAMINAR AQUELE 
+
+
+'const user = {
+
+
+    email: email, 
+    password: password
+}
+'
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR DIZ QUE PODEMOS CRIAR 1 USER ASSIM,
+
+É CLAROo,
+
+
+
+MAS QUE TAMBÉM É BOM __ ADICIONARMOS 1 
+
+CART 
+
+NESSE 
+
+USER AÍ,
+
+
+
+1 CART QUE SERÁ INICIALMENTE __ 
+
+
+1 
+
+OBJEto COM UMA PROPRIEDADE 
+
+'products',
+
+
+
+QUE CONTERÁ INICIALMENTE 1 ARRAY VAZIO....
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+'const user = {
+
+
+    email: email, 
+    password: password,
+    cart: {
+        products: []
+    }
+}
+'
+
+
+
+
+----------------------
+
+
+
+
+CERTO... 
+
+
+
+ISSO AGORA É UM 'NEW VALID USER',
+
+
+
+
+O QUAL 
+
+
+SALVMAOS 
+
+NA NOSSA DATABASE 
+
+POR MEIO DE 
+
+'user.save()"....
+
+
+
+
+
+
+------------------
+
+
+OK....  AÍ O PROFESSOR DIZ QUE 
+
+
+
+
+ELE VAI escrever 'return user.save()',
+
+TUDO 
+
+PARA 
+
+
+
+QUE 
+
+POSSAMOS 
+
+
+CHAINAR OUTRO THEN BLOCK AQUI,
+
+
+
+
+__ THEN BLOCK QUE __ SERÁ __ 
+
+
+
+EXECUTADO/CHAMADO QUANDO A 
+
+FUNCTION DE 
+
+
+
+'create 
+a user'
+
+TIVER 
+
+ACABADO...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+
+
+
+ const { email, password, confirmPassword } = req.body;
+
+
+
+    if ( password !== confirmPassword ) {
+
+        console.log("Passwords do not match.")
+      return res.status(400).json(
+        {message: "Passwords don't match!"}
+      );
+
+
+    }
+
+
+
+
+    User.find({email: email}) /////TALVEZ ESTE CÓDIGO...
+    .then(
+        (user) => {
+
+
+            if(user) { ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+                    return res.status(400).json(
+                        {message: 'An user with that email already exists, please use a different email address.',
+                }
+                    )
+                
+
+            } else {
+
+
+              const user = new User({
+                email: email,
+                password: password,
+                cart: {
+                  products: []
+                }
+              })
+            return  user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+
+
+
+            }
+        }       
+    )
+    .then(
+        (result) => {
+
+        }
+    )
+    .catch(
+        (err) => {
+            console.log(err);
+        }
+    )
+
+
+
+}
+
+
+
+
+
+
+------------------
+
+
+
+
+DENTRO DESSE 'THEN BLOCK',
+
+
+
+_PROVAVELMENTE__ VAMOS QUERER_ REDIRECIONAR O USER __ 
+
+ÀLGUMA PAGE,
+
+
+
+PROVAVELMENTE__ 
+
+
+
+PARA __ A PÁGINA DE 'LOGIN',
+
+pq 
+
+
+DEPOIS DE 
+
+
+SE CADASTRAR, VOCÊ OBVIAMENTE VAI QUERER 
+
+FAZER LOGIN....
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+-----> O PROFESSOR APONTA QUE ELE 
+
+TBM 
+
+VAI 
+
+IR 
+
+
+ATÉ 
+
+O NOSSO 
+
+CÓDIGO 
+
+DE 
+
+'app.js',
+
+
+LÁ 
+
+
+
+NO PRÓPRIO 'mongoose.connect()',
+
+QUE 
+
+
+FAZ 
+
+
+
+O 
+
+CONNECT A NOSSA DATABASE E ENTÃO 
+
+
+__ 'ABRE NOSSO SERVER',
+
+FAZ COM QUE 
+
+ELE 
+
+FAÇA 
+
+
+'LISTEN TO INCOMING REQUESTS',
+
+
+
+
+
+
+O PROFESSOR 
+
+
+
+VAI SE LIVRAR DE TODO O CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO INTEIRO ERA ESTE:
+
+
+
+
+
+
+
+
+mongoose
+  .connect(
+    MONGODB_URI //mesma coisa que essa fita ali de cima.....
+  )
+  .then((result) => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: 'Max',
+          email: 'max@test.com',
+          cart: {
+            products: [],
+          },
+        });
+        user.save(); ///confirma a criação desse objeto/document 'user' na collection 'users'...
+      }
+
+      app.listen(3000);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+--------------------------------
+
+
+
+
+
+------> ELE VAI REMOVER TUDO ISSO,
+
+
+E VAI 
+
+DEIXAR 
+
+
+SÓ ISTO:
+
+
+
+
+
+
+
+mongoose
+  .connect(
+    MONGODB_URI 
+  )
+  .then((result) => { //só isso vai sobrar....
+
+      app.listen(3000);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+
+
+
+
+
+
+--> NÓS TEREMOS 1 'REAL USER FLOW',
+
+POR ISSO 
+
+
+NÃO PRECISAMOS MAIS DAQUELE 
+
+'
+DUMMY USER',
+
+
+
+e 
+
+é 
+
+POR ISSO QUE 
+
+
+O REMOVEMOS....
+
+
+
+
+
+
+
+-------> O PROFESSOR TBM VAI ATÉ O MONGODBCOMPASS
+
+
+
+
+
+
+
+
+E __ AÍ __ DENTRO __ DO DATABASE SERVER,
+
+
+DENTRO DO 'users'
+
+
+O 
+
+PROFESSOR 
+
+
+VAI DELETAR O 'DUMMY USER',
+
+pq 
+
+NÃO VAMOOS MAIS PRECISAR DELE...
+
+
+
+
+
+
+
+
+
+
+------> TUDO ISSO FEITO,
+
+
+
+
+VOLTAMOS 
+
+À PÁGINA 
+
+
+
+DE 
+
+
+'signup'
+
+
+E CRÍAMOS UM NOVO USER...
+
+
+
+
+
+
+
+
+
+------> CLICAMOS EM SIGNUP,
+
+
+
+E AÍ ___ 
+
+
+
+
+
+
+
+NOSSO 
+
+
+
+USER 
+SERÁ 
+
+CRIADO 
+
+NA 
+
+
+
+
+
+COLLECTION DE 'users',
+
+
+
+
+na DATABASE DO MONGODB...
+
+
+
+
+
+
+
+
+-------> AÍ, COM ISSO, 1 __ NOVO USER__ TERÁ SIDO CRIADO....
+
+
+
+
+
+
+
+-----> ISSO É ÓTIMO,
+
+MAS 
+
+
+COM 
+ 
+ o 
+
+ CREATE 
+
+ DESSE 
+
+ USER 
+
+ __deSSA FORMA,
+
+ __ ACABAMOS DE ___ 
+
+
+
+ TRAZER 1 __GRANDE PROBLEMA,
+
+
+ 1 GRANDE PROBLEMA COM ELE... (provavelmente é o fato de o PASSWORD NÃO ESTAR ENCRIPTADO POR MEIO DE PACKAGES COMO 'bcrypt'...)
+
+
+
+
+
+
+
+
+
+
+
+
+ --> EU ESTAVA RECEBENDO 1 ERRO.... ---> ERA PQ EU HAVIA USADO '.find()"
+
+
+ EM VEZ 
+
+ DE 
+
+
+
+ '.findOne()'...
+
+
+
+
+
+
+
+
+
+
+ --> OK, TROQUEI ISSO, E AGORA FUNCIONOU.
+
+
+
+
+
+
+
+
+
+
+ --> AGORA 1 USER REALMENTE FOI CRIADO NA DATABASE..
+
+
+
+
+
+
+
+
+
+ --> MAS TEMOS 1 GRANDE PROBLEMA COM ESSE USER..

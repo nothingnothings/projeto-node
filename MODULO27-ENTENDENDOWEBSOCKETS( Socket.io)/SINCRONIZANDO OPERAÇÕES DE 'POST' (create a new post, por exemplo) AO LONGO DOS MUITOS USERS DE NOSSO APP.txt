@@ -1,0 +1,3380 @@
+
+
+
+
+
+
+
+
+
+
+--> AGORA QUE TEMOS 
+
+COMO FAZER 'SHARE' 
+
+DE 
+
+NOSSA 
+
+
+'IO CONNECTION' 
+
+
+
+(socket.io connection, no nosso código) 
+
+
+
+
+AO __ LONGO __ DE MÚLTIPLOS ARQUIVOS 
+
+
+DE 
+
+NOSSO PROJETO,
+
+
+POR MEIO DAQUELA SINTAXE 
+
+
+
+
+QUE ESCREVEMOS NO ARQUIVO 
+
+'socket.js',
+
+
+
+SINTAXE DE 
+
+
+''
+
+
+
+
+
+
+
+let io; ///DECLARAÇÃO INICIAL DO 'io'...
+
+
+///esse OBJETO que exportamos aqui vai ser usado em 'app.js' e em outros lugares de nosso código que precisam comunicar/fazer coisas com nossa conexão 'webSocket'...
+
+module.exports = {/// É A MANEIRA UTILIZADA PARA 'SHARE THAT IO OBJECT OVER MULTIPLE FILES' (para que não fiquemos limitados ao seu uso em 'app.js')....
+
+    init: httpServer => {///recebemos o 'httpServer' como um argumento... 
+
+            io = require('socket.io')(httpServer);
+            return io;
+
+    },
+
+    getIo: () => { //não vamos esperar quaisquer argumentos...
+        if (!io) {
+            throw new Error('Socket.io not initiazlized');
+        }
+
+        return io;
+    }
+
+
+     
+
+
+}
+
+
+
+
+'''''',
+
+
+
+
+
+
+
+
+
+
+
+AGORA QUE TEMOS ACESSO A ISSO,
+
+
+
+
+
+
+DEVEMOS NOS DIRECIONAR ATÉ O CONTROLLER DE 
+
+'createPOst',
+
+
+
+
+que é O LOCAL EM QUE 
+
+VAMOS QUERER 
+
+
+
+
+
+__ USAR/REFERENCIAR A NOSSA 'IO CONNECTION'....
+
+
+
+
+
+
+
+
+
+
+
+---------> COMO FAZEMOS ESSE USO?
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> bem, primeiramente PRECISAMOS IMPORTAR 
+
+
+
+
+ESSE OBJETO que criamos lá em 'socket.js'... 
+
+
+
+
+
+
+
+
+
+-> PARA FAZER ISSO,
+ 
+
+ PROFESSOR 
+
+
+ ESCREVE UM IMPORT ASSIm:
+
+
+
+
+
+
+
+
+
+const io = require('../socket'); 
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO FEITO,
+
+
+
+
+
+
+FICAMOS COM AQUELE OBJETO legal,
+
+com 
+
+
+2
+ funções/métodos,
+
+
+ a função 
+
+
+
+ '.init',
+
+
+ e 
+
+
+ a função 
+
+
+
+ '.getIo()'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMO SÃO USADAS ESSAS 2 FUNÇÕES? 
+
+
+
+
+
+
+
+
+
+
+--> BEM,:
+
+
+
+
+1) A FUNÇÃO 'init()', SEU USO É DESTINADO AO 'app.js' DO SEU BACKEND, NO LOCAL EM QUE VOCÊ INICIALIZA SEU SERVIDOR E SUA CONEXÃO à DATABASE...
+
+
+
+
+
+--> ou seja, é o código visto em:
+
+
+
+mongoose.connect(
+    MONGOOSE_URL
+)
+.then(
+    (result) => {
+        const server = app.listen(8080);
+        const io = require('./socket').init(server); ////////ESTE CÓDIGO AQUI....
+
+        io.on('connection', socket => {
+                console.log('Client connected.');
+
+        })
+    }
+)
+.catch(err => console.log(err))
+
+
+
+
+
+
+
+
+
+
+2) JÁ A SEGUNDA FUNÇÃO/MÉTODO,
+ 
+
+ o 
+
+
+ 'getIo()', 
+
+
+ DEVE __ SER __ UTILIZADO __ NOS CONTROLLERS DE NOSSO PROJETO,
+
+
+ nos lugares que desejarmos... (
+
+     para 
+
+
+     realizar operações/features como a que desejamos agora,
+
+
+     feature de 
+
+     '''sempre que um novo post for adicionado À nossa database,
+     queremos que o frontend de todos os users seja 
+     atualizado e mostre esse post'''...
+ )
+
+
+
+
+
+
+
+
+
+
+ -----------> OK.... ------> 
+
+
+
+
+
+
+ IMPORTAMOS 
+
+
+ COM A SINTAXE DE 
+
+
+
+ 'const io = require('../socket');'
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> AGORA VAMOS QUERER 
+
+
+ usar 
+
+
+ esse 
+
+ 'getIo()'
+
+
+ DENTRO DO CREATEPOST...
+
+
+
+ --> ATÉ AGORA, O CÓDIGO DO CREATEPOST ESTAVA ASSIM:
+
+
+
+
+
+
+
+
+
+ exports.createPost = async (req, res, next) => { ////VERSÃO ASYNC/AWAIT DO CÓDIGO LOGO ACIMA....
+
+
+
+try {
+
+  const errors = validationResult(req); 
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    let creator;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = await new Post({ //versão do professor não usou 'async new Post' (async no começo), mas minha versão funcionou igual.... --> mas ela ainda ficou parecida, na verdade...
+
+      //versão do prof:
+      // const post = new Post({
+      //   title: title,
+      //   content: content,
+      //   imageUrl: imageUrl,
+      //   creator: req.userId
+      // });
+      // try {
+      //   await post.save();
+
+
+
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+    }).save(); //importante.
+
+
+
+
+     const user = await User.findOne({ _id: userId });
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+      }
+    } catch(err) {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); 
+      }
+  
+};
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE É CLARO QUE 
+
+ELE VAI QUERER 
+
+REALIZAR 
+
+ESSE 
+
+'CONNECT'/operação 
+
+com a 
+
+
+
+
+CONEXÃO WEBSOCKET __ ESSENCIALMENTE__ QUANDO ELE TIVER 
+
+ACABADO DE 
+
+'CREATE A POST'... --> OU SEJA,
+
+
+
+ELE VAI QUERER 
+
+
+
+EXECUTAR 
+
+ISSO 
+
+
+______ POUCO ANTES__ DE 
+
+
+
+
+ENVIARMOS A RESPONSE DE VOLTA AO USER...
+
+
+
+
+
+
+
+EXATAMENTE NESTE TRECHO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+
+    >>>>> AQUI....  <<<<<<
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+
+
+-----------------------------------
+
+
+
+
+OBS::: AQUELA RESPONSE AINDA VAI FICAR ALI,
+
+AINDA ENVIAREMOS UMA 
+
+
+RESPONSE AO USER QUE 
+
+EFETIVAMENTE CRIOU O POST,
+
+PQ 
+
+
+
+PRECISAMOS ENVAIR ESSA RESPONSE msm...
+
+
+
+
+
+
+
+--> MAS ALÉM DESSE RESPONSE,
+
+VAMOS QUERER 
+USAR 
+
+
+
+ESSA FEATURE DO 'socket.io' (websockets')
+
+
+PARA FAZER __ 'INFORM' DE NOSSOS 
+
+OUTROS USERS.... -> PARA ISSO,
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+PODEMOS 
+
+
+
+escrever 
+
+
+
+'io.getIo()'
+
+
+PARA 
+
+
+
+
+'FAZER GET OF OUR ESTABLISHED IO OBJECT/IO CONNECTION THAT WE SET IN APP.JS',
+
+
+
+
+
+
+
+
+
+
+
+-----> OU SEJA, O CÓDIGO VAI FICAR TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+
+    io.getIo(); //////EIS O CÓDIGO EM QUESTÃO.
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+E É CLARO QUE, A PARTIR DO 'GET' 
+
+desse objeto 
+
+'IO,
+
+
+
+
+ABRIMOS UM LEQUE DE POSSIBILIDADES,
+
+
+POIS A PACKAGE DO 
+
+'
+socket.io'
+
+NOS DÁ UM MONTE DE MÉTODOS... -----> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PRIMEIRO MÉTODO FORNECIDO PELA PACKAGE DO 'socket.io':
+
+
+
+
+
+
+
+
+1) '.emit()'.... 
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+
+    io.getIo().emit(); //////EIS O CÓDIGO EM QUESTÃO.
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+
+----------------------------------------
+
+
+
+
+
+
+EXISTE TAMBÉM O 
+
+
+
+
+2) MÉTODO '.broadcast()'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EMIT VS BROADCAST --> 
+
+
+
+
+
+emit --> ENVIA _ UMA MESSAGE 'TO ALL CONNECTED USERS'.... 
+
+
+
+
+
+
+BROADCAST -> ENVIA UMA __ MESSAGE__ 'TO ALL CONNECTED USERS, EXCEPT FOR THE ONE FOR WHICH THIS REQUEST WAS SENT' (evita REPETIÇÃO, em outras palavras)...
+
+
+
+
+
+professor optou, aqui, por 'emit()' em vez de broadcast...
+
+
+
+
+
+
+
+
+
+
+------> CERTO.... ---> ISSO FEITO,
+
+PROFESSOR 
+
+
+EXPLICA QUE DEVEMOS 'DEFINE A EVENT NAME',
+
+
+
+NO PRIMEIRO PARÂMETRO DESSE 
+
+'.emit()'..
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE ESSE NOME 
+
+
+É DE NOSSA ESCOLHA, PODEMOS COLOCAR O QUE QUISERMOS...
+
+
+
+
+
+--> ELE VAI DEFINIR 'posts',
+
+
+
+
+
+E __ AÍ _ VAI __ DEFINIR__, NO SEGUNDO PARÂMETRO,
+
+
+
+A 
+
+
+__ DATA __ QUE ELE VAI QUERER ENVIAR (em 1 objeto)....
+
+
+
+
+
+
+PORTANTO, 
+
+O MÉTODO 
+
+'emit()'
+
+
+
+tem os seguintes parâmetros: 
+
+
+
+1) O __NOME__ do evento, evento que identifica essa comunicação....
+
+
+
+2) A _ DATA__ que vamos querer enviar, por meio dessa comunicação...
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+
+    io.getIo().emit(
+
+        'posts',
+        {
+            //aqui vai a data....
+        }
+
+
+
+
+    ); //////EIS O CÓDIGO EM QUESTÃO.
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = async (req, res, next) => { ////VERSÃO ASYNC/AWAIT DO CÓDIGO LOGO ACIMA....
+
+
+
+try {
+
+  const errors = validationResult(req); 
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    let creator;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = await new Post({ //versão do professor não usou 'async new Post' (async no começo), mas minha versão funcionou igual.... --> mas ela ainda ficou parecida, na verdade...
+
+      //versão do prof:
+      // const post = new Post({
+      //   title: title,
+      //   content: content,
+      //   imageUrl: imageUrl,
+      //   creator: req.userId
+      // });
+      // try {
+      //   await post.save();
+
+
+
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+    }).save(); //importante.
+
+
+
+
+     const user = await User.findOne({ _id: userId });
+
+
+
+    user.addPost(post); //mesma coisa que 'user.posts.push(post)'...
+
+
+        //  io.getIo() //nos dá nossa 'WEBSOCKETS connection', que definimos inicialmente lá em 'app.js'....
+      ///.emit() --> COMUNICA 'ALL USERS CONNECTED TO YOUR APP' sobre essa info que você especifica (no caso, o create desse post, por esse user) ---> até mesmo o CRIADOR DO POST SERIA/SERÁ INFORMADO, se você usar 'emit()'....
+      //.broadcast --> É O RIVAL DE 'emit' --> 'ALL USERS CONNECTED TO YOUR APP, EXCEPT THE ONE FOR WHICH THIS REQUEST WAS SENT' ( ou seja, TODOS OS USERS CONECTADOS AO SEU APP VAO RECEBER ESSA COMUNICAÇÃO, __ EXCETO__ AQUELE que emitiu/broadcasteou essa comunicação)....
+
+      io.getIo().emit(  ///professor optou, aqui, por 'emit()' em vez de broadcast...
+                        ////argumentos de 'emit()' --> 1) IDENTIFICADOR, nome do 'event' relativo a essa 'comunicação'... 2) A __ DATA__ que deverá ir nessa comuunicaçaõ...
+    'posts', ///1o argumento
+    { ///2o argumento
+
+
+      
+    }
+
+
+      );
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+      }
+    } catch(err) {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); 
+      }
+  
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> TIPICAMENTE,
+
+O SEGUNDO ARGUMENTO É UM OBJETO 
+
+
+JAVASCRIPT,
+
+OBJETO COM 'ANY DATA YOU WANT'....
+
+
+
+
+
+
+
+
+
+
+--> NO CASO DO PROFESSOR,
+
+
+
+ELE VAI QUERER DEFINIR UMA KEY DE 
+
+'action',
+
+PARA 
+
+
+'
+INFORMAR O CLIENT DAQUILO QUE ACONTECEU....'
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR FALA QUE 
+
+o primeiro parâmetro é 
+
+o 
+
+
+'CHANNEL QUE QUEREMOS USAR',
+
+
+
+
+
+
+e que essa key de 'action'
+
+SERVE 
+PARA __ INFORMAR A __ AÇÃO__ QUE 
+
+VAMOS QUERER REALIZAR, DENTRO DESSE CHANNEL...
+
+
+
+
+
+
+
+
+--> ex:
+
+
+
+channel: posts 
+
+
+action: create (
+
+    ou seja,
+
+    vamos CRIAR UM POST, dentro do channel de POSTS...
+)
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE 
+
+
+
+É EVIDENTE QUE ESSE APPROACH DELE É APENAS UMA 
+
+DAS MANEIRAS DE IMPLEMENTAR 
+
+
+
+
+ESSEs 'emit()'....
+
+
+
+
+
+
+
+
+
+
+-----> OK.... MAS AÍ, A PARTIR DESSE 'emit',
+
+
+ELE VAI 
+
+
+___ COLOCAR O 'ACTUAL POST' (a post data em si)
+
+
+
+
+
+COMO UMA _ DAS KEYS__ nesse 'emit()'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+io.getIo().emit('posts', { action: 'create', post: post})
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+OK, ISSO SIGNIFICA QUE ESTAREMOS 'ENVIANDO ESSE POST, OBJETO POST,
+
+NESSA DATA PACKAGE,
+
+NESSE CHANNEL DE 'posts'... 
+
+
+
+
+
+
+
+
+
+é isso que esse código representa.... o códiog completo ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      io.getIo().emit(  
+    'posts', 
+    { 
+
+        action: 'create', 
+        post: post
+      
+    }
+
+
+      );
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+
+
+----------------------------
+
+
+
+
+
+com isso,
+ 
+ ESTAMOS ENVIANDO ESSA DATA 
+ (
+
+     esse post
+ )
+
+
+
+
+
+
+
+
+ A TODOS 
+
+ 'CONNECTED CLIENTS'... -------> 
+
+
+
+
+
+ AGORA BASTA ESCREVER,
+
+
+ NO CÓDIGO DE NOSSO FRONTEND,
+
+
+
+ 'endpoints/receptáculos'
+
+
+ QUE 
+
+
+
+ __ FAÇAM USO __ DESSA DATA __ 
+
+
+ QUE ESTAMOS 
+
+ ENVIANDO POR MEIO 
+
+
+
+ DESSE 
+
+
+ 'io.getIo().emit()'....
+
+ (
+
+     PQ SE NÃO FIZERMOS ISSO,
+
+
+     ESSE 'DISPARO' DESSA 
+
+
+     DATA, POR PARTE DO NOSSO BACKEND,
+
+     vai se chocar contra o frontend e NÃO SURTIRÁ EFEITO ALGUM....
+ )
+
+
+
+
+
+
+
+ ----------> NOSSO FRONTEND VAI TER QUE REAGIR 
+
+
+
+ A ESSE 'INCOMING EVENT'...
+
+
+
+
+
+
+
+
+
+
+
+ ----> PARA ISSO, VOLTAMOS AO FRONTEND,
+
+ LÁ EM 
+
+ 'Feed.js',
+
+
+
+
+
+ NO componentDidMount,
+
+
+
+ TEMOS ESTE CÓDIGO, NO PRESENTE:
+
+
+
+
+
+
+
+
+
+
+ componentDidMount() {
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+    openSocket('http://localhost:8080'); //COLOQUE O PATH/ENDEREÇO DE SEU__ SERVIDOR/BACKEND, APP NODEEXPRESS, no nosso caso....
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------> TEMOS AQUELE 'openSocket' no final, ali... --> 
+
+
+
+
+
+
+
+VAMOS QUERER __ 
+
+
+'SET UP THE CODE TO LISTEN TO INCOMING DATA FROM 
+
+SOCKET.io' ... --------> ISSO PQ,
+ 
+
+
+
+ NO NOSSO APP,
+
+
+
+ OS EVENTOS QUE 
+
+ NÓS 
+
+ FAZEMOS 
+
+
+
+ EMIT/BROADCAST 
+
+
+ LA __ NO SERVER__ 
+
+
+
+
+ ESTÃO RELACIONADOS COM __ O POST _ QUE 
+
+
+ ESTAMOS 'MANAGING'
+
+ para aquele user específico...
+
+
+
+
+
+
+
+
+
+ --> E É NO COMPONENT DE 'Feed.js'
+
+
+
+ QUE OS POSTS 
+
+ SÃO DISPLAYADOS,
+
+
+ por isso 
+
+ estamos interessados nesse 'componentDidMount'...
+
+
+
+
+
+
+
+
+
+
+
+ --> EM componentDidMount,
+
+  
+
+  LOGO DEPOIS DO __OPEN__ DO SOCKET__ 
+
+
+  'webSockets'
+
+
+  NO NOSSO FRONTEND,
+
+  POR MEIO DAQUELE CÓDIGO DE 
+
+
+
+  'openSocket',
+
+
+
+  O PROFESSOR 
+
+
+
+
+  EXPLCIA UQE 
+
+
+
+  VAI __ QUERER___ ARMAZENAR __ 
+
+  O 
+
+
+  'ACTUAL SOCKET'
+
+
+  retornado por esse 
+
+  'openSocket'... 
+
+
+
+
+  fazemos isso por meio da escrita:
+
+
+
+
+
+const socket = openSocket('http://localhost:8080')  
+
+
+
+
+
+
+
+
+
+---> COM ISSO,
+
+
+TEREMOS ___ 
+
+ACESSO 
+
+À SOCKET 
+
+ABERTA EM SI,
+
+
+por meio dessa const...
+
+
+
+
+
+
+
+
+
+
+
+------> OK... ----> 
+
+
+
+
+
+QUANDO CRIAMOS UMA CONSTANTE PARA ARMAZENAR CALLS DE 'openSocket',
+
+
+
+
+
+__ 
+
+ESSA CONSTNATE NOS FORNECE 
+
+__ VÁRIOS MÉTODOS 
+
+PARA 
+
+FAZER 
+
+'listen to '
+
+
+A DETERMINADOS EVENTS... (events disparados __ CONTRA NOSSO __ FRONTEND)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AQUI, NESSE PARÂMETRO,
+
+
+VAMOS QUERER USAR 
+
+
+
+________ O MESMO __ EVENT NAME __ QUE 
+
+UTILIZAMOS 
+
+LÁ NO BACKEND,
+
+
+
+
+
+
+lá naquele código de 
+
+
+
+
+
+      io.getIo().emit(  
+    'posts', 
+    { 
+
+        action: 'create', 
+        post: post
+      
+    }
+
+
+
+
+
+
+
+
+
+    --> É ESSA STRING DE 
+
+    'posts'...
+
+
+
+
+
+    --> VMAOS QUERER ENFIAR ESSA STRING DENTRO DO 
+
+
+
+
+
+
+MÉTODO 
+
+
+do 'socket'
+
+
+NO NOSSO FRONTEND...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  const openSocketToOurBackend = openSocket('http://localhost:8080'); //COLOQUE O PATH/ENDEREÇO DE SEU__ SERVIDOR/BACKEND, APP NODEEXPRESS, no nosso caso....
+ 
+
+  openSocketToOurBackend.on('posts'); ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+  ----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+--------> CERTO... passamos esse 'posts' 
+
+aí...
+
+
+
+PASSAMOS ISSO PARA DENTRO DO método '.on()',
+
+QUE É 
+
+OUTRA PARTE __ CRUCIAL_ DO CÓDIGO QUE DEVE SER ESCRITO NO FRONTEND, PARA REAGIR 
+
+
+A 
+
+
+REQUESTS 
+
+DISPARADOS PELO BACKEND....
+
+
+
+----------------------------
+
+
+
+
+
+
+
+------> CERTO...
+
+
+
+
+
+
+NESSE 
+
+
+
+
+CALL DO MÉTODO 
+
+'.on()',
+
+
+
+O SEGUNDO PARÂMETRO 
+
+
+É JUSTAMENTE __ 
+
+
+O CÓDIGO __ QUE DEVE SER EXECUTADO _ A PARTIR 
+
+DO 
+
+
+RECEIVE 
+
+DESSE 
+
+
+REQUEST 
+
+com o identificador de 
+
+'posts'....
+
+
+
+
+
+
+---->
+
+
+
+
+VAMOS RECEBER, NESSE PARÂMETRO,
+
+
+
+O ARGUMENTO 'data'...
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  const openSocketToOurBackend = openSocket('http://localhost:8080'); //COLOQUE O PATH/ENDEREÇO DE SEU__ SERVIDOR/BACKEND, APP NODEEXPRESS, no nosso caso....
+ 
+
+  openSocketToOurBackend.on('posts', 
+  (data) => {
+
+  }
+  
+  ); ////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> NESSE SEGUNDO PARÂMETRO,
+
+
+O
+ __ PROFESSOr___ PROVAVELMENTE_ VAI QUERER EXECUTAR AQUELE CÓDIGO DO 
+
+ 'addPost',
+
+
+ QUE 
+
+
+ ERA AQUELA FUNÇÃO/MÉTODO COM ESTE CÓDIGO AQUI:
+
+
+
+
+
+ addPost = post => {
+
+
+    this.setState(prevState => {
+
+                const updatedPosts = [...prevState.posts];
+                if(prevState.postPage === 1) {
+                    updatedPosts.pop();
+                    updatedPosts.unshift(post);
+                }
+
+
+                return {
+                    posts: updatedPosts,
+                    totalPosts: prevState.totalPosts + 1
+                }
+
+    })
+}
+
+
+
+
+
+-------------------------------
+
+
+CERTO... VAMOS QUERER 
+
+CHAMAR 
+
+ESSA FUNÇÃO/MÉTODO AÍ,
+
+e aí 
+
+PASSAR 
+
+o 
+
+'post' em si, como argumento...
+
+
+(
+
+
+  isso lá 
+
+  dentro 
+
+  desse código de 
+
+
+
+  'openSocketToOurBackend.on('posts', 
+  
+  
+  () => {
+
+
+    ...
+  }
+  
+  )
+'
+
+
+)
+
+
+
+
+
+
+
+
+
+OK...
+
+
+
+
+
+provavelmente 
+
+
+
+
+o código ficará assim:
+
+
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/status', {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({ status: data.status });
+      })
+      .catch(this.catchError);
+    this.loadPosts(); //EXECUTADO __ APÓS O FETCH, ACHO...
+  const openSocketToOurBackend = openSocket('http://localhost:8080'); //COLOQUE O PATH/ENDEREÇO DE SEU__ SERVIDOR/BACKEND, APP NODEEXPRESS, no nosso caso....
+ 
+
+  openSocketToOurBackend.on('posts',
+  
+    (data) => {
+
+      addPost(data.post);
+    }
+  
+  
+  );
+  
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CLARO QUE ESTOU __ CHUTANDO_...
+
+
+
+
+NÃO SEI SE ESSE CÓDIGO ESTÁ REALMENTE CORRETo...
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+OK, MAS QUAL É A UTILIDADE DE 
+
+
+
+'action'? --> a utilidade é que 
+
+
+
+
+EVENTUALMENTE VAMOS 
+
+ENVIAR 
+
+DIFERENTES TIPOS DE 'data'
+
+
+por meio daquele 
+
+channel de 
+
+
+'posts',
+
+
+
+E ESSa 'action' key é que vai diferenciar,
+
+a nós,
+
+
+
+a data que 
+
+enviamos em cada 1 desses 'emit()'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OK...
+
+
+
+
+
+
+
+
+MAS AÍ, 
+
+LÁ 
+
+
+
+NO FRONTEND,
+
+
+
+EU ESQUECI DE ESCREVER O CÓDIGO DE UMA CERTA FORMA...
+
+
+
+
+
+
+
+
+
+
+--> a sintaxe que o professor usou foi esta:
+
+
+
+
+
+
+
+
+this.loadPosts();
+const socket = openSocket('http://localhost:8080')
+
+socket.on('posts', 
+
+
+(data) => {
+
+  if (data.action === 'create') {
+
+
+
+  }
+}
+
+
+)
+
+
+
+
+
+--------------------------------------
+
+
+
+
+COM ISSO,
+
+
+COM ESSE IF CHECK 
+
+
+
+aí 
+
+de 
+
+
+'if (data.action === 'create')' ,
+
+
+
+
+NÓS __ 
+
+
+
+
+
+ASSEGURAMOS QUE __ APENAS__ 
+
+
+
+O 'emit' que tiver 
+
+UM VALOR 
+
+de 
+
+'create'
+
+
+NA 
+SUA 
+
+KEY 
+
+
+
+de 'action' 
+
+
+
+
+__ __ VAI CONSEGUIR__ ENVIAR DATA _ PARA 
+
+ESSE 
+
+'RECEPTÁCULO/ENDPOINT' 
+
+
+no nosso 
+
+frontend...
+
+
+
+
+
+
+
+
+
+
+--> OK... ISSO SIGNIFICA QUE 
+
+VAMOS 'CATCH'
+
+
+apenas 
+
+esse determinado event 'create'
+
+
+QUE 
+
+ESTAMOS EMITINDO NO BACKEND...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+  openSocketToOurBackend.on('posts',
+  
+      
+
+  (data) => {
+
+    if (data.action === 'create') { ////vamos querer aceitar data EMITIDA _ APENAS__ DO REQUEST _ DISPARADO POR NOSSO BACKEND QUE TENHA ESSE VALOR de string 'create' DENTRO DE SUA KEY 'action'.... ( ou seja, só aquele código do 'SOCKETIO' que escrevemos la no controller de 'createPost'...)
+
+
+    }
+
+
+  }
+  
+  );
+  ///essa constante que segura o call de 'openSocket' nos fornece VÁRIOS MÉTODOS 'listener', que são EVENT LISTENERS; usaremo-nos para __ FAZER LISTEN TO _ A EVENTS __ DISPARADOS __ por nosso backend... (como o evento 'posts' que escrevemos lá no backend, no controller de 'feed.js', controller de 'createPost'...)
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+--> A PARTIR 
+
+DISSO,
+
+
+
+
+SE ENTRARMOS NESSE IF CHECK/if block aí,
+
+
+
+
+
+O PROFESSOR __ DIZ QUE _ VAMOS QUERER ___ EXECUTAR__ AQUELA 
+
+
+
+FUNÇÃO/MÉTODO DE 'addPost'
+
+
+QUE ELE HAVIA ESCRITO ANTES....
+
+
+
+
+-> PORTANTO, NOSSO CÓDIGO FICARÁ ASSim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+this.loadPosts();
+const socket = openSocket('http://localhost:8080')
+
+socket.on('posts', 
+
+
+(data) => {
+
+  if (data.action === 'create') {
+
+        this.addPost(data.post);//// eis o código em questão.
+
+
+  }
+}
+
+
+)
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+----> OK... ISSO SIGNIFICA QUE NÓS SETTAMOS A COISA TODA... --> 
+
+sabemos que 
+
+
+
+A 'DATA PACKAGE' 
+
+quaisquerue 
+
+estamos 
+
+
+ENVIANDO POR MEIO DAQUELE CÓDIGO DO 
+
+
+'SOCKETIO',
+
+
+auqele código de 
+
+
+
+
+
+
+'io.getIo().emit('posts', { action: 'create', post: post})' 
+
+
+
+
+
+
+VAI __ NOS REMETER__ 
+
+
+
+ESSAS KEYS DE 'action' 
+
+e 
+
+'post'...
+
+
+
+
+
+
+
+
+---> E SABEMOS QUE TEREMOS ESSA KEY de 'post',
+
+QUE 
+
+VAI 
+
+TER 
+O 
+
+PSOT QUE 
+
+
+
+FOI ACTUALLY CRIADO.. (criado com 'createPost')....
+
+
+
+
+
+
+
+
+
+
+
+-------->  PARA __ 
+
+VER SE ISSO FUNCIONOU,
+
+
+VOCÊ DEVE 
+
+_ABRIR __ 2 BROWSERS/aba anonima do google chrome,
+
+
+para que 
+
+TENHAMOS 
+
+
+2 CLIENTS INTERAGINDO COM NOSSO APP..
+
+
+
+
+
+
+--> CRIE UM NOVO POST EM 1 DOS APPS,
+
+
+
+e veja 
+
+se 
+
+isso é refletido no outro app...
+
+
+
+
+
+
+
+---> mas antes disso,
+
+
+RETIRE O CÓDIGO 
+
+
+
+QUE 
+
+FAZIA 'FILTER DOS POSTS POR USER',
+
+para 
+
+QUE 
+TODOS OS POSTS POSSAM SER VISUALIZADOS POR TODOS OS USERS....
+
+
+
+
+
+
+
+
+
+
+
+--> certo... mas isso NÃO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+--> O ERRO TVZ SEJA ESTE:
+
+
+
+Access to XMLHttpRequest at 
+
+'http://localhost:8080/socket.io/?EIO=4&transport=polling&t=Nso6WBa' 
+
+
+from origin 'http://localhost:3000' has been blocked by CORS policy: No
+
+
+ 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+
+
+
+
+---------------------------------
+
+
+
+TALVEZ SEJA NECESSÁRIO DEFINIR UM 
+
+
+'HEADER' 
+
+disso aí em mais algum lugar de nosso código....
+
+
+
+
+
+
+
+
+
+
+TALVEZ O FIX SEJA ESTE:
+
+
+
+
+import io from 'socket.io-client'   
+
+var socket = io('http://localhost:<your_port_number>', {transports: ['websocket', 'polling', 'flashsocket']});
+
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+COM ISSO, PAREI DE RECEBER AQUELE ERRO...
+
+
+
+
+
+
+
+
+
+
+-> AGORA MEU CÓDIGO ESTÁ QUASE FUNCIONANDO COMO QUERO,
+
+MAS 
+
+
+AINDA HÁ UM PROBLEMA:
+
+
+
+há aquele bug que o professor 
+
+
+falou mais cedo,
+
+provavelmente algo com 
+
+
+'pop()'
+ 
+
+ e 
+
+ 'unshift()' 
+
+
+
+ (
+   ISSO PQ 
+
+
+O ÚLTIMO POST ESTÁ __ SUMINDO__...
+
+ )
+
+
+
+
+
+
+
+
+
+ --> outro problema é que 
+
+ meu 
+
+ 'delete post'
+
+ NÃO ESTÁ MAIS FUNCIONANDO....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> outra coisa que quero fazer, em meu app,
+
+
+
+ é 
+
+
+
+ __ ESCONDER__ OS BUTTON DE 
+
+ 'edit' e 
+
+
+
+ 'delete'
+
+
+ de meus posts 
+
+ SE __ AQUELE __ USER 
+
+ NÃO FOR O RESPONSÁVEL 
+
+
+
+ POR A CRIAÇÃO DAQUELE POST, originariamente....
+
+
+
+
+
+
+
+
+
+ --> consertar isto:
+
+
+
+  --> outro problema é que 
+
+ meu 
+
+ 'delete post'
+
+ NÃO ESTÁ MAIS FUNCIONANDO....
+
+
+
+
+
+
+
+
+
+--> consertei o 'deletePost'...
+
+
+
+
+
+
+
+
+
+--> AGORA SÓ FALTA FAZER COM QUE OS BUTTON DE 'delete' e 'edit'
+
+SUMAM 
+
+quando o user não tiver uma token que 
+corresponda 
+
+
+ao userId do user que 
+
+criou esses posts....
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+--> CONSEGUI.... CONSEGUI FAZER UMA FEATURE DESSAS,
+
+DE FAZER OS 
+
+BUTTONS DE 'edit' e 'delete'
+
+SUMIR ___ quando aquele user não tiver sido o user responsável por aquele post...(
+
+
+
+  usei bastante 
+
+  do 
+
+REACT....
+)
+
+
+
+
+
+
+O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react';
+
+import Button from '../../Button/Button';
+
+import { Fragment } from 'react';
+
+import { useEffect, useState } from 'react';
+
+// import Image from '../../Image/Image';
+
+import './Post.css';
+
+const post = (props) => {
+
+
+
+
+  const [created, setCreated] = useState(false);
+
+
+  // const[loadedPostData, setLoadedPostData] = useState(false);
+
+
+
+  // useEffect(() => {
+  
+  //   const creationStatus = editAndDeleteDisplayer();
+  //   console.log(creationStatus);
+  //    setCreated(creationStatus);
+  //   // setCreated(true);
+  //    console.log(created);
+  // }, [loadedPostData]);
+  
+
+
+
+
+
+
+
+  useEffect(() => {
+    (async () => {
+      const postUserIdResult = await fetch(`http://localhost:8080/feed/post/buttons/${props.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.token}`,
+      },
+      body: JSON.stringify({
+        userId: props.userId,
+      }),
+    });
+    const manipulatedPostUserIdResult = await postUserIdResult.json();
+
+    console.log(manipulatedPostUserIdResult);
+      console.log(manipulatedPostUserIdResult.created);
+      setLoadedPostData(true);
+      setCreated(manipulatedPostUserIdResult.created);
+      console.log(created);
+    })()
+
+  }, [])
+
+
+
+
+
+
+
+
+
+
+
+  // const editAndDeleteDisplayer = async () => {
+  //   const postUserIdResult = await fetch(`http://localhost:8080/feed/post/buttons/${props.id}`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${props.token}`,
+  //     },
+  //     body: JSON.stringify({
+  //       userId: props.userId,
+  //     }),
+  //   });
+
+
+  //   const manipulatedPostUserIdResult = await postUserIdResult.json();
+
+  //   console.log(manipulatedPostUserIdResult);
+  //     console.log(manipulatedPostUserIdResult.created);
+  //     setLoadedPostData(true);
+  //   return manipulatedPostUserIdResult.created;
+  // };
+
+  return (
+    <article className="post">
+      <header className="post__header">
+        <h3 className="post__meta">
+          Posted by {props.author} on {props.date}
+        </h3>
+        <h1 className="post__title">{props.title}</h1>
+      </header>
+      {/* <div className="post__image">
+      <Image imageUrl={`http://localhost:8080/${props.image}`} contain />
+    </div> */}
+      {/* <div className="post__content">{props.content}</div> */}
+      <div className="post__actions">
+        <Button mode="flat" link={props.id}>
+          View
+        </Button>
+        {created ? (
+          <Fragment>
+            <Button mode="flat" onClick={props.onStartEdit}>
+              Edit
+            </Button>
+            <Button mode="flat" design="danger" onClick={props.onDelete}>
+              Delete
+            </Button>
+          </Fragment>
+        ) : null}
+      </div>
+    </article>
+  );
+};
+
+export default post;
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+Certo... 
+
+
+devo prosseguir....
+
+
+
+
+
+
+
+-> vou também consertar um styling 
+
+na sidebar/sidedrawer...
+
+
+
+
+--> coloquei um styling um pouco melhor...
+
+
+
+
+
+
+
+------------------
+
+
+
+
+ok...
+
+
+
+
+
+
+
+
+--> FALTA O PROBLEMA DO 'pop' e 'unshift'...
+
+
+
+
+
+
+
+
+
+
+-> nosso app tem uma peculiaridade... --->  2 pessoas com a MESMA CONTA (user) 
+
+PODEM LOGGAR AO MESMO TEMPO...
+
+
+
+
+
+
+
+--> não sei como fazer para evitar esse comportamento...
+
+
+
+
+
+
+
+--> e lá 
+
+
+
+na página/versão da página do user que __ CRIA ___ ESSE POST,
+
+
+o post 
+
+
+
+
+novo é AUTOMATICAMENTE ADICIONADO AO FINAL...(
+
+
+  o que é um lixo, 
+
+
+  pq 
+
+  cria uma discrepância entre 
+
+
+
+o comportamento da UI 
+
+do 
+user que 
+
+cria 1 post e dos outros que veem essa criação...
+)
+
+
+
+
+
+
+Ideal seria se ele fosse adicionado AO INÍCIO dos posts desse user...
+
+
+
+
+
+
+
+
+
+
+
+Use sort when querying.
+
+Just use db.collection.find().sort({_id:-1}).
+
+You are saving documents to collection. It is not like push or unshift in javascript.
+
+
+
+
+
+
+
+--> FAZEMOS ISSO PARA 'INVERTER' a query 
+
+
+
+de nossos documents...
+
+
+--> mas isso não vai resolver nosso problema... (acho)....
+
+
+
+
+
+
+
+
+
+--> FUNCIONOU, E CONSERTOU NOSSO PROBLEMA:
+
+
+
+
+    const neededUserDocuments = await Post.find({}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    ).sort({_id: -1})
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+--> ok... agora só falta 
+
+
+
+mudar aquele 'pop' e 'unshift'
+
+
+
+
+
+
+na função/método 'addPost'
+
+
+de nosso frontend...
+
+
+
+
+
+
+
+
+
+
+--> tirei o 'pop',
+
+
+e isso consertou o display errado...
+
+
+
+
+
+
+
+
+
+
+--> mas o display ainda está errado... -> o professor havia escrito aquele 'pop' 
+
+
+
+JUSTAMENTE PARA QUE 
+
+
+
+O POST AO FINAL DO 
+
+
+
+
+NOSSO DISPLAY 'AVANCASSE UMA PÁGINA',
+
+
+sumisse do nosso display e APARENTASSE TER IDO PARA OUTRA PAGE....
+
+
+
+(
+
+
+  é uma ilusão, é claro...
+)
+
+
+
+
+--> talvez a solução seja executar o 'pop' __ DEPOIS__ de executar __ 'unshift'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, AGORA FUNCIONOU...
+
+
+
+
+AS FEATURES 
+
+DE 
+
+
+NOSSO 
+
+
+
+APP 
+
+
+ESTÃO FUNCIONANDO ADEQUADAMENTE,
+
+DE CERTA FORMA.....
+
+
+
+
+
+-------------------------------
+
+
+--> MAS HÁ MAIS UMA FEATURE QUE TALVEZ FOSSE BOM ADICIONAR....
+
+
+
+
+
+
+
+
+
+
+--> O UPDATE DE NOSSOS POSTS (no frontend dos OUTROS USERS...) QUANDO OCORRE O 'EDIT' E O 'DELETE' DE UM POST....
+
+
+
+
+
+
+
+
+--> mas esse será o foco das próximas aulas, aparentemente...
+
+
+
+-----------------------------
+
+
+
+Devo prosseguir com 
+
+
+a aula do professor...
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+ok.... 
+
+
+
+
+
+O CÓDIGO CORRIGIDO DE 'addPost'
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+  addPost = (post) => {
+    this.setState(prevState => {
+                const updatedPosts = [...prevState.posts];
+                if(prevState.postPage === 1) {
+                    // updatedPosts.pop();
+                    updatedPosts.unshift(post);
+                    updatedPosts.pop();
+                }
+                return {
+                    posts: updatedPosts,
+                    totalPosts: prevState.totalPosts + 1
+                }
+
+    })
+}
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+na aula do professor, ele faz o test do nosso código por 
+
+
+meio 
+
+da abertura de 2 
+
+
+browsers diferentes, etc etc...
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> ok, nunca recarregamos a página do outro user,
+
+
+
+e mesmo assim o feed foi recarregado... (
+
+
+  feature bem interessante....
+)
+
+
+
+
+--> mas é claro que esse SOCKETIO/websockets requer TWEAKS no frontend e no backend...

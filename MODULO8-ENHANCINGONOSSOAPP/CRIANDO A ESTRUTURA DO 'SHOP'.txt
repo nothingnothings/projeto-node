@@ -1,0 +1,938 @@
+
+
+
+
+
+
+
+
+
+
+
+
+------> DE VOLTA AO NOSSO CÓDIGO,
+
+
+DEVEMOS 
+
+
+PENSAR RAPIDAMENTE SOBRE NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+--> O QUE ESTAMOS CONSTRUÍNDO É UMA 'ONLINE SHOP'... --> ISSO SIGNIFICA QUE 
+
+O 
+
+QUE 
+
+PRECISAMOS 
+
+É 
+
+
+DE 
+UMA 
+
+'STARTING PAGE'...
+
+
+
+
+
+
+
+
+
+---------> PRECISAMOS DE UMA PAGE EM QUE 
+
+PODEMOS 
+
+VER
+ 
+
+ TODOS 
+
+ OS 
+
+ PRODUCTS 
+
+ QUE 
+
+ ESTÃO LISTADOS,
+
+
+ TBM 
+
+
+
+ __QUEREMOS 
+
+
+ SER 
+
+ CAPAZES 
+
+
+
+ DE __cRIAR NOVOS PRODUTOS,
+
+ ADICIONAR 
+
+ PRODUTOS (como ADMINISTRADOR....) --> TAMBÉM QUEREMOS SER 
+
+
+
+
+ CAPAZES 
+
+ DE 
+
+ __DELETAR__ PRODUTOS__...........
+ 
+
+
+
+
+
+
+
+
+
+
+ ---> COMO USUÁRIOS, QUEREMOS 
+
+ SER 
+
+ CAPAZES 
+ DE 
+
+ ADICIONAR PRODUTOS A UM 
+
+ SHOPPING CART,
+
+
+
+
+
+
+
+
+TAMBÉM 'GO TO A CHECKOUT PAGE',
+
+
+
+
+E AÍ 
+
+
+
+PAGAR PELOS PRODUTOS...
+
+
+
+
+
+
+
+
+--> TBM VAMOS QUERER SER CAPAZES DE VER NOSSAS 'ORDERS', como CUSTOMERS.. 
+
+
+
+
+
+
+
+
+
+
+
+--> É BASTANTE COISA, CONSTRUÍREMOS ESSA LÓGICA AO LONGO DO CURSO...
+
+
+
+
+
+
+
+
+
+--> VAMOS COMEÇAR PELAS VIEWS...
+
+
+
+
+
+
+-------> PROFESSOR QUER 
+
+
+ADICIONAR 
+
+AS 
+
+VIEWS 
+
+PARA 
+
+ 
+ AS DIFERENTES COISAS DE QUE 
+
+
+ PRECISAREMOS 
+
+ NO FUTURO
+
+
+
+
+
+
+
+
+
+ ---> SÓ TEMOS 
+
+ 'shop' 
+
+ e 
+
+ 'add-product'...
+
+
+
+
+
+
+
+ ------> PRECISAMOS 
+
+
+ DE 
+
+
+ MAIS 
+
+ VIEWS... --> PROFESSOR VAI SPLITTAR NOSSAS 
+
+ VIEWS 
+ EM 
+
+
+ SUBFOLDERS,
+
+
+
+ PARA __ OS __aGRUPAR... 
+
+
+
+
+
+
+
+
+
+ -----> ELE CRIA UM FOLDER DE 'admin'
+
+ E AÍ 
+
+
+
+ TRANSFERE 
+
+
+
+ O 
+
+ 'add-product.ejs'
+
+
+
+ PARA 
+ DENTRO 
+
+ DO FOLDER 
+
+ 'admin'...
+
+
+
+
+
+
+
+
+ --> ELE TAMBÉM VAI ADICIONAR 
+ OUTRO 
+
+ FOLDER,
+
+
+
+
+ chamado 
+
+ de 
+
+ 'shop'.... ---> ESSA 
+
+
+
+ SERÁ 
+
+
+ A 'CUSTOMER FACING PART',
+
+
+ por assim dizer...
+
+
+
+
+
+
+
+
+
+
+--------> QUANTO AO VIEW 
+
+DE 
+
+'shop.ejs,'
+
+
+PROFESSOR 
+O RENOMEIA,
+
+
+COLOCA 
+
+
+'product-list.ejs',
+
+
+
+
+
+
+
+PQ É EXATAMENTE ISSO QUE ELE VAI QUERER NESSA PAGE,
+ 
+
+ NO FINAL DAS CONTAS...
+
+
+
+
+
+
+
+
+
+UMA LISTA COM TODOS OS PRODUCTs...
+
+
+
+
+
+
+
+
+
+-----> É CLARO QUE 
+
+
+
+
+ESSES NÃO SERÃO TODOS NOSSOS VIEWS,
+
+
+
+MAS 
+
+
+NÓS 
+
+
+__JÁ TEMOS QUE 
+
+
+
+___ ADICIONAR ALGUMAS MUDANÇAS....
+
+
+
+
+
+
+
+
+-----> A PRIMEIRA COISA QUE PRECISAMOS FAZER É ALTERAR O PATH DE NOSSOS INCLUDES NOS VIEWS,
+
+pq agora eles estarão INCORRETOS...
+
+
+
+
+
+(aquele código de '<%- include('includes/head.ejs)' %>' ,
+
+
+
+ETC ETC...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... O CÓDIGO DE nossos CONTROLLERS TBM TEVE DE SER AJUSTADO,
+
+o path dos 
+
+views 
+
+REFERENCIADO NOS CONTROLLERS....(como visto EM
+
+
+'''
+
+
+exports.getProducts = (req, res, next) => {
+
+  Product.fetchAll((products) => { //é código assíncrono, no final das contas...
+
+      res.render('shop/product-list', {
+  prods: products,
+  pageTitle: 'Shop',
+  path: '/',
+  productCSS: true,
+  activeShop: true,
+  hasProducts: products.length > 0,
+});
+
+
+  });
+
+};
+
+
+'''''
+
+
+
+)
+
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+
+
+
+
+
+
+O que mais?
+
+
+
+
+
+
+OS INCLUDES EU TAMBÉM CORRIGI...
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----> faltou a página de 404...
+
+
+
+
+
+
+
+
+
+
+-----> OK....
+
+
+
+
+
+
+TUDO ESTÁ SENDO RENDERIZADO CORRETAMENTE, AGORA..
+
+
+
+
+
+
+
+
+
+
+----> as views reformatadas AINDA FUNCIONAM CORRETAMENTE...
+
+
+
+
+
+
+
+
+
+-> AGORA VAMOS CRIAR NOVAS VIEWS.. --> para isso,
+
+
+
+dentro do folder 
+
+'shop'
+
+
+PROFESSOR CRIA UMA NOVA PÁGINA/view',
+
+
+index.ejs...
+
+
+
+
+
+
+
+
+------->  CERTO... ESSA É A STARTING PAGE... 
+
+
+
+
+
+
+
+-------> BEM... AGORA VAMOS FAZER A SEPARAÇÃO:
+
+
+
+
+
+
+1) A STARTING PAGE (index.ejs)
+
+
+2) A 'PRODUCTS AREA' (que será 'products-list.ejs', essa outra view... ) ------> ELA DEVERÁ RENDERIZAR NOSSA PRODUCT LIST...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E, NO FINAL DAS CONTAS,
+
+
+A 
+
+página 
+
+
+'index.ejs'
+
+
+VAI SER__ BEM SIMILAR__, MAS VAI DISPLAYAR 
+
+MENOS 
+
+PRODUTOS,
+
+
+
+
+vamos dizer...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK.... NO FOLDER DE 'shop',
+
+
+
+TBM VOU QUERER TER UM 
+
+'product-detail.ejs' --------> 
+
+
+
+
+
+COM ESSE NEGÓCIO AÍ,
+
+QUANDO EU CLICAR EM 1 PRODUCT,
+
+
+VOU PODER VER DETALHES SOBRE ELE....
+
+
+
+
+
+
+
+
+
+
+
+--> TAMBÉM VOU QUERER TER UM VIEW DE NOME '
+
+cart.ejs',
+
+
+
+
+QUE 
+
+
+
+SERÁ O CART DO USUÁRIO, QUE PODERÁ SER VISTO QUANDO ELE CLICAR NO 'CART'
+
+
+NO MENU...
+
+(e vamos ter que 
+
+adicionar esse 
+
+ITEM DO MENU,
+
+é claro...)
+
+
+
+
+
+
+
+
+
+------> E TEM MAIS 1 VIEW FALTANDO, QUE É 
+
+O 
+
+'checkout.ejs',
+
+
+QUE 
+
+
+SERÁ 
+O 
+
+
+'CHECKOUT FLOW'
+
+
+
+
+que vamos poder INICIAR DE DENTRO DO 
+
+
+'CART'...
+
+
+
+
+
+
+
+--> LÁ NO FOLDER DE 'ADMIN',
+
+
+
+
+VAMOS TAMBÉM COLOCAR UM 
+
+
+VIEW DE 
+
+'edit-product',
+
+
+
+
+PARA QUE 
+
+POSSAMOS EDITAR NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+
+--> TAMBÉM TEREMOS 'product-list.ejs',
+
+
+
+
+
+
+
+QUE SERÁ UMA VIEW DE PRODUCTLIST 
+
+
+
+DO ADMIN... (diferente da mesma view, mas do usuário)... ----> PARA 
+
+EVITAR 
+
+
+CONFUSÃO 
+
+
+
+DE NOMES,
+
+
+
+PROFESSOR 
+
+
+
+NOMEIA 
+
+
+
+'products-list-admin.ejs'..
+
+
+
+
+
+
+
+
+-> AGORA QUE TEMOS TUDO ISSO SETTADO,
+
+
+
+
+___ 
+
+
+
+
+VAMOS 
+
+VOLTAR AO 'NAVIGATION',
+
+
+
+
+NAVBAR,
+
+em que 
+
+
+
+
+TEREMOS 
+
+
+
+
+
+
+DE TRABALHAR 
+
+
+NOS 
+
+'AVAILABLE NAVIGATION ITEMS'..
+
+
+
+
+
+ex:
+
+
+
+
+
+<header class="main-header">
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item"><a href="/" class="<%= path === '/' ? 'active' : '' %>" >Shop</a></li>
+        <li class="main-header__item"><a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add Product</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+
+
+
+
+
+  -------------------------------
+
+
+
+
+
+  ISSO PQ ATÉ 
+
+  AGORA
+
+
+  ___ NÓS _ TEMOS 
+
+
+  2 NAVITEMS,
+
+
+
+  1 
+
+
+  PARA A STARTING PAGE E 
+
+  OUTRO 
+
+  PARA 
+
+
+
+  O 
+
+
+  'add a product'
+
+
+  NA ÁREA DO ADMIN..
+
+
+
+
+
+
+
+
+  --> É CLARO QUE VOCÊ PODERIA ARGUMENTAR 
+
+
+  QUE 
+
+  VOCÊ 
+
+
+  NUNCA GOSTARIA 
+
+
+  DE, EM GERAL,
+
+
+
+
+  TER 
+
+
+  APENAS 
+
+  1 NAVIGATION COM 
+
+  TODAS 
+
+  AS 
+
+
+  'CUSTOMER OPTIONS'
+
+
+  e todas 
+
+  as 
+
+  'ADMIN OPTIONS'... ----> MAS ISSO É ALGO QUE VEREMOS DEPOIS.... (render de DIFERENTES NAVBARS, dependendo se  ESTAMOS RENDERIZANDO VIEWS DE ADMIN OU USUÁRIO...)
+
+
+
+
+
+
+
+  -> MAS ISSO É ALGO QUE VEREMOS MAIS TARDE...
+
+
+
+
+
+
+
+  ---> A PRÓXIMA COISA QUE O PROFESSOR QUER FAZER É ADICIONAR LINKS PARA TODOS OS NOSSOS VIEWS,
+
+
+
+
+  para que então os refinemos ao longo do curso....

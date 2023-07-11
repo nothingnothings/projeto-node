@@ -1,0 +1,686 @@
+WRAPUP BEM LONGO, MT COISA FOI ABORDADA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ACABAMOS ESTE MÓDULO...
+
+
+
+
+
+
+
+
+--> APRENDEMOS UM MONTE SOBRE 
+
+__COOKIES_ E SESSIONS...
+
+
+
+
+
+
+
+
+--> COOKIES:
+
+
+
+
+
+
+
+* ÓTIMOS PARA __ ARMAZENAR __ DATA ON THE CLIENT (browseR)...
+
+
+
+
+
+
+
+* NUNCA ARMAZENE SENSITIVE DATA NOS SEUS COOKIES.... (pq os cookies podem ser VISTOS  + MANIPULADOS...) 
+
+(DO NOT STORE SENSITIVE DATA HERE! IT CAN BE VIEWED + MANIPULATED!)
+
+
+
+
+--> a pior parte não é o USER VENDO OS DADOS, pq 
+
+__CADA USER_ VAI PODER __ VER __aPENAS __ SEUS PRÓPRIOS COOKIES,
+
+
+MAS__ O GRANDE__ PROBLEMA É _ QUE __SEUS COOKIES, SUA DATA, PODE SER 
+
+_MANIPULATED... ---> E VOCê NUNCA 
+
+VAI 
+
+QUERER QUE SEUS USERS POSSAM CONTROLAR 
+
+'WHETHER THEY ARE AUTH OR NOT' 
+
+
+por meio do simples switch 
+
+de 
+
+
+1 cookie value... 
+
+
+
+
+
+
+
+
+**** COOKIES PODEM SER CONFIGURADOS __ DE INÚMERAS MANEIRAS.... -------> E, FREQUENTEMENTE,
+
+VOCÊ 
+
+__NÃO VAI PRECISAR CONFIGURÁ-LOS... (pelo menos não DIRETAMENTE, por meio do set do header...  ) ------> EM VEZ DISSO,
+
+VOCÊ PROVAVELMENTE VAI USAR PACKAGES COMO 'express-session', QUE __ TAMBÉM USAM COOKIES___ (além de usar 'sessions'...)
+
+
+
+
+
+
+
+
+***** MAS O __IMPORTANTE__ É QUE __ VOCê __PODE__, É CAPAZ__, __ DE CONFIGURAR __ SEUS COOKIES PARA,
+
+
+POR EXEMPLO,
+
+
+____'EXPIRE AFTER WE CLOSE THE BROWSER'.... ------> POR DEFAULT, OS COOKIES __SEMPRE VAO EXPIRAR 
+
+QUANDO O BROWSER FOR FECHADO.... ------------> E ESSES COOKIES QUE  ___eXPIRAM__ QUANDO O BROWSER É FECHADO 
+
+___SÃO CHAMADOS DE 'SESSION COOKIES'...
+
+
+(Cookies can be configured to expire when the browser is closed (default, they are called SESSION COOKIES), or 
+
+when a certain __AGE_/EXPIRY DATE is reached   (CHAMADOS DE __PERMANENT COOKIES__...))....
+
+
+
+
+
+
+
+
+---> O TERMO 'SESSION COOKIES'  ___ PODE SER ___ CONFUSO.... ------> 
+
+
+
+
+SESSION COOKIES 
+
+
+NÃO ___ SÃO ___ COOKIES__ NECESSARIAMENTE USADOS PARA 'IDENTIFICAR SESSIONS' (identificar/correlacionar a sessions na nossa database),
+
+
+
+__ PQ __ ESSE TERMO TBM SE REFERE ___ AOS 
+
+
+COOKIES_ _ QUE 
+
+SÃO PERDIDOS/MORTOS __ QUANDO ___ FECHAMOS NOSSOS BROWSERS...
+
+
+
+
+
+
+
+
+
+
+--> O USO MAIS CORRETO DO TERMO 'session cookie' é 
+
+
+
+
+para 
+
+DESCREVER OS __ COOKIES__ QUE APENAS SOBREVIVEM 
+
+SE VOCÊ MANTIVER 
+
+
+O BROWSER ABERTO...
+
+
+
+
+
+
+
+
+********* além disso, ___ CABE RESSALTAR QUE __ COOKIES__ FUNCIONAM MT BEM COM SESSIONS... 
+
+
+
+
+
+
+
+
+
+--> PERMANENT COOKIES __ SÃO OS COOKIES COM AGE/EXPIRY DATE.... -----> É PERMANENTE NO SENTIDO DE QUE 
+
+
+_ELE _ NÃO VAI IR EMBORA NECESSARIAMENTE QUANDO VOCÊ FECHAR O BROWSER... --> ele vai continuar lá, 
+
+
+
+até ___ CHEGAR O SEU TEMPO LIMITE...
+
+
+
+
+
+
+
+
+
+--------> COOKIES FUNCIONAM BEM COM SESSIONS, MAS NÃO ESTÃO RESTRITOS A ELAS.... ---------> 
+
+
+
+VOCê DEVE TER AQUELE 'TRACKING COOKIE'
+
+em mente, pq ele 
+
+
+__ É UM EXEMPLO __ DE COOKIE__ QUE __NÃO DEPENDE___ DE SESSIONS...
+
+------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... AGORA AS ___ SESSIONS__.....
+
+
+
+
+
+
+
+
+
+
+
+SESSIONS:
+
+
+
+
+
+
+
+
+* VOCÊ __ AS ARMAZENA___ NO SERVER, E __NÃO NO CLIENT__....
+
+
+
+---> como elas ficam no SERVER e NÃO __PODEM SER VISTAS/MANIPULADAS POR SEUS USERS,
+
+
+ELAS SÃO ÓTIMAS PARA ARMAZENAR SENSITIVE DATA __ QUE __ SOBREVIVE AO LONGO DE REQUESTS... -----> PQ ISSO 
+
+
+É MT IMPORTANTE, pq você __ PODERIA__ ARMAZENAR DATA EM 'REQUESTS', como fizemos MAIS CEDO NO CURSO,
+
+
+MAS AÍ __ A DATA___ SEMPRE É/SERÁ _ PERDIDA__ QUANDO FOR FORMULADO UM NOVO REQUEST (qunado uma nova page for acessada 
+
+
+no nosso app/aquela page for deixada...) ------------> COM AS SESSIONS, POR SUA VEZ, A DATA __SOBREVIVE__... 
+ 
+
+
+
+
+
+
+
+
+* SÃO ÓTIMAS PARA __ ARMAZENAR __DADOS SENSÍVEIS (sensitive data) QUE 
+
+VAMOS QUERER QUE 
+
+SOBREVIVAM ___ AO LONGO __ DE REQUESTS/VÁRIOS REQUESTS...
+
+
+
+
+
+
+* VOCÊ __PODE __ ARMAZENAR___ _______QUALQUER COISA EM SESSIONS, não só 'users'....
+
+
+
+
+
+
+
+
+
+
+
+**** --> VOCÊ PODE ARMAZENAR, POR EXEMPLO,
+
+
+
+____ SEU 'SHOPPING CART',
+
+
+
+
+
+___ MAS FREQUENTEMENTE VOCÊ 
+
+USA 
+
+
+AS SESSIONS PARA __ STORE __ USER DATA... --------> STORE DE USER DATA ____OU 'AUTHENTICATION STATUS'
+
+
+EM GERAL...
+
+
+
+
+
+(often used for storing user data/authentication status)
+
+
+
+
+
+
+
+
+
+******** CERTO.... OUTRO PONTO IMPORTANTE É QUE __ 
+
+
+A 
+
+
+_____ SESSION, QUALQUER SESSION, 
+
+______PRECISA___ DE 1 COOKIE 
+
+PARA 
+
+SER 
+
+'IDENTIFIED'... -------------->         E VOCÊ NÃO DEVE CONFUNDIR ESSE 
+
+
+
+
+COOKIE NECESSÁRIO COM OS 'session cookies' (pq esses cookies aí são SIMPLESMENTE OS COOKIES QUE ___MORREM AO SER FECHADO SEU BROWSER....),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK......... ----->  PQ N DEVEMOS CONFUNDIR 'SESSION COOKIE' COM O 'COOKIE DA SESSION'? (usado para o identify) -------> 
+
+
+
+
+
+É __ PQ _ O 'COOKIE DA SESSION' nem sempre 
+
+
+PRECISA/PRECISARÁ 
+
+
+__sER UM COOKIE ___ TEMPORÁRIO (o chamado 'session cookie' de verdade....),
+
+
+
+__JUSTAMENTE__ PQ 
+
+VOCÊ ___________PODE____ (é permitido) 
+
+USAR 
+
+
+___PERMANENT COOKIES (totalmente distintos de session cookies, pois '''permanentes'''/submetidos a uma EXPIRY DATE)
+
+
+
+
+
+
+COM SUAS SESSIONS, PARA ESSA FUNÇAÕ DE 'IDENTIFy'... ------------------>
+
+
+
+
+
+
+
+
+
+
+E NA PACKAGE DE 
+
+
+'express-session', que usamos PARA SETTAR__ 
+
+
+O COOKIE __ DA SESSION ___ AUTOMATICAMENTE,
+
+
+
+
+
+LÁ __ NÓS PODÍAMOS/podemos __ CONFIGURAR___ 
+
+
+
+
+
+
+O COOKIe (se é permanent ou session cookie, etc etc) 
+
+
+
+
+QUANDO REGISTRÁVAMOS/NO MOMENTO DO _rEGISTER__ DESSE MIDDLEWARE...
+
+
+ex:
+
+
+
+
+
+
+
+
+app.use( /// (1/2) ///DEVE SER USADO COM O MIDDLEWARE DE BAIXO, que vai _RESOLVER__ O PROBLEMA DOS 'MONGOOSE METHODS', que são necessa´rios e NÃO SERÃO OBTIDOS _ QUANDO RETRIEVARMOS UMA SESSION DIRETAMENTE/conseguirmos dados nas sessions diretamente (pq os methods SÃO PERDIDOS na database....)
+  session(
+    ////USADO PARA DEFINIR/SETTAR NOSSA 'session' no nosso app, SESSION QUE SERÁ USADA/EMBUTIDA __ EM TODO E QUALQUER REQUEST que será enviado ao nosso server/app node... ----> É POR ISSO QUE VOCÊ SEMPRE DEVE ESCREVER ESSE CÓDIGO __ BEM NO INÍCIO DO RUNTIME/FLOW DE SEU APP, junto desses bodyParser e definidores de 'exceções public' ( middleware de 'express.static()' ....)
+    {
+      //é aqui que vamos  SETTAR__ NOSSO 'STORE', o 'STORE' que será usado para ARMAZENAR NOSSAS SESSIONS....
+
+      secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session...
+      // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg' ////segredo já um pouquinho mais forte.
+
+      resave: false, //////SETTING DE PERFORMANCE... Forces the session to be saved back to the session store, even if the session was never modified during the request. -----> VOCê DEVE __GERALMENTE SETTAR COMO 'FALSE', pq você NÃO VAI QUERER que SUA 'SESSION' seja SALVA a partir de TODO E CADA REQUEST CYCLE (req-res, ciclo que termina com o SEND DE UMA RESPONSE, que mata o request), PQ _àS VEZES OS REQUESTS__ PODEM N TER ALTERADO COISA ALGUMA, hipóteses em que É INÚTIL SALVAR/re-salvar a session, pq nada nela terá mudado a partir daquele request inútil...
+      saveUninitialized: false, ////MESMA COISA QUE A SETTING DE CIMA, 1 setting de PERFORMANCE...  ------> VOCÊ __ DEVE  SETTAR __ COMO  'FALSE' PQ __ ISSO VAI __ BASICAMENTE ___ ___GARANTIR__, também,  QUE  NENHUMA  SESSION  ACABE  'saved for a request WHERE THAT SESSION DOESNT NEED/didnt need TO BE SAVED' ----> ISSO PQ  __-NADA FOI/TERÁ SIDO ALTERADO NA SESSION, por meio desse request, o  que afastaria a necessidade de 'save' dessa session para salvar as changes...
+      store: store, ///define o STORE que você vai querer usar.... (vamos passar nossa CONSTANTE de 'store' que definimos mais acima..., com o 'new MongoDBStore()'...)
+      // cookie: { ////KEY USADA PARA _ DEFINIR CONFIGS ESPECÍFICAS DE NOSSO 'SESSION COOKIE', dos session cookies armazenados no browser de nosso user... (pleonasmo... todos session cookies são armazenados NO BROWSER DO USER...)
+      //   maxAge: ...
+      // }
+    }
+  )
+);
+
+
+
+
+
+
+
+
+
+
+-------> É SÓ VER AQUELA PARTE DE 'cookie' ali, embaixo... 
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK.... AQUI NÓS SIMPLESMENTE TEREMOS/TEMOS UM COOKIE __ QUE É USADO 
+
+PARA 
+
+'IDENTIFY A SESSION',
+
+
+
+
+e isso é 
+
+IMPORTANTE PQ, CASO CONTRÁRIO,
+
+
+
+
+__ NÓS VAMOS TER ESSA DATA NO 
+
+SERVER,
+
+sim,
+
+
+
+MAS __ COMO SABEREMOS 'TO WHICH USER IT BELONGS?' (a que user essa data de session pertence?)
+
+
+
+
+
+
+
+
+----> É EXATAMENTE PARA ISSO QUE VOCÊ VAI PRECISAR DO __ COOKIE_, DO 'COOKIE DA SESSION'...
+
+
+
+
+
+
+
+-------> É ASSIM, PORTANTO, QUE AS SESSIONS FUNCIONAM,
+
+
+
+E É ASSIM 
+
+
+
+QUE VOCÊ 
+
+DEVE USAR 
+
+
+
+OS COOKIES NO SEU APP...
+
+
+
+
+
+
+
+
+
+
+-----------> POR FIM,
+
+
+
+'YOU CAN USE DIFFERENT STORAGES FOR SAVING YOUR SESSIONS ON THE SERVER'....
+
+(pacotes como 'connect-mongodb-session' são usados PARA __ 
+
+
+REALIZAR ESSE STORAGE DE FORMA SIMPLES...)
+
+
+
+
+
+
+
+-->  É CLARO QUE VOCÊ PODE USAR DIFERENTES STORAGES ___ 
+
+
+para armazenar___ suas sessions; você poderia/pode usar 
+
+
+UMA 
+
+
+STORAGE 'mySQL',
+
+
+
+
+
+OU FILE STORAGE (meio ruim),
+
+
+
+
+OU 
+
+O MONGODB, como usamos neste módulo,
+
+
+PARA FAZER O STORAGE DE 
+
+SUA DATA...
+
+
+
+
+
+
+
+
+
+
+
+-------> OK, ESSES SÃO OS SESSIONS E COOKIES,
+
+
+
+CONCEITOS QUE __ VOCÊ NEM SEMPRE 
+
+
+__ 
+
+
+CONTROLARÁ 
+
+E 
+
+USARÁ DIRETAMENTE,
+
+
+
+MAS  COM FREQUÊNCIA USARÁ 
+
+
+
+___INDIRETAMENTE,
+
+
+
+por EXEMPLO 
+
+
+
+COM __ AUTHENTICATION,
+
+
+
+
+ALGO QUE VEREMOS 
+
+
+
+NO PRÓXIMO MÓDULO..
+
+
+
+
+
+
+
+
+
+
+
+
+------> NO PRÓXIMO MÓDULO VEREMOS __ 
+
+
+
+
+REAL AUTH WORKFLOW,
+
+
+COM SIGNUP, LOGIN, LOGOUT, STORE REAL USER DATA,
+
+
+
+create users,
+
+
+
+
+todas essas coisas....
+
+
+
+
+
+
+
+The mobile navigation was broken thus far, in the attached code, it's fixed (a pure styling thing, it does NOT affect your Node.js code!).
+
+
+

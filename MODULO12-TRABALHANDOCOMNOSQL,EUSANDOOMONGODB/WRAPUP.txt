@@ -1,0 +1,546 @@
+
+
+
+VIMOS UM MONTE SOBRE NOSQL E 
+
+MONGODB...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MONGODB É APENAS UMA ALTERNATIVA A DATABASES SQL... 
+
+
+
+
+
+
+
+---> ELE SEGUE UMA FILOSOFIA DIFERENTE...
+
+
+
+
+------> SEM STRICT SCHEMAS, MENOS RELATIONS....
+
+
+
+
+
+
+--> VOCÊ AINDA PODE USAR SCHEMAS, É CLARO,
+
+
+
+
+e pode usar relations reference-based, mas vocÊ ganha mais flexibilidade...
+
+
+
+
+
+
+--> FREQUENTEMENTE RELATIONS SÃO CRIADAS POR MEIO 
+
+DO EMBED DE 
+
+
+DOCUMENTS/DATA EM OUTROS DOCUMENTS...
+
+
+
+
+
+
+
+------> vVOCÊ __NÃO PRECISA SPLITTAR SUA 
+
+DATA 
+
+AO LONGO 
+
+DE
+
+
+
+DÚZIAS 
+
+
+
+DE TABLES,
+
+
+como 
+
+fazemos no 'sql database',
+
+
+
+
+
+E SIM 
+
+
+
+__ VOCÊ TRABALHA COM COISAS 
+
+
+
+ 
+ COMO O 'EMBEDDING'
+
+ DE 
+
+ DATA,
+
+
+
+
+
+ OU ENTÃO 
+
+
+ O USO __SÓ DE ALGUMAS REFERENCES... (
+
+
+
+     ou seja,
+
+
+
+     __VOCÊ MISTURA OS 2 CONCEITOS,
+
+
+     O CONCEITO DE 'REFERENCING' (ids) 
+
+
+     e 
+
+     O CONCEITO DE EMBEDDING, 
+
+
+
+
+     __EXATAMENTE COMO VOCÊ VIU 
+
+
+     NESSE MÓDULO AQUI...
+ )
+
+
+
+
+
+
+
+
+
+
+
+ ----> OK... EM GERAL, VOCÊ 
+
+
+ FICA COM BEM MAIS FLEXIBILIDADE....  ------> E COMO VOCÊ 
+ PODE 
+
+
+ 'STORE' 
+
+
+ A 
+
+ DATA 
+
+
+
+ ___ NO __MESMO FORMATO__ PELO QUAL VOCÊ 
+
+ ESTÁ 
+
+ A 
+
+ 'FETCHEANDO',
+
+
+
+
+
+
+
+VOCÊ FREQUENTEMENTE PODE ESCREVER 
+
+
+'SIMPLER QUERIES',
+
+
+
+
+isso pq 
+
+A DATA __ JÁ VAI ESTAR NO FORMATO 
+
+
+QUE 
+
+VOCÊ PRECISA QUE 
+
+ELE ESTEJA... (no formato necessário)......
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK..... ----> MAS QUANDO VOCê TRABALHA COM O MONGODB EM NODE,
+
+
+você 
+
+
+vai ter que 
+
+usar o 
+
+
+DRIVER OFICIAL DO MONGODB,
+
+o 
+
+'npm install --save mongodb'...
+
+
+
+
+
+
+--> E AÍ VOCÊ 
+
+TEM UM MONTE 
+
+DE COMANDOS ÚTEIS COM ESSE DRIVER,
+
+
+
+como 
+
+
+'insertOne',
+
+
+
+'find()',
+
+
+
+'updateOne()',
+
+
+
+'deleteOne()',
+
+
+
+
+
+ETC.... ----> 
+
+
+
+
+TODOS ESSES MÉTODOS 
+
+
+DEIXAM 
+
+OPERATIONS 
+
+'CRUD' 
+
+BEM SIMPLES...
+
+
+
+
+
+
+
+
+
+
+------> VOCÊ DEVE 
+
+
+
+CHECAR OS OFFICIAL DOCS PARA APRENDER MAIS SOBRE 
+
+TODAS AS OPERAÇÕES DISPONÍVEIS,
+
+tbm as configurations/operators...
+
+
+
+
+
+
+
+
+-----> TODAS AS OPERATIONS DO MONGODB SÃO 'PROMISE-BASED',
+
+
+por isso 
+
+você pode 
+
+FACILMENTE 
+
+
+'CHAINAR'
+
+as operations 
+
+PARA 
+
+
+CONSEGUIR 
+
+
+FLOWS MAIS COMPLEXOS DE DADOS...
+
+
+
+
+
+
+
+
+
+----------> OPERATORS --> EXEMPLO: '$in', '$pull', etc etc...
+
+
+
+
+
+
+
+
+-------> DEVEMOS ASSISTIR O CURSO DE MONGODB DO 
+
+PROFESSOR....
+
+
+
+
+
+
+
+
+---> OK... MAS TENHA EM MENTE QUE TODAS AS OPERATIONS 
+
+
+DO 
+
+
+MONGODB SÃO 
+
+'PROMISE-BASED'.... ---->  A VANTAGEM 
+
+
+
+
+é que 
+
+mesmo operations 
+
+
+MAIS COMPLEXAS,
+
+EM QUE 
+
+CHAINAMOS 
+
+
+
+ESSES METHODS,
+
+
+ficam 
+
+
+
+fáceis de ler, fáceis de entender....
+
+
+
+
+
+
+
+
+
+
+
+---> OK... OVERALL, NOSQL 
+E MONGODB 
+
+
+
+SÃO MT POPULARES,
+
+
+ESPECIALMENTE 
+
+ 
+
+
+ EM COMBINAÇÃO COM 
+ O 
+
+
+ 'NODEJS',
+
+ isso 
+
+
+ pq 
+
+
+ VOCÊ JÁ TRABALHA COM 'JAVASCRIPT OBJECTS' 
+
+
+ anyways, com o nodejs,
+
+ e também
+
+
+ PQ 
+
+
+ É MT RÁPIDO....
+
+
+
+
+
+
+
+
+
+ -----> E O PROFESSOR VAI 
+
+
+ SE ATER AO MONGODB 
+
+
+
+
+ __ NO RESTANTE DESSE CURSO.... -----> 
+
+
+
+
+
+ MAS ELE RESSALTA QUE É CLARO QUE 
+
+
+
+ __PODEMOS__ USAR 'MYSQL',
+
+
+
+
+ TUDO DEPENDE 
+
+ DE NOSSA PREFERÊNCIA,
+
+
+ E OS 
+
+
+ REQUISITOS 
+ DE 
+
+ SEU 
+
+ APP ... ------> E EXISTE UMA 
+
+
+
+
+ GRANDE 
+
+ 'GRAY AREa'
+
+
+
+ EM QUE 
+
+
+
+ O USO DE QUALQUER 1 
+
+
+ DESSAS DATABASES É BOM/ACEITÁVEL,
+
+ nenhuma resposta é errada...
+
+
+
+
+
+
+
+
+
+ Attached, you find the source code for this section.
+
+When using my source code, make sure to run npm install in the extracted folder!
+
+Useful resource:
+
+MongoDB Official Docs: https://docs.mongodb.com/manual/core/security-encryption-at-rest/https://docs.mongodb.com/manual/
+
+SQL vs NoSQL: https://academind.com/learn/web-dev/sql-vs-nosql/
+
+Learn more about MongoDB: https://academind.com/learn/mongodb
+
+
+
+
+
+
+
+
+Behind the scenes, two files were deleted:
+
+order-item.js
+
+order.js
+
+Why? We simply don't need them anymore, the way we now structured our models.
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA VAMOS PARA O PRÓXIMO MÓDULO, PARA APRENDER 'MONGOOSE'...

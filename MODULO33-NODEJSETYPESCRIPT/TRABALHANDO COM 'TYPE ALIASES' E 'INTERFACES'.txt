@@ -1,0 +1,1511 @@
+
+
+
+
+
+
+
+
+
+
+
+
+-----> NOSSO CÓDIGO ATÉ AGORA FICOU ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const addButton = document.querySelector('button');
+
+
+// const input1 = document.getElementById('input1').textContent;
+
+
+// const input2= document.getElementById('input2').textContent;
+
+
+
+
+
+
+// const add = (num1, num2) => {
+
+
+
+//     const paragraphNumber = document.querySelector('p');
+//     paragraphNumber.textContent = num1 + num2;
+// }
+
+
+
+// addButton.addEventListener('click', add(input1, input2))
+
+
+
+
+
+
+const num1Element = document.getElementById('input1') as HTMLInputElement; //SIM, O TYPESCRIPT FUNCIONA COM QUALQUER TIPO DE JAVASCRIPT CODE, ATÉ CMO BROWSERSIDE VANILLA...
+
+
+const num2Element = document.getElementById('input2') as HTMLInputElement; 
+
+
+const buttonElement = document.querySelector('button')!; ///O 'BANG' OPERATOR AO FINAL DE UM VALOR DE UMA CONST SERVE PARA DIZER '''ESSA CONST NUNCA FICARÁ COMO 'NULL', ENTÃO PARE DE NOS INCOMODAR COM ESSE AVISO DE 'OBJECT IS POSSIBLY NULL', PQ ELE __ NUNCA __ VAI FICAR COMO NULL, SEU IDIOTA....
+
+
+
+const numResults: number[] = [];  ////////COM ESSA SINTAXE DO LADO ESQUERDO DO '=', DIZEMOS AO TYPESCRIPT QUE NESSE ARRAY _ SÓ SERÃO PERMITIDOS __ NUMBERS....
+
+const textResults: string[] = []; ///SÓ SERÃO PERMITIDAS _ strings__ DENTRO DESSE ARRAY...
+
+
+// function add (num1: number, num2: number) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+
+//     return num1 + num2;
+//     }
+    
+
+
+// function addSum (num1: number, num2: number, num3) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+    function addSum (num1: number | string ///AQUI __ PERMITIMOS, NESSE PARÂMETRO, TANTO 'STRINGS' COMO 'NUMBERS'...
+        
+        ,
+        
+        num2: number | string) {
+
+
+            if (typeof num1 === 'number' &&
+            typeof num2 === 'number'  ) { ////EIS O CÓDIGO EM QUESTAÕ.
+                  return num1 + num2;
+     } else if (
+         typeof num1 === 'string' &&
+         typeof num2 === 'string'
+     ) {
+         return num1 + '' + num2;
+     }
+
+        return; ///case de 'MIXED DATA TYPES'... -> não vamos querer rodar CÓDIGO ALGUM...
+
+
+    }
+    
+    
+
+    
+
+
+
+    function printResult(resultObject: { ///EXEMPLO DE __ COMO DEFINIR __ 'OBJECT TYPES' nos seus parâmetros... --> 'vou querer que essa function receba um data type DE FORMATO OBJECT, COM ESTE, ESTE E ESTE FORMATO'... (define as características do objeto-parâmetro nesse PRÓPRIO OBJETO-CONFIG aqui... {})
+
+        //objeto-config/molde DO FORMATO QUE NOSSO 'object TYPE' deverá ter...
+
+        val: number;
+       exemplo: string;
+       timestamp: Date ///com isso, nos referimos ao OBJETO/CONSTRUCTOR FUNCTION 'Date' DO __ JAVASCRIPT__... (builtin)...
+
+
+    }) { ///function body 
+   
+        console.log(resultObject.val);
+   
+   
+    }
+
+
+
+
+
+
+
+
+
+    // function addSum(num1: any) {} ////SIM, TAMBÉM EXISTE ESSE TYPE DE 'any', que é USADO COMO UM FALLBACK, PQ NÃO É NADA __ ESPECÍFICO, APENAS ATRAPALHA NOSSO CÓDIGO...
+    //// SE VOCê NÃO DEFINE nenhum data type em 1 dos seus parâmetros, ele é considerado como 'ANY', mas isso NÃO É BOM, PQ É UM 'ANY' IMPLÍCITO, um any que faz com que o STRICT MODE PENSE QUE VOCê 'ESQUECEU' DE DEFINIR O DATA TYPE DESSA FUNCTION, o que fará ele RECLAMAR.... (como visto com 'num3')...
+    
+   console.log(addSum(1, 6));
+    
+    
+    // console.log(add('1', '6')); // --> isso fará com que UM ERROR SEJA THROWN PELO TYPESCRIPT, PQ NAQUELA FUNÇÃO DEFINIMOS QUE O DATA TYPE __ DEVE SER, OBRIGATORIAMENTE, _ 'NUMBER', e não string... (como visto nesse CONSOLE.LOG)...
+
+
+
+
+
+    buttonElement.addEventListener('click',  //ver anotaçaõ lá no selector/ definição da constante de 'buttonElement'...
+    
+    () => {
+
+        // const num1 = num1Element.value; ///SE ESCREVERMOS ISSO SEM _ EXPLICARMOS AO TYPESCRIPT QUE 'num1Element' É _ UMA CONSTANTE QUE SEGURA UM INPUT (pq inputs são elementos que REALMENTE POSSUEM ESSA PROPRIEDADE 'value', que é uma propriedade QUE MUITAS VEZES NÃO EXISTE EM ELEMENTOS HTML... -> precisamos usar aquilo que é chamado de 'TYPE CASTING'... ---> TYPE CASTING É AQUELE TRECHO 'as HTMLInputElement', QUE ESCLARECE QUE ESSE _ ELEMENTO QUE FOI SELECIONADO ___ SERÁ_ __ SEMPRE UM 'INPUT ELEMENT'... (assim, deixamos nosso código bem mais CLARO, EXPLÍCITO)...
+        ///o código de const num1Element = document.getElementById('input1') as HTMLInputElement;  VAI FAZER COM QUE O 'error/aviso' que surge por causa de 'num1Element.value' SUMA...
+        
+        // const num2 = num2Element.value;
+
+
+        const num1 = num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+        const num2 = num2Element.value;
+        const result = addSum(+num1, +num2);
+        const stringResult = addSum(num1, num2); ////////EIS O CÓDIGO EM QUESTÃO (vamos querer adicionar/CONCATENAR 2 STRINGS EM 1 SÓ)..... --> aqui veremos COMO DEFINIR 'MÚLTIPLOS DATA TYPEs' como válidos para 1 parâmetro (tanto o type de STRING como de NUMBER)...
+        console.log(result, stringResult);
+
+
+        numResults.push(result as number);
+        textResults.push(stringResult as string);
+
+        printResult({
+            val: result as number, ///escrevemos 'as number' para DIZER AO TYPESCRIPT: 'SIM, EU __ SEI__ QUE ISSO SERÁ UM NUMBER, CHILL OUT, man...''' --> mesmo USO DE 'as' visto lá em cima com 'HTMLInputElement'...
+            exemplo: 'EXEMPLOZXC',
+            timestamp: new Date()
+        });
+
+
+        console.log(numResults, textResults);
+        // console.log(addSum(true, false)); ////ISSO NÃO FUNCIONARÁ, E O TYPESCRIPT APITARÁ/NOS AVISARÁ DISSO... --> É PQ NOSSA FUNCTION DE 'addSum' SÓ ACEITA OS DATATYPES DE NUMBER/STRING PARA SEUS PARÂMETROS, não permitindo o datatype de 'BOOLEAN'... (como true e false)...
+    })
+
+
+
+
+    // if (buttonElement) { ////se escrevermos assim, CONSERTAMOS O 'AVISO' do TYPESCRIPT de que essa variável PODERIA ESTAR COMO UNDEFINED (nenhum button encontrado, essa é a hipótese que ele considera)..
+        
+    // buttonElement.addEventListener('click', 
+    
+    // () => {
+
+    //     // const num1 = num1Element.value; ///SE ESCREVERMOS ISSO SEM _ EXPLICARMOS AO TYPESCRIPT QUE 'num1Element' É _ UMA CONSTANTE QUE SEGURA UM INPUT (pq inputs são elementos que REALMENTE POSSUEM ESSA PROPRIEDADE 'value', que é uma propriedade QUE MUITAS VEZES NÃO EXISTE EM ELEMENTOS HTML... -> precisamos usar aquilo que é chamado de 'TYPE CASTING'... ---> TYPE CASTING É AQUELE TRECHO 'as HTMLInputElement', QUE ESCLARECE QUE ESSE _ ELEMENTO QUE FOI SELECIONADO ___ SERÁ_ __ SEMPRE UM 'INPUT ELEMENT'... (assim, deixamos nosso código bem mais CLARO, EXPLÍCITO)...
+    //     ///o código de const num1Element = document.getElementById('input1') as HTMLInputElement;  VAI FAZER COM QUE O 'error/aviso' que surge por causa de 'num1Element.value' SUMA...
+        
+    //     // const num2 = num2Element.value;
+
+
+    //     const num1 = +num1Element.value; //coloco o '+' para CONVERTER ISSO EM UM NÚMERO...
+
+    //     const num2 = +num2Element.value;
+
+
+    //     const result = addSum(num1, num2);
+    //     console.log(result);
+    // })
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+    printResult(
+            {
+                val: 4214142,
+                exemplo: 'asdasa',
+                timestamp: new Date()
+            }
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+mas
+
+NO NOSSO CÓDIGO,
+
+
+ESTAMOS COM UM POUCO DE REPETIÇÃO.... --> NÃO É REPETIÇÃO HORRÍVEL,
+
+
+
+
+MAS 
+
+NÃO É OPTIMAL..
+
+
+
+
+
+
+
+
+
+
+
+--> TEMOS UM POUCO DE CÓDIGO QUE PODE SER DE CERTA FORMA 
+
+DIFÍCIL DE LER....
+
+
+
+
+
+
+
+
+
+
+-> COMO O CÓDIGO DE 'addSum':
+
+
+
+
+    function addSum (num1: number | string ///AQUI __ PERMITIMOS, NESSE PARÂMETRO, TANTO 'STRINGS' COMO 'NUMBERS'...
+        ,
+        num2: number | string) {
+
+
+            if (typeof num1 === 'number' &&
+            typeof num2 === 'number'  ) { ////EIS O CÓDIGO EM QUESTAÕ.
+                  return num1 + num2;
+     } else if (
+         typeof num1 === 'string' &&
+         typeof num2 === 'string'
+     ) {
+         return num1 + '' + num2;
+     }
+
+        return; ///case de 'MIXED DATA TYPES'... -> não vamos querer rodar CÓDIGO ALGUM...
+
+
+    }
+    
+    
+
+----------------------------------
+
+
+
+
+
+
+
+NESSE CÓDIGO,
+
+TEMOS 
+
+
+__REPETIÇÃO__... -> 
+
+
+
+
+
+
+
+
+aquela linha 
+
+
+
+
+
+function addSum (num1: number | string, num2: number | string) {  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ, NÓS TEMOS __ UMA REPETIÇÃo___ --> estamos 
+
+REUTILIZANDO O MESMO 'UNION TYPE'
+
+
+EM 
+
+2 LUGARES,
+
+
+1 
+ATRÁS DO OUTRO...
+
+
+
+
+
+
+
+------> PARA SOLUCIONAR ESSE PROBLEMA,
+
+
+TEMOS UM RECURSO NA SINTAXE DO TYPESCRIPT QUE É O 
+
+
+
+'type alias'..
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+ESSE TRECHO 
+
+
+''
+
+function addSum (num1: number | string, num2: number | string) {  }
+
+''
+
+
+
+É __ OK,
+
+
+
+
+MAS QUE 
+
+VOCê 
+
+PODE 
+
+MELHORAR ISSO COM OS TYPE ALIAS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------->  OS TYPE ALIAS são acessados por meio do termo 'type', solto...
+
+
+
+
+ex:
+
+
+
+type 
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSE É UM OPERATOR __ BUILTIN ___ NO __ TYPESCRIPT (você 
+
+NÃO 
+
+DEVE 
+O 
+
+CONFUNDIR COM O OPERATOR 
+
+
+'typeof' do JAVASCRIPT VANILLA,
+
+PQ 
+OS 
+
+2 
+
+
+SÃO COMPLETAMENTE DIFERENTES...)
+
+
+
+
+
+
+
+
+
+
+---------> OK...
+
+
+é 
+o 
+
+'type'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O 'type
+TE DEIXA __ SETTAR __ SEU 'PRÓPRIO TYPE ALIAS'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ 
+
+FAZ ISSO,
+
+
+DEFINE 
+
+
+
+UM TYPE ALIAS, __ PARA QUE 
+
+
+VOCÊ 
+
+
+
+_ CONSIGA__ DAR UM __ DIFERENTE__ NOME 
+
+
+
+
+A 
+
+
+UM 
+
+
+DETERMINADO 
+
+
+'TYPE'... 
+
+(
+
+    ou seja,
+
+    PODEMOS _ ABREVIAr__ 'types'/'data types'/'CONJUNTOS DE DATA TYPES'...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO É ESPECIALMENTE ÚTIL SE VOCÊ ESTÁ TRABALHANDO COM __ UNION TYPES ( que são coisas como 'num1: number | string' ... )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PARA EXEMPLIFICAR O USO de 'type' (type alias),
+
+
+
+O PROFESSOR ESCREVE:
+
+
+
+
+
+
+type NumOrString = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> ISSO SERÁ UM TYPEALIAS USADO PARA ABREVIAR ('number | string')...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+type NumOrString = number | string; 
+
+
+
+
+
+
+
+
+
+
+
+
+---------> OU SEJA,
+
+
+O VALOR QUE 
+
+ARMAZENAMOS DENTRO DE UM 'type alias'
+
+
+É _ JUSTAMENTE 1 'TYPE'... ( um union type, geralmente)....
+
+
+
+
+
+
+
+
+
+
+ 
+--> ISSO É BEM INTERESSANTE...
+
+
+
+
+
+
+
+
+
+---------> COMO TEMOS ESSE UNION TYPE REPRESENTADO POR ISSO,
+
+
+
+
+PODEMOS 
+
+IR SUBSTIUINDO 
+
+
+
+
+
+
+TODOS OS LOCAIS 
+
+em que 
+
+tínhamos 
+
+'string | number'
+
+
+PELO 
+
+TYPE ALIAS 
+
+de 
+
+'NumOrString'..
+
+
+
+
+ex:
+
+
+
+
+
+
+type NumOrString = number | string; 
+
+
+
+
+
+function addSum(num1: NumOrString, num2: NumOrString) {
+
+
+
+}
+
+
+-------------------------------------------
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E O PROFESSOR __ EXPLICA QUE PODEMOS __ ARMAZENAR 'QUALQUER COISA',
+
+
+
+'QUALQUER TYPE',
+
+
+
+_DENTRO DE UM 'TYPE ALIAS' 
+
+como 
+
+esse que utilizamos...
+
+
+
+
+
+
+
+
+
+------> CERTO.... --> E SE NÓS COMPILARMOS ESSE CÓDIGO,
+
+
+É CLARO QUE 
+
+ESSE 
+
+TYPE ALIAS VAI SUMIR 
+
+NO ARQUIVO 
+
+'app.js',
+
+ISSO 
+
+PQ 
+
+ELE 
+É 
+
+UM 
+
+
+'PURE TYPESCRIPT FEATURE' (Exclusiva ao typescript)..
+
+
+
+
+
+
+
+
+
+
+------> MAS ESSA FEATURE PODE TE SALVAR DE UM POUCO DE REPETIÇÃO.... 
+
+
+
+
+
+
+
+
+
+-------> VOCÊ PODE USAR TYPE ALIASES 
+
+para 
+
+
+
+
+__ REPRESENTAR 'OBJECT TYPES',
+
+
+como aquele que havíamos usado anteriormente....
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+type NumOrString = number | string; 
+
+
+
+
+type Result = {
+
+    val: number;
+    timestamp: Date;    
+    exemplo: string
+}
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+--> AÍ, SE QUISERMOS USAR ESSE 
+
+
+
+
+
+TYPE ALIAS LÁ EM 'printResult',
+
+
+
+ESCREVEMOS ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+type NumOrString = number | string; 
+
+
+
+
+type Result = {
+
+    val: number;
+    timestamp: Date;    
+    exemplo: string
+}
+
+
+
+
+
+
+function printResult(
+    resultObject: Result
+) { ///function body 
+   
+        console.log(resultObject.val);
+   
+   
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+type Result = {
+    val: number;
+    exemplo: string;
+    timestamps: Date;
+}
+
+
+// function addSum (num1: number, num2: number, num3) { ///POR MEIO DESSA SINTAXE 'num1: number', DEFINIMOS __ QUAL_ _TYPE_ ESSE ARGUMENTO OBRIGATORIAMENTE DEVE TER/SER...
+    function addSum (
+        
+        // num1: number | string ///AQUI __ PERMITIMOS, NESSE PARÂMETRO, TANTO 'STRINGS' COMO 'NUMBERS'...
+        num1: NumOrString ///exemplo de utilizaçaõ de 'TYPE ALIAS' (visto ali em cima, em ''' type NumOrString = string | number;''' )
+        ,
+        
+        // num2: number | string
+        num2: NumOrString
+        
+        
+        
+        ) {
+
+
+            if (typeof num1 === 'number' &&
+            typeof num2 === 'number'  ) { ////EIS O CÓDIGO EM QUESTAÕ.
+                  return num1 + num2;
+     } else if (
+         typeof num1 === 'string' &&
+         typeof num2 === 'string'
+     ) {
+         return num1 + '' + num2;
+     }
+
+        return; ///case de 'MIXED DATA TYPES'... -> não vamos querer rodar CÓDIGO ALGUM...
+
+
+    }
+    
+    
+
+
+
+
+    function printResult(resultObject: Result ///uso do TYPE ALIAS DE 'Result' (que vai SUBSTITUIR esse código que temos logo abaixo)....
+    
+    
+    // { ///EXEMPLO DE __ COMO DEFINIR __ 'OBJECT TYPES' nos seus parâmetros... --> 'vou querer que essa function receba um data type DE FORMATO OBJECT, COM ESTE, ESTE E ESTE FORMATO'... (define as características do objeto-parâmetro nesse PRÓPRIO OBJETO-CONFIG aqui... {})
+
+    //     //objeto-config/molde DO FORMATO QUE NOSSO 'object TYPE' deverá ter...
+    //     val: number;
+    //    exemplo: string;
+    //    timestamp: Date ///com isso, nos referimos ao OBJETO/CONSTRUCTOR FUNCTION 'Date' DO __ JAVASCRIPT__... (builtin)...
+
+
+    // }
+
+    
+    ) { ///function body 
+   
+        console.log(resultObject.val);
+   
+   
+    }
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE TYPE ALIASES PODEM SER __ BEM ÚTEIS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+POR FIM, COMO FEATURE DE SINTAXE FINAL,
+
+
+TEMOS 
+
+
+
+
+OUTRA COISA QUE SERVE DE ALTERNATIVA....  -------> ESSA FEATURE É _ USADA__ PRINCIPALMENTE
+
+
+
+QUANDO VOCÊ TRABALHA COM 
+
+
+'OBJECT TYPES'...
+
+
+
+
+
+
+
+
+
+--> É A FIGURA DAS 
+
+
+'INTERFACES'...  -----> INTERFACES __ TAMBÉM __ TE DEIXAM 'DEFINIR A ESTRUTURA DE UM OBJETO' (
+
+
+    exatamente 
+
+    como 
+
+
+
+    TYPE ALIASES...
+)
+
+
+
+
+
+
+
+
+
+--> POR EXEMPLO,
+
+
+VOCÊ PODE ESCREVER:
+
+
+
+''''''
+
+
+
+interface ResultObj {
+
+
+
+}
+
+
+
+
+''''''''
+
+
+
+
+
+
+
+
+
+------> AÍ, DENTRO DESSE NEGÓCIO,
+
+
+PODEMOS COPIAR A EXATA MESMA ESTRUTURA DE NOSSO TYPE ALIAS DE 'Result':
+
+
+
+
+
+
+interface ResultObj {
+    val: number;
+    timestamp: Date;
+    exemplo: string
+}
+
+
+
+
+
+
+
+
+
+
+
+----------> AGORA, NO CASO, PODEMOS USAR 'ResultObj'
+
+
+
+
+NOS __ LOCAIS EM QUE __ ANTERIORMENTE EU HAVIA USADO 'Result':
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+interface ResultObj {
+    val: number;
+    timestamp: Date;
+    exemplo: string
+}
+
+
+
+
+
+
+
+function printResult(
+    resultObject: ResultObj
+) { ///function body 
+   
+        console.log(resultObject.val);
+   
+   
+    }
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+OK..... MAS QUAL É A DIFERENÇA ENTRE UM TYPE ALIAS E UMA INTERFACE?
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUAL A DIFERENÇA?
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, SE VOCÊ VAI APENAS __ 'DEFINE THE STRUCTURE OF AN OBJECT',
+
+
+
+
+VOCÊ 
+
+PODE 
+
+CERTAMENTE USAR QUALQUER UM DOS DOIS... ---------> MAS 
+
+
+USAR 
+
+
+
+
+__INTERFACES___ É UM POUCO 
+
+MAIS 
+
+
+COMUM DO QUE USAR 
+
+
+TYPE ALIASES, PARA OBJECT TYPES.... (mas não é obrigatório)...
+
+
+
+
+
+
+
+
+
+
+
+--> MAS O BONUS DE 'INTERFACES'
+
+
+É 
+
+QUE 
+
+__ ELAS PODEM,
+
+NO CASO,
+
+
+ 
+
+ _ FORÇAR__ CERTAS 'CLASSES' 
+
+
+
+ A IMPLEMENTAR__ CERTOS METHODS/FUNCIONALIDADES....... ------> MAS ISSO 
+
+
+
+ É 
+
+
+
+
+ ALGO QUE NÃO VEREMOS NESSE 'BASIC REFRESHER'...
+
+
+
+
+
+
+
+
+
+
+ --> APRENDEMOS MAIS SOBRE INTERFACES NO CURSO DE TYPESCRIPT DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS PARA TYPE ALIASING __ BÁSICO__, ISSO NÃO IMPORTA (a diferença entre type aliases e interfaces)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK... TEMOS UM TYPE ALIAS, E A INTERFACE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -------------> OK... MAS COMO DETALHE FINAL,
+
+
+
+ SE VOCÊ 
+
+
+
+
+ TIVER SUA 
+
+ PRÓPRIA 
+
+ CLASS/CONSTRUCTOR FUNCTION,
+
+
+
+
+
+ VOCÊ 
+
+
+
+
+ PODERIA/PODE 
+
+
+ USAR 
+
+
+ O 
+
+
+ 'CLASS NAME' 
+
+
+ COMO 
+
+
+
+
+ 1 TYPE TAMBÉM... ( 
+
+
+
+     ou seja,
+
+
+     PODEMOS 
+
+
+
+     FAZER EXATAMENTE A MESMA COISA QUE FIZEMOS COM 'Date' 
+
+     em 
+
+
+
+
+     'type Result {
+         val: number;
+         timestamp: Date;
+         exemplo: string
+     }
+
+     ' -----------------> ISSO SIGNIFICA QUE PODEMOS USAR NOSSO CONSTRUCTOR FUNCTION/CLASS  __ COMO 'MOLDE' de como nossos object types deverão se parecer....
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+class Tempo {
+
+    constructor(propriedade) {
+            this.propriedade = propriedade;
+    }
+
+
+}
+
+
+
+
+
+ type Result {
+         val: number;
+         timestamp: Tempo; ///////ISSO OBRIGARÁ ESSA PROPRIEDADE DESSE TYPE A TER AQUELA ESTRUTURA DE 'Tempo'...
+         exemplo: string
+     }
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+-> E ISSO FUNCIONA PARA QUALQUER CONSTRUCTOR FUNCTION/CLASS,
+
+NÃO INTERESSA 
+
+
+SE 
+
+
+É UM BUILTIN ( como 'Date') OU _ _SE FOI CRIADO POR VOCÊ ('Tempo');

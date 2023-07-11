@@ -1,0 +1,1620 @@
+
+
+
+
+
+
+
+
+
+
+----> OK, AGORA É HORA DE USAR O NOSSO 
+
+
+
+
+
+OBJETO 
+
+'User' NO NOSSO APP... --> 
+
+
+A QUESTÃO, ENTRETANTO,
+
+É:
+
+
+
+
+
+
+
+EM QUE LUGAR DO MEU APP VOU QUERER USAR ESSE 
+
+OBJETO 
+
+user 
+que 
+
+foi 
+
+armazenado 
+
+em 
+
+'req.user"?
+
+
+
+
+
+
+
+
+
+------> BEM, O PROFESSOR DIZ QUE 
+
+
+
+VAI QUERER __ USAR __ 
+
+ESSE 
+
+
+OBJETO 
+
+
+'user'
+
+SEMPRE QUE 
+
+UM 
+
+
+
+NOVO PRODUCT FOR CRIADO NA NOSSA DATABASe,
+
+
+
+
+
+pq 
+
+VMAOS QUERER 
+
+
+
+__aRMAZENAR UMA REFERÊNCIA (reference) AO USER 
+
+
+QUE 
+
+
+CRIOU ESSE PRODUCT SEMPRE QUE 
+
+ELE 
+
+EXECUTAR AQUELE 
+
+method de 
+
+'save()' 
+
+
+em 
+
+'Product.js'... --------> 
+
+
+
+
+
+
+
+
+
+
+
+AS OPÇÕES SÃO:
+
+
+
+
+
+
+
+ARMAZENAR UMA REFERENCE AO USER, em algum lugar....
+
+
+
+
+
+
+___ OU 
+
+
+
+'EMBED THE ENTIRE USER DATA' dentro de um PRODUCT, COMO 
+
+
+
+nós já aprendemos...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO,
+
+
+PARA 
+
+
+'PRODUCTS' 
+
+E 
+
+'USERS',
+
+
+VOCÊ 
+
+PODERIA 
+
+__ACTUALLY__ ENCONTRAR__ ARGUMENTOS 
+
+PARA 
+
+AMBOS 
+
+OS 
+APPROACHES,
+
+aqui... ------> AINDA ASSIM,
+
+
+É 
+
+
+CLARO QUE 
+
+VOCê 
+
+
+__NÃO VAI QUERER 'ENCLOSE __ ALL THE USER DATA'
+
+
+
+em 
+
+um 
+
+'EMBEDDED DOCUMENT',
+
+isso 
+
+PQ 
+
+ISSO 
+
+SIGNIFICARIA 
+
+
+
+
+
+____ QUE SE ___ A 'USER DATA' MUDASSE,
+
+
+VOCÊ SERIIA __ FORÇADO_ _ A UPDATAR 
+
+ESSA 
+
+
+DATA 
+
+
+DAQUELE USER _______ EM TODOS __OS PRODUCTS vinculados a ele...
+
+
+
+
+
+
+
+
+
+--> MAS SE VOCÊ _ 'DO INCLUDE' 
+
+alguma coisa 
+
+QUE 
+
+É 
+
+__IMPROVA´VEL DE SER ALTERADA COM 
+
+FREQUÊNCIA,
+
+
+COMO 
+
+
+
+POR EXEMPLO O 
+
+'username'
+
+DE UM USER,
+
+
+
+
+
+
+
+____ AÍ É CLARO QUE VOCê CERTAMENTE PODERIA 
+
+
+'EMBED' ESSA DATA,
+
+
+
+JUNTO COM O 'id' do user... -------> VOCÊ FARIA/FAZ ISSO 
+
+PARA 
+
+QUE 
+
+VOCÊ SEMPRE CONSIGA 'FETCH MORE DATA ABOUT THE USER', se/quando isso for necessário... 
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA DESSE APPROACH DO 'EMBED' É QUE SE __VOCÊ ALTERAR_ ALGUMA COISA __, ALGUM 
+
+FIELD 
+
+DESSE USER,
+VOCÊ 
+
+SERÁ OBRIGADO A UPDATAR__ ESSE FIELD/VALOR EM __tODOS OS PRODUCTS_ EM QUE 
+
+
+ESSE USER FOI EMBEDDADO... ------>  A ALTERNATIVA A ISSO,
+
+É CLARO,
+
+
+
+
+
+__É ARMAZENAR__ APENAS 
+
+O ID 
+
+
+
+DO USER __ EM 
+
+1 
+
+
+PRODUCT, OU SEJA, 
+
+
+__ ARMAZENAR 
+APENAS 
+
+A 
+
+'REFERENCE'... -----> SE VOCÊ OPTAR POR ESSE APPROACH/CAMINHO,
+
+
+
+
+nas hipóteses em que vocÊ PRECISA CONECTAR DATA ENTRE 
+
+'products' e 'users',
+
+
+VOCÊ 
+
+SEMPRE TERÁ 
+
+DE FETCHEÁ-LOS  
+
+
+__MANUALMENTE___  de 2 collections diferentes... --> é claro que isso não é tõa ruim 
+
+
+NOS CASOS EM MODELOS DE APP EM QUE 
+
+__VOCÊ RARAMENTE _ CONECTA 
+
+2 DATABASES, raramente conecta 'products' com 'users', por exemplo....
+
+
+
+
+
+
+
+
+
+--> E PORTANTO,
+
+
+AQUI, __ QUANDO EU 'FETCHO' UM PRODUCT,
+
+
+eu 
+
+
+REALMENTE NÃO VOU PRECISAR NEM UM POUCO DA 'USER DATA', pq 
+
+NÓS 
+NÃO 
+
+VAMOS ESTAR DISPLAYANDO coisas como 'user name' EM 
+
+QUALQUER LUGAR DE NOSSO APP,
+
+
+POR ISSO 
+
+
+
+
+O PROFESSOR DIZ QUE 
+VAMOS QUERER 
+
+ARMAZENAR 
+
+
+____SÓ O ID__ DO USER,
+
+
+PQ VAMOS QUERER SABER 'A QUEM ESTE PRODUCT ESTÁ CONECTADO', ainda que 
+
+NÃO 
+
+vamos fazer com tanta frequência o fetch de products a partir desse user/fetch do user a partir dos products...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS O QUE TUDO ISSO SIGNIFICA PARA O NOSSO APP?
+
+
+
+
+
+
+BEM, ISSO SIGNIFICA QUE __ QUANDO NÓS ESTIVERMOS 
+
+'CREATING A NEW PRODUCT',
+
+
+nós podemos/vamos 
+
+
+PASSAR O USERID 
+
+
+
+
+
+COMO PROPRIEDADE 
+
+
+DE 
+
+
+NOSSO 'Product'....
+
+
+
+
+(e isso será escrito no nosso CONSTRUCTOR, pq é isso que ACABA CRIANDO NOSSO 
+
+objeto/document de 'Product'...)
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+class Product {
+  constructor(title, price, imageUrl, description, id, userId) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this._id = id;
+    this.userId = userId; ////ISSO ESTABELECERÁ A 'RELATION' entre nossos products e nossos users.... VAI VINCULAR O USER CRIADOR AO PRODUCT QUE FOI CRIADO POR ELE...
+  }
+
+
+
+
+
+
+
+
+  -> COM ISSO, TEREMOS TUDO DE QUE PRECISAMOS NO 
+
+
+  model de 'product'... --> basta 
+
+  INSERIR ESSE USERID SEMPRE 
+
+
+  QUE 
+
+  ADICIONARMOS 1 PRODUCT NA NOSSA DATABASE, AGORA...
+
+
+
+
+
+
+
+
+
+  --> POR ENQUANTO, PROFESSOR PROVAVELMENTE VAI USAR O __ÚNICO USER__ QUE 
+
+  temos na nossa database 
+
+como 
+
+user 
+
+desses documents 'product'....
+
+
+
+
+
+
+
+
+
+
+
+--> e nosso erro de '' TypeError: Cannot read property '_id' of undefined ''
+
+
+
+
+
+
+provavelmente está ocorrendo POR CAUSA DE PROBLEMAS COM 
+
+
+CÓDIGO ASSÍNCRONO....
+ 
+
+
+--> TALVEZ SEJA UM PROBLEMA COM O __bODYPARSER..
+
+
+
+
+
+
+
+
+--> hoje recebi um NOVO ERRO:
+
+
+     error: MongoNetworkError: connection <monitor> to 54.85.23.35:27017 closed
+
+
+
+
+
+
+
+
+--> meu ip address mudou COMPLETAMENTE, por alguma razão..
+
+
+
+era essa a razão do erro.
+
+
+
+
+
+
+
+--> agora volto para o erro de 
+
+
+''--> e nosso erro de '' TypeError: Cannot read property '_id' of undefined '''''
+
+
+
+
+
+
+
+
+
+
+
+
+--> RESOLVI O PROBLEMA... ERAM AQUELES 
+
+2
+ 
+
+ 'next()"
+
+ LÁ 
+
+
+
+
+ NO 
+
+
+ MEU 
+
+
+ 'app.use'
+
+
+ QUE FAZ O GET DO USER, A PARTIR DA EXISTÊNCIA/INEXISTÊNCIA dele na database..
+
+
+
+
+
+
+ ex (ESTAVA ASSim):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ app.use((req, res, next) => {
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+      req.user = user;
+      
+      //next();
+      console.log(req.user, 'TEST3');
+   
+   
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+   next();
+    console.log('TEST2');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+QUANDO O CORRETO É ASSIM:
+
+
+
+
+
+
+
+ app.use((req, res, next) => {
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+      req.user = user;
+      
+      next();
+      console.log(req.user, 'TEST3');
+   
+   
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+   ////next(); //REMOVIDO ESTE 'next()"...
+    console.log('TEST2');
+});
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ok....... qual o próximo passo?
+
+
+
+
+
+
+
+
+----->  PRECISO 
+
+
+
+
+CONSERTAR 
+
+
+O CASE 
+
+DE 
+
+
+'edit a product',
+
+aparentemente.... -> PRECISO VINCULAR 
+
+ESSE 
+
+'edited product'
+
+ao meu user,
+
+
+teoricamente...]
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS ANTES DISSO, 1 PROBLEMA:
+
+
+
+
+meu product não está mais sendo ADDADO 
+
+
+na minha database, quando o crio em 'add a product'...
+
+
+
+
+
+--> tenho que investigar a razão disso....
+
+
+
+
+
+
+
+
+ok, consertei,
+
+
+era só um call errado de nosso 
+
+
+model de 
+
+'Product',
+
+eu estava 
+
+passando um valor como '_id' 
+
+
+
+no case 
+
+
+
+DE ADD A PRODUCT, o que não deve ser feito,
+
+PQ 
+
+
+__NÃO VAMOS QUERER EDITAR 1 PRODUCT QUE JÁ EXISTE NA DATABASE, 
+
+e sim queremos 
+
+
+ADDAR 1 PRODUCT COMPLETAMENTE NOVO (com um '_id' completamente novo, portanto,
+
+e é justamente por isso 
+
+que 
+
+não precisamos 
+desse 
+
+'_id', 
+
+pq 
+
+
+esse '_id' é usado para diferenciar os PRODUCTS QUE JÁ EXISTEM DAQUELES QUE AINDA NÃO EXISTEM e serão criados por 'add product'...)
+
+
+
+
+
+
+
+
+
+
+
+
+OK...
+
+
+
+
+
+Mas um problema, agora, é que todos os PRODUCTS ESTÃO SENDO ARMAZENADOS COM UM 
+
+FIELD 
+
+
+de 
+
+
+'userId',
+
+
+QUE __ ATÉ AGORA_ __NÕA ESTÁ EQUIVALENTE AO 
+
+NOSSO 
+
+ÚNICO 
+
+USER 
+
+NA COLLECTION DE 'users'.... -> temos que consertar isto...
+
+
+
+
+
+
+
+
+
+
+
+O 
+
+
+'_id'
+
+
+do 
+
+NOSSO ÚNICO USER É ESTE:
+
+
+616fa02db3544414dae89f26
+
+
+
+
+
+
+
+
+
+--> PRECISAMOS QUE ESSE VALOR FIQUE ARMAZENADO EM TODOS OS fields 
+
+'userId'
+
+
+de nossos 
+
+PRODUCTS...
+
+
+
+
+
+
+
+
+
+
+->OK, AGORA FUNCIONOU...
+
+
+
+
+
+
+
+O CÓDIGO DO CONSTRUCTOR DE 'product' ficou assim:
+
+
+
+
+
+
+
+
+class Product {
+  constructor(title, price, imageUrl, description, userId, id) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.userId = ObjectId(userId);
+    this._id = id;
+ 
+  }
+
+
+
+
+
+
+
+
+
+
+
+----> E O CÓDIGO DO 'postAddProduct'
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  const user = req.user;
+  const userId = req.user._id;
+
+ 
+
+
+
+  const newProduct = new Product(title, price, imageUrl, description, userId); ///com isso, estamos usando A VERSÃO 'NOSQL'/mongodb do código de 'add a product to our database'... 
+
+   newProduct.save().then(
+     (result) => {
+
+          // console.log(result);
+          res.redirect('/admin/product-list-admin');
+
+     }
+   )
+   .catch(
+     (err) => {
+          // console.log(err);
+          res.redirect('/product-list-admin');
+     }
+   )
+
+
+
+
+
+
+
+
+   ----------------------------------
+
+
+
+
+
+
+
+
+   CERTO...
+
+
+
+
+
+
+
+   QUAL É O PRÓXIMO PASSO?
+
+
+
+
+
+
+
+
+   --> VAMOS VER O CASE DE 'EDIT A PRODUCT'...
+
+
+
+
+
+
+
+
+
+   --> não, ele está fazendo tudo errado... -> 
+
+
+   ele 
+
+   está 
+
+
+
+   ADICIONANDO 1 NOVO PRODUCT EM VEZ DE EDITAR,
+
+
+
+
+   e aí 
+
+
+   o 
+
+   'userId'
+
+   também está todo zoado...
+
+
+
+
+
+
+
+
+   OK.... CONSEGUI.... ERA A MESMA COISA,
+
+   o call de 
+
+   parâmetros (o userId e o productId, nesse caso)
+
+
+
+   ao instanciar 
+
+   'Product', nosso model...
+
+
+
+
+
+
+
+
+   --------------------------
+
+
+
+
+
+
+
+   --> PROFESSOR DIZ QUE 
+
+
+
+   ISTO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+   app.use((req, res, next) => {
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+      req.user = user;
+      
+      next();
+      console.log(req.user, 'TEST3');
+   
+   
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+    console.log('TEST2');
+});
+
+
+
+
+
+
+
+
+
+
+
+É UM CONSTRUCTED EXAMPLE,
+
+MAS 
+
+É 
+
+UM EXEMPLO DE COMO 
+
+
+
+
+VOCÊ PODE 'EXTRACT THE USER IN A CENTRAL PLACE' 
+
+
+PARA ENTÃO 
+
+
+CONSEGUIR ___ REUTILIZAr__ ESSE 
+
+
+
+'user' 
+
+armazenado no nosso REQUEST OBJECT __ em _QUALQUER OUTRA ROUTE DE NOSSO APP...
+
+
+
+(essa é a ideia aqui)....
+
+
+------------------------------------
+
+
+
+
+
+MAIS TARDE, QUANDO APRENDERMOS AUTHENTICATION EM NODE APPS,
+
+faremos 
+
+
+O HANDLE 
+
+DESSE USER AÍ, 
+
+obtido em 'app.js',
+
+DE UMA 
+
+FORMA UM POUCO DIFERENTE...
+
+
+
+
+
+
+
+
+
+
+------> OK.... POR ENQUANTO TEMOS ESSE OBJEOT 'user' no request,
+
+
+
+
+
+
+
+E vamos o utilizar em 'postAddProduct' 
+
+
+e 
+
+'editProduct'..
+
+
+
+---------------------------
+
+
+
+OK... 
+
+
+ISSO ESTÁ FUNCIONANDO....
+
+
+
+
+
+
+
+
+
+
+
+
+------> PROFESSOR ENCONTRA O MESMO ERRO 
+
+
+QUE 
+
+TIVEMOS ANTES,
+
+AQUELE 
+
+
+de 
+
+
+
+'cannot read property _id of undefined'...
+
+
+
+
+
+
+
+
+
+-------> ELE EXPLICA QUE 
+
+ISSO 
+
+DEVE ESTAR 
+
+VINDO DE DENTRO 
+
+DE 
+
+NOSSO ARQUIVO 
+
+
+'app.js',
+
+
+
+
+
+
+
+LÁ EM 
+
+'app.use()'... -----> 
+
+
+
+
+
+
+aí, depois de algum debugging,
+
+
+
+
+
+ELE DESCOBRE QUE ENVIOU 'DUPLICATE HEADERS'.... -----> 
+
+
+
+
+
+
+
+SIM, ISSO PQ 
+
+
+ELE CHAMOU 
+
+
+'next()'
+
+
+2 VEZES, LÁ 
+
+EM 
+
+
+APP.JS,
+
+
+
+naquele código 
+
+
+
+de 
+
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+ app.use((req, res, next) => {
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+      req.user = user;
+      
+      next();
+      console.log(req.user, 'TEST3');
+   
+   
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+   next();
+    console.log('TEST2');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR ENTÃO REMOVEU O NEXT LÁ DO FINAL,
+
+e aí ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ app.use((req, res, next) => {
+  User.findUserById('616fa02db3544414dae89f26') ///dummy user...
+    .then((user) => {
+      req.user = user;
+      
+      next();
+
+   
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+
+    console.log('TEST2');
+});
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+AÍ DEIXAMOS DE CHAMAR 
+
+
+AQUELE NEXT errado...
+
+
+
+
+
+
+
+
+--> RECARREGAMOS A PÁGINA,
+
+e aí 
+
+
+vamos 
+
+fetchear 
+
+o 
+
+
+user 
+
+
+por meio 
+de 
+
+'User.findById()',
+
+
+
+tudo padrãozinho...
+
+
+
+
+
+
+
+
+
+
+------------> AGORA QUANDO EXAMINAMOS NOSSOS PRODUCTS,
+
+
+PERCEBEMOS 
+
+QUE 
+
+
+
+CADA 1 DELES TEM UMA REFERENCE AO 'user' que 
+
+'DID CREATE' 
+
+
+
+o product... todos os products, na verdade.. -----> E ESSA É __UMA MANEIRA__ DE ESTABELECER 
+
+
+
+_ RELATIONS.... --> É A MESMA MANEIRA QUE USAMOS NO 
+
+
+
+
+MÓDULO DE 'mySQL',
+
+
+
+aquela RELATION BEM BÁSICA 
+
+
+
+
+'one-to-many'.... -----> AQUI 
+
+
+
+
+NÓS NÃO TEMOS 
+
+
+
+1 'EMBEDDED DOCUMENT'... -----> ISSO PQ 
+
+
+QUANDO 
+
+NÓS FETCHEAMOS 
+
+
+1 PRODUCT,
+
+NÓS 
+
+
+REALMENTE 
+
+NAÕ VAMOS PRECISAR 
+
+DE 
+
+QUAISQUER INFORMAÇÕES 
+
+DO USER 
+
+
+PROPRIAMENTE DITO,
+
+
+
+E É EXATAMENTE POR ISSO QUE DEIXAMOS 
+
+SÓ ESSA 
+
+'PIECE OF DATA'
+
+
+do 'userId' 
+
+em cada product,
+
+que 
+
+é 
+
+
+tudo 
+
+
+
+de que precisamos, nesse use-case específico... --------> ISSO, É CLARO,
+
+
+
+
+VAI MUDAR __ QUANDO COMEÇARMOS __ A ARMAZENAR 'ORDERS'
+
+
+
+na nossa database NOSQL...
+
+
+
+
+
+
+
+
+-----> COM O CASE DAS 'orders', por outro lado,
+
+
+
+
+PASSA A ___FAZER__ SENTIDO___ ARMAZENAR 
+
+'INFORMATION ABOUT THE USER'....  ----> por exemplo,
+
+uma coisa que 
+
+
+VAMOS QUERER 
+
+ARMAZENAR, PROVAVELMENTE,
+
+
+É O EMAIL 
+
+DE 
+
+CADA 
+
+USER,
+
+
+
+
+e PARA O 
+
+PRODUCT,
+
+
+
+VOCÊ PROVAVELMENTE VAI QUERER 
+
+
+ARMAZENAR 
+
+O 'TITLE' E O 'PRICE'
+
+na sua database,
+
+
+
+por exemplo.... --------> NESSE CASO, DAS ORDERS,
+
+
+__PODE FAZER MUITO MAIS SENTIDO __ 
+
+
+
+'SUDDENLY AGGREGATE THIS TOGETHER'... ------->
+
+
+
+
+
+
+
+É POR ISSO QUE AGORA DEVEMOS TRABALHAR NOS 'CARTITEMS' 
+
+e nas 
+
+'ORDERS'....

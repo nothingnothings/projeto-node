@@ -1,0 +1,571 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O QUE É AUTHENTICATION?
+
+
+
+
+
+
+
+
+
+
+--> BEM, OBVIAMENTE TEMOS NOSSO USER,
+
+
+
+
+que interage com nosso app, INTERAGE COM NOSSAS VIEWS...
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ TEMOS O SERVER E A DATABASE COM A QUAL ELE TRABALHA....
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+| User | 
+
+
+
+
+
+
+
+
+
+| sERVER |
+    |
+    V 
+| Database |
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO.... EM 1 APLICATIVO,
+
+
+
+O USER SEMPRE VAI TER 
+
+ALGUMAS OPÇÕES DO QUE ELE PODE FAZER... ------> NO NOSSO CASO,
+
+
+ELE PODE:
+
+
+
+a) view all products 
+
+
+
+b) create e manage products 
+
+
+
+c) place orders...
+
+
+
+----------------------------------------
+
+
+
+
+
+ESSES SÃO ALGUNS EXEMPLOS.... ------> 
+
+
+
+
+
+
+
+
+
+JÁ A IDEIA POR TRÁS DA 'AUTHENTICATION' é 
+
+
+
+__QUE NEM TODAS ESSAS ACTIONS DEVERÃO __ FICAR__ DISPONÍVEIS __ AO 
+
+NOSSO USER/nossos users, todos os users de nosso app...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> 1 COISA IMPORTANTE:
+
+
+
+por 
+
+
+
+
+'''''USER'''', esse termo aí,
+
+
+
+
+___PROFESSOR____________ NÃO QUER DIZER__ 
+
+
+'LOGGED IN USER'... ----------> EM VEZ DISSO,
+
+
+
+ELE QUER 
+
+DIZER 
+
+
+______SIMPLESMENTE___ UMA 
+
+
+
+
+PESSOA NORMAL 
+
+
+
+QUE VISITA NOSSA PÁGINA... (o localhost:3000, no nosso caso)... -----> 
+
+
+
+
+
+É UM USER QUALQUER, PORTANTO...
+
+
+
+
+
+
+
+
+
+--------> OK.... --> PROFESSOR ESTÁ FALANDO DAS PESSOAS EM GERAL,
+
+
+PESSOAS QUE USAM NOSSA PAGE... --------------> E USERS ANONIMOS,
+
+QUE 
+NÃO ESTÃO 
+
+
+LOGGED IN,
+
+
+
+
+
+_____CERTAMENTE__ NÃO DEVERÃO SER CAPAZES DE FAZER TODAS ESSAS COIASS....
+
+
+
+
+
+
+
+
+
+
+
+---> A COISA QUE ELES __PODERÃO __ FAZER É 
+
+
+'VIEW ALL PRODUCTS',
+
+
+essa 
+
+deve 
+
+ser 
+
+uma 
+
+route 
+
+
+
+___SEM GUARDS.... (
+
+
+    OPEN TO ANYONE 
+) -------> ISSO 
+
+É 
+VISTO EM LOJAS ONLINE 
+
+COMO 
+
+
+
+'AMAZON',
+
+
+
+pq 
+
+eles querem que todos 
+
+
+vejam os products...
+
+
+
+
+
+
+
+
+
+
+------> MAS É CLARO QUE HÁ OUTRAS COISAS,
+
+
+
+
+COMO POR EXEMPLO: 
+
+
+
+1) CREATE DE PRODUCTS 
+
+
+
+2) MANAGE DE PRODUCTS 
+
+
+
+
+3) PLACE DE ORDERS... 
+
+
+
+
+
+
+
+
+
+
+--> TODAS ESSAS COISAS SÓ DEVERÃO FICAR DISPONÍVEIS 
+
+
+
+A 
+
+'LOGGED IN USERS',
+
+
+
+E NÃO 
+
+A QUAISQUER OUTROS VISITORS DE NOSSA PAGE..... 
+
+
+
+
+
+
+
+---> ISSO PQ 
+
+
+
+PARA COMPRAR 1 NOVO
+
+PRODUCT, VOCÊ PRECISA ESTAR LOGGED IN,
+ 
+
+
+ E PARA CRIAR UM PRODUCT, A MESMA COISA...  ---------> ISSO PQ 
+
+
+
+
+
+ NO __ NOSSO APP,
+
+
+
+
+
+ NÓS ___, É CLARO, 
+
+
+
+ __CONNECTAMOS/ATRIBUÍMOS 
+
+
+ O _ CREATE ___ 
+
+
+ DE 
+
+ 1
+  
+
+
+  PRODUCT 
+
+
+  A 
+
+
+  1 
+
+  '
+  LOGGEDIN USER.'... -------> NÓS __ MATCHEAMOS AS 2 COISAS .... -------> 
+
+
+
+
+
+
+
+
+
+  E É _EXATAMENTE PARA ISSO QUE 
+
+  PRECISAMSO 
+
+
+
+
+
+  DA 
+
+
+
+  ___AUTHENTICATION........ -----------> PRECISAMOS/o app precisa 
+
+
+
+
+
+  SER 
+
+  CAPAZES 
+
+
+  DE __ DIFERENCIAR__ ENTRE 
+
+
+
+
+
+
+
+'ANONYMOUS USERS' ( que não estão logged in)
+
+
+
+
+
+
+E 
+
+'LOGGED IN USERS'.... ---------> 
+
+
+
+
+
+
+E AÍ PRECISAMOS 
+
+
+PROVIDENCIAR 
+
+
+1 
+
+
+'FLOW',
+
+
+
+
+
+
+
+
+
+UM FLOW __ ENTRE___ VIEWS __ 
+
+
+E 
+
+BACKEND LOGIC,
+
+
+
+
+_QUE __ PERMITIRÁ 
+
+AS 
+
+PESSOAS 
+
+
+
+QUE VISITAM 
+
+
+
+A NOSSA PÁGINA 
+
+
+A 
+
+
+
+
+'SIGNUP' E 'SIGNIN' .... -----> 
+
+
+
+
+
+
+E AÍ PODEMOS USAR 
+
+'SESSIONS',
+
+
+
+como 
+
+o professor 
+
+
+
+NOS MOSTROU NO ÚLTIMO MÓDULO,
+
+
+PARA 
+
+
+
+'STORE THE INFORMATION' 
+
+
+
+ACERCA 
+
+
+
+DE UM USER ESTAR 'LOGGED IN'  ou 
+
+não... -------> E É 
+
+
+
+
+ISSO 
+
+
+QUE 
+
+
+VAI ___ DEIXAR__ O USER 'INTERACT WITH THE PAGES',
+
+
+
+
+AO LONGO DE VÁRIOS REQUESTS (1 para cada page)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTo....
+
+
+
+
+
+
+--> ESSA É A IDEIA POR TRÁS DE AUTHENTICATION,
+
+
+mas a pergunta agora é :
+
+
+
+
+COMO ISSO É IMPLEMENTADO?

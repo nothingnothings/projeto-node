@@ -1,0 +1,1103 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> O QUÃO RUIM SÃO ERROS? 
+
+
+
+
+
+
+
+
+--> BEM, ERRORS NÃO SÃO NECESSARIAMENTE O 'FIM DE SEU APP'...
+
+
+
+
+
+
+
+
+-------> VOCÊ PODE SE RECUPERAR DE ERRORS, PODE INFORMAR 
+
+OS 
+
+USERS 
+
+DE QUE 
+
+
+ALGO DEU ERRADO,
+
+
+ QUE ELE DEVE TENTAR DE NOVO...  -----> A MELHOR COISA,
+  
+  NO 
+  CASO
+  ,
+
+
+  É 
+
+
+  'HANDLE ERRORS GRACEFULLY'...  
+
+
+
+
+
+
+
+
+
+
+
+  --> E HÁ DIFERENTES TIPOS DE ERRO...
+
+
+
+
+
+
+
+
+
+  1) erros TÉCNICOS/DE REDE .... --> erros nos quais vocÊ tem MT POUCA INFLUÊNCIA... são erros relacionados ao SYSTEM ADMIN...
+
+
+
+
+
+
+
+
+  2) EXPECTED ERRORS (TERMO NÃO OFICIAL, INVENTADO PELO PROFESSOR) --> PROFESSOR VAI NOS EXPLICAR O QUE SÕA ....
+
+
+
+
+
+
+
+
+
+  3) BUGS/ERROS DE LÓGICA...
+
+
+
+
+
+
+
+
+
+
+
+  --> ERROS TÉCNICOS ---> EXEMPLO CLÁSSICO 
+
+  É 
+
+
+  'MONGODB SERVER CAIU' ----->  QUALQUER INTERAÇÃO COM A DATABASE VAI __ FALHAR__ ---> EM CASOS COMO 
+
+
+  ESSES, NÃO HÁ 
+
+  MT COISAs QUE 
+
+  PODEMOS 
+  FAZER,
+
+
+
+
+
+
+__a MELHOR COISA QUE PODEMOS FAZER É MOSTRAR UMA ERROR PAGE AO USER 
+QUE 
+
+
+
+___INFORME QUE 'O PROBLEMA OCORREU DE NOSSA PARTE',
+
+
+E QUE 
+
+ESTAMOS PROCURANDO POR 
+
+ALGUMA SOLUÇÃO AO PROBLEMA ----------> 
+
+
+
+
+
+
+
+
+
+
+
+OK... --> NÓS TVZ 
+
+TAMBÉM 
+
+
+
+
+VAMOS QUERER, POR TRÁS DAS CENAS,
+
+ENVIAR 1 EMAIL AOS ADMINISTRADORES, COISAS ASSIM...
+
+
+
+
+
+
+
+-------> NÓS TAMBÉM 
+
+TEMOS 
+
+
+
+
+O 
+
+
+
+2,
+
+
+
+'EXPECTED ERRORS' --------> algumas operações,
+
+
+
+
+
+CERTAS OPERAÇÕES, COMO O INTERACT COM UMA FILE/DATABASE,
+
+
+
+
+__ 
+
+
+
+QUE PODEM __ FALHAR__... -----> NÃO FALHAM COM FREQUÊNCIA,
+
+
+e não 
+
+é 
+
+tão esperado que aconteçam,
+
+
+
+
+MAS __ AINDA PODEM __ ACONTECER... (
+
+ex: muitos requests simultâneos a um mesmo arquivo...
+
+
+) 
+
+
+
+
+
+
+
+
+
+
+--> EM CASES DE 'ERROS ESPERADOS',
+
+
+
+
+O INFORM DO USER,
+
+
+
+DIZENDO 
+
+'NOSSO SERVIÇO FALHOU AGORA, TENTE DE NOVO MAIS TARDE'
+
+
+É A MELHOR OPÇÃO... (DAR AO USER UMA CHANCE DE FAZER 'RETRY'....) -------> ESSE É O USE-CASE 
+
+CLÁSSICO 
+
+
+DE 
+
+'validation errors' (que adicionamos NO MÓDULO 18...) 
+
+
+
+
+
+
+
+
+
+--> ERRORS '''ESPERADOS''' --> SOLUÇÃO IDEAL É __INFORMAR__ O USER 
+
+E 
+DEIXAR
+
+
+ELE FAZER RETRY...
+
+
+
+
+
+
+
+
+-----> VALIDATION ERROS TRATAM TIPICAMENTE DE 
+
+'EXPECTED ERRORS' .. ----> ISSO PQ É ESPERADO 
+
+QUE 
+
+USERS EVENTUALMENTE INPUTTEM 
+
+DATA INVÁLIDA.... ----> E COM ESSA DATA INVÁLIDA, VAMOS QUERER 
+
+
+INFORMAR O USER DE SUA INVALIDEZ E DE COMO __ ELES PODEM __ 
+
+
+CONVALIDAR ESSE INPUT....
+
+
+
+
+
+
+
+
+------> E É CLARO QUE TEMOS, POR FIM, 
+
+
+
+OS 
+
+PIORES TIPOS DE ERRO,
+
+
+OS 
+
+
+ERROS 
+
+__LÓGICOS__...
+
+
+
+
+
+
+
+3) BUGS/ ERROS DE LÓGICA... --> ERROS NO SEU CÓDIGO... EX: INTERAGIMOS 
+
+
+
+COM UM OBJETO/O OBJETO 'User'
+
+
+EM 1
+ 
+
+ LOCAL
+  QUE 
+
+  ELE NÃO PODE EXISTIR, ou então não existe/não existirá em todas as hipóteses...
+
+
+
+
+
+
+
+
+
+
+  --> ESSES ERROS AÍ __SÃO ESPECIAIS,
+
+  POIS _ ELES DEVEM SER _ cONSERTADOS__ DURANTE O DEVELOPMENT 
+
+  DE 
+
+  NOSSO APP...
+
+
+
+  ---> DEVEMOS TESTAR NOSSO CÓDIGO E CONSERTAR ESSES PROBLEMAS... (os 
+
+
+  erros 
+
+  de 
+
+  tipo 
+
+  3 
+
+  NÃO SÃO ERROS QUE DEVEMOS 'HANDLE DURING RUNTIME',
+
+
+  e sim 
+
+  DEVEMOS ___ CONSERTAR/MARTELAR__ DURANTE O DEVELOPMENT__...  -----> COM ESSES ERROS,
+
+
+
+
+  OS USERS NÃO SÃO OS CULPADOS,
+
+  NEM 
+  A 
+
+  REDE,
+
+  E 
+
+  SIM _ NÓS_... NÓS SOMOS OS CULPADOS PELO CÓDIGO DEFICIENTE...
+
+
+
+
+
+
+
+
+
+
+
+  ------> OK... MAS COMO PODEMOS TRABLAHAR COM OS DIFERENTES TIPOS DE ERROS,
+
+  ENTÃO?
+
+
+
+
+
+
+
+  -->TEMOS QUE __DIFERENCIAR___....
+
+
+
+
+
+
+
+
+
+
+  ------> 1) HÁ ERROS EM QUE 'A ERROR IS THROWN'.... esse é o primeiro tipo...
+  ----> 'ERROR' é um OBJETO TÉCNICO EM UM NODE APP/aplicativo javascript... -----> ISSO SIGNIFICA QUE 
+
+
+  __EXISTE__ 1 'BUILTIN ERROR OBJECT'
+
+  que podemos 
+
+  'throw' (com 'throw new Error('EXEMPLO');')
+
+
+
+
+
+
+
+
+
+  -------> PODEMOS THROWAR ESSES ERRORS.... ---> ESSA É UMA FEATURE DO JAVASCRIPT,
+  MAS PRATICAMENTE TODAS AS LINGUAGENS DE PROGRAMAÇÃO POSSUEM ESSA FEATURE DE 'THROW AN ERROR'...
+
+
+
+
+
+
+
+
+  -----> OK.... MAS NÓS  ___ TAMBÉM PODEMOS TER CENÁRIOS _ EM QUE __ 
+  __NÃO PODEMOS/NÃO VAMOS CONSEGUIR COM O 'FOLLOWUP' DE NOSSO CÓDIGO,
+
+MAS AO MESMO TEMPO NÃO TEREMOS UM 'TECHNINCAL ERROR'.... ---------> EXEMPLO CLÁSSICO:
+
+
+NÓS TENTAMOS 'LOG A USER IN',
+
+mas o EMAIL QUE O USER INPUTTOU _ NÃO EXISTE NA DATABASE...   --------> ISSO AÍ NÃO É BEM 
+
+UM 
+
+
+'TECHNICAL ERROR',
+
+
+
+__ POIS _NÃO HÁ NENHUM 'ERROR BEING THROWN',
+
+
+MAS NÓS,
+
+COMO DESENVOLVEDORES__, 
+
+
+____sABEMOS ___ QUE 
+
+___NÃO SERÁ POSSÍVEL/NÃO É POSSÍVEL CONTINUAR SEM ESSE EMAIL... -------> E É EXATAMENTE 
+
+
+
+POR ISSO QUE 
+
+
+
+VAMOS QUERER 
+
+
+'CHECK FOR THIS SCENARIO' 
+
+
+também... vamos querer 
+
+CHECAR POR ESSE CENÁRIO E FAZER 
+
+O 
+
+'HANDLE'
+
+DELE 
+
+APROPRIADAMENTE... ---------> ok.... --------->
+
+
+
+
+
+
+
+
+
+
+QUANTO à PARTE DE 
+
+
+'AN ERROR IS THROWN',
+
+
+
+NÓS TEMOS CERTAS__ FERRAMENTAS__ 
+
+
+
+
+__ QUE PODEMOS USAR __ PARA:
+
+
+
+1) TESTAR CÓDIGO 
+
+
+
+
+2) CATCH POTENTIAL ERRORS....
+
+
+3) CATCHEAR PARA ENTÃO CONSEGUIRMOS 'HANDLE THEM GRACIOUSLY'....
+
+
+
+
+
+
+
+
+
+-----> CERTO....
+
+
+
+
+
+
+
+
+
+--> E PARA CÓDIGO SÍNCRONO,
+
+O IDEAL, 
+
+PARA 
+
+FAZER ESSAS 
+
+3 
+
+ETAPAS (test-catch-handle),
+
+
+
+___O  IDEAL__ É USAR 
+
+
+
+___TRY-CATCH___ BLOCKS...
+
+
+
+
+
+
+
+
+
+
+
+------> JÁ PARA __ ASYNC CODE___, 
+
+
+
+
+O QUE UTILIZAMOS SÃO '.catch()'
+
+BLOCKS...
+
+
+
+(na verdade, temos 'then-catch'.... )
+
+
+----------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+JÁ VIMOS UM MONTE DE then()-catch()  NESSE CURSO...
+
+
+
+
+
+
+
+
+
+
+
+
+-> MAS NÃO VIMOS MTOS 'try-catch()'..
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+NO FINAL DAS CONTAS,
+
+
+EM 
+
+AMBOS OS CENÁRIOS 
+
+
+NÓS __ TEMOS __ 
+
+
+OPÇÕES:
+
+
+
+
+
+PODEMOS:
+
+
+
+1) '''DIRECTLY HANDLE THE ERROR''''  (fizemos isso, até agora... tentamos fazer, na realidade... são os try-catch/then-catch blocks...)
+
+
+
+
+
+
+2) USE EXPRESS ERROR HANDLING FUNCTION...
+(
+
+  usamos um MECANISMO 'BUILTIN' NO EXPRESS, 
+
+  UM MIDDLEWARE __ ESPECIAL DE ERROR HANDLING,
+
+  __ o 
+  QUAL NÃO UTILIZAMOS ATÉ AGORA....,
+
+
+  QUE 
+
+
+
+_PODEMOS _ USAR PARA 
+
+
+'CATCH ERRORS'
+
+
+E 
+
+PARA __ ENTÃO 
+
+'RETURN A RESPONSE TO THE USER'....
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> QUANTO A ESSA 'EXPRESS ERROR HANDLING FUNCTION' ------> 
+
+
+
+
+função 
+
+
+ESPECIAL DE HANDLE DE ERROS, do express.... ---------> 
+
+
+
+
+
+
+
+PROFESSOR __ VAI NOS MOSTRAR__ COMO ELA FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+----------> PARA O CENÁRIO EM QUE _ ___ 'NO ERROR IS THROWN',
+
+
+
+
+
+'WE JUST HAVE TO __CHECK__ VALUES__ with IF CHECKS',
+
+
+por exemplo,
+
+
+
+
+E __ AÍ __, a partir desses checks (e seu true/false), PODEMOS DECIDIR_ SE VAMOS QUERER:
+
+
+
+
+
+
+1) THROW AN ERROR (para então handlar accordingly)  ------> SE FAZEMOS ___ THROW__ DE 1 ERROR, entramos no mundo de 'AN ERROR IS THROWN', visto logo acima, com as modalidades 'directly handle error' e 'use express error handling function'...
+
+
+(FAZEMOS ESSE __THROW__ MANUAL__ DE 1 ERROR, para então 'kick off that error handling process'....)
+
+
+
+
+
+
+2) __ 'DIRECTLY HANDLE the "error" ' -----> NÓS 
+
+
+
+SEGUIMOS 
+
+ESSE 
+
+APPROACH __ SE __ SABEMOS_ QUE 
+
+
+
+NÃO É UM 'TECHNICAL ERROr',
+
+
+
+
+
+mas que 
+
+
+estamos 
+
+
+FALTANDO ALGUM PIECE OF DATA,
+
+como 
+
+'input data',
+
+
+por exemplo... --> nesse caso,
+
+
+provavelmente 
+
+
+
+MOSTRAREMOS 
+
+UMA PÁGINA/RENDER
+ 
+ DIZENDO
+  
+
+
+  que 
+
+  o
+   
+   código não conseguiu 
+
+
+
+
+
+continuar.... fallbacks...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESUMO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ERROR IS THROWN  (para esse tipo de erro, há CERTAS TOOLS QUE PODEMOS USAR PARA TESTAR CÓDIGO E CATCHAR POTENTIAL ERRORS...)
+      |
+      |
+---------------------
+|                   |
+SYNC              ASYNC
+CODE 
+(try-catch)       (then-catch)
+
+-------------------------
+
+          |
+----------------------
+|                     |
+
+Directly            Use express error handling function (não usamos isso, até agora)...
+handle 
+Error
+
+
+
+
+
+
+
+
+
+
+
+NO ERROR IS THROWN (nós sabemos que NÃO PODEMOS CONTINUAR, mesmo sem erro.......)
+      |
+      |
+      |
+      |
+
+  Validate Values (VAMOS __CHECAR___ VALORES, POR MEIO DE 'IF CHECKS'...)
+      |
+      |
+      |
+----------------------
+|                     |
+ throw                Directly    
+error                  handle 
+(para entrarmos no         "Error"
+mundo de 'throw an error')                   
+                   
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+"Error" --> ESTAMOS FALANDO DE ALGO QUE NÃO É UM TECHNICAL ERROR Per se,
+
+
+
+
+E SIM 
+
+
+
+um 'erro' que é produzido por conta do IF CHECK QUE NÓS ESCREVEMOS (validation).... --> ex: MISSING INPUT DATA....
+
+
+
+
+
+
+
+
+
+
+
+------> EM TODOS OS CASES,
+
+
+TEMOS 
+
+
+___DIFERENTES  MANEIRAS___ DE 
+
+
+
+RETORNAR A INFORMAÇÃO DO ERRO, ao usuário...
+
+
+
+
+
+
+
+
+
+
+
+---> AS COISAS QUE PODEMOS FAZER SÃO:
+
+
+
+
+
+1) MOSTRAR UMA PÁGINA DEDICADA DE ERRO (ex: erro 404, ou erro 500....) ---> 'ERROR PAGE'...
+
+
+('Hey, nós tivemos um problema'...) -------> ESSE TIPO 
+
+
+DE 
+
+'HANDLE' 
+
+DE ERRORS __ DEVE _ SER 'SUA ÚLTIMA OPÇÃO'... --> é o last resort JUSTAMENTE __ PQ 
+
+O END USER, NO FINAL DAS CONTAS,
+
+__aCABA __ FICANDO__ COMPLETAMENTE 'SEM INPUT' 
+
+no uso 
+
+de 
+
+seu site.... (não tem o que ele fazer/interagir, só vai receber essa page sem nada...)
+
+
+
+
+
+--> TAMBÉM É RUIM PQ O ___USER_ PERDE __ TODO O INPUT,
+E TBM NÃO PODE CONTINUAR....
+
+
+
+
+
+
+
+
+2) 'Intended Page/Response, but with 
+
+ERROR INFORMATION/MODAL/DIV/ELEMENT'...
+
+
+
+
+(retornamos a page em que o USER ESTAVA ORIGINALMENTE,
+
+MAS COM UMA INFO EXTRA DE ERRO.... --> FOI ISSO QUE FIZEMOS AO LONGO DO ÚLTIMO MÓDULO,
+
+com 
+
+
+as routes de 
+
+
+'login', 'signup' e 'add a product'/'edit a product'....
+
+ ) ----> VIMOS ISSO 
+
+
+ NO MÓDULO DE 'VALIDATING',
+
+ 
+ 
+ EM QUE __ MANTÍAMOS _ O INPUT DO USER 
+
+ E 
+
+ RE-RENDERIZÁVAMOS A PAGE EM QUE ELE ESTAVA...
+
+
+
+
+
+
+
+
+
+3) REDIRECT.... --> É UMA OPÇÃO, TAMBÉM... ----> É USADO 
+
+EM 
+
+CASOS COMOO:
+
+
+
+'nós tentamos acessar uma page __ MAS NÃO ESTAMOS AUTHENTICATED,
+
+NÃO TEMOS 1 SESSION'.... ------> AÍ 
+
+
+
+
+PODEMOS ESCREVER, PARA ESSE CASE,
+
+
+1 
+
+REDIRECT 
+
+PARA 
+ 
+ A HOME PAGE,
+
+ POR EXEMPLO... (e podemos redirecionar com uma mensagem de erro na LANDING PAGE, por exemplo...)
+
+
+
+
+
+
+
+
+
+
+
+ -----> OK.... ESSAS SÃO 
+
+
+ AS 
+
+
+
+ ___ DIFERENTES FERRAMENTAS__ QUE TEMOS,
+
+ as 
+
+ difernetes maneiras de 
+
+ trabalhar com erros que temos..
+
+
+
+
+
+
+
+
+
+ ----> AGORA DEVEMOS MERGULHAR NO NOSSO CÓDIGO,
+
+ VER O QUE JÁ ESTÁVAMOS USANDO, E O QUE __ PODEMOS USAR___...

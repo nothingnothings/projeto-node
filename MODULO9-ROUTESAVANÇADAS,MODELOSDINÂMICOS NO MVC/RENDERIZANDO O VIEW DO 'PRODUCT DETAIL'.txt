@@ -1,0 +1,563 @@
+
+
+
+
+
+
+
+
+
+
+----> ok...-->  
+
+
+
+
+
+
+
+
+
+TEMOS UM MODELO BÁSICO....
+
+
+
+
+
+
+
+--> eX:
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+      <article class="card product-item">
+        <header class="card__header">
+            <h1 class="product__title"><%= prod.title %></h1>
+        <div class="card__image">
+            <img src="<%= prod.imageUrl %>" alt="<%= prod.title %>"></img>
+        </div>
+        <div class="card__content">
+            <h2 class="product__price"></h2>$<%= prod.price %></h2>
+            <p class="product__description"><%= prod.description %></p>
+        <div>
+        <div class="card__actions">
+            <a class="btn" href="/">Edit</a>
+            <form action="/admin/delete-product" method="DELETE"> 
+            <button class="btn" type="submit">Delete</button>
+          </form>
+        </article>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> PROFESSOR ESCREVE DIFERENTE.... --> ELE 
+
+
+
+COLOCA UMA CLASS DE 
+
+'centered' 
+
+para 
+
+esse main aí...
+
+
+
+
+
+
+
+
+
+-->
+
+
+
+
+'.centered {
+
+    text-align: center;
+}
+',
+
+
+ISSO 
+
+LÁ NO ARQUIVO 
+
+'main.css'...
+
+
+
+
+
+
+
+
+
+
+
+------------> professor escreve uma 
+
+
+h1 tag,
+
+
+
+
+
+
+
+com
+
+
+<h1><%= product.title %></h1>.....
+
+
+
+
+
+
+
+
+
+
+
+
+DEPOIS UMA IMAGE DENTRO DE UMA DIV...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+<hr>
+<div>
+    <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+</div>
+
+
+
+
+------------------------------
+
+
+
+
+
+DEPOIS UMA H2 TAG COM 
+
+
+O PRODUCT PRICE,
+
+
+E AÍ UM PARAGRAPH 
+
+COM 
+
+
+A 
+
+'PRODUCT DESCRIPTION'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main class="centered">
+          <h1><%= prod.title %></h1>
+          <hr>
+          <div>
+            <img src="<%= prod.imageUrl %>" alt="<%= prod.title %>"></img>
+          </div>
+          <h2><%= prod.price %></h2>
+          <p><%= prod.description %></p>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+------> OK.... ESSE CÓDIGO AQUI ESTAVA ERRADO:
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+  const productId = req.params.productId;
+
+ const product = Product.findProduct(productId, 
+
+  (product) => {
+      console.log(product, 'LINE');
+      return product;
+  }
+  );
+
+
+
+    
+    res.render('shop/product-detail',  /////////ISSO AQUI ESTÁ/ESTAVA ERRADO....
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      prod: product
+    }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+  const productId = req.params.productId;
+
+ const product = Product.findProduct(productId, 
+
+  (product) => {
+      console.log(product, 'LINE');
+
+
+
+            res.render('shop/product-detail',   //////EIS O CÓDIGO EM QUESTÃO.
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      prod: product
+    }
+    )
+  }
+
+  );
+
+}
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+--------> CERTO... isso deu certo...
+
+
+
+
+
+PROFESSOR FALA DESTE 
+
+
+
+
+CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      prod: product
+    }
+    )
+  }
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+ok..........
+
+
+
+
+
+
+
+
+
+
+------> A QUESTÃO, AGORA, É:
+
+
+
+
+
+QUAL 'PATH'/link queremos HIGHLIGHT QUANDO 
+
+ESTIVERMOS 
+
+
+NESSE 
+
+
+
+LINK DE 'PRODUCT-DETAIL'? (ISSO PQ Não temos 1 link a esse product em especial)..
+
+
+
+
+
+
+
+
+
+--> MAS FAZ SENTIDO 
+
+HIGHLIGHTEAR 
+
+
+O LINK 
+
+DE 
+
+'products',
+
+pq tecnicamente estamos nele....
+
+
+
+
+
+
+
+
+
+-----> OK... 
+
+
+
+
+AGORA 
+
+
+
+TEMOS A PAGE EM SI,
+
+
+
+tudo ok..
+
+
+
+
+
+
+
+-----> DEVEMOS TERMINAR ESSA PAGE COM 
+
+
+
+
+
+1 BOTÃO DE 
+
+
+'add to cart button',
+
+
+
+DEBAIXO DO PRODUCT.. --> mas com isso,
+
+
+
+
+PROFESSOR ACHA QUE 
+
+ISSO É OQUE 
+
+PRECISAMOS, ATÉ AGORA...
+
+
+
+
+
+
+
+
+
+
+PROFESSOR ESCREVE 
+
+
+UMA 
+
+
+
+form, tipo assim:
+
+
+
+
+
+<form action="/cart" method="POST" ></form>
+
+
+
+
+
+
+
+
+
+PARA WRAPPAR O BUTTON DO 
+
+
+'Add to Cart'...
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main class="centered">
+          <h1><%= prod.title %></h1>
+          <hr>
+          <div>
+            <img src="<%= prod.imageUrl %>" alt="<%= prod.title %>"></img>
+          </div>
+          <h2><%= prod.price %></h2>
+          <p><%= prod.description %></p>
+          <form action="/cart" method="POST">
+            <button class="btn" type="submit">Add to Cart</button>
+          </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+--------------------------
+
+
+AGORA DEVEMOS 
+
+
+ADICIONAR ESSA FUNCIONALIDADE 
+
+
+
+DO 
+
+'ADD TO CART'...

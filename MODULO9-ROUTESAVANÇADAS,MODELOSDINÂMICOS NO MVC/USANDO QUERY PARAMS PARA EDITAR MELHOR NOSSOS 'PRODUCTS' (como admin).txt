@@ -1,0 +1,4145 @@
+
+
+
+
+
+
+
+TRABALHAMOS UM POUCO COM O MODELO DE 'CART'....
+
+
+
+
+
+
+
+
+--> MAS ALGUMAS COISAS AINDA ESTÃO ___ FALTANDO___.... --> NÓS 
+
+
+NUNCA FIZEMOS DISPLAY DE NOSSO 
+
+CART,
+
+
+e TAMBÉM
+
+
+
+AINDA 
+
+__NÃO SOMOS CAPAZES DE 'DELETE AN ITEM' FROM THE CART...
+
+
+
+
+
+
+
+
+
+
+--> MAS DEVEMOS IGNORAR ISSO POR ENQUANTO,
+
+
+
+DEVEMOS 
+
+
+
+FOCAR 
+
+
+NO 
+
+'EDIT' DE UM PRODUCT, POR PARTE DO ADMIN....
+
+
+
+
+
+
+
+
+
+---> PROFESSOR EXPLICA QUE TEMOS AQUELA VIEW 
+
+
+de 
+
+'edit-product.ejs'...
+
+
+
+
+
+
+
+
+
+--> O QUE QUERO FAZER 
+
+
+
+ALI DENTRO __ É RENDERIZAR __ A MESMA FORM QUE 
+
+TEMOS PARA 
+
+
+'ADD PRODUCT' (do admin),
+
+
+
+
+
+MAS DESSA VEZ PARA O EDITAR...
+
+
+
+
+
+
+
+-->A DIFERENÇA 
+
+É __QUE __AQUI __VAMOS 
+
+QUERER 
+
+'PRE-POPULATE' 
+
+
+
+A 
+
+FORM
+
+
+DESSA 
+
+PÁGINA ___cOM OS VALUES__ DO PRODUCT___ QUE 
+
+EU QUERO 
+
+
+
+____eDITAR___ ...
+
+
+(hmmm.... bem interessante)...
+
+
+
+
+ 
+
+
+
+
+
+
+ ---> CERTO.... SE EU ESTOU USANDO __ o MESMO CÓDIGO HTML DA PÁGINA 
+
+ DE 
+
+
+
+ 'Add PRODUCT',
+
+
+
+
+ ___FARIA_ _ SENTIDO __ __
+
+
+ COLOCAR_ _ ESSE CÓDIGO 
+
+ COMO 
+ UM TEMPLATE/INCLUDES...
+
+
+
+
+
+
+
+
+
+ ---> MAS PROFESSOR DIZ QUE 
+
+
+
+
+ ELE PREFERE COPIAR E COLAR 
+
+
+ O CÓDIGO 
+
+ DE 
+
+ 'add-product.ejs'
+
+
+
+ __DENTRO DE 
+
+
+ 'edit-product.ejs',
+
+
+ E AÍ 
+
+
+ DELETAR 
+
+ O 
+
+
+ ARQUIVO 
+
+
+ 'add-product.ejs'
+
+ POR COMPLETO...
+
+
+
+
+
+
+
+
+
+
+
+ ------> É UMA DECISÃO BEM ESTRANHA...
+
+
+
+
+
+ Mas vamos seguí-la...
+
+
+
+
+
+
+
+
+
+ --> É CLARO QUE VAMOS TER QUE 
+
+
+
+ MODIFICAR O CONTROLLER 
+
+
+ de 
+
+ 'admin.js',
+
+
+
+ AQUELE 
+
+
+ CÓDIGO DE 
+
+
+
+
+ 'exports.getAddProductPage = (req, res, next) => {}'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX(estava assim):
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+    res.render('admin/add-product', {
+      pageTitle: 'Add Product', //RENDER. USADO COM TEMPLATING ENGINES COMO 'pug'...
+      path: '/admin/add-product',
+      activeAddProduct: true,
+      productCSS: true,
+      formsCSS: true,
+    });
+  };
+
+
+
+
+
+
+
+
+
+ ------------------------------------
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR VAI TROCAR PARA FICAR ASSIM:
+
+
+
+
+
+ exports.getAddProductPage = (req, res, next) => {
+    res.render('admin/edit-product', { ///TROCOU
+      pageTitle: 'Add Product', 
+      path: '/admin/add-product',
+    });
+  };
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+ENTRETANTO, AGORA O PROFESSOR NOS DIZ QUE PARA O 'EDIT DE UM PRODUCT'
+
+
+
+
+ELE TAMBÉM VAI QUERER TER UMA 'ROUTE',
+
+
+
+
+
+E __ PARA ISSO ELE VAI QUERER __ TER ESSE MESMO VIEW 
+
+de 
+
+
+
+'edit-product.ejs'...
+
+
+
+
+
+
+
+
+---> PARA ISSO,
+
+
+
+PROFESSOR 
+
+
+VAI COPIAR 
+
+
+
+O CÓDIGO DE 'getAddProductPage'
+
+
+
+e vai escrever:
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+            res.render('admin/edit-product', { ///TROCOU
+      pageTitle: 'Edit Product', 
+      path: '/admin/add-product',
+    });
+}
+
+
+
+
+
+
+-----> OU SEJA,
+
+ELE TAMBÉM VAI QUERER 
+
+
+TER 
+
+
+O 
+
+RENDER 
+
+DA 
+
+VIEW DE 
+
+'edit-product' aqui... (
+
+
+
+    ou seja,
+
+    2 
+
+    ROUTES com o render dessa view,
+
+    1 de 'ADD',
+
+    a outra de 
+
+    'EDIT'...
+)
+
+
+
+
+
+
+---> A DIFERENÇA É QUE __ NESSA ROUTE__ DE 
+
+
+'edit product'
+
+
+O PROFESSOR 
+
+
+PRETENDE 
+
+'PASS IN MY PRODUCT INFORMATION'... (coisa que não será vista na route de 'add product', exclusiva ao USUÁRIO....)
+
+
+
+
+
+
+
+
+------->  MAS O __PROBLEMA__, É CLARO, 
+
+
+
+É 
+
+
+
+
+
+'HOW SHOULD I REACH THIS CONTROLLER ACTION?' -----> 
+
+
+
+
+COMO DIABOS 
+
+
+
+
+PROFESSOR 
+
+CONSEGUIRÁ
+
+CHEGAR 
+
+
+
+
+NESSE CONTROLLER de 
+
+
+'exports.getEditProductPage',
+
+DEIXANDO 
+
+DE 
+
+TRIGGAR 
+
+ O 
+
+
+
+ DE 
+
+
+ 'getAddProductPage'?
+
+
+
+
+
+
+
+
+
+
+
+ --> A IDEIA DO PROFESSOR É ESTA:
+
+
+
+
+
+
+ --> VOCÊ ESTÁ NA PÁGINA DE 'ADMIN PRODUCTS'...
+
+
+
+
+
+ -> ENTÃO, VOCÊ CLICA EM UM BOTÃO 'edit',
+
+
+ em 
+
+ 1 DOS PRODUCTS...
+
+
+
+
+
+ --> A IDEIA DO PROFESSOR É QUE 
+ ESSE CLICK 
+
+
+
+ ___ NÃO VAI FAZER COM QUE 
+
+
+
+
+
+
+SUA URL SE TRANSFORME PARA ALGO COMO 
+
+
+
+''localhost:3000/admin/edit-product''',
+
+
+
+
+E __ SIM _ ELE VAI QUERER __ QUE 
+
+O ____iD __ DO
+
+
+
+PRODUCT __ SEJA 
+
+
+
+ADICIONADO 
+
+
+DEPOIS 
+
+DE 
+
+
+
+'edit-product',
+
+
+
+
+TIPO 
+
+
+
+
+''localhost:3000/admin/edit-product/1219082198921''',
+
+
+
+
+
+
+
+
+
+-------> OK.... COM ESSE ID ENFIADO NA URL,
+
+
+PROFESSOR 
+VAI QUERER 
+
+
+
+QUE 
+
+
+
+
+A 
+
+ROUTE 
+
+De 
+
+
+'edit product'
+
+
+SEJA AUTOMATICAMENTE CARREGADA,
+
+
+
+E QUE 
+
+
+AS FORMS 
+
+DA VIEW 
+
+'edit-product.js'
+
+
+SEJAM __ AUTOMATICAMENTE 
+
+
+POPULADAS ___ pelo conteúdo daquele 
+
+
+
+
+PRODUCT ESPECÍFICO....
+
+
+
+
+
+
+
+
+
+
+---> E SE/QUANDO O PROFESSOR CLICAR O BOTÃO DE 'SAVE'
+
+
+para aquele product,
+
+ELE NÃO VAI QUERER __ CRIAR UM NOVO PRODUCT,
+
+E SIM 
+
+SÓ 
+
+
+EDITAR ESSE PRODUCT, COMO ELE ESTÁ,
+
+
+LÁ 
+
+
+
+NO 'products.js'...
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE O PROFESSOR PRECISARÁ DE 
+
+2 COISAS:
+
+
+
+
+
+
+
+
+1) o __ID____ ------> O PROFESSOR PRECISA PASSAR A INFO DO ID,
+
+
+
+ID 
+
+QUE 
+
+
+ESTÁ CONTIDO EM CADA OBJETO 'product' LÁ EM 
+
+'products.json'...
+
+
+
+
+
+
+2) ALÉM DISSO,
+
+
+PROFESSOR VAI PRECISAR TRANSMITIR INFO __ DE QUE _ ELE 
+
+QUER __ EDITAR__ O PRODUCT, E NÃO 
+
+
+___CRIAR UM NOVO... (talvez seja bom usar 'PATCH', nesse caso?)
+
+
+
+
+
+
+
+
+
+
+-----> BEM... PROFESSOR DIZ QUE 
+
+DEVEMOS 
+
+IR 
+
+
+ATÉ 
+
+NOSSAS ROUTES DE 
+
+'admin'
+
+
+E AÍ 
+
+
+
+DEVEMOS ADICIONAR UMA NOVA ROUTE...
+
+
+
+
+
+
+
+
+----------> __ VAMOS QUERER ADICIONAR UMA 
+
+
+
+ROUTE 
+
+
+
+COM ID DINÂMICO, DYNAMIC ROUTES,
+
+JÁ APRENDEMOS SOBRE COMO ISSO FUNCIONA...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+router.get('/edit-product/:productId');
+
+
+
+
+
+
+
+
+
+
+
+--> TIPO ASSIM,
+
+CREIO EU...
+
+
+
+
+
+
+--> E AÍ VAMOS 
+
+ESCREVER:
+
+
+
+
+
+
+
+
+
+
+
+
+router.get('/edit-product/:productId', 
+
+
+        adminController.getEditProductPage 
+
+);
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+OK.... ISSO RESOLVE A ETAPA NUMERO 1...
+
+
+
+
+
+
+
+
+
+--> AGORA 
+
+DEVEMOS 
+
+VER A ETAPA NÚMERO 2,
+
+
+QUE É :
+
+
+
+
+
+
+
+2) ALÉM DISSO,
+
+
+PROFESSOR VAI PRECISAR TRANSMITIR INFO __ DE QUE _ ELE 
+
+QUER __ EDITAR__ O PRODUCT, E NÃO 
+
+
+___CRIAR UM NOVO... (talvez seja bom usar 'PATCH', nesse caso?)
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> BEM... ESSA INFO TEM QUE SER TRANSMITIDA __ LÁ NO NOSSO CONTROLLER.... isso é meio lógico...
+
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ NO CONTROLLER 
+
+de 
+
+
+'getEditProductPage',
+
+
+
+
+PROFESSOR DIZ QUE 
+
+ 
+
+ DEVEMOS PASSAR UM 'ADDITIONAL 
+ 
+INFORMATION FIELD',
+
+
+
+um field de information que será 
+
+
+'editing: true'... ---------> 
+
+
+
+
+
+AÍ, LÁ NO VIEW,
+
+
+USAREMOS 
+
+
+ESSE 
+
+
+
+'editing: true'
+
+
+__PARA __ RODAR __ LÓGICA,
+
+
+PARA 
+
+
+
+
+EXECUTAR IF-ELSE BLOCKS, 
+
+
+que 
+
+alterarão 
+
+
+O CONTEÚDO QUE SERÁ DISPLAYADO NA NOSSA PÁGINA,
+
+
+a partir 
+
+
+
+dessa propriedade...
+
+
+
+
+ex:
+
+
+exports.getEditProductPage = (req, res, next) => {
+            res.render('admin/edit-product', {
+      pageTitle: 'Edit Product', 
+      path: '/admin/add-product',
+      editing: true   ///EIS O CÓDIGO EM QUESTÃO.
+    });
+}
+
+
+
+
+
+
+
+
+
+
+----> A PARTIR DISSO,
+
+
+
+
+
+PODEMOS RENDERIZAR 2 
+
+PAGES DIFERENTES,
+
+
+
+1 PAGE QUE 
+
+
+
+ENVIARÁ 
+
+
+
+A UMA ROUTE DE 'POST',
+E OUTRA 
+
+DE 
+
+'PATCH'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> MAS DIGAMOS QUE __ QUEREMOS 
+
+TER UMA 
+
+'ADDITIONAL CONFIRMATION',
+
+
+
+
+
+
+'BY ASSURING' 
+
+
+que 
+
+
+AS PESSOAS TENHAM DE PASSAR AQUILO 
+
+QUE É 
+
+CHAMADO 
+
+
+
+
+DE 'QUERY PARAMETER'... query parameter NA URL... ------>
+
+
+
+
+
+
+
+
+UM QUERY PARAMETER PODE SER ADICIONADO A QUALQUER URL,
+
+
+TUDO POR MEIO 
+
+
+DE UMA 
+
+SINTAXE 
+
+COMO 
+
+
+'?',
+
+
+
+e depois 
+
+desse 
+
+'?' 
+
+
+
+
+KEY-VALUE PAIRS 
+
+separados por 
+
+
+
+UM SINAL DE IGUAL...
+
+
+
+
+como, por exemplo,
+
+
+
+
+'localhost:3000/edit-product/12345?edit=true'
+
+
+
+
+
+
+
+
+E VOCÊ PODE TER MÚLTIPLOS QUERY PARAMS,
+
+BASTA OS SEPARAR COM AMPERSANDS...
+
+
+
+ex:
+
+
+'localhost:3000/edit-product/12345?edit=true&write=no&title=new'
+
+
+
+
+
+(isso será 
+
+
+edit: true 
+
+write: no 
+
+title: new
+
+)
+
+
+
+
+
+
+
+-> ISSO É POSSÍVEL,
+
+
+
+E TUDO ISSO É O QUE CHAMAMOS DE 'OPTIONAL DATA'...
+
+
+
+
+
+
+
+
+
+----> E O PROFESSOR NOS EXPLICA QUE O PATH/route 
+
+QUE 
+
+É 
+
+ALCANÇADA 
+
+
+
+POR 
+
+ESSA URL 
+
+É 
+
+
+
+__A PARTE_ QUE VAI ATÉ 
+
+O 
+
+'?', antes de o alcançar... (como 'localhost:3000/edit-product/12345', NESSE CASO....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO QUER DIZER, EM OUTRAS PALAVRAS, QUE __ VOCÊ __ NÃO PRECISA __ 
+
+
+ADICIONAR QUALQUER INFORMAÇão 
+
+SOBRE QUERY PARAMETERS  
+
+
+QUE VOCÊ TVZ GANHE ___aos seus ARQUIVOS ROUTE (como admin.js e shop.js),
+
+
+
+ISSO 
+
+
+PQ 
+
+
+OS 
+PATHS,
+
+
+como 
+
+
+'/products/:productId' 
+
+
+
+LÁ EM 
+
+
+'router.get('/products/:productId)',
+
+
+
+__NÃO SERÃO AFETADOS...
+
+
+
+--------------------------
+
+
+
+
+
+
+(MAS VOCê PODE... (gravação do professor CORTOU AQUI...))
+
+
+
+
+
+
+
+consegui um arquivo alternativo com MAIS AULAS DO PROFESSOR, e com o  resto dessa gravação...
+
+
+
+
+
+
+
+--> SIM, O CHECK 
+
+
+ POR 'QUERY PARAMS'
+
+
+ LÁ 
+
+
+ NAS SUAS ROUTES __ É REALMENTE____ INÚTIL....
+
+
+
+
+
+
+_---> ENTRETANTO, O MESMO NÃO PODE SER DITO A RESPEITO DO 
+
+
+CHECK POR QUERY PARAMS ___ NOS SEUS _____ CONTROLLERS..... ------> 
+
+
+
+
+
+
+NOS CONTROLLERS, VOCÊ ____PODE___ CHECAR POR __ QUERY PARAMETERS...
+
+
+
+
+
+
+--> você pode, POR EXEMPLO,
+
+
+CHECAR 
+
+
+SE 
+
+
+O 
+
+'editMode'
+
+'IS SET'.... ------> 
+
+
+
+
+PARA 
+
+ISSO,
+
+professor 
+
+diz que 
+
+podemos 
+
+
+escrever algo como 
+
+
+
+
+'const editMode = req.query'... ---------> VAMOS QUERER ACESSAR A OPÇÃO 'query' DENTRO DO REQUEST 
+
+QUE NOS FOI ENVIADO...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+            const editMode = req.query;
+
+            res.render('admin/edit-product', {
+      pageTitle: 'Edit Product', 
+      path: '/admin/add-product',
+      editing: true   ///EIS O CÓDIGO EM QUESTÃO.
+    });
+}
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+ISSO, ESSA INFORMAÇÃO _ CONTIDA___ NA URL,
+
+
+VAI 
+
+
+NOS INFORMAR EXATAMENTE '''''O DONO DO SITE ESTÁ QUERENDO EDITAR ESTE PRODUCT''' ----> 
+
+
+
+
+
+
+
+
+o professor nos explica que 
+
+
+'req.query'
+
+TAMBÉM É __ CRIADO __ E 'MANAGED' 
+
+
+PELO 
+
+
+EXPRESSJS....
+
+
+
+
+
+
+-----> mas é claro que 
+
+SÓ 
+
+'req.query' NÃO VAI BASTAR.... --> TEREMOS QUE 
+
+ACESSAR 
+
+
+1 DAS 
+
+
+KEYS QUE FOI 
+
+
+ENXERTADA 
+
+
+__DENTRO DA URL __ 
+
+
+daquele product...
+
+
+
+
+
+--> AQUI, NO CASO, PODEMOS CHECAR 
+
+PELA 
+
+
+
+KEY DE 
+
+'edit'... (que deverá estar settada como TRUE para que 
+
+
+esse 
+
+RENDER DESSA PAGE ESPECIAL 
+
+
+
+de 'res.render(
+    ...,
+
+    {
+        editing: true
+    }
+)
+
+'
+
+
+SEJA PERMITIDA...
+
+)
+
+
+
+
+
+
+
+--> OK... PROFESSOR VAI ESCREVER:
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+            const editMode = req.query.edit;
+
+            res.render('admin/edit-product', {
+      pageTitle: 'Edit Product', 
+      path: '/admin/add-product',
+      editing: true   ///EIS O CÓDIGO EM QUESTÃO.
+    });
+}
+
+
+
+
+
+
+
+
+
+
+---> CERTO... ISSO AÍ,
+
+
+SÓ SE 
+
+'edit'
+
+
+ESTIVER SETTADO EM ALGUM LUGAR 
+
+DA 
+
+
+'LIST OF PARAMETERS',
+
+
+
+__ SÓ ENTÃO NESSA HIPÓTESE,
+
+
+
+
+terei 
+
+'true'
+
+
+
+ENFIADO NO 'editMode'... -----------> PROBLEMA:::: O VALOR 
+
+
+
+
+__ DE QUERIES__, EXTRAÍDO DAS QUERIES,
+
+
+É 
+
+
+__SEMPRE UMA STRING... --> ISSO SIGNFIICA QUE 
+
+
+
+NOSSO 
+
+
+'true' 
+
+
+não 
+
+será 
+
+
+true (boolean),
+
+
+e sim 
+
+
+'true' (STRING)...
+
+
+
+
+
+--> mas isso n faz mt diferença, aqui... ---> isso pq 
+
+
+TIPO...
+
+
+
+
+
+'true'(string) === TRUTHY.... === TRUE (tratado como true)
+
+
+
+'FALTA DE TRUE' === 'FALSY' === FALSE (tratado como false)...
+.
+
+
+
+
+
+
+
+-----> E O PROFESSOR VAI SE APROVEITAR 
+
+
+
+DE ESSE 
+
+'editMode' (que será ou TRUE ou FALSE, dependendo da presença/ausência de 'edit' NAQUELES QUERIES)...
+
+
+
+
+
+
+
+--> É POR ISSO QUE O PROFESSOR VAI PASSAR O VALOR de 'editMode'
+
+
+À PROPRIEDADE 'editing'...
+
+
+
+ex:
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+            const editMode = req.query.edit;
+
+            res.render('admin/edit-product', {
+      pageTitle: 'Edit Product', 
+      path: '/admin/add-product',
+      editing: editMode  ///EIS O CÓDIGO EM QUESTÃO.
+    });
+}
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+
+O PROFESSOR ADICIONA UM REDIRECT A PARTIR 
+
+DE 
+
+!editMode'....
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+            const editMode = req.query.edit;
+
+            if(!editMode) {
+                res.redirect('/');
+            }
+
+            res.render('admin/edit-product', {
+      pageTitle: 'Edit Product', 
+      path: '/admin/add-product',
+      editing: editMode  ///EIS O CÓDIGO EM QUESTÃO.
+    });
+}
+
+
+
+
+
+
+---------->  MAS AÍ ELE DIZ QUE 
+
+
+ISSO É MEIO REDUNDANTE, 
+
+COISA MEIO REDUNDANTE DE SE FAZER... --> ISSO PQ 
+
+
+
+____ NESSE CONTROLLER __ NÓS 
+
+
+
+'ALREADY KNOW THAT WE WANT TO EDIT A PRODUCT'.... ------> MAS O PROFESSOR QUER
+
+
+
+NOS DEMONSTRAR COMO PODEMOS 
+USAR 
+
+QUERY PARAMS 
+
+
+
+PARA __SETTAR_ _'OPTIONAL INFORMATION',
+
+PASSAR 
+
+
+
+
+
+ADDITIONAL INFORMATION... --> ISSO É FREQUENTEMENTE USADO PARA 
+
+TRACKAR USUÁRIOS,
+
+
+OU PARA 
+
+'KEEP A CERTAIN FILTER THE USER SETS, ON THE PAGE'....
+
+
+
+
+
+
+
+
+------> AQUI, NO CASO, O PROFESSOR VAI O UTILIZAR PARA SETTAR EXPLICITAMENTE O 
+
+
+'EDIT MODE',
+
+
+E PARA REDIRECIONAR O USER 
+
+
+
+
+NOS CASOS EM QUE 
+
+
+
+ESSE QUERY PARAM NÃO EXISTE NA URL...
+
+
+
+
+
+
+
+
+
+---> OK....
+
+AGORA SALVAMOS TUDO, E AÍ VAMOS 
+
+CAIR 
+
+
+
+EM UMA PÁGINA 
+
+'add product'
+
+MODIFICADA (é igual a anterior,
+
+
+
+mas 
+
+na verdade 
+
+
+NÓS VAMOS DIFERENCIAR ENTRE 
+
+A 
+
+
+PAGE 
+DE 
+
+
+'add-product' 
+
+e 
+
+
+'edit-product'
+
+LÁ NA 
+
+VIEW 
+
+DE 
+
+'edit-product.ejs'...)
+
+
+
+
+
+
+
+
+
+--> CERTO... MAS AGORA __ PRECISAMOS __ COLOCAR ESSE QUERY PARAM 
+
+DENTRO 
+
+DE NOSSA URL...
+
+
+
+
+
+
+--> SE EU INPUTTAR ISTO AQUI:
+
+
+http://localhost:3000/admin/edit-product/21221?edit=true
+
+
+
+
+
+
+--> SOU LEVADO 
+
+
+à 
+
+PAGE 
+
+DE 
+
+'edit product'... 
+
+
+
+
+(MAS 
+
+
+AINDA ASSIM,
+
+O PROBLEMA 
+
+É QUE 
+
+NÃO HÁ COMO EU FAZER ISSO SEM INPUTTAR 
+
+
+ESSE ENDEREÇO NA URL,
+
+NO MOMENTO... --> PRECISO 
+
+
+FAZER COM QUE 
+
+OS CLICKS 
+
+
+NOS MEUS PRODUCTS,
+
+lá em 
+
+
+'product-list-admin',
+
+
+__TENHAM QUERY PARAMS 
+
+
+no seu 'href'...
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+---> CONSEGUI....
+ 
+
+
+
+ O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="DELETE"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+ESTA É A PARTE IMPORTANTE:
+
+
+
+
+
+
+
+          <div class="card__actions">
+              <a class="btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
+              <form action="/admin/delete-product" method="DELETE"> 
+              <button class="btn" type="submit">Delete</button>
+            </form>
+          </article>
+
+
+
+
+
+
+
+
+
+
+
+--->        <a class="btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
+
+
+
+
+
+
+
+--> como você pode perceber,
+
+
+AQUI EU 
+
+
+_COLOQUEI UM HREF 
+
+QUE LEVA 
+
+
+à ROUTE/PATH FIXA 
+
+DE 
+
+
+'/admin/edit-product/' --> DEPOIS DISSO,
+
+
+TEMOS O 
+
+PATH SEGMENT DINÂMICO DE 
+
+'<%= product.id %>' (MARCAÇÃO DINÂMICA EJS)....
+
+
+
+
+--> o 'product.id' 
+
+
+FOI PASSADO/É PASSADO ANTERIORMENTE, por meio do CONTROLLER DE 'getProductsAdminPage', como 'DATA' ({...}, é o segundo parâmetro de 'res.render()'...)
+
+
+
+
+
+
+
+
+--> JÁ 
+
+
+AQUELA 
+
+
+PARTE FINAL,
+
+o 
+
+'?edit=true',
+
+
+__É LITERALMENTE NOSSO QUERY PARAMETER,
+
+O QUERY PARAMETER QUE 
+
+VAI 
+
+LEVAR 
+
+O 
+
+
+ADMIN 
+
+à PÁGINA 
+
+
+DE 
+
+
+'edit your product',
+
+quando 
+
+
+
+clicarmos 
+
+
+em 'Edit', em algum produto... (na página 'admin products'...)
+
+
+
+
+
+
+
+
+
+-->OK... PRÓXIMA ETAPA 
+
+É 
+
+
+PRE-POPULAR NOSSOS FIELDS 
+
+
+COM
+
+
+A DATA DE NOSSO 'PRODUCT'...
+
+
+
+
+--> acho que consigo fazer isso sozinho...
+
+
+
+
+
+
+
+
+
+--------> OK.... CONSEGUI... O ÚNICO FIELD QUE FICOU ERRADO FOI O 
+
+
+
+DE 
+
+'description'... ---> NÃO APARECE NADA NESSE FIELD...
+
+
+
+
+TVZ SEJA O COMPORTAMENTO DE 'value',
+
+
+QUE PODE 
+SER 
+DIFERENTE 
+
+EM 
+
+
+
+
+<textarea >'...
+
+
+
+
+
+
+
+
+
+
+--> DESCOBRI:
+
+
+
+
+
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" placeholder="<%= prod.description %>"></textarea>
+        </div>
+
+
+
+
+
+--> 
+
+EM TEXTAREAS,
+
+
+
+
+NÃO É 'value'
+
+o negócio que deixa 
+
+
+UM 
+
+VALUE INICIAL 
+
+
+
+
+no nosso field,
+
+E SIM 
+
+
+
+'placeholder'... (bem interessante...)
+
+
+
+
+----------------------
+
+
+
+
+
+CERTO.... MAS UM PROBLEMA É QUE 
+
+
+
+__  O PLACEHOLDER É SÓ UM 
+
+
+'fantasma' na parte de trás,
+
+
+
+não é 
+
+
+
+UM VALOR ESCRITO DE VERDADE.. 
+
+
+
+
+
+
+
+
+
+
+
+You should make clear that placeholder does not set the value of a textarea. 
+Rather "The placeholder attribute represents a short hint (a word or short phrase)
+ intended to aid the user with data entry when the control has no value"
+  [and it disappears as soon as user clicks into the textarea]. It will never act 
+  as "the default value" for the control. If you want that, you must put the desired 
+  text inside the <textarea>Here is the actual default value</textarea>, as
+   per other answers here. –
+
+
+
+
+
+
+
+OK.... 
+
+ESSA VERSÃO AÍ FUNCIONOU MELHOR:
+
+
+
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+
+
+
+
+
+--> BEM MELHOR DO QUE A OUTRA,
+
+
+
+E NÃO TRAZ OUTROS PROBLEMAS...
+
+
+
+
+
+
+
+-> TBM VOU QUERER 
+
+
+ALTERAR 
+
+A CAPTION 
+
+DE 
+
+'Add Product'
+ 
+ NO MEU BUTTON...
+
+
+
+
+
+
+
+
+ EX( ficou assim):
+
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+</main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESTE CÓDIGO FUNCIONOU:
+
+
+
+
+ <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+
+
+
+
+
+
+
+
+
+
+ --> AGORA 
+
+
+ SÓ VAMOS TER ESSA CAPTION
+ DE 
+
+ 'Edit Product'
+
+
+ QUANDO REALMENTE ESTIVERMOS COM OS QUERY PARAMS 
+
+
+ DE 
+
+ 'EDIT'...
+
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+  <h1 class="centered"><%= editing ? 'Edit Selected Product' : 'Add a Product' %></h1>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+</main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+OK... AGORA VOU READICIONAR O CASE 
+
+
+DA 
+
+
+ROUTE/coisa/PAGE 
+
+
+de 
+
+'add-product'...
+
+
+
+
+
+
+
+OK.... ACHO QUE CONSEGUI...
+
+
+
+
+
+CÓDIGOS FICARAM ASSIM:
+
+
+
+
+
+
+
+
+
+(VIEW COMPARTILHADO POR 'edit-product' e 'add-product', ambos os cases...):
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+  <% if (editing) { %>
+  <h1 class="centered">Edit Selected Product</h1>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+    <% } else {%>
+        <h1 class="centered">Add a New Product</h1>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="image" id="titleUrl"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description"></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+        <%  } %>
+</main>
+
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> CONTROLLER DE 'add-product':
+
+
+
+
+
+
+
+exports.getAddProductPage = (req, res, next) => {
+
+
+
+  const editMode = req.query.edit;
+
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product', 
+    path: '/admin/add-product',
+    editing:  editMode
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+---------> COMO __NÓS NÃO VAMOS TER 
+
+COISA ALGUMA 
+
+
+em 'req.query.edit',
+
+ESSE VALOR VAI FICAR COMO _ UNDEFINED__, o que 
+
+fará com que 
+
+
+'editing' fique 
+
+
+
+'editing: undefined',
+
+
+O QUE 
+
+
+POR SUA VEZ 
+
+
+
+VAI __tRIGGAR AQUELE ELSE 
+
+
+BLOCK 
+
+
+
+
+DO VIEW,
+
+aquele 
+
+
+
+''''
+
+else {%>
+        <h1 class="centered">Add a New Product</h1>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="image" id="titleUrl"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description"></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+
+
+
+
+
+'''',
+
+
+
+QUE É JUSTAMENTE NOSSA 
+
+
+
+PAGE 
+
+DE 
+
+'ADD-PRODUCT',
+
+
+
+usada pelo admin...
+
+
+
+
+
+
+
+
+--> E A FUNÇÃO DE EDIT REALMENTE ESTÁ FUNCIONANDO...
+
+
+
+--> E A FUNÇÃO DE 'ADD PRODUCT',
+
+
+também....
+
+
+
+
+
+
+
+
+--> NÃO, ESPERE.. O EDIT PRODUCT __NÃO ESTÁ FUNCIONANDO___... -->
+
+
+
+
+
+O QUE ESTÁ ACONTECENDO 
+
+É 
+
+QUE 
+
+
+O 
+
+
+'PATH/ROUTE' 
+
+de 
+
+
+'EDIT PRODUCT' 
+
+
+__ESTÁ FAZENDO A MESMA COISA QUE 
+
+'add product',
+
+
+ELE ESTÁ __ ADICIONANDO__ 
+
+
+
+UM 
+
+
+PRODUCT A MAIS, com as informações que colocamos... (e não está 
+
+REALMENTE 
+
+
+EDITANDO O PRODUCT QUE JÁ EXISTE, QUE É O QUE QUEREMOS...)
+
+
+
+
+
+
+
+
+
+
+--> ESTÁ FALTANDO ALGUMA COISA PARA 
+
+
+
+___REALIZAR ESSA OPERAÇÃO DE EDIT... --> alguma lógica em 
+
+
+
+'product', provavelmente.... (o model)...
+
+
+
+
+
+
+
+
+
+
+--> A SOLUÇÃO TALVEZ SEJA TROCAR O METHOD 
+
+
+
+DESSA FORM de 
+
+''
+
+  <h1 class="centered">Edit Selected Product</h1>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+
+
+
+
+    ''
+
+
+
+    PARA __ 'PATCH',
+
+
+    E NÃO 
+
+    'post'...
+
+
+    (PQ 
+    
+    VAMOS 
+    
+    QUERER 
+    
+    REALIZAR 
+    
+    UMA OPERAÇÃO 
+    
+    DE 
+    
+    'PATCH' 
+    
+    
+    nessa nossa route....)
+
+
+
+
+
+    -> MAS É CLARO QUE ISSO PODE ESTAR ___ERRADO__....
+
+
+
+
+
+
+
+
+
+    --> E ESTÁ ERRADO, MESMO (patch não é suportado como valor do attribute 'method', em FORMS...):
+
+
+
+
+
+
+    According to the HTML standard, you can not. 
+    The only valid values for the method attribute are get and post, corresponding to the GET and POST HTTP methods.
+     <form method="put"> is invalid HTML and will be treated like <form>, i.e. send a GET request.
+
+Instead, many frameworks simply use a POST parameter to tunnel the HTTP method:
+
+
+
+form method="post" ...>
+  <input type="hidden" name="_method" value="put" />
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... HORA DE ESCREVER A LÓGICA 
+
+DE 
+
+'EDIT'
+ 
+ do nosso product....
+
+
+
+
+
+
+
+
+
+
+ __ EU ACHAVA QUE HAVIA CONSEGUIDO, MAS NÃO...
+
+
+
+
+
+ --> VOU TENTAR MAIS AMANHÃ...
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ ---> ok.... CONSEGUI. FINALMENTE...
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO FICOU __BEM COMPLEXO, NA VERDADE (para mim):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICOU ASSIM (código de 'save()', modificado para ACEITAR ESSA 'HIPÓTESE' de 'edit'):
+
+
+
+
+
+
+
+
+
+
+  save(editedProduct) {
+     if (!editedProduct) {
+       
+      this.id = Math.random().toString(); 
+
+      getProductsFromFile((products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+    } else {
+        
+      getProductsFromFile((products) => { 
+
+       const productToBeEditedIndex = products.findIndex(
+          (item, index) => {
+                return parseInt(editedProduct.id) !== item.id;
+          }
+        )
+          
+        products[productToBeEditedIndex] = editedProduct;
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+
+
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  CERTO... ISSO REALMENTE FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+
+
+  --> JÁ O CÓDIGO DO VIEW FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+  <% if (editing) { %>
+  <h1 class="centered">Edit Selected Product</h1>
+    <form action="/admin/edit-product/<%= prod.id %>" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="imageUrl" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+    <% } else {%>
+        <h1 class="centered">Add a New Product</h1>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="image" id="titleUrl"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description"></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+        <%  } %>
+</main>
+
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE ALTERNA ENTRE A PAGE DE 'ADD-PRODUCT' 
+
+
+E 
+
+'EDIT-PRODUCT'...
+
+
+
+
+
+
+
+(
+dependendo do NOSSO CONTROLLER, QUE ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/');
+  }
+  
+  const productId = req.params.productId;
+
+  Product.findProduct(productId,
+      (product) => {
+        res.render('admin/edit-product', {
+          pageTitle: 'Edit Product', 
+          path: '/admin/edit-product',
+          editing: editMode, 
+          prod: product
+        });
+      }
+    
+    )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+E 
+
+
+
+
+ASSIM:
+
+
+
+
+exports.editProduct = (req, res, next) => {
+      const productId = req.params.productId;
+      const editedProduct = new Product();
+
+      Product.findProduct(
+        productId, (product) => {
+
+              const newProduct = {
+                  ...req.body,
+                  id: productId
+              }
+
+             if (product === newProduct) {
+              alert('No changes to product were detected, redirecting to home page...');
+               res.redirect('/');
+             } else {
+             editedProduct.save(newProduct);
+              res.redirect('/');
+             }
+             
+            
+
+
+        }
+      )
+}
+
+
+
+)
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+É CLARO QUE MINHA LÓGICA _ NÃO ESTÁ PERFEITA... ---> 
+
+
+
+Há repetição de código lá em 'admin.js', o controller... (repetição de código vista em 'editing: editMode') ----------> E OUTRO 
+
+
+
+
+PROBLEMA 
+
+É 
+
+O 
+
+FATO 
+
+
+DE 
+
+'save()' 
+
+
+EXIGIR A INSTANCIAÇÃO 
+
+
+
+DE 
+
+
+
+'Product'
+
+lá 
+
+
+
+neste controller de 'admin.js':
+
+
+
+
+exports.editProduct = (req, res, next) => {
+      const productId = req.params.productId;
+      const editedProduct = new Product(); //////PROBLEMA VISTO AQUI.
+
+      Product.findProduct(
+        productId, (product) => {
+
+              const newProduct = {
+                  ...req.body,
+                  id: productId
+              }
+
+             if (product === newProduct) {
+              alert('No changes to product were detected, redirecting to home page...');
+               res.redirect('/');
+             } else {
+             editedProduct.save(newProduct);
+              res.redirect('/');
+             }
+             
+            
+
+
+        }
+      )
+}
+
+
+
+)
+
+
+----------------------------------
+
+
+
+
+
+
+
+Esses são ALGUNS dos problemas, mas certamente devem existir outros...
+
+
+
+
+
+
+--> VOU COPIAR MEU PROJETO,
+
+PARA 
+
+
+ENTÃO 
+
+ESCREVER A 'VERSÃO DO PROFESSOR',
+
+
+
+adicional...
+
+
+
+
+
+---> OK... CONTINUANDO...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR FALA 
+
+
+
+DO 
+
+
+'PRE-POPULATE' 
+
+
+de 
+
+dados 
+
+
+
+DA FORM, 
+
+
+da 
+página 
+
+de 
+
+'edit-product'....
+
+
+
+
+
+
+PROFESSOR COMEÇA COM ESTE CÓDIGO:
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+
+
+};
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE VAI PRECISAR DA 'PRODUCT INFORMATION'.... --> ele vai conseguir 
+
+isso por meio do 
+
+'PRODUCT MODEL'....
+
+
+
+
+
+
+---> E AÍ ELE VAI PRECISAR DO 
+
+
+
+'productId',
+
+
+PARA RODAR 
+
+
+'Product.findProduct()'...
+
+
+
+
+
+
+
+
+ELE ESCREVE:
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/'); 
+  }
+
+
+    const productId = req.params.productId;
+
+
+    Product.findProduct(productId,  ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+    () => {
+
+    }
+    )
+
+
+};
+
+
+
+
+
+
+
+
+
+
+--> OK... É CLARO QUE 
+
+
+ESSA NOSSA FUNÇÃO 
+
+
+
+VAI __RECEBER UM CALLBACK/executar um callback,
+
+
+
+
+
+E AÍ 
+
+
+ELE 
+
+
+VAI RENDERIZAR AQUELA NOSSA PAGE/view,
+
+
+
+
+por meio deste código:
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/'); 
+  }
+
+
+    const productId = req.params.productId;
+
+
+    Product.findProduct(productId,  
+
+
+
+    (product) => {
+        res.render('admin/edit-product', {   ///////EIS O CÓDIGO EM QUESTÃO.
+            
+
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        prod: product
+
+        } )
+    }
+    )
+
+
+};
+
+
+
+
+
+
+
+
+--------> CERTO.... 
+
+
+
+
+
+
+AÍ PASSAMOS NOSSO PRODUCT NAQUELA KEY DE 'prod'....
+
+
+
+
+
+
+
+
+
+--> PROFESSOR TBM ADICIONA UM _ IF CHECK__.... --> SE NÓS __ NÃO TIVERMOS 1 PRODUCT (ou se ele estiver 
+
+
+COMO UNDEFINED,
+
+
+AÍ ___ VAMOS QUERER __RETORNAR UM REDIRECT, POR ENQUANTO ---> não é a melhor user experience,
+
+
+o ideal seria mostrar um error, mas faremos isso por enquanto...
+
+ )
+
+
+
+
+
+
+ ex:
+
+
+ exports.getEditProductPage = (req, res, next) => {
+
+
+  const editMode = req.query.edit;
+
+  if(!editMode) {
+    return res.redirect('/'); 
+  }
+
+
+    const productId = req.params.productId;
+
+
+    Product.findProduct(productId,  
+
+
+
+    (product) => {
+
+        if(!product) {
+            return res.redirect('/');
+        }
+
+        res.render('admin/edit-product', {   ///////EIS O CÓDIGO EM QUESTÃO.
+            
+
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        prod: product
+
+        } )
+    }
+    )
+
+
+};
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+OK.. AGORA VAMOS VER NOSSA VIEW... ---> 
+
+
+
+
+
+A VIEW 
+
+
+
+
+
+ESTAVA TIPO ASSIM:
+
+
+
+
+
+        <h1 class="centered">Add a New Product</h1>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="image" id="titleUrl"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description"></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> É CLARO ____ QUE NÓS __ 
+
+
+
+
+VAMOS EDITAR/ JÁ EDITAMOS 
+
+
+
+ESSE NEGÓCIO,
+
+
+E DEIXAMOS ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+  <% if (editing) { %>
+  <h1 class="centered">Edit Selected Product</h1>
+    <form action="/admin/edit-product/<%= prod.id %>" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= prod.title %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="imageUrl" id="titleUrl" value="<%= prod.imageUrl %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><%= prod.description %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<%= prod.price %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+    <% } else {%>
+        <h1 class="centered">Add a New Product</h1>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="image" id="titleUrl"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description"></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+        <%  } %>
+</main>
+
+<%- include('../includes/end.ejs'); %>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> OK... ---> O QUE O PROFESSOR FAZ É, por alguma razão,
+
+
+ colocar um RENDER CONDICIONAL 
+
+ DE STRING LÁ 
+
+
+
+
+ em 
+
+
+
+ ''          <button type="submit" class="btn">Add Product</button>''''
+
+
+
+
+
+
+
+
+
+ --> NA VERSÃO DELE, FICA TIPO 
+
+
+
+
+
+
+ <button type="submit" class="btn"><% if (editing) { %> Update Product <% } else %> Add Product <% } %></button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> CERTO... ISSO FUNCIONOU...  
+
+
+
+
+
+
+
+ --> ATÉ AGORA, O CÓDIGO DO PROFESSOR ESTÁ EXATAMENTE IGUAL AO MEU:
+
+
+
+
+ ele vai até 
+
+ o 
+
+ controller 
+
+ de 
+
+ 'getAddProductPage'
+
+
+
+ E ENTÃO 
+
+
+ COLOCA 
+
+ um 
+
+ 'editing: editMode' -----> NÃO... MAS EM VEZ DISSO,
+
+
+ ELE SÓ DEFINE 
+
+
+
+ 'editing: false'... ( 
+
+
+
+     O QUE É 
+
+     A MESMA COISA QUE 
+
+
+     'editing: editMode' (pq isso vai render falsy),
+
+
+
+     MAS 
+
+
+
+     SEM ESSE CHECK AÍ....
+ )
+
+
+
+
+
+
+
+
+
+ ------> OK... MAS O QUE INTERESSA É QUE A PÁGINA VAI FUNCIONAR....
+
+
+
+
+
+
+
+
+
+
+
+----> OK.... MAS O PROFESSOR QUER FAZER MAIS DO QUE 
+
+
+
+SÓ MUDAR A 
+
+'CAPTION';
+
+
+
+ELE TAMBÉM __ QUER MUDAR __ A ACTION....
+
+
+
+
+
+
+
+---> ou seja.... a versão do PROFESSOR de nosso código 
+
+
+VAI FICAR BEM MAIS ENXUTA,
+
+
+pq não terá de repetir TODOS AQUELES FIELDS 
+
+
+de 
+
+'title' etc etc 
+
+DE NOVO... 
+
+(na verdade, talvez ele tenha...)
+
+
+
+
+
+
+
+
+--> a versão dele ficará mais difícil de ler....
+
+
+
+
+
+
+
+
+
+
+<form class="product-form" action="/admin/<% if (editing) { %> edit-product <% } else { %>add-product <% } %>" method="POST">
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK... 
+
+
+MAS O QUE O PROFESSOR QUER FAZER,
+
+
+AGORA, 
+
+É 
+
+'PRE-POPULATE'
+
+
+NOSSA FORM DE 
+
+
+EDIT 
+
+COM 
+
+INFORMATION...
+
+
+
+
+
+
+
+
+
+
+--------> VOCÊ DEVE TER EM MENTE QUE 
+
+
+em 
+
+
+'admin.js'
+
+
+
+
+NÓS ESTAMOS FAZENDO RETRIEVE DAQUELE 
+
+
+PRODUCT ESPECÍFICO,
+
+
+
+e aí estamos 
+
+
+PASSANDO 
+
+
+ESSE 
+
+
+
+
+Product como 
+
+'prod: product',
+
+
+LÁ NO RENDER DE NOSSA VIEW...
+
+
+
+
+
+
+
+
+--> EM CADA INPUT FIELD QUE TEM 'value',
+
+VOU QUERER 
+
+
+
+__ TER A DATA DO 
+
+
+PRODUCT A SER EDITADO,
+
+CASO ESTEJAMOS com 'editing: true',
+
+
+
+
+E NÃO VAMOS QUERER,
+
+
+NO CASO CONTRÁRIO...
+
+
+
+
+
+
+
+
+A FORMA DO CÓDIGO FICARÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs') %>
+<main>
+  <% if (editing) { %>
+  <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+<form class="product-form" action="/admin/<% if (editing) { %> edit-product <% } else { %>add-product <% } %>" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<% if(editing) { %> prod.title <% } %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="imageUrl" id="titleUrl" value="<% if(editing) { %> prod.imageUrl <% } %>"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description" ><% if(editing) { %> prod.description <% } %> </textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<% if(editing) { %> prod.title <% } %>"></title>
+        </div>
+        <button type="submit" class="btn"> <%= editing ? 'Edit Product' : 'Add Product' %></button>
+    </form>
+</main>
+
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+OK...... CONSEGUI... FICOU ASSIM:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    </head>
+    <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <h1 class="centered"><% if (editing) { %> Edit Selected Product <% } else { %> Add A Product <% } %></h1>
+    <form class="product-form" action="/admin/<% if (editing) { %> edit-product <% } else { %>add-product <% } %>" method="POST">
+            <div class="form-control">
+                <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" value="<% if(editing) { %><%= prod.title %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="image">Image URL</label>
+                <input type="text" name="imageUrl" id="titleUrl" value="<% if(editing) { %><%= prod.imageUrl %><% } %>"></title>
+            </div>
+            <div class="form-control">
+                    <label for="description">Description</label>
+                <textarea type="text" rows="5" name="description" id="description" ><% if(editing) { %><%=prod.description%><% } %></textarea>
+            </div>
+            <div class="form-control">
+                    <label for="price">Price</label>
+                <input type="number" name="price" id="price" value="<% if(editing) { %><%= prod.price %><% } %>"></title>
+            </div>
+            <button type="submit" class="btn"><%= editing ? 'Edit Product': 'Add Product' %></button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+O CÓDIGO FICOU MAIS SUCINTO DO QUE O NOSSO, E MAIS FUNCIONAL...
+
+
+
+
+
+
+
+
+
+
+
+
+-> AGORA PODEMOS 'COMEÇAR O EDIT 
+
+DE NOSSOS PRODUCT'...
+
+
+
+
+
+
+
+--> VAMOS TRABALHAR NA FUNCTIONALITY DE 
+
+'STORE THE UPDATED INFORMATION' nas 
+
+
+próximas aulas...

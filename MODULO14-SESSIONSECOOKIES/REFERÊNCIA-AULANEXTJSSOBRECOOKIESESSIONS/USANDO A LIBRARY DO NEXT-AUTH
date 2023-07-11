@@ -1,0 +1,256 @@
+Como mencionado na última aula, não precisamos construir tudo do nada...
+
+
+
+
+Em vez disso, temos uma package boa, o next-auth,
+
+
+que 
+
+faz o add de AUTHENTICATION ao 
+
+
+seu app nextjs 
+
+
+SER SUPER SUPER SIMPLES...  --------> 
+
+
+
+
+
+E ELA, NA VERDADE, 
+
+SUPORTA  UMA AMPLA GAMA DE AUTHENTICATION PROVIDERS ... ----> Isso 
+
+
+significa que 
+
+
+voce vai ter combinacoes 
+
+
+além de 'user + password'; ,
+
+
+VOCE 
+
+
+TAMBÉM TEM COISAS COMO 
+
+'SIGN IN WITH GOOGLE',
+
+
+com o facebook,
+
+
+apple, etc etc, qualquer coisa que voce quiser....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOS DOCS, voce ve a lista de ''supported authentication providers'''... ---> 
+
+
+se voce clicar em algum deles, voce vera COMO IMPLEMENTAR AUTHENTICATION
+
+com aquele provider especifico....
+
+
+
+
+-------> isso é algo que voce pode fazer, é claro... --->     MAS NESSE 
+
+
+MÓDU   LO
+
+
+VAMOS CONSTRUIR 
+
+
+NOSSA AUTHENTICATION DO ZERO,
+
+COM NOSSA 
+
+
+PROPRIA COMBINACAO DE 
+
+
+'EMAIL' E 'PASSWORD',
+
+
+armazenada NO NOSSO PRÓPRIO DATABASE,
+
+
+tudo para que possamos ver 'the complete authentication flow'
+
+
+EM GRANDE DETALHE... ------> OK, VAMOS USAR ESSA PACKAGE... --> 
+
+
+para começarmos, 
+
+
+devemos 
+
+
+executar 
+
+'npm install next-auth'...
+
+
+
+
+--> isso vai instalar essa package...
+
+
+
+
+
+
+
+
+
+
+
+--> certo... e 'next-auth'... --> possui capacidades tanto 
+
+'serverside' como 
+
+'clientside'...
+
+
+
+
+
+
+
+
+
+
+VAMOS SER CAPAZES  DE A UTILIZAR EM 
+
+ALGUMAS API ROUTES (para verificar se o usuário está 'logged in'),
+
+
+
+E TAMBÉM SEREMOS CAPAZES DE 
+
+
+RODAR ESSE CÓDIGO NOS  NOSSOS COMPONENTS, PARA FAZER A MESMA COISA... -----> 
+
+
+
+
+isso pq É CLARO QUE A RESPOSTA À QUESTÃO:
+
+''o usuário está logged in e authenticated'''
+
+
+
+NAO É ALGO QUE E NECESSARIO APENAS EM 
+
+     
+
+     'PROTECTED RESOURCES ON OUR API ROUTES/serverside',
+
+
+
+
+     MAS TAMBÉM EM NOSSOS CLIENTSIDE COMPONENTS,
+
+
+     PQ LÁ 
+
+
+     PODEMOS TAMBÉM QUERER  MOSTRAR ALTERACOES 
+
+
+     NA USER INTERFACE A PARTIR DO STATUS DE AUTHENTICATION DO USUÁRIO (props, possivelmente)...
+
+
+
+
+
+     ---> E ELE TAMBÉM VAI NOS AJUDAR COM O GENERATE DAQUELES TOKENS, JSON WEB TOKENS... ---> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+     ---> MAS A ÚNICA COISA QUE ELE NAO VAI FAZER É 
+
+
+     O MANAGE 
+     
+     DO 'USER CREATION' para nós... --->   
+
+
+
+SOMOS __ NÓS___ QUE PRECISAMOS     TRAZER NOSSA LÓGICA PARA ISSO.... 
+
+
+
+
+
+
+
+
+
+
+----------> O NEXT-AUTH DE FATO SUPORTA  VÁRIAS DATABASES,
+
+
+
+mas 
+
+'MOSTLY FOR OTHER AUTHENTICATION METHODS'... --> é por isso que 
+
+quando 
+o 
+assunto 
+
+é     '''HAVING OUR __OWN__ USER ACCOUNTS''',
+
+
+
+precisamos TRAZER NOSSA 
+
+
+PRÓPRIA LÓGICA API ROUTE DE 'SIGNUP' 
+
+E 
+
+
+TAMBÉM NOSSA 
+
+__PRÓPRIA__
+
+
+LÓGICA DE USER 
+
+VERIFICATION... (somos nós que teremos de codar isso...)
+
+
+
+
+---> MAS É EXATAMENTE ISSO QUE FAREMOS AO LONGO DAS PRÓXIMAS LIÇÕES...

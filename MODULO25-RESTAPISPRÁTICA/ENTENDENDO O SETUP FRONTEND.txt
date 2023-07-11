@@ -1,0 +1,869 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ANEXADO A ESSE VÍDEO,
+
+
+
+
+ENCONTRAMOS UM NOVO PROJETO...  ---> É UM PROJETO 
+
+
+
+
+NÃO 
+
+'NODEJS' (nodeexpress),
+
+
+
+E SIM 
+
+
+
+UM 
+
+
+'REACT PROJECT'...
+
+
+
+
+
+
+
+
+
+
+--> REACTJS ---> REACTJS ---> É UM FRAMEWORK FRONTEND JAVASCRIPT...
+
+
+
+
+
+
+
+
+
+---> ELE RODA NO BROWSER, E TE DEIXA 
+
+
+
+'CREATE SUCH A SINGLE PAGE APPLICATION',
+
+
+
+COMO O PROFESSOR 
+
+
+
+
+MENCIONOU NO ÚLTIMO MÓDULO....
+
+
+
+
+
+
+
+
+--> ELE DIZ PARA BAIXARMOS O PROJECT, MAS EU GOSTARIA DE O CODAR...
+
+
+
+
+
+
+
+
+----------> PROFESSOR DIZ PARA ABRIR ESSE FOLDER EM UM IDE E ENTÃO 
+
+
+
+EXECUTAR 
+
+'npm install',
+
+PARA INSTLAR 
+
+
+
+TODAS AS DEPENDENCIES DO PROJETO...
+
+
+
+
+
+
+
+
+
+
+------>  OK.... -------> MAS SÓ TEMOS DEPENDENCIES DO BROWSER, NESSE APP,
+ 
+ PQ 
+
+
+ ELE 
+
+ É REACTJS,
+
+
+ realmente....
+
+
+
+
+
+
+
+
+
+
+ ------->package.json ----> temos só REACT-RELATED PACKAGES....
+
+
+
+
+
+
+
+
+
+
+ -----------> ok, vou analisar esse project....
+
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR DIZ QUE NO FRONTEND MODERNO VOCÊ TEM 
+
+ SETUPS BEM COMPLEXOS,
+
+
+
+
+ PACKAGE DEPENDENCIES 
+
+
+
+ BEM COMPLEXAS....
+
+
+
+
+
+
+
+
+ -----> NPM START --> ABRE UM DEV SERVER... -------> 
+
+
+
+
+
+
+O DEV SERVER É NA VERDADE UM 'NODE SERVER SERVING YOUR APP',
+
+
+MAS QUE NÃO TEM RELAÇAÕA COM O NODESERVER QUE VAMOS CONSTRUIR/ESTAMOS CONSTRUINDO...
+
+
+
+
+
+
+
+
+
+
+---> É APENAS UM DUMMY DEV SERVER 
+
+
+
+
+
+
+QUE SIMPLESMENTE FAZ 'SERVE' DA BUILD VERSION 
+
+DE NOSSO FRONTEND APP... --> SERVE UM SIMPLES ARQUIVO 
+
+
+
+HTML 
+
+
+ESQUELETO, QUE VAI 
+
+ADQUIRINDO 
+
+
+
+OS 
+
+
+
+
+
+
+COMPONENTS QUE VAMOS 
+
+
+
+
+ESCREVENDO... 
+
+
+
+
+--> ESSES COMPONENTS VÃO SENDO ENFIADOS NOS HOOKS DESSE HTML, COMO 
+
+VISTO EM 
+
+
+
+  <div id="backdrop-root"></div>
+  <div id="modal-root"></div>
+  <div id="root"></div>
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS VER 1 ERRO QUANDO INICIARMOS NOSSO APP, MAS VAMOS O CONSERTAR AO LONGO DO MÓDULO...
+
+
+
+
+
+
+
+
+
+--> VEREMOS UMA INTERFACE 
+
+
+
+__TOTALMENTE __ RENDERIZADA POR MEIO DO REACT...
+
+
+
+
+
+
+
+
+
+------> SE INSPECIONARMOS O PAGE SORUCE,
+
+VAMOS VER SÓ O HTML ESQUELETO,
+
+
+
+SEM NADA MAIS.... 
+
+
+
+
+
+
+
+
+
+-----> se você inspecionar o DOM, CONTUDO, VOCÊ VERÁ MUITO MAIS ELEMENTOS... --> 
+
+
+
+E TODOS 
+
+
+
+
+ESSES elementoS FORAM RENDERIZADOS DINAMICAMENTE PELO REACt (BROWSERSIDE JAVASCRIPT FRAMEWORK)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> QUASE TODO O CÓDIGO  COM QUE TRABALHAREMOS 
+
+
+JÁ FOI PREPARADO PELO PROFESSOR...
+
+
+
+
+
+
+
+--> VAMOS CODANDO ISSO AÍ...
+
+
+
+
+
+
+
+-----> 
+
+DEVEMOS OBSERVAR COMO NOSSA REST API E O FRONTEND (React) 
+
+
+SÃO DECOUPLED 1 EM RELAÇÃO AO OUTRO.... (E AINDA TRABALHAM JUNTOS....)
+
+
+
+
+
+
+
+
+
+
+
+--> É UM APP BEM SIMPLES DE 'SOCIAL NETWORKING'...
+
+
+
+
+
+
+
+
+
+---> PODEMOS CRIAR NOVOS POSTS,
+
+
+
+
+E AÍ MAIS TARDE ADICIONAREMOS AUTHENTICATION... 
+
+
+(
+
+
+
+    DEPOIS INTEGRAREMOS A BACKEND,
+
+
+
+    é por isso que 
+
+    recebemos um erro de 
+
+
+    'unexpected token < in JSON at position 0'
+
+
+    JÁ NO INÍCIO DO NOSSO CÓDIGO...
+)
+
+
+
+
+
+
+
+
+
+
+-------> CERTO...
+
+
+
+
+
+
+
+--> ESSE É O FRONTEND... --> VOU QUERER CONECTAR ESSE 
+
+FRONTEND 
+
+
+AO 
+
+
+NOSSO 
+
+BACKEND...
+
+
+
+
+
+
+--> TEMOS QUE VER QUAIS ENDPOINTS ESSE 
+
+
+
+FRONTEND PRECISA, 
+
+PARA ENTÃO OS CODAR 
+
+
+
+NO NOSSO BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+
+--> NUNCA VI/NÃO ENTENDI ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+export const generateBase64FromImage = imageFile => {
+
+
+    const reader = new FileReader();
+
+    const promise = new Promise((resolve, reject) => {
+
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = err => reject(err);
+
+
+    })
+
+
+    reader.readAsDataURL(imageFile);
+    return promise;
+}
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6
+
+
+I am working on some code, and I have stumbled across something I am unfamiliar with.
+
+export const doSomething = () => [ someFunction(), bind(stuff, stuff, stuff) ]; 
+I have never seen an arrow function with a square bracket like that, has anyone else? If so what is the meaning of how it works?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Doesn't it just return an array? – 
+VLAZ
+ Nov 4 '19 at 21:37
+
+
+
+
+
+
+
+
+
+
+
+
+ --> minha dúvida surgiu a partir DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+ import React from 'react';
+import { NavLink } from 'react-router-dom';
+
+import './NavigationItems.css';
+
+const navItems = [
+  { id: 'feed', text: 'Feed', link: '/', auth: true },
+  { id: 'login', text: 'Login', link: '/', auth: false },
+  { id: 'signup', text: 'Signup', link: '/signup', auth: false }
+];
+
+const navigationItems = props => [
+  ...navItems.filter(item => item.auth === props.isAuth).map(item => (
+    <li
+      key={item.id}
+      className={['navigation-item', props.mobile ? 'mobile' : ''].join(' ')}
+    >
+      <NavLink to={item.link} exact onClick={props.onChoose}>
+        {item.text}
+      </NavLink>
+    </li>
+  )),
+  props.isAuth && (
+    <li className="navigation-item" key="logout">
+      <button onClick={props.onLogout}>Logout</button>
+    </li>
+  )
+];
+
+export default navigationItems;
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+esta parte aqui:
+
+
+
+
+
+const navigationItems = props => [
+  ...navItems.filter(item => item.auth === props.isAuth).map(item => (
+    <li
+      key={item.id}
+      className={['navigation-item', props.mobile ? 'mobile' : ''].join(' ')}
+    >
+      <NavLink to={item.link} exact onClick={props.onChoose}>
+        {item.text}
+      </NavLink>
+    </li>
+  )),
+  props.isAuth && (
+    <li className="navigation-item" key="logout">
+      <button onClick={props.onLogout}>Logout</button>
+    </li>
+  )
+];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pelo visto, parece que ESSE 'navigationItems' 
+
+VAI RETORNAR ___ MAIS DE 1 'component'...
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+https://stackoverflow.com/questions/34893506/return-multiple-elements-inside-react-render/34893582
+
+
+
+
+
+
+
+
+
+In React v16 it's possible for render() to return an array of elements.
+
+Like with other arrays, you’ll need to add a key to each element to avoid the key warning:
+
+render() {
+  return [
+    <ChildA key="key1" />,
+    <ChildB key="key2" />,
+    <ChildC key="key3" />,
+  ];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+OK, DIGITEI TODO O CÓDIGO DO PROFESSOR... HORA DE VER O VÍDEO...
+
+
+
+
+
+
+
+------> os estilos estão bem errados... falta aplicar um monte de coisa....
+
+
+
+
+
+
+
+
+
+OK, CORRIGI OS ESTILOS....
+
+
+
+
+
+
+--------------
+
+
+
+--> PROFESSOR EXPLICA QUE 
+
+
+TODO ESSE CÓDIGO É RENDERIZADO PELO REACTJS...
+
+
+
+
+
+
+
+
+--> NÃO VAMOS TRABALHAR COM CÓDIGO REACT, NÃO VAMOS EDITAR MTAS COISAS....
+
+
+
+
+
+
+
+
+--> ESSA É A FRONTEND QUE VAMOS USAR COM NOSSA REST API...
+
+
+
+
+
+
+
+
+
+--> PODEOMS:
+
+
+
+
+
+1) TER O USER STATUS, QUE PODEMOS UPDATAR POR MEIO DE 'UPDATE'
+
+
+
+
+
+2) PODEMOS CRIAR NOVOS POSTS, por meio do button de 'new post'....
+
+
+
+
+
+3) MAIS TARDE ADICIONAREMOS AUTHENTICATION....
+
+
+
+
+
+
+
+
+
+----> vamos adicionar backend a esse frontend...
+
+
+
+
+
+
+
+----------------> VAMOS VER QUAL RESTFUL API ENDPOINTS ESSE FRONTEND PRECISA,
+
+
+
+para que então implementemos, etapa por etapa...
+
+
+
+
+
+
+
+--> MAS O BOTÃO DE 'NEW POST'
+
+
+está dando erro... ainda não sei a razão para isso...
+
+
+
+--> talvez eu tenha esquecido de escrever 'return' lá no backdorp....
+
+
+
+
+
+
+
+--> ERA ISSO MESMO:
+
+
+
+import React from 'react';
+
+import ReactDOM from 'react-dom';
+
+import './Backdrop.css';
+
+const backdrop = (props) => {
+  return ReactDOM.createPortal( ///eu me lembro disto.
+    <div
+      className={['backdrop', props.open ? 'open' : ''].join(' ')}
+      onClick={props.onClick}
+    />,
+    document.getElementById('backdrop-root') ////e disto... (ver arquivo de 'index.html', sua estrutura......)
+  );
+};
+
+
+export default backdrop;
+
+
+
+
+
+
+
+
+-----------------
+
+OK, DEVEMOS COMEÇAR A PLANEJAR NOSSA API,
+
+NA PRÓXIMA AULA...

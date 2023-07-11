@@ -1,0 +1,1177 @@
+
+
+
+
+
+
+
+
+
+-----> É HORA DE TRABALHAR 
+
+
+
+
+
+
+
+
+no 
+
+
+
+MODEL DE 
+
+
+
+'product.js'...
+
+
+
+--> LÁ,
+
+NÓS TÍNHAMOS/TEMOS 
+
+
+UM MÉTODO 
+
+
+
+'save() {}'...
+
+
+
+
+
+
+
+
+
+SEU CÓDIGO É:
+
+
+
+
+
+
+save() {
+    this.id = Math.random().toString();
+
+    getProductsFromFile(
+        products => {
+            products.push(this);
+            fs.writeFile(filePath, JSON.stringify(products),
+            
+            (err) => {
+
+                console.log(err);
+            }
+            
+            
+            )
+        }
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ATÉ AGORA, NÓS SÓ O UTILIZMAOS PARA 
+
+
+'CREATE A NEW PRODUCT'...
+
+
+
+
+
+
+--> MAS AGORA VAMOS O UTILIZAR PARA EDITAR UM PRODUCT QUE JÁ EXISTE, TAMBÉM...
+
+
+
+
+
+
+
+
+
+--> A ÚNICA COISA QUE PRECISAMOS FAZER, LÁ EM 
+
+
+'save(){}',
+
+É 
+
+
+'CHECK IF WE ALREADY HAVE AN ID'...
+
+
+
+
+
+
+
+
+
+
+--------> PARA FAZER ESSE CHECK AÍ,
+
+
+
+PRECISAMOS __fAZER UMA ALTERAÇÃO LÁ 
+
+
+NA FORMA 
+
+PELA QUAL 
+
+
+__CRÍAMOS __ O NOSSO PRODUCT...
+
+(ou seja,o  constructor...)
+
+
+
+
+
+
+
+nosso constructor estava assim:
+
+
+
+
+
+
+constructor(title, imageUrl, description, price) {
+
+
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+}
+
+
+
+
+
+
+
+
+AGORA ELE FICARÁ ASSIM:
+
+
+
+
+
+
+
+constructor(id, title, imageUrl, description, price) {
+
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+}
+
+
+
+
+
+
+
+
+--> AGORA, QUANDO ESTIVERMOS CRIANDO 'A BRAND NEW PRODUCT',
+
+
+
+nós SIMPLESMENTE 
+
+
+VAMOS 
+
+
+
+PASSAR 'null' como 
+
+esse primeiro parâmetro...
+
+
+
+
+
+
+
+EX:
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+  
+    const newProduct = new Product(null, req.body.title, req.body.imageUrl, req.body.description, req.body.price ); ///////EIS O CÓDIGO EM QUESTÃO.
+    newProduct.save(); 
+    res.status(302).redirect('/');
+  };
+
+
+
+----------------------
+
+
+
+
+
+OK... E NO CASO 
+
+
+
+DO 'EDIT A PRODUCT',
+
+
+
+É CLARO QUE __NÓS JÁ VAMOS TER 1 
+
+'id',
+
+
+
+
+
+E VAMOS 
+
+
+EXECUTAR CÓDIGO CONDICIONAL EM 
+
+'save() {}'
+
+
+
+
+PARA 
+
+
+EXECUTAR FUNÇÕES DIFERENTES A PARTIR DISSO...
+
+
+
+
+
+
+
+ex:
+
+
+constructor(id, title, imageUrl, description, price) { 
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+
+
+
+
+
+save() {
+
+
+    this.id = Math.random().toString(); /////ESTE CÓDIGO TAMBÉM É IMPORTANTE...
+}
+
+
+
+
+
+
+
+
+---> ISSO SIGNIFICA QUE 
+
+
+SE NÓS 
+
+CRIARMOS UM NOVO PRODUCT,
+ 
+
+ __INICIALMENTE__ ELE TERÁ 'id = null',
+
+
+ MAS ___ QUANDO ESSE PRODUCT FOR REALMENTE SALVO POR MEIO DE 'save(){}',
+
+
+ ELE __ 
+
+
+ RECEBERÁ 
+
+ UM 
+
+
+ ID POR MEIO DAQUELA LINHA 
+
+ DE 
+
+ ''this.id = Math.random().toString(); ''
+
+
+
+
+
+
+
+
+
+ --> CERTO...
+
+
+
+
+ mas eu acho que agora nós vamos 
+
+
+ fazer algo como 
+
+
+ 'save() {
+
+
+
+            if (this.id) {
+
+
+            }
+ }
+
+ '
+
+
+
+
+
+
+
+
+ --> OU SEJA,
+
+
+ '''SE 'this.id' JÁ EXISTE,
+
+
+ __VAMOS QUERER __ RODAR UM CÓDIGO ALTERNATIVO, E AÍ 'RETURN' (parar execução do restante do código)...
+
+
+
+
+
+
+
+
+
+
+
+--> SE 'this.id' JÁ EXISTIR no PRODUCT,
+
+
+
+
+O 'save()" 
+
+DEVERÁ 
+
+
+'UPDATE AN EXISTING PRODUCT',  e naõ 
+
+
+ADD A NEW ONE....
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+ save() {
+
+
+
+     if (this.id) {
+
+
+
+     }
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO... MAS A QUESTÃO É QUE AINDA VAMOS PRECISAR 'GET ALL THE PRODUCTS' por meio de 'getProductsFromFile'...
+
+
+
+e ainda vamos precisar dos callbacks...
+
+
+
+
+
+
+
+
+
+---> COMO NÓS __ VAMOS PRECISAR__ DE 
+
+
+
+
+'TODOS OS PRODUCTS' 
+
+DE QUALQUER FORMA,
+
+
+
+
+__PROFESSOR DECIDE MOVER 
+
+
+ESSE 
+
+
+'if (this.id)
+'
+
+PARA 
+
+
+__DENTRO 
+
+DO 
+
+
+CÓDIGO 
+
+CALLBACK 
+
+
+de 
+
+
+
+'getProductsFromFile'....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+    save() {
+       
+
+
+ 
+
+
+                                         
+
+      getProductsFromFile(
+        (products) => {
+
+                 if (this.id) {  ///EIS O CÓDIGO EM QUESTÃO.
+
+      }
+            this.id = Math.random().toString(); ////EIS O CÓDIGO EM QUESTÃO.
+            products.push(this);
+            fs.writeFile(
+              filePath, JSON.stringify(products, 
+                  (err) => {
+                      console.log(err);
+                  }
+                
+                )
+            )
+        }
+      )
+    }
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+EX:
+
+
+
+
+
+    save() {
+       
+      getProductsFromFile(
+        (products) => {
+          if (this.id) { 
+    
+          }
+      this.id = Math.random().toString(); 
+            products.push(this);
+            fs.writeFile(
+              filePath, JSON.stringify(products, 
+                  (err) => {
+                      console.log(err);
+                  }
+                
+                )
+            )
+        }
+      )
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+CERTO... DENTRO DESSE IF STATEMENT,
+
+
+
+__ EU AGORA __ VOU QUERER 
+
+'UPDATE THE EXISTING PRODUCT'.... ----> E PARA ISSO,
+
+
+
+PRIMEIRAMENTE 
+
+EU 
+
+
+PRECISO __ENCONTRAR__ 
+
+ESSE 
+'EXISTING PRODUCT'.... 
+
+
+
+
+
+
+
+
+
+
+
+-----> eu já havia escrito um código para isso, mas não havia ficado tão bom...
+
+
+
+
+
+
+
+
+--> O PROFESSOR ESCREVE A MESMA COISA DE ANTES, aquele 'products.findIndex()'...
+
+
+
+
+
+
+'const existingProductIndex = products.findIndex(
+    (item) => {
+            item.id === this.id
+    }
+)
+'
+
+
+
+
+
+
+
+---> ISSO VAI ME DAR O EXATO NÚMERO INDEXADOR DAQUELE ITEM NO ARRAY 'products'... -> ISSO FEITO,
+
+
+posso simplesmente 
+
+escrever 
+
+algo como 
+
+
+
+products[existingProductIndex] = this;
+
+
+
+
+
+
+
+
+
+--> ERREI DE NOVO.... --> PROFESSOR NOS EXPLICA QUE 
+
+
+DEVEMOS 
+
+CRIAR UMA __ CÓPIA __ DE NOSSO ARRAY... --> tipo algo assim:
+
+
+
+
+
+
+
+
+'const updatedProductsArray = [...products];' 
+
+
+
+
+
+
+--> CLARO, PARA DEPOIS __ CONSEGUIRMOS_ _ 
+
+
+
+USAR 'fs.writeFile' PARA ESCREVER ESSE __ ARRAY, TUDO DE UMA VEZ, 
+
+DENTRO 
+
+DE NOSSA FILE...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const existingProductIndex = products.findIndex(prod => prod.id === this.id);
+const updatedProductsArray = [...products];
+
+
+updatedProductsArray[existingProductIndex] = this;
+
+
+fs.writeFile(
+    filePath, updatedProductsArray, (err) => {
+        console.log(err);
+    }
+)
+
+
+
+
+
+
+
+
+--> TIPO ISSO AÍ, CREIO EU...
+
+
+
+
+
+
+MAS EU RECEBI UM ERRO...
+
+
+
+
+ex:
+
+
+
+TypeError [ERR_INVALID_CALLBACK]: Callback must be a function. Received undefined
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+obs 
+
+
+'this' --->  DENTRO 
+
+DESSA 
+
+'CLASS' 
+
+
+
+
+_ É BASICAMENTE O 'UPDATED PRODUCT'.... --> ISSO PQ VOCÊ TME QUE 
+
+
+IMAGINAR  QUE CRIAMOS UMA NOVA INSTANCE 
+
+'product',
+
+E QUE 
+
+
+ENTÃO VAMOS A POPULAR 
+
+
+
+COM INFORMATION SOBRE 
+
+
+NOSSO 
+
+
+
+'existing product',
+
+
+E AÍ VAMOS 
+
+CHAMAR 
+
+'save()'
+
+
+
+PARA 
+
+
+__DESCOBRIR_ _SE JÁ TEMOS ESSE PRODUCT,
+
+
+E SE JÁ TEMOS,
+
+
+
+VAMOS SIMPLESMENTE 
+
+'REPLACE'
+
+
+ESSE PRODUCT NO ARRAY 
+
+de products...
+
+
+
+
+
+
+
+TypeError [ERR_INVALID_CALLBACK]: Callback must be a function. Received undefined -------> 
+
+
+
+
+
+ESSE CÓDIGO PODE TER ACONTECIDO PQ __ EU ESQUECI DE ESCREVEr 
+
+
+
+'JSON.stringify(updatedProducts);'....
+
+
+
+(WRAPPAR MINHA DATA COM O STRINGIFY...)
+
+
+
+
+
+
+
+
+
+
+-> não... mas eu ainda recebi istO:
+
+
+
+
+TypeError [ERR_INVALID_CALLBACK]: Callback must be a function. Received undefined
+
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ ISSO TENHA ACONTECIDO PQ __ EU ESQUECI __ DE 
+
+ESCREVER 
+
+
+'return'/completar meu if-else block com um ELSE BLOCK...
+
+
+
+
+
+
+
+
+OK.... DEIXEI DE RECEBER UM ERRO,
+
+
+MAS AGORA 
+
+
+O CÓDIGO ESTÁ FAZENDO ALGO ERRADO...
+
+
+
+
+
+
+
+
+---> O CÓDIGO ESTÁ SEMPRE ADICIONANDO UM OBJETO VAZIO QUANDO 
+
+
+
+CLICO EM 'edit' (e não devia adicionar nada, muito menos 1 objeto vazio...)
+
+
+
+
+
+
+
+
+
+--->AHH... acho que sei a razão... SEMPRE QUANDO AGORA EU FOR FAZER O EDIT DE ALGUM PRODUCT,
+
+EU DEVO 
+
+
+
+INSTANCIAR 'Product' com 
+
+
+
+
+TODAS AQUELAS INFOS, E TAMBÉM COM O 'id' do product...
+
+
+
+
+
+
+
+
+---> certo.. mas o problema é que UM PRODUCT NOVO AINDA ESTÁ SENDO ADICIONADO,
+
+NÃO ESTOU CONSEGUINDO EDITAR O PRODUCT JÁ EXISTENTE...
+
+
+
+
+
+---> parece que AQUELA COISA DE ADICIONAR UM 'HIDDEN INPUT' 
+
+LÁ 
+
+EM 
+
+
+'edit-product.js'
+
+
+ERA A COISA CERTA A SE FAZER...
+
+
+
+
+
+
+
+
+POR ISSO, VOU READICIONAR AQUELE CÓDIGO LÁ.... ENTRETANTO,
+
+
+PROFESSOR
+
+
+
+NOS DESTACA QUE ___ 
+
+
+ESSE 
+
+'INPUT' DE TIPO 'HIDDEN'
+
+SÓ DEVE __ EXISTIR__ NA 
+
+NOSSA 
+
+PAGE/HTML 
+
+
+___ SE NÓS ESTIVERMOS 
+
+NO 
+
+'editing mode' (ou seja, com 'editing = true', aquela propriedade DA URL/query param...)
+
+
+
+
+
+
+----> POR ISSO,
+
+
+PROFESSOR VAI ESCREVER ALGO COMO 
+
+
+
+
+<% if (editing) { %> 
+
+
+<input type="hidden" value="<%= product.id %>" name="id">
+
+
+<% } %>
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+CERTO. CONSEGUI... FINALMENTE, DEU CERTO...
+
+
+
+
+
+
+
+
+
+
+MEU CONTROLLER FICOU TIPO:
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+    const editedProduct = new Product(req.body.id, req.body.title, req.body.imageUrl, req.body.description, req.body.price);
+
+
+    editedProduct.save();
+
+    res.redirect('/admin/product-list-admin');
+
+
+}
+
+
+
+
+
+
+
+------> PROFESSOR ADMITE QUE PODERÍAMOS 
+
+
+FETCHEAR 
+
+
+
+NOSSO PRODUCT POR MEIO DA FUNÇÃO 
+
+'findProduct',
+
+
+no modelo 
+
+'product',
+
+MAS 
+
+
+
+
+__ COMO ESSA É A 
+
+ROUTE 
+
+DE 
+
+'edit',
+
+
+
+_ EU 
+JÁ VOU CONSEGUIR 
+
+'THE NEW VALUES THAT I WANT TO STORE'
+
+
+
+__COMO PARTE__ DO  _BODy__ DO REQUEST __ DE TIPO POST __ QUE 
+
+
+É ENVIADO A ESSA ROUTE...
+
+
+
+
+
+E É EXATAMENTE POR ISSO QUE TEMOS 
+
+UM CÓDIGO COMO 
+
+ESTE, DE INSTANCIAÇÃO:
+
+
+
+    const editedProduct = new Product(req.body.id, req.body.title, req.body.imageUrl, req.body.description, req.body.price);
+
+
+
+-------------------------------------
+
+
+
+OK... AGORA FINALMENTE 
+
+O FLOW 
+
+
+
+
+
+DE NOSSO 
+
+
+
+
+
+'EDIT PRODUCT'
+
+ESTÁ FUNCIONANDO... 
+
+
+
+
+
+
+
+
+
+--> POR FIM, PROFESSOR EXECUTA 
+
+'updatedProduct.save()',
+
+
+O QUE INICIA TODO O FLOW 
+
+
+
+
+DO MÉTODO QUE 
+
+SALVAMOS LÁ NO MODEL de 'product'...
+
+
+
+
+
+
+
+
+-> AGORA, QUANDO EDITAMOS UM PRODUCT,
+
+SOMOS REDIRECIONADOS 
+
+
+à PÁGINA DE 'admin products'...
+
+
+
+
+
+
+
+--> ok...

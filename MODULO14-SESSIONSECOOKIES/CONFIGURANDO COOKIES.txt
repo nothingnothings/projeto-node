@@ -1,0 +1,1498 @@
+ 
+
+
+
+
+
+
+
+OK.
+
+
+
+PODEMOS MANIPULAR COOKIES, E OS USERS TAMBÉM, E ISSO NÃO É BOM.... ---------> 
+
+
+
+
+ISSO SIGNIFICA QUE 
+
+
+
+
+ARMAZENAR SENSITIVE DATA 
+
+
+
+EM COOKIES, NO BROWSER DOS USERS,
+
+
+É UMA __PÉSSIMA IDEIA_...
+
+
+
+
+
+
+
+-----> MAS O PROFESSOR MENCIONOU 
+
+
+QUE 
+
+
+
+SEU USO PARA FINS DE 'TRACKING USERS'
+
+
+
+
+É __ POPULAR... --> É UM INSTRUMENTO POPULAR PARA O TRACK 
+
+
+
+DE USERS 
+
+
+
+NO SEU SITE... ----->  E PQ ISSO? ---------> ISSO PQ, 
+
+
+
+COMO VOCÊ PODE, POR EXEMPLO,
+
+
+
+VER COM OS COOKIES QUE 
+
+
+O PROFESSOR 
+
+
+
+
+
+TEM NO 
+
+
+BROWSER DELE,
+
+
+
+
+OS COOKIES 
+
+
+
+___N PRECISAM/NÃO TEM QUE
+
+
+
+
+
+SER RELACIONADOS COM SUA PÁGINA... --------> 
+
+
+
+
+
+
+ISSO QUER DIZER QUE 1 COOKIE _ PODE TAMBÉM 
+
+
+
+SER __ ENVIADO __ A 
+
+
+OUTRA PÁGINA.... ------> E ESSE É UM INSTRUMENTO COMUM EM TRACKING...
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+the question: how does Facebook know that you went to Old Navy?
+I often hear about this slightly creepy internet experience: you’re looking at a product online, and a day later see an ad for the same boots or whatever that you were looking at. This is called “retargeting”, but how does it actually work exactly in practice?
+
+In this post we’ll experiment a bit and see exactly 
+
+how Facebook can know what products you’ve looked at online! I’m 
+
+using Facebook as an example in this blog post just because it’s easy to find websites
+
+ with Facebook tracking pixels on them but of course almost every internet 
+ 
+ 
+ advertising company does this kind of tracking.
+
+
+
+
+
+
+
+
+
+tracking pixels: it’s not the gif, it’s the URL + query parameters
+A tracking pixel is a 1x1 transparent gif that sites use to track you. 
+By itself, obviously a tiny 1x1 gif doesn’t do too much. 
+
+So how do tracking pixels track you? 2 ways:
+
+Sites use the URL and query parameters in the tracking pixel to add extra information,
+
+
+ like the URL of the page you’re visiting. So instead of just requesting 
+ 
+ https://www.facebook.com/tr/ (which is a 44-byte 1x1 gif), it’ll request 
+ 
+ https://www.facebook.com/tr/?the_website_you're_on. (email marketers use similar
+  tricks to figure out if you’ve opened an email, by giving the tracking pixel a unique URL)
+Sites send cookies with the tracking pixel so that they can tell that the person who
+ visited oldnavy.com is the same as the person who’s using Facebook on the same computer.
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+TRACKING PIXEL --> É SIMPLESMENTE UMA IMAGE URL SEM 
+
+IMAGE,
+
+
+
+
+MAS ESSA IMAGE PODE SER LOCALIZADA EM, DIGAMOS,
+
+
+OS 
+
+SERVERS DO GOOGLE,
+
+
+
+
+E ÁI VOCÊ TEM 1 
+
+COOKIE 
+
+
+
+
+NESSA PAGE,
+
+
+
+QUE TBM É 
+
+ENVIADO COM ESSA IMAGE URL,
+
+
+
+
+E COM ISSO 
+
+
+O 
+
+GOOGLE É CAPAZ 
+
+DE 
+
+TRACKAR 
+
+
+ 
+ EM QUAL PAGE VOCê ESTÁ 
+
+
+
+ ___E COMO __ VOCê ESTÁ SE MOVENDO 
+
+
+
+ AO LONGO DA WEB,
+
+
+
+ __MESMO SE VOCÊ NÃO ESTIVER NOS WEBSITES DELES... (
+
+
+
+isso pq 
+
+certa data É MANTIDA NO SEU CLIENT,
+
+
+
+
+E É CLARO QUE VOCê PDOE BLOQUEAR 
+
+ESSE STORE DE DATA,
+
+MAS O QUE INTERESSA É QUE 
+
+ESSA DATA É REALMENTE 
+
+ARMAZENADA 
+
+NO SEU BROWSRE,
+
+
+
+E AÍ 
+
+
+
+
+___ ESSA DATA __ É ENVIADA 
+
+
+
+__EM CADA REQUEST __ que vocÊ envia,
+
+
+__ ENVIADA __ AO GOOGLE... --> ISSO PARA QUE 
+
+
+
+ELES 
+
+
+CONSIGAM __ TE TRACKAR__ SEM VOCÊ 
+
+ESTAR NOS SERVERS DELES... -----> isso é bem eficienet,
+
+pq
+
+
+
+
+ESSA DATA 
+
+VAI SER ENVIADA, DO SEU BROWSER AO GOOGLE,
+
+
+PARA __ CADA_ 
+
+
+PAGE QUE VOCÊ VISITAR...
+
+
+
+
+ ) -------------------> E ESSA É UMA DAS UTILIDADES 
+
+
+
+ DOS 
+
+
+
+ COOKIES:
+
+
+ O TRACK DE USERS.... ----> É UMA COISA BEM COMUM DE SE FAZER....
+
+
+
+
+
+
+
+
+
+
+
+
+ ----------> OK... E VOCÊ TAMBÉM PODE __ CONFIGURAR___ COOKIEs.. --> nós 
+
+ alteramos/definimos o 
+
+
+
+
+ value do 
+
+
+ cookie 
+
+
+
+ 'isLoggedIn' 
+
+
+
+ anteriormente,
+
+
+ MAS NA VERDADE __ VOCÊ PODE SETTAR __ MAIS COISAS DO QUE 
+
+ APENAS 
+
+  O 
+
+
+  'VALUE' 
+
+
+
+
+
+
+  lá nas devtools/no seu código...
+
+
+
+
+
+
+
+
+
+
+  ----------> 
+  NO NOSSO CÓDIGO, HAVÍAMOS DEFINIDO ISTO:
+
+
+
+
+
+
+  
+
+exports.postLogin = (req, res, next) => {
+
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...)
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+--> AQUI, NÓS SETTÁVAMOS NOSSO COOKIE por meio do add 
+
+daquele 
+
+
+'key-value pair' 
+
+
+
+
+de 
+
+
+
+'loggedIn=true ' (ISSO PQ TODOS OS COOKIES SÃO, NO FINAL DAS CONTAS, KEY-VALUE PAIRS...)
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> OBVIAMENTE, PODEMOS ADICIONAR __ MÚLTIPLOS COOKIES (múltiplos key-value pairs)....
+
+
+
+
+
+
+
+
+
+------> NÓS TAMBÉM PODEMOS __ ADICIONAR 
+
+
+um 
+
+
+';' 
+
+
+DEPOIS 
+
+
+
+
+
+
+DA DEFINITION DO KEY-VALUE PAIR,
+
+
+para então 
+
+
+
+poder 
+
+settar 
+
+
+coisas como 
+
+
+'Expires=',
+
+
+
+PARA 
+
+SETTAR ALGUMA EXPIRATION DATE 
+
+PARA 
+
+
+ESSE 
+
+COOKIE...
+
+
+
+
+
+
+
+
+
+
+---------> ESSA DATE QUE VOCÊ SETTA EM 'Expires='
+
+
+_TEM QUE __ SEGUIR 
+
+
+UM CERTO FORMATO,
+
+
+
+
+O FORMATO  'HTTP-DATE'.... ---> PROFESSOR COLOCA UM LINK A ISSO, ANEXA 1 LINK para entendermos...
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+OK, ENTÃO VOCÊ PODE/PODERIA DEFINIR 1 CERTA 'DATE'
+
+PARA QUANDO 
+
+ESSE COOKIE VAI EXPIRAR... ---> ISSO PQ 
+
+
+
+
+
+
+
+LEMBRANDO,
+
+
+
+__ SE VOCÊ __ NÃO DEFINIR NADA __ NESSE 'Expires=',
+
+
+
+
+
+O SEU 
+
+
+
+
+COOKIE __ VAI NATURALMENTE__ EXPIRAR___ NO MOMENTO EM QUE VOCê FECHAR O SEU BROWSER....
+
+
+
+
+
+
+
+
+
+
+SE VOCÊ QUISER DEFINIR UM 'expires',
+
+
+
+
+VOCÊ 
+
+
+
+ESCREVE ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true; Expires= '); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...)
+        res.redirect('/');
+
+
+
+
+}
+
+-----------------------------------------
+
+
+
+
+
+
+
+ALTERNATIVAMENTE A 'Expires',
+
+
+
+VOCê PODE 
+DEFINIR 
+
+
+
+
+um 
+
+
+'Max-Age=',
+
+
+
+
+
+
+
+
+
+
+QUE É A MESMA COISA, MAS 
+
+
+
+
+
+QUE VOCÊ DEVE ESTIPULAR EM __ SEGUNDOS... --> VOCê DEVE ESTIPULAR, EM SEGUNDOS,
+
+
+
+__QUANTO TEMPO AQUELE __ COOKIE DEVERÁ DURAR....
+
+
+
+
+--> SE DEFINIRMOS '10', por exemplo,
+
+
+
+
+
+O COOKIE VAI DURAR 10 SEGUNDOS...
+
+
+
+
+
+
+
+
+-----------------> ok.......
+
+
+
+
+
+
+
+ENTENDI...
+
+
+
+
+
+
+
+
+--> 
+ESSA COISA DE SETTAR UMA DURATION É __INTERESSANTE__ SE VOCÊ 
+
+QUER, POR EXEMPLO,
+
+
+
+
+
+__CONTROLAR__ POR QUANTO TEMPO ___ VOCê VAI QUERER 
+
+
+
+TRACKAR 1 USER.... ----------> OU, 
+
+
+
+
+COMO USAREMOS 
+
+
+
+MAIS TARDE,
+
+
+
+_VOCÊ pODE (e deve) USAR 
+
+
+
+
+ESSA REGULAÇÃO DE DURATION DO COOKIE __ PARA __CONTROLAR_ POR QUANTO TEMPO __ 
+
+
+
+
+UMA AUTHENTICATED SESSION/A AUTH SESSION  CONTINUA ATIVA
+
+
+
+
+
+___ PARA 1 USER... ------> VOCÊ JÁ DEVE CONHECER ISSO LÁ 
+
+
+DO 
+
+SEU BANCO ONLINE,
+
+
+
+bancos 
+
+que 
+
+
+TE CHUTAM depois de certa duração.... 
+
+
+
+
+
+
+
+
+
+
+------> TAMBÉM 
+
+PODEMOS 
+
+
+
+ESPECIFICAR 1 
+
+
+'Domain=',
+
+
+
+O DOMAIN A QUE ESSE COOKIE DEVE SER ENVIADO... --------> AQUI, DE NOVO,
+
+
+
+
+PODE-SE FALAR DO ASSUNTO DO 'tracking',
+
+
+PQ 
+
+
+1 COOKIE 
+
+
+
+__NEM SEMPRE _ VAI ESTAR 'ATRELADO'/'vinculado' 
+
+
+
+à PÁGINA DA WEB QUE O 
+
+ORIGINOU/CRIOU... ----> 
+
+
+
+
+empresas fazem acordos umas com as outras, para te trackar.... --> 
+
+
+
+
+o cookie que 1 empresa produz PODE ESTAR SENDO USADO 
+
+
+POR OUTRA EMPRESA, para te trackar (ex: google, facebook....) ------> E ELAS FAZEM ISSO,
+
+
+DE FATO, POR MEIO 
+
+DESSA CONFIG DE 
+
+
+
+'Domain='
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICARIA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true; Domain= '); ///é isto que SETTARÁ O ___DOMAIN__ a que seu COOKIE será enviado...
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+----------------------------
+
+
+
+
+ALÉM DISSO,
+
+
+
+PROFESSOR 
+
+
+
+
+EXPLICA QUE PODEMOS 
+
+ADICIONAR 
+
+
+
+
+
+
+
+1 
+
+
+
+detalhe 
+
+
+'Secure',
+
+
+
+
+um ATRIBUTO 'Secure' 
+
+
+
+no nosso cookie...
+
+
+
+
+
+--> NO CASO DE 'Secure',
+
+
+
+VOCê __SÓ ESCREVE 'Secure', sem mais nada,
+
+PQ 
+
+__ELE __ NÃO É UM 'KEY-VALUE PAIR'...
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+----> OK, MAS O QUE FAZ 'Secure'? ------> O SECURE 
+
+
+
+
+
+
+FAZ COM QUE O COOKIE __ SÓ SEJA SETTADO __ SE A PAGE FOR SERVIDA 
+
+POR 
+
+
+'https'....
+
+HYPERTEXT TRANSFER PROTOCOL SECURE.
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true; Secure'); ///é isto que SETTARÁ O ___DOMAIN__ a que seu COOKIE será enviado...
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+----------> O PROFESSOR 
+
+
+
+APONTA QUE __ NÃO CONSEGUE __ DEMONSTRAR COMO ISSO FUNCIONA AGOR 
+
+
+
+
+PQ 
+
+
+NOSSO 
+
+'LOCAL DEVELOPMNET'
+
+
+
+AINDA NÃO ESTÁ USANDO HTTPS... ---------> MAS NÓS __CERTAMENTE__ 
+
+
+
+
+
+VAMOS USAR __ HTTPS,
+
+mais tarde no curso,
+
+
+QUANDO O PROFESSOR NOS 
+
+
+AJUDAR A SETTAR ISSO...
+
+
+
+
+
+
+
+
+
+
+------> SE VOCÊ DEIXAR 'Secure' 
+
+
+SETTADO NO SEU COOKIE/header 
+
+
+e 
+aí 
+
+
+TENTAR 
+
+
+
+
+OBTER ESSE COOKIE,
+
+
+
+ELE __ SIMPLESMENTE__ NÃO SERÁ __ SETTADO 
+
+
+NO BROWSER DO USER 
+
+SE 
+
+
+
+
+SUA PAGE NÃO FOR SERVIDA DE FORMA 'https'.... (de forma SECURE)...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> HÁ AINDA O ATTRIBUTE DE 'HttpOnly'... ---------> SE VOCÊ DEFINE ISSO,
+
+
+
+
+
+
+__ O COOKIE É REALMENTE SETTADO COMO ANTES, COISA NORMAL,,
+
+
+
+
+mas fica com uma DIFERENÇA:
+
+
+
+LÁ NO CHROME 
+
+
+HÁ 
+
+
+UMA 
+
+
+COLUNA DE 
+
+'HTTP' 
+
+
+
+nos cookies... --> 
+
+
+
+E ESSA COLUNA PODE TER UM 
+
+
+
+V (check) 
+
+OU NADA... --->  ISSO AÍ SÓ SIGNIFICA 
+
+
+_____QUE 
+
+
+
+'NOW WE __CANNOT__ ACCESS THE COOKIE VALUE 
+
+THROUGH CLIENTSIDE JAVASCRIPT'....  ----------------> OU SEJA,
+
+
+
+
+NÃO PODEMOS USAR __ 
+
+OS 
+
+SCRIPTS RODANDO NO BROWSER_ _ PARA 
+
+
+ALTERAR__ 
+
+
+
+O 
+
+VALUE 
+
+DO 
+
+COOKIE QUE 
+
+
+
+tem/teve 
+
+esse 
+
+
+attribute 
+de 
+
+
+'HttpOnly'
+
+
+
+settado em si...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+        res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly'); ///é isto que SETTARÁ O ___DOMAIN__ a que seu COOKIE será enviado...
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+ISSO, NO CASO,
+ 
+
+ PODE SER UM __IMPORTANTE__ MECANISMO DE SEGURANÇA,
+
+
+
+
+ PQ __ ELE __ PROTEGE__ NOSSO SERVER 
+
+ DE 
+
+
+ 'CROSS-SITE SCRIPTING ATTACKS'...
+
+
+
+
+
+
+
+
+
+
+ --------> ISSO SIGNIFICA QUE SEU CÓDIGO CLIENTSIDE JAVASCRIPT,
+
+
+
+ EM QUE ALGUÉM PODE TER INJETADO CÓDIGO MALICIOSO,
+
+
+
+ __NÃO PODE _'READ' SEUS COOKIE VALUES,
+
+
+
+ NÃO PODE 'READ' PARA ENTÃO OS MODIFICAR,
+
+
+
+ o que te poupa de dores de cabeça... --------> E ISSO 
+
+ SERÁ IMPORTANTe 
+
+
+
+
+
+ mais TARDE,
+
+
+
+ NO MÓDULO DE AUTHENTICATION,
+
+
+ PQ 
+
+
+ VAMOS QUERER LÁ 
+
+
+ QUE __ NOSSOS COOKIES NÃO __ARMAZENEM 
+
+
+ 'SENSITIVE INFORMATIOn',
+
+
+
+ E SIM 
+
+
+
+ QUE SIRVAM COMO UMA 'PARTE IMPORTANTE'
+
+
+ DO AUTHENTICATE DO USER... ---------> ISSO SIGNIFICA QUE 
+
+
+
+ ESSE 
+
+ ATTRIBUTE DE 
+
+ 'httpOnly' pode/é 
+
+
+
+ UM ____EXTRA SECURITY LAYER,
+
+ pq 
+
+
+
+ AGORA 
+
+ O 
+
+ COOKIE 
+
+
+
+
+VAI CONTINUAR SENDO 
+
+ANEXADO A TODO REQUEST 
+
+QUE 
+
+
+
+VAI ALCANÇAR NOSSO SERVER,
+
+
+___MAS 
+
+__ SERÁ IMPOSSÍVEL 'READ THE COOKIE VALUE' 
+
+lá 
+
+de dentro do 
+
+
+
+'BROWSER JAVASCRIPT CODE'...
+
+
+
+(
+
+
+
+    OK... MAS, OBVIAMENTE, COMO PODEMOS PERCEBER,
+
+
+
+    USERS NO DEVTOOLS __ CONSEGUEM 
+
+
+LER A 
+
+DATA,
+
+
+
+
+MAS , DE NOVO,
+
+
+ESSE É __SEU PRÓPRIO COOKIE,
+
+E VOCÊ 
+NÃO VAI 
+
+ARMAZENAR INFORMATION COMO 'hey, estou loggado aqui'... -----> PQ ISSO SERIA FÁCIL DE SER MANIPULADO,
+
+
+
+E VOCê NÃO SERIA/NÃO É CAPAZ DE PROTEGER CONTRA MANIPULATES ASSIM.... (por isso você não vai codar seu código assim... não vai colocar SENSITIVE information nesse cookie armazenado no browser do user...)
+
+
+
+)
+
+
+
+
+
+
+
+
+
+-----> OK.... 
+
+
+ENTÃO 
+
+ESSES 
+
+SÃO OS 'KEY-VALUES'
+
+
+que você pode armazenar em 
+
+
+'
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+    
+
+
+        // req.isLoggedIn = true; ///É PARTE DE NOSSO 'DUMMY AUTHENTICATION'.... --> BTW: este approach NÃO FUNCIONA, isso pq TODA VZE QUE ENVIARMOS 1 REQUEST e recebermos uma response (req -> res, como vemos aqui mesmo) ,_ _NÓS VAMOS __ PERDER __ TODA A DATA __ QUE FICA DENTRO DO OBJETO REQUEST... ----> a data de 'user', no nosso OBJETO REQUEST nesse nosso app, SÓ fica ''''PERSISTENTE''' pq __ NÓS ESTAMOS SEMPRE O READICIONANDO ao nosso objeto 'request' QUANDO INICIAMOS QUALQUER PAGE DE NOSSO APP, por causa daquele middleware 'app.use()' LÁ EM 'app.js'...
+
+        res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...)
+        
+        
+        // res.setHeader('Set-Cookie', 'loggedIn=true; Expires='); ///com 'Expires', você define QUANTO TEMPO ESSE COOKIE VAI DURAR, NO MÁXIMO (aí ele vai ser removido SE ESSE TEMPO PAASSAR, ou se você FECHAR O BROWSER)... --> AS DATES DEFINIDAS COM ESSE 'Expires=' __DEVEM SEGUIR __ O FORMATO 'HTTP DATE'..
+        // res.setHeader('Set-Cookie', 'loggedIn=true; Max-age=10'); ///faz a mesma coisa que o CONFIG do cookie de cima, estabelece um TEMPO limite de duração para o cookie.... -->> entretanto, a diferença é que com 'Max-Age', nós definimos o TEMPO EM __ SEGUNDOS_ QUE ESSE COOKIE DEVERÁ DURAR...
+        // res.setHeader('Set-Cookie', 'loggedIn=true; Domain=google'); //USADO ___ NO TRACKING__ DE SEUS USERS/VOCê.... --> o domain a que É ENVIADO 1 COOKIE nem sempre precisa ser o mesmo domain QUE O PRODUZIU... (conluio entre empresas, que fazem acordos para te TRACKAR... ---> cookie produzido em 1 site pode acabar SENDO ENVIADO a DESTINO/DOMAIN distinto, como o google e seus servidores.....)
+        // res.setHeader('Set-Cookie', 'loggedIn=true; Secure'); ///SECURE faz com que seu cookie NÃO SEJA SETTADO NO BROWSER do user SE FOR CONSTATADO QUE A PAGE que produz esse cookie NÃO ESTÁ SENDO SERVIDA EM UM FORMATO HTTPS (http secure)...
+        // res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly'); ///IMPORTANTE MECANISMO DE SEGURANÇA,  constatado na coluna 'HTTP' (V) da aba 'application', no google devtools --> ESSE ATTRIBUTE no cookie FAZ COM QUE SEJA __ IMPOSSÍVEL __ ALGUÉM USAR 'CLIENTSIDE JAVASCRIPT' para __ALTERAR O VALOR DESSE COOKIE ESPECÍFICO... --> É MUITO IMPORTANTE E UTILIZADO NO COMBATE A CROSS-SITE SCRIPTING ATTACKS, QUE AMEAÇAM NOSSO SERVER...
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+'''',
+
+
+
+
+
+
+E ISSO __ TE DÁ UM MONTE __ DE FLEXIBILIDADE... 
+
+
+
+
+
+
+
+
+
+--> OK... DITO ISSO,
+
+
+
+___VOCê ____ FREQUENTEMENTE__ 
+
+
+NÃO __ VAI __ SETTAR DIRETAMENTE SEUS COOKIES.... 
+
+
+
+
+
+RARAMENTE 
+
+
+VOCê VAI SETTAR SEUS COOKIES MANUALMENTE,
+
+
+
+
+PQ __ É SEMPRE MELHOR VOCÊ 
+
+
+
+USAR __ ALGUNS PACKAGES, COMO PACKAGES USADOS PARA __ AUTHENTICATION,
+
+
+
+
+do que 
+
+
+SETTAR OS COOKIES VOCê MESMO.... --> E ISSO É 
+
+
+__ALGO QUE_ _ 
+
+O PROFESSOR 
+
+
+
+MOSTRARÁ
+ 
+ _NAS PRÓXIMAS LIÇÕEs,
+
+
+  
+
+
+
+
+EM QUE VEREMOS __ SOBRE ___ SESSIONS,
+
+
+
+
+EM QUE 
+
+VEREMOS QUE AS ___SESSIONS___ NOS AJUDAM COM 
+
+
+O __ _STORE__ DE 
+
+
+'SENSITIVE INFORMATIOn' ao longo 
+
+
+DE 
+
+__MÚLTIPLOS REQUESTS.... --------> nessas AULAS,
+
+
+
+vamos aprender que 
+
+
+
+
+__COOKIES__ AINDA SÃO IMPORTANTES,
+
+
+__SÃO IMPORTANTES AINDA QUANDO USAMOS 'SESSIONS'.... 
+
+
+
+
+
+

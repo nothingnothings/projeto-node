@@ -1,0 +1,1530 @@
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ --> AGORA DEVEMOS NOS ASSEGURAR DE QUE CONSEGUIMOS TRABALHRA COM O DENO E O MONGOb..
+
+
+
+
+
+
+
+
+
+ -> HAVÍAMOS CRIADO AQUELE CLIENT DE 
+
+
+
+ 'helpers',
+
+ com arquivo '
+
+
+ db_client.ts
+
+
+ NO SEU INTERIOR, QUE TINHA ESTE CÓDIGO;
+
+
+
+
+
+
+
+
+ import {
+  Bson,
+  MongoClient,
+  Database, ///// É UM 'TPYE' do typescript.... que deve ser importado, para definir COMO É A ESTRUTURA DESSE OBJETo....
+} from 'https://deno.land/x/mongo@v0.29.0/mod.ts';
+
+const MONGODB_URI =
+  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/todos?retryWrites=true&w=majority';
+
+let db: Database; //COM ESSE CÓDIGO, SETTAMOS ESSA VARÍAVEL COMO SENDO O VALOR DE 'NOSSA DATABASE'.... --> SERÁ DE TYPE 'Database', que éu um type que TBM PODE __ SER OBTIDO LÁ DE 'https://deno.and/x/mongo@v0,8.0mod.ts
+
+export function connect() {
+  const client = new MongoClient();
+  client.connectWithUri(MONGODB_URI);
+
+  db = client.database('todos');
+}
+
+export function getDb() {
+  return db;
+}
+
+// const db = client.database('todos');
+// const users = db.collection('todos');
+
+
+
+
+
+
+
+
+
+
+--------> NÓS ESTAMOS CHAMANDO 'connect'
+
+
+sempre que 
+
+nosso server se inicia..
+
+
+
+
+
+
+
+
+
+
+
+---> 'MONGOCLIENT' -> ELE AUTOMATICAMENTE SUPERVISIONA NOSSA CONNECTION entre backend/database --> ELE ATÉ MESMO 
+
+
+
+VAI SETTAR MÚLTIPLAS CONEXÕES SIMULTANEAS,
+
+
+
+'CONNECTION POOLING',
+
+
+tudo para ter 
+
+
+A MANEIRA MAIS FÁCIL DE 
+
+TRABALHAR COM O MONGODB... --> ESSE MODULE É MT BOM... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS SÓ PRECISAMOS CHAMAr 'getDb()',
+
+agora,
+
+NO MOMENTO EM QUE __ QUEREMOS 'WORK WITH THE DATABASe'...
+
+
+
+
+
+
+
+
+
+
+
+-----> E É CLARO QUE EXISTEM VÁRIOS LOCAIS NO NOSSO APP EM QUE QUEREMOS UTILIZAr 
+
+
+
+ESSE 'getDb()'...
+
+
+
+
+
+
+
+
+
+
+--> UM LOCAL EXEMPLO PERFEITO, ÓBVIO,
+
+é o local em que 
+
+
+QUEREMOS 
+
+
+FAZER 'GET DE TODOS OS TODOS'...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA CONSEGUIR __ VER__ tODOS _ OS __ 
+
+
+
+DOCUMENTS NESSA COLLECTION,
+
+
+professor escreve o CÓDIGO SUPER SIMPLESd DE
+
+
+(obs: VOCÊ DEVE __ ESCOLHER QAUL COLLECTION QUER CONQUISTAR, OU SÓ ESSSA DE LUXO...)
+
+
+
+
+ :
+
+
+
+
+
+
+
+
+
+
+
+router.get('/todos', (ctx) = > {
+
+            getDb().collection();
+            ctx.response.body(todos: todos);
+
+})
+
+
+
+
+
+
+
+
+
+
+--> MAS ESSE ARGUMENTO 'collection' DEIXA VOCÊ SE CONECTAR A UM LUGAR ESPECÍFICO NA DATABASe( essa collection aí)....
+
+
+
+
+
+
+
+
+E LÁ, COMO NÓS __ SOMOS AQUELES QUE __GERENCIAM__ A COLEÇÃO,
+
+
+
+
+
+SOMOS NÓS QUE DEFINIMOS ESSES NOMES... -> ASSUMIMOS QUE 
+
+
+
+VAMOS TER UMA COLEÇÃO DE 'todos',
+E
+
+
+
+
+SE NÃO EXISTIR,
+
+ELSERIA CONSTRUÍDA 'FROM SCRTCH'....( on the fly , quando for adicionado algo)..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR ENTÃO USA O CLÁSSICO 
+
+'.find()'
+
+
+
+ NSA MERDA...ES
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ router.get('/todos', async(
+     ctx => {
+         const todos = await getDb().collection('todos').find();
+         ctx.response.body = { todos: todos } 
+     }
+ ))
+
+
+
+
+
+
+
+
+
+
+
+ --------------------------------
+
+
+
+
+ essa parte foi escrita meio com sono.... --> MAS AGORA, PROSSEGUINDO.... --> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> O CÓDIGO DO CONTROLLER DE 'getTodos' (all)
+
+
+ FICOU ASSIM:
+
+
+
+
+
+
+
+
+ export const getTodos = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    const todos = await getDb().collection('todos').find();
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+--------> ESSA LINHA DE 
+
+
+
+''    const todos = await getDb().collection('todos').find();'''
+
+
+
+
+
+
+
+é tipo a sintaxe normal do mongodb, sem o mongoose.... ---> precisamos de 
+
+
+'getDb()'
+
+PARA 
+
+
+OBTER A CONEXÃO A NOSSA DATABASE, e aí 
+
+
+precisamos 
+
+
+
+
+do call do method '.find()'
+ 
+
+ em cima de 'collection('todos')'
+
+
+
+ PARA OBTER ESSES OBJETOS/documents 'todo'...
+
+
+
+
+
+
+
+
+
+
+
+
+ O FORMATO DESSES DOCUMENT SERÁ ASSIM:
+
+
+
+
+ {
+   _id: ObjectId(),
+   text: ...
+ }
+
+
+
+
+
+
+
+
+ ---> MAS PARA SERMOS CAPAZES __ DE TRABALHAR COM ESSES OBJETOS, PROFESSOR EXPLICA QUE 
+
+ ELE VAI QUERER __ OS TRANSFORMAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---------> hmmm... como assim?
+
+
+
+
+
+
+
+
+
+
+bem, o nosso código até agora tem este formato:
+
+
+
+
+
+
+ export const getTodos = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    const todos = await getDb().collection('todos').find();
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+--------> eu vou precisar enfiar esses objetos na 'response',
+
+
+
+de alguma forma.... ( eu achava que só escrever 'todos: todos' já faria isso, mas não sei se estou certo....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> O PROFESSOR DIZ QUE VAI QUERER TRANSFORMAR ESSES OBJECTS,
+
+por isso ele vai chamar 
+
+
+'.map()'
+
+
+em cima do ARRAY DE TODOS,
+
+
+
+
+
+PARA ENTÃO  
+
+
+
+MUDAR CADA OBJETO 'todo'...
+
+
+
+
+
+
+
+
+
+
+--> ELE VAI QUERER TRANSFORMAR CADA TODO EM UM NOVO OBJETO --> vamos querer 
+
+
+ter um field de 
+
+'id' (e não '_id'),
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+    const todos = await getDb().collection('todos').find();
+
+
+const transformedTodos = todos.map(
+  (todo) => {
+    return {id: todo._id}
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-> CERTO.... MAS NÃO SERÁ SÓ ISSO... --> O PROFESSOR VAI QUERER ACESSAR A PROPRIEDADE 
+
+
+
+'.$oid' 
+
+
+
+DENTRO DESSE '._id' -------> PROFESSOR EXPLICA QUE 
+
+ESSA 
+
+
+
+É UMA PROPRIEDAED __ PROVIDENCIADA__ PELA LIBRARY DO MONGO (do deno),
+
+
+
+
+
+NOS DOCUMENTS QUE ELA FETCHEIA DO MONGODB... -->  AÍ ESSA PROPRIEDADE 
+
+
+VAI TER O 
+
+'ID GERADO PELO MONGODB',
+
+no formato de uma ___STRING___ ( e não no formato 'ObjectId()', que queremos evitar)...
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE A ESCRITA DE 
+
+
+'todo._id.$oid'
+
+
+
+É IGUAL à ESCRITA DE 
+
+
+
+'todo._id.toString()'....
+
+
+
+
+
+
+
+
+-----------> CERTO...
+
+
+
+
+
+
+
+--> ALÉM DISSO, VAMOS QUERER UMA PROPRIEDADE de 'TEXT',
+
+
+QUE VAI MANTER AQUELE valor de 'todo.text'.... 
+
+
+
+
+
+
+
+
+
+
+--------> 
+
+
+o código fica assim:
+
+
+
+
+
+
+
+
+
+ export const getTodos = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    const todos = await getDb().collection('todos').find();
+    
+    const transformedTodos = todos.map(
+      (todo) => {
+        return {
+          id: todo._id.$oid,
+          text: todo.text
+        }
+      }
+    )
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+------------------------------
+
+
+
+
+POR FIM, 
+
+
+
+
+
+O PROFESSOR QUER SATISFAZER A SINTAXE TYPESCRIPT, POR ISSO 
+
+ELE 
+
+VAI 
+
+DEFINIR 
+
+
+
+o formato daquele objeto 'todo' naquele MAP,
+
+
+
+
+
+tipo '.map((todo: {}) => {
+
+  return ...
+})'...
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+ export const getTodos = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    const todos = await getDb().collection('todos').find();
+    
+    const transformedTodos = todos.map(
+      (todo:    {
+
+    _id: ObjectId,                //////EIS O CÓDIGO EM QUESTÃO.
+    text: string
+      }) => { 
+        return {
+          id: todo._id.$oid,
+          text: todo.text
+        }
+      }
+    )
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: todos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+--> CERTO.... MAS ESSE TYPE DE 'ObjectId' 
+
+
+NÃO É ALGO QUE TEREMOS _ NATIVAMENTE__ NO NOSSO CÓDIGO,
+
+
+por isso PRECISAMOS O IMPORTAR 
+
+
+
+DAQUELE 
+
+
+LINK DE 
+
+
+
+'''https://deno.land/x/mongo@v0.29.0/mod.ts'; '''',
+
+
+
+
+
+
+QUE O CONTÉM, NESSA NOSSA VERSÃO DENO DE NOSSO BACKEND....
+
+
+
+
+
+
+
+
+
+
+--------> MAS AÍ FICO COM UM PROBLEMA: ESSE 'ObjectId' NÃO ESTÁ APARECENDO COMO EXISTENTE NESSE LINK/arquivo importado...
+
+
+
+
+
+
+
+
+
+--> qual é a razão disso? tenho de ler os docs..
+
+
+
+
+
+
+
+
+--> PARECE QUE ISSO É UM OBJETO/METHOD EXISTENTE DENTRO DE 'Bson'....
+
+
+
+
+
+
+eX:
+
+
+
+
+
+import {
+  Bson, MongoClient, 
+  
+  Database, ///// É UM 'TPYE' do typescript.... que deve ser importado, para definir COMO É A ESTRUTURA DESSE OBJETo....
+} from 'https://deno.land/x/mongo@v0.29.0/mod.ts';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> tipo 
+
+
+'
+Bson.ObjectId'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> mas o typescript ainda é iffy.... ---> Às vezes nao funciona direito...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> meu código ficou assim:
+
+
+
+
+
+
+
+
+
+export const getTodos = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    const todos = await getDb().collection('todos').find();
+
+    const transformedTodos = todos.map(
+        (todo) => {
+            return {
+                id: todo._id.$oid, ///mesma coisa que 'todo._id.toString()'...
+                text: todo.text
+            }
+
+
+        }
+    );
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: transformedTodos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> OK.... ---> AGORA VAMOS CONSERTAR O CONTROLLER DE 'createTodo'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CONTROLLER DE 'CREATE TODO' ficou assim:
+
+
+
+
+
+
+
+
+
+
+
+
+export const createTodo =  async ( {request, response, params }: { ////async --> 'eis o código em questão'
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+}) => {
+
+    const body = await request.body({type: "json"}) //Returns { type: "json", value: Promise { <pending> } }
+
+
+    if(!request.hasBody) {
+        response.status = 400;
+        response.body = { message: "No data provided"};
+        return;
+    }
+
+
+    const values = await body.value;
+
+
+
+
+        const newTodo: Todo = {
+            // id: Math.random().toString(), //vai ser gerado automaticamnete pelo mongodb...
+            text: values.text
+
+        }
+
+
+
+        const insertedTodoId = await getDb().collection('todos').insertOne(newTodo); ////vai retornar uma promise, que será resolved quando essa promise tiver acabado...
+        ///essa promise vai resolver/retornar o ID DO __ TODO QUE RECÉM FOI ADICIONADO A NOSSA COLLECTION...
+
+
+
+
+
+        newTodo.id = insertedTodoId.$oid; ///MESMA COISA QUE 'insertedTodoId.toString()'...
+
+
+
+
+    response.status = 201;
+    response.body = {
+        message: 'Created todo',
+        data: newTodo
+    }
+
+
+}
+
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+COM TUDO ISSO, PODEMOS QUITAR O DEV SERVER E REEXECUTAR O CÓDIGO DENO COM 
+
+
+
+
+deno run --allow-net app.ts
+
+
+
+
+
+
+
+
+
+------> MAS __ MEU __ CÓDIGO __ CRASHOU__...
+
+
+
+
+
+
+
+
+
+
+
+--> 
+
+
+
+error: Uncaught (in promise) AssertionError
+    throw new AssertionError(msg);
+          ^
+    at assert (https://deno.land/std@0.118.0/testing/asserts.ts:219:11)
+    at MongoClient.database (https://deno.land/x/mongo@v0.29.0/src/client.ts:67:5)
+    at connect (file:///A:/projeto4%20-%20NODEJS/MODULO35-DENO,CRUDEMONGODATABASES/NOVOPROJETODENO,BACKEND/helpers/db_client.ts:19:15)
+    at file:///A:/projeto4%20-%20NODEJS/MODULO35-DENO,CRUDEMONGODATABASES/NOVOPROJETODENO,BACKEND/app.ts:17:1
+PS A:\projeto4 - NODEJS\MODULO35-DENO,CRUDEMONGODATABASES\NOVOPROJETODENO,BACKEND>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ACHO QUE É PQ EU __ NÃO ESTABELECI MEU BACKEND COMO UM DOS 'PERMITIDOS'.. do mongodb...
+
+
+
+
+
+
+
+
+--> talvez... -> mas não é esse o problema...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI MAIS ALGUNS PROBLEMAS:
+
+
+
+
+
+
+
+
+
+export const getTodos = async ({request, response, params }: {
+    request: Request,
+    response: Response,
+    params: { todoId: string }
+
+
+
+
+
+}) => {
+
+
+    const todos = await getDb().collection('todos').find({}, {noCursorTimeout: false}); ///2o parametro é necessário para acabar com erro específico do DENO...
+
+    const transformedTodos = todos.map(
+        (todo) => {
+            return {
+                id: todo._id.$oid, ///mesma coisa que 'todo._id.toString()'...
+                text: todo.text
+            }
+
+
+        }
+    );
+    
+    response.status = 200;
+    response.body = {
+        message: 'Got todos',
+        data: transformedTodos
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> AGORA VOU VER SE O CÓDIGO DE 'createTodo'
+
+
+funciona...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> digitei o negócoi, coloquei 'add todo',
+
+
+mas nada aconteceu...
+
+
+
+--> NA VERDADE, 1 TODO FOI CRIADO,
+
+
+só ele não aparece no frontend (tanto na 'HOME PAGE', tanto como DEPOIS DE NÓS ADICIONARMOS 1 TODO...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> consertei um monte de problemas:
+
+
+
+
+
+
+
+
+
+havia um call de '.find()' que não havia chamado '.toArray()',
+
+que é aquele method que 
+
+RESOLVE O PROBLEMA DE 
+
+
+
+'Promise Pending'....
+
+
+
+
+
+
+
+
+
+-----> isso feito,
+
+
+o negócio funcionou... ( agora meus 'todo' estão aparecendo com sucesso, e estou conseguindo ADICIONAR novos todo, também)..
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA FALTA O 'edit todo' e o 'delete todo'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PROFESSOR MENCIONA UM OUTRO ERRO:
+
+
+
+
+
+
+'Property openPlugin does not exist on type 'typeof Deno'. ' 
+
+
+
+
+
+
+
+
+-----> ISSO ACONTECEU PQ 
+
+
+O 
+
+DENO FOI ESCRITO COM O 'RUST'.. --> E O MONGO MODULE 
+
+
+DE 
+
+
+FATO 
+
+, NO FINAL DAS CONTAS,
+SÓ FAZ 'WRAP'
+
+
+DO 
+
+
+RUST PACKAGE... ------> O MONGODB/RUST É SUPORTADO 
+
+
+PELO DENO, SIM,
+
+MAS 
+
+
+
+
+
+
+O DENO USA UM SISTEMA DE PLUGINS (herdado desse RUST),
+
+
+
+
+e o MONGODB __ 
+
+
+
+
+USA ESSES PLUGINS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO CASO DO 
+
+
+
+
+
+MONGODB,
+
+
+
+NÓS PRECISAMOS ADICIONAR UMA FLAG DE 
+
+
+
+
+
+
+'--unstable'
+
+
+no 
+
+
+nosso execute.... --> MAS MESMO COM ISSO,
+
+
+
+O RUN DESSE ARQUIVO AINDA VAI FALHAR... --> PARA CONSERTAR ISSO,
+
+devemos 
+
+colocar permissões de 
+
+'--allow-write'
+
+
+e 
+
+'--allow-read'...
+
+
+
+
+
+
+
+
+
+----> E AINDA VAMOS 
+
+
+
+
+
+RECEBER UM ERRO DE PLUGIN ----->  A PERMISSÃO QUE PRECSAMOS, A ÚLTIMA,
+
+É 
+
+'--allow-plugin' ...
+
+
+
+
+
+
+
+
+------> O APP DENO PRECISA DE UM MONTE DE PERMISSÕES PARA RODAR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> ERRO DE URl... -> É UM ERRO DO PROFESSOR...
+
+
+
+
+
+
+
+
+--------> ok, agora conseguimos conectar ao cluster do 
+
+
+
+
+MONGODB, tudo certo...
+
+
+
+
+
+
+
+

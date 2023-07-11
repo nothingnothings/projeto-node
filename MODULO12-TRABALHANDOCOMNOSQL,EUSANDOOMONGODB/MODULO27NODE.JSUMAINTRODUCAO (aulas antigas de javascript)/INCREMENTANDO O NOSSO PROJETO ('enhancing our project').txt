@@ -1,0 +1,447 @@
+
+
+
+
+CERTO.
+
+
+
+
+NOSSO CÓDIGO ATÉ AGORA É O DE UM ___SERVIDOR BÁSICO___...
+
+
+
+É UM APLICATIVO __BÁSICO___ de express.js...
+
+
+
+
+
+Não é muito bonito, nem complexo, de fato.
+
+
+
+MAS ESSE EXEMPLO MOSTRA A IDEIA GERAL POR TRÁS DO EXPRESS.JS e do NODE.JS....
+
+
+
+
+
+TE DÁ UMA IDEIA DE COMO TRABALHAR COM ISSO....
+
+
+
+O express.js e o node.js SÃO, NO FINAL DAS CONTAS, apenas UM JAVASCRIPT 
+
+ESPECIAL, com algumas packages e coisas extras que você pode usar (packages que você não pode usar no browser)...
+
+
+
+
+---> ESSE 'JAVASCRIPT ESPECIAL' também vem com alguns módulos 'BUILTIN', 
+
+como aquele 
+
+módulo 'filesystem' ('fs') QUE 
+
+USAMOS MAIS CEDO....
+
+
+
+
+Mas, no final das contas, esse negócio ainda é um javascript, mas um javascript 
+
+rodando em um ambiente diferente... e, portanto, com UM PROPÓSITO DIFERENTE.
+
+
+------------------------------------------
+
+
+
+
+AQUI, NÓS ESTAMOS CONSTRUINDO UMA WEBPAGE TRADICIONAL...
+
+
+
+Uma webpage tradicional em que NÓS RENDERIZAMOS TODAS 
+
+AS PÁGINAS 
+
+
+HTML ___NO SERVIDOR___.....
+
+
+RENDERIZAMOS 
+
+
+TODAS AS PÁGINAS HTML NO SERVIDOR E ENTÃO AS RETORNAMOS..... ----> e, de fato, 
+
+não há nada de errado com isso...
+
+
+
+
+MAS, DE NOVO, O PROFESSOR APONTA O CURSO DE NODE.JS dele... (curso de 30 horas).
+
+
+
+
+
+ELE DIZ QUE HÁ MUITOS TÓPICOS PARA COBRIR QUANDO ESTAMOS FALANDO DE NODE.JS...
+
+
+
+
+
+
+
+---> só podemos ver pouca coisa, aqui.
+
+
+
+
+
+
+----> AINDA ASSIM, O PROFESSOR QUER NOS MOSTRAR ___OUTRA FORMA___ DE WEB APPLICATION;
+
+
+outra FORMA DE BACKEND/serverside QUE VOCÊ PODERIA 
+
+__CONSTRUIR ___ COM A AJUDA DO NODE.JS...
+
+
+
+--------------------------------------------------
+
+
+
+
+NOSSA WEB APPLICATION ATÉ AGORA:
+
+
+
+const express = require('express');
+
+
+const app = express();
+
+
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+
+app.use(express.urlencoded({extended: false})); 
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+   resp.render('index', {
+       user: userName
+   })
+})  
+
+
+
+app.listen(3000);
+
+
+
+--------------------------------------
+
+
+
+
+
+AQUI NÓS TEMOS UMA WEBAPP QUE RENDERIZA ARQUIVOS HTML NO 
+
+___SERVIDOR___ E QUE ENTÃO OS ENVIA DE VOLTA AO CLIENT...
+
+
+
+
+
+
+--> bem, se você ainda se lembra do nosso aplicativo DE PRÁTICA que fizemos mais 
+
+cedo....
+
+
+Lá, por exemplo, o que nós fizemos é:
+
+
+
+NÓS CONSEGUIMOS 
+
+
+a LOCALIZAÇÃO/endereço/coordenadas PARA UM CERTO LUGAR/certos lugares 
+
+EM UM MAPAA....
+
+
+
+Conseguíamos essas informações POR MEIO DOS SERVIDORES ___DO GOOGLE___...
+
+
+
+Nós enviávamos o request AOS SERVIDORES DO GOOGLE....
+
+
+
+
+
+
+----> professor explica que CLARAMENTE O QUE AQUELES SERVIDORES ESTAVAM 
+
+NOS ENVIANDO DE VOLTA ___NÃO ERA ____ CÓDIGO HTML.../não era HTML DATA...
+
+
+ERA, SIM, JSON DATA!!!
+
+
+
+ERA 'JSON DATA' que então 
+
+
+PARSEAMOS/PARSEÁVAMOS COM 
+
+A AJUDA 
+
+
+do método
+
+'.json()' e etc.... (funções assíncronas)...
+
+
+
+ex:
+
+
+
+
+const data = await response.json(); /////esse código
+if (data.error_message) {
+    throw new Error(data.error_message);
+}
+const address = data.results[0].formatted_address;
+return address;
+
+
+------------------------------------------
+
+
+
+
+
+
+E, DE FATO, quando fazemos/faz-se SEND DE REQUESTS do clientside javascript (ou seja, do browser de algum usuário)
+A UM CERTO SERVIDOR, tipicamente você TROCA ('exchange') JSON DATA... você tipicamente 
+
+troca json data com ele PQ TIPICAMENTE NO 'CLIENTSIDE JAVASCRIPT' VOCÊ TEM/PODE TER ALGUMA LÓGICA 
+
+QUE EDITA A 'PÁGINA HTML' JÁ EXISTENTE, a página html EM QUE O USUÁRIO/VOCÊ JÁ ESTÁ.... você tem essa página 
+
+html em que você já está, e você GERALMENTE __NÃO QUER TROCAR __ ESSA PÁGINA HTML INTEIRA COM OUTRO CÓDIGO HTML/
+PÁGINA HTML MANDADA DE VOLTA PARA O SERVIDOR (pq isso te obrigaria a trocar de endereços, a recarregar 
+a página...).
+
+
+
+
+
+
+ 
+
+---> VOCÊ NUNCA VAI QUERER RECARREGAR A PÁGINA INTEIRA... VocÊ talvez queira ___TWEAKAR____ 
+
+ALGUMAS ___PARTES____ DA PÁGINA PARA ___DAR AO USUÁRIO___ AQUELA EXPERIÊNCIA 
+
+'altamente reativa' (highly reactive), aquele feel de 'highly reactive'...
+
+
+
+
+
+
+---> É POR ISSO QUE O SERVIDOR DA GOOGLE __NÃO RETORNA _____ HTML, 
+
+não faz o RETURN DE HTML como 
+
+esse nosso servidor feio faz, atualmente...
+
+
+---> É POR ISSO QUE O SERVIDOR DA GOOGLE RETORNA 
+
+_____JSON DATA____...
+
+
+
+
+
+
+
+----> E É EVIDENTE QUE NÓS SOMOS CAPAZES, SIM, DE CRIAR UM SERVIDOR DESSES,
+
+UM SERVIDOR QUE RETORNA ___JSON DATA___ em vez de HTML DATA....
+
+
+
+PROFESSOR DIZ QUE DEVEMOS IMPLEMENTAR ISSO NESSE APLICATIVO DE 'PRÁTICA' dos maps.....
+
+DEVEMOS CONECTAR ESSA FEATURE NESSE APLICATIVO, ASSEGURAR 
+
+QUE:
+
+
+
+1) QUANDO NÓS CRIAMOS UM 'PLACE' nesse aplicativo (ou seja, 
+
+executamos aquele código 
+
+de 
+
+'SharePlace.js' QUE 
+
+FAZ UMA URL com o local encontrado pelo google...) , NÓS NÃO ACABEMOS 
+
+__ENCODANDO__  
+
+____TODA A INFORMAÇÃO ___ SOBRE O LOCAL ___ encontrado/address/coordenadas 
+
+NAQUELA URL, naquele link,
+
+
+
+E SIM EM VEZ DISSO QUE 
+
+
+ACABEMOS GERANDO UM __ID___ PARA AQUELE __LUGAR ___ NO __ NOSSO SERVIDOR__, ou seja, 
+
+NO SERVERSIDE_____....
+
+ARMAZENAR ESSE LOCAL ___EM UM ID___ NA NOSSA DATABASE, no nosso servidor...
+
+
+
+
+ARMAZENAR ESSE LOCAL EM UM ID NA NOSSA DATABASE __E ENTÃO___ ENVIAR ESSE LINK ____ DE VOLTA 
+
+AO 'CLIENTSIDE CODE'... (
+
+    ou seja, 
+
+
+    enviar de volta a esse código:
+
+
+    selectPlace(coordinates, address) {
+        if(this.map) {
+            this.map.render(coordinates);
+        } else {
+            this.map = new Map(coordinates);
+        }
+        this.shareBtn.disabled = false;
+        const sharedLinkInputElement = document.getElementById('share-link');
+        sharedLinkInputElement.value = `${location.origin}/my-place?address=${encodeURI(address)}.........
+    }
+
+
+
+
+
+) 
+
+
+
+
+
+
+ASSIM SERÁ ENVIADO DE VOLTA O CÓDIGO DESSE LUGAR AO 'CLIENT SIDE CODE'...
+
+
+AÍ quando o usuário visitar ESSE LINK de '`${location.origin}/my-place?address=${encodeURI(address)}.........', 
+
+
+QUE INCLUIRÁ 
+
+AQUELE 'id' (depois de fuçarmos no código),
+
+
+ELE ACABARÁ NAQUELE OUTRO ARQUIVO 
+
+
+
+'index.html' de 
+
+'my-place'... (na pasta my-place),
+
+
+NÓS VAMOS 
+
+
+FAZER __PARSE___ DAQUELE 'id' DA URL  E ___DE NOVO ___ ALCANÇAR 
+
+O 'backend server' 
+
+(
+
+que está 
+
+em 
+
+'app.js'
+
+
+) PARA 
+
+ENTÃO PEGAR OS DADOS (data), 
+
+O ADDRESS 
+
+E 
+
+
+AS COORDENADAS __PARA AQUELE DETERMINADO ID___.... ele vai 
+
+conseguir tudo isso de nossa database....
+
+
+aí todos esses dados do servidor SERÃO ENVIADOS DE VOLTA 
+
+NO FORMATO '.json'/ como json 
+
+àQUELE 
+
+'CLIENTSIDE APP'... ele fará 
+
+isso para que 
+
+NO CLIENTSIDE APPLICATION NOS TORNEMOS CAPAZES 
+
+
+DE RENDERIZAR ESSES DADOS....
+
+
+
+
+
+E É EXATAMENTE ISSO QUE FAREMOS EM SEGUIDA...
+
+
+
+FAREMOS ISSO PARA QUE CONSIGAMOS ENTENDER ESSA 'OUTRA FORMA DE BACKEND SERVICE' que poderíamos construir...
+
+
+ESSA 'outra forma de backend service' é tipicamete conhecida COMO 
+
+A "REST API"... ----> é uma interface COM A QUAL PODEMOS CONVERSAR ___COM QUALQUER CLIENTE QUE 
+DESEJARMOS, desde que (as long as) NÓS FAÇAMOS O 'SEND' DOS DADOS CORRETOS ('the correct data') AO 
+
+URL correto....

@@ -1,0 +1,1892 @@
+
+
+
+
+
+
+
+--> AGORA QUE SOMOS CAPAZES DE FAZER 'SIGNUP' (Que é o negócio que vai CRIAR NOSSOS USERS, NO FINAL DAS CONTAS),
+
+
+
+
+como 
+
+VISTO NO CÓDIGO DE 
+
+
+'''
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    return res.status(400).json({ message: "Passwords don't match!" });
+  }
+
+  User.findOne({ email: email }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+
+        return res.redirect('/');
+      } else {
+       return bcrypt.hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+        
+        .then((hashedPassword) => {
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: {
+              products: [],
+            },
+          });
+          return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+        })
+        .then((result) => {
+          res.redirect('/login');
+        });
+      }
+    })
+    .catch(
+      (err) => {
+        console.log(err);
+      }
+    )
+
+};
+
+
+
+
+
+
+
+'''',
+
+
+
+
+
+AGORA 
+
+__DEVEMOS __ 
+
+
+
+TAMBÉM 
+
+
+ADICIONAR
+
+
+
+UMA FUNCIONALIDADE __ QUE 
+
+
+ASSEGURE _ QUE 
+
+
+OS 
+
+
+USERS_ __ TAMBÉM __ CONSIGAM 
+
+FAZER 
+
+
+'SIGNIN/LOGIN'...
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, OBVIAMENTE,
+
+TEMOS __ NOSSA PAGE DE 
+
+'login'..... --> E AÍ,
+
+QUANDO 
+
+
+INPUTTAMOS 
+
+
+ALGO 
+
+
+NESSA PAGE,
+
+
+ 
+
+
+ NÓS 
+
+ ALCANÇAMOS NOSSO CONTROLLER DE 
+
+
+
+ 'exports.postLogin' -----> 
+
+
+
+
+
+
+
+
+
+O CÓDIGO COMEÇA ASSIM:
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+
+
+}
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+-------------> OK .... 
+
+
+PROFESSOR 
+
+VAI QUERER USAR 
+
+UM APPROACH QUE NÃO USAMOS ATÉ AGORA....
+
+
+
+
+
+
+
+
+
+-------> O QUE ELE VAI QUERER 
+
+
+______FAZER É ____ ENCONTRAR 
+
+
+1 
+
+USER 
+
+
+POR MEIO 
+
+DO 
+
+
+field 
+
+'email'
+ 
+
+ NOS NOSSOS USERS... ----------> 
+
+
+
+
+
+
+
+ OU SEJA,
+
+
+
+
+
+
+ VAMOS 
+
+ COMPARAR O EMAIL ___ QUE O USER INPUTTOU__ COM 
+
+os 
+
+
+
+
+'email' nos fields 'email'
+
+
+
+
+DE NOSSOS OBJETOS 'USER',
+
+lÁ 
+
+
+
+NA COLLECTION de 'users',
+
+
+NA NOSSA DATABASE...
+
+
+
+
+
+(
+
+    E PROFESSOR TBM VAI QUERER __ EXTRAIR:
+
+
+    1) O EMAIL 
+
+
+
+    2) O PASSWORD, 
+
+
+    os 
+
+
+    2 lá 
+
+    do 'REQUEST BODY',
+
+
+    que 
+
+    será 
+
+
+    COMPOSTO POR MEIO DO USO DE NOSSA VIEW e aquela 'form' com 
+
+
+    os input fields 
+
+    de  'email' e 'password', com aquele 
+
+    BUTTON DE TYPE SUBMIT..
+
+)
+
+
+
+
+
+
+--> É POR ISSO QUE ESCREVEREMOS:
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+const email = req.body.email;
+const password: req.body.password;
+
+    User.findOne(
+        {email: email} 
+    )
+
+}
+
+
+
+
+
+-------------------------
+
+
+
+
+'EMAIL' E 'PASSOWRD'
+
+
+
+
+SÃO
+ 
+
+ OS 
+
+ 2 PIECES OF INFORMATION NECESSÁRIOS PARA 
+
+
+ FAZER 
+
+
+ 'SIGN A USER IN'...
+
+
+
+
+
+
+
+
+ --> OK... E AÍ O PROFESSOR VAI USAR 
+
+ 'findOne()',
+
+
+ COISA 
+
+
+ NORMAL...
+
+
+
+
+
+
+
+
+
+ ----> AÍ ELE VAI ENCONTRAR 
+
+ 1 
+
+ USER 
+
+
+
+
+ COM 
+
+
+ ESSE EMAIL AÍ,
+
+
+ SE ELE EXISTIR... 
+
+
+
+
+ ------> 
+
+
+
+ E AÍ 
+
+ VAMOS 
+
+
+
+ ESCREVER EXATAMENTE O CÓDIGO QUE ESCREVEMOS ALI EM CIMA...
+
+
+
+
+
+
+
+
+
+
+ ----> CERTO.... E SE REALMENTE FOR __ OBTIDO_ _ 1 USER COM ESSE EMAIL,
+
+ SABEREMOS/
+
+
+
+
+
+ SABEMOS __ QUE 
+
+
+
+
+ __VAMOS TER _qUE CHECAR__ O 
+
+ PASSWORD,
+
+
+
+ ESSE É O PRÓXIMO PASSO NO CHECK 
+
+ das informações 
+ que 
+
+ o 
+
+
+ USER NOS ENVIOU....
+
+
+
+
+
+
+
+
+
+ --> portanto, provavelmente escreveremos algo como:
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+exports.postLogin = (req, res, next) => {
+
+
+const email = req.body.email;
+const password: req.body.password;
+
+    User.findOne(
+        {email: email} 
+    )
+    .then(
+
+        (user) => {
+
+            const passwordIsValid = bcrypt.compare(password, user.password); //////TIPO ALGO ASSIM....
+
+
+
+        }
+    )
+
+}
+
+
+
+
+
+-------------------------------------
+
+
+
+
+ESSE 'passwordIsValid'
+
+
+
+VAI _RETORNAR OU 'TRUE' OU 'FALSE',
+
+dependendo 
+
+do resultado de 
+
+
+''bcrypt.compare(password, user.password);''',
+
+
+QUE 
+
+VAI ___COMPARAR__ A 
+
+
+
+DATA INPUTTADA PELO USER AGORA __ COM 
+
+A DATA (o password)
+
+
+
+
+DO USER OBTIDO LÁ  __ NA DATABSE por meio daquele email...
+
+
+
+
+
+
+-----. ISSO PQ __ É REALMENTE ESSA FUNÇÃO/MÉTODO 
+
+'compare()'
+
+
+DO 
+
+
+BCRYPT 
+que 
+
+vai conseguir _ COMPARAR__ 
+
+1 
+
+VALOR 
+
+'HASHED' (valor armzenado NA DATABASe)
+
+
+
+cOM 
+
+
+1
+
+ VALOR 
+
+ 'normal' (Que pode ou não ser esse valor hashed....)
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+const email = req.body.email;
+const password: req.body.password;
+
+    User.findOne(
+        {email: email} 
+    )
+    .then(
+
+        (user) => {
+
+            const passwordIsValid = bcrypt.compare(password, user.password); //////TIPO ALGO ASSIM....
+
+
+
+        }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+
+
+-----> AQUI ESQUECEMOS 1 DETALHE, DETALHE QUE É O ADD DA HIPÓTESE 
+
+'
+user com esse email não existe lá na nossa database'....
+
+
+
+
+
+
+
+
+
+(if(!user) {
+
+
+
+}
+
+
+
+)
+
+
+
+
+
+
+
+
+
+--> SE O USER REALMENTE ESTIVER 'UNDEFINED'/NÃO EXISTIR,
+
+
+
+
+__ 
+
+
+EU VOU QUERER SIMPLESMENTE 'return res.redirect('/login')' ,
+
+
+
+
+VAMOS 
+
+QUERER 
+
+SIMPLESMENTE, DE FORMA PROVISÓRIA,
+
+REDIRECIONAR A 
+
+
+
+PAGE DE 'LOGIN'.... (
+
+
+    isso pq 
+    O LOGIN FALHOu, MAIS PRECISAMENTE..
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ADMITE QUE 
+
+VAMOS USAR 
+
+O METHOD 
+
+'bcrypt.compare()'
+
+PARA 
+
+COMPARAR 
+
+ESSES 
+
+2 NEGÓCIOS..... (o hashedPassword com o PASSWORD...) ----> EMBORA SEJA 
+
+IMPOSSÍVEL __ REVERTER
+ 
+ 1 
+
+ 'HASHED PASSWORD'
+
+ ao 
+
+ password que o deu origem,
+
+
+
+
+
+_COMO O BCRYPT_ FOI RESPONSÁVEL PELO CREATE DO HASH,
+
+
+ELE 
+
+
+USA 
+
+
+
+UM CERTO ALGORITMO PARA 
+
+
+
+ESSE CREATE, O QUE SIGNIFICA QUE 
+
+PODEMOS SIMPLESMENTE 
+
+PASSAR O NORMAL PASSWORD E O HASHED PASSWORD NO BCRYPT.compare(),
+
+que 
+
+
+então VAI COMPARAR OS 2 E ENTÃO RETORNAR 'TRUE' OU FALSE' dependendo do resultado.
+
+
+
+
+
+
+OK... PROFESSOR VAI ESCREVER O MESMO CÓDIGO QUE EU TINHA ESCRITo...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  const password = req.body.password;
+  const email = req.body.email;
+
+
+
+  User.findOne(
+    {email: email}
+  )
+  .then(
+    (user) => {
+
+
+      if(!user) {
+
+        return res.redirect('/login');
+      } else {
+
+
+
+      bcrypt.compare(password, user.password)
+        .then(
+
+        )
+
+
+
+
+      }
+
+
+    }
+  )
+
+};
+
+
+
+
+
+
+
+
+-------> CERTO... MAS A DIFERENÇA,
+
+AQUI,
+
+
+É 
+
+
+QUE 
+
+
+__ 
+
+
+ELE VAI USAR __ 
+
+
+o 'bcrypt.compare()'
+
+
+
+__SEM O STORE EM UMA CONST como 'passwordIsValid',
+
+
+PQ 
+
+
+
+
+__ ELE VAI QUERER __ CHAINAR__ '.then()'
+
+nesse compare... ----->  ISSO 
+
+
+
+PQ 
+
+
+
+O 
+
+
+
+bcrypt.compare()
+
+
+
+__VAI NOS RETORNAR___ UMA PROMISE... ---> 
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  const password = req.body.password;
+  const email = req.body.email;
+
+
+
+  User.findOne(
+    {email: email}
+  )
+  .then(
+    (user) => {
+
+
+      if(!user) {
+
+        return res.redirect('/login');
+      } else {
+
+
+
+      bcrypt.compare(password, user.password)
+        .then(
+
+        )
+
+
+
+
+      }
+
+
+    }
+  )
+
+};
+
+
+
+
+
+
+--------> 
+
+
+
+
+
+COLOCAMOS UM THEN BLOCK
+
+e 
+UM 
+
+
+CATCH BLOCK,
+PARA 
+
+
+
+CAPTURAR QUAISQUER ERRORS..
+
+
+
+
+
+
+--> SE EU OBTER 1 ERRO, TBM VOU QUERER REDIRECIONAR, VOU QUERER REDIRECIONAR DE VOLTA à PAGE 
+
+DE 
+
+'login'...
+
+
+
+
+
+
+
+
+--> MAS __ SE CONSEGUIRMOS __ ENTRAR 
+
+
+NO 
+
+'THEN BLOCK',
+
+
+
+
+
+____ VAMOS QUERER__ CHECAr__ 
+
+
+SE 
+
+
+FOMOS 
+
+'SUCCESSFUL'.... --->
+
+
+
+(se deu 'true' ou 'false').... ------> 
+
+
+
+
+
+
+
+
+
+
+IMPORTANTE!!! --> COM O 
+
+
+
+'bcrypt.compare()'
+
+,
+
+SÓ __ VAMOS RECEBER 
+
+
+
+1 'error' no CATCH BLOCK __ se algo __ REALMENTE___ DER ERRADO... o simples 
+
+return de 
+
+'false' para a comparison __ NÃO VAI __ FAZER COM QUE _ ENTREMOS 
+
+NESSE BLOCK AÍ...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  const password = req.body.password;
+  const email = req.body.email;
+
+
+
+  User.findOne(
+    {email: email}
+  )
+  .then(
+    (user) => {
+
+
+      if(!user) {
+
+        return res.redirect('/login');
+      } else {
+
+
+
+        // const passwordIsValid = bcrypt.compare(password, user.password)
+        bcrypt.compare(password, user.password)
+        .then(
+          
+          (result) => {
+
+
+          }
+        )
+        .catch(
+          (err) => {
+
+                console.log(err);
+                res.redirect('/login');
+
+          }
+        )
+
+
+
+
+      }
+
+
+    }
+  )
+
+};
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+OK, EM TANTO 'TRUE' COMO 'FALSE'
+
+
+VAMOS ENTRAR 
+
+
+naquele 
+
+
+'then block',
+
+E AÍ 
+
+
+__VAMOS RECEBER ALGO (true ou false)
+
+naquele 
+
+ARGUMENTO DE 'result'...
+
+
+
+
+
+
+-------->  professor renomeia 'result' para 'doMatch',
+
+
+
+PQ 
+
+
+AÍ 
+
+
+ELE VAI 
+
+ESCREVER IF CHECKS 
+
+
+
+,
+
+
+1 
+
+if check 
+checando 
+
+PELO 
+
+TRUE 
+
+DE 
+
+'doMatch'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  const password = req.body.password;
+  const email = req.body.email;
+
+
+
+  User.findOne(
+    {email: email}
+  )
+  .then(
+    (user) => {
+
+
+      if(!user) {
+
+        return res.redirect('/login');
+      } else {
+
+
+
+        // const passwordIsValid = bcrypt.compare(password, user.password)
+        bcrypt.compare(password, user.password)
+        .then(
+          
+          (result) => {
+
+
+          }
+        )
+        .catch(
+          (err) => {
+
+                console.log(err);
+                res.redirect('/login');
+
+          }
+        )
+
+
+
+
+      }
+
+
+    }
+  )
+
+};
+
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  const password = req.body.password;
+  const email = req.body.email;
+
+
+
+  User.findOne(
+    {email: email}
+  )
+  .then(
+    (user) => {
+
+
+      if(!user) {
+
+        return res.redirect('/login');
+      } else {
+
+
+
+        // const passwordIsValid = bcrypt.compare(password, user.password)
+        bcrypt.compare(password, user.password)
+        .then(
+              (result) => {///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+
+
+                if (result) { ///se já __ EXISTIR__ 1 USER ASSIM, COM ESSE EMAIL, NA DATABASE, NA COLLECTION DE 'users', PROSSEGUIMOS COM OS CHECKS.... -_> aí vamos checar SE __ O SEU PASSWORD está correto, tbm... (pq tanto o email como o password deverão ser os corretos, os armazenados no nosso database....)
+
+                      
+                }
+
+              }
+        )
+
+
+
+
+      }
+
+
+    }
+  )
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> SE ENTRARMOS NO BLOCK DE 'if(result)',
+
+
+ISSO SIGNIFICA QUE 
+
+
+
+OS __ PASSWORDS__ SÃO IGUAIS...,
+
+
+E 
+
+
+AÍ 
+
+SIGNIFICA QUE 
+
+PODEMOS 
+
+__rETORNAR__, 
+
+PARA 
+
+
+NÃO EXECUTAR 
+
+
+MAIS NENHUM OUTRO CÓDIGO... (por enquanto, pq o que precisamos fazer é AUTENTICAR O USER NESSE BLOCK AÍ...)
+
+
+
+
+
+
+
+
+
+---> E SE NÓS PASSARMOS POR ESSE BLOCK, caso de 
+
+
+'passwords não são iguais',
+
+VAMOS 
+
+QUERER 
+
+REDIRECIONAR À PAGE DE LOGIN,
+
+
+e aí, no futuro,
+ 
+
+
+ mostrar 
+
+
+ 1 
+
+ aviso que o user 
+
+
+ ERROU O PASSWORD...
+
+
+
+
+
+
+ ---------> OK.... --> MAS VAMOS QUERER __ SETTAR 
+
+
+ 1 
+
+
+ SESSION
+
+
+
+
+
+ DENTRO 
+
+ DO CASE DE 
+
+
+
+ 'os passwords são iguais'.... -----> PARA SETTAR 
+
+
+ 1 
+
+ SESSION (store no database de 1 session + STORE NO BROWSER do user de um COOKIE com o ID de nossa session, encriptado... --> é o 'COOKIE DA SESSION', por assim dizer),
+
+
+
+ vamos usar aquelas 
+
+
+ linhas 
+
+
+
+
+
+
+ de 
+
+
+ '''
+
+
+ req.session.isLoggedIn = true;
+ req.session.user = user;
+ req.session.save(
+   (err) => {
+     console.log(err);
+     res.redirect('/');
+   }
+ )
+
+
+
+
+ '''
+
+
+
+
+
+
+
+
+
+ VAI FICAR TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.postLogin = (req, res, next) => {
+
+
+  const password = req.body.password;
+  const email = req.body.email;
+
+
+
+  User.findOne(
+    {email: email}
+  )
+  .then(
+    (user) => {
+
+
+      if(!user) {
+
+        return res.redirect('/login');
+      } else {
+
+
+
+        // const passwordIsValid = bcrypt.compare(password, user.password)
+        bcrypt.compare(password, user.password)
+        .then(
+              (result) => {///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+
+
+                if (result) { ///JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+                    req.session.isLoggedIn = true; /////EIS O CÓDIGO EM QUESTÃO.
+ req.session.user = user;
+ req.session.save(
+   (err) => {
+     console.log(err);
+     res.redirect('/');
+   }
+ )
+
+  return res.redirect('/');
+
+                }
+
+
+res.redirect('/login');
+              }
+        )
+
+
+
+
+      }
+
+
+    }
+  )
+
+};
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+OK... TUDO 
+
+
+ISSO ESTÁ CERTO,
+
+
+
+menos o 'res.redirect('/')' DENTRO DAQUELE BLOCK DE 
+
+'req.session.save()' (
+
+
+  VAMOS 
+
+
+
+
+  MOVER O 'return res.redirect('/')'
+
+
+  PARA DENTRO DELE, no seu lugar....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADICIONAMOS MAIS ALGUNS 'RETURN',
+
+
+
+E AÍ O CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+  const password = req.body.password;
+  const email = req.body.email;
+
+  User.findOne({ email: email }).then((user) => {
+    if (!user) {
+      return res.redirect('/login');
+    } else {
+      // const passwordIsValid = bcrypt.compare(password, user.password)
+      bcrypt
+        .compare(password, user.password)
+        .then((result) => {
+          ///result será OU TRUE OU FALSE (pq esse será o RESULTADO de 'bcrypt.compare()', é isso que ele nos retorna...)
+
+          if (result) {
+            //JÁ SE __ OS PASSWORDS BATEREM, prosseguiremos com o processo de auth.... caso contrário, mostraremos um erro/aviso dizendo que os passwords estão incorretos...
+
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+           return req.session.save((err) => {
+              console.log(err);
+
+              return res.redirect('/');
+            });
+          }
+
+          res.redirect('/login');
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/login');
+        });
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+OK.... COM TUDO ISSO NO LUGAR,
+
+
+DEVEMOS SER CAPAZES 
+
+DE 
+
+FAZER SIGNIN 
+
+
+se 
+
+
+
+
+INPUTTARMOS 1 PASSWORD VÁLIDO...
+
+
+
+
+
+
+
+
+--> PROFESSOR 
+
+
+
+
+
+
+TENTA, PRIMEIRAMENTE, 1 EMAIL ERRADO... --> 
+
+
+
+
+
+NOSSO CÓDIGO FALHA, EXATAMENTE COMO 
+
+QUERÍAMOS... 
+
+
+
+
+
+
+
+
+
+
+----> AÍ O PROFESSOR ENTRA 1 EMAIL VÁLIDO, JUNTO COM 1 PASSWORD VÁLIDO... ------> 
+
+
+
+
+
+VAMOS CONSEGUIR _SER REDIRECIONADOS, 
+
+
+VAMOS APARECER NA STARTING PAGE,
+
+
+
+
+E ESTAREMOS 'AUTHENTICATED'... -------> 
+
+
+
+
+
+
+
+E LÁ NA COLLECTION DE 'SESSIONS',
+
+veremos
+
+A NOSSA SESSION 
+
+
+
+ARMAZENADA... (sinal de que tudo isso funcionou...)
+
+
+
+
+
+
+
+
+
+
+
+-------> obs.... --> se user digita email com 
+
+
+
+___'.COM' em maiúsculo, isso é AUTOMATICAMENTE CONVERTIDO 
+
+em 
+
+
+'.com' (minúsculo) lá na database.... --> e isso pode causar erros, se o user for idiota (se ele digitar '.COM' em maiúsculo msm...)
+
+
+
+
+
+
+
+
+
+ok....
+
+
+
+
+
+
+
+So, does capitalization matter in email addresses? Short answer: No! ... Unlike passwords,
+ email addresses are not case sensitive. Whether or not you add capitals, 
+ your email server will read it the same way as long as the numbers and letters
+  match your official email address.
+
+
+
+
+
+
+
+
+
+
+
+--> FIZ ALGUNS AJUSTES PARA 
+
+
+CORRIGIR ESSE PROBLEMA DO 
+
+'LOWERCASE'
+
+com 
+
+
+os 
+
+
+
+emails..
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  console.log(email);
+
+  if (password !== confirmPassword) {
+    console.log('Passwords do not match.');
+    return res.status(400).json({ message: "Passwords don't match!" });
+    // return res.redirect('/');
+  }
+
+  User.findOne({ email: email.toLowerCase() }) /////TALVEZ ESTE CÓDIGO... (usei 'findOne' em vez de '.find()', pq FIND() NÃO FUNCIONOU/deu um erro....)
+    .then((user) => {
+      if (user) {
+        ///se for descoberto que JÁ EXISTE 1 USER COM ESSE EMAIL LÁ NA NOSSA DATABASE, vamos querer RETORNAR UMA RESPONSE DIZENDO 'An user with that email already exists, please use a different email address.';
+
+        // return res
+        //   .status(400)
+        //   .json({
+        //     message:
+        //       'An user with that email already exists, please use a different email address.',
+        //   });
+
+        return res.redirect('/');
+      } else {
+        return bcrypt
+          .hash(password, 12) ///ESSE 'HASHING' é uma TAREFA ASSÍNCRONA, e é por isso que VAMOS USAR UM THEN BLOCK, para chainar o resto de nosso código a essa tarefa... --> e é por isso que vamos escrever aquele 'return', para CONTINUAR COM A EXECUÇÃO DOS THEN BLOCKS RESTANTES...
+
+          .then((hashedPassword) => {
+            const user = new User({
+              email: email.toLowerCase(),
+              password: hashedPassword,
+              cart: {
+                products: [],
+              },
+            });
+            return user.save(); //salva/cria nosso user QUE AINDA NÃO EXISTIA (pq passamos aquele check de 'if(user)' ) LÁ NA DATABASE, NA COLLECTION DE 'users'...
+          })
+          .then((result) => {
+            res.redirect('/login');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROSSEGUINDO...
+
+
+
+
+
+
+-> AGORA NOSSO USER/NÓS __ JÁ CONSEGUIMOS FICAR 'AUTH'
+
+
+
+NO NOSSO APP,
+
+quando digitamos 
+
+
+
+
+o email e password adequados/que já existem na database....
+
+
+
+
+
+
+
+
+--> e nossa session está sendo estabelecida com sucesso, tanto no browser 
+
+do user 
+
+como 
+
+na database...

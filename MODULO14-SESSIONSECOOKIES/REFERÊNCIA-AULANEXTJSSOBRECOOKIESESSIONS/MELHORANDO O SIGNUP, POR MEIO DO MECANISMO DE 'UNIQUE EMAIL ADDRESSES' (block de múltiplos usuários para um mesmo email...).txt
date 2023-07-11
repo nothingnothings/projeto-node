@@ -1,0 +1,716 @@
+OK, O CREATE DE USER FUNCIONA,
+
+
+MAS 
+
+
+AGORA  AINDA PODEMOS 
+
+'CREATE THE SAME USER,
+
+WITH THE SAME EMAIL AND PASSWORD',
+
+
+
+MÚLTIPLAS VEZES (quantas vezes quisermos)...
+
+
+
+
+---> E ISSO NÃO É O QUE TIPICAMENTE QUEREMOS FAZER,
+
+
+
+COM UM SERVER, com a geracao de 
+
+
+users....
+
+
+
+
+--> PORTANTO, PARA EVITAR ISSO,
+
+
+NA NOSSA FUNÇÃO 
+
+
+ 
+
+
+ HANDLER 
+
+ DE
+ 'signup' (essa api route aí),
+
+
+DEVEMOS CHECAR 
+
+SE UM 
+
+'USER' 
+
+PARA 
+
+AQUELE 'GIVEN EMAIL'
+
+
+JÁ EXISTE...
+
+
+
+
+-->  REVEJA O CÓDIGO:
+
+
+
+
+
+  const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+   const hashedPassword = await hashPassword(password);  ////voce deve colocar 'await' no call dessa function, PQ ELA É UMA FUNCTION ASSÍNCRONA...
+
+ const result = await db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+       res.status(201).json(
+           {
+               message:'Created user.'
+           }
+       )
+    console.log(result);
+
+}
+   
+
+
+
+}
+
+
+
+
+
+
+
+NESSE CÓDIGO AÍ,
+
+
+___DEPOIS__ DE NOS CONNECTARMOS A DATABASE ('client.db()'),
+
+
+E LOGO 
+
+ANTES DE ___ 'HASHARMOS O PASSWORD' (criarmos o hashed password),
+
+
+
+e armazenarmos 
+
+o user,
+
+
+
+DEVEMOS 
+
+
+
+'CHECK IF A USER ALREADY EXISTS'... --->
+
+
+
+
+
+PARA ISSO,
+
+VAMOS 
+
+QUERER 
+
+
+
+escrever 
+
+
+'const existingUser = ...',
+
+
+
+
+NESSA FUNÇÃO AÍ,
+
+
+VAMOS EXECUTAR 
+
+
+'db.collection('users').find()' ----------> 
+
+
+
+VAMOS USAR O MÉTODO 'find()'
+
+do mongodb
+
+
+PARA __ TENTAR ___ ENCONTRAR 
+
+
+UM USER/OBJETO USER NA COLLECTION QUE 
+
+
+
+
+POSSUA 
+
+
+
+O MESMO 'EMAIL' 
+
+
+que ficou em 'req.body.email'...
+
+
+
+
+
+
+
+
+----> PARA SER MAIS PRECISO,
+
+PROFESSOR EXECUTARÁ 
+
+'findOne()'...
+
+
+
+
+---> FINDONE NOS DEIXA 
+
+ENCONTRAR 
+
+1 
+
+DOCUMENT... --> 
+
+
+E NÓS 
+
+PASSAMOS 
+
+1 
+OBJETO COMO PARÂMETRO 
+
+A 
+
+ESSE 
+
+
+MÉTODO,
+
+um OBJETO 
+
+COM KEY-VALUE PAIRS,
+
+
+E AS 
+
+__KEYS___ SÃO AS KEYS__ QUE 
+
+
+
+NÓS TEMOS NOS NOSSOS 'DOCUMENTS'...
+
+
+(como 'email', 'password' e '_id'... )
+
+
+
+
+
+NÓS VAMOS PROCURAR POR '{
+
+    email: email
+}',
+
+
+
+VER SE JÁ EXISTE 1 NA NOSSA DATABASE....
+
+
+
+
+OU SEJA, CÓDIGO FICARÁ ASSIM:
+
+
+
+
+
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+if (req.method === 'POST') {
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    console.log(email, password.trim().length < 7)
+
+    if (!email || !email.includes('@') || !password || password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+    
+    const existingUser = await db.collection('users').findOne( /////EIS O CÓDIGO EM QUESTAõ.
+        {
+            email: email
+        }
+    )
+
+   const hashedPassword = await hashPassword(password);  ////voce deve colocar 'await' no call dessa function, PQ ELA É UMA FUNCTION ASSÍNCRONA...
+
+ const result = await db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+       res.status(201).json(
+           {
+               message:'Created user.'
+           }
+       )
+    console.log(result);
+
+}
+   
+
+
+
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+------------------------------------------------------
+
+
+
+
+
+
+É CLARO QUE NÓS VAMOS QUERER 
+'AWAIT'
+
+
+
+aquele 
+
+'existingUser',
+
+
+
+PQ TODOS ESSES CÓDIGOS DE 'db.collection'
+
+SÃO ASYNC,
+
+
+
+
+
+MAS A QUESTÃO 
+
+É 
+
+QUE 
+
+O RESULTADO 
+
+DESSA 
+
+
+CONST 
+
+'existingUser'
+
+
+
+VAI OU SER:
+
+
+
+1) UNDEFINED (nenhum user com aquele email fora encontrado)
+
+
+OU 
+
+
+2) O USER EM SI... (o que será 'truthy')...---> ISSO SIGNIFICA QUE 
+
+JÁ EXISTE 1 USER COM ESSE EMAIL NA DATABASE, O QUE IMPOSSIBILITA 
+
+A PESSOA QUE ESTÁ NO SEU SITE AGORA 
+
+DE CRIAR UM NOVO USER COM 
+
+ESSE EMAIL JÁ UTILIZADO...
+
+
+
+
+
+---> PROFESSOR COLOCA UM IF CHECK:
+
+
+
+if (existingUser) {
+
+        res.status(422).json(
+            {
+                message: 'An user with the entered email already exists on database. Please enter a different email.'
+            }
+        )
+
+    return; ////cessa execucao do restante do código
+}
+
+
+
+
+
+
+
+OUTRA COISA QUE 
+
+O PROFESSOR QUER FAZER AQUI,
+
+A QUAL NÃO HAVIA FEITO ANTES,
+
+É 
+
+'CLOSE OUR DATABASE CONNECTION',
+
+por meio 
+
+
+de 
+
+'client.close()'...
+
+
+--> VAMOS CHAMAR 
+CLOSE
+NESSE
+CASE 
+
+
+DE JÁ EXISTIR UM USER COM ESSE EMAIL,
+
+
+e com o case padrão, também..
+
+
+
+
+
+
+CÓDIGO FICA ASSIM:
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+if (req.method === 'POST') {
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    console.log(email, password.trim().length < 7)
+
+    if (!email || !email.includes('@') || !password || password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+const existingUser  = await db.collection.insertOne(
+    {
+        email: email
+    }
+)
+
+if (existingUser) {   ////usado para EVITAR QUE VISITANTES DE NOSSA PÁGINA POSSAM CRIAR UM USER COM O MESMO EMAIL DE OUTRO USER NA NOSSA DATABASE...
+
+    client.close();
+    res.status(422).json(
+        {
+            message: 'An user with the entered email already exists on database. Please enter a different email.'
+        }
+    )
+
+return; ////cessa execucao do restante do código
+}
+
+   const hashedPassword = await hashPassword(password);  ////voce deve colocar 'await' no call dessa function, PQ ELA É UMA FUNCTION ASSÍNCRONA...
+
+ const result = await db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+       res.status(201).json(
+           {
+               message:'Created user.'
+           }
+       )
+    console.log(result);
+
+
+
+    client.close();
+}
+   
+
+
+return;
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+-----------------------------------------------
+
+
+COM ESSAS MUDANÇAS NO NOSSO CÓDIGO,
+
+
+NÃO SEREMOS CAPAZES 
+
+DE 
+
+CRIAR UM USER COM 
+UM MESMO 
+
+EMAIL 2X...  ---> VAMOS RECEBER UM ERRO 422 
+
+
+com 
+
+'the user already exists'...
+
+
+
+
+
+
+
+
+
+---> PODEMOS VINCULAR NOSSO FRONTEND 
+A 
+
+ESSAS RESPOSTAS DO SERVIDOR,
+
+
+
+é claro...  ----> para isso, precisamos de 
+
+'auth-form.js',
+
+o component do frontend,
+
+É CLARO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->   CONSEGUI RESOLLVER VÁRIOS PROBLEMAS,
+
+
+CÓDIGO FICOU ASSIM:
+
+
+
+
+import { connectToDatabase } from "../../../helpers/db-util";
+
+import { hashPassword } from "../../../helpers/auth"; /////utility function criada com a ajuda do 'bcrypt'...
+
+
+
+
+const handler = async (req, res) => {
+
+
+if (req.method === 'POST') {
+    const data = req.body;
+
+
+    const { email, password } = data;
+
+    console.log(email, password.trim().length < 7)
+
+    if (!email || !email.includes('@') || !password || password.trim().length < 7)  {
+
+        
+        res.status(422).json(
+            {
+                message: 'Invalid input - password should also be at least 7 characters long.'
+            }
+        )
+        return;
+    }
+
+   const client = await connectToDatabase();
+
+   const db = client.db();  ////necessário...
+
+
+const existingUser  = await db.collection('users').findOne(
+    {
+        email: email
+    }
+)
+
+if (existingUser) {   ////usado para EVITAR QUE VISITANTES DE NOSSA PÁGINA POSSAM CRIAR UM USER COM O MESMO EMAIL DE OUTRO USER NA NOSSA DATABASE...
+
+    client.close();
+    res.status(422).json(
+        {
+            message: 'An user with the entered email already exists on database. Please enter a different email.'
+        }
+    )
+
+return; ////cessa execucao do restante do código
+}
+
+   const hashedPassword = await hashPassword(password);  ////voce deve colocar 'await' no call dessa function, PQ ELA É UMA FUNCTION ASSÍNCRONA...
+
+ const result = await db.collection('users').insertOne(
+       {
+           email: email,
+           password: hashedPassword
+       }
+   )
+
+       res.status(201).json(
+           {
+               message:'Created user.'
+           }
+       )
+    console.log(result);
+
+
+
+    client.close();
+}
+   
+
+
+return;
+}
+
+
+
+
+
+
+
+export default handler;
+
+
+
+
+
+
+
+
+
+
+
+OK.... se eu quisesse VINCULAR MEU FRONTEND 
+
+
+a essa resposta aí, teria de usar o 'auth-form'...

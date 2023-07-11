@@ -1,0 +1,696 @@
+
+
+
+
+
+
+
+
+
+
+-------> ALÉM DE OBJECTS, OUTRA DATA STRUCTURE CRUCIAL EM JAVASCRIPT (ou em geral)
+
+
+SÃO 
+
+ARRAYS...
+
+
+
+
+
+
+
+
+
+
+--> ex:
+
+
+const hobbies = [];
+
+
+
+
+
+
+----------------
+
+
+
+UM ARRAY É DEFINIDO COM SQUARE BRACKETS (mas também pode ser criado com 'new Array()', O __ CONSTRUCTOR DE ARRAYS...)
+
+
+
+
+
+
+
+
+
+
+
+--> EM UM ARRAY,
+
+ VOCÊ PODE TER QUALQUER DATA QUE 
+
+ VOCÊ 
+
+ USA/USARIA NORMALMENTE...
+
+
+
+
+
+
+
+
+
+---> 
+
+
+Ex:
+
+
+
+
+
+const hobbies = ['Sports', 'Cooking', 1]; 
+
+
+
+
+
+
+
+
+
+PODEMOS MISTURAR DATA TYPES,
+
+
+TAMBÉM 
+
+
+
+ARMAZENAR 
+
+BOOLEANS 
+E OBJECTS 
+
+DENTRO 
+
+DELES...
+
+
+
+
+
+------>
+
+
+
+
+
+
+
+OK.... -----> 
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA 
+
+
+
+TBM QUE PODEMOS USAR __ FOR LOOPS__ PARA IR POR DENTRO 
+
+DOS NOSSOS ARRAYS...
+
+
+(por meio do FOR OF LOOP)...
+
+
+
+
+
+FOR OF LOOP ----> armazenamos 
+
+
+
+
+'EACH ELEMENT FOR EACH ITERATION IN THAT 
+
+
+'''HOBBY''' VARIABLE'......
+
+
+
+ex:
+
+
+
+const hobbies = ['Sports', 'Cooking'];
+
+
+for (let hobby of hobbies) {
+
+
+}
+
+
+
+----------------------------
+
+
+
+
+
+--> 
+
+
+
+
+E AGORA,
+
+
+
+
+SE ESCREVERMOS 
+
+
+'console.log(hobby)',
+
+
+
+
+VAMOS CONSOLE LOGGAR 2X ,
+
+uma 
+
+vez para 
+
+cada 
+elemento contido no array....
+
+
+
+
+
+
+
+-------> 
+
+
+ex:
+
+
+
+
+
+const hobbies = ['Sports', 'Cooking'];
+
+
+for (let hobby of hobbies) {
+
+
+            console.log(hobby);
+
+}
+
+
+
+
+----------------------
+
+
+
+VEREMOS 
+
+'SPORTS' 
+
+E 
+
+
+'COOKING'
+
+PRINTADOS NO CONSOLE...
+
+
+
+
+
+
+
+
+--------> TAMBÉM É INTERESSANTE QUE EM JAVASCRIPT 
+
+TEMOS 
+
+
+
+UM MONTE DE 'BUILTIN METHODS'
+
+que podemos 
+
+executar em arrays....
+
+
+
+
+
+
+
+--> EM HOBBIES,
+
+
+NESSE ARRAY,
+
+
+se digitarmos 
+
+'.' (DOT NOTATION),
+
+
+
+NOSSO 
+
+IDE 
+
+VAI SUGERIR ___ UM MONTE __ DE MÉTODOS __ QUE 
+
+
+POSSO 
+
+USAR 
+
+EM 
+ARRAYS....
+
+
+
+
+
+
+
+---------> E TODOS ESSES MÉTODOS ME AJUDAM A 'GO THROUGH THE ELEMENTS IN THE ARRAY',
+
+
+
+ME AJUDAM A OS MANIPULAR,
+
+
+
+
+
+
+PEGAR UM 'SUBSET' daquele array,
+
+
+
+ou qualquer coisa que eu precisar....
+
+
+
+
+
+
+
+
+
+
+--> VOCÊ VERÁ COM FREQUÊNCIA '.map()',
+
+
+QUE 
+
+TE AJUDA 
+
+
+A TRANSFORMAR UM ARRAY,
+
+
+
+OU __ TRANSFORMAR___ 
+
+OS VALUES desse array.... -------> 
+
+
+
+
+
+E O QUE 'MAP' 
+
+VAI FAZER,
+
+NA VERDADE,
+
+
+É 
+
+
+
+'RETURN A NEW ARRAY',
+
+
+
+um 
+
+
+
+ARRAY 
+
+A PARTIR 
+
+DO PRIMEIRO 
+
+array,
+
+
+QUE SERÁ INDEPENDENTE DELE (viverá de forma independente na memória)....
+
+
+
+
+
+
+
+-----> .map() é mt usado com react....
+
+
+
+
+
+
+---> E O MAP 
+
+
+TEM 
+
+
+2 PARÂMETROS NA SUA CALLBACK FUNCTION,
+
+tem 
+
+o 
+
+
+'item' e o 
+
+
+'index'...
+
+
+eX:
+
+
+
+
+hobbies.map(
+    (hobby, index) => {
+
+
+        return xxxx;
+    }
+)
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+
+--> O ARRAY VELHO NÃO TERÁ SIDO EDITADO/MODIFICADO 
+
+
+
+PELA CRIAÇÃO DESSE NOVO ARRAY... 
+
+
+
+
+
+
+
+-------> 
+
+
+
+O MAP 
+
+
+
+
+
+TE PERMITE 
+
+
+
+DIZER COMO VOCÊ VAI QUERER EDITAR AQUELE ARRAy.. --> AS DIRETRIZES 
+QUE 
+
+VOCÊ 
+
+ESCREVE 
+
+DENTRO 
+
+
+DO 
+
+BODY 
+
+
+DO .map()
+
+SERÃO 
+
+
+EXECUTADAS ____ 
+
+
+EM CADA 1 DOS ELEMENTOS DENTRO DO ARRAY,
+
+
+para 
+
+cada 1 deles,
+
+
+
+E 
+
+AÍ 
+
+
+O 
+
+
+MAP VAI __ RETORNAR __ A VERSÃO 'UPDATED'
+
+
+
+
+
+DO ELEMENTO....
+
+
+
+
+(que geralmente ARMAZENAMOS EM UMA CONST...)
+
+
+
+
+
+
+
+
+
+--> AQUI, O PROFESSOR VAI ESCREVER ISTO:
+
+
+
+
+
+
+const hobbies = ['Sports', 'Cooking'];
+
+
+
+
+console.log(
+
+
+    hobbies.map(hobby => {
+
+        return 'Hobby:' + hobby
+    })
+)
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+PODEMOS SIMPLIFICAR ESSA SINTAXE,
+
+DEIXAR ASSIM:
+
+
+
+
+'''console.log(hobbies.map(hobby => 'Hobby: ' + hobby))'''' (SIMPLIFICAÇÃO DE ARROW FUNCTIONS)...
+
+
+
+
+
+
+
+ISSO 
+
+VAI 
+
+
+
+CONSOLE.LOGGAR 
+
+UM 
+
+ARRAY __ INDEPENDENTE__ DO PRIMEIRO,
+
+
+
+
+
+
+
+
+POR ISSO, SE ESCREVERMOS ISTO:
+
+
+
+
+
+
+
+
+const hobbies = ['Sports', 'Cooking'];
+
+
+console.log(hobbies.map(hobby => 'Hobby: ' + hobby));
+
+console.log(hobbies);
+
+
+
+
+
+
+VEREMOS ISTO NO TERMINAL DE 
+
+NOSSO 
+
+APP NODEJS:
+
+
+
+
+
+['Hobby: Sports', 'Hobby: Cooking'];
+['Sports', 'Cooking'];
+
+
+
+
+
+
+
+ISSO PQ 
+
+O NOSSO ARRAY N TERÁ SIDO 
+
+
+
+ALTERADO
+ 
+ POR AQUELA OPERAÇÃO 
+
+ DE 
+
+ MAP 
+
+ QUE 
+
+ EXECUTAMOS DENTRO DO CONSOLE.LOG....
+
+
+(é um novo array, array independente do ORIGINAL...)
+
+
+
+ -------------------------------
+
+
+
+
+
+
+
+
+
+
+ E VEREMOS O MAP METHOD USADO VÁRIAS VEZES DURANTE O CURSO...
+
+
+
+
+ --> LEIA O MDN PARA SABER SOBRE TODOS ESSES METHODS....
+
+
+
+
+
+ --> QUANDO USAMOS ALGUM DOS METHODS 
+
+
+ NESSE CURSO,
+
+
+ você deve procurar na internte....
+
+
+
+
+
+
+ --> ARRAYS --> DATA STRUCTURE MT IMPORTANTE.
+
+ 
+

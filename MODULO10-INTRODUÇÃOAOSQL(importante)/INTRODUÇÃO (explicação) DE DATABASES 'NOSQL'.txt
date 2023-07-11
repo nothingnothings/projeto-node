@@ -1,0 +1,1038 @@
+
+
+
+
+
+
+
+
+
+--> VIMOS 'SQL BASED DATABASES'.....
+
+
+
+
+
+
+
+
+--> AGORA VAMOS VER 'NOSQL DATABASES'... ----->
+
+
+
+
+
+ESSE NOME SIMPLESMENTE SIGNIFICA QUE 
+
+
+
+
+NOSQL 
+
+
+DATABASES 
+
+
+
+__NÃO ___ 
+
+
+SEGUEM O APPROACH 
+
+
+
+
+OPTADO 
+
+
+POR 
+
+
+'SQL DATABASES'...
+
+
+
+
+--------------------------
+ 
+
+
+
+
+
+
+----------> O 'NOSQL'
+
+
+
+
+TAMBÉM USA __ UMA QUERY LANGUAGE_ __ DIFERENTE DAQUELA EMPREGADA 
+
+
+PELAS 
+
+
+SQL DATABASES... ------> MAS EM VEZ DE 
+
+TER 
+
+
+
+'SCHEMAS' E 'RELATIONS' (como o SQL),
+
+
+
+
+
+
+
+
+__o NOSQL TEM OUTROS FOCOS/STRENGTHS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> EM NOSQL,
+
+
+
+
+
+_NÓS:
+
+
+
+
+1) AINDA PODEMOS TER UMA DATABASE... ---> E NÓS PODEMOS DAR A ESSA DATABASE UM NOME, COMO 'SHOP'....
+
+(isso tbm ocorre no SQL, pq lá TAMBÉM TEMOS DATABASES...)
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+database = SHOP
+
+
+
+
+
+**** EM 'SQL', NÓS TÍNHAMOS/TEMOS __ TABLES_, TABLES COMO 
+
+
+'Users' e 'Orders', 'Products', etc...
+
+
+
+
+
+
+
+
+
+
+
+****** JÁ NO 'NOSQL',
+
+
+
+TABLES 
+
+SÃO CHAMADAS 
+
+
+DE 
+
+
+
+'COLLECTIONS'.... ---------->
+
+
+
+
+
+
+SÃO CHAMADAS DE 'COLLECTIONS', MAS VOCê AINDA PODE 
+
+IMAGINAR 
+
+
+
+ESSAS COLLECTIONS 
+
+
+
+COMO 
+
+
+'TABLES', pq 
+
+
+
+essa é a estrutura EQUIVALENTE 
+
+
+A 
+
+'collections',
+
+lá no SQL...
+
+
+
+
+
+
+
+
+--------> NOSQL world --> usamos 'collections'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO MUNDO 'NOSQL',
+
+
+
+
+NÓS 
+
+
+__NÃO VAMOS ENCONTRAR __ 'RECORDS' ('nossos ROWS nas columns', lá no SQL),
+
+
+
+
+
+
+
+__-E SIM 
+
+
+
+'DOCUMENTS'.... ----> documents são os NOSSOS 'OBJETOS DATA'...
+
+
+
+
+
+
+
+
+
+
+
+--> E TODO DOCUMENT TEM UMA ESTRUTURA ASSIM:
+
+
+
+
+
+
+
+{ name: 'Max', age: 29 }
+
+{ name: 'Manu'} 
+
+
+
+
+
+
+
+
+
+
+-------> E COMO ESTAMOS __ TRABALHANDO COM JAVASCRIPT NESSE CURSO,
+
+
+
+NÓS __ OBVIAMENTE 
+
+
+PODEMOS 
+
+
+PERCEBER  ___ 
+
+
+QUE 
+
+ISSO 
+
+
+
+SE PARECE __UM POUCO COMO UM OBJETO JAVASCRIPT... 
+
+
+
+
+
+
+
+
+---------> ISSO SIGNIFICA QUE 
+
+A ESTRUTURA 
+
+DE 
+UM 
+
+
+'DOCUMENT' É MT PARECIDA 
+
+COM 
+
+A MANEIRA PELA QUAL
+
+
+
+DESCREVEMOS/ORGANIZAMOS CÓDIGO NO JAVASCRIPT, você poderia dizer...
+
+
+
+
+
+
+
+
+---------> CERTO....  -------> 
+
+
+
+
+E UMA COISA QUE VOCÊ PODE VER 
+
+
+NESTE EXEMPLO:
+
+
+
+
+
+Users
+
+{ name: 'Max', age: 29 }
+
+{ name: 'Manu'} 
+
+
+
+
+
+
+
+--> UMA DIFERENÇA EM RELAÇÃO 
+
+
+
+AO 'SQL' QUE PODEMOS 
+
+
+VER __ NESSE __ EXEMPLO É QUE 
+
+O 
+
+
+'NOSQL'
+
+
+
+
+___ NÃO TEM UM 
+
+
+'STRICT SCHEMA'... -----> ISSO SIGNIFICA QUE 
+
+
+CADA 
+
+
+'
+DOCUMENT' 
+
+
+
+PODE 
+
+TER 
+
+MAIS OU MENOS 
+
+PROPRIEDADES 
+
+NO SEU INTERIOR... -------> 
+
+
+
+AQUI,
+
+TEMOS 
+
+
+
+2 DOCUMENTS 
+
+
+NA MESMA COLLECTION,
+
+
+
+
+mas o segundo 
+
+
+
+document,
+
+de 'Manu',
+
+
+
+
+NÃO TEM 
+
+
+UMA PROPRIEDADE 
+
+
+'age'... -------> E ISSO É PERFECTLY 
+
+FINE 
+
+
+
+
+
+NO NOSQL ---> VOCÊ 
+
+
+
+PODE ___ ARMAZENAR__ MÚLTIPLOS DOCUMENTS,
+
+
+COM 
+
+
+DIFERENTES STRUCUTRES,
+
+
+EM UMA 
+
+MESMA COLLECTION...
+
+
+
+
+
+
+
+
+
+
+
+------------> MAS É CLARO QUE 
+FREQUENTEMENTE 
+
+
+
+__VOCê AINDA VAI TENTAR TER 'KINDOF A SIMILAR STRUCTURE',
+
+
+
+
+MAS 
+
+
+TAMBÉM NÃO É INCOMUM 
+
+QUE 
+
+EM 
+
+ALGUNS 
+
+
+
+APPS __ VOCÊ __ NÃO TENHA _ 
+
+
+
+SEMPRE 
+
+
+EXATAMENTE 
+
+
+'EXACTLY THE SAME FIELDS AVAILABLE FOR THE DATA 
+
+THAT YOU ARE STORING ON THE DATABASE'... --------> 
+
+
+
+
+
+
+
+
+E ISSO É OK NO NOSQL,
+
+PQ VOCÊ 
+
+
+
+DEFINITIVAMENTE PODE ARMAZENAR 
+
+
+
+
+OBJECTS QUE _sÃO GERALMENTE_ IGUAIS, com apenas 
+
+
+alguns 
+
+fields diferentes.....
+
+
+
+
+
+
+
+
+
+
+--------> OUTRA COISA É QUE 
+
+
+
+
+
+
+
+____NO 'MUNDO NOSQL'
+
+
+
+
+
+
+
+
+
+
+___ _NÓS ____ _ NÃO TEMOS 'RELATIONS' ENTRE TABLES...
+
+
+
+(não podemos criar uma table de 'orders' VINCULANDO 'product_id's com 'user_id's...)
+
+
+
+
+
+
+
+
+
+--------> EM VEZ DE TERMOS/USARMOS RELATIONS,
+
+
+
+
+NO MUNDO 
+
+NOSQL
+
+
+
+
+nós 
+
+
+'GO FOR'
+
+
+
+
+DUPLICATE DATa.... --------> 
+
+
+
+
+
+
+ISSO SIGNFICA QUE 
+
+
+
+
+
+
+A DISPOSIÇÃO 
+
+
+DE DADOS,
+
+
+SE VOCê QUER TER 'TIPO UMA RELATION',
+
+
+
+
+vai ficar tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Users 
+
+{id: 1, name: 'Max', email: 'max@test.com'}
+{id: 2, name: 'Manu', email: 'manu@test.com'}
+{...}
+
+
+
+Products 
+
+{id: 1, title: 'Chair', price: 120.99}
+{id: 2, title: 'Book', price: 40.99}
+{...}
+
+
+
+
+Orders (EIS O EXEMPLO EM QUESTÃO):
+
+
+
+{id: 'ddjfa31', user: { id: 1, email: 'max@test.com'}, product: { id: 2, price: 40.99}}
+{id: 'iddao1', user: { id: 2, email: 'manu@test.com'}, product: { id: 1, price: 120.99}}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^^^
+    	                DUPLICATION                               DUPLICATION
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+SE NÓS 
+
+
+TIVERMOS UMA 
+
+
+'ORDERS COLLECTION'
+
+
+na nossa database,
+
+
+
+NÓS __ SIMPLESMENTE 
+
+
+VAMOS 
+
+
+
+TER 
+
+
+'NESTED DOCUMENTS', 
+
+
+COMO 
+
+
+
+ O 
+
+ 'user' e o 'product',
+
+
+
+
+
+ QUE SERÃO ARMAZENADOS COMO 'SEPARATE DOCUMENTS',
+
+
+
+
+ COM MAIS DETALHES, POR EXEMPLO,
+
+
+ LÁ 
+
+
+ NAS COLLECTION DE 'users' e 'Products'....
+
+
+ -------->  E NÓS NÃO VAMOS CONECTAR 
+
+
+ ESSES 'products' e 'users' 
+
+
+ POR MEIO 
+
+
+
+ DE 
+ UM ID 
+ OU 
+
+ ALGUMA 
+ 'BEHIND THE SCENES RELATION',
+
+  
+
+E SIM, EM VEZ DISSO,
+
+
+
+__SIMPLESMENTE __ DUPLICAMOS 
+
+
+
+'DATA'... ----------> para sermos mais precisos,
+
+
+
+VAMOS DUPLICAR A DATA DE QUE PRECISAMOS 
+
+
+NESSA COLLECTION DE 'order', nesse exemplo.. -----> é claro que 
+
+
+
+ISSO SIGNIFICA QUE 
+
+
+__ SE __ ESSA 
+
+DATA 
+
+
+
+do 'user'
+
+
+__MUDA,
+
+
+
+__NÓS SOMOS 
+
+
+
+__FORÇADOS __ A UPDATAR __ 
+
+
+ESSA DATA 
+
+
+
+
+______EM MÚLTIPLOS LUGARES... (isso se todos esses lugares 
+
+PRECISAREM 
+
+DO 
+
+'LATEST UPDATE/LATEST DATA CHANGE' desse user....) -------> MAS ISSO 
+
+
+
+__ PODE SER OK __, pode ser OK PQ 
+
+
+__NOS DÁ 
+
+
+
+A VANTAGEM IMENSA DE 
+
+
+'SE EM ALGUM MOMENTO QUISERMOS 
+
+
+
+RETRIEVAR __ DATA_ ,
+
+
+
+__NÓS __ NÃO VAMOS PRECISAR TER DE __'JOIN MULTIPLE TABLES TOGETHER' (o que pode levar a CÓDIGO __MUITO LONGO __ E DIFÍCIL, e oq pode também impactar performance),
+
+
+
+
+ EM VEZ DISSO PODEMOS 
+
+
+
+
+
+ SIMPLESMENTE 'READ THE DATA' 
+
+ LÁ 
+
+
+ DA 
+
+
+ COLLECTION DE 
+
+ 'orders',
+
+
+
+ E AÍ PROVAVELMENTE 
+
+
+
+ VAMOS TER TODA A DATA QUE 
+
+ PRECISAMOS 
+
+
+
+
+
+OUTPUTTAR NA PÁGINA DE 'ORDERS',
+
+
+SEM PRECISAR 
+
+'REACH OUT TO THE OTHER COLLECTIONS (como users e products)',
+
+
+
+
+
+
+O QUE 
+
+
+
+
+NOS DÁ A VANTAGEM DE ISSO AÍ, ESSE FETCH DE DADOS,
+
+SER 
+
+REALIZADO 
+
+DE UMA MANEIRA 
+
+
+
+SUPER RÁPIDA...
+
+
+
+
+
+
+
+--> E ESSA É UMA DAS 
+
+
+
+GRANDES VANTAGENS DO 'NOSQL' ---> ELE PODE 
+
+SER 
+
+
+SUPER 
+
+RÁPIDO E EFICIENTE... 
+
+
+
+
+
+
+
+
+--> NOSQL 
+
+
+CARACTERÍSTICAS EM GERAL:
+
+
+
+
+
+
+
+
+1) NÃO TEMOS STRICT DATA SCHEMA; PODEMOS TER 'MIXED DATA' NA MESMA COLLECTION (coisas como {name, id, age} e então {id, age})
+
+
+NENHUMA STRUCTURE IS REQUIRED....
+
+
+
+
+
+
+
+2) NÃO TEMOS 'DATA RELATIONS' forçadas.... ---> NA VERDADE, 
+
+
+
+PODEMOS 
+
+'RELATE' NOSSOS DOCUMENTS __ EM ALGUMAS MANEIRAS/DE ALGUMA MANEIRA,
+
+
+
+MAS NÃO SOMOS OBRIGADOS A ISSO.... 
+
+
+(you can relate documents but you dont have to... --> AND YOU SHOULDNT DO IT TOO MUCH,
+OR YOUR QUERIES BECOME SLOW...
+) 
+
+
+
+---> É POSSÍVEL 
+
+
+_____ CONNECTAR TABLES LÁ NO MUNDO NOSQL,
+
+E VEREMOS 
+
+COMO CONECTAR 
+
+ESSA DATA... --> veremos isso no MÓDULO DO NOSQL... ------> 
+
+
+
+
+
+
+
+MAS EM GERAL,
+
+NÓS TEMOS 
+
+__NENHUMA CONNECTION, OU POUCAS CONNECTIONS,
+
+
+no mundo NOSQL... ----> 
+
+
+
+
+E EM VEZ DISSO, TENTAMOS 'COPY DATA',
+
+
+E aí __TER __ COLLECTION/COLLECTIONS COM DOCUMENTS QUE 
+
+
+
+FUNCIONAM POR CONTA PRÓPRIA...
+
+
+
+
+
+
+ok... essas são as diferenças...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> HÁ TBM UMA DIFERENÇA 
+
+
+
+ENTRE OS 2,
+
+NO QUE DIZ RESPEITO À 'SCALABILITY'...
+
+
+
+
+
+
+
+
+
+
+3) SCALABILITY... ----> CONFORME NOSSO APP CRESCE E PRECISAMOS ARMAZENAR MAIS DADOS, RETRIEVAR MAIS DADOS, TRABALHAR COM MAIS DADOS, VAMOS PRECISAR __'SCALE' NOSSOS SERVERS DATABASE....
+
+--> E PODEMOS DIFERENCIAR ENTRE 'VERTICAL' E 'HORIZONTAL 'scaling'...
+
+
+
+
+
+
+
+
+---> DAREMOS UMA OLHADA NISSO E COMO 
+
+
+
+SQL E NOSQL SE COMPARAM, na próxima aula...

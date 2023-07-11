@@ -1,0 +1,843 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> NÓS JÁ ESTAMOS RESTRINGINDO O NÚMERO DE PRODUCTS QUE 1 DETERMINADO USER PODE VER PARA FAZER 
+
+
+'DELETE'/'REMOVE' (só poderá remover/editar o PRODUCT QUE ELE MESMO TENHA CRIADO...)
+
+
+
+
+
+
+
+
+
+O CÓDIGO QUE USAMOS FOI ESTE:
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  console.log(req.session.user);
+
+  const userId = req.session.user._id;
+  const userId2 = req.user._id
+
+  console.log(userId);
+
+
+
+  console.log(userId2);
+
+  Product.find({ userId: userId })  ////////EIS O CÓDIGO EM QUESTÃO.
+   
+    .then((products) => {
+      if (!products) {
+        res.render('admin/product-list-admin', {
+          path: '/admin/products-list',
+          pageTitle: 'Admin Products Page',
+          prods: [],
+        });
+      }
+
+      res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products,
+      });
+    });
+
+};
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+ISSO JÁ ERA UM GRANDE PASSO ADIANTE,
+
+
+MAS ISSO _ NÃO SIGNIFICA QUE __ NÓS NÃO CONSIGAMOS 
+
+
+
+ENVIAR 
+
+REQUESTS 
+
+
+
+
+mesmo assim,
+
+
+
+ENVIAR REQUESTS por meio do 'creating our own pages', 
+
+
+PAGES EM QUE _ AINDA TENTAMOS 'DELETE ANOTHER PRODUCT, ONE THAT WE DID NOT CREATE'... --------> É POR ISSO, PORTANTO,
+
+
+QUE 
+
+
+
+É __ NECESSÁRIO___ ADICIONAR PROTECTIONS __ 
+
+
+
+NAS NOSSAS ACTIONS/CONTROLLERS 
+
+de 
+
+'post',
+
+ 
+
+
+
+
+
+ __JUSTAMENTE EM CONTROLLERS COMO 
+
+
+ 'exports.postEditProduct' 
+
+
+ e 
+
+
+
+ 'exports.postAddProduct'..
+
+
+
+
+
+
+
+ -------> LÁ, NESSE LOCAL DO 'DELETE',
+
+
+
+ __VAMOS QUERER __ CHECAR__ SE O PRODUCT QUE 
+
+ ESTAMOS TENTANDO FAZER 'DELETE' __ REALMENTE__ FOI 
+
+ CRIADO_ _ PELO 
+
+ USER 
+ QUE 
+ ESTÁ 
+ 'CURRENTLY LOGGED IN'...
+
+
+
+
+
+
+
+
+
+ ---------> É POR ISSO QUE EM 'postEditProduct',
+
+
+
+
+ SERÁ BEM LEGAL 
+
+
+
+ __COLOCAR UM IF CHECK NELE....
+
+
+
+
+
+
+
+
+ -------> VAI SER 1 CHECK __ QUE SERÁ EXECUTADO ___ LOGO APÓS O MOMENTO __ EM QUE 
+
+
+ 'I FOUND THE PRODUCT THAT SHOULD BE EDITED',
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  Product.findById(productId) 
+
+    .then((product) => { ///VAMOS COLOCAR O CHECK TIPO AQUi...
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+
+      return product.save(); 
+    })
+    .then((result) => {
+      console.log('UPDATED PRODUCT');
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.redirect('/admin/product-list-admin');
+    });
+};
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+->>>>> NESSE IF CHECK, VAMOS CHECAR ___ SE TEMOS __ PERMISSÃO PARA 
+
+FAZER 
+O  
+
+'EDIT' 
+
+DESSE PRODUCT... -------> É POR ISSO QUE DENTRO DO THEN BLOCK,
+
+
+em que temos o pRODUCT FETCHEADO DA DATABASE,
+
+
+
+PROFESSOR 
+
+
+vai 
+
+rapidamente escrever 
+
+
+
+
+'if (product.userId !== req.user._id )' ,
+
+
+
+
+
+
+
+PQ 
+
+SE ESSES VALORES ___ NÃO FOREM IGUAIS__, 
+
+
+
+
+
+AÍ ISSO SIGNIFICA/SIGNIFICARÁ 
+QUE 
+
+
+'
+THE WRONG USER IS TRYING TO EDIT THIS '...
+
+
+
+
+-----------------
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  Product.findById(productId) 
+
+    .then((product) => { ///VAMOS COLOCAR O CHECK TIPO AQUi...
+
+
+    if(product.userId !== req.user._id) { /////EXEMPLO CLÁSSICO DE 'AUTHORIZATION'....
+
+
+    }
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+
+      return product.save(); 
+    })
+    .then((result) => {
+      console.log('UPDATED PRODUCT');
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.redirect('/admin/product-list-admin');
+    });
+};
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+AÍ, NESSE CASE DE 'FRACASSO' Aí,
+
+
+VAMOS __ QUERER __ SIMPLESMENTE __ 
+
+
+
+RETORNAR COM UM REDIRECT 
+
+
+
+
+
+
+À PÁGINA DE INDEX/STARTING PAGE  -----> VAMOS QUERER ISSO PQ 
+
+ESSE 
+
+CASE 
+É 
+O 
+
+CASE DE ALGUÉM QUE 'IS TRYING TO DO SOMETHING FISHY',
+
+
+o que 
+
+
+é 
+
+razão para DEIXARMOS DE TENTAR CONTINUAR...
+
+
+
+
+
+
+
+
+-----> OK...
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  Product.findById(productId) 
+
+    .then((product) => { ///VAMOS COLOCAR O CHECK TIPO AQUi...
+
+
+    if(product.userId !== req.user._id) { /////EXEMPLO CLÁSSICO DE 'AUTHORIZATION'....
+
+        return res.redirect('/');
+
+    }
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+
+      return product.save(); 
+    })
+    .then((result) => {
+      console.log('UPDATED PRODUCT');
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.redirect('/admin/product-list-admin');
+    });
+};
+
+
+
+
+
+
+------------------------------------------ 
+
+
+
+
+
+O CÓDIGO FICA ASSIM, NA REAL:
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  Product.findById(productId) 
+
+    .then((product) => { ///VAMOS COLOCAR O CHECK TIPO AQUi...
+
+
+    if(product.userId !== req.user._id) { /////EXEMPLO CLÁSSICO DE 'AUTHORIZATION'....
+
+        return res.redirect('/');
+
+    }
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+
+      return product.save().then(
+
+            (result) => {
+
+                console.log('UPDATED PRODUCT');
+                res.redirect('/admin/product-list-admin');
+            }
+
+      )
+    }
+    )
+    .catch((err) => {
+      console.log(err);
+
+      res.redirect('/admin/product-list-admin');
+    });
+};
+
+
+
+
+
+
+
+--> OK... 
+
+VAMOS TESTAR PARA VER SE ISSO FUNCIONA...
+
+
+
+
+
+
+
+
+--> acho que ainda falta a route/controller de ADD, TAMBÉM..
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+OK.... MAS VAMOS QUERER FAZER A MESMA COISA, MAS COM 'delete product'...
+
+
+
+
+
+
+
+O CÓDIGO DE DELETE PRODUCT É:
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id;
+
+
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+-----------------------
+
+OK... MAS AQUI TEMOS 1 PROBLEMA... --> o 'findByIdAndDelete' é um MÉTODO COMPOSTO,
+
+que 
+
+
+faz 
+
+as 
+
+
+2 operações juntas... 
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE PODEMOS IMPLEMENTAR ISSO FACILMENTE POR meio 
+
+
+
+
+
+_____ DO ___ 
+
+
+
+
+CHANGE 
+
+
+
+
+DESSE METHOD de 'findByIdAndDelete',
+
+
+
+TROCAR ELE POR UM METHOD de 
+
+
+
+'deleteOne()'...
+
+
+
+
+
+
+
+tipo assim:
+
+
+
+
+
+
+'''Product.deleteOne()''''
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE VAMOS QUERER DELETAR 1 PRODUCT, MAS DELETAR 
+
+1 
+
+PRODUCT ___ EM QUE__ O 'id' (_id) 
+
+
+DESSE PRODUCT 
+
+
+É 
+
+
+IGUAL 
+
+
+
+Ao 
+
+
+
+'prodId' (critério inicial),
+
+
+
+MAS __ TAMBÉM __ EM QUE 
+
+
+
+
+O 
+
+
+'userId' É IGUAL A 'req.user._id'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id;
+
+
+
+  Product.deleteOne({_id: prodId, userId: req.user._id}) ////////EIS O CÓDIGO EM QUESTÃO.
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+----------------------------------------
+
+
+
+OK, ISSO 
+
+
+SIGNIFICA QUE 
+
+
+
+__AMBOS ___ OS CRITÉRIOS DEVEM DAR 'TRUE'
+
+para 
+
+O 
+
+
+CARA SER CAPAZ DE DELETAR AQUELE PRODUCT (só o 'prodId' não vai ser suficiente..) ---> O USERID 
+
+
+TAMBÉM TEM QUE dar 'match' ... --------> OK....
+
+
+
+
+
+
+----> ISSO SERÁ NOSSA AUTHORIZATION, ESSENCIALMENTE...
+
+
+
+
+
+
+
+
+
+-----> OK... QUANDO CLICARMOS EM 'delete',
+
+
+
+
+SEM 
+
+
+TER ESSE 'USER' 
+
+ESPECÍFICO,
+
+
+__NÃO _ VAMOS NEM __ MESMO __ VER 
+
+o 
+
+
+'DELETE' nesse product...   
+
+(
+
+  ok, mas 
+
+
+  MESMO ASSIM NÃO VAMOS VER ESSE PRODUCT EM 'ADMIN PRODUCTS' SE NÃO 
+
+  FORMOS O ADMIN/USER QUE O CRIOU..... --> NÓS __ SÓ VAMOS __ VER 
+
+
+
+  OS NOSSOS PRODUCTS, QUE FORAM CRIADOS POR NÓS,
+
+
+  por causa de 'req.user._id' 
+
+
+  armazenado no nosso browser...
+)
+
+
+
+
+
+
+
+----> E ___ MESMO __ SE O USER__ TENTAR__ DELETAR__ ESSE PRODUCT_ _POR 
+
+
+MEIO 
+
+
+DO TYPE MANUAL DE VALORES, ELE NÃO VAI CONSEGUIR,
+
+
+__POIS__ NÃO TERÁ __ A SESSION 
+
+desse user específico armazenada no browser...
+
+
+
+
+
+
+OK.... 
+
+
+
+
+-> MAS 
+
+
+
+
+UM PROBLEMA, AGORA, É QUE MESMO LOGGADOS COM 'THE VALID ACCOUNT' para 
+
+1 determinado product (ou seja, esse user é o CRIADOR desse product),
+
+
+
+NÓS __ AINDA VAMOS 
+
+
+'FAIL' quando tentarmos o editar...
+
+
+
+
+
+
+
+
+-------> OK, MAS PQ FALHAMOS? --> DEVEMOS VER ISSO NA PRÓXIMA AULA...

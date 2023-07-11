@@ -1,0 +1,2220 @@
+
+
+
+
+
+
+
+
+
+----> O PROFESSOR NOS MOSTROU COMO USAR UMA SESSIon... ---> MAS O PROBLEMA É QUE, ATÉ AGORA,
+
+
+ESSA 
+
+SESSION 
+
+
+ESTÁ 
+
+__ARMAZENADA NA 'MEMORY' 
+
+DE NOSSO APP NODE.JS,
+
+
+
+
+POR MEIO DOS 
+
+CÓDIGOS:
+
+
+
+
+
+
+
+
+
+
+
+(app.js):
+
+
+
+
+
+
+
+app.use(session( 
+  {
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', 
+    // secret: 'ASSAasj21jasjxzkvnklnbbnz,qn2oigndpoghojuhojá0wqj0dknbxklcknkmgnhoaso1mnkl2nlg'
+
+  
+    resave: false,
+    saveUninitialized: false 
+   
+    
+
+  }
+)); 
+
+
+
+
+
+
+
+
+^^^^ ISSO AÍ DEFINE O FORMATO/COMO DEVERÁ SER NOSSA SESSION...
+
+
+
+
+
+
+
+
+(controller de 'auth.js'):
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+
+  
+        req.session.isLoggedIn = true; //MANEIRA ___ LEGIT__ de SETTAR 1 SESSION COOKIE no browser de seu user... --> é claro que esse approach aí REQUER QUE VOCÊ TENHA A PACKAGE DE 'express-session' JÁ INSTALADA no seu projeto.... (pq só assim o objeto 'session' no objeto 'request' passa a existir)....
+      
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+^^^^^ESSE É O CÓDIGO QUE __ DEFINE UMA SESSION/propriedades na nossa session QUE 
+
+
+
+SÃO USADAS PARA 'AUTH', essencialmente... (como essa propriedade de 'isLoggedIn=true', que inicialmente é UNDEFINED no SESSION COOKIE de seu user, armazenado no browser do seu user...)
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O __PROFESSOR__ EXPLICA QUE O PROBLEMA DE 
+
+
+
+USAR 
+
+A 
+
+'MEMORY' de seu servidor nodeJS 
+
+PARA 
+
+ARMAZENAR ___ 
+
+SESSIONS É QUE __ 
+
+
+
+
+MEMORY __ DE QUALQUER COISA É __ UM 
+
+
+'LIMITED RESOURCE' -------> ISSO É FINE 
+
+
+
+para 
+
+
+
+development 
+
+intents,
+
+
+
+
+MAS __ PARA __ 1 production SERVER,
+
+ISSO 
+
+
+SERIA/É __HORRÍVEL__.... -------> HORRÍVEL PQ _ 
+
+
+
+SE VOCê 
+
+TEM 
+
+
+
+
+
+
+MILHARES/CENTENAS DE MILHARES DE USERS,
+
+
+
+SUA 
+
+MEMORY VAI
+
+
+RAPIDAMENTE 'OVERFLOW' 
+
+
+SE VOCê 
+
+ARMAZENAR TODA ESSA INFO... --------> VOCÊ N QUER FAZER ISSO,
+
+E 
+
+DE 
+
+UMA 
+
+
+PERSPECTIVA 
+
+DE SEGURANÇA,
+
+TBM NÃO É IDEAL...
+
+
+
+
+
+
+
+
+
+
+--> OK.... ISSO SIGNIFICA QUE 
+
+VAMOS QUERR 
+
+
+ARMAZENAR SESSIONS DE FORMA __DIFERENTE.... ------> 
+
+
+
+
+
+
+
+
+E LÁ 
+
+
+NA DOCUMENTAÇÃO 
+
+
+DO 
+
+
+
+'express-session',
+
+
+
+NA GITHUB PAGE,
+
+
+
+
+
+
+
+
+VOCê 
+
+
+
+ENCONTRA UM MONTE DE 
+
+
+
+coisas chamadas 
+de 
+
+
+
+'Compatible Session Stores'....
+
+
+
+
+
+
+
+
+--> SÃO LISTAS DE STORES __ DE SESSIONS COMPATÍVEIS Com 
+
+
+sessions... -----> E ISSO 
+
+AÍ,
+ 
+
+ ESSA LISTA,
+
+
+
+ é esta:
+
+
+
+
+
+
+
+
+
+
+ ★ aerospike-session-store A session store using Aerospike.
+
+★ better-sqlite3-session-store A session store based on better-sqlite3.
+
+★ cassandra-store An Apache Cassandra-based session store.
+
+★ cluster-store A wrapper for using in-process / embedded stores - such as SQLite (via knex), leveldb, files, or memory - with node cluster (desirable for Raspberry Pi 2 and other multi-core embedded devices).
+
+★ connect-arango An ArangoDB-based session store.
+
+★ connect-azuretables An Azure Table Storage-based session store.
+
+★ connect-cloudant-store An IBM Cloudant-based session store.
+
+★ connect-couchbase A couchbase-based session store.
+
+★ connect-datacache An IBM Bluemix Data Cache-based session store.
+
+★ @google-cloud/connect-datastore A Google Cloud Datastore-based session store.
+
+★ connect-db2 An IBM DB2-based session store built using ibm_db module.
+
+★ connect-dynamodb A DynamoDB-based session store.
+
+★ @google-cloud/connect-firestore A Google Cloud Firestore-based session store.
+
+★ connect-hazelcast Hazelcast session store for Connect and Express.
+
+★ connect-loki A Loki.js-based session store.
+
+★ connect-memcached A memcached-based session store.
+
+★ connect-memjs A memcached-based session store using memjs as the memcached client.
+
+★ connect-ml A MarkLogic Server-based session store.
+
+★ connect-monetdb A MonetDB-based session store.
+
+★ connect-mongo A MongoDB-based session store.
+
+★ connect-mongodb-session Lightweight MongoDB-based session store built and maintained by MongoDB.
+
+★ connect-mssql-v2 A Microsoft SQL Server-based session store based on connect-mssql.
+
+★ connect-pg-simple A PostgreSQL-based session store.
+
+★ connect-redis A Redis-based session store.
+
+★ connect-session-firebase A session store based on the Firebase Realtime Database
+
+★ connect-session-knex A session store using Knex.js, which is a SQL query builder for PostgreSQL, MySQL, MariaDB, SQLite3, and Oracle.
+
+★ connect-session-sequelize A session store using Sequelize.js, which is a Node.js / io.js ORM for PostgreSQL, MySQL, SQLite and MSSQL.
+
+★ connect-sqlite3 A SQLite3 session store modeled after the TJ's connect-redis store.
+
+★ connect-typeorm A TypeORM-based session store.
+
+★ couchdb-expression A CouchDB-based session store.
+
+★ dynamodb-store A DynamoDB-based session store.
+
+★ express-etcd An etcd based session store.
+
+★ express-mysql-session A session store using native MySQL via the node-mysql module.
+
+★ express-nedb-session A NeDB-based session store.
+
+★ express-oracle-session A session store using native oracle via the node-oracledb module.
+
+★ express-session-cache-manager A store that implements cache-manager, which supports a variety of storage types.
+
+★ express-session-etcd3 An etcd3 based session store.
+
+★ express-session-level A LevelDB based session store.
+
+★ express-session-rsdb Session store based on Rocket-Store: A very simple, super fast and yet powerfull, flat file database.
+
+★ express-sessions A session store supporting both MongoDB and Redis.
+
+★ firestore-store A Firestore-based session store.
+
+★ fortune-session A Fortune.js based session store. Supports all backends supported by Fortune (MongoDB, Redis, Postgres, NeDB).
+
+★ hazelcast-store A Hazelcast-based session store built on the Hazelcast Node Client.
+
+★ level-session-store A LevelDB-based session store.
+
+★ lowdb-session-store A lowdb-based session store.
+
+★ medea-session-store A Medea-based session store.
+
+★ memorystore A memory session store made for production.
+
+★ mssql-session-store A SQL Server-based session store.
+
+★ nedb-session-store An alternate NeDB-based (either in-memory or file-persisted) session store.
+
+★ @quixo3/prisma-session-store A session store for the Prisma Framework.
+
+★ restsession Store sessions utilizing a RESTful API
+
+★ sequelstore-connect A session store using Sequelize.js.
+
+★ session-file-store A file system-based session store.
+
+★ session-pouchdb-store Session store for PouchDB / CouchDB. Accepts embedded, custom, or remote PouchDB instance and realtime synchronization.
+
+★ session-rethinkdb A RethinkDB-based session store.
+
+★ @databunker/session-store A Databunker-based encrypted session store.
+
+★ sessionstore A session store that works with various databases.
+
+★ tch-nedb-session A file system session store based on NeDB.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSA LISTA,
+
+BASICAMENTE 
+
+__TODOS __OS TIPOS DE DATABASE
+
+
+
+SÃO SUPORTADOS... ----> VOCÊ Poderia/PODE 
+
+
+ARMAZENAR 
+
+
+
+ESSAS 
+
+SESSIONS 
+
+EM 
+
+
+__fILES__, 
+
+apesar 
+
+de 
+
+isso 
+CERTAMENTE 
+NÃO TE 
+
+DAR 
+
+A MELHOR PERFORMANCE... -------> 
+
+
+
+
+
+NÓS, NO CASO,
+
+
+
+VAMOS 
+
+
+USAR O MONGODB,
+
+PQ JÁ ESTAMOS USANDO ISSO... -->
+
+
+
+
+PARA ISSO,
+
+VAMOS USAR A PACKAGE
+
+
+DE 
+
+'connect-mongodb-session'...
+
+
+
+
+
+
+
+
+
+
+
+------> OK... VAMOS INSTALAR ESSA PACKAGE... --> 
+
+E AÍ 
+
+VAMOS 
+
+REGISTRAR 
+
+
+ESSA PACKAGE COMO 
+
+
+A 
+
+'STORE' 
+
+
+COM QUE PODEREMOS/VAMOS 
+
+
+TRABALHAR....
+
+
+
+
+
+
+
+
+
+--> VAMOS RODAR 
+
+
+'npm install --save connect-mongodb-session';
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+--> CERTO... PODEMOS USAR ESSA PACKAGE PARA __ DEIXAR NOSSA 
+
+
+
+PACKAGE DE 
+
+'express-session'
+
+
+ARMAZENAR DATA, PARTICULARMENTE 
+
+'SESSION DATA'.... (dentro da database)...
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+VAMOS ATÉ 
+
+'app.js',
+
+
+
+
+naquele LOCAL EM QUE INICIALIZAMOS/DEFINIMOS NOSSA SESSION,
+
+
+
+
+AQUI:
+
+
+
+
+app.use(session( 
+  {
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', 
+
+  
+    resave: false,
+    saveUninitialized: false 
+   
+    
+
+  }
+)); 
+
+
+
+
+
+
+
+
+
+--> NESSE LOCAL AÍ 
+
+
+VAMOS __CONFIGURAR NOSSO STORE, TAMBÉM...
+
+
+
+
+
+
+
+
+--> PARA SETTAR ESSE STORE,
+
+PRIMEIRAMENTE O PROFESSOR VAI IMPORTAR 
+
+
+
+
+
+um negócio 
+
+
+
+
+
+
+que chamará de 
+
+
+'mongoDBStore'...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const mongoDBStore = require('');
+
+
+
+
+
+
+
+
+
+--> AÍ ELE VAI PEDIR JUSTAMENTE O 'connect-mongodb-session' PACKAGE.... (isso lá em 'app.js')
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+const mongoDBStore = require('connect-mongodb-session'); ////EIS O CÓDIGO EM QUESTÕA.
+
+
+
+
+
+app.use(session( 
+  {
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', 
+
+  
+    resave: false,
+    saveUninitialized: false 
+   
+    
+
+  }
+)); 
+
+
+---------------------------
+
+
+
+
+
+
+OK.... ISSO FEITO,
+
+
+PROFESSOR VAI USAR OUTRA SINTAXE BIZARRA...
+
+
+
+
+
+
+
+
+
+
+
+temos isto:
+
+
+
+
+const mongoDBStore = require('connect-mongodb-session');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> E ISSO AÍ, ESSE PACKAGE AÍ, 
+
+VAI __ACTUALLY__ TE RETORNAR UMA __ FUNCTION.... ------> E AÍ,
+
+
+
+VOCê 
+
+
+DEVE __ USAR___ ESSA FUNCTION,
+
+
+DEVE __ PASSAR__ 
+
+
+
+
+SEU OBJETO 'session' (
+
+
+
+  que é 
+
+
+  'const session = require('express-session)'
+
+)
+
+
+
+
+COMO PARâMETRO DESSA '''''''FUNÇÃO'''''''''.
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+--------->  OK... ISSO SIGNIFICA QUE ESSA CONST de 
+
+
+
+
+
+
+'mongoDBStore' 
+
+
+__INTEIRA__ 
+
+
+vai 
+
+
+representar o longo código de 
+
+
+
+
+'require('connect-mongodb-session')(session);'
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO...
+
+
+
+
+
+------> agora, munido dessa const 
+
+DE 
+
+'mongoDBStore',
+
+
+
+
+_____ VOCÊ PODE 
+
+
+
+________INICIALIZAR UM NOVO 'STORE',
+
+
+
+
+por meio de um código como 
+
+
+
+
+'const store = ... '      (VAI ARMAZENAR ESSE STORE EM UMA CONSTANTE, constante de qualquer nome)...
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+
+const store = ...;
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+------> OK...  AÍ, NESSA CONSTANTE AÍ,
+
+VOCê 
+
+VAI 
+
+
+__EXECUTAR___ O 'mongoDBStore'
+
+
+
+COMO _ SE ELE FOSSE UM CONSTRUCTOR, 
+
+
+VAI INSTANCIAR 
+
+
+
+1 'OBJETO mongoDBStore'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+
+const store = new mongoDBStore();
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+OK... MAS PQ PODEMOS FAZER ISSO? 
+
+
+
+
+--> É PQ 
+
+
+
+essa função de 'require('connect-mongodb-session')(session) 
+
+PARECE 
+
+
+
+___ NOS __ 'YIELD UMA CONSTRUCTOR FUNCTION' (essa função é uma constructor function...)
+
+
+
+
+
+
+
+
+
+
+------> DENTRO DESSE 
+
+
+'store',
+
+
+que terá esse 'new MongoDBStore()',
+
+
+
+
+
+
+
+
+
+VOCÊ __ VAI PASSAR ALGUMAS _____OPTIONS __ EM 1 OBJETO JAVASCRIPT... 
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+
+const store = new MongoDBStore(
+  {///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+  }
+)
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+--> OK,  
+MAS QUE OPÇÕES ESSE 
+
+
+
+'DATABASE STORE' 
+
+
+
+
+PODE 
+
+QUERER? -------> BEM ,
+
+
+
+
+ELE PRIMEIRAMENTE 
+
+VAI __ PRECISAR DE UMA 
+
+
+
+'
+CONNECTION STRING'... -------> ISSO PQ 
+
+
+
+
+__ELE PRECISA/PRECISARÁ 
+
+
+
+___________sABER EM __QUAL DATABASE__/
+
+QUE 
+
+DATABASE 
+
+
+
+_____ SERVER VOCê VAI QUERER 
+
+
+
+
+_ARMAZENAR SUAS SESSIONS.... -------> 
+
+
+
+
+bem.... ----> NÓS JÁ TEMOS AQUELA CONNECTION STRING DE NOSSO 
+
+
+SERVIDOR/DATABASE MONGODB,
+
+
+aquela fita 
+
+
+string 
+
+de 
+
+
+''
+
+'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority'
+
+
+'''
+
+
+
+
+
+
+
+------> AÍ VAMOS PEGAR ISSO 
+
+
+
+e colar 
+
+
+
+
+DENTRO 
+
+
+
+
+DE 1 KEY NESSE OBJECT, chamada de 
+
+
+'uri'...
+
+
+
+
+
+(
+
+  OBS: como vamos usar essa fita string do mongodb em MÚLTIPLOS LUGARES (tanto em 'mongoose.connect()', lá embaixo, como NESSE OBJETO '{}' dentro do call de 'new MongoDBStore', O PROFESSOR DECIDE ARMAZENAR ISSO EM UMA CONST GLOBAL CHAMADA DE 'const MONGODB_URI = stringgggg';
+)
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+
+const store = new MongoDBStore(
+  {///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+
+      uri:  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority'
+
+  }
+)
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+CERTo...
+
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+
+PROFESSOR RESSALTA 
+
+
+
+QUE __ A SESSION/AS SESSION ___ SERÁ/serão ARMAZENADA/armazenadas 
+
+
+
+
+LÁ NA DATABASE DE 'shop',
+
+
+
+PQ 
+
+
+É 
+
+A ISSO QUE 
+
+ESSA FITA DIRECIONA...
+
+
+
+
+
+
+
+
+-----> VOCÊ PODERIA USAR UMA DATABASE DIFERENTE, É CLARO (1 database para o store de SESSIONS, outra para o STORE DA DATA DE SEU APP),
+
+
+
+
+MAS O PROFESSOR AFIRMA QUE ELE ESTÁ 'FINE' COM O USO DE APENAS 1 ÚNICA DATABASE....
+
+
+
+
+
+
+
+
+
+-----> CERTO... PODEMOS USAR A MESMA DATABASE,
+
+
+MAS 
+
+
+ALGO QUE É __NECESSÁRIO__ FAZER É __DEFINIR 1 __COLLECTION__... -------> 
+
+
+E VOCÊ __ REALMENTE__ PRECISA DEFINIR 1 'COLLECTION',
+
+
+
+
+ 
+ OU SEJA,
+
+ 1 LOCAL 
+
+ ONDE SUAS 
+
+
+ SESSIONS FICARÃO ARMAZENADAS...
+
+
+
+--> E ESSA INFORMAÇÃO FICARÁ CONTIDA EM 
+
+1 
+
+
+key de 
+
+
+
+'collection:',
+
+
+
+TIPO ASSIM:
+
+
+
+'collection: 'sessions' '
+
+
+
+
+
+
+ --> 
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+ 
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+
+const store = new MongoDBStore(
+  {///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+
+      uri:  'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority',
+
+      collection: 'sessions'
+
+  }
+)
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+É CLARO QUE VOCê TBM PODE SETTAR INFORMAÇÕES/configurações adicionais,
+
+
+COMO 
+
+
+1 
+
+'expires',
+
+QUE 
+
+
+DEFINE 
+
+
+__QUANDO ___ ESSA 
+
+SESSION DEVERÁ EXPIRAR... ------> SE VOCÊ SETTAR ISSO AÍ,
+
+SUA 
+
+SESSION SERÁ AUTOMATICAMENTE 'CLEANED UP' PELO MONGODB QUANDO 
+
+
+
+A DATA CHEGAR...
+
+
+
+
+
+
+---------------------------
+
+
+
+
+EX:
+
+
+
+
+
+
+const store = new MongoDBStore(
+  {///objeto OPTIONS dessa instanciação desse 'mongo db store', que é usado para ARMAZENAR SUAS SESSIONS...
+
+
+
+    uri: MONGODB_URI, ///mesma connection string de nosso CONNECT GERAL AO NOSSO DATABASE... (usado lá em 'mongoose.connect()')...
+
+    collection: 'sessions', //aqui você define a COLLECTION em que você vai querer ARMAZENAR SUAS SESSIONS....
+    //expires// opcional.... ---> SE VOCÊ SETTAR ISSO, o mongodb VAI AUTOMATICAMENTE LIMPAR suas sessions ARMAZENADAS NESSA collection aí, quando o tempo delas expirar, tempo definido nessa key...
+
+
+  } //em 'uri' você deve colocar A __sTRING__ DA DATABASE EM QUE VOCê VAI QUERER ARMAZENAR (o seu store) SUAS SESSIONS...
+  
+)
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+COM ISSO,
+
+
+TEREMOS 
+
+NOSSA 
+
+'store'
+
+
+DEFINIDA 
+
+
+NO NOSSO APP.... -----> E AGORA,
+
+
+QUANDO 
+
+SALVARMOS 
+
+
+
+NOSSO CÓDIGO,
+
+
+VAMOS 
+
+GANHAR 
+
+ 
+
+
+ 1 ERRO GROTESCO...
+
+
+ (mas eu não recebi erro algum....)
+
+
+
+
+
+
+
+ PROFESSOR DIZ QUE 
+
+
+ ERRO OCORREU 
+
+ por 
+
+ causa 
+
+
+
+
+
+ DA PARTE 
+
+
+ 'retryWrites=true'
+
+
+
+
+ NA NOSSA CONNECTION URL,
+
+ que 
+
+ está assim:
+
+
+
+
+
+ 'mongodb+srv://madblorga:T5lws5TGxtclEbKI@cluster0.nhtjo.mongodb.net/shop?retryWrites=true&w=majority'
+
+
+
+
+
+
+
+
+
+
+
+ ---> CERTO... mas eu __ NÃO RECEBI ESSE ERRO..
+
+
+
+
+
+
+
+
+
+OK, AGORA TEMOS NOSSO 'STORE' SETTADO NO NOSSO APP,
+
+
+e 
+
+
+
+podemos USAR ESSE STORE __COMO _ UMA 'SESSION STORE'... -----> PARA FAZER ISSO,
+
+
+USAR 
+
+ESSE 
+
+
+STORE COMO 'SESSION STORE',
+
+
+
+
+
+DEVEMOS __ IR __ JUSTAMENTE __ AO LOCAL EM QUE 
+
+
+
+
+________INICIALIZAMOS NOSSA SESSION, LÁ EM 'app.js',
+
+
+
+exatamente naquele 
+
+local 
+
+de 
+
+
+''''
+
+
+
+
+
+app.use(session(
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', ///segredo FRACO.... vocÊ DEVE _USAR __SECRETS _ FORTES (longas strings, o ideal são 'random sets of characters'... --> colocamos isso NA FASE DE PRODUCTION...) --> O 'secret' É USADO NO __ GENERATE__ Do 'id' QUE SERÁ armazenado no seu 'SESSION COOKIE', no browser do usuário... (ver aulas 'o que é uma session' e 'initializing the session middleware')  --> OBS: O ID __ da session ARMAZENADO NO SERVER/DATABASe é o id 'puro', ao passo que o ID __ armazenado no BROWSER em 1 cookie ( o SESSION COOKIE, cookie em que fica ARMAZENADA A SESSION, o COUNTERPART da session que será matcheado com ela) SERÁ 1 'HASHED ID', UM ID ___CODIFICADO, cujo algoritmo SÓ É ENTENDIDO PELO PRÓPRIO APP NODE QUE CRIOU/FORMATOU ESSE HASHED ID, E QUE __ DEPENDE DESSE VALOR AÍ, de 'secret' nesse define da sua session... 
+
+    resave: false,
+    saveUninitialized: false 
+
+ 
+  }
+)); 
+
+
+
+
+''''''''
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+--> VAMOS ALI 
+
+
+
+
+E AÍ __ ADICIONAMOS __ OUTRA KEY/option __ 
+
+DENTRO 
+
+DAQUELE OBJETO 
+
+'option' ({})
+
+
+
+
+
+na 'session()',
+
+
+QUE 
+
+
+SERÁ 
+
+
+
+UMA 
+
+
+KEY DE 
+
+'
+store:',
+
+
+
+
+
+
+EM QUE 
+
+
+
+
+__VAMOS __ ESPECIFICAR __ NOSSA CONSTANTE 
+
+'store'
+
+
+
+
+EM QUE 
+
+
+
+ARMAZENAMOS NOSSO 'INITIALIZED MONGODB STORE'...
+
+
+
+
+
+
+
+
+
+
+
+ex (sim, todas essas linhas são necessárias):
+
+
+
+
+
+ 
+const session = require('express-session);
+
+const mongoDBStore = require('connect-mongodb-session')(session);
+
+
+
+const store = new MongoDBStore(
+  {
+
+
+
+    uri: MONGODB_URI, 
+
+    collection: 'sessions', 
+  
+
+
+  } 
+  
+)
+
+
+
+app.use(session(
+  { 
+
+
+    secret: 'asjosaoasjoasjoghihninknxcknklnknlk', 
+
+    resave: false,
+    saveUninitialized: false,
+    store: store ////////EIS O CÓDIGO EM QUESTÃO.
+
+ 
+  }
+)); 
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+COM ISSO,
+
+
+
+sua SESSION DATA __ REALMENTE __ PASSARÁ 
+
+A 
+
+SER 
+
+ARMAZENADA 
+
+NESSE STORE AÍ.... 
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO SIGNIFICA QUE 
+
+
+
+SE AGORA VOLTARMOS A NOSSA PAGE E ENTÃO 
+
+
+
+
+
+clicarmos
+
+
+NO BUTTON DE 'login',
+
+
+
+
+
+
+___ NÓS VAMOS GANHAR 1 NOVA 'SESSION COOKIE'
+
+
+
+
+NO NOSSO BROWSER,
+
+
+
+
+MAS 
+
+
+A DIFERENÇA É QUE 
+
+ESSA 
+
+'SESSION' 
+
+
+
+
+AGORA 
+
+
+
+
+
+TERÁ SUA CONTRAPARTE __  (a session com o REAL ID )
+
+
+
+ARMAZENADA __ 
+
+
+
+
+LÁ 
+
+NA NOSSA 
+
+DATABASE MONGODB.... (na collection de 'sessions'...)
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COM EFEITO,
+
+
+
+
+1 
+
+
+DOCUMENT 'SESSION' realmente foi criado na collection 'sessions',
+
+
+LÁ NO MONGODB...
+
+
+
+
+
+
+
+
+
+--> SEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+{
+    "_id": "tBKy3qfCGJcL_w8x7WnaU6rpeAEkWmoK",
+    "expires": {
+        "$date": "2021-11-15T03:45:37.402Z"
+    },
+    "session": {
+        "cookie": {
+            "originalMaxAge": null,
+            "expires": null,
+            "secure": null,
+            "httpOnly": true,
+            "domain": null,
+            "path": "/",
+            "sameSite": null
+        },
+        "isLoggedIn": true
+    }
+}
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+E NESSE NEGÓCIO, REALMENTE É POSSÍVEL VER AQUELE 
+
+'isLoggedIn=true'...
+
+
+
+
+
+
+
+
+
+
+AQUELE '_id' 
+
+É IMPORTANTE,
+
+
+vemos que 
+tem 1 id 
+
+
+de 
+
+
+
+    "_id": "tBKy3qfCGJcL_w8x7WnaU6rpeAEkWmoK",
+
+
+
+
+
+
+
+
+    ------> E AÍ TEMOS 
+
+    o 
+
+    'isLoggedIn',
+
+
+
+  
+
+
+  E AÍ 
+
+
+  ALGUMA _ INFO SOBRE_ ___ O COOKIE __ QUE 
+
+
+  
+
+
+  __PERTENCE _ A ESSA SESSION ESPECÍFICA.... (e aí também encontramos o EXPIRY DATE QUE FOI SETTADO POR DEFAULT, null...)
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OK, É ASSIM QUE SESSIONS SÃO ARMAZENADAS 
+
+
+
+  NAS NOSSAS DATABASES,
+
+
+
+
+
+
+
+__ E É ASSIM QUE
+
+
+
+VAMOS QUERER 
+
+
+
+REALMENTE 
+
+ARMAZENAR 
+
+NOSSAS SESSIONS,
+
+
+NA FASE DE PRODUCTION... ----> DEVEMOS USAR ___ 1 ___ SESSION STORE ___ DE VERDADE,
+
+
+ 
+
+ E ____ NUNCA DEVEMOS USAR O 'MEMORY STORE' DO NODEJS,
+
+
+ PQ 
+
+
+ ELE 
+
+ É 
+
+ BEM MENOS SEGURO,
+
+
+
+ E TAMBÉM 
+
+ NÃO É 'LESS UNLIMITED' COMO O 'DATABASE STORE' de sessions....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS O QUE INTERESSA É QUE __ SESSIONS __ SÃO 
+
+
+1 
+
+FERRAMENTA PODEROSA __ PARA FAZER O 
+
+
+__STORE__ DE DATA __ AO LONGO DE __ MÚLTIPLOS REQUESTS,
+
+
+
+AO MESMO TEMPO EM QUE __ SCOPAMOS __ESSES REQUESTS A 1 MESMO USER/BROWSER... (sem fazer o SHARE dessa data ao longo de múltiplos users...)
+
+
+
+
+------>  ISSO PQ AGORA, COMO VOCÊ VIU,
+
+
+
+__DIFERENTES USERS TEM __DIFERENTES SESSIONS__, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> PROFESSOR APONTA QUE O __MAIN USE__ DESSA 
+
+
+'SEPARAÇÃO' DAS SESSIONS 
+
+em relação aos USERS 
+
+
+
+É __rEALMENTE__ AUTHENTICATIOn,
+
+
+
+MAS QUE 
+
+VOCÊ __ TAMBÉM __ PODE 
+
+USAR 
+
+ESSE MESMO SISTEMA DE 'SESSIONS'
+
+
+____ PARA ____ ARMAZENAR COISAS 
+
+
+
+COMO 
+
+
+'SHOPPING CARTS'...(
+
+
+  Ex: PODERÍAMOS ARMAZENAR SHOPPING CARTS EM 
+
+
+  SESSIONS, EM VEZ DE USAR NOSSA DATABASE PARA ISSO.... --------> 
+
+
+
+  NÓS ESTAMOS ARMAZENANDO NOSSOS SHOPPING CARTS EM 1 DATABASE,
+
+  o que 
+
+
+
+  __TAMBÉM É UMA __ 'DECENT SOLUTION',
+
+
+  mas 
+
+
+  É CLARO QUE 
+
+  _VOCÊ __ PODERIA__ ARMAZENAR 
+
+
+
+  1 SHOPPING CART/OS SHOPPING CARTS 
+
+  EM 
+
+  SESSIONS DISTINTAS, 
+
+
+
+
+ARMAZENAR EM SESSIONS DISTINTAS __ NESSE MESMO DATABASE, mas 
+
+
+na collection de 
+
+'sessions',
+
+
+
+
+
+
+
+MAS CERTAMENTE VOCÊ PDOERIA USAR
+
+UMA SESSION PARA ISSO...
+
+
+
+
+)
+
+
+
+
+
+
+
+
+OK... EM GERAL:
+
+
+
+
+
+
+
+---------->
+---------->
+----------> 
+
+USE SESSIONS PARA __ QUALQUER__ DATA QUE 
+
+'BELONGS TO A USER',
+
+DATA QUE ___ VOCê __ NÃO QUER 
+
+PERDER 
+
+
+
+
+
+APÓS O __ SEND DE RESPONSES NO SEU APP, 
+
+E TBM 
+
+
+
+__ DATA___ QUE NÃO DEVE/NÃO DEVERÁ SER VISÍVEL A OUTROS 'AVERAGE USERS'...
+
+
+
+
+
+
+
+
+USE SESSIONS QUANDO:
+
+
+
+A) VOCÊ TIVER DATA QUE 'BELONGS TO A USER' 
+
+
+B) quando você QUISER QUE __ ESSA _DATA NÃO SEJA PERDIDA QUANDO VOCê ENVIAR 1 REQUEST/RECEBER 1 RESPONSE (request lifecycle end) 
+
+
+C) QUANDO VOCÊ __ QUISER __ QUE ESSA DATA QUE 'BELONGS TO A USER' 
+__NÃO SEJA __ COMPARTILHADA/VISTA __ POR  todos os OUTROS USERS DE SEU APP...

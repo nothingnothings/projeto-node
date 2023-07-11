@@ -1,0 +1,1016 @@
+
+
+
+DENTRO DO APP.JS, COMEÇAMOS PELO SIMPLES IMPORT DO 
+
+'EXPRESS'...
+
+
+
+
+Nós importamos esse negócio com o código:
+
+
+
+'const express = require('express');'
+
+
+
+
+IMPORTAMOS A PACKAGE E A ARMAZENAMOS NESSA CONSTANTE, que podemos chamar do nome que quisermos... 
+
+
+
+
+
+PROFESSOR EXPLICA QUE O 'EXPRESS' EM SI, O QUE VOCÊ GANHA POR MEIO DESSE PACOTE,
+ 
+ É UMA ___FUNÇÃO___...
+
+
+
+ --------------------------------------------
+
+
+
+ Como esse 'express' é uma função, o que você fazer aqui, na verdade, é 
+
+ SIMPLESMENTE __CRIAR UM 'APP'___ POR MEIO DO 
+
+ CALL DE 'EXPRESS()'...
+
+ Sim, você chama 'express' como se ele fosse uma simples função....
+
+
+
+ ----------------------------------------
+
+
+
+
+ ex:
+
+
+
+
+ const express = require('express');
+
+
+ const app = express();
+
+
+
+
+ ----------------------------------
+
+
+ ISSO TE DARÁ UM OBJETO 'APP' QUE, NO FINAL DAS CONTAS, É UM OBJETO ____COM UM MONTE __ 
+
+ DE FEATURES E FUNÇÕES, todas elas providenciadas pelo express.
+
+
+
+
+ CERTO, VOCÊ SETTA O EXPRESS DESSA FORMA, CHAMANDO-A DESSE JEITO, COMO UMA FUNÇÃO...
+
+
+
+
+ No objeto 'app' teremos todas as suas features legais....
+
+
+
+
+
+
+ ----> uma coisa que você pode fazer, nesse objeto 'app', é CHAMAR 
+
+
+ 'LISTEN()' (como aprendemos antes, na SINTAXE 'PURA' DO NODE.JS...).
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ 
+ const express = require('express');
+
+
+ const app = express();
+
+
+
+app.listen(3000);
+
+
+
+-----------------------------------
+
+
+
+
+Sim, exatamente como antes...
+
+
+
+
+ISSO FUNCIONA PQ O 'EXPRESS.JS' acaba chamando 
+
+
+essE MÉTODO '.listen' PARA NÓS, POR TRÁS DAS CENAS 
+
+
+
+
+
+
+IMPORTANTE!!!! ---> EXPRESS.JS __AINDA É __ UMA FRAMEWORK...
+
+isso significa que 
+
+ELE FEZ + OU - A MESMA COISA QUE FIZEMOS ANES, COM 'server.listen(3000);' e 'createServer()',
+
+MAS COM SUA 
+
+PRÓPRIA SINTAXE E 'FRAMEWORK'...
+
+
+
+
+
+ou seja, 
+
+
+ELE USOU O CREATE SERVER E o 'listen'
+
+
+PARA NÓS, MAS ELE 
+
+FEZ TUDO ISSO 
+
+
+
+'POR TRÁS DAS CENAS' do node.js....
+
+
+
+---------------------------------------------
+
+
+Esse servidor criado por meio de 
+
+
+'createServer()' 
+
+
+(e, no caso de 'express.js', pelo call de 
+
+
+'.listen()' e de 'express()', armazenado EM UMA CONSTANTE/OBJETO...)
+ 
+
+ PASSA A RESIDIR 
+
+ DENTRO 
+
+ DESSE OBJETO 
+
+
+
+ 'app'... (que é uma constante)....
+
+
+---------------------
+
+
+RESUMINDO:
+
+
+
+essas 3 linhas:
+
+
+
+-------------------------------------------
+
+
+ const express = require('express');
+
+
+ const app = express();
+ 
+
+ app.listen(3000); 
+
+----------------------------------------------
+
+
+
+ NÓS JÁ TERÍAMOS UM SERVIDOR NODE.JS RODANDO...
+
+
+ Seria um servidor NODE.JS '''POWERED BY'''' express.js....
+
+
+  
+  MAS ISSO POR SI SÓ NÃO FARIA MUITA COISA...
+
+
+
+
+
+  O QUE NÓS TIPICAMENTE QUEREMOS FAZER, EM UM SERVIDOR, 
+
+  É AGIR COM BASE EM 'INCOMING HTTP REQUESTS'....
+
+
+
+
+  E, para isso, É IMPORTANTE ___ENTENDER___ COMO O 
+
+  'EXPRESS JS' funciona....
+
+
+
+
+  EXPRESS.JS ---------> É UM 'MIDDLEWARE DRIVEN FRAMEWORK'... --> isso soa fancy, 
+
+  MAS O QUE DIABOS SIGNIFICA?
+
+
+
+Significa que o EXPRESS É 'all about' O FUNNELING DO INCOMING HTTP REQUEST/DOS INCOMING HTTP REQUESTS
+
+POR um monte de  _______FUNÇÕES_____, FUNÇÕES TODAS 
+
+ELAS QUE ___RECEBEM O REQUEST__ E ENTÃO ___ FAZEM COISAS A PARTIR 
+
+DELE_____...
+
+
+---> e cada função dentro desse FRAMEWORK chamado 'express' PODE 
+
+TANTO:
+
+1) PARAR O REQUEST E ENVIAR DE VOLTA UMA RESPONSe  (se isso acontece, o REQUEST NÃO ALCANÇA NENHUMA DAS OUTRAS FUNÇÕES SUBSEQUENTES A ESSA PRIMEIRA FUNCTION QUE O 'CAPTURA'...) ------> se isso acontece, o request não alcança nenhuma outra function, NENHUM OUTRO 'MIDDLEWARE'...
+
+
+
+2) CADA FUNÇÃO/ALGUMAS FUNÇÕES PODEM ___FORWARDAR__ O REQUEST PARA A __PRÓXIMA ___ FUNÇÃO, PARA O PRÓXIMO 'MIDDLEWARE' na fila...
+
+
+
+
+
+MIDDLEWARE  ========== no final das contas, É SIMPLESMENTE UMA 
+
+_______FUNÇÃO____ QUE RECEBE UM REQUEST E ENTÃO PODE ___FAZER ALGO COM ELE____....
+
+
+
+-----------------------------
+
+
+
+
+O professor decide nos mostrar um exemplo...
+
+
+
+Ele diz que podemos registrar um desses MIDDLEWARES por meio da utilização do 
+
+
+método '.use()' ..... DEVEMOS CHAMAR 
+
+ESSE MÉTODO NO 
+
+NOSSO OBJETO 'app'...
+
+
+
+
+
+O MÉTODO '.use()' EXIGE/USA UMA FUNÇÃO __INTERNA__ COMO ARGUMENTO...
+
+
+
+
+
+ex:
+
+
+
+
+
+ const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use(() => { ///////EIS O CÓDIGO EM QUESTÃO.
+
+})
+
+
+
+ app.listen(3000); 
+
+
+
+ ------------------------------
+
+
+
+
+ ESSA FUNÇÃO INTERNA É UMA FUNÇÃO QUE 
+
+ O __EXPRESS___ VAI EXECUTAR PARA NÓS.... E É UMA 
+
+ FUNÇÃO QUE VAI, ENTÃO, __ RECEBER O OBJETO 'REQUEST'....
+
+
+ESSA FUNÇÃO TAMBÉM VAI RECEBER UM SEGUNDO ARGUMENTO, QUE É O _OBJETO RESPONSE__...
+
+
+
+ex:
+
+
+
+
+ const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp) => { ///////EIS O CÓDIGO EM QUESTÃO.
+
+})
+
+
+
+ app.listen(3000); 
+
+
+
+------------------------------------------------------------------
+
+
+
+
+
+ESSA FUNÇÃO TAMBÉM VAI EXIGIR UM TERCEIRO PARÂMETRO, UM PARÂMETRO CHAMADO 
+
+DE 'next()'....
+
+
+Esse parâmetro examinaremos MAIS TARDE...
+
+-------------------------------------------------------
+
+
+
+
+
+
+ const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+
+})
+
+
+
+ app.listen(3000); 
+
+
+
+
+ ---------------------------------------
+
+
+
+ O que temos/teremos, aqui, portanto, É BASICAMENTE 
+
+
+ O MESMO REQUEST, OU UM REQUEST SIMILAR, DAQUELE 
+
+ QUE VIMOS 
+
+
+ EM 
+
+
+ 'http.createServer((request, response) => {
+
+
+ })', 
+
+
+ OS MESMOS OBJETOS QUE PASSAMOS ANTES À FUNÇÃO 'createServer'....
+
+
+
+
+----------------------------------------
+
+
+
+ENTRETANTO, NÃO SERÁ A MESMA COISA __EM AÇÃO__, 
+
+pois essa versão do EXPRESS 
+é 
+
+enriquecida COM FUNCIONALIDADES EXTRAS....
+
+
+
+A mesma coisa ocorre para a RESPONSE, para o OBJETO/PARÂMETRO RESPONSe dessa função ('resp')....
+
+
+
+
+
+Nós teremos esse objeto 'response' nesse método '.use()' PARA 
+
+QUE POSSAMOS __TRABALHAR___ NA/COM a RESPONSE QUE VAMOS ENVIAR DE VOLTA....
+
+
+ele também existe para que O ENVIO DA RESPONSE 'QUANDO ELA ESTÁ PRONTa' ACONTECA 
+AUTOMATICAMENTE.... (ao contrário do que acontece com o node.js puro, em que 
+as funções assíncronas e síncronas criam uma CONFUSÃO.)
+
+
+
+
+
+---> O QUE PODERÍAMOS FAZER AQUI, POR EXEMPLO, É DEFINIR 
+
+UM 'HEADER' na response de 
+
+
+'Content-Type' de tipo 'text/html'....
+
+
+
+
+
+ex:
+
+
+
+
+ const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+
+    resp.setHeader('Content-Type', 'text/html');
+})
+
+
+
+ app.listen(3000); 
+
+
+
+
+ ----------------------------------------------
+
+
+
+ professor explica que TALVEZ ISSO SEJA TUDO QUE VAMOS QUERER FAZER NESSE 
+
+ MIDDLEWARE.... (por alguma razão bizarra)...
+
+
+
+
+
+
+ FEITO ISSO, PODEMOS ADICIONAR _____________OUTRO MIDDLEWARE (por meio de 'use()' ) ____ NO NOSSO CÓDIGO, 
+
+ LOGO DEPOIS DESSE.... (e a ordem __IMPORTA__, SIM)....
+
+
+
+
+ ex:
+
+
+
+
+
+ 
+
+ const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+
+    resp.setHeader('Content-Type', 'text/html');
+})
+
+
+
+app.use(); //////////OUTRO MIDDLEWARE. É executado DEPOIS DO PRIMEIRO.
+
+
+
+
+
+ app.listen(3000); 
+
+
+
+ -------------------------------------
+
+
+
+ Nesse novo middleware, nós DE NOVO passamos aquela função interna...
+
+
+ Nessa função vamos pegar o mesmo objeto req e resp (request e response)... e o NEXT.
+
+
+
+ ex:
+
+
+
+
+
+
+
+  const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+
+    resp.setHeader('Content-Type', 'text/html');
+})
+
+
+
+app.use((req, resp, next) => {
+
+}); 
+
+
+
+
+
+ app.listen(3000); 
+
+
+
+--------------------------------
+
+
+
+
+DENTRO DESSE MIDDLEWARE, PODEMOS TER DECIDIDO/DECIDIR QUE 
+
+NÓS 
+
+'JÁ ACABAMOS' com o SETUP da response, e com A OBTENÇÃO DE DADOS para 
+
+fora do 'request'... como decidimos isso, 
+
+vamos 
+
+
+querer ENVIAR DE VOLTA UMA ___RESPONSE___ ao client/ao usuário....
+
+
+
+
+
+PARA ENVIAR UMA RESPONSE AO USUÁRIO, DEVE-SE UTILIZAR O MÉTODO 
+
+ESPECIAL '.send()'....
+
+------------------------------------------
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+  const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+
+    resp.setHeader('Content-Type', 'text/html');
+})
+
+
+
+app.use((req, resp, next) => {
+    resp.send();
+}); 
+
+
+
+
+
+ app.listen(3000); 
+
+
+
+ ------------------------------------------------------
+
+
+
+
+ ESSE MÉTODO 'send()' É ___NOVO___... ele foi adicionado 
+
+ PELO EXPRESS.js  ---> esse método não existe no NODE.JS PURO...
+
+
+
+
+Dentro dessa resposta, poderíamos/podemos enviar nossa 
+
+
+'H1' TAG...
+
+
+
+essa tag poderá dizer 'hello world'..
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+  const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+
+    resp.setHeader('Content-Type', 'text/html');
+})
+
+
+
+app.use((req, resp, next) => {
+    resp.send('<h1>Hello World!</h1>');
+}); 
+
+
+
+
+
+ app.listen(3000); 
+
+
+
+ ---------------------------------------------------
+
+
+
+ ESSE NEGÓCIO VAI __ENVIAR___ NOSSA STRING, NOSSA STRING QUE SERÁ INTERPRETADA COMO HTML (Devido ao 'resp.setHeader' no use anterior...)
+
+
+COMO  __RESPONSE DATA____...
+
+
+
+-------------------------------------
+
+
+Isso signfica que 
+
+AS COISAS QUE SÃO DEFINIDAS 
+
+
+EM UM '.use()' ANTERIOR 
+
+SÃO 
+
+'carried over' AO PRÓXIMO CALL DE '.use()'...
+
+
+
+ISSO SIGNIFICA ----> QUE TODOS OS MIDDLEWARES TRABALHAM COM __ O MESMO 'REQUEST E RESPONSE OBJECTS'...
+
+
+
+
+
+As coisas que são definidas em um response LÁÁÁÁ EM CIMA em um '.use' SÃO 
+
+APLICADAS TAMBÉM 
+
+
+NO .'use()' 
+
+
+LÁÁÁÁ DE BAIXO.
+
+
+
+
+
+Certo. 
+
+
+Mas no '.use()' 
+
+
+e no '.send()' lá de baixo, 
+
+
+eu acabei ENVIANDO A RESPONSE...
+--------------------------------------
+
+
+
+COM ISSO, 
+
+NÓS TEMOS 2 MIDDLEWARES NO NOSSO CÓDIGO...
+
+
+A única 'piece' FALTANDO é 
+
+
+a coisa no nosso código que DIGA AO EXPRESS
+
+
+QUE NÓS NÃO QUEREMOS 
+
+QUE O __PRIMEIRO MIDDLEWARE__ (o middleware do HEADER)
+ 
+
+
+PARE O NOSSO REQUEST, não queremos que ele impeça o request de ALCANÇAR O SEGUNDO MIDDLEWARE ('.use()' )....
+
+
+
+
+
+-------------
+
+
+BEM, É EXATAMENTE PARA ISSO QUE O ARGUMENTO 
+
+
+'next' 
+
+
+__EXISTE__... 
+
+
+
+
+O ARGUMENTO 
+
+'next', na verdade, 
+
+É 
+
+
+__UMA FUNÇÃO____...
+
+
+É UMA FUNÇÃO QUE PODEMOS EXECUTAR 
+
+ASSIM:
+
+'next();' ...
+
+
+
+
+
+A ÚNICA COISA QUE O 'NEXT' FALA É DIZER 
+
+'nós não acabamos por aqui, GO TO THE NEXT MIDDLEWARE...'
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+  const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+})
+
+
+
+app.use((req, resp, next) => {
+    resp.send('<h1>Hello World!</h1>');
+}); 
+
+
+
+
+
+ app.listen(3000); 
+
+
+
+
+ ----------------------------------------
+
+
+
+
+
+ O next() VAI FAZER COM QUE TODOS OS 'CONFIGS' DO RESPONSE SETTADOS NO PRIMEIRO MIDDLEWARE 
+
+ SEJAM TRANSFERIDOS AO SEGUNDO MIDDLEWARE... ('.use')
+
+
+
+
+
+ certo....
+
+
+ Mas como nós NÃO QUEREMOS FAZER NADA MAIS COM A RESPONSE ALÉM DE 
+
+ DEFINIR AQUELE HTML CODE E ENTÃO ENVIÁ-LA, no segundo middleware,
+
+ ALI NÓS NÃO ACRESCENTAMOS 
+
+ NENHUM 'next()'....
+
+
+(o negócio será realmente enviado aqui, nesse segundo middleware; não existirá/existe
+
+nenhum outro middleware no nosso código)
+
+
+ ex:
+
+
+
+
+
+   const express = require('express');
+
+
+ const app = express();
+ 
+
+app.use((req, resp, next) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+})
+
+
+
+app.use((req, resp, next) => {
+    resp.send('<h1>Hello World!</h1>');
+}); 
+
+
+
+
+
+ app.listen(3000); 
+
+
+
+
+ -----------------------------------
+
+
+
+
+ ESSE É UM SETUP MT BÁSICO, MAS QUE FUNCIONA...
+
+
+
+ ESSE SETUP DEVERÁ RENDERIZAR 
+
+o 
+
+'Hello World' NA TELA DO BROWSER....
+
+
+
+
+
+CERTO.
+
+ISSO FUNCIONOU.
+
+
+
+O SERVIDOR FUNCIONA COMO ANTES, MAS AGORA COM EXPRESS.js....
+
+
+SE CHECARMOS O ARQUIVO 
+
+
+'locahost' no devtools, na aba network, veremos 
+
+
+a aba HEADERS e lá 
+
+o negócio que 
+
+diz 
+
+'Content-Type: html/text'....
+
+
+
+---> VOCÊ TAMBÉM PERCEBERÁ __QUE EXISTEM MAIS HEADERS ___ DO QUE ANTES, COM 
+O NODE.JS PURO... isso 
+ocorre pq O EXPRESS.JS TAMBÉM ADICIONA UM MONTE DE 
+
+'DEFAULT HEADERS' AUTOMATICAMENTE... ---> nós não precisamos adicionar esses headers por conta própria...
+
+(é um 'extra work' do express.js) ---> ele faz coisas, portanto, ALÉM do trabalho 'básico' do node...
+
+
+
+
+COM ISSO, AGORA TEMOS UMA MANEIRA UM POUCO 
+
+MAIS ____CONVENIENTE____ DE GERENCIAR 
+
+
+OS INCOMING HTTP REQUESTS... (por meio dos MIDDLEWARE e dos '.USE()'..)
+
+
+
+E TAMBÉM 
+
+o gerenciamento do ENVIO DE RESPONSES...
+
+
+
+
+ENTRETANTO, NÓS AINDA NÃO ESTAMOS EXTRAÍNDO QUAISQUER DADOS, AQUi...
+
+
+dEVEMOS ver como fazer isso...
+
+
+
+ISSO TAMBÉM É RELATIVAMENTE FÁCIL, COM A AJUDA DO EXPRESS.JS

@@ -1,0 +1,590 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> É HORA DE EXTRAIR ESSE ID DA URL... 
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSOR 
+
+
+VAI ATÉ 
+
+O 
+
+FOLDER DAS ROUTES...
+
+
+
+
+
+
+
+
+--> EU HAVIA ESCRITO ESSA ROUTE:
+
+
+router.get(
+    '/products/:productId', 
+    shopController.getProductDetailPage
+)
+
+
+
+
+
+
+
+
+
+--> E ELA REALMENTE ESTÁ FUNCIONANDO...
+
+
+
+
+-----> É UMA GET ROUTE, PQ VAMOS QUERER DISPLAYAR UMA PAGE, POR ENQUANTO.... 
+
+
+
+
+
+
+
+
+--> O SEGMENTO DINÂMICO É SUPORTADO POR MEIO 
+
+
+DE 
+
+':xxxxx' -----> ISSO SIGNIFICA QUE 
+
+ESSE 
+
+
+SEGMENTO SERÁ DINÂMICO.... ---> NO CASO,
+
+
+
+
+
+colocamos 
+
+
+'productId.'..
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE MAIS __ tARDE __ SEREMOS CAPAZES __ DE EXTRAIR __ 
+
+ESSA INFORMAÇÃO, a informação 
+
+do 
+
+ID DO USUÁRIO,
+
+
+por meio 
+
+
+
+desse valor aí ('productId', nesse caso),
+
+
+
+POR ISSO 
+
+
+
+DEVEMOS NOS LEMBRAR DE SUA GRAFIA... 
+
+
+
+
+
+
+
+-> A PARTE IMPORTANTE É O ':' ---> ISSO SINALIZA AO EXPRESS QUE 
+
+
+
+__ ELE NÃO DEVE__ PROCURAR POR UMA ROUTE COMO 
+
+
+
+'/products/productId',
+
+
+
+
+E SIM SINALIZA 
+
+
+QUE 
+
+
+
+
+__ QUE 
+
+
+
+ELE DEVERÁ 
+
+
+
+
+CARREGAR ESSA ROUTE PARA 
+
+
+
+
+VALORES DINÂMICOS ENFIADOS NISSO...
+
+
+
+
+
+
+
+
+
+
+---> ISSO TEM IMPLICAÇÕES IMPORTANTES...
+
+
+
+
+
+
+
+VEJA ESTE PEDAÇO DE CÓDIGO:
+
+
+
+router.get(
+    '/products/:productId', 
+    shopController.getProductDetailPage
+)
+
+
+router.get(
+    '/products/delete', 
+
+    xxxx
+)
+
+
+
+
+
+
+
+---> SE VOCê TIVER ESSA DISPOSIÇÃO AÍ,
+
+
+
+A SEGUNDA ROUTE, ROUTE DO '/products/delete',
+
+
+__NUNCA SERÁ TRIGGADA... --> isso 
+
+pq 
+
+
+A PRIMEIRA ROUTE VAI 'CATCH' TODOS OS REQUESTS,
+
+de qualquer valor,
+
+
+que existam após 
+
+'/products/'... --> 
+
+
+
+
+PARA 
+
+
+
+
+__RESOLVER ESSE PROBLEMA, CASO VOCÊ QUEIRA ESSAS 2 ROUTES CO-EXISTINDO,
+
+
+VOCÊ DEVERÁ 
+COLOCAR 
+
+
+'
+
+router.get(
+    '/products/delete', 
+
+    xxxx
+)
+
+
+
+'
+
+
+
+__NA FRENTE, ANTERIORMENTE à ROUTE DE '/products/:productId'...
+
+
+
+
+
+
+
+
+---------> NOSSO CÓDIGO É PARSEADO 'TOP FROM BOTTOM',
+
+
+
+E É POR ISSO QUE 
+
+ISSO 
+
+
+TEM QUE SER ESTRUTURADO ASSIM... (a route dinâmica tem que ser definida __ DEPOIS, essencialmente)...
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+OK... PROFESSOR EXPLICA EXATAMENTE O QUE EXPLIQUEI AQUI....
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+AQUI, ENTRETANTO, NÃO TEMOS ESSE CASE, 
+
+PROFESSOR 
+
+
+SÓ 
+
+QUERIA 
+
+O MENCIONAR....
+
+
+
+
+
+
+
+------> VAMOS LÁ NO CONTROLLER, AGORA,
+
+QUE 
+
+ATÉ AGORA ESTÁ ASSIM:
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+
+  console.log(req);
+    res.render('shop/product-detail', 
+    {
+      pageTitle: 'Product Detail',
+      path: ''
+    }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+------> CERTO.... 
+
+
+
+
+NESSE CONTROLLER,
+
+
+
+__VAMOS QUERER __ EXTRAIR __ 
+
+
+
+
+O 'productId'
+
+
+CONTIDO 
+
+LÁ NA URL,
+
+TUDO PARA QUE 
+
+CONSIGAMOS 
+
+ENTÃO 
+
+'
+BUSCAR'
+
+DENTRO DE NOSSO ARQUIVO 
+
+
+'ProductId'
+
+
+_ UM OBJETO PRODUCT COM AQUELE ID ESPECÍFICO... ------> PARA ISSO,
+
+
+É ÓBVIO QUE 
+
+
+TEREMOS DE ESCREVER 
+
+
+UMA 
+
+LÓGICA 
+
+DE 
+
+
+'findProduct'
+
+LÁ 
+
+
+
+NO NOSSO 
+
+MODEL 
+
+
+
+de 
+
+
+'product.js'... (logica de DATA HANDLING)...
+
+
+
+
+
+
+
+
+--------> 
+
+
+PARA EXTRAIR O VALOR DINÂMICO NA URL,
+
+PROFESSOR ESCREVE:
+
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+
+  console.log(req);
+    res.render('shop/product-detail', 
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      product: xxxx
+    }
+    )
+
+}
+
+
+-----------------------------
+
+
+
+
+
+OK, MAS AGORA PRECISAMOS DE ALGUMA LÓGICA EM 
+
+
+'product.js'
+
+
+PARA 
+
+
+FAZER FIND DE NOSSO PRODUCT...
+
+
+
+
+
+
+
+
+
+-----> ok..... vou procurar um método...
+
+
+
+
+
+
+
+
+
+
+Professor escreve:
+
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+            console.log(req.params);
+            const productId = req.params;
+
+  console.log(req);
+    res.render('shop/product-detail', 
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      product: xxxx
+    }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DESISTE DE 
+
+
+
+RENDERIZAR O VIEW 
+
+
+
+DE 
+
+'product-detail.ejs'
+
+por enquanto, 
+
+
+ficando apenas com um 'res.redirect('/')' no seu lugar...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK, MAS O QUE INTERESSA É QUE JÁ ESTAMOS CONSEGUINDO O 'DYNAMIC SEGMENT',
+
+
+e poderemos o utilizar para 
+
+
+
+__ENCONTRAr_ _ O PRODUCT DENTRO DO ARQUIVO 
+
+
+
+'product.js',
+
+
+o product com id 
+
+equivalente 
+
+àquele que 
+foi inserido na url...
+
+
+
+
+
+
+
+
+
+
+----->

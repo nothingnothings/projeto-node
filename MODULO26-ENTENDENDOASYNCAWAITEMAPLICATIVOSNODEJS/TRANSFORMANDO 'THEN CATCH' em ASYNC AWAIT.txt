@@ -1,0 +1,4489 @@
+
+
+
+
+
+
+
+
+-> AGORA QUE VIMOS COMO ASYNC CODE PODE SER IDENTIFICADO
+
+
+,
+
+
+E COMO 
+
+PODEMOS 
+
+USAR 
+
+
+
+
+PROMISES (then catch)
+
+
+OU 
+
+CALLBACKS (
+
+coisas horríveis como 
+
+
+'.countDocuments(
+    (argumneto) => {
+            funçãoASerExecutada();
+    }
+)
+'
+
+
+),
+
+
+
+
+
+
+O PROFESSOR 
+
+
+
+
+
+QUER NOS INTRODUZIR AO 'ASYNC AWAIT'.. --> 
+
+
+
+para usar 
+
+O
+
+ 
+ ASYNC AWAIT 
+
+
+ EM 
+
+
+ PROJETOS NODEJS/EXPRESS,
+
+
+
+ VOCÊ DEVE 
+
+ ADICIONAR A KEYWORD de 
+
+ 'async'
+
+ NA FRENTE DOS PARÂMETROS 
+
+ DE SUA 
+
+ ARROW FUNCTION (no caso dos controllers)...
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+ exports.getPosts = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT.... 
+
+
+
+ }
+
+
+
+
+
+ ---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----------> ok... aí, DENTRO DESSA FUNÇÃO,
+
+ você vai usar a keyword de 'AWAIT'... (eu já havia visot isso antes)...
+
+
+
+
+
+
+
+
+
+ -_> ESSAS 2 KEYWORDS SÃO SEMPRE USADAS CONJUNTAMENTE....
+
+
+
+
+
+
+
+
+
+ ----------> OK... AÍ PODEMOS TWEAKAR NOSSA SINTAXE...
+
+
+
+
+
+
+
+
+ --> PODEMOS ESCREVER NOSSA SINTAXE QUASE COMO SE ELA 
+ FOSSE 
+
+
+ RODADA SINCRONAMENTE...
+
+
+
+
+ EX(código original):
+
+
+
+
+
+
+
+
+ 
+// exports.getPosts = (req, res, next) => { código com promises (then e catch blocks)...
+//   //código com pagination...
+//   const pageNumber = req.query.page || 1;
+
+//   const userId = ObjectId(req.userId); ///userId extraído de nossa token e armazenado no objeto request do user... tudo graças ao middleware de 'isAuth', lá no folder de 'middlewareHelpers'...
+
+//   console.log(userId);
+//   console.log(pageNumber);
+
+//   let totalItems;
+
+//   Post.countDocuments({ creator: { userId: userId } })
+//     .then((numPosts) => {
+//       totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+//       // return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+//       return Post.find({ creator: { userId: userId } }) ////vai nos dar APENAS os posts VINCULADOS A ESSE NOSSO USER...
+//         .skip(
+//           (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+//         ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+//         .limit(ITEMS_PER_PAGE)
+//         .then((posts) => {
+//           if (!posts) {
+//             res.status(404).json({
+//               message:
+//                 'No posts encountered on database, please try again later.',
+//             });
+//           }
+//           // console.log(posts);
+//           res.status(200).json({
+//             posts: posts,
+//             currentPage: +pageNumber,
+//             totalItems: totalItems,
+//           });
+//         });
+//     })
+//     .catch((err) => {
+//       if (!err.statusCode) {
+//         const error = new Error(err);
+//         error.httpStatusCode = 500;
+//         return next(error);
+//       }
+//     });
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX(CÓDIGO QUE EU ALTEREI TOTALMENTE):
+
+
+
+
+
+
+
+
+
+exports.getPosts = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT.... 
+  //código com pagination...
+  const pageNumber = req.query.page || 1;
+
+  const userId = ObjectId(req.userId); ///userId extraído de nossa token e armazenado no objeto request do user... tudo graças ao middleware de 'isAuth', lá no folder de 'middlewareHelpers'...
+
+  console.log(userId);
+  console.log(pageNumber);
+
+  // let totalItems;
+
+    // Post.countDocuments({ creator: { userId: userId } })
+    // .then((numPosts) => {
+      
+    try {
+    const countedDocuments = await Post.countDocuments({creator: {userId: userId}});
+
+    console.log(countedDocuments);
+
+      // totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+      // return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+    const neededUserDocuments = await Post.find({creator: {userId: userId}}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    )
+    
+    // The Model.find() function takes 3 arguments that help you initialize a query without chaining. The first argument is the query filter (also known as conditions). The 2nd argument is the query projection, which defines what fields to include or exclude from the query. For example, if you want to exclude the customer's email for privacy concerns, you can use either of the below syntaxes.
+    // The 3rd argument to Model.find() is the general query options. Here's a full list of options (https://mongoosejs.com/docs/api.html#query_Query-setOptions). For example, you can set limit and skip in the 3rd argument.
+
+
+    console.log(neededUserDocuments);
+  
+    // const selectedUserDocuments = await allUserDocuments.skip((pageNumber - 1) * ITEMS_PER_PAGE);
+
+
+    // const posts = await selectedUserDocuments.limit(ITEMS_PER_PAGE);
+
+    if(!neededUserDocuments) {
+      res.status(404).json(
+        {
+          message: 'No posts encountered on database, please try again later.'
+        }
+      )
+    } else {
+
+      res.status(200).json(
+        {
+          posts: neededUserDocuments,
+          currentPage: +pageNumber,
+          totalItems: countedDocuments
+        }
+      )
+
+    }
+
+
+
+  } catch (err) {
+    if (!err.statusCode) {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR ESCREVE + OU - O QUE EU ESCREVI...
+
+
+
+
+
+
+
+ELE ESCREVE ESSE 
+
+'const count = await Post.countDocuments()'....
+
+
+
+
+
+
+
+
+
+----> vou tentar 
+
+
+
+fazer 
+
+essa conversão para 'async code'
+
+EM TODAS MINHAS ROUTES/controllers...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OUTRO CONTROLLER QUE QUEREMOS CONVERTER É ESTE:
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    let creator;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = new Post({
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+    });
+
+    post
+      .save()
+      .then((result) => {
+        console.log(result);
+
+        const post = result;
+
+        return User.findOne({ _id: userId }) //use 'findOne', e não 'find()', pq você NÃO VAI QUERER RETORNAR 'an iterable cursor of results'...
+          .then((user) => {
+
+            creator = user;
+            return user.addPost(post);
+          });
+      })
+      .then((result) => {
+        console.log(result, 'LINE');
+
+        res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: creator._id,
+            name: creator.name
+          }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+      });
+  }
+};
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+EU DEI UMA REFORMATADA NO CÓDIGO, MAS NÃO SEI SE FICOU CERTO....
+
+
+
+
+EX:
+
+
+
+
+
+exports.createPost = async (req, res, next) => { ////VERSÃO ASYNC/AWAIT DO CÓDIGO LOGO ACIMA....
+
+
+
+try {
+
+  const errors = validationResult(req); 
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    let creator;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = await new Post({
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+    }).save();
+
+
+
+
+     const user = await User.findOne({ _id: userId });
+
+    user.addPost(post);
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: creator._id,
+            name: creator.name
+          }
+        });
+
+      }
+    } catch(err) {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); 
+      }
+  
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> VOU TESTAR ESSE CÓDIGO 
+
+
+
+(não 
+
+
+sei 
+
+
+se vai funcionar, acho que acertei os try-catch blocks,
+
+
+
+mas não tenho certeza...
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+--> SIM... DEU CERTO... A ÚNICA COISA QUE NÃO DEU CERTO FOI A RESPONSE 
+
+
+DO BACKEND... 
+
+
+
+
+
+
+
+
+vou dar uma olhada nessa response aí...
+
+
+
+
+
+
+
+eX:
+
+
+
+
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: creator._id,
+            name: creator.name
+          }
+        });
+
+
+
+
+
+
+
+
+
+--> DEVE SER PQ 
+
+
+EU 
+
+
+NÃO TENHO ESSA PROPRIEDADE 'creator'/constante creator... 
+
+
+
+
+--> É SÓ CONSERTAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = async (req, res, next) => { ////VERSÃO ASYNC/AWAIT DO CÓDIGO LOGO ACIMA....
+
+
+
+try {
+
+  const errors = validationResult(req); 
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    let creator;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = await new Post({
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+    }).save();
+
+
+
+
+     const user = await User.findOne({ _id: userId });
+
+    user.addPost(post);
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+      }
+    } catch(err) {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); 
+      }
+  
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> CÓDIGO CONSERTADO FICOU ASSIM:
+
+
+
+    res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: user._id,
+            name: user.name
+          }
+        });
+
+      }
+    } catch(err) {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); 
+      }
+
+
+
+
+
+
+
+
+
+
+--> a conversão 
+
+
+de código 
+
+
+
+'promise-based' 
+
+
+
+para 
+
+'async-await'
+
+
+é 
+
+
+realmente 
+
+BEM MAIS FÁCIL DO QUE EU ME LEMBRAVA....
+
+
+
+
+
+
+-------------------------
+
+
+
+
+DEVO FAZER ESSA CONVERSÃO COM TODOS OS OUTROS CONTROLLERS... (também os de auth...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> EM 'EDIT POST',
+
+
+
+temos este código:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findOne({ _id: ObjectId(postId) })
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+      return post.save();
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: result,
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI,
+
+
+
+CONSEGUI CONVERTER...
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = async (req, res, next) => { ////VERSÃO COM ASYNC AWAIT....
+
+
+
+  ///versão do professor do código de cima....
+
+
+  try {
+
+
+  
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+
+
+
+ const post = await Post.findOne({ _id: ObjectId(postId) }); ///eis o código em questão.
+
+
+
+ console.log(post, 'LINEASASas');
+
+ console.log(post.creator.userId, userId)
+
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+
+      
+
+    const newPost = await post.save();
+
+
+    // .then((result) => {
+    //   console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: newPost,
+      });
+    // })
+
+  } catch (err) {
+          ///reutilização de error catching logic...
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+  }
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ANTES EU ESTAVA RECEBENDO UM ERRO DE 
+
+
+
+'''
+
+new ObjectId("61b21fe3789c68beb90c99e6") new ObjectId("61b21fe3789c68beb90c99e6")
+Error: Your user was not responsible for that post
+    at exports.editPost (A:\projeto4 - NODEJS\MODULO26-ENTENDENDOASYNCAWAITEMAPLICATIVOSNODEJS\NOVONOVOPROJETO22-BACKEND,VERSAODOPROFESSOR\controllers\feed.js:577:23)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  statusCode: 403
+}
+
+
+
+'''
+
+
+ISSO 
+
+ESTAVA 
+
+
+OCORRENDO PQ EU NÃO ESTAVA 
+
+
+
+_ CONVERTENDO __OS 
+
+
+'userId' (pq sempre 2 'objectId' vão ser considerados  como DIFERENTES, MESMO COM VALORES IDÊNTICOS.... --> para fazer comparisons entre eles, somos obrigados a convertê-los em strings, por meio de '.toString()'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok..........
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO LIMPO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = async (req, res, next) => { 
+
+  try {
+
+
+  
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+ const post = await Post.findOne({ _id: ObjectId(postId) }); ///eis o código em questão.
+
+
+
+ console.log(post, 'LINEASASas');
+
+ console.log(post.creator.userId, userId)
+
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId.toString() !== userId.toString()) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+
+      
+
+    const newPost = await post.save();
+
+      res.status(200).json({
+        message: 'Post updated!',
+        post: newPost,
+      });
+
+  } catch (err) {
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+  }
+
+
+};
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+OK.... PRÓXIMO CONTROLLER....
+
+
+
+
+
+
+
+
+
+
+
+
+ESTE AQUI:
+
+
+
+
+
+
+
+
+
+exports.getSinglePost = (req, res, next) => {
+  const postId = req.params.postId;
+  console.log(postId, 'LINE');
+
+  // Post.findById({postId})
+  Post.findOne({ _id: ObjectId(postId) })
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.statusCode = 404; //pq o POST NÃO PODE SER ENCONTRADO ('NOT FOUND', é isso que significa esse código...)
+        throw error; //vai fazer com que entremos no CATCH BLOCK... --> podemos escrever um THROW de um error dentro de código assíncrono, sim, DESDE QUE TENHAMOS UM 'CATCH BLOCK' depois do then block em que escreveoms esse 'throw', para que seja CAUGHT esse throw desse error....
+      }
+
+      res.status(200).json({
+        message: 'Post fetched.',
+        post: post, ///// o actual post, a post data que interessa, sendo retornada ao nosso frontend....
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+vai ficar assim:
+
+
+
+
+
+
+
+
+
+
+exports.getSinglePost = async (req, res, next) => { //versão com async await...
+
+  try {
+
+  
+  const postId = req.params.postId;
+  console.log(postId, 'LINE');
+
+  const post = await Post.findOne({ _id: ObjectId(postId) });
+
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.statusCode = 404; 
+        throw error; 
+      }
+
+      res.status(200).json({
+        message: 'Post fetched.',
+        post: post, 
+      });
+
+
+  } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+  }
+};
+
+
+
+
+
+
+
+
+---------------------
+
+OK...
+
+
+
+
+
+
+AGORA FALTA O CONTROLLER DE ... deletePost...
+
+
+
+que é este:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); 
+
+  User.findOne({ _id: userId })
+    .then((user) => {
+
+      console.log('USER', user);
+      if (!user) {
+        const error = new Error('User not found in database.');
+        error.statusCode = 401; //unauthenticated
+        throw error;
+      }
+
+      console.log('USER2', user);
+      user.posts.pull({postId: ObjectId(postId)}); 
+
+      return user.save(); 
+    })
+    .then((result) => {
+      Post.findById(postId).then((post) => {
+        if (!post) {
+          const error = new Error('Post not found.');
+          error.statusCode = 404;
+          throw error;
+        }
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+        return Post.findByIdAndRemove(postId).then((result) => {
+          console.log(result);
+          res.status(200).json({
+            message: 'The post was deleted.',
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+---------------- 
+
+
+
+
+VOU TENTAR FAZER ISSO POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+hmmm essa é a versão bosta do código... a versão que 
+
+não 
+
+possuía os checks pelo user... 
+
+acho que copiei errado,
+
+aparentemente (pq eu me lembro de ter codado algo para resolver isso)....
+
+
+
+
+
+
+
+hmmm não... foi minha imaginação...
+
+
+
+
+
+meu código 
+
+desse 
+
+
+controller está bem ruim, 
+
+bem errado...
+
+
+
+
+o do professor havia ficado assim:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+  Post.findById(postId)
+    .then(post => {
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.statusCode = 404;
+        throw error;
+      }
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error('Not authorized!');
+        error.statusCode = 403;
+        throw error;
+      }
+      // Check logged in user
+      clearImage(post.imageUrl);
+      return Post.findByIdAndRemove(postId);
+    })
+    .then(result => {
+      return User.findById(req.userId);
+    })
+    .then(user => {
+      user.posts.pull(postId);
+      return user.save();
+    })
+    .then(result => {
+      res.status(200).json({ message: 'Deleted post.' });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+--> BEM MELHOR....
+
+
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ A VERSÃO ASYNC/AWAIT FIQUE ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = async (req, res, next) => { ///versão COM  async/await..
+
+
+
+
+  try { 
+
+  
+  const postId = req.params.postId;
+ const post = await Post.findById(postId);
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error('Not authorized!');
+        error.statusCode = 403;
+        throw error;
+      }
+     const unlinkedImageResult = await fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+
+     const removedPostResult = await Post.findByIdAndRemove(postId);
+   const user = await User.findById(req.userId);
+
+   const modifiedUser = await user.posts.pull(postId).save()
+
+      res.status(200).json({ message: 'Deleted post.' });
+
+  } catch(err) {
+
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+
+};
+
+
+
+----------------------
+
+
+
+HORA DE TESTAR...
+
+
+
+
+
+
+
+--> GANHAMOS UM ERROR:
+
+
+
+
+Error: Not authorized!
+    at exports.deletePost (A:\projeto4 - NODEJS\MODULO26-ENTENDENDOASYNCAWAITEMAPLICATIVOSNODEJS\NOVONOVOPROJETO22-BACKEND,VERSAODOPROFESSOR\controllers\feed.js:982:23)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  statusCode: 403
+}
+
+
+
+
+
+
+
+
+
+-> JÁ CONSERTEI... 
+
+
+
+-> era o 'creator',
+
+
+
+que 
+
+no meu código 
+
+
+TEM O USERID 
+
+
+dentro 
+
+
+
+de um objeto,
+
+
+ e no do user não tem isso...
+
+
+
+ FICOU ASSim:
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.deletePost = async (req, res, next) => { ///versão COM  async/await..
+
+
+
+
+  try { 
+
+  
+  const postId = req.params.postId;
+ const post = await Post.findById(postId);
+    // .then(post => {
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.statusCode = 404;
+        throw error;
+      }
+      // }
+
+      if (post.creator.userId.toString() !== req.userId) {
+        const error = new Error('Not authorized!');
+        error.statusCode = 403;
+        throw error;
+      }
+
+      // Check logged in user
+      // clearImage(post.imageUrl);
+     const unlinkedImageResult = await fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+
+     const removedPostResult = await Post.findByIdAndRemove(postId);
+    // })
+
+
+    // .then(result => {
+   const user = await User.findById(req.userId);
+    // })
+    // .then(user => {
+   const modifiedUser = await user.posts.pull(postId).save()
+      // return user.save();
+    // })
+    // .then(result => {
+      res.status(200).json({ message: 'Deleted post.' });
+    // })
+  } catch(err) {
+    // .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+    // });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> O ÚNICO PROBLEMA, AGORA, é que o 
+
+
+
+
+frontend não está updatando corretamente...
+
+
+(algo de errado na response)...
+
+
+
+
+--> verei isso amanhã...
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+--> O OUTRO PROBLEMA É QUE ESSES POSTS __ NÃO ESTÃO SENDO __ APAGADOS__ 
+
+
+NO NOSSO 
+
+
+
+
+
+DOCUMENT DE 'user' (naquele array de 'posts')....
+
+
+
+
+
+
+
+
+
+
+---> OK... CONSERTEI O PROBLEMA DO 'ITEM NÃO É DELETADO DE NOSSO FEED VISUAL' 
+
+
+
+
+
+-_> MAS AINDA RESTA O PROBLEMA DA AUSÊNCIA DO 'PULL' 
+
+
+DO 
+
+
+
+OBJETO 'post' 
+
+
+LÁ DO 
+
+
+
+DOCUMENT DE 'user'...
+
+
+
+
+
+
+
+
+
+ESTE CÓDIGO TAMBÉM NÃO FUNCIONOU:
+
+
+const user = await User.findOne(ObjectId(req.userId), null, {$pull: {posts: {postId: ObjectId(postId)}}});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CONSEGUI... ESCREVI UM CÓDIGO QUE FUNCIONOU:
+
+
+
+
+
+exports.deletePost = async (req, res, next) => { 
+
+
+  try { 
+
+  
+  const postId = req.params.postId;
+ const post = await Post.findById(postId);
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if (post.creator.userId.toString() !== req.userId) {
+        const error = new Error('Not authorized!');
+        error.statusCode = 403;
+        throw error;
+      }
+
+     const unlinkedImageResult = await fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+
+     const removedPostResult = await Post.findByIdAndRemove(postId);
+      
+    console.log(req.userId);
+    
+    const user = await User.findOneAndUpdate({_id: ObjectId(req.userId)}, {$pull: {posts: {postId: ObjectId(postId)}}})
+        console.log(user, 'LINE');
+
+      res.status(200).json({ message: 'Deleted post.' });
+  } catch(err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+};
+
+
+
+
+
+
+
+
+
+
+--------> NO CASO, 
+
+
+EU USEI 
+
+
+
+UM MÉTODO DIFERENTE DO MONGOOSE PARA UPDATAR 
+
+
+
+ESSE 
+
+
+
+array de 'posts' 
+
+
+
+em 
+
+'user'.... -----> eu usei o método 
+
+
+'findOneAndUpdate',
+
+
+
+MAS __ COM USO DO SEGUNDO PARÂMETRO,
+
+
+PARÂMETRO 
+
+EM QUE 
+
+ESPECIFIQUEI QUE 
+
+O 'update'
+ 
+ em questão 
+
+ DEVERIA 
+
+ SER O _ _ PULL __ DAQUELE OBJECT com aquele 
+
+ 'postId' 
+
+ específico...
+
+
+
+ ---------------------
+
+
+
+
+
+
+
+ OK... AGORA SÓ FALTA CONVERTER OS CÓDIGOS then e catch 
+
+ LÁ 
+
+
+
+
+ DO 
+
+
+
+ 'auth.js'....
+
+
+
+
+
+
+ Ex:
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+  hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+      return user.save(); ///retornamos para usar o then block subsequente....
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(201).json({
+        message: 'User was created successfully!',
+        userId: result._id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMEÇO PELO 'signup'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.signup = async (req, res, next) => {
+  
+
+
+  try {
+
+  
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array(); ///array com todos os errors ocorridos durante o validation.... ////esse pass de errors é totalmente opcional, mas é bom se você quer que o user/desenvolvedores tenham o array de errors na response, quando errors ocorrerem....
+    throw error; //será capturado por nosso MAIN ERROR HANDLING MIDDLEWARE, lá em 'app.js'...
+  }
+
+  const email = req.body.email;
+  const name = req.body.name;
+  const password = req.body.password;
+
+ const hashedPassword = await hash(password, 12);
+
+
+      const user = new User({
+        email: email,
+        name: name,
+        password: hashedPassword,
+      });
+
+  const savedUser = await user.save(); ///retornamos para usar o then block subsequente....
+
+
+      res.status(201).json({
+        message: 'User was created successfully!',
+        userId: savedUser._id,
+      });
+
+
+  } catch(err) {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+  }
+
+
+};
+
+
+
+
+------------------------------------
+
+
+
+
+
+DEU CERTO...
+
+
+
+
+
+
+
+
+
+
+-> agora para o próximo 
+
+
+
+controller...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É O ÚLTIMO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+      loadedUser = user; ///aqui armazenamos a data de nosso user naquela variável inicial... vamos o utilizar mais para baixo, em execuções dentro dessa promise chain...
+      return compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error('Invalid Password. Please try again.');
+        error.statusCode = 401; //'unauthenticated'...
+        throw error;
+      } else {
+        const token = jwt.sign(
+         
+         
+          {
+              ///// PRIMEIRO ARGUMENTO = DATA QUE VOCê QUER QUE SEJA RETORNADA, NA SUA JSON WEB TOKEN, AO USER (nunca coloque o hashedPassword, essa é a única regra... common practice é retornar o email...) --> aqui retornamos o 'userId' pq vamos o utilizar em coisas como 'deletePost'...
+            email: loadedUser.email,
+            userId: loadedUser._id,
+          },  //////SEGUNDO ARGUMENTO = 'SECRET', OU A 'PRIVATE KEY' usada no GENERATE DA ASSINATURA (signature) dessa JSON WEB TOKEN --> É BOM USAR STRINGS ALEATÓRIAS E BEM LONGAS, para deixar seguro.... use o site mkjwk.org....
+          'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+          {
+            ////TERCEIRO ARGUMENTO, ARGUMENTO DE OPTIONS...
+            //////TERCEIRO ARGUMENTO = 'OBJETO CONFIG' --> você define CARACTERÍSTICAS DESSA WEBTOKEN: quando ela deve expirar,
+            expiresIn: '1h', ///JSON WEB TOKEN VAI EXPIRAR EM 1 HORA... (no browser do user...) --> boa medida de segurança, pq aí se o token do user, no browser do user, for roubado por um user malicioso, essa token logo expirará, em 1 hora....
+          }
+        );
+
+        res.status(200).json({
+          token: token, //vamos querer enviar isso ao nosso frontend, para que seja armazenada...
+          userId: loadedUser._id.toString(), ///também vamos querer enviar isso ao nosso frontend, para que seja armazenado.... (e então utilizado no frontend/app react)....
+        });
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a conversão fica assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.login = async (req, res, next) => {
+  
+  
+  
+  try {
+    const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  const user = await User.findOne({ email: email })
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+    const passwordsAreEqual = await compare(password, user.password);
+
+
+
+      if (!passwordsAreEqual) {
+        const error = new Error('Invalid Password. Please try again.');
+        error.statusCode = 401; //'unauthenticated'...
+        throw error;
+      } else {
+
+        const token = jwt.sign( //não é código async....
+          {
+
+            email: user.email,
+            userId: user._id,
+          },  
+          'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM', //private key/secret ---> SERÁ CONHECIDA APENAS PELO SERVER...
+          {
+            expiresIn: '1h', ///JSON WEB TOKEN VAI EXPIRAR EM 1 HORA... (no browser do user...) --> boa medida de segurança, pq aí se o token do user, no browser do user, for roubado por um user malicioso, essa token logo expirará, em 1 hora....
+          }
+        );
+
+        res.status(200).json({
+          token: token, //vamos querer enviar isso ao nosso frontend, para que seja armazenada...
+          userId: user._id.toString(), ///também vamos querer enviar isso ao nosso frontend, para que seja armazenado.... (e então utilizado no frontend/app react)....
+        });
+      }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+
+  }
+};
+
+
+
+
+
+-------------------------------
+
+
+
+
+PRONTO... TODOS MEUS CONTROLLERS FORAM TRANSFORMADOS EM CÓDIGO ASYNC/AWAIT...
+
+
+
+
+
+
+
+
+
+
+
+
+--> aGORA SÓ ME RESTA FAZER A MESMA COISA COM O CÓDIGO 'FRONTEND'.. 
+
+
+
+
+
+
+
+
+-------> vou começar...
+
+
+
+
+
+
+
+
+
+
+
+
+---------> CÓDIGO DE 'App.js':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component, Fragment } from 'react';
+
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+
+import Layout from './components/Layout/Layout';
+
+import Backdrop from './components/Backdrop/Backdrop';
+
+import Toolbar from './components/Toolbar/Toolbar';
+
+import MainNavigation from './components/Navigation/MainNavigation/MainNavigation';
+
+import MobileNavigation from './components/Navigation/MobileNavigation/MobileNavigation';
+
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
+
+import FeedPage from './pages/Feed/Feed'; ////page component....
+
+import SinglePostPage from './pages/Feed/SinglePost/SinglePost'; //page component (props repassados a ela, como METHODS...)
+
+import LoginPage from './pages/Auth/Login'; ///page component
+
+import SignupPage from './pages/Auth/Signup'; //page component
+
+import './App.css';
+
+class App extends Component {
+  state = {
+    ////state INICIAL de nosso app...
+    showBackdrop: false,
+    showMobileNav: false,
+    // isAuth: true,
+    isAuth: false,
+    token: null, ///vamos armazenar a token OBTIDA LÁ NO BACKEND, aqui, no BROWSERSIDE, para ser anexada aos nossos requests QUE VÃO PRECISAR DESSA TOKEN PARA SEREM 'authorized'...
+    userId: null,
+    authLoading: false,
+    error: null,
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem('token'); //vai fazer o get de nossa token ao ser montado nosso app ( app geral) 
+    const expiryDate = localStorage.getItem('expiryDate');
+
+    if (!token || !expiryDate) { ///if checks preventivos de login (se o user não tiver a token/token tiver expirado, não vamos renderizar o resto do nosso app)...
+      return;
+    }
+
+    if (new Date(expiryDate) <= new Date()) {
+      this.logoutHandler();
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    const remainingMilliseconds =
+      new Date(expiryDate).getTime() - new Date().getTime();
+    this.setState({ isAuth: true, 
+      token: token, ///vai fazer o set de nossa token no STATE de nosso frontend, se passarmos por aqueles if checks preventivos....
+      
+      
+      userId: userId }); 
+    this.setAutoLogout(remainingMilliseconds);
+  }
+
+  mobileNavHandler = (isOpen) => {
+    this.setState({ showMobileNav: isOpen, showBackdrop: isOpen });
+  };
+
+  backdropClickHandler = () => {
+    this.setState({ showMobileNav: false, showBackdrop: false, error: null });
+  };
+
+  logoutHandler = () => {
+    this.setState({ isAuth: false, token: null });
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiryDate');
+    localStorage.removeItem('userId');
+  };
+
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        ///EIS O CÓDIGO EM QUESTÃO.
+      }
+    )
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+  setAutoLogout = (milliseconds) => {
+    setTimeout(() => {
+      this.logoutHandler();
+    }, milliseconds);
+  };
+
+  errorHandler = () => {
+    this.setState({ error: null });
+  };
+
+  render() {
+    let routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={(props) => (
+            <LoginPage
+              {...props} //usado para OBTER OS 'ROUTING-RELATED PROPS'... (para fzer coisas como REDIRECTS...)
+              onLogin={this.loginHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          exact
+          render={(props) => (
+            <SignupPage
+              {...props}
+              onLogin={this.signupHandler}
+              loading={this.state.authLoading}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+    if (this.state.isAuth) {
+      routes = (
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={(props) => (
+              <FeedPage userId={this.state.userId} 
+              
+              token={this.state.token} //prop extremamente importante, usado no método de 'loadPosts()'...
+               />
+            )}
+          />
+          <Route
+            path="/:postId"
+            render={(props) => (
+              <SinglePostPage
+                {...props}
+                userId={this.state.userId}
+                token={this.state.token}
+              />
+            )}
+          />
+          <Redirect to="/" />
+        </Switch>
+      );
+    }
+
+    return (
+      <Fragment>
+        {this.state.showBackdrop && (
+          <Backdrop onClick={this.backdropClickHandler} />
+        )}
+        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <Layout
+          header={
+            <Toolbar>
+              <MainNavigation
+                onOpenMobileNav={this.mobileNavHandler.bind(this, true)}
+                onLogout={this.logoutHandler}
+                isAuth={this.state.isAuth}
+              />
+            </Toolbar>
+          }
+          mobileNav={
+            <MobileNavigation
+              open={this.state.showMobileNav}
+              mobile
+              onChooseItem={this.mobileNavHandler.bind(this, false)}
+              onLogout={this.logoutHandler}
+              isAuth={this.state.isAuth}
+            />
+          }
+        />
+        {routes}
+      </Fragment>
+    );
+  }
+}
+
+export default withRouter(App);
+
+
+
+
+
+
+
+
+
+
+
+--> PRIMEIRAMENTE: 
+
+
+
+
+
+CÓDIOG JSX --> não precisamos alterar nada, n há then e catch blocks lá....
+
+
+
+
+
+
+
+
+
+------> esta função aqui:
+
+
+
+
+  setAutoLogout = (milliseconds) => {
+    setTimeout(() => {
+      this.logoutHandler();
+    }, milliseconds);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ISSO É CÓDIGO ASYNC... 
+
+
+
+
+
+
+  ---> MAS NÃO É UM CÓDIGO COM THEN E CATCH BLOCKS...
+
+
+
+
+
+
+  ------------------------
+
+
+
+
+
+
+
+
+
+
+--> JÁ ISTO AQUI PODE SER CONVERTIDO:
+
+
+
+
+
+
+
+
+
+
+
+signupHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    // fetch('URL')
+    fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+  -----------
+
+
+
+
+
+
+
+
+  FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  signupHandler = async (event, authData) => {
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    const fetchedResponse = await fetch('http://localhost:8080/auth/signup', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        confirmPassword: authData.confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json', ///ESQUECI DE COLOCAR, MAS É ESSENCIAL.
+      },
+    })
+        if (fetchedResponse.status === 422) {
+          throw new Error(
+            'Validation failed. Make sure the email address is unused.'
+          );
+        }
+
+        if (fetchedResponse.status !== 200 && fetchedResponse.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+
+        console.log(fetchedResponse);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+        });
+        this.props.history.replace('/'); ///routing prop....
+    } catch (err) {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+
+        })
+      }
+    }
+
+
+
+
+
+
+
+
+    -----------------------------
+
+
+
+
+--> deu certo...
+
+
+
+
+
+    --> ok... hora de ver o próximo código....
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -----> O PRÓXIMO É O 'loginHandler':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ authLoading: true });
+    fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        ///EIS O CÓDIGO EM QUESTÃO.
+      }
+    )
+      .then((res) => {
+        if (res.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+
+        this.setState({
+          isAuth: true,
+          token: data.token,
+          authLoading: false,
+          userId: data.userId,
+        });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isAuth: false,
+          authLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+--> VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+   const loginResult = await fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      }
+    );
+        if (loginResult.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (loginResult.status !== 200 && loginResult.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          token: loginResult.token,
+          authLoading: false,
+          userId: loginResult.userId,
+        });
+        localStorage.setItem('token', loginResult.token);
+        localStorage.setItem('userId', loginResult.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+  };
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+CERTO...
+
+
+
+
+
+
+
+
+->OK, AGORA GANHEI UM ERRO... 
+
+
+EX:
+
+
+
+
+
+JsonWebTokenError: jwt malformed
+
+
+
+
+ at Object.module.exports [as verify] (A:\projeto4 - NODEJS\MODULO26-ENTENDENDOASYNCAWAITEMAPLICATIVOSNODEJS\NOVONOVOPROJETO22-BACKEND,VERSAODOPROFESSOR\node_modules\jsonwebtoken\verify.js:63:17)
+
+
+
+
+
+
+
+
+
+ ----> os valores 
+
+
+
+
+ das entries 
+
+
+
+
+ 'userId'
+
+
+ ' 
+
+ token' 
+
+
+
+
+ NO NOSSO LOCALSTORAGE_ _ESTÃO FICANDO 
+
+ COMO 'undefined'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> CONSEGUI CONSERTAR.... (era só converter esses valores da response usando '.json')...
+
+
+
+ FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+   const loginResult = await fetch(
+      'http://localhost:8080/auth/login',
+
+      {
+        body: JSON.stringify({
+          email: authData.email,
+          password: authData.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      }
+    );
+        if (loginResult.status === 422) {
+          throw new Error('Validation failed.');
+        }
+
+        if (loginResult.status !== 200 && loginResult.status !== 201) {
+          throw new Error('Could not authenticate you!');
+        }
+
+
+
+
+        const decryptedResult = await loginResult.json();
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          token: decryptedResult.token,
+          authLoading: false,
+          userId: decryptedResult.userId,
+        });
+        localStorage.setItem('token', decryptedResult.token);
+        localStorage.setItem('userId', decryptedResult.userId);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+  };
+
+
+
+
+
+
+
+  -----------------------------------------------
+
+
+
+
+
+  ---> certo... o 'App.js'
+
+  ESTÁ ACABADO...
+
+
+
+
+
+
+
+
+  --> hora de ver os outros components....
+
+
+
+
+
+
+
+  -> são os components 'FeedEdit',
+
+
+
+  'Feed'
+
+
+  e 
+
+
+  'SinglePost'... 
+
+
+
+
+
+
+
+
+
+
+
+
+  --------------
+
+
+
+
+
+
+
+  EM 'SINGLE POST',
+
+  temos isto:
+
+
+
+
+
+
+
+
+
+
+
+
+
+    componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(
+      `http://localhost:8080/feed/post/${postId}`,
+
+      {
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+      }
+    )
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          image: data.post.imageUrl,
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+
+
+
+
+
+  --------------------------------
+
+
+
+
+
+
+mas acho que é melhor NÃO USAR 'async/await'
+
+
+
+
+
+EM 'componentDidMount()' (esse lifecycle hook)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  postInputChangedHandler = async (input, value, files) => {
+
+
+
+
+    try {
+
+    
+    
+    if (files) {
+     const base64 = await generateBase64FromImage(files[0]);
+        // .then((base64) => {
+          // console.log('ENTERED');
+          this.setState({ imagePreview: base64 });
+        // })
+        // .catch((event) => {
+      
+  
+        // });
+    }
+
+    this.setState((prevState) => {
+      let isValid = true;
+      for (const validator of prevState.postForm[input].validators) {
+        isValid = isValid && validator(value);
+      }
+      const updatedForm = {
+        ...prevState.postForm,
+        [input]: {
+          ...prevState.postForm[input],
+          valid: isValid,
+          value: files ? files[0] : value,
+        },
+      };
+      let formIsValid = true;
+      for (const inputName in updatedForm) {
+        formIsValid = formIsValid && updatedForm[inputName].valid;
+      }
+      return {
+        postForm: updatedForm,
+        formIsValid: formIsValid,
+      };
+    });
+
+
+  } catch (err) {
+
+
+    console.log('ENTERED2');
+    this.setState({ imagePreview: null });
+  }
+  };
+
+
+
+
+
+
+
+  ----------------------------------
+
+
+
+
+
+
+
+  AGORA SÓ FALTOU O 'Feed'...
+
+
+
+
+
+
+ESTE AQUI:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+deletePostHandler = async (postId) => {
+
+    try {
+
+    
+    this.setState({ postsLoading: true });
+
+ const deleteResult = await fetch(`http://localhost:8080/feed/delete-post/${postId}`, {
+      method: 'DELETE',
+
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+
+
+    });
+        if (deleteResult.status !== 200 && deleteResult.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        console.log(deleteResult);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+    } catch (err) {
+        console.log(err);
+        this.setState({ postsLoading: false });
+
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  E ESTE AQUI (ainda tenho que converter):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST';
+
+
+    if (this.state.editPost) {
+      url = `http://localhost:8080/feed/post/${postData.id}`;
+      method = 'PUT';
+      console.log(postData);
+
+
+    } 
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+    })
+      .then((res) => {
+        if (res.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+          console.log(res.status);
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data.post);
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = async (postData) => {
+
+
+    try {
+
+    
+    this.setState({ editLoading: true });
+
+
+
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST';
+
+
+    if (this.state.editPost) {
+      url = `http://localhost:8080/feed/post/${postData.id}`;
+      method = 'PUT';
+      console.log(postData);
+
+
+    } 
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+   const editAndAddResults = await fetch(url, {
+      method: method,
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+
+      }
+
+    })
+
+        if (editAndAddResults.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+          console.log(editAndAddResults.status);
+        if (editAndAddResults.status !== 200 && editAndAddResults.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        console.log(editAndAddResults.post);
+
+
+
+
+      const manipulatedEditAndAddResults = editAndAddResults.json();
+
+
+
+
+        const post = {
+          _id: manipulatedEditAndAddResults.post._id,
+          title: manipulatedEditAndAddResults.post.title,
+          content: manipulatedEditAndAddResults.post.content,
+          creator: manipulatedEditAndAddResults.post.creator,
+          createdAt: manipulatedEditAndAddResults.post.createdAt,
+        };
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+    } catch (err) {
+
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK... ESSES 2 ESTÃO FUNCIONANDO..
+
+
+
+
+
+
+
+
+
+--> AGORA SÓ FALTOU o de 
+
+
+'loadPosts":
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+
+
+
+      // const token = localStorage.getItem('token');  // já vamos obter isso por meio dos PROPS repassados pelo 'App.js'..
+
+
+
+
+
+
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+    console.log(page);
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      console.log(this.state.postPage);
+      this.setState({ postPage: page });
+      console.log(this.state.postPage);
+    }
+
+    console.log(this.state.postPage, 'NEEDPOSTPAGE');
+    // fetch('URL')
+    fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+      {
+          headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+            'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+          }
+      }
+    ) ///esse request vai ser enviado PRIMEIRAMENTE ao middleware do arquivo 'is-auth', na pasta 'middlewareHelpers'...
+    
+    
+    // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log('ENTERED25125');
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ----> vou fazê-lo, também.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  E
+  X:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    loadPosts = async (direction) => {
+    try {
+
+
+    
+  if (direction) {
+    this.setState({ postsLoading: true, posts: [] });
+  }
+
+  let page = this.state.postPage;
+  console.log(page);
+
+  if (direction === 'next') {
+    page++;
+    this.setState({ postPage: page });
+  }
+
+  if (direction === 'previous') {
+    page--;
+    console.log(this.state.postPage);
+    this.setState({ postPage: page });
+    console.log(this.state.postPage);
+  }
+
+  console.log(this.state.postPage, 'NEEDPOSTPAGE');
+  const loadedPostsResult = await fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+    {
+        headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        }
+    }
+  ); ///esse request vai ser enviado PRIMEIRAMENTE ao middleware do arquivo 'is-auth', na pasta 'middlewareHelpers'...
+  
+      if (loadedPostsResult.status !== 200) {
+        throw new Error('Failed to fetch posts.');
+      }
+
+    const manipulatedPostsResult = loadedPostsResult.json();
+      this.setState({
+
+        posts: manipulatedPostsResult.posts.map((post) => {
+          return {
+            ...post,
+            imagePath: post.imageUrl,
+          };
+        }),
+        totalPosts: manipulatedPostsResult.totalItems,
+        postsLoading: false,
+      });
+
+  } catch (err) {
+        this.catchError();  ////não sei se isso está certo.
+  }
+};
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+-> MAS ESSE CÓDIGO NÃO ESTÁ FUNCIONANDO...
+
+
+
+
+
+ok, esses eram todos, acho...
+
+
+
+
+
+
+
+eu havia esquecido um 'await'
+ 
+ em 
+
+
+ 'manipulatedPostsResult.json()'...
+
+
+
+
+
+
+ FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+     loadPosts = async (direction) => {
+    try {
+
+
+    
+  if (direction) {
+    this.setState({ postsLoading: true, posts: [] });
+  }
+
+  let page = this.state.postPage;
+  console.log(page);
+
+  if (direction === 'next') {
+    page++;
+    this.setState({ postPage: page });
+  }
+
+  if (direction === 'previous') {
+    page--;
+    console.log(this.state.postPage);
+    this.setState({ postPage: page });
+    console.log(this.state.postPage);
+  }
+
+  console.log(this.state.postPage, 'NEEDPOSTPAGE');
+  const loadedPostsResult = await fetch(`http://localhost:8080/feed/posts?page=${page}`,  //forma correta. (OBS: NÃO É BOM ENCODAR SUA 'TOKEN'/JWT TOKEN de authorization NAS SUAS URL... EM VEZ DISSO, OPTE POR __ ANEXAR/APPENDAR ESSA TOKEN __ LÁ _ NOS HEADERS__ DOS REQUESTS QUE VOCÊ ENVIA, COMO VISTO LOGO ABAIXo...)
+    {
+        headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        }
+    }
+  ); ///esse request vai ser enviado PRIMEIRAMENTE ao middleware do arquivo 'is-auth', na pasta 'middlewareHelpers'...
+  
+      if (loadedPostsResult.status !== 200) {
+        throw new Error('Failed to fetch posts.');
+      }
+
+    const manipulatedPostsResult = await loadedPostsResult.json();
+      this.setState({
+
+        posts: manipulatedPostsResult.posts.map((post) => {
+          return {
+            ...post,
+            imagePath: post.imageUrl,
+          };
+        }),
+        totalPosts: manipulatedPostsResult.totalItems,
+        postsLoading: false,
+      });
+
+  } catch (err) {
+        this.catchError();  ////não sei se isso está certo.
+  }
+};
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+OK.... AGORA TODO O CÓDIGO ESTÁ FUNCIONANDO...
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+HORA DE VER A AULA DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+--------->
+
+
+
+
+
+
+
+
+
+
+PROFESSOR COMEÇA PELO CÓDIGO 
+
+
+
+de 
+
+
+
+
+
+'getPosts'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EU JÁ HAVIA CONVERTIDO ISSO...
+
+
+
+
+
+
+
+
+
+mas o jeito que ele escreveu foi um pouquinho diferente...
+
+
+
+
+
+
+
+
+
+
+
+--> ele escreveu assim:
+
+
+
+
+
+
+
+
+
+const totalItems = await Post.find().countDocuments();
+
+
+
+const posts = await Post.find()
+                      .skip((currentPage - 1) * ITEMS_PER_PAGE)
+                      .limit(ITEMS_PER_PAGE);
+
+
+
+      
+  
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+    const countedDocuments = await Post.find().countDocuments({creator: {userId: userId}});
+
+
+
+
+
+
+
+    console.log(countedDocuments);
+
+      // totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+      // return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+    const neededUserDocuments = await Post.find({creator: {userId: userId}}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> É UMA MANEIRA MAIS CONVENIENTE DE ESCREVER NOSSO CÓDIGO ASYNC... --> professor não usou 
+
+esse código até agora no curso 
+
+
+pq 
+isso 
+
+
+aí 
+
+
+
+
+PODE 
+
+
+
+LEVAR NOVATOS A PENSAR QUE 
+
+
+
+ESSE CÓDIGO FUNCIONA __ EXATAMENTE COMO LINES 'COMUNS' de javascript,
+
+
+
+__ MAS ESSE CÓDIGO REALMENTE É ASYNC... ------> (ELE TRAVA SUA EXECUÇÃO, ESSENCIALMENTE)....
+
+
+
+
+
+
+
+
+O ASYNC AWAIT É EXECUTADO __ POR TRÁS DAS CENAS.... 
+
+
+
+
+
+
+
+
+
+
+
+
+--> VOCê PODE PREFEREIR ESSA SINTAXE,
+
+MAS 
+
+
+
+A SINTAXE DO THEN-CATCH É BOA....
+
+
+
+
+
+
+
+----> PARA 
+
+
+
+VERIFICAR ERROS COM ESSA SINTAXE,
+
+NÓS NOS UTILIZAMOS DE 'try-catch' 
+
+
+
+tipo 
+
+
+try {
+  código inteiro, quase 
+} catch (err) {
+
+
+    err.statusCode = 500;
+    next(err);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS, COM ISSO,
+
+
+CONSEGUIMOS CONVERTER 1 SNIPPET DO NOSSO CÓDIGO EM UMA VERSÃO 'ASYNC/AWAIT'....
+
+
+
+
+
+
+
+
+
+
+
+
+--------> ok.... ------> O CÓDIGO DO PROFESSOR FUNCIONA, O NOSSO TAMBÉM...
+
+
+
+
+
+
+
+--> hora de ver a aula 'top-level-await'...

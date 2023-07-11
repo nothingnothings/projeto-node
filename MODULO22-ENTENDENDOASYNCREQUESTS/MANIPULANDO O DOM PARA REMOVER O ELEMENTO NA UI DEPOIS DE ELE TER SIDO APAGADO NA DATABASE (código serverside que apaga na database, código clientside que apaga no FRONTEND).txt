@@ -1,0 +1,679 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> NOSSO CÓDIGO ESTÁ ASSIM:
+
+
+
+
+
+const deleteProduct = (button) => {
+  //ver view de 'product-list-admin', no button de 'delete', em que colocamos 'onClick=deleteProduct(this)'... (o 'this' é o ELEMENTO BUTTON EM SI...)
+  // console.log('Clicked');
+
+  // console.log(button);
+
+  // console.log(button.parentNode.querySelector('[name=id]').value);
+
+  const productId = button.parentNode.querySelector('[name=id]').value;
+
+  const csrfToken = button.parentNode.querySelector('[name=_csrf]').value;
+
+
+
+const data =  {
+  // productId: JSON.stringify(productId),
+  // csrfToken: JSON.stringify(csrfToken)
+  productId: productId,
+  csrfToken: csrfToken //não stringifie a sua token, senão o 'CSURF' não consegue a compreender/parsear...
+}
+
+
+console.log(data.csrfToken);
+
+
+  fetch(`/admin/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js'
+    method: 'DELETE',
+    // body: JSON.stringify(data), ////só é usado com POST REQUESTS...
+    headers: {
+      'csrf-token': data.csrfToken  ///////SEMPRE VAMOS PRECISAR DESSA 'csrf-token' (é o nome da KEY A QUAL O 'csurf' VAI FAZER 'LOOKUP', vai procurar AUTOMATICAMENTE NOS NOSSOS HEADERS...)
+    }
+  }
+  )
+  .then(
+      (result) => {
+            const grid = button.parentNode.parentNode.parentNode.parentNode;
+            const product = button.parentNode.parentNode;
+            grid.remove(product);
+          console.log(result);
+      }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+
+    }
+  )
+
+  // console.log(button.parentNode.querySelector('[name=_csrf]').value);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> EU JÁ 
+
+
+CONSEGUI 
+
+
+
+
+REMOVER O ELEMENTO NO DOM,
+
+
+
+
+por meio daquele código de 
+
+
+
+
+            const grid = button.parentNode.parentNode.parentNode.parentNode;
+            const product = button.parentNode.parentNode;
+            grid.remove(product);
+          console.log(result);
+
+
+
+
+
+
+
+
+
+----> BEM, O PROFESSOR EXPLICA QUE 
+
+
+
+
+aquele 
+
+
+'console.log(result)'
+
+
+
+
+
+
+
+ESSE RESULT TINHA 
+
+
+
+UM 
+
+'CRYPTIC BODY',
+
+
+
+QUE 
+
+ERA UMA READABLE STREAM... ------> PROFESSOR EXPLICA QUE 
+
+
+
+
+NESSE THEN BLOCK PODEMOS EXECUTAR 
+
+
+
+'return result.json()',
+
+
+
+
+
+
+
+
+QUE 
+
+ESSE 
+
+'.json()'
+
+
+É UMA FUNÇÃO/MÉTODO QUE 
+
+VAI 
+
+
+'RETURN A NEW PROMISE',
+
+
+
+RAZÃO PELA QUAL PODEMOS ADICIONAR OUTRO 
+
+'then block'
+
+
+chainando nesse primeiro...
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+  fetch(`/admin/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js'
+    method: 'DELETE',
+    // body: JSON.stringify(data), ////só é usado com POST REQUESTS...
+    headers: {
+      'csrf-token': data.csrfToken  ///////SEMPRE VAMOS PRECISAR DESSA 'csrf-token' (é o nome da KEY A QUAL O 'csurf' VAI FAZER 'LOOKUP', vai procurar AUTOMATICAMENTE NOS NOSSOS HEADERS...)
+    }
+  }
+  )
+  .then(
+      (result) => {
+            const grid = button.parentNode.parentNode.parentNode.parentNode;
+            const product = button.parentNode.parentNode;
+            grid.remove(product);
+  
+
+
+        return result.json();
+
+
+      }
+  )
+  .then(
+      (data) => {
+          console.log(data);
+      }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+
+    }
+  )
+
+
+
+
+
+  --------------------------------
+
+
+
+
+
+
+
+
+  --> ESSA 'DATA' 
+
+  será o RESPONSE BODY... -----------> nós não precisamos dessa data agora,
+
+
+
+  MAS O PROFESSOR QUER NOS MOSTRAR COMO PODEMOS 
+
+  'GET THAT DATA 
+
+
+  THAT 
+
+  GETS RETURNED BY THE SERVER'... 
+
+
+
+
+
+
+
+
+  ------> MAS 
+
+
+  O QUE INTERESSA É QUE 
+  TEMOS UMA RESPONSE, SINAL QUE 
+
+
+  O 
+
+
+
+
+  ITEM FOI DELETADO NO SERVER,
+
+
+
+
+
+  E QUE 
+
+  AGORA VOU QUERER 
+
+  APAGAR 
+  ESSE ITEM 
+
+  NO DOM TAMBÉM...
+
+
+
+
+
+
+
+
+
+  --> COMO FAZER ISSO? 
+
+
+
+
+
+
+  -------> BEM, PROFESSOR ADMITE QUE 
+
+  TEMOS ACESSO 
+
+  AO 
+
+
+  BUTTON EM QUE CLICAMOS...
+
+
+
+
+
+
+
+
+  -----> ele diz que 
+
+
+  NÓS TEMOS QUE ACHAR O 'article'
+
+  QUE 
+
+
+  SEGURA ESSE BUTTON POR MEIO DAS MUITAS DIVS....
+
+
+
+
+
+
+
+  -----------> ELE 
+
+  VAI ESCREVER DE FORMA MAIS BONITA,
+
+
+  ele escreve 
+
+
+
+  'const productElement = buttonn.closest()' 
+
+
+
+
+
+
+
+
+
+
+  -----> NESSE 'closest()'
+
+
+
+  VOCÊ PASSA UM __ SELECTOR,
+
+
+
+
+
+
+O QUE FAZ COM QUE 
+
+
+__ SEJA DADO __ 
+
+
+O 
+
+ELEMENTO MAIS 
+
+PRÓXIMO COM ESSE 'selector'... ----> NÓS COLOCAMOS 
+
+
+'article' 
+
+PQ 
+ESSE 
+
+É 
+
+O 
+
+ELEMENTO MAIS PRÓXIMO DESSE BUTTOn...
+
+
+
+
+
+
+
+
+--> OK, AÍ O PROFESSOR 
+
+
+escreve 
+
+
+'productElement.remove()',
+
+
+PARA 
+
+REMOVER ESSE ELEMENTO...
+
+
+
+
+
+
+
+--> MAS ESSA FUNÇÃO AÍ NÃO É SUPORTADA NO 
+
+INTERNET EXPLORER,
+
+
+
+
+
+
+
+PARA QUE SEJA SUPORTADA NO INTERNET EXPLORER,
+
+
+
+
+PRECISAMOS DE UM CÓDIGO COMO 
+
+
+
+
+
+''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+const productElement = buttonn.closest('article');
+
+
+
+productElement.parentNode.removeChild(productElement);
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+FICA TIPO ASSIM, no final das contas:
+
+
+
+
+
+
+
+
+
+
+const productElement = button.closest('article');
+
+
+
+
+  fetch(`/admin/product/${productId}`, { ///checar route de 'deleteProduct' lá no arquivo route de 'admin.js'
+    method: 'DELETE',
+    // body: JSON.stringify(data), ////só é usado com POST REQUESTS...
+    headers: {
+      'csrf-token': data.csrfToken  ///////SEMPRE VAMOS PRECISAR DESSA 'csrf-token' (é o nome da KEY A QUAL O 'csurf' VAI FAZER 'LOOKUP', vai procurar AUTOMATICAMENTE NOS NOSSOS HEADERS...)
+    }
+  }
+  )
+  .then(
+      (result) => {
+            const grid = button.parentNode.parentNode.parentNode.parentNode;
+            const product = button.parentNode.parentNode;
+            grid.remove(product);
+  
+
+
+        return result.json();
+
+
+      }
+  )
+  .then(
+      (data) => {
+          console.log(data);
+          productElement.parentNode.removeChild(productElement);
+      }
+  )
+  .catch(
+    (err) => {
+
+      console.log(err);
+
+    }
+  )
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+OK, COM ISSO NO LUGAR,
+
+
+PODEMOS SÓ RECARREGAR ESSA PÁGINA E CLICAR EM 'DELETE' ... --> E AÍ 
+
+VAMOS VER que 
+
+
+NOSSA PAGE NÃO TERÁ SIDO RECARREGADA,
+
+E 
+AÍ 
+
+AQUELE PRODUCT ESPECÍFICO TERÁ SIDO DELETADO...
+
+
+
+
+
+
+ok, sucesso...
+
+
+
+
+
+
+
+É ASSIM QUE 
+
+PODEMOS 'USE ASYNC REQUESTS'....
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE 
+
+HÁ BEM MAIS COISAS QUE PODEMOS FAZER NO CLIENTSIDE,
+
+MAS ESSE NÃO É UM CURSO 
+
+
+DE 
+
+
+JAVASCRIPT CLIENTSIDE,
+
+
+
+POR ISSO VAMOS PROSSEGUIR COM 
+
+
+
+
+O APRENDIZADO 
+
+DE NODE...
+
+
+
+
+
+
+
+--> A LIÇÃO IMPORTANTE, AQUI, É QUE 
+
+VOCÊ PODE 
+
+'SEND DATA TO YOUR BACKEND'
+
+
+
+COM A AJUDA 
+
+
+DESSES ASYNC REQUESTS,
+
+
+
+
+
+e é assim que 
+
+você pode 
+
+'INCLUDE DATA',
+
+
+E COMO VOCê PODE FAZER HANDLE DESSA DATA LÁ NO SEU BACKEND...
+
+
+
+
+
+
+
+
+Attached, you find the source code for this section.
+
+When using my source code, make sure to run npm install in the extracted folder!
+
+Useful resources:
+
+More on the fetch API: https://developers.google.com/web/updates/2015/03/introduction-to-fetch
+
+More on AJAX Requests: https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX/Getting_Started
+
+
+
+
+
+
+AJAX stands for Asynchronous JavaScript And XML. In a nutshell,
+
+ it is the use of the XMLHttpRequest object to communicate with servers.
+ 
+  It can send and receive information in various formats, including JSON, XML, HTML, and text files.
+  
+   AJAX’s most appealing characteristic is its "asynchronous" nature, which means it can communicate
+   
+    with the server, exchange data, and update the page without having to refresh the page.
+
+
+
+
+------------------------------------
+
+
+
+The two major features of AJAX allow you to do the following:
+
+Make requests to the server without reloading the page
+Receive and work with data from the server
+

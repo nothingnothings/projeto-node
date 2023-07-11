@@ -1,0 +1,626 @@
+
+
+AGORA VAMOS 
+
+
+
+
+ASSEGURAR 
+
+QUE 
+
+
+O 
+
+USER TBM CONSIGA 
+
+'DELETE ITEMS'
+
+
+LÁ 
+
+NA PAGE DO CART...
+
+
+
+
+
+
+--> PARA ISSO, VAMOS PRECISAR DE UMA ___ NOVA ROUTE__......
+
+
+
+
+
+
+
+
+
+---> TENTAR FAZER ISSO SOZINHO...
+
+
+
+
+{"products":[{"id":"0.5207285031223152","quantity":1},{"id":"0.2683474077265857","quantity":1}],"totalPrice":636858585}
+
+
+
+^^^^^ISTO É ANTES...
+
+
+
+
+ESTE É O 'RESULTADO':
+
+
+
+
+
+
+{"products":[],"totalPrice":636636363}
+
+
+
+
+
+
+--> TODOS OS PRODUCTS ESTÃO SENDO DELETADOS... --> o price está certo, mas 
+
+
+os PRODUCTS N...
+
+
+
+
+
+
+
+
+----> continuamos assistindo a 
+
+
+
+
+aula do profesor..
+
+
+
+
+
+
+ele 
+
+
+escreve 
+
+um 
+
+
+'router.post(/cart-delete-item')'..
+
+
+
+
+
+
+
+
+
+---------->
+
+
+
+aí 
+
+
+
+'exports.postCartDeleteProduct = (req, res, next) => {
+
+    const productId = req.body.productId;
+
+
+    Cart.deleteProductFromCart(productId)
+
+
+
+
+
+}
+
+'
+
+
+
+
+
+
+
+--> OK.. PROFESSOR FALA QUE 
+ESSA FUNÇÃO 
+
+
+'deleteProductFromCart'
+
+
+
+EXIGE O ID DO PRODUCT,
+MAS QUE 
+ELA TBM 
+
+EXIGE 
+
+
+
+O 
+
+PRICE DO PRODUCT... 
+
+
+
+
+-----> VAMOS PRECISAR DO PRODUCT INTEIRO, PORTANTO,
+
+
+antes de conseguir o valor DESSE PRICE.... 
+
+
+
+
+
+
+
+
+-----> para conseguir o PRODUCT INTEIRO,
+
+
+PROFESSOR É FORÇADO A CHAMAR 
+
+'
+Product.findProduct(productId, () => {})',
+
+
+
+
+
+
+
+
+(NOSSA VERSÃO DO CÓDIGO NÃO FUNCIONA...)
+
+
+
+
+
+
+
+----------> ou seja,
+não adianta fazer istO:
+
+
+
+<input type="hidden" name="price">
+
+
+
+PARA TENTAR 
+
+CONSEGUIR O VALOR DO PRODUCTPRICE...
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+------- OK... NOSSO CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+
+
+  const productId = req.body.id;
+  // const productPrice = req.body.price; ////esta versão do código __ NÃO FUNCIONA___ (pq é o price _ GERAL__ que vai ser considerado, nesse negócio, e não o PRICE DE CADA PRODUCT INDIVIDUAL..)
+  console.log(productId);
+
+  Product.findProduct(productId,
+    (product) => {
+      Cart.deleteProductFromCart(
+          productId, product.price
+      )
+    }
+    
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR ADMITE QUE PODERÍAMOS TER USADO 
+
+UM 
+
+INPUT HIDDEN 
+
+PARA 
+
+PASSAR O 'PRICE' 
+
+AO BACKEND,
+
+
+
+
+MAS ELE 
+
+CONSIDERA ESTE APPROACH MAIS CLEAN, E PORTANTO O UTILIZOU...
+
+
+
+
+
+(
+
+
+
+    SE NÓS PASSARMOS 
+
+    SÓ O 
+
+    ID POR MEIO DO REQUEST 
+
+    E ENTÃO 
+
+    FIZERMOS 
+
+    TODO 
+
+    O 
+
+
+    DATA RETRIEVAL
+     
+
+
+     NO NOSSO CÓDIGO NODEJS,
+
+
+     a experiência é mais clean, na visão do professor....
+)
+
+
+
+
+
+
+
+--------> OK.....   TERMINADO ESSE CALL DE 
+
+
+'Cart.deleteProductFromCart',
+
+
+professor diz que 
+
+PODEMOS ENVIAR UMA RESPONSE 
+
+DE 
+
+REDIRECT DE VOLTA 
+AO 
+
+'/cart'...
+
+
+
+
+
+
+
+
+------> EX:
+
+
+
+
+
+
+exports.deleteCartItem = (req, res, next) => {
+
+
+  const productId = req.body.id;
+  console.log(productId);
+
+  Product.findProduct(productId,
+    (product) => {
+      Cart.deleteProductFromCart(
+          productId, product.price
+      )
+      res.redirect('/cart');
+    }
+    
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... MAS AINDA ESTOU COM O MESMO PROBLEMA DE ANTES... ---> QUANDO DELETO ALGUMA COISA, 
+
+
+______TODOS ___ OS 
+
+
+PRODUCTS SÃO REMOVIDOS...
+
+
+
+
+
+
+
+--> É UM BUG __ MEU...______
+
+
+
+
+
+
+
+
+---> PROFESSOR DIZ QUE MELHORAMOS UM MONTE NOSSO APP...
+
+
+
+
+
+
+----> PROFESSOR EXPLICA/ADMITE QUE NOSSO 
+
+APPROACH ATUAL COM OS MODELS 
+
+É UM 
+
+POUCO 
+
+SUBOPTIMAL... ---> ISSO PQ 
+
+
+
+
+___ O TRABALHO__ COM FILE/FILESYSTEM NÃO É 'TAO GREAT'..
+
+
+
+
+
+
+
+
+
+
+-_> ELE TAMBÉM ADMITE QUE 
+
+
+__PODEMOS__ MELHORAR ALGUMAS COISAS NOS CONTROLLERS... --> 
+
+PQ 
+
+POR EXEMPLO,
+
+
+ 
+__NÓS ___ DEVEMOS __ SÓ 
+
+
+'REDIRECT'
+
+
+SE 
+
+
+__SOUBERMOS QUE 
+
+
+
+O PROCESSO DE DELETE FOI UM SUCESSO... (e não sempre,
+
+
+como acontece 
+
+
+nesta linha:
+
+
+''''''''''''''''''''''''''''''
+
+Product.findById(
+    prodId, product => {
+        Cart.deleteProductFromCart(productId, product.price);
+        res.redirect('/cart');
+    }
+)
+
+
+''''''''''''''''''''''''
+
+)
+
+
+---------------> ISSO PQ 
+
+
+COMO 
+
+__ACESSAMOS UMA FILE por meio desse 'deleteProductFromCart',
+
+_NÓS TEORICAMENTE DEVERÍAMOS TER UM CALLBACK DENTRO DELA,
+
+TAMBÉM... ------> MAS ESSAS 
+
+SÃO 
+
+COISAS QUE 
+
+O 
+
+PROFESSOR 
+
+FARÁ 
+
+
+__ QUANDO __ADICIONARMOS __UMA DATABASE AO NOSSO APP, NO PRÓXIMO MÓDULO...
+
+
+
+
+------------------
+
+
+
+
+OK... MAS TENHO QUE CONSERTAR 
+
+
+ESSE PROBLEMA __ DE TODO O CART__ 
+
+
+
+SER DELETADO QUANDO REMOVO 1 ÚNICO ELEMENTO/product...
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+DESCOBRI O PROBLEMA... ERA 
+
+
+
+1 
+
+
+'return' faltando NESSE TRECHO DE CO´DIGO de 'deleteProductFromCart':
+
+
+
+
+
+
+
+
+
+
+
+static deleteProductFromCart(productId, productPrice) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+        if(err) {
+          return;
+        }
+        const cart = JSON.parse(fileContent);
+        const updatedCart = {...cart};
+        const product = updatedCart.products.find(prod => prod.id === productId);
+        const productQuantity = product.quantity;
+        updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+                return prod.id !== productId; <<<<<<<<<<<<<<<NESTA LINHA AQUI...
+          }
+        )
+        console.log(updatedCart);
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQuantity;
+            fs.writeFile(
+              filePath, JSON.stringify(updatedCart), 
+              (err) => {
+                  console.log(err);
+              }
+            )
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+esse '.filter()'
+
+
+estava tipo 
+
+
+'
+
+
+
+    updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+                 prod.id !== productId; <<<<<<<<<<<<<<<NESTA LINHA AQUI...
+          }
+        )
+
+
+'
+
+
+
+QUANDO DEVIA ESTAR ASSIM:
+
+
+
+
+
+    updatedCart.products = updatedCart.products.filter(
+          prod => {
+            console.log(prod.id, productId);
+               return  prod.id !== productId; <<<<<<<<<<<<<<<NESTA LINHA AQUI...
+          }
+        )
+
+
+
+
+
+
+
+-----------------------------
+
+
+

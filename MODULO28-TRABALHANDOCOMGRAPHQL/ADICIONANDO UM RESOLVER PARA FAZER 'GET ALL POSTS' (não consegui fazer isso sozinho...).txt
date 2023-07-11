@@ -1,0 +1,1265 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> OK..
+
+
+
+
+
+VAMOS TENTAR FAZER O GET DE TODOS OS NOSSOS POSTS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSOR COMEÇA COM O CÓDIGO DO 
+
+NOSSO 
+
+'schema.js'...,
+
+
+LÁ NO BACKEND...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O GET DE POSTS É UMA QUERY, É ALGO NORMAL NO MUNDO GRAPHQL...
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE ESCREVEMOS, LÁ EM 
+
+'RootQuery',
+
+ESTE CÓDIGO:
+
+
+
+type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--------->  O PROFESSOR EXPLICA QUE 
+
+
+'EU NÃO VOU PRECISAR DE QUAISQUER ARGUMENTS AQUI,
+
+E SIM 
+
+
+VOU QUERER 
+
+
+
+
+ESPECIFICAR MEU __ '''RETURN TYPE''' DIRETAMENTe'''' --> O QUE 
+
+O 
+
+
+PROFESSOR 
+
+
+VAI QUERER RETORNAR N 
+
+
+VAI 
+
+SER 
+
+ESSE 
+
+'PostsData' 
+
+
+
+que nós havíamos criados 
+(
+
+    que tinha esta estrutura:
+
+
+
+
+
+
+type PostsData {
+      posts: [Post!]!
+      totalItems: Int!
+      page: Int!
+}
+
+
+
+),
+
+
+
+
+
+
+OU SEJA,
+
+
+NÃO VAI SER ISSO,
+
+E NÃO VAI SER UM RETURN DIRETO DE '[Post]',
+
+
+
+
+COMO 
+
+
+
+PODERÍAMOS ESPERAR... --> EM VEZ DISSO,
+
+
+
+
+
+
+PROFESSOR VAI CRIAR UM ___ NOVO TYPE__ para isso...
+
+
+
+
+
+
+
+
+
+--> ELE NOS RELEMBRA: 
+
+
+
+
+
+
+
+NO MUNDO DO REST API,
+
+
+
+NÓS NÃO REALMENTE FAZÍAMOS MAIS DO QUE O RETURN DE UM ARRAY SIMPLES DE POSTS,
+
+pq 
+
+também 
+
+RETORNÁVAMOS UM NÚMERO QUE 
+
+ESPECIFICAVA O 'NÚMERO TOTAL DE POSTS'... 
+
+
+(
+
+    e também a CURRENT PAGE, no meu código..
+)
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE ELE CRIA UM NOVO type,
+
+
+
+
+
+
+exatamente como eu havia feito...
+
+
+
+tipo assim:
+
+
+
+
+
+
+type PostData {
+    posts: [Post!]!
+    totalItems: Int!
+}
+
+
+
+
+
+
+
+
+
+--> OK, FOI EXATAMENTE O QUE EU HAVIA FEITO...
+
+
+
+
+
+
+
+--> E NOSSA QUERY VAI REALMENTE RETORNAR ESSE 'PostData.'...
+
+
+
+ex:
+
+
+type RootQuery {
+      loginUser(email: String!, password: String!): AuthData!
+      getPosts(pageNumber: Int!): PostsData!
+}
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... E AGORA PRECISAMOS DE UM RESOLVER PARA ISSO...
+
+
+
+
+
+
+
+
+--> VOLTAMOS AOS RESOLVERS,
+E AÍ 
+
+O 
+
+PROFESSOR 
+
+COMEÇA COM UM CÓDIGO BEM PARECIDO COM O MEU...
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+MEU CÓDIGO HAVIA FICADO ASSIM:
+
+
+
+
+
+
+
+
+     getPosts: async function(args, req) {
+
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+        const pageNumber = args.pageNumber || 1; //extraído de nossa QUERY....
+     
+
+        console.log(pageNumber);
+
+        const countedDocuments = await Post.find().countDocuments();
+
+
+        const neededUserDocuments = await Post.find({}, null,
+            {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+          ).populate(
+            'creator.userId'
+        ).sort({_id: -1})
+      
+
+
+
+        if(!neededUserDocuments) {
+            const error = new Error('No posts found in the database, please try again.')
+            error.code = 404;
+            throw error;
+          }
+
+
+          console.log(neededUserDocuments);
+
+        return {
+            posts: neededUserDocuments,
+            totalItems: countedDocuments,
+            page: +pageNumber
+        }
+
+    
+
+
+     }
+
+
+
+
+     ---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     --> mas no código do professorr,
+
+
+
+     A PRIMEIRA COISA QUE ELE FAZ É CHECAR SE O USER ESTÁ AUTHENTICATED (se ele possui 'req.isAuth = true' NO OBJETO REQUEST)...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+por isso ele  copia o check de 
+
+
+
+
+if (!req.isAuth) {
+
+
+
+
+}
+,
+
+
+
+
+
+
+E O NEGÓCIO FICA ASSIm:
+
+
+
+
+     getPosts: async function(args, req) {
+
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE A LÓGICA DE PAGINATION SERÁ ADICIONADA MAIS TARDE,
+
+
+
+
+mas que por enquanto ele vai executar aquela lógica/métodos do mongoose 
+
+PARA DETERMINAR O NÚMERO DE POSTS... (também para CONSEGUIR O NÚMERO TOTAL DE POSTS)....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+     getPosts: async function(args, req) {
+
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+        const pageNumber = args.pageNumber || 1; //extraído de nossa QUERY....
+     
+
+        console.log(pageNumber);
+
+        const countedDocuments = await Post.find().countDocuments();
+
+
+        const neededUserDocuments = await Post.find({}, null,
+            {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+          ).populate(
+            'creator.userId'
+        ).sort({_id: -1})
+      
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... foi exatamente o que eu havia escrito...
+
+
+
+
+
+
+
+
+--> vou ter obtido meus posts... --> AÍ O PROFESSOR DECIDE RETORNAR UM __ OBJETO__ .... --> 
+
+
+
+
+
+O OBJETO DEVERÁ TER UMA ESTRUTURA DE 
+
+
+'`{
+    posts: [Post!]!
+    totalPosts: Int!
+    page: Int!
+}
+
+
+''
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> DEVERÁ TER ESSA KEY AÍ...
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... AÍ O PROFESSOR FINALMENTE TOCA NO TÓPICO EM QUE EU TIVE PROBLEMAS:
+
+
+ele fala 
+que 
+o 
+
+
+'posts'
+
+
+
+
+
+,
+
+se você escrever assim:
+
+
+
+
+
+
+
+''''
+return {
+    posts: posts,
+    totalPosts: totalPosts
+}
+
+
+'''
+
+
+
+
+__ NÃO VAI FUNCIONAR DIREITO.... --> NÃO VAI FUNCIONAR DIREITO JUSTAMENTE 
+
+PQ 
+
+
+
+
+___DENTRO __ DESSES OBJETOS 'post'
+
+
+existirão 
+
+FIELDS 
+
+
+COMO 
+
+
+'_id',
+
+
+
+OU 'createdAt',
+
+
+
+
+__ FORMATOS__ QUE NÃO SÃO ENTENDIDOS COMPLETAMENTE PELO GRAPHQL.... ---------->
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE VOCÊ VAI CHAMAR, AQUI,
+
+o 
+
+
+'.map()',
+
+
+PARA 
+
+
+__ TRANSFORMAR TODO E CADA ELEMENTO NESSE ARRAY... --> 
+
+
+
+
+
+VAMOS QUERER RETORNAR UM __ NOVO OBJETO __ PARA CADA 'POST',
+
+
+
+OBJETO QUE _ SERÁ GERALMENTE O MESMO(
+
+
+    por isso usamos o SPREAD OPERATOR,
+
+
+    tipo assim:
+
+
+    '
+    return {
+        ...p._doc,
+
+
+        bla bla bla...
+    }
+    '
+)
+
+
+
+
+
+
+
+
+MAS __ FEITO ESSE SPREAD DAS PROPRIEDADES 'GERAIS',
+
+
+VAMOS QUERER 
+
+
+OVERWRITAR AS COISAS QUE NÃO SÃO COMPREENDIDAS/SUPORTADAS NO FORMATO ORIGINAL _ PELO __ GRAPHQL.... --> 
+
+
+
+SERÃO:
+
+
+
+
+
+1) o _id 
+
+
+2) createdAt 
+
+
+3) updatedAt...
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE VAMOS ESCREVER BASICAMENTE ISTO:
+
+
+
+
+
+
+
+return {
+    posts: posts.map(
+        (post) => {
+            return {
+                ...post._doc,
+                _id: post._id.toString(),
+                createdAt: post.createdAt.toISOString(),
+                updatedAt: post.updatedAt.toISOString()
+            }
+        }
+    )
+    ,
+    totalPosts: totalPosts
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É ASSIM, BASICAMENTE,
+
+
+A MANEIRA PELA QUAL VAMOS TRANSFORMAR ESSENCIALMENTE TODOS OS POSTS NO 
+
+
+ARRAY DE 'posts',
+
+
+
+
+
+
+___ 
+
+
+para que isso encaixe 
+
+
+
+NO NOSSO SCHEMA DO GRAPHQL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+O PROFESSOR 
+
+TESTA 
+
+
+
+
+ESSA QUERY 
+
+LÁ NO GRAPHiql....
+
+
+
+-> 
+
+ele escreve assim:
+
+
+
+
+
+'''''''''''
+
+
+
+query {
+    getPosts(
+pageNumber: 1
+    ) {
+
+        posts 
+        totalPosts
+    }
+}
+
+
+
+''''''''''' 
+
+
+
+
+
+
+
+
+CERTO... AÍ ELE FINALMENTE FALA DO PROBLEMA do return de 'posts' a partir desse 'query'.... ---> ELE EXPLICA QUE 
+
+
+
+
+
+os 'posts'
+
+SÃO UM ARRAY DE 'COMPLEX OBJECTS',
+
+
+POR ISSO 
+
+
+__ NELE __ NÓS TAMBÉM PRECISAMOS ESPECIFICAR_ _ __ _EXATAMENTE _ OS FIELDS__ QUE QUEREMOS OBTER 
+
+DELES.... (
+
+
+    duuuh.... era isso que eu havia esquecido... --> esse é o PROPÓSITO DO 
+
+    GRAPHQL,
+
+    PODER __ ESPECIFICAR__ QUAIS FIELDS VOCÊ VAI QUERER EXTRAIR DE UM DETERMINADO 
+
+    CONJUNTO DE ITEMS, COMO OBJETOS EM 1 ARRAY... (ex: vou querer só os names, ou só as descriptions, etc etc...)
+)
+
+
+
+
+
+
+
+--> AQUI, NO CASO, 
+
+
+O PROFESSOR ESPECIFICA 
+
+
+os 
+
+'_id',
+
+
+
+os 
+
+'title'
+
+
+e 
+
+
+
+os 
+
+'content'...
+
+
+
+
+
+
+-----> MINHA QUERY, NO MEU CÓDIGO,
+
+NO CASO,
+
+FICA ASSIM:
+
+
+
+
+
+
+
+
+
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+            }
+            page
+            totalItems
+          }
+        } 
+        `
+
+
+
+
+
+
+
+
+
+
+--> CERTO... SUCESSO.... --> 
+
+
+
+
+OBTIVEMOS 
+
+'NOT AUTHENTICATED',
+
+
+
+
+MAS ISSO SIGNIFICA QUE 
+
+
+
+
+__ NOSSO CÓDIGO DEU CERTO....
+
+
+
+
+
+
+
+--> entretanto,
+
+
+
+
+
+AINDA _ NÃO ESTAMOS VENDO ESSES POSTS NA NOSSA PÁGINA...
+
+
+
+
+
+
+
+
+--> o problema é o 'populate' 
+
+
+
+lá em 'getPosts',
+
+que não está funcionando (não está populando nossa propriedade 'creator.userId' em cada POST....)
+
+
+
+
+
+
+
+
+
+
+---> CONSEGUI.... fiz um hotfix,
+
+
+
+
+uma reestruturação 
+
+
+de dados 
+
+
+rápida,
+
+
+
+
+
+
+e aí deu tudo certo....
+
+código ficou assim:
+
+
+
+
+
+
+
+
+     getPosts: async function(args, req) {
+
+        if(!req.isAuth) { ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+            const error = new Error('Not authenticated!');
+            error.code = 401;
+            throw error;
+        }
+
+        const pageNumber = args.pageNumber || 1; //extraído de nossa QUERY....
+     
+
+        console.log(pageNumber);
+
+        const countedDocuments = await Post.find().countDocuments();
+
+
+        const neededUserDocuments = await Post.find({}, null,
+            {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+          ).populate(
+            'creator.userId'
+        ).sort({_id: -1})
+      
+
+
+
+        if(!neededUserDocuments) {
+            const error = new Error('No posts found in the database, please try again.')
+            error.code = 404;
+            throw error;
+          }
+
+
+          console.log(neededUserDocuments);
+
+        return {
+            posts: neededUserDocuments.map(
+                (post) => {
+                    return {
+                        ...post._doc, //TUDO, EXCETO ESSAS 3 KEYS/PROPRIEDADES, PERMANECERÁ O MESMO...
+                        creator: { //hotfix...
+                            name: post.creator.userId.name,
+                            _id: post.creator.userId._id
+                        },
+                        _id: post._id.toString(), //// DE NOVO, PRECISAMOS TRANSFORMAR essas 3 propriedades, pois seus data types MONGOOSE (ObjectId e DATETYPE) não SÃO/SERÃO RECONHECIDOS PELO GRPAHQL e seu schema...
+                        createdAt: post.createdAt.toISOString(),
+                        updatedAt: post.updatedAt.toISOString()
+                    }
+                }
+            )
+            ,
+            totalItems: countedDocuments,
+            page: +pageNumber
+        }
+
+    
+
+
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     ---------> O ÚNICO PROBLEMA É QUE NOSSAS DATAS ESTÃO APARECENDO COMO 'invalid date' 
+
+
+
+
+     LÁ NO FRONTEND...
+
+
+
+
+
+
+     --> acho que esse valor está como 'undefined'... --> e, de fato, está como UNDEFINED...
+
+
+
+
+
+
+
+
+
+
+
+
+     --> CONSERTEI... ERA SÓ CONSERTAR A QUERY EM 'loadPosts':
+
+
+
+
+
+           const graphqlQuery = {
+//só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+
+
+
+/// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+        query: `
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              creator {
+                name 
+                _id
+              }
+              createdAt ////EU HAVIA ESQUECIDO ISTO....
+            }
+            page
+            totalItems
+          }
+        } 
+        `
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+--> EU HAVIA ESQUECIDO DE ESCREVER 
+
+aquele 
+
+
+'createdAt'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> CERTO.... HORA DE VER A PRÓXIMA AULA DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> o professor fala que a próxima etapa é 
+
+
+
+
+
+
+enviar a token nesse request de 'get all posts',
+
+
+MAS EU JÁ FIZ ISSO,
+
+
+COMO PODEMOS OBSERVAR NESTE CÓDIGO AQUI:
+
+
+
+
+
+      const loadedPostsResult = await fetch(
+        // `http://localhost:8080/feed/posts?page=${page}`, ///OBS:: NÃO VAMOS MAIS CONSEGUIR ENCODAR O 'PAGENUMBER' NA NOSSA URL, POIS NO MUNDO GRAPHQL SÓ EXISTE 1 ENDPOINT (o endpoint de 'localhost:8080/graphql', DE TIPO POST)....
+        `http://localhost:8080/graphql`,
+
+        {
+          method: 'POST', ////sim, vamos usar um METHOD DE 'POST', mesmo que esse seja um GET REQUEST, pq estamos no mundo graphql...
+          headers: {
+           
+            Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            'Content-Type': 'application/json' //aqui vamos querer ENVIAR DATA CONCRETA (o page number, nesse request de tipo POST, post pq é GRAPHQL WORLD).... , por isso o 'application/json', e esse header aí...
+          },
+
+
+          body: JSON.stringify(
+            graphqlQuery
+          )
+        }
+      ); 
+
+
+    
+
+
+
+
+
+--_> COMO PODE VER,
+
+
+
+NÓS TAMBÉM TEMOS AQUELE 
+
+HEADER DE 
+
+'Content-Type',
+
+QUE TAMBÉM É ESSENCIAL PARA CONSEGUIRMOS 
+
+
+
+ENVIAR ESSE REQUEST DE TIPO 'POST'... (pq precisamos que isso seja json data, para que seja reconhecido pelo graphql...)

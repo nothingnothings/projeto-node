@@ -1,0 +1,7553 @@
+
+
+
+
+
+
+
+
+
+-> PROFESSOR APONTA QUE JÁ PROGREDIMOS BASTANTE, ADICIONAMOS:
+
+
+
+
+
+
+
+
+1) CREATE POSTS 
+
+
+
+
+2) VIEW POSTS (fetch de posts)
+
+
+
+
+3) VIEW A SINGLE POST 
+
+
+
+
+
+
+
+
+4) UPLOAD FILES (images)
+
+
+
+
+
+5) VALIDATE CONTENT... (browser e serverside)
+
+
+
+
+
+
+
+
+
+
+
+ok, mas o QUE ESTÁ FALTANDO? 
+
+
+
+
+
+
+BEM, ESTÁ FALTANDO A FEATURE DE 'UPDATE POSTS'...
+
+
+
+
+
+
+
+
+
+------> NA VERDADE,
+
+ESTÁ FALTANDO:
+
+
+
+6) EDIT POSTS 
+
+
+
+
+7) DELETE POSTS 
+
+
+
+
+
+
+---
+
+8) AUTHENTICATION 
+
+
+9) USERS 
+
+
+
+
+10) CONNECT DE USERS A POSTS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> VAMOS CONTINUAR COM O 'EDIT' E 'DELETE' 
+
+
+
+DE POSTS...
+
+
+
+
+
+
+
+--> talvez seja melhor 
+
+
+
+COMEÇAR COM O 
+
+'DELETE POST'.....
+
+
+
+
+(
+
+    mais fácil...
+)
+
+
+
+
+
+
+
+
+
+
+para o delete post, vou querer:
+
+
+
+
+
+1) DELETAR O POST NA DATABASE MONGODB.... 
+
+
+
+2) DELETAR A IMAGE QUE ESTAVA ASSIGNADA A ESSE POST,
+
+LÁ 
+
+
+NO BACKEND...
+
+
+
+
+
+vou ter que checar as aulas anteriores...
+
+
+
+
+
+
+
+
+
+
+EU COMEÇO ASSIM:
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+
+
+
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+a primeira coisa, obviamente,
+
+
+é conseguir 
+
+o 
+
+
+'postId' 
+
+desse post específico que queremos deletar...
+
+
+
+
+
+
+
+
+
+--> para isso, vamos escrever 
+
+
+
+
+
+'const postId = req.params.postId'
+
+
+
+
+
+
+
+
+LÁ NO CONTROLLER....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+
+
+    const postId = req.params.postId;
+  
+}
+
+
+
+---------------------------
+
+
+
+
+
+ok... isso feito,
+
+
+precisamos de uma __ ROUTE__ para 
+
+esse 'deletePost',
+
+lá 
+
+em 
+
+'feed.js'....
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+router.post('/delete-post/:postId', feedController.deletePost);
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+certo....
+
+
+
+
+
+
+
+agora todos os requests submetidos 
+
+
+a 
+
+
+'localhost:8080/feed/delete-post/:postId'
+
+
+
+VAO 
+
+
+
+SER DIRECIONADOS A ESSA ROUTE aí...
+
+
+
+
+
+
+
+
+
+
+
+
+---> O CÓDIGO DO FRONTEND QUE FAZ ESSA FUNÇAÕ DE DELETE É ESTE (em 'Feed.js', component):
+
+
+
+
+
+deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+--------> preciso substituir 'URL' 
+
+pelo actual endpoint 
+
+de nosso backend...(
+
+
+'localhost:8080/feed/delete-post/:postId'
+
+)
+
+
+
+
+
+
+
+
+--> fica tipo assim:
+
+
+
+
+
+
+
+
+
+deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch('localhost:8080/feed/delete-post/:postId')
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+----------------------
+
+
+
+
+ENTRETANTO, É CLARO QUE ISSO ESTÁ __INCOMPLETO__;
+
+
+
+vou precisar 
+
+também 
+
+
+
+DOS HEADERS APROPRIADOS ('Content-Type: application/json'),
+
+
+
+
+e 
+
+também do 
+
+'method: POST'......
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch('localhost:8080/feed/delete-post/:postId', {
+
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+
+
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+VAMOS QUERER USAR 
+
+AQUELES CÓDIGOS 
+
+
+MONGOOSE,
+
+como 
+
+
+
+'Post.findByIdAndDelete()',
+
+
+
+PARA AÍ 
+
+
+
+__ 
+__ ENCONTRAR__ ESSE 
+
+
+POST E ENTÃO O DELETAR....
+
+
+
+
+
+
+COMEÇA TIPO ASSIM:
+
+
+
+exports.deletePost = (req, res, next) => {
+
+  const postId = req.params.postId;
+
+
+    Post.findByIdAndDelete(postId)
+    .then(
+      (result) => {
+        console.log(result);
+
+
+
+      }
+    )
+    .catch(
+      (err) => {
+        
+      }
+    )
+
+
+
+
+}
+
+
+
+-----------------------------
+
+
+
+
+
+É CLARO QUE VAMOS QUERER RETORNAR UMA JSON DATA 
+
+
+em caso de sucesso nesse delete... --> portnaot,
+
+
+
+escrevemos 
+
+
+
+'res.status(200).json(
+    {
+        message: 'Product successfully deleted'
+    }
+)
+'
+
+
+
+
+e 
+
+'res.status(500).json(
+    {
+        message: 'Failed to delete product.'
+    }
+)
+'
+
+
+
+
+
+
+
+
+
+
+
+-------> É CLARO QUE PODEMOS, AQUI, TAMBÉM EXECUTAR O CÓDIGO 
+DE 
+
+
+'DELETE IMAGE',
+
+
+deletar 
+
+DO BACKEND A IMAGE QUE ESTAVA ASSIGNADA A ESSE POST...
+
+
+
+
+
+
+
+--> para isso, temos o nosso código das aulas antigas, este aqui:
+
+
+
+
+  Product.findById(productId).then((product) => {
+    fs.unlink(product.imageUrl, (err) => {
+      console.log(err);
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> posso 
+
+  usar sua mesma estrutura 
+
+
+
+  no código de 'posts',
+
+
+  tipo assim:
+
+
+
+
+
+
+  Post.findById(postId).then(
+      (post) => {
+
+          fs.unlink(post.imageUrl, (err) => {
+              console.log(err);
+          })
+      }
+  )
+
+
+
+
+
+
+  --> UNLINK VAI DELETAR E DESASSIGNAR 
+
+
+  ESSA IMAGE AÍ,
+
+
+
+  de nosso backend....
+
+
+
+
+
+
+
+
+
+
+  --> nosso código do frontend que vai fazer RE-RENDER de nossos 
+
+  posts é este:
+
+
+
+
+
+
+
+
+        .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+
+
+
+
+
+
+
+
+-------> é um re-render do dom, essencialmente...
+
+
+
+
+
+
+
+
+
+
+
+--> bem, mas eu recebi um __ERRO__....
+
+
+
+
+
+
+
+--> o erro é este:
+
+
+
+
+
+
+Feed.js:208 Fetch API cannot load localhost:8080/feed/delete-post/:postId. URL scheme "localhost" is not supported.
+
+
+
+
+
+
+
+
+
+
+
+--> isso aconteceu pq eu esqueci 
+
+'http://' 
+
+no início da url string....
+
+
+
+
+
+
+
+
+
+
+--> BEM, AGORA RECEBI OUTRO ERRO:
+
+
+
+Error: Deleting a post failed!
+
+
+{"message":"Failed to delete product.",
+
+"err":{"stringValue":"\":postId\"","valueType":"string","kind":"ObjectId","value":":postId","path":"_id","reason":{},"name":"CastError",
+
+
+
+"message":"Cast to ObjectId failed for value \":postId\" (type string) at path \"_id\" for model \"Post\""}}
+
+
+
+
+
+
+
+
+
+CAST TO OBJECTID FAILEd.... ----> é aquele erro de 
+
+
+
+'ObjectId',
+
+
+bem clássico...
+
+
+
+
+
+
+
+
+
+
+--> ESSE ERRO OCORREU PQ EU ESQUECI O VALOR DINÂMICO DO 'postId'
+
+na url,
+
+com template literal:
+
+
+
+
+
+
+  deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch(`http://localhost:8080/feed/delete-post/${postId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+
+outro erro:
+
+
+'fs is not defined'... --> tenho que importar o FS (filesystem) 
+
+
+
+lá 
+
+
+
+no controller 'feed.js',
+
+para 
+
+
+poder usar 
+
+'fs.unlink()'...
+
+
+
+
+
+
+
+
+
+
+
+OK... FUNCIONOU BRILHANTEMENTE...
+
+
+
+
+
+
+
+
+--> DELETEI ATÉ O POST DO JASPION...
+
+
+
+
+
+
+
+
+---> tenho que adicionar de novo...
+
+
+
+
+
+
+
+
+
+
+
+
+----> certo.... sucesso...
+
+
+
+
+
+
+
+
+ENTÃO,
+
+
+
+
+
+TEMOS QUE FAZER ISTO,
+
+
+NO MOMENTO:
+
+
+
+
+
+
+
+
+
+
+
+
+------> NA VERDADE,
+
+ESTÁ FALTANDO:
+
+
+
+6) EDIT POSTS  ---- fazer agora...
+
+
+
+
+7) DELETE POSTS  ------- RESOLVIDO...
+
+
+
+
+
+
+---
+
+8) AUTHENTICATION 
+
+
+9) USERS 
+
+
+
+
+10) CONNECT DE USERS A POSTS....
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+vamos querer fazer o EDIT de um post...
+
+
+
+
+
+
+
+
+
+
+--> para isso, vamos precisar de um NOVO CONTROLLER... (em feed.js)...
+
+
+
+
+
+
+
+
+
+-> A ÚNICA PERGUNTA É:
+
+
+
+
+por acaso 
+
+
+uso o mesmo verbo de 'post' para essa route de 'edit'?
+
+
+
+
+
+ou será 
+
+que 
+
+uso um novo verbo, como 
+
+
+'patch'?
+
+
+
+
+
+
+
+
+
+
+---> ok...vamos tentar usar 'patch'...
+
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ ASSIM? 
+
+
+
+router.patch('/edit-post/:postId', feedController.editPost);
+
+
+
+
+
+
+
+
+
+
+
+--> bem, agora devo consultar um pouco o meu código antigo de 'edit product',
+
+
+usado no outro projeto...
+
+
+
+
+
+
+
+o código antigo era este:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  console.log(req.body);
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+
+  const image = req.file; //usado nos nossos CHECKS, para saber se O 'PATH' de nosso arquivo (e, consequentemente, o arquivo atribuído 'for a given product') realmente precisa ser alterado... (ver aquele if check lá embaixo..)
+  const description = req.body.description;
+  const price = req.body.price;
+
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+
+  if (validationErrors.length > 0) {
+
+
+    Product.find({ userId: userId })
+      .then((products) => {
+        // let errorMessage = null;
+
+        return res.status(422).render('admin/product-list-admin', {
+          pageTitle: 'Admin Products Page',
+          path: 'admin/product-list-admin',
+          errorMessage: errors.array()[0].msg,
+          validationErrors: validationErrors,
+          prods: products,
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  } else {
+    console.log(productId, 'LINE5123');
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+      .then((product) => {
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          if (image) {
+            const oldImagePath = product.imageUrl;
+            fs.unlink(product.imageUrl, (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
+            product.imageUrl = req.file.path; /////CÓDIGO MAIS RECENTE, USADO COM O 'MULTER'... ---> vai EDITAR/OVERWRITTAR O PATH A IMAGE ANTIGA (atribuída a esse product) SE CONSTATAR QUE ALGUMA FILE VÁLIDA (não undefined/inválida) TIVER SIDO ENVIADA AO NOSSO APP...
+          }
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); ///É ISSO QUE VAI FAZER O REPASSE DO ERRO A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js.... (é o middleware que  tem 4 argumentos, 'error, req, res, next'...)
+      });
+  }
+};
+
+
+
+
+
+
+--------------------
+
+
+hmmmm espere. Tive uma epifania..
+
+
+
+
+--> será que não é melhor __USAR ___ JSON DATA __ PARA 
+
+ENVIAR 
+
+
+
+NOSSO 'postId',
+
+LÁ 
+
+NA ROUTE 
+
+DE 
+
+'deletePost'?
+
+
+
+
+
+--> tipo assim:
+
+
+
+
+
+
+
+  deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch(`http://localhost:8080/feed/delete-post`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          postId: postId
+        }
+      )
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK, ISSO DEU CERTO....
+
+
+(
+
+    e acho que é melhor do que a approach do 
+
+    'const postId = req.params.postId'... 
+
+    (
+
+
+        extract do postId nos params não é bom, acho eu, 
+
+        em 
+
+        rest apis...
+    )
+)
+
+
+
+
+----------------------------------
+
+
+
+Vou tentar reformatar isso aí...
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+
+
+
+    const postId = req.body.postId;
+
+
+
+
+
+}
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+MEU CÓDIGO DO FRONTEND VAI FICANDO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST'
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    const formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      url = 'http://localhost:8080/feed/post-edit'; ////EIS O CÓDIGO EM QUESTÃO.
+      method = 'PATCH';
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+certo... mas 
+
+
+agora estou com alguns errors no frontend...
+
+
+
+
+ex:
+
+
+
+
+
+
+FeedEdit.js:53 Uncaught TypeError: Cannot read properties of undefined (reading 'title')
+    at FeedEdit.componentDidUpdate (FeedEdit.js:53)
+    at commitLifeCycles (react-dom.development.js:19710)
+    at commitLayoutEffects (react-dom.development.js:22662)
+    at HTMLUnknownElement.callCallback (react-dom.development.js:189)
+    at Object.invokeGuardedCallbackDev (react-dom.development.js:238)
+    at invokeGuardedCallback (react-dom.development.js:291)
+    at commitRootImpl (react-dom.development.js:22404)
+    at unstable_runWithPriority (scheduler.development.js:659)
+    at runWithPriority$1 (react-dom.development.js:11077)
+    at commitRoot (react-dom.development.js:22246)
+    at finishSyncRender (react-dom.development.js:21663)
+    at performSyncWorkOnRoot (react-dom.development.js:21649)
+    at react-dom.development.js:11131
+    at unstable_runWithPriority (scheduler.development.js:659)
+    at runWithPriority$1 (react-dom.development.js:11077)
+    at flushSyncCallbackQueueImpl (react-dom.development.js:11126)
+    at flushSyncCallbackQueue (react-dom.development.js:11114)
+    at discreteUpdates$1 (react-dom.development.js:21752)
+    at discreteUpdates (react-dom.development.js:811)
+    at dispatchDiscreteEvent (react-dom.development.js:4211)
+componentDidUpdate @ FeedEdit.js:53
+commitLifeCycles @ react-dom.development.js:19710
+commitLayoutEffects @ react-dom.development.js:22662
+callCallback @ react-dom.development.js:189
+invokeGuardedCallbackDev @ react-dom.development.js:238
+invokeGuardedCallback @ react-dom.development.js:291
+commitRootImpl @ react-dom.development.js:22404
+unstable_runWithPriority @ scheduler.development.js:659
+runWithPriority$1 @ react-dom.development.js:11077
+commitRoot @ react-dom.development.js:22246
+finishSyncRender @ react-dom.development.js:21663
+performSyncWorkOnRoot @ react-dom.development.js:21649
+(anonymous) @ react-dom.development.js:11131
+unstable_runWithPriority @ scheduler.development.js:659
+runWithPriority$1 @ react-dom.development.js:11077
+flushSyncCallbackQueueImpl @ react-dom.development.js:11126
+flushSyncCallbackQueue @ react-dom.development.js:11114
+discreteUpdates$1 @ react-dom.development.js:21752
+discreteUpdates @ react-dom.development.js:811
+dispatchDiscreteEvent @ react-dom.development.js:4211
+14:55:48.572 index.js:1437 The above error occurred in the <FeedEdit> component:
+    in FeedEdit (at Feed.js:256)
+    in Feed (at App.js:199)
+    in Route (at App.js:195)
+    in Switch (at App.js:194)
+    in App (created by Route)
+    in Route (created by withRouter(App))
+    in withRouter(App) (at src/index.js:10)
+    in Router (created by BrowserRouter)
+    in BrowserRouter (at src/index.js:9)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://fb.me/react-error-boundaries to learn more about error boundaries.
+
+
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+consertei o problema:
+
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.props.editing &&
+      prevProps.editing !== this.props.editing &&
+      prevProps.selectedPost !== this.props.selectedPost
+    ) {
+      const postForm = {
+        title: {
+          ...prevState.postForm.title,
+          value: this.props.selectedPost.title,
+          valid: true,
+        },
+        image: {
+          ...prevState.postForm.image,
+          value: this.props.selectedPost.imagePath,
+          valid: true,
+        },
+        content: {
+          ...prevState.postForm.content,
+          value: this.props.selectedPost.content,
+          valid: true,
+        },
+      };
+
+      this.setState({ postForm: postForm, formIsValid: true });
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+  --> em vários lugares estava 'prevProps.postForm.xxxx',
+
+  em vez de 
+
+
+  'prevState'.postForm.xxx'....
+
+
+
+
+
+
+
+  --> agora está funcionando... só ajeitar o 
+
+  backend e um pouco do frontend...
+
+
+
+
+
+
+
+
+
+
+
+  --> ok... mas o problema, agora, é que quando VOU EDITAR MEU PRODUCT, EU INPUTTO DATA NOS INPUT FIELDS 
+
+  E AÍ 
+
+
+
+  MEU 
+
+
+
+  MODAL FICA CARREGANDO PARA SEMPRE.... ('Loading')...
+
+  (e o serverside também não responde....)
+
+
+
+
+
+
+
+
+  -> ah... é pq eu não codei o controller, é claro.... (ainda não existe lógica serverside/ nodeexpress para 
+  
+  
+  realizar essa função de 'edit'.... --> devo ir até o arquivo 'feed.js', dos controllers, e adicionar essa lógica...)
+
+
+
+
+
+
+
+----> COMEÇO TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+
+    const postId = req.body.postId;
+
+      const imageUrl = req.file.path;
+      const content = req.body.content;
+      const title = req.body.title;
+
+
+
+    Post.findById(postId)
+    .then(
+
+        (post) => {
+
+
+          if(
+            post.title !== title
+          ) {
+            post.title = title
+          }
+
+                    if(
+            post.content !== content
+          ) {
+            post.content = content
+          }
+
+
+    if(
+      post.imageUrl !== imageUrl
+    ) {
+      post.imageUrl = imageUrl
+    }
+
+
+
+
+
+        }
+    )
+}
+  
+
+
+
+
+
+
+GANHEI UM ERRO:
+
+
+
+TypeError: Cannot read property 'title' of null
+    at A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\controllers\feed.js:138:14
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+--> meu 'post'
+
+não está sendo encontrado com esse id...
+
+
+
+
+
+
+--> meu 'postId'
+
+
+não está sendo anexado em 
+
+'req.body.postId'....
+
+
+
+--> problema no frontend,
+
+provavelmente...
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA ESTÁ AQUI:
+
+
+
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST'
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      url = 'http://localhost:8080/feed/post-edit';
+      method = 'PATCH';
+
+      formData = new FormData();
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  ----> em nenhum lugar desse código frontend estou efetivamente passando 
+
+  o 
+
+  'postId'...
+
+
+
+
+
+
+
+
+
+  --> TALVEZ A SOLUÇÃO SEJA ISTO:
+
+
+
+
+      if (this.state.editPost) {
+      // url = 'URL';
+      url = 'http://localhost:8080/feed/post-edit';
+      method = 'PATCH';
+
+      formData = new FormData();
+      formData.append('postId', postData._id);
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    }
+
+
+
+
+
+
+
+
+
+
+    -----> agora estou, sim, fazendo o append de 'postId'
+
+
+
+    no meu objeto 'body' no request...
+
+
+
+
+
+
+
+
+
+
+
+    --> e isso funcionou, relativamente,
+
+    pois OBTIVE OUTRO ERRO:
+
+
+
+  reason: BSONTypeError: Argument passed in must be a string of 12 bytes or a string of 24 hex characters
+      at new BSONTypeError (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\bson\lib\error.js:41:28)
+
+
+
+
+
+
+
+
+-----> agora só o formato desse negócio está errado, mas o
+
+
+
+postId está sendo passado, pelo menos...
+
+
+
+
+
+
+--. mas o '_id' 
+
+está como undefined.. 
+
+
+
+
+
+não me lembro se o field era 'id' 
+
+ou '_id'...
+
+
+
+
+
+
+--> esse '_id' 
+
+
+
+não foi passado...
+
+
+
+
+
+
+
+--> tenho que configurá-lo, incluir de alguma coisa,
+
+
+
+por meio da function de 'fetch posts' ou algo assim...
+
+
+
+
+
+
+
+
+
+
+
+ACHEI..
+
+
+
+ISTO INTERESSA:
+
+
+
+           {this.state.posts.map((post) => (
+                <Post
+                  key={post._id}
+                  id={post._id} ///isto aqui.
+                  author={post.creator.name}
+                  date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                  title={post.title}
+                  image={post.imageUrl}
+                  content={post.content}
+                  onStartEdit={this.startEditPostHandler.bind(this, post._id)}
+                  onDelete={this.deletePostHandler.bind(this, post._id)}
+                />
+              ))}
+
+
+
+
+
+
+
+
+
+-> NÃO ADIANTA.... --> nesse caso, 
+
+
+talvez 
+eu seja 
+
+OBRIGADO A USAR 
+
+ROUTING PROPS,
+
+
+
+usar
+
+
+o
+
+
+
+pass de 'postId'
+
+
+
+lá na nossa url bar...
+
+
+
+
+
+
+
+
+
+
+
+--> espere... isso não faz o menor sentido.... --> para que seja 
+
+POSSÍVEL __ EDITAR__ 1 PRODUCT 
+
+
+
+NO NOSSO BACKEND,
+
+
+
+PRIMEIRAMENTE __ PRECISAMOS ___ CHECAR/PROCURAR__ POR ELE,
+
+
+lá 
+
+no frontend... ---> ou seja,
+
+
+
+
+
+
+entenda o código:
+
+
+
+
+
+
+
+
+
+1) FRONTEND ENVIA REQUEST __ DE 'QUERO EDITAR' (Request de tipo PATCH).... (precisamos do POSTID...)
+
+
+
+
+
+
+2) BACKEND __ PROCURA ___ NA __ DATABASE __ pela existência desse post....
+
+
+
+
+3) BACKEND RETORNA MENSAGEM AO USER, DEIXANDO QUE ELE EDITE O POST...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ENCONTREI ISTO:
+
+
+
+
+
+
+
+
+  startEditPostHandler = (postId) => {
+    this.setState((prevState) => {
+      const loadedPost = {
+        ...prevState.posts.find((post) => post._id === postId),
+      };
+
+      return {
+        isEditing: true,
+        editPost: loadedPost,
+      };
+    });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  --> isto me interessa muito, pois tenho aquele 
+
+
+  'editPost', 
+
+  QUE 
+
+  AGORA 
+
+  SERÁ 
+
+  ESSE 
+
+  'loadedPost',
+
+
+  basicamente....
+
+
+
+
+
+
+
+
+
+
+
+  --> LÁ NO RENDER DA PÁGINA 'Feed', TEMOS ISTO:
+
+
+
+
+
+             {this.state.posts.map((post) => (
+                <Post
+                  key={post._id}
+                  id={post._id}
+                  author={post.creator.name}
+                  date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                  title={post.title}
+                  image={post.imageUrl}
+                  content={post.content}
+                  onStartEdit={this.startEditPostHandler.bind(this, post._id)}
+                  onDelete={this.deletePostHandler.bind(this, post._id)}
+                />
+              ))}
+
+
+
+  ------------------------
+
+
+
+
+  ou seja,
+
+  o 
+
+  'id'
+
+  do POST JÁ ESTÁ SENDO PASSADO AO 
+
+
+  'onStartEdit',
+
+
+
+
+  QUE FAZ COM QUE O 'editPost'
+
+
+  fique com aquelas infos pertinentes...
+
+
+
+
+
+
+
+
+
+
+
+  ok... agora deu certo...
+
+
+
+  era uma confusão entre '_id'
+
+
+  e 
+
+  'id':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST'
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      url = 'http://localhost:8080/feed/post-edit';
+      method = 'PATCH';
+      console.log(postData);
+      formData = new FormData();
+      formData.append('postId', postData.id);
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+  --------------------------------------------------
+
+
+
+
+
+
+
+  --> mas nosso post AINDA NÃO ESTÁ SENDO EDITADO....
+
+
+
+
+  --> pq isso?
+
+
+
+  --> recebo este error:
+
+
+
+
+
+  Feed.js:206 TypeError: Failed to fetch
+    at Object.Feed._this.finishEditHandler [as onFinishEdit] (Feed.js:161)
+    at FeedEdit._this.acceptPostChangeHandler (FeedEdit.js:154)
+
+
+
+
+
+
+
+
+
+
+
+
+  --> talvez seja pq eu ainda não codei o controller adequadamente....
+
+
+
+
+
+
+
+
+
+
+  eu coloquei um return de 'post.save()',
+
+  E ISSO FEZ MEU POST EDITADO SER SALVO.... AGORA SÓ TENHO 
+  QUE 
+
+
+  FAZER COM QUE:
+
+
+
+
+  1) O MODAL FAÇA 'CLOSE' AO SER 'SUCCESSFUL' essse edit 
+
+
+
+
+  2) o post seja renderizado no meu 'feed', sem recarregar a page...
+
+
+
+
+
+  3) também preciso do ERROR HANDLING NO CASO DE 'FAIL TO EDIT'/fail to edit pq A DATA PASSADA É IGUAL à ANTIGA 
+
+
+
+
+  4) também preciso do __'DELETE O ARQUIVO IMAGE ANTIGO, QUANDO UMA NOVA IMAGE TIVER SIDO ATRIBUÍDA A ESSE POST'...
+
+
+
+
+
+
+
+
+
+
+
+  -------------------------
+
+
+
+
+
+  começo com o '1'...
+
+
+
+
+
+
+  --> wtf... npm start não está funcionando....
+
+
+
+
+
+  ex:
+
+
+
+  npm : O termo 'npm' não é reconhecido como nome de cmdlet, função, arquivo de script ou programa operável. 
+Verifique a grafia do nome ou, se um caminho tiver sido incluído, veja se o caminho está correto e tente novamente. 
+No linha:1 caractere:1
++ npm start
++ ~~~
+    + CategoryInfo          : ObjectNotFound: (npm:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+
+
+
+    
+
+
+AAAAAH.... aqueles arquivos que eu apaguei do root do meu 
+
+
+'C:/'....
+
+
+
+
+
+
+
+
+
+reinstalei o node, e agora tenho o npm de novo...
+
+
+
+
+
+
+
+acho que tenho que editar o frontend..
+
+
+
+
+
+--> preciso de uma response, na verdade... é a response que vai triggar aquele código de 
+
+
+''
+
+
+
+
+    .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> é por isso que 
+
+  lá 
+
+
+
+
+
+  no 'feed.js' (controller),
+
+  eu escrevo esta response:
+
+
+
+
+
+  exports.editPost = (req, res, next) => {
+  const postId = req.body.postId;
+  console.log(postId, 'LINE61235');
+  const image = req.file;
+  const content = req.body.content;
+  const title = req.body.title;
+
+  Post.findById(postId)
+    .then((post) => {
+      console.log(post);
+      if (post.title !== title) {
+        post.title = title;
+      }
+
+      if (post.content !== content) {
+        post.content = content;
+      }
+
+      if (post.image) {
+        post.imageUrl = image.path;
+      }
+
+      let postData = post;
+
+      return post.save().then((result) => {
+        console.log(result);
+
+        return res.status(200).json(
+          {
+            message: 'Post successfully edited.',
+            post: postData
+          }
+        )
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(
+        {
+          message: 'Something went wrong"'
+        }
+      )
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> e isso funciona, na verdade,
+
+
+
+pq 
+
+
+o 
+
+
+código frontend é este:
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST'
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      url = 'http://localhost:8080/feed/post-edit';
+      method = 'PATCH';
+      console.log(postData);
+      formData = new FormData();
+      formData.append('postId', postData.id);
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  o set de 'isEditing'
+
+  como false 
+
+  faz 
+
+
+
+  com que 
+
+
+
+  A JANELA/MODAL DE edit seja fechado...
+
+
+
+
+
+
+
+
+
+
+
+  --> o único problema é que 
+
+
+
+  OS POSTS NÃO SÃO RECARREGADOS...  -> o ideal 
+
+
+
+
+  seria um _ RE-FETCH __ DOS POSTS,
+
+
+  para que 
+
+
+  aí 
+
+  apareça o post recém editado....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> CONSEGUI.... GENIAL.
+
+
+
+
+  ficou tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+    finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST'
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      url = 'http://localhost:8080/feed/post-edit';
+      method = 'PATCH';
+      console.log(postData);
+      formData = new FormData();
+      formData.append('postId', postData.id);
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+
+
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---> ou seja, aquele call de 'this.loadPosts()'
+
+
+
+
+  no final 
+
+  dos 2 cases (de success e de error)
+
+
+  faz com que 
+
+  os 
+
+  posts 
+
+
+  sejam recarregados, e aí apareça as mudanças 
+
+
+  no post recém editado...
+
+
+
+
+
+  (
+
+
+    o código de loadPosts é 
+
+
+    este:
+
+
+
+loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('http://localhost:8080/feed/posts') //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+  CERTo...
+
+
+
+
+
+
+
+
+
+  agora nosso app está ficando melhor....
+
+
+
+
+
+
+
+
+
+
+
+  
+  1) O MODAL FAÇA 'CLOSE' AO SER 'SUCCESSFUL' essse edit 
+
+
+
+
+  2) o post seja renderizado no meu 'feed', sem recarregar a page...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> CONSEGUI FAZER ISSO....
+
+
+
+
+
+
+
+
+
+--> FALTOU ISTO:
+
+
+
+
+
+
+
+
+
+
+
+
+  3) também preciso do ERROR HANDLING NO CASO DE 'FAIL TO EDIT'/fail to edit pq A DATA PASSADA É IGUAL à ANTIGA 
+
+
+
+
+  4) também preciso do __'DELETE O ARQUIVO IMAGE ANTIGO, QUANDO UMA NOVA IMAGE TIVER SIDO ATRIBUÍDA A ESSE POST'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ok.... CONSEGUI IMPLEMENTAR ESSE 
+
+
+  'FAIL TO EDIT' 
+
+
+  nesse caso aí...
+
+
+
+
+
+
+  CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST'
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      url = 'http://localhost:8080/feed/post-edit';
+      method = 'PATCH';
+      console.log(postData);
+      formData = new FormData();
+      formData.append('postId', postData.id);
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+ 
+
+
+          if (res.status === 400) {
+            throw new Error('Please input values that are valid and not equal to previous ones.');
+          }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+
+
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  E ASSIM:
+
+
+
+
+
+
+
+
+
+
+  exports.editPost = (req, res, next) => {
+  const postId = req.body.postId;
+  console.log(postId, 'LINE61235');
+  const image = req.file;
+  const content = req.body.content;
+  const title = req.body.title;
+
+  Post.findById(postId)
+    .then((post) => {
+      console.log(post);
+      if (post.title !== title) {
+        post.title = title;
+      }
+
+      if (post.content !== content) {
+        post.content = content;
+      }
+
+      if (post.image) {
+        post.imageUrl = image.path;
+      }
+
+      if(post.title === title &&
+        post.content === content &&
+        !post.image) {
+
+          const error = new Error('As no changes to the post were written, no changes to the post were made.')
+          error.statusCode = 400;
+          throw error;
+        }
+
+      let postData = post;
+
+      return post.save().then((result) => {
+        console.log(result);
+
+        return res.status(200).json(
+          {
+            message: 'Post successfully edited.',
+            post: postData
+          }
+        )
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      if (err.statusCode === 400) {
+        res.status(400).json(
+          {
+            message: err.message,
+            error: err
+          }
+        )
+      }
+    });
+};
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+CERTo...
+
+
+
+
+
+
+
+
+
+
+agora para o próximo ponto....
+
+
+
+
+
+
+
+
+
+
+
+  4) também preciso do __'DELETE O ARQUIVO IMAGE ANTIGO, QUANDO UMA NOVA IMAGE TIVER SIDO ATRIBUÍDA A ESSE POST'...
+
+
+
+
+
+
+
+
+
+
+--> este é mais complicado... 
+
+
+
+
+--> vamos precisar de 
+
+
+
+'fs.unlink',
+
+
+
+
+
+
+e vamos precisar do 'imageUrl',
+
+
+para encontrar 
+
+esse file 
+
+
+no backend 
+
+
+e então o apagar...
+
+
+
+
+
+
+
+
+--> devo fazer isso lá no controller de 'feed.js',
+
+
+em 
+
+
+'editPost'...
+
+
+
+
+
+
+
+
+
+
+TALVEZ NESTE IF BLOCK?
+
+
+
+
+
+      if (image) {
+        post.imageUrl = image.path;
+      }
+
+
+
+
+
+
+
+
+
+  
+  --------------------------------------
+
+
+
+
+
+
+
+
+--> sucesso....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  vou ver a aula do professor...
+
+
+
+
+
+
+
+
+
+
+
+---> OK... ----> PARA O EDIT,
+
+
+
+PROFESSOR DECIDE USAR UM METHOD NÃO USADO POR NÓS....
+
+
+
+
+
+
+
+
+
+--> lá nas routes de feed, ele adiciona um method de 
+
+'PUT'
+
+em vez de 'PATCH'...
+
+
+
+
+
+
+
+
+
+
+ele escreve 
+
+
+
+'router.put('/post/:postId', feedController.editPost)' 
+
+
+
+
+
+
+
+
+
+
+
+--> professor explica que 'EDIT A POST'
+
+É 
+
+
+ESSENCIALMENTE 
+
+'REPLACE AN OLD POST WITH A NEW ONE'.... --> nós vamos manter o OLD ID 
+
+desse post,
+
+
+
+MAS APENAS ISSO, PQ O RESTO MUDARÁ...
+
+
+
+
+
+
+
+
+
+
+
+--> E COMO NÓS VAMOS ___ SUBSTITUIR UM RESOURCE,
+
+
+DEVEMOS USAR O METHOD DE 'put'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> O MÉTODO PUT É UM MÉTODO QUE APRENDEMOS NO MÓDULO PASSADO, MAS QUE AINDA NÃO USAMOS,
+
+
+PQ 
+
+
+EM UMA 'NORMAL BROWSER FORM',
+
+
+
+
+os únicos methods disponíveis são POST e GET  ---------> ENTRETANTO,
+
+
+EM UMA 
+
+RESTFUL API,
+
+
+
+
+POR MEIO DE 'ASYNC REQUESTS'
+
+ENVIADOS POR MEIO DE JAVASCRIPT,
+
+
+VOCÊ É CAPAZ 
+
+DE 
+
+ENVIAR 
+
+ESSE TIPO DE METHOD NO SEU REQUEST...
+
+
+
+
+
+
+
+
+
+-------------- --------> OK... --> MAS É CLARO QUE VAMOS PRECISAR 
+
+
+DE UMA 
+
+URL....
+
+
+
+
+
+
+
+--> no meu caso, o código estava assim:
+
+
+
+
+
+
+
+
+
+router.patch('/post-edit', feedController.editPost);
+
+
+
+
+
+
+
+
+
+
+
+--> entretanto, professor diz que 
+
+
+ele 
+
+
+
+vai querer 
+
+
+ENCODAR O 'ID DO POST'
+
+
+
+
+em um segmento dinâmico, 
+
+na url 
+de 
+
+
+'/post-edit/:postId',
+
+
+
+ALGO ASSIM... 
+
+
+
+
+
+
+
+
+-----------> 
+
+
+
+
+
+no caso dele, o código vai ficar 
+
+
+
+
+'router.put('/post/:postId')';
+
+
+
+
+
+
+
+
+
+
+
+
+
+(
+
+
+
+  OU SEJA, MAIS CONCISA DO QUE NOSSA ROUTE, ESSA AÍ...
+)
+
+(
+
+
+
+  e também vai conter o 'postId'
+
+
+  no meio da url.... não sei se esse é o approach mais seguro, no caso....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS VAMOS PRECISAR DE UMA 'CONTROLLER ACTION' 
+
+para handlar esse edit...
+
+
+
+
+
+
+
+
+
+
+--> a COISA IMPORTANTE SOBRE POST REQUESTS 
+
+
+E 
+
+PATCH/PUT REQUESTS 
+
+
+
+
+
+É QUE __ ELES TODOS POSSUEM UM 'REQUEST BODY'.... -------> MAS A OUTRA COISA IMPORTANTE 
+
+
+
+SOBRE ESSE TIPO DE METHOD 
+
+É 
+
+QUE
+ 
+
+
+ ___ ELES __ TAMBÉM PODEM ___ TER 
+
+
+ 'PARAMETERS
+ '
+
+
+
+
+
+NA _ URL__.... (como ':productId'..)
+
+
+
+
+
+
+
+
+
+--> MAS A COISA IMPORTANTE É QUE 
+
+
+NÓS PODEMOS/PODEREMOS TER 1 REQUEST 
+
+BODY,
+
+
+
+E ESSE REQUEST BODY 
+
+
+
+
+VAI _ _SEGURAR__ 'THE ACTUAL POST DATA'
+
+que 
+
+
+vamos querer enviar ao backend...
+
+
+
+
+
+
+
+
+
+-------> VAMOS QUERER USAR ESSA ACTUAL POST DATA, SUBSTITUIR A 'OLD POST DATA'
+ 
+ por ela....
+
+
+
+
+
+
+
+
+
+
+
+ -----> no controller de 'feed.js',
+
+
+
+
+
+ PROFESSOR ADICIONA UMA NOVA ACTION,
+
+ de 
+
+
+
+
+
+ 'exports.editPost'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ele escrevE:
+
+
+
+
+
+
+
+ exports.editPost = (req, res, next) => {
+
+        const postId = req.params.postId;
+
+
+ }
+
+
+
+
+
+
+
+
+
+ (ISSO 
+ 
+ É SIMILAR AO CÓDIGO QUE EU HAVIA 
+ 
+ 
+ escrito,
+ 
+
+ MAS EU ACABEI USANDO UM APPROACH EM QUE O 
+
+ 'postId'
+
+
+
+ acaba submittado no request 
+
+
+ body, em vez de um SEGMENTO DINÂMICO DA URL...
+ 
+ 
+ 
+ )
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+ exports.editPost = (req, res, next) => {
+  // const postId = req.body.postId; //approach do postId NO BODY DO REQUEST...
+
+  const postId = req.params.postId; ///approach do segmento dinâmico na url...
+  console.log(postId, 'LINE61235');
+  const image = req.file;
+  const content = req.body.content;
+  const title = req.body.title;
+
+
+
+
+
+  ----------------------------------------------
+
+
+
+
+
+
+
+  CERTO... ISSO VAI EXTRAIR 
+
+
+
+
+  NOSSO POSTID (precisamos alterar também o frontend, para que 
+  
+
+  o postId seja 
+
+
+  REPASSADO NA NOSSA URL,
+
+
+  quando for clicado o 'update post' button....
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... aí o professor extrai o title,
+
+
+o content,
+
+
+
+
+e 
+
+
+
+a 
+
+
+'file' (req.file)....
+
+
+
+
+
+
+
+
+-------> na verdade, ele vai querer extrair a 'IMAGE URL'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DEI UMA EDITADA,
+
+
+
+ACHO QUE ATÉ AGORA VAI FICAR ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => {
+
+
+  const postId = req.params.postId;
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      // url = 'http://localhost:8080/feed/post-edit';  ////approach do method 'PATCH', com o POSTID enviado no BODY do request (send no body do request, em vez de o extrair de um SEGMENTO DINÂMICO NA URL)....
+      // method = 'PATCH';
+      url = 'http://localhost:8080/feed/:postId';
+      method = 'PUT';
+      console.log(postData);
+      formData = new FormData();
+      // formData.append('postId', postData.id); //ver anotação logo acima... approach do método 'patch', antiga, minha, obsoleta.
+      formData.append('title', postData.title);
+      formData.append('content', postData.content);
+      formData.append('image', postData.image);
+    }
+
+    console.log(url);
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+professor diz que quanto a image file/url,
+
+
+
+temos 
+
+
+
+DUAS OPTIONS,
+
+QUANDO UPDATAMOS....
+
+
+
+
+
+
+
+
+
+
+--> 1A OPÇÃO/APPROACH --> a 'imageUrl'
+
+
+
+fica como PARTE DO __ INCOMING REQUEST_,
+
+
+
+E 
+
+AÍ __ É 
+
+
+'JUST SOME TEXT IN THE REQUEST BODY'...
+
+
+
+
+
+--> aí ficaria tipo assim:
+
+
+
+'let imageUrl = req.body.imageUrl' 
+
+
+
+
+
+
+---------> ESSE CASE AÍ, NO CASO, SERIA O CASE SE 
+
+'NO NEW IMAGE FILE WAS ADDED'...
+
+
+
+
+
+
+--> ISSO PQ __ SE NENHUMA 'NEW FILE' FOI PICKADA,
+
+
+
+AÍ __ O FRONTEND ___ CODE _ JÁ TEM TODA  A LÓGICA NECESSÁRIA 
+
+PARA 
+
+
+'TAKE THE EXISTING URL' E A MANTER....
+
+
+
+
+
+
+
+
+O CÓDIGO, PORTANTO, VAI FICANDO ASSIM:
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+
+
+
+  const postId = req.params.postId;
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+}
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+--> MAS É CLARO QUE 
+
+
+
+EXISTIRÃO CASES EM QUE 'A FILE WAS PICKED'....
+
+
+
+
+
+
+
+
+
+--> EM CASES COMO ESSES,
+
+
+
+
+entraremos no 
+
+
+
+if block de 
+
+
+'if (req.file)',
+
+
+
+
+E AÍ 
+
+PODEREMOS DEFINIR 
+
+
+'imageUrl' como sendo igual a 
+
+
+
+'req.file.path' 
+
+(
+
+  ou seja,
+
+  é exatamente o que eu havai escrito, essencialmente.
+)
+
+
+
+
+
+EX:
+
+
+
+      if (image) {
+        post.imageUrl = image.path;
+      }
+
+
+
+
+
+------------------------------
+
+
+
+
+
+VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => { ///versão do professor do código de cima....
+      const postId = req.params.postId;
+      const title = req.body.title;
+      const content = req.body.content;
+      let imageUrl = req.body.imageUrl;
+      if(req.file) {
+        imageUrl = req.file.path;
+      }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> DEPOIS DE TUDO ISSO,
+
+PELO MENOS 
+
+1 
+
+DAS 2 COISAS 
+
+
+DEVERÁ JÁ ESTAR 
+
+'set'... (
+
+
+  ou a FILE, ou a IMAGEURL...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR ENTÃO VAI QUERER CHECAR:
+
+
+'se imageUrl não estiver SET a esse ponto do runtime (o que vai acontecer 
+
+SE NÓS _ NÃO TIVERMOS CONSEGUIDO EXTRAIR ESSA IMAGEURL DO request body'...)' --> SE ESSE FOR 
+
+O 
+
+CASE,
+
+PROFESSOR VAI QUERER _ fAZER _ O THROW _ DE UM ERROR....
+
+
+
+
+
+--> nesse error,
+
+ele escreve 
+
+'No file was picked'.... (
+
+  é um approach possível para nossa 
+
+  UI.... ---> mostrar 1 erro se A IMAGEURL 
+
+  não tiver conseguido ser extraída do 'body do request',
+
+
+  E nem 
+
+  EXTRAÍDA 
+
+  por meio 
+
+  do 
+
+  'req.file.path' (path do arquivo que deveria ter sido uploadado pelo user)
+
+
+
+),
+
+
+
+
+
+
+
+ESSE ERRO SERÁ THROWN NO 'WORST CASE SCENARIO',
+
+
+em que 
+
+
+
+não conseguimos obter a imageUrl de NENHUMA DAS 2 ORIGENS (nem do FILE que user uploadou, 
+
+NEM 
+
+DA IMAGEURL no body,
+
+
+que existe no caso em que ELE NÃO UPLOADA COISA ALGUMA...
+
+
+)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => { ///versão do professor do código de cima....
+      const postId = req.params.postId;
+      const title = req.body.title;
+      const content = req.body.content;
+      let imageUrl = req.body.imageUrl;
+      if(req.file) {
+        imageUrl = req.file.path;
+      }
+
+      if (!imageUrl) { ////eis o código em questão.
+          const error = new Error('No file was picked.');
+          error.statusCode = 422; //invalid input;
+          throw error;
+      }
+
+
+
+}
+
+
+
+
+
+
+----------------------------- 
+
+
+
+
+
+PROFESSOR EXPLICA QUE ESSA É NOSSA 'FIRST PIECE OF VALIDATIOn',
+
+
+
+mas que 
+
+vamos adicionar mais validation, é claro... ---> NORMALMENTE,
+
+ENTRETANTO, DEVEMOS 
+
+TER 
+
+
+1 
+
+'imageUrl'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BEM, MAS PROFESSOR ADMITE QUE 
+
+FEZ UM ERRO....
+
+
+
+
+
+em 
+
+
+
+'let imageUrl = req.body.imageUrl',
+
+
+
+O CORRETO SERÁ 
+
+
+'let imageUrl = req.body.image',
+
+
+
+
+E LÁ 
+
+
+EMBAIXO,
+
+
+
+'if(!image)' 
+
+
+
+(OU SEJA,
+
+
+EU ESTAVA CERTO...)
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => { ///versão do professor do código de cima....
+      const postId = req.params.postId;
+      const title = req.body.title;
+      const content = req.body.content;
+      let imageUrl = req.body.image;
+      if(req.file) {
+        imageUrl = req.file.path;
+      }
+
+      if (!imageUrl) { ////eis o código em questão.
+          const error = new Error('No file was picked.');
+          error.statusCode = 422; //invalid input;
+          throw error;
+      }
+
+
+
+}
+
+
+
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+----. certo, mas o professor admite que 
+
+
+
+
+
+
+DEVEMOS TWEAKAR 1 POUCO NOSSO CÓDIGO 
+
+FRONTEND...
+
+
+
+
+
+
+
+
+--> LÁ em 
+
+'Feed.js',
+
+
+AQUELE COMPONENT,
+
+
+
+
+
+
+
+
+
+--> LÁ, NÓS TEMOS AQUELE METHOD DE 
+
+
+'loadPosts':
+
+
+
+
+
+ loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('http://localhost:8080/feed/posts') //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> NESSE LOCAL AÍ,
+
+  QUE É EXECUTADO 
+  QUANDO 
+
+  CARREGAMOS TODA A 'POST DATA'
+
+
+
+
+
+  DO SERVER,
+
+  INCLUINDO NOSSA 'imageUrl',
+
+
+
+
+
+  NÓS __ ARMAZENAMOS__ SMEPRE OS __ POSTS 
+
+
+
+  naquele 
+
+
+
+  'this.setState'
+
+
+
+
+  de 
+
+
+  ''
+
+
+
+          this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+
+
+
+
+
+
+'' 
+
+
+
+
+
+
+
+
+
+
+--> ISSO, NESSA LINHA, FAZ COM QUE 
+
+
+
+OS POSTS SEJAM 
+
+ARMAZENADOS NA NOSSA 'FRONTEND APPLICATION',
+
+que 
+
+então faz handle dessa data....
+
+
+
+
+
+
+
+
+--> MAS PROFESSOR EXPLICA QUE PRECISAMOS __ TWEAKAR_ 1 POUCO ESSa 
+
+linha de 
+
+
+
+'posts: data.posts'...
+
+
+
+
+
+
+
+
+
+------> ELE DIZ QUE 
+
+
+
+LÁ DEVEMOS 
+
+
+acessar 
+
+
+
+
+
+'data.posts',
+
+
+MAS AÍ 
+
+
+DEVEMOS CHAMAR 
+
+
+
+'.map()'
+
+
+EM CIMA DESSE ARRAY,
+
+
+
+
+PARA QUE POSSAMOS 
+
+
+'MAP THIS INTO A DIFFERENT KIND OF ARRAY'... -----> CADA 
+
+ELEMENT TEM QUE 
+
+SER 
+
+
+MUDADO 
+
+1 POUQUINHO...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+posts: data.posts.map(
+  (post) => {
+
+    return { //versão alterada desse post...
+
+    }
+  }
+)
+
+
+
+
+
+
+--------------------------
+
+
+
+professor vai usar o spreadoperator para 'GET ALL THE PROPERTIES OF MY POST OBJECT',
+
+
+
+e aí 
+
+vai 
+
+usar/escrever  (UMA PROPRIEDADE NOVA...)
+
+a propriedade 
+
+de 
+
+'imagePath',
+
+
+
+
+
+
+que 
+
+SERÁ 
+
+
+IGUAL A 
+
+
+
+
+'post.imageUrl'..
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+posts: data.posts.map(
+  (post) => {
+
+    return {
+      ...post,
+      imagePath: post.imageUrl    //EIS O CÓDIGO EM QUESTÃO.
+    }
+  }
+)
+
+
+-------------------------
+
+
+
+O CÓDIGO COMPLETO FICA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+          this.setState({
+          posts: data.posts.map(
+            (post) => {
+              return {
+                ...post,
+                imagePath: post.imageUrl
+              }
+            }
+          )
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE 'imageUrl',
+
+AQUI,
+
+
+É 
+
+
+A 
+
+
+PROPRIEDADE 
+
+QUE 
+
+
+
+TEMOS 
+
+
+EM CADA 'post',
+
+
+
+
+
+
+LÁ NA DATABASE.... (e cujo model definimos no nosso SERVERSIDE, em 'post.js', models...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... O PATH A IMAGE FICA NESSA KEY DE 'imageUrl'....
+
+
+
+
+
+
+
+
+
+
+
+
+----> BEM, O PATH ORIGINAL 
+
+A ESSA IMAGE 
+
+VAI 
+
+FICAR 
+
+
+NESSE 'imagePath' 
+
+aí...  --> ISSO PQ 
+
+QUANDO 
+
+
+
+
+
+NÓS FAZEMOS 
+O 
+
+VIEW DE 1 SINGLE POST (por meio do component 
+
+'SinglePost.js',
+
+
+
+
+NÓS SEMPRE 
+
+
+
+EXTRAÍMOS A 'imageUrl'
+
+
+
+E ENTÃO FAZÍAMOS APPEND DESSA IMAGEURL ao 'domain' (localhost:8080)...
+
+ex:
+
+
+
+
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          image: data.post.imageUrl,
+          content: data.post.content,
+        });
+      })
+
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+certo....  e, bem, 
+
+
+o 
+
+'path'
+ 
+
+
+
+ DEVE SER 
+
+'JUST THE PATH,
+
+WITHOUT THE DOMAIN'... ---> isso pq 
+
+
+
+
+VAMOS MANTER _ essa data nessa key de 'imagePath',
+
+
+
+E AÍ 
+
+
+ISSO 
+
+VAI 
+
+SER REUTILIZADO
+ 
+
+
+ MAIS TARDE,
+
+
+
+ QUANDO 
+
+ 
+ EDITARMOS NOSSO POST, POR MEIO DO 
+
+
+ 'EDIT MODAL'... -------> E AÍ, POR TRÁS DAS CENAS,
+
+
+
+
+ se nenhuma IMAGEM FOR ADDADA,
+
+
+ esse PATH vai ficar armazenado, 
+
+
+
+ e aí 
+
+
+
+
+ ESSE PATH VAI SER RESUBMITTADO ao nosso backend/database,
+
+ com nosso 'newly editted post'....
+
+
+
+
+
+
+
+
+
+
+
+
+ --> devemos ver os internals do react component 'FeedEdit'
+
+ para entender mais sobre a estrutura de como fica 
+
+
+
+ esse 'imagePath'....
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+   loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('http://localhost:8080/feed/posts') //forma correta.
+      // fetch('/feed/posts') //FORMA ERRADA.
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          // posts: data.posts,
+
+          posts: data.posts.map((post) => {
+            return {
+              ...post,
+              imagePath: post.imageUrl,
+            };
+          }),
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchError);
+  };
+
+
+
+
+
+
+
+
+
+
+  --------------------------------
+
+
+
+
+
+
+
+  ok.... professor diz que não quer mergulhar mt no reactside,
+
+
+
+
+  mas que 
+
+  esse era um ajuste necessário..
+
+
+
+
+
+
+
+
+
+
+  --> LÁ NO SERVERSIDE,
+
+
+
+  podemos 
+
+
+  EXTRAIR NOSSA 
+
+
+  IMAGE LÁ DO BODY....
+
+
+
+
+
+  ex:
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => { ///versão do professor do código de cima....
+      const postId = req.params.postId;
+      const title = req.body.title;
+      const content = req.body.content;
+      let imageUrl = req.body.imageUrl;
+      if(req.file) {
+        imageUrl = req.file.path;
+      }
+
+      if (!imageUrl) {
+          const error = new Error('No file was picked.');
+          error.statusCode = 422; //invalid input;
+          throw error;
+      }
+
+
+
+}
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+ok....  AGORA A IMAGE PODE SER EXTRAÍDA DO BODY.... -->  (default case, caso em que o user não uploadou nova image)...
+
+
+
+
+
+
+
+
+-_> E SE USER UPLOADAR UM ARQUIVO, ENTRAMOS NO IF BLOCK DE 'if(req.file)',
+
+
+EM QUE 
+
+AÍ 
+
+VAMOS DEFINIR O CMAPO 'imageUrl' desse post 
+
+
+como sendo 
+igual a 
+
+'req.file.path' (path dessa NOVA IMAGE)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... a partir desse novo código,
+
+TEMOS QUASE O MESMO COMPORTAMNETO DE ANTES... --> entretanto,
+
+agora recebo um erro de 
+
+'failed to fetch'
+
+
+quando termino de EDITAR 
+
+meu post....
+
+
+
+
+
+
+
+
+--> ALÉM DISSO, O POST __ NÃO ESTÁ SENDO EDITTADO... ALGO OCORREU DE ERRADO.
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+Access to fetch at 'http://localhost:8080/feed/:postId' 
+
+from origin 'http://localhost:3000' has been blocked by CORS policy: 
+Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> bem, é claro,
+
+é pq 
+
+eu ainda 
+
+
+NÃO 
+
+
+TERMINEI A LÓGICA SERVERSIDE DE 'editPost',
+
+
+talvez...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK... CONTINUAMOS O TRABALHO COM ISSO, COM O 'editPost'...
+
+
+
+
+
+
+
+
+
+
+--> O QUE O PROFESSOR 
+
+
+SUGERE,
+É CLARO,
+
+É 
+
+
+'ADDITIONAL VALIDATIOn'....
+
+
+
+
+
+
+
+
+
+---> NO CASO, O PROFESSOR VAI COPAIR AQUELE ARRAY 
+
+
+
+
+DE VALIDATION LÁ 
+
+DA ROUTE de 
+
+
+
+'router.post('/post')',
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+//POST /feed/post
+router.post('/post', 
+[
+body(
+    'title'
+)
+.trim()
+.isLength({min: 6})
+.withMessage('Title should be more than 6 characters long.')
+// .isString()
+.isAlpha()
+.withMessage('Post Titles must contain only letters.')
+
+.custom((value, { req }) => {
+    ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+    console.log(value);
+    return Post.findOne({ title: value }).then((post) => {
+      console.log(post);
+      if (post) {
+        console.log(post, 'LINE');
+        return Promise.reject(
+          'A post with the chosen title already exists, please choose another one.'
+        );
+      } else {
+        return value;
+      }
+    });
+  })
+,
+
+body(
+    'content'
+)
+.trim()
+.isLength({min: 6})
+.withMessage('Content should be more than 6 characters long.')
+
+],
+
+feedController.createPost);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE VAI COPIAR ESSE ARRAY INTERMEDIÁRIO E VAI COLOCAR 
+
+
+
+LÁ 
+
+
+
+
+NA ROUTE DE 'editPost'.... (eu não havia feito isso)...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+router.put(
+  '/post/:postId',
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.'),
+
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ],
+
+  feedController.editPost
+); ///versão do professor... ele encoda o postId na url, e também usa esse method de 'put' em vez de 'patch' (pq PUT VAI SUBSTITUIR RESOURCES NO NOSSO DATABASE, no caso as INFORMAÇÕES CONTIDAS EM 1 'POST'... isso é uma substituição, no caso, pq A OLD DATA desse post é PERDIDA, exceto o _Id....)
+
+
+
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+ok... e a validation acerca de 'imageUrl'
+
+
+
+não é necessária/a image não precisa de validation,
+
+pq 
+esse 
+
+
+VALIDATE É FEITO DIRETAMENTE NA 
+'
+CONTROLLER ACTION',
+
+E no 
+
+MULTER EM SI (lá em 'app.js')...
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, NÃO PRECISAMOS DE MAIS VALIDATION ALGUMA, POR ENQUANTO...
+
+
+
+
+
+
+
+
+
+
+
+--> DEPOIS DISSO,
+
+PROFESSOR VAI ATÉ 
+
+
+
+A ROUTE/CONTROLLER DE 'createPost',
+
+
+em que 
+
+
+temos 
+
+aquela boa lógica de validation...
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = new Post({
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        name: 'Maximillian',
+      },
+    });
+
+    post
+      .save()
+      .then((result) => {
+        console.log(result);
+        res.status(201).json({
+          message: 'Post created successfully',
+          post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+      });
+  }
+};
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+
+
+
+--> NESSE CASO, ELE VAI COPIAR AS LINHAS 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  } 
+
+
+
+
+
+
+
+--------------------------
+
+
+ELE CHECA PELA EMPTYNESS de 
+
+
+'errors',
+
+
+E AÍ 
+
+VAI DAR THROW DAQUELE ERROR SE TIVERMOS 
+
+ALGUM 
+
+
+INPUT INCORRETO..
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+};
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+ok....  ---> SE NÃO TIVERMOS ERRORS,
+
+
+CONTINUAMOS, FAZEMOS 'CHECK' DA FILE.. --> 
+
+
+E SE AÍ 
+
+PASSAMOS POR TODOS AQUELES IF CHECKS,
+
+
+
+
+
+
+
+
+
+
+
+AÍ __ SABEMOS QUE TEMOS 
+
+'VALID DATA',
+
+E QUE 
+
+PODEMOS 
+
+
+'UPDATE' 
+
+
+nosso post lá na database... --> para isos,
+
+
+
+usaremos 
+
+
+
+
+'Post.findById()'
+
+
+
+
+PARA ENTÃO USAR 
+
+
+
+
+'post.save()'...
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+
+  Post.findById(postId)
+  then(
+    (post) => {
+          
+    }
+  )
+  .catch(
+    (err) => {
+      
+
+    }
+  )
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+--> O PROFESSOR REUTILIZA AQUELA LÓGICA DE 
+
+ERRO ENCONTRADA EM OUTROS LUGARES,
+
+AQUELA DE 
+
+
+'if(!err.statusCode) {
+
+  err.statusCode = 500;
+
+}
+
+next(err);'
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+
+  Post.findById(postId)
+  then(
+    (post) => {
+          
+    }
+  )
+  .catch(
+    (err) => {
+      if(!err.statusCode) {
+
+  err.statusCode = 500;
+
+}
+
+next(err);
+
+    }
+  )
+
+};
+
+
+
+
+
+
+-----------------------
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findById(postId);
+  then((post) => {
+
+
+
+  }
+  
+  ).catch((err) => { ///reutilização de error catching logic...
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  });
+};
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ SE TIVERMOS O POST,
+
+
+
+sabemos que 
+
+
+
+NÃO TEMOS 
+
+
+
+1 DATABASE ERROR....
+
+
+
+
+
+
+
+
+
+
+-> professor ainda vai querer checar:
+
+
+
+
+
+
+SE 'POST' está como undefind... ('!post') ----> PQ 
+
+
+SE 
+
+ESTIVER COMO UNDEFINED,
+
+N TEMOS 
+
+1 
+
+
+
+POST PARA ESSE ID,
+
+
+
+LÁ NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findById(postId);
+  then((post) => {
+        if (!post) {
+
+          const error = new Error('Post not found.');
+          error.statusCode = 404;
+          throw error;
+        }
+
+  }
+  
+  ).catch((err) => { ///reutilização de error catching logic...
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  });
+};
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+ERRO DE CÓDIGO 404,
+
+
+
+
+post não pode ser encontraod...
+
+
+
+
+
+
+
+
+------> PROFESSOR DIZ QUE PODERÍAMOS REFATORAR TUDO ISSO... --> mas o professor 
+
+
+
+prefere 
+
+
+
+o approach mais 'verbose',
+
+para entender o que cada action creator faz....
+
+
+
+
+
+
+
+
+
+--> CERTO... PASSADO ESSE 
+
+'if(!post)',
+
+
+TEMOS AQUELES IF CHECKS QUE EU ESCREVI,
+
+
+
+
+
+de 
+
+
+
+
+'''ah, se esse input for o mesmo, não update coisa alguma''...
+
+
+
+
+
+
+
+
+--> na verdade, não farei isso...
+
+
+
+
+
+
+
+
+
+--> vou só escrever 
+
+
+'post.title = title',
+
+
+
+'post.imageUrl = imageUrl',
+
+
+
+'post.content = content';
+
+
+
+
+
+
+
+
+
+
+
+
+
+E AÍ, POR FIM, UM 
+
+'post.save()':
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findById(postId);
+  then((post) => {
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    post.title = title;
+    post.imageUrl = imageUrl;
+    post.content = content;
+
+    post.save();
+  }).catch((err) => {
+    ///reutilização de error catching logic...
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  });
+};
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CLARO QUE TENHO QUE RETORNAR ESSE 'post.save()'... 
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findById(postId);
+  then((post) => {
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    post.title = title;
+    post.imageUrl = imageUrl;
+    post.content = content;
+
+    return post.save();
+  }).catch((err) => {
+    ///reutilização de error catching logic...
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COLOCO UM THEN BLOCK 
+
+APÓS 
+
+esse then block,
+
+para ter 
+ 
+
+ o RESULT DESSA SAVE OPERATION....
+
+
+
+
+
+
+
+
+
+ aí escrevmeos:
+
+
+
+
+
+
+ .then(
+   (result) => {
+     res.status(200);
+   }
+ )
+
+
+
+
+ ------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+ exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.imageUrl;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findById(postId);
+  then((post) => {
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    post.title = title;
+    post.imageUrl = imageUrl;
+    post.content = content;
+
+    return post.save();
+  })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+
+          message: 'Post updated!',
+          post: result
+      });
+    })
+    .catch((err) => {
+      ///reutilização de error catching logic...
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> VAMOS RETORNAR, POR MEIO DESSA JSON DATA,
+
+
+nosso 'actual post',
+
+
+naquela key de 'post: result'... ---> ISSO SERÁ USADO 
+
+
+
+
+NO UPDATE 
+
+DE 
+NOSSO FRONTEND, DA UI....
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... ESSA É A LÓGICA DE UPDATE.... --> É CLARO QUE HÁ MAIS UMA COISA QUE PODEMOS ADICIONAR (e que eu já havia adicionado):
+
+
+
+
+A LÓGICA PARA 'DELETE THE OLD IMAGE'...
+(
+
+  eu não havia feito isso, nessa route,
+
+  anteriormente.... havia feito só 
+
+  lá em 'deletePost'...
+)
+
+
+
+
+RECEBO UM ERRO:
+
+
+
+reason: BSONTypeError: Argument passed in must be a string of 12 bytes or a string of 24 hex characters
+      at new BSONTypeError (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\bson\lib\error.js:41:28)
+
+
+
+CastError: Cast to ObjectId failed for value ":postId" (type string) at path "_id" for model "Post"
+
+
+
+
+
+
+
+
+
+
+--> para fazer esse delete, o professor adiciona uma pequena 'helper function' lá 
+
+
+no controller de 'feed.js',
+
+
+
+que será usada 
+
+
+tanto em 'edit'
+
+quanto em 
+
+
+'delete' 
+
+
+a post,
+
+presumivelmente....
+
+
+
+
+
+
+
+--> isso ocorreu pq 
+
+minha lógica de 
+
+
+'finishEditHandler'
+
+está toda diferente, na minha versão, em relação à versão do professor....
+
+
+
+
+
+
+versão do professor:
+
+
+
+
+
+
+
+
+
+
+  finishEditHandler = (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+    this.setState({ editLoading: true });
+
+    //Set up data (with image!)
+    // let url = 'URL';
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST';
+
+    ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    if (this.state.editPost) {
+      // url = 'URL';
+      // url = 'http://localhost:8080/feed/post-edit';  ////approach do method 'PATCH', com o POSTID enviado no BODY do request (send no body do request, em vez de o extrair de um SEGMENTO DINÂMICO NA URL)....
+      // method = 'PATCH';
+      url = `http://localhost:8080/feed/post/${postData.id}`;
+      method = 'PUT';
+      console.log(postData);
+      // formData = new FormData(); /// approach antiga, do 'formData'.... --> essa approach é usada com o 'createPost', mas não com o EDIT POST...
+      // formData.append('postId', postData.id); //ver anotação logo acima... approach do método 'patch', antiga, minha, obsoleta.
+      // formData.append('title', postData.title);
+      // formData.append('content', postData.content);
+      // formData.append('image', postData.image);
+
+    } 
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      // body: JSON.stringify(postData),
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+      // headers: { ///este código, este SET DE HEADERS, __ NÃO FUNCIONA__ quando estamos lidando com O 'UPLOAD DE TEXT + UPLOAD DE IMAGES/files' ao mesmo tempo... (pq nossas files não conseguem ser convertidas em text...) --> para possibilitar o upload de images + text ao nosso backend, usamos o approach de 'const formData = new FormData()', visto mais acima...
+      //   'Content-Type':     //'application/json' //só usaríamos isso se NÃO TIVÉSSEMOS UMA IMAGE nesse request que queremos enviar, nesse caso específico (aqui, no caso, temos UMA IMAGE + TEXTDATA... --> por isso vamos usar 'multipart/form-data' como CONTENT TYPE)....
+      //                       'multipart/form-data'
+      // }
+    })
+      .then((res) => {
+        if (res.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+  --------------------------
+
+
+
+
+  ok, mas é claro que agora estou com um OUTRO PROBLEMA.... --> 
+
+
+
+
+  minha image 
+
+
+  NOVA não está ficando associada ao post editado....
+
+
+
+
+
+
+
+
+
+
+  -> consertei essa coisa do image upload... --> 
+
+
+
+  era o código dos filters do multer que estava me dando problemas:
+
+
+
+
+
+
+
+
+
+const fileFilter = (req, file, cb) => {
+  console.log(file);
+
+  console.log(req.body.title, 'LINE3');
+
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    if (
+      req.body.title.length > 6 &&
+      req.body.title.match(/^[A-Za-z]+$/) &&
+      req.body.content.length > 6
+    ) {
+      console.log('IMAGE UPLOADED')
+      return cb(null, true);
+    } else {
+      return cb('Invalid data inputted, file was not saved.', false);
+    }
+  } else {
+   return cb(null, false); ///isso é o que interessa... vai parar nosso fileupload, se o chamarmos... (ou não).
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> vocÊ não deve chamar 
+
+
+'return cb('Invalid data', true)',
+
+PQ 
+
+
+
+ISSO 
+AÍ SERÁ CONSIDERADO COMO UMA 'ERROR MESSAGE',
+
+
+
+E AÍ VAI CANCELAR O UPLOAD....
+
+
+
+
+
+
+
+
+---> certo... o único problema, agora, é que 
+
+
+
+as images antigas não estão sendo apagadas, quando editamos uma 
+
+image 
+
+associada a 1 post.... (a imageUrl, no caso... e a image tambem, mas no backend expressnode app...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO... FUNCIONOU.
+
+
+O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) { //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findOne({_id: ObjectId(postId)}).
+  then((post) => {
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if(req.file) {
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+    }
+
+    console.log("TEST42");
+    post.title = title;
+    post.imageUrl = imageUrl.replace(/\\/g, "/");
+    post.content = content;
+    return post.save();
+  })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: result,
+      });
+    })
+    .catch((err) => {
+      ///reutilização de error catching logic...
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+agora continuo a aula do professor.....
+
+
+
+
+
+
+
+
+--> o professor usou um approach mais elegante,
+
+mas que 
+
+
+
+resulta no mesmo funcionamento....
+
+
+
+
+a helper function de 
+
+'delete old image'
+
+é 
+
+
+
+
+
+
+'const clearImage = filePath => {
+
+
+
+}
+'
+
+
+
+
+
+
+
+
+
+
+
+
+--------> É UMA FUNÇÃO QUE EXIGE UM 'file path'
+
+
+COMO ARGUMENTO.... -------> 
+
+
+
+
+
+
+
+
+O PROFESSOR ENTÃO USA 
+
+AQUELA 
+
+PACKAGE 
+
+
+'fs' (filesystem)
+
+
+
+do nodejs...
+
+
+
+
+
+
+
+ 
+--> aí o professor 
+
+IMPORTA TAMBÉM 
+
+
+'path' (o package)....
+
+
+
+
+
+
+
+-> aí ele escreve 
+
+
+
+
+
+''''''
+
+
+
+const clearImage = filePath => {
+
+  filePath = path.join(__dirname, '..', filePath);
+
+  fs.unlink(
+    filePath, err => {
+      console.log(err);
+    }
+  ) //vai deletar aquela file específica, naquele path que passmos...
+}
+
+
+
+
+--------------------------
+
+
+
+
+-> E VAMOS QUERER 
+
+
+EXECUTAR ESSA FUNÇÃO DE 'clearImage'
+
+
+
+SEMPRE QUE 
+
+
+
+O USER TIVER UPLOADADO UMA 'NEW IMAGE'..
+
+
+
+
+
+
+
+
+
+--> AÍ O PROFESSOR VAI QUERER UMA LÓGICA TIPO ESTA:
+
+
+
+    if(imageUrl !== post.imageUrl) {
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+    }
+
+
+
+-------------------------------------------
+
+
+
+
+
+certo...
+
+
+
+
+
+
+
+
+
+
+-_> PROFESSOR EXPLICA QUE O CÓDIGO DE 'finishEditHandler'
+
+FUNCIONA TANTO 
+
+PARA 
+
+O 
+
+
+'UPDATE' 
+
+
+como o 
+
+'CREATE' 
+
+de um novo post...
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok.....
+
+
+
+
+
+
+
+
+Professor adiciona um novo post,
+
+
+
+
+
+
+
+não adiciona um 'new file'....
+
+
+
+
+
+
+AÍ __ 
+
+
+NÃO GANHAMOS ERRORS, O QUE É BOM....
+
+
+
+
+
+
+
+
+
+
+---> NO BACKEND AINDA TEREMOS APENAS 1 IMAGE ATRIBUÍDA A ESSE POST... (que é o que desejamos...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... O UPDATE DE POSTS ESTÁ FUNCIONANDO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS VER, AGORA, O DELETE DE POSTS...

@@ -1,0 +1,48 @@
+{{!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="/public/css/main.css"></link> ISTO NÃO FUNCIONA/NÃO FUNCIONARÁ... assista aula 'SERVING PAGES STATICALLY' -->
+    <link rel="stylesheet" href="/css/main.css"></link> <!--  PARA FAZER ESSE CÓDIGO/IMPORT DE CSS FUNCIONAR, devemos omitir '/public/' do início, PQ ELE _JÁ É __IMPLÍCITO/IMPLICITADO NESSE IMPORT AÍ, tudo devido ao middleware de  ' app.use(express.static(path.join(__dirname, 'public')));  ' lá em APP.JS ...-->
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>{{pageTitle}}</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+         --}}
+  {{!-- {{#if prods.length > 0}} NÃO FUNCIONA. É EXECUTE DE LÓGICA, e isso não funciona em TEMPLATES HANDLEBARS... --> já o código logo abaixo FUNCIONA, pois é só um boolean de 'true/false', extraído de LÓGICA RODADA LÁ NO 'EXPRESS', E NÃO NESSE NOSSO TEMPLATE/arquivo handlebars... --}}
+            <main>
+            {{#if hasProducts}}
+            <div class="grid">
+            {{#each prods}}
+            <article class="card product-item">
+                <header class="card__header">
+                    <h1 class="product__title">{{this.title}}</h1>
+                </header>
+                <div class="card__image">
+                    <img src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg" alt="chair"></img>
+                </div>
+                <div class="card__content">
+                    <h2 class="product__price">{{this.price}}</h2>
+                    <p class="product__description">{{this.desc}}</p>
+                </div>
+                <div class="card__actions">
+                    <button class="btn">Add to Cart</button>
+                </div>
+                </article>
+            {{/each}}
+             </div>
+            {{else}}
+                <h1>No Products</h1>
+            {{/if}}
+    </main>

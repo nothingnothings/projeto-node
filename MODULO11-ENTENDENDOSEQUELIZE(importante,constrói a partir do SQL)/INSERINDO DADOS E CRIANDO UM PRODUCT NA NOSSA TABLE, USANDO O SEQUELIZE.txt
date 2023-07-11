@@ -1,0 +1,955 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> É HORA DE USAR O SEQUELIZE 
+
+
+
+
+
+PARA __ ARMAZENAR 1 RECORD NA NOSSA TABLE, E NÃO PARA 
+
+
+A CRIAR....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, VAMOS ATÉ NOSSOS ARQUIVOS DOS CONTROLLERS,
+
+
+
+
+QUE É ONDE 
+
+
+
+VAMOS CRIAR UM NOVO PRODUCT.... --> isso 
+
+
+pq 
+
+
+__ O CREATE DE  
+
+
+
+
+UM PRODUCT VAI 
+
+SER ÚTIL, TBM, QUANDO MAIS TARDE QUISERMOS 
+
+
+FAZER 
+
+__RETRIEVE___ 
+
+D
+ESSE PRODUCT...
+
+
+
+
+
+
+
+
+
+--> LÁ 
+
+
+
+EM 
+
+
+'admin.js',
+
+
+lugar em que 
+
+CRÍAMOS NOSSOS PRODUCTS,
+
+
+
+
+ 
+
+
+
+ __ ATÉ O MOMENTO CONTINUAMOS IMPORTANDO NOSSO 
+
+
+
+ MODEL 
+
+
+
+ 'Product'
+
+
+
+ LÁ 
+
+
+
+ de 
+
+ '../models/product/',
+
+
+
+
+
+
+E ISSO É FINE,
+
+
+
+PQ 
+
+
+
+
+__USAMOS A MESMA ESTRUTURA 
+
+DE EXPORTS/IMPORTS 
+
+
+
+
+
+
+
+DE MODELS 
+
+
+
+
+
+com o sequelize/sem o sequelize  (e também com banco de dados/sem banco de dados..)
+
+
+
+
+
+
+
+
+
+
+--> MAS ALI,
+
+
+
+
+EM 
+
+
+
+'exports.postAddProduct = (req, res, enxt) => {
+
+}',
+
+
+
+QUE TEM ESTE CÓDIGO:
+
+exports.postAddProduct = (req, res, next) => {
+
+    const newProduct = new Product(null, req.body.title, req.body.imageUrl, req.body.description, req.body.price ); 
+
+    newProduct.save()
+    .then(
+      () => {
+        res.status(302).redirect('/');
+      }
+    )
+  };
+
+
+
+
+
+
+
+
+
+
+  --> NESSE LUGAR AÍ,
+
+
+  AGORA 
+
+
+  VAMOS 
+
+
+  _TRABALHAR DE FORMA UM POUCO DIFERENTE COM O NOSSO 
+
+
+  'Product'... 
+
+
+
+
+
+
+  ----> OK... O QUE O PROFESSOR VAI 
+
+
+  FAZER É SE LIVRAR 
+
+
+  DAQUELE CÓDIGO VELHO QUE INSTANCIAVA 
+
+
+UM
+
+
+  OBJETO 'PRODUCT'....
+
+
+
+
+
+
+
+  ex:
+
+
+
+
+
+  exports.postAddProduct = (req, res, next) => {
+
+
+  };
+
+
+
+
+
+
+
+
+
+  --> E AÍ, DENTRO DESSE 
+
+  'postAddProduct',
+
+
+  O PROFESSOR VAI __CRIAR UM NOVO PRODUCT,
+
+
+
+
+  POR MEIO DO CALL 
+
+
+
+
+  de 
+
+
+  'Product.xxxxx '-------> 
+
+
+
+
+  ELE VAI 
+
+
+  __USAR __ UM 
+
+
+  DOS 
+
+  MÉTODOS 
+
+
+
+  FORNECIDOS PELO 
+
+
+
+  ___SEQUELIZE__...
+
+
+
+
+
+
+
+
+  --> E SE USARMOS A DOT NOTATION,
+
+  NOSSO IDE JÁ 
+
+  VAI NOS MOSTRAR 
+
+
+
+  DIVERSOS DOS MÉTODOS DISPONÍVEIS...
+
+
+
+
+
+
+
+  (CERTO... MAS EU NÃO ESTOU VENDO ISSO... estranho.)
+
+
+
+
+
+
+
+
+
+
+
+  ------>  E TEMOS ___MUUUUITOS MÉTODOS....
+
+
+
+
+
+
+
+
+  --> métodos como 'count',
+
+
+  'create',
+
+
+
+  'describe',
+
+
+  destroy....
+
+
+
+
+
+
+
+
+
+  --> ISSO MOSTRA O PODER 
+
+
+
+
+DE 
+
+'SEQUELIZE',
+
+
+E 
+
+
+
+SUA GRANDE UTILIDADE...
+
+
+
+
+
+
+
+
+
+--> PARECE QUE É O 'INTELLISENSE' do visual studio code, que não funciona com isso....
+
+
+
+
+
+
+
+
+The reason you are not getting the Intellisense might be because you are not importing your models through sequelize correctly. Assuming you are defining your models in separate files and then importing them. I would recommend doing the following:
+
+Create an index.js file in your models folder
+Use sequelize.import to import all your models and associate them as well.
+Then export them all from index.js along with seqeulize db instance and Sequelize module.
+Wherever in your project you need your models just require db from /models.
+
+
+
+
+
+
+
+
+
+^^^^^^^^^ISSO NÃO FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+--> OK...
+
+
+MAS O QUE INTERESSA É QUE 
+
+TEMOS 
+
+O 
+
+
+
+
+
+MÉTODO 
+
+'.create()'
+
+
+DENTRO DOS NOSSOS MODELS...
+
+
+
+
+
+
+--> O MÉTODO 'create()'
+
+
+
+
+
+
+__ VAI CRIAR 1 NOVO 'ELEMENTO' BASEADO NAQUELE MODEL,
+
+
+
+E AÍ IMEDIATAMENTE SALVA 
+
+ESSE 
+
+
+
+ELEMENTO __ NA SUA DATABASE__... 
+
+
+
+
+
+
+
+-----> HÁ ___ TAMBÉM  '.build()',
+
+QUE TAMBÉM 
+
+
+
+__CRIA UM NOVO ELEMENTO/OBJETO A PARTIR 
+
+DO 
+
+
+SEU MODEL,
+
+
+
+MAS 
+
+ELE 
+
+
+
+FAZ 
+
+ESSE ELEMENTO/OBJETO __ SOMENTE EM JAVASCRIPT,
+
+E AÍ 
+
+
+
+
+__PRECISAMOS __ SALVAR 
+
+
+
+ESSE OBJETO MANUALMENTE NA DATABASE 
+
+
+(a vantagem 
+
+
+de 
+
+
+'.create()'
+
+
+é que 
+
+ELE FAZ 
+
+ISSO,
+
+CRIA UM OBJETO JAVASCRIPT e 
+
+
+SALVA NA DATABASE,
+tudo 
+
+
+
+DE UMA SÓ VEZ... IN ONE GO...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+BUILD (cria um objeto a partir do model, aí você precisa o salvar/manipular manualmente 
+)
+  VS CREATE (cria um objeto a partir do MODEL, e aí o SALVA NA DATABASE..)
+
+
+
+
+
+
+
+
+
+
+  -->
+
+
+
+  OK.... PROFESSOR VAI ESCREVER ASSIM:
+
+
+
+
+
+
+
+
+
+
+  exports.postAddProduct = (req, res, next) => {
+
+
+
+
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      Product.create(); ///EIS O CÓDIGO EM QUESTÃO.
+  }
+
+
+
+
+
+
+
+
+
+
+
+  CERTO.... E AÍ O 
+
+
+  '.create()'
+  
+SIMPLESMENTE 
+
+ACEITA/EXIGE UNS 
+
+
+ARGUMENTOS,
+
+
+USADOS 
+
+DE ACORDO COM A NOSSA 
+
+'MODEL DEFINITION'...
+
+
+
+
+
+---> vamos ter que basicamente 
+
+
+ASSIGNAR 
+
+
+
+OS VALORES PARA CADA 1 DOS FIELDS 
+
+
+DO 
+
+MODEL QUE 
+
+CRÍAMOS 
+
+
+lá 
+
+com 
+
+
+'sequelize.define()'....
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+  exports.postAddProduct = (req, res, next) => {
+
+
+
+
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      Product.create(
+
+          {
+            description: description,
+            imageUrl: imageUrl,
+            title: title,
+            price: price
+
+
+
+          }
+
+
+
+
+      ); ///EIS O CÓDIGO EM QUESTÃO.
+  }
+
+
+
+
+
+
+------------------------
+
+
+
+
+NÓS NÃO PRECISAMOS ASSIGNAR UM ID, PQ ISSO SERÁ ASSIGNADO AUTOMATICAMENTE,
+
+
+MAS TODOS OS OUTROS FIELDS 
+
+PRECISAMOS 
+
+ASSIGNAR....
+
+
+
+
+
+
+
+CERTO....
+
+
+
+
+ASSIGNAMOS TUDO ISSO, SEM PROBLEMAS
+
+
+
+
+
+
+
+
+
+
+
+-----> E EXATAMENTE 
+
+
+COMO 
+
+
+'MYSQL'
+
+
+funcionava no MÓDULO PASSADO,
+
+COM PROMISES,
+
+
+
+
+
+___ O SEQUELIZE TBM 
+
+
+FUNCIONA COM PROMISES... --> 
+
+
+
+
+É POR ISSO QUE 
+
+VAMOS PODER 
+
+CHAINAR 
+
+
+THEN E CATCH 
+
+A 
+
+ESSE 
+
+
+
+'
+
+
+
+Product.create()'...
+
+
+
+
+EX:
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  ////VERSÃO QUE USA SEQUELIZE...
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  Product.create( ///EIS O CÓDIGO EM QUESTÃO. --> ISSO VAI __CRIAR UM OBJECT A PARTIR DO MODEL DE 'Product', com aqueles FIELDS QUE DEFINIMOS ALI EMBAIXO ASSIGNADOS àQUELES VALORES de 'title', 'price', etc etc, E AÍ __ VAI AUTOMATICAMENTE __ SALVAR ISSO NA NOSSA DATABASE DE 'products'... (tudo graças ao sequelize)...
+    {
+      description: description,
+      imageUrl: imageUrl,
+      title: title,
+      price: price,
+    }
+  )
+  .then(
+    (result) => {
+      console.log(result);
+    }
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+};
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO,
+
+SALVAMOS TUDO ISSO E VOLTAMOS AO NOSSO APP,
+
+E TESTAMOS 
+
+
+
+
+
+A 
+
+FUNÇÃO DE 
+
+'ADD PRODUCT'...
+
+
+
+
+
+
+
+
+
+---> OK... DEU CERTO.... 
+
+
+
+
+FUNCIONOU CERTINHO, AGORA 
+
+
+TEMOS 
+
+ESSE 
+
+'PRODUCT'
+
+NA 
+
+
+NOSSA 
+
+DATABASE, DENTRO DA TABLE DE 
+
+'products'...
+
+
+
+
+
+
+
+
+SE EXAMINARMOS O CONSOLE.LOG NO TERMINAL,
+
+veremos 
+
+O 
+
+
+SQL 
+
+CODE 
+
+QUE 
+ELE 
+
+EXECUTOU PARA NÓS,
+ 
+ PARA 
+
+
+ REALIZAR ESSA OPERAÇÃO....
+
+
+
+
+
+
+
+
+ Executing (default): INSERT INTO `products` (`id`,`title`,`price`,`imageUrl`,`description`,`createdAt`,`updatedAt`) VALUES (DEFAULT,?,?,?,?,?,?);
+
+
+
+
+
+
+
+
+ ------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ É DESSA FORMA QUE PODEMOS 
+
+
+ 'ADD 
+
+ A VALUE/RECORD ATRAVÉS DO SEQUELIZE'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ----> VOCÊ PODE TER PERCEBIDO QUE _ AINDA NÃO ESTAMOS ENVIANDO UMA RESPONSE AO 
+
+ USUÁRIO.. --> ISSO 
+
+
+ VEREMOS MAIS TARDE....
+
+
+
+
+
+ --> CRÍAMOS UM PRODUCT;
+
+
+ O PRÓXIMO PASSO É 
+
+
+ VER 
+
+ COMO USAR 
+ O 
+
+
+ SEQUELIZE 
+
+
+ PARA ___ RETRIEVAR___ DATA...

@@ -1,0 +1,609 @@
+
+
+
+
+
+OK.... MEU CÓDIGO ESTÁ ASSIM (mas não está funcionando):
+
+
+
+
+
+
+  static findProduct(productId) {
+     const product = getProductsFromFile(
+          (products) => {
+            // console.log(products);
+              products.find(
+                (item, index) => {
+                   return item.id === productId
+                }
+              )
+          }
+
+        )
+
+        return product;
+  
+  }
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+POR ALGUMA RAZÃO,
+
+'product' está ficando como 'UNDEFINED'....
+
+
+-----
+
+
+
+
+
+
+
+-----> PROFESSOR CRIA UM 
+
+MÉTODO PARA UM 'SINGLE PRODUCT'...
+
+
+
+
+
+
+
+
+--> professor 
+
+
+
+
+COLOCA NOME DE 
+
+
+
+'findById'....
+
+
+
+
+ex:
+
+
+
+
+
+
+static findById(id, cb) {
+
+
+
+
+}
+
+
+
+
+
+----------> ACHO QUE ISSO ERA A COISA QUE EU ESTAVA FAZENDO ERRADO.... -----> EU PRECISAVA 
+
+
+DE UM 
+
+CALLBACK, DE UMA CALLBACK FUNCTION NESSE 
+
+meu 
+
+
+'findById',
+
+
+COISA QUE EU NÃO TINHA NESTE CÓDIGO:
+
+
+
+
+  static findProduct(productId) {
+     const product = getProductsFromFile(
+          (products) => {
+            // console.log(products);
+              products.find(
+                (item, index) => {
+                   return item.id === productId
+                }
+              )
+          }
+
+        )
+
+        return product;
+  
+  }
+
+
+
+
+
+
+------------------------
+
+
+
+CERTO... MAS COMO SERÁ O RESTO DA LÓGICA?
+
+
+
+
+
+
+
+
+
+
+---> FICOU TIPO ASSIM:
+
+
+
+
+(lá em 'product.js', nosso MODEL):
+
+  static findProduct(productId, callback) {
+   getProductsFromFile(
+         (products) => {
+          const product = products.find(
+               (item, index) => {
+                  return item.id === productId
+               }
+             )
+             callback(product); ///CALL DA CALLBACK FUNCTION, passando esse 'product' obtido por meio do RESULTADO DO MÉTODO 'find'...
+         }
+
+       )
+ 
+ }
+
+
+
+(lá em 'shop.js', nosso CONTROLLER):
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+  const productId = req.params.productId;
+
+ const product = Product.findProduct(productId, 
+
+  (product) => { ///A CALLBACK FUNCTION EM QUESTÃO.
+      console.log(product, 'LINE');
+  }
+  );
+
+    res.render('shop/product-detail', 
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      product: product
+    }
+    )
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ACHO QUE CONSEGUI... ->>> O NEGÓCIO 
+
+
+ESTÁ SENDO PASSADO COMO KEY 
+
+'product'
+
+lá 
+
+em 
+
+'res.render()':
+
+
+
+
+
+
+
+    res.render('shop/product-detail', 
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      product: product
+    }
+    )
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+CERTO... AGORA SÓ FALTA O VIEW PARA 
+
+
+ESSA 
+
+DATA 
+
+DO NOSSO PRODUCT ESPECÍFICO...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR COMEÇA A EXPLICAR A LÓGICA DE 'static findById', esse método que criamos....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+static findById(id, callback) {
+
+
+    getProductsFromFile();
+}
+
+
+
+
+
+
+
+
+
+1) ESSE 'getProductsFromFile' __ É NECESSÁRIO PQ VAMOS PRECISAR DE TODOS OS PRODUCTS,
+PQ VAMOS PROCURAR POR 1 PRODUCT ESPECÍFICO NO SEU MEIO.... (i need to read the entire file...)
+(mais tarde, quando TIVERMOS UMA DATABASE, 
+
+NÃO PRECISAREMOS MAIS DISSO, PQ AÍ VAMOS RODAR UM FIND E PASSAREMOS QUERIES 
+
+A ESSE FIND, QUE PROCURARÁ DENTRO DA DATABASE...) 
+
+
+
+
+
+
+ISSO FEITO, PROFESSOR VAI ESCREVER:
+
+
+
+
+
+
+
+
+static findById(id, callback) {
+
+
+    getProductsFromFile(
+        (products) => {
+
+        }
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+2) PRECISAMOS DESSE '(products) => {}'... --- OU SEJA,
+ 
+ VAMOS COMEÇAR COM O 
+
+
+ MESMO FORMATO 
+
+ DE 
+
+ 'fetchAll'... ---> OK.. MAS ANTES DE RETORNAR/TERMINAR COM O EXECUTE DESSE '(products) => {}',
+
+
+ VOU QUERER 
+
+ 'FILTER OUT THAT ONE PRODUCT WITH MY ID'...
+
+
+
+
+ por isso vou rodar JAVASCRIPT NORMAL,
+
+ VOU USAR 
+
+
+
+
+ 'const product = products.find(
+     (item, index) => {
+            item.id === productId
+     }
+ )
+ '
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+ static findById(productId, callback) {
+
+
+    getProductsFromFile(
+        (products) => {
+            const product = products.find(
+                (item, index) => {
+                    item.id === productId
+                }
+            )
+        }
+    );
+}
+
+
+
+
+
+
+--------->
+
+
+
+
+
+
+
+CERTO... AÍ PRECISAMOS __ DE MAIS 1 CALLBACK... (Argumento 'cb'....)
+
+
+
+
+
+
+
+
+
+
+3) PROFESSOR EXECUTA 
+
+
+'callback(productId);'....
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+ static findById(productId, callback) {
+
+
+    getProductsFromFile(
+        (products) => {
+            const product = products.find(
+                (item, index) => {
+                    item.id === productId;
+                }
+            )
+            callback(product); ///EIS O CÓDIGO EM QUESTÃO.
+        }
+    );
+}
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+FIND --> É UM CÓDIGO SÍNCRONO... 
+
+
+
+'CALLBACK()' --> é chamado de forma SÍNCRONA... 
+
+
+
+
+--> TODA ESSA FUNÇÃO AÍ 
+
+
+É __NECESSÁRIA __ PQ 
+
+
+
+
+A FUNÇÃO 
+
+
+'getProductsFromFile'
+
+
+É __ UM MÉTODO ASYNC....___ (pq lida com FILES...)
+
+
+
+
+
+
+
+
+
+
+----> ok... LÁ NO CONTROLLER, TEMOS A CONTINUAÇÃO 
+
+dessa 
+
+callback function...
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.getProductDetailPage = (req, res, next) => {
+
+  const productId = req.params.productId;
+
+ const product = Product.findProduct(productId, 
+
+  (product) => {
+      console.log(product, 'LINE');
+  }
+  );
+
+    res.render('shop/product-detail', 
+    {
+      pageTitle: 'Product Detail',
+      path: '',
+      product: product
+    }
+    )
+
+}
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+ const product = Product.findProduct(productId, 
+
+  (product) => {
+      console.log(product, 'LINE');
+  }
+  );
+
+
+
+
+
+
+
+  --> ESTE CÓDIGO AÍ...
+
+
+  VAMOS 
+
+
+
+  RECEBER __NOSSO PRODUCT, BASICAMENTE....______
+
+
+
+
+  ---------------------------------
+
+
+
+
+ 
+ OK.. NOSSA
+
+
+
+FUNÇÃO DE FETCH ONE PRODUCT ESTÁ FUNCIONANDO...
+
+
+
+
+--> AGORA DEVEMOS ESCREVER UMA VIEW 
+
+
+QUE 
+
+
+FARÁ DISPLAY DESSES DETAILS,
+ 
+
+ DO 
+ 
+ 'product' fetcheado por essa função...

@@ -1,0 +1,1735 @@
+
+
+
+
+
+
+
+
+
+
+PROFESSOR NOS MANDA DE VOLTA AO PROJETO DO ÚLTIMO MÓDULO...
+
+
+
+
+
+
+
+
+
+
+
+
+ELE NA VERDADE 
+
+MUDOU O CÓDIGO HTML UM POUCO, 
+
+OS 
+
+
+STYLES TAMBÉM...
+
+
+
+
+
+
+
+
+
+---------> OK.... ----> O QUE ELE FEZ?
+
+
+
+
+
+
+
+--> MUDOU O STYLING UM POUCO,
+
+
+ADICIONOU UM POUCO MAIS DE HTML.... 
+
+
+
+
+
+
+
+---------> PROFESSOR TAMBÉM ADICIONOU UNS STYLINGS DE QUE PRECISAREMOS, NESTE MÓDULO..
+
+
+
+
+
+
+
+
+
+--> usou umas cores verdes e tal...
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS FOCAR NA ___DATA__... -> 
+
+
+
+
+POR ENQUANTO NÃO TRABALHAMOS COM DATA NO NOSSO APP...
+
+
+
+
+
+
+
+
+
+
+
+-----> em 'admin.js',
+
+
+
+POR EXEMPLO, TEMOS ESTE CÓDIGO:
+
+
+
+
+
+
+const path = require('path');
+
+
+
+const express = require('express');
+
+
+
+
+const rootDir = require('../util/path'); /////UTILITY FUNCTION DE AUTORIA DO PROFESSOR.... --> substitui o trecho ""'__dirname, '..' ""       VISTO EM CÓDIGOS COMO 'path.join(__dirname, '..', 'views', 'add-product.html') , que ficam tipo 'path.join(rootDir, 'views', 'add-product.html');'....
+
+const router = express.Router();
+
+// router.use('/add-product',  ///ALTERAMOS ESSE PATH AÍ
+//(req, res, next) => {
+// router.get('/add-product', (req, res, next) => {
+//   console.log('test; IN THE MIDDLEWARE');
+//   res
+//   .status(200)
+//   .send(
+//     '<form action="/product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+//   );
+// });
+
+// router.post('/product',  ////ALTERAMOS ESSE PATH AÍ, COLOCAMOS O 'COMMON STARTING PATH' de '/admin'..
+//(req, res, next) => {
+//   console.log(req.body);
+//   res
+//   .status(302)
+//   .redirect('/');
+// });
+
+
+
+
+
+// router.get('/admin/add-product', (req, res, next) => {
+    router.get('/add-product', (req, res, next) => { ///esse path de 'add-product' NÃO VAI CONFLITAR COM O DE BAIXO PQ os METHODS QUE TRIGGAM ESSAS 2 ROUTES SÃO DIFERENTES (um é 'post', o o outro é get...)
+    console.log('test; IN THE MIDDLEWARE');
+    res
+    .status(200)
+    .sendFile(
+        // path.join(__dirname, '..', 'views', 'add-product.html') //versão nua e crua desse código.
+        path.join(rootDir, 'views', 'add-product.html') // VERSÃO DO PROFESSOR DESSE CÓDIGO de cima... --> utiliza-se de uma função helper 'rootDir' para substituir '__dirname' e '..'...
+    )
+    // .send(
+    //   '<form action="/admin/add-product" method="POST"><input type="text" name="title"></input><button type="submit">ADD PRODUCT</button></form>'
+    // );
+  });
+  
+//   router.post('/admin/product', (req, res, next) => {
+    router.post('/add-product', (req, res, next) => { ///esse '/admin' FOI TRANSPORTADO/OUTSOURCEADO como filter lá no 'app.use()' em 'app.js' (arquivo) QUE SE UTILIZA DESSA NOSSA ROUTE/MIDDLEWARE que faz esse redirect.... 
+    console.log(req.body);
+    res
+    .status(302)
+    .redirect('/');
+  });
+
+
+
+
+
+
+
+
+
+// router.use();
+
+// router.get();
+// router.post();
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+professor EXPLICA QUE 
+
+
+
+
+'WE DO GET THAT DATA FOR A PRODUCT HERE',
+
+
+nessa linha aqui:
+
+
+
+
+
+    router.post('/add-product', (req, res, next) => { ///esse '/admin' FOI TRANSPORTADO/OUTSOURCEADO como filter lá no 'app.use()' em 'app.js' (arquivo) QUE SE UTILIZA DESSA NOSSA ROUTE/MIDDLEWARE que faz esse redirect.... 
+    console.log(req.body);
+    res
+    .status(302)
+    .redirect('/');
+  });
+
+
+
+
+
+
+
+
+
+--> NESSA ROUTE DE POST,
+
+NÓS 
+
+
+CONSEGUIMOS A DATA DE UM PRODUCT,
+
+
+mas 
+
+
+NÃO ACABAMOS FAZENDO COISA ALGUMA COM 
+
+ESSA 
+
+DATA.... (só console.loggamos 
+
+
+essa data no console,
+
+
+
+não fazemos mais nada com isso...
+
+)
+
+
+
+
+
+
+
+
+
+
+----> E O TRABALHO COM ESSA DATA aí, contida no body,
+
+É 
+
+
+KINDOF HARD AGORA,
+
+
+
+
+
+JUSTAMENTE __ PQ NÃO TEMOS DATABASE ALGUMA,
+
+
+
+
+
+__ NÃO TEMOS UM DATABASE EM QUE PODERÍAMOS ARMAZENAR ESSA 
+
+DATA PERMANENTEMENTE...
+
+
+
+
+
+
+
+
+--> MAS UMA COISA QUE PODERÍAMOS FAZER, AQUI, É TEMPORARIAMENTE 
+
+ARMAZENAR 
+
+
+
+
+ESSA DATA EM ___ VARIÁVEIS JAVASCRIPT,
+
+
+PARA 
+
+VER COMO ISSO FUNCIONA....  ------> AÍ PODERÍAMOS TESTAR 
+
+
+
+SE ISSO FUNCIONA,
+
+
+
+E 
+
+AÍ PODEMOS TESTAR 
+
+
+
+SE 
+
+
+
+ESSES PRODUCTS 'are then SHARED ACROSS INCOMING REQUESTS FROM DIFFERENT USERS'.... --------> 
+
+
+
+
+
+
+E ISSO, É CLARO, 
+
+
+VAI NOS RENDER UMA LIÇAO VALIOSA:
+
+
+
+NÓS FREQUENTEMENTE NÃO VAMOS QUERER 'SHARE SUCH DATA'... ----------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DEVEMOS 
+
+
+VER COMO ISSO FUNCIONA,
+
+
+PARA DEPOIS 
+
+
+
+APRENDERMOS UMA SOLUÇÃO COM DATABASE, BEM MAIS PERMANENTE... 
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK, DIGAMOS QUE O INCOMING PRODUCT TITLE 
+
+
+
+DEVERÁ FICAR ARMAZENADO EM UM LUGAR MAIS 'PERMANENT'...
+
+
+
+
+
+
+
+
+--> PROFESSOR TAMBÉM QUER ADICIONAR ALGUNS FIELDS A FORM,
+
+
+
+
+___ 
+
+PARA QUE UM PRODUCT SEJA MAIS DO QUE UM TITLE....
+
+
+
+
+
+
+
+
+
+--> PRIMEIRO EU VOU TROCAR O STYLING...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> OK.. PRIMEIRO PROBLEMA NO MEU APP.... --> PRECISO IMPORTAR 2 ARQUIVOS CSS 
+
+
+
+EM 1 
+
+
+ARQUIVO HTML.. como fazer isso com nodejs/expressjs?
+
+
+
+
+
+
+
+
+
+--> NO ARQUIVO DO PROFESSOR,
+
+
+VEJO 
+
+
+ESTE CÓDIGO:
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+
+
+
+
+
+    --> TALVEZ SEJA ESSA A SOLUÇÃO...
+
+
+
+
+
+
+--> BEM, ISSO RESOLVEU UM POUCO DO PROBLEMA... 
+
+
+---> MAS A FORM EM SI AINDA ESTÁ FALTANDO SEU STYLE...
+
+
+
+
+
+
+
+
+
+
+--> ESTE É O PROBLEMA, PROVAVELMENTE:
+
+.btn {
+  font: inherit;
+  border: 1px solid #00695c;
+  color: #00695c;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+
+.btn:hover,
+.btn:active {
+  background-color: #00695c;
+  color: white;
+}
+
+
+
+---------------------
+
+
+
+OK... AJEITEI UM POUCO...
+
+
+
+
+
+
+
+
+
+---------> PROFESSOR DIZ QUE A PRIMEIRA COISA QUE PODEMOS TESTAR/TENTAR AQUI 
+É 
+
+
+O 
+
+STORE DESSA DATA 
+
+obtida por meio daquele middleware/route em uma VARIÁVEL...
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSOR VAI ATÉ 
+
+'admin.js'
+
+
+E ENTÃO 
+
+decide adicionar a variável ali... -----> 
+
+
+
+
+
+ELE 
+
+
+CRIA UMA NOVA CONSTANT,
+
+
+
+
+CHAMADA DE 
+
+
+'products',
+
+QUE SERÁ UM __ ARRAY__...
+
+
+
+
+
+
+--> DEVEMOS TER EM MENTE QUE MESMO SENDO UMA 'CONSTANT',
+
+
+nós podemos 
+
+
+
+__, SIM, 
+
+
+ALTERAR O VALOR 
+
+DESSE 
+
+array REPRESENTADO POR 'products',
+
+e ele 
+
+existe em apenas 1 lugar de nossa memória (valores referenciais)...
+
+
+
+
+
+
+
+
+
+
+----> OK... FICA ASSIM:
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const rootDir = require('../util/path');
+
+const router = express.Router();
+
+const products = []; ////EIS O CÓDIGO EM QUESTÃO.
+
+router.get('/add-product', (req, res, next) => {
+
+  console.log('test; IN THE MIDDLEWARE');
+  res.status(200).sendFile(
+    path.join(rootDir, 'views', 'add-product.html')
+  );
+
+});
+
+
+
+router.post('/add-product', (req, res, next) => {
+  console.log(req.body);
+  res.status(302).redirect('/');
+});
+
+
+
+module.exports = router;
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+OK... TEMOS ESSE 
+
+
+'products' aí ,
+
+EXEMPLO O QUE 
+
+O 
+
+PROFESSOR VAI QUERER FAZER, AQUI,
+
+NESSE ARQUIVO ROUTE,
+
+É NA VERDADE 
+
+'export this 
+
+
+products'.... 
+
+
+
+
+
+ 
+
+
+--> PARA ISSO,
+
+
+
+PROFESSOR 
+
+
+VAI 
+
+
+
+USAR UMA SINTAXE DIFERENTE DE EXPORTS, diferente de 
+
+'module.exports = router;'
+
+
+
+
+
+
+
+
+
+
+
+
+--> A SINTAXE QUE ELE 
+VAI 
+USAR 
+
+
+é 
+
+
+
+
+'exports.routes = router;'
+
+
+
+'exports.products = products;' 
+
+
+
+
+
+(ELE ABREVIA/OMITE O 'module' antes de 'exports', e AÍ 
+
+
+
+USA 
+
+
+
+'.xxxxx' PARA ASSIGNAR __ 
+
+
+PROPRIEDADES 
+
+
+NO OBJETO 
+
+'module.exports' 
+
+
+
+COMO EQUIVALENTES 
+
+A 
+
+
+1) 'products',
+
+
+
+2) 'router'...
+)
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO... COMO NÓS MUDAMOS A MANEIRA PELA QUAL EXPORTAMOS NOSSAS ROUTES NESSE ARQUIVO,
+
+
+temos 
+
+que 
+
+alterar 
+
+a sintaxe 
+
+DE IMPORT 
+
+LÁ 
+
+
+em 
+
+'app.js'...
+
+
+
+
+
+
+
+-------------
+ 
+
+ FICARÁ TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+const adminRoutes = require('./routes/admin');
+
+
+
+
+ app.use(
+ 
+
+  '/admin', 
+
+
+   adminRoutes.routes   ////EIS A ALTERAÇÃO EM QUESTÃO....
+);
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+---->  E O PROFESSOR VAI ALTERAR O NOME DESSA CONST que importamos, essa 'adminRoutes',
+
+QUE AGORA FICARÁ 
+
+
+'adminData',
+
+
+JUSTAMENTE PQ 
+
+ESSE OBJETO IMPORTADO 
+
+LÁ 
+
+DE 
+'admin.js'
+
+AGORA VAI CONTER 
+
+TANTO 
+
+
+'routes' 
+
+
+como 
+
+'products' (aquele array lá)...
+
+
+
+
+ex:
+
+
+
+
+const adminData = require('./routes/admin'); ///EIS A ALTERAÇÃO EM QUESTÃo.
+
+
+
+
+ app.use(
+ 
+
+  '/admin', 
+
+
+   adminData.routes   ////EIS A ALTERAÇÃO EM QUESTÃO....
+);
+
+
+
+-------------------------
+
+
+
+
+OK.... 
+
+
+
+
+FIZEMOS ESSAS ALTERAÇÕES...
+
+
+
+
+
+
+
+
+
+-> PRODUCTS, NO MOMENTO, 
+
+É UM _EMPTY_ ARRAY__ -----> E VAMOS QUERER 
+
+
+QUE 
+
+
+O 
+
+
+
+INPUT DO USUÁRIO SEJA __ UTILIZADO , 
+
+QUE 
+
+SEJA 
+'PUSHED'
+
+para 
+
+DENTRO DESSE ARRAY...
+
+
+
+
+
+
+-------------
+
+
+
+ok.. consegui fazer esse push aí...
+
+
+
+POR MEIO 
+
+DESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+
+router.post('/add-product', (req, res, next) => {
+  ///esse '/admin' FOI TRANSPORTADO/OUTSOURCEADO como filter lá no 'app.use()' em 'app.js' (arquivo) QUE SE UTILIZA DESSA NOSSA ROUTE/MIDDLEWARE que faz esse redirect....
+  console.log(req.body);
+
+  products.push(req.body.title);
+  console.log(products);
+  res.status(302).redirect('/');
+});
+
+
+
+
+
+
+
+------------------
+
+
+
+AGORA ACHO QUE POSSO 
+
+USAR 
+
+
+
+ESSA DATA 
+
+de 
+
+'products'
+
+EXPORTADA 
+
+por 
+
+
+'exports.products = products',
+
+
+
+
+
+POSSO A UTILIZAR EM 
+
+
+
+'shop.js',
+
+PARA _ VER __ SE 
+
+
+REALMENTE 
+
+ESTOU COM 
+
+
+INPUTS DO USUÁRIO ENFIADOS DENTRO DAQUELE ARRAY de 'products'...
+
+
+
+
+----------------
+
+
+
+
+
+
+
+
+OK... ISSO DEU CERTO.
+
+
+EIS O CÓDIGO DE 
+
+'shop.js':
+
+
+
+
+
+const path = require('path');
+
+
+
+const express = require('express');
+
+
+
+const rootDir = require('../util/path');
+
+const router = express.Router();
+
+
+const adminData = require('../routes/admin'); ///EIS O CÓDIGO EM QUESTÃO.
+
+router.get(
+  '/',  //PATH FILTER
+  (req, res, next) => {
+    console.log('test2; IN ANOTHER MIDDLEWARE');
+
+    console.log(adminData.products); ///////EIS O CÓDIGO EM QUESTÃO.
+
+    console.log(path.join(__dirname, '..', 'views', 'shop.html')); //'..' em vez de '/..'
+    console.log(path.resolve('../novonovoprojeto4', 'views', 'shop.html'));
+    res.status(200).sendFile(path.join(rootDir, 'views', 'shop.html')); 
+
+  }
+);
+
+module.exports = router; 
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+ok... 
+MAS O PROFESSOR ESCREVEU 
+
+
+SEU CÓDIGO DE UMA MANEIRA UM POUCO DIFERENTE DA NOSSA... --> como 
+
+
+
+
+
+cada 
+
+product no array será um ___OBJETO___, 
+
+professor 
+
+
+vai querer 
+
+
+
+
+fazer de push de algo como 
+
+
+'{ title: req.body.title } '
+
+
+
+
+
+
+
+
+
+
+EX(lá em admin.js):
+
+
+
+
+
+router.post('/add-product', (req, res, next) => {
+  ///esse '/admin' FOI TRANSPORTADO/OUTSOURCEADO como filter lá no 'app.use()' em 'app.js' (arquivo) QUE SE UTILIZA DESSA NOSSA ROUTE/MIDDLEWARE que faz esse redirect....
+  console.log(req.body);
+
+  products.push({title: req.body.title});
+  console.log(products);
+  res.status(302).redirect('/');
+});
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+OK... ISSO DEU CERTO... 
+
+
+
+
+
+--> É EVIDENTE QUE 
+
+
+ESSES OBJETOS 'product' 
+
+DENTRO DO
+
+ARRAY 'PRODUCTS'
+
+SÓ PERSISTIRÃO
+
+ATÉ QUE SAÍAMOS DA PÁGINA/resettemos o browser...
+
+
+
+
+
+
+
+
+
+
+--> VAMOS QUERER 
+
+ADICIONAR MAIS FIELDS  
+
+QUE 
+
+CRIAM NOSSOS PRODUCTS,
+
+CRIAR PRODUCTS MAIS COMPLEXOS...
+
+
+
+
+
+
+
+
+
+
+--> OK... PROFESSOR, LA EM 'SHOP.JS',
+
+
+
+
+
+
+__ QUE É O LUGAR EM QUE OUTPUTTAMOS TODOS NOSSOS PRODUCTS/VAMOS QUERER OUTPUTTAR 
+
+TODOS OS PRODUCTS NO FUTURO,
+
+
+
+
+PROFESSOR DIZ QUE 
+
+TAMBÉM 
+
+DEVEMOS 
+
+IMPORTAR 
+
+'adminData',
+
+
+JUSTAMNETE PARA USAR AQUELA 
+
+PROPRIEDADE 
+
+
+de 
+
+
+'adminData.products',
+
+
+
+QUE CONTÉM NOSSO 
+
+ARRAY DE PRODUCTS, de objetos 'product'... -------> 
+
+
+
+
+
+
+
+
+
+
+
+OK............ -----> AÍ ELE FAZ EXATAMENTE O QUE EU FIZ,
+
+
+ELE ESCREVE:
+
+
+ 
+
+
+ router.get(
+  '/', ///////PATH FILTER.
+  (req, res, next) => {
+    console.log('test2; IN ANOTHER MIDDLEWARE');
+
+
+    console.log(adminData.products);
+
+    console.log(path.join(__dirname, '..', 'views', 'shop.html')); //'..' em vez de '/..'
+    console.log(path.resolve('../novonovoprojeto4', 'views', 'shop.html'));
+   
+    res.status(200).sendFile(path.join(rootDir, 'views', 'shop.html'));
+
+  }
+);
+
+
+
+
+-----------------------
+
+
+
+
+VEMOS O QUE 
+
+CONSEGUIMOS 
+
+em 
+
+
+'console.log(adminData.products)'... 
+
+
+
+
+
+
+
+
+--> INICIALMENTE VEREMOS UM EMPTY ARRAY,
+
+MAS 
+
+SE 
+
+
+ADICIONARMOS UM 
+
+
+OBJETO 
+
+
+POR MEIO DO FILL DO INPUT FIELD E O CLICK NO BUTTON,
+
+
+
+E AÍ 
+
+
+VEMOS UM CONSOLE.LOG 
+
+
+
+
+
+de 
+
+'[ { title: 'book' } ]' 
+
+
+
+
+
+
+
+
+
+---> PROFESSOR EXPLICA QUE ESSE CONSOLE.LOG STATEMENT ESTÁ VINDO 
+
+LÁ 
+
+
+DO ARQUIVO 
+
+'shop.js',
+
+E QUE 
+
+
+
+
+
+ISSO ESTÁ ACONTECENDO POR CAUSA DO NOSSO REDIRECT 
+
+EM 
+
+'admin.js'... -------> 
+
+
+
+
+OK... -----> 
+
+
+
+
+
+
+E ISSO, DIZ O PROFESSOR,
+
+É ALGO QUE É INTERESSANTE DE VER, E ÚTIL... --> 
+
+
+
+
+
+
+
+
+
+
+
+
+NÓS PODEMOS EXPORTAR ALGO (um object ou um array, algo REFERENCE TYPE, PORTANTO),
+
+
+
+
+
+E SE __ NÓS  ALTERARMOS 
+
+ESSE 
+
+'ALGO' NO OUTRO ARQUIVO (como em 'admin.js', que REALMENTE ALTERAMOS ESSE ARRAY),
+
+
+
+__VEREMOS ESSE UPDATE__ 
+
+EM OUTROS ARQUIVOS (como em 'shop.js', depois de sofrermos redirect de 'admin.js -> shop.js'....)
+
+
+
+
+
+
+
+
+
+
+
+--> OK... ISSO É INTERESSANTE... --> ESSA É 
+
+
+
+'ONE WAY OF SHARING DATA BETWEEN FILES'.. ------> E, PARA SERMOS HONESTOS,
+
+
+
+___ MAIS TARDE__ VEREMOS DIFERENTES__ MANEIRAS DE 'SHARE DATA',
+
+
+
+PQ ESSA _ MANEIRA AQUI TEM 
+
+UMA 
+
+DESVANTAGEM BEM SÉRIA... ---> AQUI, SE RECARREGARMOS 
+
+O 
+
+
+'SHOP',
+
+
+
+
+__NÓS AINDA__ VEREMOS ___ AQUELES 
+
+
+OBJECTS 
+
+
+'[ { title: 'asdsadas' }, { title: 'cacaa' } ]' 
+
+
+
+
+
+
+ESSE NOSSO ARRAY PREENCHIDO....
+
+
+
+
+
+
+
+
+
+---> MAS SE O PROFESSOR ABRIR UM BROWSER TOTALMENTE DIFERENTE,
+
+
+
+
+SE ELE ENTRAR EM OUTRO BROWSER (quase como 'A BRAND NEW USER', NÃO TEM NENHUM COOKIE IGUAL AO DO OUTRO BROWSER,
+
+
+NADA IGUAL... ELE USA O MESMO IP ADDRESS, MAS ISSO NÃO IMPORTA... --> é quase como se 'AS IF A REQUEST WAS MADE FROM AN ENTIRELY DIFFERENT MACHINE'..)
+
+
+
+
+
+
+
+
+
+
+__E AÍ __ 
+
+
+
+TENTAR 
+
+
+VISUALIZAR 
+
+
+
+NOSSO 
+
+SHOP,
+
+
+
+__VEREMOS QUE __ o
+
+
+
+
+RESULTADO 
+
+
+''' [ { title: 'asdsadas' }, { title: 'cacaa' } ]'''''
+
+
+
+
+
+____aINDA FICARÁ 
+
+CONSOLE.LOGGADO,
+
+
+nosso console.log 
+
+
+
+__AINDA VAI NOS DAR ESSE RESULTADO... --------> 
+
+
+
+ISSO SIGNIFICA 
+
+
+QUE 
+
+
+
+
+___ SHARE DE OBJETOS/ARRAYS_ _ POR MEIO DESSE NOSSO APPROACH AQUI 
+
+
+
+
+
+_________PODE SER __ ALGO PERIGOSO... ----> PODE SER ALGO PERIGOSO 
+
+
+
+
+PQ __ AS COISAS QUE VOCÊ 
+
+FAZ 
+'SHARE' 
+
+
+
+_____SERÃO VISTAS __ POR TODOS OS USUÁRIOS 
+
+DE 
+
+SEU 
+
+APP,
+
+e naõ 
+
+serão 
+
+'privadas',
+
+NÃO SERÃO 
+
+PRIVADAS AO USER/DONO DO SITE 
+
+QUE 
+
+
+
+
+
+
+EXECUTOU OS CÓDIGOS DE 'add a product'... -----------> ISSO SIGNIFICA QUE 
+
+ESSES 
+
+DADOS 
+
+QUE 
+
+MANIPULAMOS/COMPARTILHAMOS 
+
+
+'is actually data which IS INHERENT TO OUR NODE SERVER AS IT IS RUNNING'... ----> e, portanto,
+
+
+ESSE 
+
+CÓDIGO É 
+
+
+'SHARED ACROSS ALL USERS'.... 
+
+
+
+
+
+
+
+
+
+-----> àS VEZES ISSO PODE SER O QUE VOCÊ QUER... --> MAS ISSO É MUITO, MUITO, MAS MUITO RARO... ---->
+
+
+
+
+
+
+PARA SER HONESTO, VOCÊ QUASE NUNCA VAI QUERER ESSE COMPORTAMENTO AQUi...
+
+
+
+
+
+
+
+-------> VOCÊ PROVAVELMENTE NUNCA IMPLEMENTARÁ 
+
+
+
+__ ESSE SISTEMA AQUI... ----> EM VEZ DISSO,
+
+
+
+'YOU ALWAYS WILL WANT TO 
+
+___ FETCH __ DATA ____FOR A SPECIFIC REQUEST____ , and 
+
+if 
+
+
+that HAPPENS TO BE THE SAME DATA YOU SHOW FOR ___ALL USERS THAT 
+
+SEND THIS REQUEST, THIS IS FINE...  BUT SHARING THIS DATA/STATE ACROSS
+REQUESTS, ACROSS USERS, 
+
+__IS SOMETHING YOU TYPICALLY __ DON't WANT _ TO DO'... -------------> ISSO PQ 
+
+
+
+
+SE VOCê 
+
+
+
+__ EDITAR__ ISSO ___ COM UM 'USER A',
+
+ O USER 
+
+
+ B 
+
+
+  
+___VAI VER A VERSÃO UPDATADA,
+
+
+MESMO 
+
+QUE VOCÊ TALVEZ NÃO QUEIRA 
+
+MOSTRAR 
+
+
+
+ESSA VERSÃO UPDATADA A ELE... (authentication) ------> TALVEZ seja um 
+
+
+EDIT QUE 
+
+AINDA NÃO FOI UPLOADADO/REGISTRADO NA DATABASE,
+
+
+algo que 
+
+VOCÊ AINDA NÃO QUER 
+MOSTRAR AOS USERS... (ou tvz possa ser uma PERSONAL DATA...)
+
+
+
+
+
+
+
+
+
+
+-------> É POR ISSO QUE ESSE É UM PATTERN QUE PODEMOS USAR __ SÓ POR ENQUANTO,
+
+usar 
+
+por enquanto 
+
+PARA 
+
+PRATICAR AS COISAS QUE 
+
+QUEREMOS PRATICAR,
+
+
+
+
+___ MAS __ MAIS TARDE__ 
+
+VAMOS 
+
+
+APRENDER UMA TÉCNICA 
+
+
+
+
+__PARA FAZER 'SHARE DE DATA' 
+
+
+
+''''IN-MEMORY'''', DENTRO DA MEMÓRIA DO NODE APP, 
+
+
+
+
+_ 'ACROSS DIFFERENT REQUESTS', MAS _____ SOMENTE _ PARA 
+
+
+1 ÚNICO USER ('one and the same user'), E 
+
+
+NÃO 
+
+'ACROSS USERS'... ---->  (ISSO PQ AGORA, POR ENQUANTO, ''''WE HAVE SHARED DATA 
+
+ACROSS REQUESTS AND ACROSS USERS'....)
+
+
+
+
+
+
+
+
+--> E NÓS, MAIS TARDE, É CLARO, APRENDEREMOS SOBRE COMO __ USAR _ UMA DATABASE...
+
+
+
+
+
+
+
+
+
+
+--> MAS POR ENQUANTO USAREMOS ESSA APPROACH, USARMEOS PARA 
+
+VER ALGUM 
+
+'DUMMY DATA SHARING',
+
+
+
+E PARA VER 'HOW WE CAN GET THIS DATA INTO OUR VIEW'...

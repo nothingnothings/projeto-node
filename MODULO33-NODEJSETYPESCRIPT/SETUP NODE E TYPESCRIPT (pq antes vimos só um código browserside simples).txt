@@ -1,0 +1,557 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... COM OS TYPESCRIPT BASICS JÁ ESTUDADOS,
+
+
+
+DEVEMOS 
+
+VER 
+
+
+
+
+__ COMO PODEMOS __ USAR__ TYPESCRIPT_ _ EM UM 
+
+SIMPLES 
+
+APP 
+
+
+NODEEXPRESS....
+
+
+
+
+
+
+
+
+
+
+------> CERTO.... 
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+CRIAMOS UM NOVO 
+
+FOLDER,
+
+
+folder de 
+
+
+
+
+
+
+'novonovoprojeto30-EXEMPLODENODECOMTYPESCRIPT'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> CERTO... NESSE FOLDER,
+
+
+
+
+
+
+O PROFESSOR 
+
+
+
+
+
+VAI INICIALIZAR 
+
+O 
+
+
+TYPESCRIPT COMPILER MAIS UMA VEZ,
+
+
+por meio 
+
+
+
+
+DA ESCRITA DE 
+
+
+
+'tsc --init' (
+
+
+
+
+    ISSO 
+    FAZ COM QUE UM ARQUIVO tsconfig.json 
+
+    SEJA 
+
+    CRIADO...
+)
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... 
+
+
+
+
+
+
+
+
+
+
+---> ISSO FEITO,
+
+PROFESSOR VAI RODAR 'npm init'
+
+
+PARA 
+
+
+PRODUZIR 
+
+
+UM 
+
+
+
+ARQUIVO 'package.json'...
+
+
+
+
+
+
+
+
+
+--------> ISSO VAI  TRANSFORMAR ESSA PASTA EM UM 
+
+'NPM CONTROLLED PROJECT'...
+
+
+
+
+
+
+--> AÍ JÁ PODEMOS INSTALAR 
+
+O 
+EXPRESS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------> OK... INSTALEI O EXPRESS COM 'npm install --save express'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI QUERER CRIAR UM APP BÁSICO REST API,
+
+
+MAS 
+
+
+COM 
+
+O 
+
+TYPESCRIPT... 
+
+
+
+
+--> ISSO PARA VERMOS COMO ELE FUNCIONA....
+
+
+
+
+
+
+
+
+
+
+
+
+--> CRIO UM ARQUIVO 'app.js' --> OPS... JÁ ERREI... --> 
+
+
+ACHO QUE 
+
+
+
+
+VOU TER QUE 
+
+
+CRIAR UM ARQUIVO 
+
+
+'app.ts',
+
+E NÃO 
+
+
+'app.js'...
+
+
+
+
+
+
+
+
+
+--> CERTO... CRIEI ESSE ARQUIVO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> DEPOIS DE INSTALAR EXPRESS,
+
+
+
+
+
+
+
+O PROFESSOR INSTALA O 'body-parser' 
+
+PACKAGE..
+
+
+(
+    havia 
+
+    esquecido dessa package,
+
+    QUE É 
+
+    USADA 
+
+
+    PARA PARSEAR 
+
+    INCOMING REQUEST BODIES,
+
+    para 
+
+
+
+    CONSEGUIR NOSSA JSON DATA QUE VAI SER ENFIADA NOS 
+
+    REQUESTS....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-------> CERTO... 
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+COM TUDO ISSO INSTALADO,
+
+
+
+PODEMOS 
+
+ESCREVER UM APP NORMAL 
+
+
+
+EXPRESSJS,
+
+
+exatamente como fizemos múltiplas vezes 
+
+ao longo do curso....
+
+
+
+
+
+
+
+
+
+
+-> PROFESSOR ESCREVE 
+
+'app.js',
+
+
+
+
+
+
+
+
+
+
+
+O QUE ACHO ESTRANHO.... 
+
+
+
+
+
+
+
+
+
+--> ESCREVO TIPO ASSIM:
+
+
+
+import express from 'express';
+
+
+
+
+const app = express();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(
+3000
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ISSO LÁ NO 
+
+
+
+arquivo 'app.ts',
+
+QUE 
+
+
+
+JÁ ME DÁ UM AVISO/ERRO:
+
+
+
+
+
+[{
+	"resource": "/a:/projeto4 - NODEJS/MODULO33-NODEJSETYPESCRIPT/novonovoprojeto30-EXEMPLODENODECOMTYPESCRIPT/app.ts",
+	"owner": "typescript",
+	"code": "7016",
+	"severity": 8,
+	"message": "Could not find a declaration file for module 'express'. 'A:/projeto4 - NODEJS/MODULO33-NODEJSETYPESCRIPT/novonovoprojeto30-EXEMPLODENODECOMTYPESCRIPT/node_modules/express/index.js' implicitly has an 'any' type.\n  Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`",
+	"source": "ts",
+	"startLineNumber": 1,
+	"startColumn": 21,
+	"endLineNumber": 1,
+	"endColumn": 30
+}]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> AÍ ELE FALA ALGO TIPO ASSIM:
+
+
+'install @types/express'...
+
+
+
+
+
+
+
+--> OK... ISSO SOLUCIONOU MEU PROBLEMA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... O PROFESSOR FALA QUE 
+
+AGORA 
+
+O 
+
+OBJETIVO É 
+
+
+
+ESCREVER 'SOME TYPESCRIPT CODE'...
+
+
+
+
+
+
+
+--> ELE QUER 
+
+
+NOS MOSTRAR COMO PODEMOS ESCREVER UMA 'BASIC API ROUTE' 
+
+com o typescript...
+
+

@@ -1,0 +1,1288 @@
+
+
+
+
+
+É O CROSS-ORIGIN RESOURCE SHARING.....
+
+
+
+
+
+
+
+A ideia por trás disso é simples:
+
+
+
+
+
+Você tem alguns APLICATIVOS, ALGUM 
+
+
+WEBSITE rodando NA SUA PÁGINA....  na 'your-page.com'...
+
+
+
+
+
+
+Por exemplo, nosso aplicativo 'find a place', em que nós 
+
+VEMOS ALGO NA TELA, NO MAPA, e então escolhemos/pickamos uma localização...
+
+
+Isso existe em uma PÁGINA...
+
+
+
+
+
+
+AÍ NÓS TEMOS ___OUTRO SERVIDOR____..., por exemplo nosso BACKEND...., 
+
+nosso backend COM AQUELAS 2 ROUTES QUE NÓS ADICIONAMOS.....
+
+
+esse 'BACKEND' estará em OUTRO DOMÍNIO, de nome 
+
+'other-site.com'...
+
+
+
+
+
+portanto, temos 
+
+
+
+'your-page.com'    e      'other-site.com'...
+
+
+
+
+
+VOCÊ QUER QUE A PÁGINA 
+
+
+'your-page.com' CONVERSE 
+
+
+COM O SERVIDOR/PÁGINA 
+
+
+
+
+'other-site.com'....
+
+
+
+
+
+TEMOS, PORTANTO, ESSES 2 APLICATIVOS....
+
+
+
+Talvez nós construamos AMBOS OS APLICATIVOS, mas 
+
+mesmo assim eles ESTÃO RODANDO __eM SERVIDORES DIFERENTES___... (como é o nosso presente caso, na verdade)....
+
+
+
+---> no nosso exemplo atual, 
+
+um dos aplicativos está rodando 
+
+
+em 'localhost:3000', e o outro em 'localhost:8080'...
+
+
+------------------------------------------------
+
+
+ESSES SÃO TECNICAMENTE 2 SERVIDORES DISTINTOS....
+
+
+
+NÓS TALVEZ QUEIRAMOS __tROCAR ALGUNS RESOURCES____ entre aplicativos....
+
+
+
+um resource, por exemplo, PODERIA SER __UM SCRIPT____...... 
+
+UM SCRIPT QUE QUEREMOS 'FETCHEAR' do outro site...
+
+
+ex:
+
+
+
+o script 
+
+
+'script src="other-site.com/app.js', que o aplicativo 
+
+
+'your-page.com' QUER FETCHEAR DE 
+
+
+'other-site.com'....   (isso fará com que a página do cara, 'your-page.com' CONSIGA 
+RECEBER O SCRIPT 'app.js' DE UM SERVIDOR/DO BACKEND)
+
+
+---------------------------
+
+
+
+POR MEIO DA FETCH API/axios/XMLHttpRequest, 
+
+PODEMOS CONSEGUIR ESSE SCRIPT POR MEIO DE UM REQUEST... isso é possível. (request --> response.)...
+
+
+
+
+
+MAS ESSA COISA QUE QUEREMOS ENVIAR __TAMBÉM PODE SER ___ UM __REQUEST ___ QUE QUEREMOS ENVIAR 
+
+AO OUTRO LADO/ao outro aplicativo ou domínio...
+
+
+ex:
+
+
+QUEREMOS ENVIAR UM CÓDIGO DE 
+
+'fetch('other-site.com/products', {method: 'POST'})' ----------> SE ESSE CÓDIGO FOSSE EXECUTADO ____DENTRO DO SERVIDOR___, COMO QUEREMOS QUE O SEJA, ele ENVIARIA UM REQUEST DE TIPO 'POST' a essa url/endereço colocado no primeiro parâmetro ('other-site.com/products') ---> isso significa que ESSE REQUEST PODERIA ALCANÇAR O  FILE SYSTEM DO SERVIDOR/USUÁRIo.... ( e isso é ruim se visto em um POV de segurança)....  ------> se esse código fosse executado, HAVERIA UM ENVIO DE UM MÉTODO/DADOS 'POST' ao 'products'...
+
+
+
+
+
+
+HOJE EM DIA, POR DEFAULT, OS BROWSERS __BLOQUEIAM___ esses 
+
+'Cross-origin' REQUESTS........
+
+
+
+
+
+
+CROSS-ORIGIN REQUESTS ---> SÃO SEMPRE BLOQUEADOS PELOS BROWSERS...
+
+
+
+REQUESTS DE MESMA ORIGEM/DE MESMO DOMÍNIO --> SÃO PERMITIDOS. APENAS ELES SÃO PERMITIDOS.
+
+
+
+
+
+'By default, only requests to same origin (domain) are allowed!'
+
+
+
+
+---------------------------------------------
+
+
+
+
+Isso significa, na prática, que em 'your-page.com' NÓS APENAS 
+
+CONSEGUIMOS NOS COMUNICAR COM QUAISQUER ROTAS QUE ESTEJAM REGISTRADAS NESSE MESMO SERVIDOR, E NÃO 
+
+EM UM SERVIDOR DIFERENTE...
+
+
+
+
+ISSO EXISTE POR UMA BOA RAZÃO ---> existe pq, por default, você sempre vai querer 
+PROTEGER OS SEUS RECURSOS... -----> você não deveria/não pode esperar que qualquer um consiga 
+
+pegar QUALQUER TIPO DE DADO DE QUALQUER SERVIDOR... ----->  MAS NA WEB MODERNA, 
+
+EM QUE ESSE 'SETUP' de ter 'STANDALONE API servers' É BEM ___COMUM __ ,  É EVIDENTE 
+
+QUE VOCÊ VAI QUERER SER CAPAZ DE abrir uma EXCEÇÃO A ESSE DEFAULT... 
+
+
+----> você vai querer, é claro, dizer ao browser que esse acesso É ___OK___..., que ele pode acontecer...
+
+
+
+-------------------------------------------
+
+
+
+
+No nosso exemplo, no nosso backend, naquele servidor NODE.JS, 
+
+
+E ___SEMPRE NO BACKEND____ quando você tiver issues em relação AO ___cORS__, 
+
+
+
+
+
+DEVEMOS ADICIONAR ALGUNS __HEADERS EXTRAS____.... esses headers COMUNICARÃO 
+
+
+AO BROWSER QUE essa comunicação entre 'diferentes sources' É ___OK___, que 
+
+esse acesso é permitido, que estamos o permitindo... QUE ESTAMOS 
+
+
+_____PERMITINDO____ O ACESSO A ESSES DADOS ÀQUELA PÁGINA ESPECÍFICA (aquela página 
+específica terá permissão para acessar os dados desse servidor, basicamente)....
+
+
+
+------------------------------------------------------------
+
+
+
+No nosso código do backend, por exemplo, VAMOS QUERER _____dar à 'GET ROUTE' (
+
+
+'router.get('/location', (req, resp, next) => {});'
+
+
+
+)
+
+
+
+ACESSO À ROUTE DE 'post'....
+
+
+
+
+
+
+MAS COMO FAZEMOS ISSO?
+
+
+
+
+Bem, devemos ir 
+
+
+ATÉ O __APP.JS___  E ADICIONAR ALGUNS 
+
+
+__eXTRA HEADERS___ no código...
+
+
+
+Nós podemos colocar esses headers 
+
+
+
+no NOSSO FLOW DO 'app.js', LOGO ANTES ____DE SUA EXECUÇÃO ALCANÇAR __
+
+
+___ O CÓDIGO __ DAS OUTRAS ___ ROUTES...
+
+
+
+
+NÓS PODEMOS ADICIONAR ESSES HEADERS por __meio do código/sintaxe 
+
+
+DAS ____MIDDLEWARES___ ('app.use()')....
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use(); ////////ESSE É O LUGAR PERFEITO PARA COLOCAR ESSES HEADERS...
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+
+--------------------------------------
+
+
+
+
+ESSA MIDDLEWARE FUNCTION VAI DEFINIR ESSES HEADERS....
+
+
+Basta que nós adicionemos uma FUNÇÃO INTERNA, que executará o código...
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use((req, resp, next) => { ///aqui.
+
+
+
+
+    next();
+});
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+---------------------------------
+
+
+CERTO, AÍ DENTRO DA RESPONSE NÓS VAMOS QUERER ADICIONAR ALGUNS HEADERS...
+
+
+
+------------------------------------
+
+ex:
+
+
+
+
+const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use((req, resp, next) => {
+
+
+
+
+    next();
+});
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+---------------------------------
+
+
+OS HEADERS QUE TEREMOS DE ADICIONAR, DENTRO DESSE MIDDLEWARE, SÃO 
+
+
+'Access-Control-Allow-Origin' (isso é o NOME DA PROPRIEDADE)
+
+e 
+
+'*' (VALOR DESSA PROPRIEDADE). (como valor, podemos especificar 
+
+tanto '*', que significa 'ALL', ou ESPECIFICAR A URL 
+ESPECÍFICA EM QUESTÃO, 
+
+que no caso é 
+
+'localhost:3000' ) ----------> 
+
+
+A ESTRELA, QUANDO COLOCADA NESSE SLOT DE 'VALUE', SIGNIFICA QUE 
+
+___QUALQUER___ OUTRO SERVIDOR ____ PODE ME ENVIAR UM REQUEST__ (péssimo em questão de segurança, 
+mas esse é apenas um projeto de teste)...
+
+
+
+
+
+
+
+
+ficará assim:
+
+
+
+
+
+
+
+const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+
+
+
+    next();
+});
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+----> PPROFESSOR EXPLICA 
+QUE NÓS TAMBÉM DEVEMOS ADICIONAR ___OUTRO HEADER AQUI___,
+ 
+
+ UM header de 
+
+ 'Acess-Control-Allow-Methods', relativo aos MÉTODOS QUE VAMOS ACEITAR/supportar
+ NOS REQUESTS........
+
+
+ E COMO EU __sÓ TENHO ROTAS 'POST' e 'GET' ___ QUE SERÃO EXPOSTAS AO PÚBLICO EM MEU CÓDIGO (aquelas 2 rotas em 'location.js'), 
+
+ EU POSSO SIMPLESMENTE DEFINIR O VALOR DESSE HEADER COMO SENDO 'POST, GET'....
+
+
+
+
+ ex:
+
+
+
+
+
+
+ const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Method', 'POST, GET');
+
+
+
+    next();
+});
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+
+
+---------------------------------------
+
+
+
+com esse header 
+
+
+de 
+
+'Access-Control-Allow-Methods' com o valor de 'POST, GET', 
+
+
+
+SE O USUÁRIO/NÓS TENTARMOS ENVIAR UM 
+
+
+REQUEST DE TIPO ___'PUT'___ ao nosso servidor, 
+
+ele será 
+
+RECUSADO..... (mas os métodos get e post ainda são suportados)
+
+
+
+
+
+
+---> HÁ AINDA OUTROS HEADERS QUE VOCê PODE USAR PARA RESTRINGIR 
+
+
+O USO ('usage') DA SUA API/DO SEU BACKEND SERVER...
+
+
+
+professor coloca um link sobre __CORS___ e sobre quais headers 
+
+vocÊ pode settar para EVITAR o 'cors'...
+
+
+
+
+
+ex:
+
+
+
+Cross-Origin Resource Sharing (CORS) 
+is an HTTP-header based mechanism that
+ allows a server to indicate any other origins 
+ (domain, scheme, or port) than its own from which a browser
+  should permit loading of resources. CORS also relies on a mechanism by
+   which browsers make a “preflight” request to the server hosting the cross-origin 
+   resource, in order to check that the server will permit the actual request. 
+   In that preflight, the browser sends headers that indicate the HTTP method 
+   and headers that will be used in the actual request.
+
+
+
+For security reasons, browsers restrict cross-origin HTTP requests initiated from scripts. For example, XMLHttpRequest and the Fetch API follow the same-origin policy. This means that a web application using those APIs 
+can only request resources from the same origin the application was
+ loaded from unless the response
+  from other origins includes the right CORS headers (CASO DO NOSSO SERVIDOR).
+
+
+
+  The CORS mechanism supports secure cross-origin requests and data transfers between browsers and servers. Modern browsers use CORS in APIs 
+  such as XMLHttpRequest or Fetch to mitigate 
+  the risks of cross-origin HTTP requests.
+
+
+
+
+----------------------------------------------------------------
+
+
+
+
+ENTRETANTO, ESSES 2 SÃO TODOS OS HEADERS DE QUE PRECISAMOS, ATÉ O PRESENTE MOMENTO...
+
+
+
+Nós devemos chamar 
+
+
+
+'next()' no final desse negócio para que nosso middleware flow continue 
+
+seu curso... (para que consigamos/o código consiga entrar nas nossas ROUTES... ('locationRoutes')...)
+
+
+
+
+REINICIAMOS O NOSSO SERVIDOR.
+
+
+
+'node app.js'...
+
+
+
+
+
+Rodamos nosso servidor, também...
+
+
+
+
+
+
+OBS: PARA CONSEGUIR RODAR 
+
+
+UM SERVIDOR E 
+
+UM FRONTEND AO MESMO TEMPO, VOCÊ PRECISA USAR 2 ABAS DO 'terminal' no seu IDE...
+
+
+
+
+Abra a página 
+
+
+
+'localhost:8080' no seu browser...
+
+
+
+(OBS:
+
+
+
+No default engine was specified and no extension was provided. -----> isso acontece quando não 
+definimos o código de 'node' relativo 
+
+
+
+à VIEW ENGINE que vamos querer usar.... (nesse caso, o EJS).
+
+
+
+ex:
+
+
+
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+
+
+
+)
+
+
+
+
+---------------------------------------------------------
+
+
+
+Certo. Estamos com os 2 pedaços da nossa WEB APPLICATION rodando...
+
+
+
+
+
+
+---> professor diz que AINDA FALHAMOS... É UM ERRO DE 
+
+
+'CORS', de novo...
+
+
+
+o erro é:
+
+
+
+
+'Access localhost/:1 to fetch at 
+'hhtp://localhost:3000/add-location' from 
+origin 'http://localhost:8080' has been 
+blocked by CORS policy:
+Request header field content-type is not 
+allowed by Access-Control-Allow-Headers 
+in preflight response'.
+
+
+
+
+
+
+A RAZÃO DESSE ERRO PODE SER MEIO DIFÍCIL DE ENTENDER....
+
+
+
+
+O professor explica:
+
+PARA POST REQUESTS, browsers, na verdade, TAMBÉM 
+
+ENVIAM UM OUTRO REQUEST __ANTEs__ de todos os outros... esse 
+
+''PRIMEIRO REQUEST'' é usado 
+
+PARA DETERMINAR SE O POST REQUEST __PODE SER __ ENVIADO ('is allowed') NESSE 
+
+SERVIDOR/NESSA SITUAÇÃO ESPECÍFICA. 
+
+
+
+
+
+ISSO PODE SER VISTO NA ABA 'NETWORK'... ----> naquele request de 
+
+
+'add-location' LÁÁ´´AA NO INÍCIO DOS REQUESTS...
+
+
+
+
+(Ops... temos um problema: não 
+
+conseguimos encontrar 'add-location' na nossa flow de requests...)...
+
+
+
+
+
+Certo, agora os códigos estão + ou - certos....
+
+
+
+Mas como o professor indicou, há um problema no nosso código, ele ainda está 
+
+
+dando um erro de CORS....
+
+
+
+Certo, digamos que o negócio está funcionando (não está por causa da API key do google maps que está faltando...).
+
+
+
+----> ainda há o problema do CORS.... mesmo 
+
+com a nossa repassagem daqueles headers específicos possibilitando 'cross origin resource sharing', 
+
+o console ainda NOS REPORTA UM ERRO DE CORS....
+
+
+
+
+
+**** PARA REQUESTS DE TIPO 'POST', os browsers 
+
+actually TAMBÉM ENVIAM OUTRO REQUEST ANTES DESSES REQUESTS..., 
+
+eles mandam um REQUEST QUE DETERMINA/CHECA SE OS POST REQUESTS EM QUESTÃO 
+
+são permitidos....
+
+
+
+
+---> você pode ver isso na aba 'network'..., no console..
+
+
+
+
+---> o request de 'add-location' terá uma propriedade/indicação 
+
+dentro dela 
+
+que dirá 
+
+'Request method'.... essa propriedade 
+
+
+terá um valor de 
+
+
+'OPTIONS'........
+
+
+
+
+Beleza... mas nós nunca mandamos/nunca havíamos mandado 
+
+O REQUEST DE 'options' AQUI, NO NOSSO CÓDIGO, ao nosso servidor... ENTRETANTO, 
+
+EXPLICA O PROFESSOR, O BROWSER FAZ ESSE ENVIO AUTOMATICAMENTE, CAGANDO PARA NÓS, QUANDO 
+
+O BROWSERSIDE ENVIA ALGUNS TIPOS ESPECÍFICOS DE REQUEST, COMO É O CASO DOS REQUESTS DE TIPO 'POST'....
+
+
+
+
+
+
+Isso significa que ___NO SERVERSIDE ____ NÓS PRECISAMOS 
+
+PERMITIR ('allow') REQUESTS DE TIPO/MÉTODO 'OPTIONS' TAMBÉM....
+
+
+COmo fazemos isso? 
+
+Simples, basta que 
+
+acrescentemos 
+
+
+'OPTIONS' naquele rol de argumentos no segundo slot do 'SetHeader' de 'Allow-Methods'...
+
+
+
+
+ex:
+
+
+
+
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS'); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+    next();
+});
+
+
+
+-----------------------------------------
+
+
+ISSO VAI ADICIONAR ESSE REQUEST DE TIPO/método 'OPTIONS' no nosso rol de métodos permitidos....
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+ALÉM DISSO, PROFESSOR DIZ QUE TAMBÉM DEVEMOS ADICIONAR ___MAIS UMA COISA AQUI___,
+
+
+nesse middleware que chama os 'setHeader' na response....
+
+
+
+
+O QUE DEVEMOS ADICIONAR AQUI 
+
+
+é um 
+
+
+'setHeader' para 
+
+
+
+'Access-Control-Allow-HEADERS' (e não 'Origin', ou 'Methods'...)....
+
+
+
+
+--------------------------------------------
+
+
+
+
+ex:
+
+
+
+
+
+
+ const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS');
+    resp.setHeader('Access-Control-Allow-Headers', ...)
+
+
+
+    next();
+});
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+
+-------------------------------------------
+
+
+
+
+POR MEIO DESSE HEADER de 'Access-Control-Allow-Heades' E SEU VALOR, 
+
+
+
+PODEMOS DEFINIR ___QUAIS ____ HEADERS ESPECIAIS O CLIENTE DEVERÁ/PODERÁ 
+
+ENVIAR A NÓS....
+
+
+
+
+O valor/header que o professor vai permitir (allow) de ser enviado 
+
+pelo usuário/client é o 
+
+
+'Content-Type', PORQUE ESTAMOS SETTANDO ELE (o 'Content-Type') NO 
+
+CLIENTSIDE CODE TBM...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ const express = require('express');
+
+const locationRoutes = require('./routes/location');
+
+
+const app = express();
+
+
+
+app.use(express.json());
+
+
+
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Method', 'POST, GET, OPTIONS');
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type'); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+    next();
+});
+
+
+
+
+
+app.use(locationRoutes);
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+
+
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+  resp.render('index', {
+      user: userName,
+      message: 'funciona'
+  })
+    
+
+
+
+      })  
+
+
+
+app.listen(3000);
+
+
+
+---------------------------------------------
+
+COM ISSO, AGORA PODEMOS REINICIAR O SERVIDOR...
+
+
+
+
+
+Feito isso, agora veremos que O CÓDIGO ESTARÁ FUNCIONANDO, E O ERRO DE 'CORS' terá sumido...
+
+
+
+
+
+É ASSIM, PORTANTO, QUE PODEMOS __ENVIAR UM POST REQUEST___ DE UM 
+
+SERVIDOR _____________dISTINTO ___________ DAQUELE QUE É O 'SERVERSIDE' ____É ASSIM 
+
+QUE PODEMOS ENVIAR UM REQUEST DE UM 'CLIENTSIDE SERVER' (no caso, o browser do usuário/nosso 
+browser)....
+
+
+
+
+---> esse 'clientside server'/clientside sempre terá (ou geralmente) UM 
+
+
+APLICATIVO 'ESTÁTICO', um app estático QUE TERÁ ALGUM CÓDIGO JAVASCRIPT 'clientside' RODANDO EM UMA 
+PÁGINA QUE ESTARÁ ABERTA POR ELE... 
+
+
+
+Aqui, nesse exemplo, enviamos um request de tipo POST desse 'clientside server' AO 
+
+NOSSO 'SERVERSIDE' server... ( que é NOSSA BACKEND 'NODE.JS', A qual _____também____ USA 
+
+JAVASCRIPT, MAS UM JAVASCRIPT NO ___CONTEXTO DO NODE.JS____...) ------> 
+
+
+
+e esse servidor 'serverside' AGORA VAI SE COMUNICAR, NA FORMA DE UMA 'REST API', A ESSE 
+
+'CLIENTSIDE PROJECT'... ---> e esse é um setup bem típico, na verdade...

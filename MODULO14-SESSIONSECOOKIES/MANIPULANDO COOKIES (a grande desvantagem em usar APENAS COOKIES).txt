@@ -1,0 +1,580 @@
+
+
+
+
+
+
+
+
+
+----> NA ÚLTIMA LIÇÃO,
+
+PROFESSOR NOS MOSTROU COMO PODEMOS 
+
+
+SETTAR 1 COOKIE,
+
+
+
+
+
+POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+exports.postLogin = (req, res, next) => {
+
+        res.setHeader('Set-Cookie', 'loggedIn=true'); ///é isto que SETTARÁ UM 'SESSION COOKIE' (cookie que só sobrevive ATÉ O MOMENTO EM QUE VOCê FECHA O BROWSER --> FECHADO O BROWSER, ESSE COOKIE VAI __ MORRER, PQ ELE NÃO É UM 'PERSISTENT COOKIE', E SIM É UM 'SESSION/TRANSIENT' COOKIE...) ------> E ESSE COOKIE SERÁ EMBUTIDOO _ EM TODOS OS REQUESTS__ QUE VOCê FIZER DESSE BROWSER AQUI... (você pode observar isso lá nos 'HEADERS' de cada request, na aba 'network', no google chrome... --> você acha esse cookie lá em 'Cookie', nos 'Headers'...)
+        res.redirect('/');
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+-> OU SEJA, É O 'setHeader'
+
+EM AÇÃO...
+
+
+
+
+
+
+
+
+
+
+--> AÍ ELE NOS MOSTROU, TAMBÉM,
+
+
+
+UMA MANEIRA UM PCO COMPLEXA DEMAIS DE EXTRAIR 1 COOKIE... ---> 
+
+
+
+
+este código aqui (em todos nossos renders):
+
+
+
+
+
+
+
+
+exports.getStartingPage = (req, res, next) => {
+
+
+  const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+    isLoggedIn: isLoggedIn
+  });
+};
+
+
+
+
+
+
+
+
+
+
+-> ESTA LINHA AQUI:
+
+
+
+
+  const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+
+
+
+
+  ----------------------------------------------------
+
+
+
+
+
+
+  ----> PROFESSOR EXPLICA QUE __ SE VOCÊ REALMENTE QUER EXTRAIR COOKIES,
+
+
+  HÁ VÁRIAS THIRD PARTY PACAKGES 
+
+  QUE 
+
+
+  TE AJUDAM A FAZÊ-LO...
+
+
+
+
+
+  -------> MAS NOSSO APPROACH 
+
+
+
+
+
+  TEM OUTRA __ GRANDE FALHA___..... --> A 
+
+
+
+
+  FALHA É:
+
+
+
+
+
+
+
+
+
+
+  COMO NÓS PODEMOS __ACESSAR___ NOSSOS COOKIES__ FACILMENTE (eles são públicos, 
+  
+  
+  ficam 
+  
+  sempre 
+
+
+  ARMAZENADOS NA STORAGE DE NOSSO BROWSER,
+
+  e podem ser vistos 
+
+  em 
+
+
+  'application' > Cookies
+  
+  
+  
+  ),
+
+
+
+
+
+
+  COMO PODEMOS 
+
+
+  ACESSAR NOSSOS COOKIES 
+
+
+
+  __FACILMENTE___, NÓS 
+
+
+  PODEMOS 
+
+
+
+
+
+  FAZER COISAS AINDA MAIS MALUCAS,
+
+
+
+  podemos 
+
+
+
+  __FACILMENTE__ ALTERAR NOSSOS COOKIES,
+
+
+  PODEMOS 
+
+
+
+
+  IR ATÉ 
+
+
+
+
+  OS COOKIES COM AS DEVTOOLS 
+
+
+  e aí 
+
+
+
+  TROCAR
+   
+
+   OS COOKIES,
+
+   colocar 
+
+
+
+o valor 
+de 
+
+'loggedIn=true',
+
+
+
+por exemplo,
+
+para 
+
+
+
+'loggedIn=false',
+
+
+
+
+
+
+MANIPULAR O VALUE...
+
+
+
+
+
+
+
+
+--> PODEMOS IR ATÉ O 'COOKIE' 
+
+E AÍ ALTERAR O 'VALUE' 
+
+
+DELE NO STORAGE,
+
+
+com os devtools... ---> 
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR TROCA O VALOR DE 'true' para 'false'... --> AINDA ASSIM,
+
+OS 
+
+LINKS DE 'ADD A PRODUCT' 
+
+E 
+
+
+'ADMIN PRODUCTS' AINDA 
+
+
+
+CONTINUAM APARECENDO.... -> ELE NOS EXPLICA QUE É 
+
+PQ 
+
+
+'false'
+
+
+___É ENVIADO COMO 'text'
+
+
+
+NO NOSSO COOKIE,
+
+E 
+
+TEXTO, seja qulaquer TEXTO,
+
+
+
+é 
+
+SEMPRE TRATADO COMO 'TRUTHY'...
+
+
+
+
+
+
+
+
+--------> OK.... --> MAS PODEMOS ___ SIMPLESMENTE___ 
+
+
+
+
+
+ALTERAR O CÓDIGO, TIRAR 'true' e deixar um ESPAÇO EM BRANCO,
+
+para 
+
+
+aí 
+
+
+conseguir 'falsy' -> 'false'.. -> E ISSO VAI REALMENTE 
+
+SUMIR 
+
+
+COM 
+
+
+
+OS LINKS DE 'ADMIN PRODUCTS' 
+
+E 
+
+
+'ADD A PRODUCT'.... ---------> ISSO SIGNIFICA QUE 
+
+
+
+O __ PROBLEMA, AQUI, 
+
+É __ QUE 
+
+
+PODEMOS FACILMENTE ___ MANIPULAR __ 
+
+
+NOSSOS COOKIES 
+
+DO LADO DE DENTRO DO BROWSER.... --> E VOCÊ __oBVIAEMNTE__ 
+
+
+
+
+
+
+
+____ NÃO VAI QUERER DEIXAR OS USERS DE 
+
+SEU 
+
+
+
+APP ___CONSEGUIR 'LOGIN' 
+
+
+
+POR MEIO __ DO SIMPLES MANIPULATE DE UM COOKIE VALUE...----------->  É POR ISSO QUE 
+
+
+___ 
+
+MESMO QUE __ SEJA 
+
+
+
+
+INTERESSANTE/CONVENIENTE 
+
+
+__ARMAZENAR __ ALGUM DATA (alguns dados )
+
+NO CLIENTSIDE,
+
+
+
+
+__PRINCIPALMENTE__ COISAS 
+
+
+RELACIONADOS A 'PREFERÊNCIAS',
+
+
+ 
+
+
+ OU ENTÃO 
+
+
+ 'TRACKING' DE USERS,
+
+
+
+ ADVERTISEMENTS ,
+
+
+
+
+
+ ETC...  -----> EMBORA ISSO AÍ SEJA INTERESSANTE/POSSÍVEL,
+
+
+
+
+
+ __DEVE-SE RESSALTAR QUE 
+
+ 'SENSITIVE DATA' 
+
+
+
+
+
+ __NUNCA DEVE _ SER ARMAZENADA NO BROWSERSIDE.... -------> 
+
+
+
+
+ N PODE SER ARMAZENADA NO BROWSER PQ 
+
+
+  
+
+  _PODEMOS __ EDITAR___ 
+
+
+  ESSAS INFOS... --> podemos 
+
+
+
+  EDITAR NOSSO 
+
+
+
+  COOKIE DE 
+
+  'loggedIn',
+
+  por exemplo...
+
+
+
+
+
+
+
+
+
+
+
+  RESUMINDO.... --> 
+
+
+
+
+  EMBORA 
+
+
+
+
+  COOKIES SEJAM GERALMENTE __ UMA COISA BOA __ PARA 
+
+
+  ARMAZENAR 
+
+  DATA 
+
+
+  'ACROSS REQUESTS',
+
+
+
+
+
+
+
+  ELES TALVEZ NÃO SEJAM __ O MELHOR APPROACH EM TODAS AS SITUAÇÕES... ----> 
+
+
+
+
+
+
+  E É NESSAS HIPÓTESES,
+
+
+
+  'STORE OF SENSITIVE INFORMATION',
+
+
+
+  EM QUE 
+
+
+
+
+  'SESSIONS' podem nos ajudar... -----> ENTRETANTO,
+
+
+
+  ANTES 
+
+
+  DE 
+
+
+  ESTUDARMOS AS 'SESSIONS',
+
+
+
+
+
+
+  __ O PROFESSOR __ QUER 
+
+
+  RAPIDAMENTE 
+
+
+  NOS INFORMAR DE OUTROS __FELDS__ QUE 
+
+
+  VOCÊ 
+
+
+
+  PODE CONFIGURAR 
+
+
+
+  EM 1 COOKIE/sobre 1 cookie,
+
+
+
+
+
+  FIELDS QUE 
+
+
+
+
+  TAMBÉM VAO NOS 'HIGHLIGHT'
+
+
+
+  QUANDO 
+
+
+
+___ FAZ SENTIDO__ USAR 1 COOKIE 
+
+
+em seu app....

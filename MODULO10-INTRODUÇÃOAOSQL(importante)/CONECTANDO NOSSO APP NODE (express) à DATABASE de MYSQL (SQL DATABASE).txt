@@ -1,0 +1,2228 @@
+
+
+
+
+
+
+
+
+
+
+
+----> PARA USAR 'SQL',
+
+
+ou para 
+
+INTERAGIR COM O SQL 
+
+DE 
+
+
+DENTRO DE 
+
+UM NODE APP,
+
+
+
+
+PRECISAMOS INSTALAR UMA PACKAGE 
+
+NOVA NO NOSSO PROJETO node... 
+
+
+
+
+
+
+
+
+--> PARA ISSO, 
+
+(--save ---> PRODUCTION DEPENDENCY, PARTE CRUCIAL DE NOSSO APP...)
+
+
+ESCREVEMOS 
+
+'npm install --save mysql2' 
+
+
+
+
+
+
+
+
+
+
+
+
+------> MYSQL 2 --> É SIMPLESMENTE UMA VERSÃO MAIS POSTERIOR Da package 'mysql 1' ,
+
+
+
+
+
+
+E ELA NOS 
+
+
+
+DEIXA EXECUTAR E ESCREVER CÓDIGO 
+
+
+
+SQL 
+
+
+
+
+___DENTRO DO NODE_, 
+
+
+E NOS DEIXA INTERAGIR COM UMA DATABASE DESSE TIPO...
+
+
+
+
+-----------------------------------
+
+
+COM ISSO INSTALADO,
+
+
+
+
+
+
+ESTAMOS MAIS PRÓXIMOS DE USAR MYSQL...
+
+
+
+
+
+
+A PRÓXIMA ETAPA É __CONECTAR__ 
+
+
+
+AO NOSSO DATABASE,
+
+
+
+
+CONECTAR O NOSSO APP 
+
+NODEJS 
+
+
+AO 
+
+
+DATABASE SQL,
+
+isso de DENTRO DE NOSSO CÓDIGO....
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+PROFESSOR 
+
+
+
+
+VAI ATÉ O FOLDER DE 'util'
+
+QUE CRÍAMOS 
+
+
+HÁ MTAS AULAS...
+
+
+
+
+
+
+
+--> LÁ VAMOS CRIAR UM NOVO ARQUIVO,
+
+
+ 
+
+arquivo chamado de 
+
+'database.js'... 
+
+
+(podemos escolher qualquer nome, mas esse é bom...)
+
+
+
+
+
+
+
+
+
+VAMOS SETTAR O CÓDIGO 
+
+QUE 
+VAI NOS DEIXAR 
+
+
+CONECTAR 
+
+
+à DATABASE 
+
+DO SQL......... --> ESSE CÓDIGO 
+
+
+
+TAMBÉM 
+
+
+
+
+VAI NOS DAR AQUILO QUE O PROFESSOR 
+
+CHAMA 
+
+
+DE 
+
+
+'CONNECTION OBJECT',
+
+objeto 
+
+Q
+UE 
+
+VAI 
+
+
+NOS __DEIXAR __ 'RUN QUERIES'__, RUN QUERIES buscando/lendo/writando dados 
+
+
+nessa database...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+PRIMEIRAMENTE 
+
+O 
+
+PROFESSOR 
+
+
+
+
+USA A SINTAXE DE IMPORTS DO NODE PARA 
+
+
+
+
+importar aquelA
+
+package de 
+
+
+'mysql2',
+
+
+
+PARA ENTÃO A ARMAZENAR EM UMA CONSTANTE...
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const mysql = require('mysql2');
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+E AGORA, ISSO FEITO,
+
+
+PROFESSOR NOS EXPLICA QUE 
+
+
+
+__HÁ 2 MANEIRAS DE NOS CONECTARMOS COM UMA 
+
+
+
+
+DATABASE 
+
+
+'SQL'... ------> 
+
+
+
+
+
+
+
+
+
+
+1a MANEIRA) -----> NESSE APPROACH, SETTAMOS 
+
+
+
+
+1 CONNECTION, CONNECTION QUE PODEMOS ENTÃO UTILIZAR PARA __ RODAR (run) QUERIES... 
+
+
+
+******** IMPORTANTE: SEMPRE QUE TIVERMOS 'ACABADO' COM UMA QUERY, DEVEMOS 
+
+'CLOSE THE CONNECTION' (acho que com '.close()'? não sei...)
+
+
+
+
+
+
+
+A DESVANTAGEM, NESSE PRIMEIRO APPROACH, É QUE 
+
+
+
+___SEMPRE PRECISAMOS __ RE-EXECUTAR O CÓDIGO PARA 
+
+'CREATE THE CURRENT CONNECTION'  ____ PARA ____ CADA ____ 
+
+
+
+PEQUENINO QUERY/novo query feito à nossa database.... ----> E É CLARO QUE 
+
+
+EXISTIRÃO _ MTOS QUERIES FEITOS AO NOSSO APP... -->  ISSO 
+
+
+
+
+
+
+PQ 
+
+
+
+
+
+1 QUERY SEMPRE É CRIADO/DISPARADO QUANDO:
+
+
+1) FETCHEAMOS DADOS 
+
+
+2) ESCREVEMOS DADOS 
+
+
+3) DELETAMOS DADOS 
+
+
+
+
+etc... ------>   E É CLARO QUE O CREATE DE NOVAS CONEXÕES 
+
+
+TODA HORA __ RAPIDAMENTE __ 
+
+
+SE TORNA MUITO _____ INEFICIENTE... ----> SE TORNA 
+
+
+
+INEFICIENTE __TANTO NO NOSSO CÓDIGO  
+
+
+
+
+E TANTO ___ COMO NA 
+
+
+
+CONEXÃO à DATABASE QUE É ESTABELECIDA, 
+
+O CUSTO COMPUTACIONAL DESSAS CONNECTIONS FREQUENTES... --------> 
+
+
+
+
+É POR ISSO QUE 
+UMA 
+
+
+MANEIRA MELHOR/APPROACH MELHOR É O APPROACH nº 2... ---> 
+
+
+
+
+
+
+
+2a Maneira) ----> CRIAÇÃO DE UMA 'CONNECTION POOL'... -->  
+
+
+
+
+
+BTW, VOCÊ PODE 
+
+
+APRENDER BEM MAIS INFORMAÇÕES 
+
+SOBRE 
+ESSE PACKAGE DE 'mysql2'
+
+
+NOS SEUS DOCS... 
+
+
+
+
+
+
+
+--> PARA CRIAR UMA POOL, uma CONNECTION POOL, PROFESSOR 
+
+
+ESCREVE 
+
+'const pool',
+
+UMA CONSTANTE EM QUE ARMAZENARÁ UMA POOL DESSAS...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ele escreve 
+
+
+
+
+'const pool = mysql.createPool()'
+
+
+
+
+
+
+
+
+
+CREATEPOOL É UM MÉTODO EXISTENTE DENTRO DO OBJETO 
+
+'mysql/mysql2',
+
+
+
+
+
+
+
+
+____..... na verdade, dentro desse objeto,
+
+vemos outros métodos,
+
+como 
+
+
+'createConnection',
+
+
+'createPoolCluster' 
+
+
+'createQuery' 
+
+
+'createServer'....
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE NÃO VAMOS QUERER USAR 
+
+
+'createConnection'
+
+
+
+JUSTAMENTE PQ NÃO VAMOS QUERER UMA 'SINGLE CONNECTION',
+
+E SIM 
+
+
+VAMOS QUERER 
+
+UMA 
+
+
+
+POOL DE CONNECTIONS,
+
+MÚLTIPLAS CONEXÕES....  -------> ESSA POOL 
+
+
+
+VAI 
+
+
+NOS 
+
+DEIXAR 
+
+FAZER 
+
+'REACH OUT' 
+
+A NOSSA DATABASE 
+
+
+
+__sEMPRE QUE _ TIVERMOS UMA QUERY PARA RODAR/EXECUTAR... --> E AÍ __ NÓS 
+
+
+
+
+VAMOS, A PARTIR DESSE USO DE 'createPool',
+
+
+
+SEMPRE 
+
+
+CONSEGUIR 
+
+'A NEW CONNECTION' DESSA POOL,
+
+
+
+
+
+essa pool
+
+
+QUE FAZ MANAGE DE MÚLTIPLAS CONEXÕES... ------> isso é feito 
+
+
+
+
+JUSTAMENTE PARA QUE 
+
+VOCÊ 
+
+
+
+_CONSIGA__ RODAR MÚLTIPLAS QUERIES__ SIMULTANEAMENTE (em paralelo)... --> ISSO 
+
+PQ 
+
+
+CADA 
+
+
+__ QUERY__ PRECISA DE SUA PRÓPRIA CONNECTION, e a pool FACILITA ESSA 'RESERVA' DE CONNECTION,
+
+
+1 
+
+
+CONNECTION A CADA QUERY....
+
+
+
+
+
+
+
+
+ex: 
+
+
+
+
+const mysql = require('mysql2');
+
+
+
+
+const pool = mysql.createPool();
+
+
+
+
+---------------------------------
+
+
+
+
+E QUANDO A CONNECTION DE AQUELA DETERMINADA QUERY ACABAR,
+
+ 
+
+ ___ A CONNECTION SERÁ 'HANDED BACK INTO THE POOL',
+
+ momento em que 
+
+ ESSA CONNECTION 
+
+ SE TORNARÁ 
+
+ DISPONÍVEL MAIS UMA VEZ, DISPONÍVEL 
+
+ PARA 
+
+ ABRIGAR/HANDLAR __OUTRA __ QUERY...
+
+
+
+
+
+
+
+
+
+
+ --> ESSA POOL criada com 'mysql.createPool()'
+
+
+ PODE/VAI __ SER ACABADA (finished)
+ QUANDO 
+
+
+ NOSSO APP NODE/EXPRESS
+
+
+ DESLIGAR... 
+
+
+
+
+
+
+
+
+
+
+
+
+ certo.... professor escreve:
+
+
+
+
+
+
+
+
+ 
+const mysql = require('mysql2');
+
+
+
+
+const pool = mysql.createPool({});
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, 
+
+ESSA POOL VAI ACEITAR/EXIGIR UM OBJETO JAVASCRIPT,
+
+
+SERÁ UM OBJETO JAVASCRIPT 
+
+
+COM ALGUMA INFORMAÇÃO 
+
+
+SOBRE 
+
+
+__ NOSSA DATABASE ENGINE___....
+
+
+
+
+
+
+
+
+
+
+
+PARA ISSO,
+
+
+primeiramente 
+
+O PROFESSOR 
+
+
+VAI 
+
+
+
+ESCREVER UMA KEY 
+DE 
+
+'host',
+
+
+QUE 
+
+SERÁ 
+
+O __ SERVER, O IP ADDRESS/name do nosso server... ----------> 
+
+
+
+
+
+
+
+
+E COMO ESTAMOS RODANDO ESSA DATABASE __ NA NOSSA LOCALMACHINE,
+
+
+vamos escrever 
+
+'host:  "localhost", 
+
+
+
+
+
+
+
+
+------> DEPOIS DISSO, VAMOS DEFINIR O USERNAME 
+
+
+que fará 
+
+
+as 
+
+queries ao database.... -> por default,
+
+O  USERNAME 
+
+SERÁ 
+
+
+'root'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const mysql = require('mysql2');
+
+
+
+
+const pool = mysql.createPool(
+    {
+        host: 'localhost',
+        user: 'root'
+    }
+);
+
+
+
+
+
+
+
+
+------> ESSE USErname 
+
+
+
+É AQUELE QUE FOI DADO A NÓS DURANTE AQUELE 
+
+PROCESSO DE INSTALAÇÃO/CONFIGURAÇÃO 
+
+
+
+DO NOSSO 
+
+
+
+
+SQL DATABASE....
+
+
+
+
+
+
+
+
+
+----------> OK.... --> NÓS TAMBÉM VAMOS TER QUE DEFINIR 
+
+
+
+
+uma key de 'database',
+
+EM QUE 
+
+
+VAMOS 
+
+DEFINIR 
+
+COM EXATIDÃO 
+
+O 
+
+'DATABASE NAME'.............. --------> ISSO 
+
+
+PQ 
+
+
+
+
+
+'mysql2', essa package aí,
+
+
+
+__vaI NOS DAR __ ACESSO __ AO NOSSO 'DATABASE SERVER'..... --> O PROBLEMA É QUE 
+
+
+
+ESSE 
+
+
+'database server' 
+
+
+É COMPOSTO 
+
+
+
+TIPICAMENTE POR __MÚLTIPLAS DATABASES.... -----> E É EXATAMENTE 
+
+
+POR ISSO QUE 
+
+
+TEMOS QUE 
+
+DEFINIR 
+
+
+UMA 
+
+'DATABASE' 
+
+nessa key aí....
+
+
+
+
+
+
+OBS:::::: ---> SUPER IMPORTANTE!!!!! ---> DATABASES ---> 'database' --> essa 
+
+
+
+DATABASE QUE VOCÊ ESPECIFICA/ESCOLHE NESSE OBJETO é ___  LITERALMENTE__ O 
+
+
+
+
+'schema'
+ 
+
+
+
+QUE CRÍAMOS LÁ 
+
+
+NO 
+
+
+MYSQL WORKBENCH...
+
+
+
+
+
+
+--> no nosso caso,
+
+
+
+
+AS DATABASES QUE TEMOS, AGORA,
+
+
+
+são 
+
+
+'node-complete-course' 
+
+
+
+'sakila' 
+
+
+'sys'
+ 
+
+
+ e 
+
+ 'world'....
+
+
+
+
+
+
+
+ (tODOS ELES SÃO SCHEMAS, MAS 'SCHEMAS' SÃO DATABASES, na verdade...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -> É POR ISSO QUE 
+
+
+ NESSE CAMPO 
+
+ de 
+ '
+ database'
+
+ VAMOS 
+
+ ESCREVEr 
+
+
+ 'node-complete-course'....
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+ const pool = mysql.createPool(
+    {
+        host: 'localhost',
+        user: 'root',
+        database: 'node-complete-course'
+    }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COM ISSO,
+ 
+
+ PROFESSOR NOS DIZ QUE AGORA SÓ FALTA 1 PEDAÇO DE INFORMAÇÃO,
+
+  
+
+  QUE É 
+
+  CLARO QUE 
+
+  É 
+
+  NOSSO __ PASSWORD__.. --> katsuhiro...
+
+
+
+
+
+
+
+
+
+  --> PASSWORD -----> 
+
+
+
+
+  CERTO... VAMOS USAR O PASSWORD QUE ASSIGNAMOS DURANTE A INSTALLATION....
+
+
+
+
+
+  CERTO... CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+  
+
+const mysql = require('mysql2');
+
+ const pool = mysql.createPool(
+    {
+        host: 'localhost',
+        user: 'root',
+        database: 'node-complete-course',   
+        password: 'kskaoasko'...
+    }
+);
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+
+
+NÃO ACABAMOS... --> 
+
+
+
+PARA CONSEGUIR '''ATIVAR''' 
+
+
+esse arquivo 
+
+aí,
+
+
+
+para que 
+
+
+UMA CONEXÃO A NOSSA DATABASE SQL SEJA ESTABELECIDA,
+
+
+você 
+
+
+
+PRECISA __ EXPORTAR___ ESSE 
+
+OBJETO 
+
+
+'pool',
+
+POR MEIO 
+
+DA SINTAXE 
+
+
+DO 
+
+
+NODE/EXPRESS...
+
+
+tipo:
+
+
+
+
+
+module.exports = pool...... 
+
+
+
+
+
+
+
+
+--> É CLARO QUE VOCÊ TEM QUE EXPORTAR DE UMA MANEIRA ESPECIAL;
+
+
+VOCÊ 
+
+PRECISA 
+
+
+escrever 
+
+
+
+'module.exports = pool.promise();' 
+
+
+
+
+
+
+
+--> VOCÊ 
+
+
+VAI 
+
+
+QUERER ESCREVER ASSIM PQ 
+
+__ VOCÊ VAI QUERER __ 
+
+
+
+EXPORTAR __ 
+
+
+ESSE OBJETO __ COMO UMA PROMISE... --> 
+
+
+
+
+
+
+
+ISSO VAI TE DEIXAR __ USAR__ PROMISES QUANDO 
+
+
+VOCÊ TRABALHAR COM ESSAS CONNECTIONS 
+
+A SUA 
+
+DATABASE....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const mysql = require('mysql2');
+
+ const pool = mysql.createPool(
+    {
+        host: 'localhost',
+        user: 'root',
+        database: 'node-complete-course',   
+        password: 'kskaoasko'...
+    }
+);
+
+
+
+
+
+module.exports = pool.promise();
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+--> É CLARO QUE NOSSAS DATABASES 
+
+
+'HANDLE ASYNCHRONOUS TASKS',
+
+
+
+
+HANDLAM ASYNCHRONOUS 
+
+DATA... --------> 
+
+
+
+
+
+
+
+
+E NÓS 
+
+VAMOS 
+
+
+USAR __ PROMISES, COM DATABASES SQL,
+
+
+___ EM VEZ DE CALLBACKS (que são horríveis)... 
+
+
+
+
+
+
+
+--> ISSO PQ PROMISES NOS DEIXAM 
+
+
+
+__ESCREVER __ 
+
+
+CÓDIGO DE UMA 
+
+
+
+MANEIRA UM POUCO MAIS ESTRUTURADA (.then() e .catch() blocks)... --------->
+
+
+
+
+
+
+PROMISES SÃO MELHORES PQ 
+
+AÍ NÓS NÃO TEMOS 
+
+
+TANTOS 
+
+'NESTED CALLBACKS' (graças a deus),
+
+
+
+
+
+
+
+
+
+
+
+EM VEZ DISSO TEMOS 
+
+
+
+'PROMISE CHAINS'... -----> VEREMOS ESSAS PROMISE CHAINS 
+
+
+MAIS 
+
+TARDE UM POUCO NESTE MÓDULO....
+
+
+
+
+
+
+
+
+
+--------> ok.... agora 
+
+
+
+NÓS 
+
+
+'EXPORTAMOS' 
+
+
+
+ESSA POOL AÍ, por meio desse arquivo 
+
+
+'database.js'
+
+LÁ 
+
+
+
+NO FOLDER 
+
+'util'...
+
+
+
+
+
+
+----------> E AGORA 
+
+
+PODEMOS IMPORTAR 
+
+
+
+ESSE 
+
+OBJETO 
+
+'pool' 
+
+
+
+NOS LUGARES DE NOSSO CÓDIGO EM QUE 
+
+
+VAMOS QUERER 
+
+
+
+REALIZAR 
+
+OPERAÇÕES/QUERIES 
+
+
+
+no nosso servidor SQL...
+
+
+
+
+
+
+
+--> O OBJETO POOL 
+
+VAI NOS DAR ACESSO 
+
+ÀS 
+
+CONEXÕES 
+
+
+
+
+NO 
+
+SEU INTERIOR...
+
+
+
+
+
+
+
+
+------> E O PROFESSOR PODE NOS DEMONSTRAR ISSO, POR MEIO DE UM EXEMPLO.... ---> 
+
+ELE 
+
+VAI 
+
+
+ATÉ 
+
+
+
+o 
+
+
+
+
+'app.js',
+
+
+
+AÍ 
+
+
+ELE 
+
+
+
+___DECIDE IMPORTAR___  '''A DATABASE''' (na verdade, 
+
+
+ele vai 
+
+IMPORTAR __ A POOL__ daquela database,
+
+
+que é 
+
+ESSENCIALMENTE A DATABASE.. ok....
+)
+
+
+
+
+
+--> PROFESSOR 
+
+ 
+
+VAI ARMAZENAR 
+
+
+
+ESSE 
+
+
+
+IMPORT 
+
+
+
+DA 
+
+'DATABASE/POOL'
+
+em uma CONSTNATE 
+
+chamada 
+
+de 
+
+'db'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const db = require('./util/database');
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express'); ///necessário.
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express(); /////necessário.
+
+
+
+
+
+app.set('view engine', 'ejs'); 
+
+
+
+// const adminData = require('./routes/admin');
+
+
+const adminRoutes = require('./routes/admin');
+
+
+const shopRoutes = require('./routes/shop');
+
+
+const errorController = require('./controllers/error');
+
+
+const db = require('./util/database'); ///////SERÁ/É O EXPORT da 'pool'/'database' SQL que vamos querer utilizar....
+
+
+
+
+app.use(bodyParser.urlencoded({extended: false})); ////1 DE _DIVERSOS_ MÉTODOS__ que podemos usar para PARSEAR NOSSAS 'INCOMING REQUESTS'....--> nesse caso, vamos usar 'urlencoded()', que é algo que usamos PARA PARSEAR DADOS ENVIADOS POR MEIO DE UMA FORM...
+
+
+
+
+app.use(express.static(path.join(__dirname, 'public'))); ////////    COM ISSO, COM ESSE SIMPLES MIDDLEWARE, USERS  DEVERÃO/CONSEGUIRÃO  SER CAPAZES  DE ACESSAR O  FOLDER 'PUBLIC'  NO ROOT FOLDER.... --> FAZEOMS ISSO PARA CONSEGUIR FAZER 'SERVE' DAS __ FILES CSS__ DE NOSSO PROJETO (ver aula 'serving files statically', em que SOLUCIONAMOS O PROBLEMA ___ DOS ARQUIVOS CSS SERVIDOS/UTILIZADOS EM PÁGINAS SERVIDAS PELO NODEJS/EXPRESSJS...)
+///^^^este código é MUITO IMPORTANTE.
+
+
+
+app.use(
+ 
+
+  '/admin', //será APLICADO NA URL de nosso path, do path desse negócio aí... (que está lá em 'admin.js')...
+
+
+      
+
+    adminRoutes ////uso do EXPRESSJS...
+);
+
+
+
+app.use(
+  shopRoutes   ////uso do EXPRESSJS...
+)
+
+
+
+
+app.use(
+
+  errorController.error404
+)
+
+
+
+
+app.listen(3000); ///é um resumo/shorthand de 'const server = http.createServer(app);' e 'server.listen(3000)'...
+                    ///também torna desnecessário o import de 'const http = require('http'), PQ ESES MÓDULO JÁ VEM COM esse método '.listen()' no nosso app EXPRESS..
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK...
+ 
+
+
+ 'db'
+
+
+ SERÁ ESSENCIALMENTE 
+
+
+ A 
+
+ 'POOL'
+
+
+
+ QUE VAI 
+
+ NOS DEIXAR 
+
+ USAR 
+
+ UMA CONEXÃO/CONEXÕES 
+
+
+ COM A DATABASE SQL....
+
+
+
+
+
+
+
+ --------> certo.... --> e aí 
+
+ vamos querer 
+
+
+
+
+ UTILIZAR 
+
+
+
+ ESSA POOL CRIADA COM 
+
+ 'createPool()'....
+
+
+
+
+
+
+
+
+
+
+
+ --> professor 
+
+
+ escreve 
+
+
+
+ 'db.' 
+
+
+
+ E AÍ 
+
+
+ O 
+
+
+ IDE 
+
+ NOS SUGERE VÁRIOS MÉTODOS....
+
+
+
+
+
+
+
+
+
+
+ 1) end 
+
+
+ 2) execute 
+
+
+
+ 3) getConnection 
+
+
+ 4) pool 
+
+
+
+
+ 5) Promise 
+
+
+
+ 6) query ..
+
+
+
+
+
+
+
+
+
+
+
+
+ --> UM DESSES MÉTODOS QUE É IMPORTANTE É O 
+
+ 'execute'... ---------> 
+
+
+
+
+
+ ''''EXECUTE''' --> NOS DEIXA __eXECUTAR__ QUERIES__...
+
+
+
+
+
+
+
+
+
+
+ 'db.query' ---> ISSO NOS DEIXA EXECUTAR QUERIES TBM,
+
+ MAS 
+ O 
+
+ 'db.execute()'
+
+
+ É __MAIS SEGURO DO QUE ESSE MÉTODO AÍ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> VAMOS USAR 
+
+
+
+ 'db.execute()',
+
+ PQ ELE É MAIS SAFE DO QUE O 
+
+ 'db.query()'....
+
+
+
+
+
+
+
+
+
+
+ ------> PROFESSOR DIZ QUE TAMBÉM 
+
+
+ TEMOS 
+
+
+
+ 'db.end()',
+
+ E QUE 
+
+
+ VAMOS QUERER 
+
+
+ __o UTILIZAR__ 
+
+
+ SEMPRE QUE 
+
+ NOSSO 
+
+ APP 
+
+
+
+
+
+
+
+VAI 
+
+
+
+'SHUT DOWN'.. (quando quisermos que nosso app SE DESLIGUE, vamos querer chamar 'db.end()'...) ------>  MAS É CLARO QUE 
+
+
+
+NESSE 
+
+NOSSO CASE, 
+
+
+DE NOSSO 
+
+PROJETO,
+
+NÃO VAMOS QUERER
+
+'SHUT OUR APPLICATION DOWN'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> EM VEZ DISSO, O QUE VAMOS QUERER FAZER, em 'app.js',
+
+
+É __CONECTAr__ NOSSO NODE/EXPRESS 
+
+APP 
+
+
+
+AO 
+
+
+
+NOSSO 
+
+DATABASE 
+
+'SQL' de MYSQL.... ------> 
+
+
+
+
+
+PARA 
+
+
+
+
+CONECTAR NOSSO APP,
+
+
+professor 
+
+escreve 
+
+
+
+'db.execute()',
+
+QUE 
+
+É UM 
+
+
+
+MÉTODO QUE 
+
+
+
+
+NOS DEIXA 
+
+'EXECUTE A COMMAND'.... -----------> 
+
+
+
+
+
+E PROFESSOR 
+
+
+
+
+
+
+_____ EXPLICA QUE PODEMOS ESCREVER UM 'COMANDO' AQUI 
+
+
+
+
+por __ MEIO DA UTILIZAÇÃO 
+
+
+DE 
+
+
+SINTAXE 
+
+
+'SQL'.... -------> A SINTAXE SQL 
+
+
+SERÁ 
+
+
+INPUTTADA AQUI COMO __ UMA STRING.... --> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+É CLARO QUE PARA CONSEGUIRMOS 
+
+
+
+EXECUTAR COMANDOS POR MEIO DE 'db.execute()',
+
+
+
+
+
+__NÓS ___PRECISAMOS __ SABER 
+
+'SQL',
+
+
+precisamos 
+
+SABER A LINGUAGEM SQL.... --------> 
+
+
+E O PROFESSOR 
+
+VAI 
+
+NOS ENSINAR 
+
+O
+ BASICÃO DO 
+
+ SQL....
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> SE VOCÊ, NO FUTURO,
+
+ PLANEJA 
+
+
+ USAR 
+
+ __ SQL (mysql) 
+
+
+
+ JUNTO COM 
+
+ O SEU NODEAPP,
+
+
+
+
+ VOCÊ DEFINITIVAMENTE 
+
+ PRECISA 
+
+
+
+
+ ___ VER UM CURSO DE SQL,
+
+
+
+
+ O QUAL 
+
+
+ VAI 
+
+
+
+
+
+ MOSTRAR TODAS AS PARTES APROFUNDADAS DA LINGUAGEM 
+
+
+ SQL,
+
+
+  
+
+  PQ ISSO 
+
+  AÍ 
+
+  É 
+
+  ALGO 
+
+
+
+
+
+  QUE VAI ALÉM 
+
+
+
+  DAQUILO QUE O PROFESSOR ENSINA NESTE CURSO,
+
+
+  pq 
+
+  este curso é um curso sobre NODEJS, e não sobre SQL...
+
+
+
+
+
+
+
+
+
+
+  ------> MAS O QUE PODEMOS FAZER AQUI, É CLARO,
+
+
+
+  É 
+
+
+
+
+  escrever:
+
+
+
+
+
+
+  'SELECT' 
+
+
+*  (everything)
+
+
+
+FROM (de )
+
+
+
+
+
+'products' (---> será uma TABLE DENTRO DO 'SCHEMA/DATABASE SERVER', que vamos escrever no futuro...)
+
+
+
+
+
+
+--> fica tipo 
+
+
+
+
+'db.execute('SELECT * FROM "node-complete-course".products');' 
+
+
+
+
+
+
+
+
+--> PARA CRIAR UMA 
+
+TABLE 
+
+DE 
+'PRODUCTS',
+
+
+
+
+
+vamos 
+
+ATÉ 
+
+O WORKBENCH DO MYSQL 
+
+e então 
+
+
+
+CLICAMOS 
+EM 
+
+'tables' 
+
+E AÍ 
+
+
+'create new table'...
+
+
+
+
+
+
+
+
+
+
+--> ISSO VAI NOS DAR O EDITOR DE TABLES...
+
+
+
+
+
+
+
+
+--> O NOME DA TABLE 
+
+SERÁ 
+
+'PRODUCTS'...
+
+
+
+
+
+
+
+
+--> AÍ, DENTRO DESSA TABLE,
+
+VOCÊ 
+
+
+
+
+CRIA 'FIELDS'... --> PROFESSOR DIZ QUE 
+
+DEVEMOS TRABALHAR COM ISSO NA PRÓXIMA AULA,
+
+criar 
+
+
+
+FIELDS NA NOSSA TABLE..

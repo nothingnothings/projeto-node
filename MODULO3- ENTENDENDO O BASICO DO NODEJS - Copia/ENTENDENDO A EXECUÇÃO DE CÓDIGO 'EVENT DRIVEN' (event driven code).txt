@@ -1,0 +1,1809 @@
+
+
+
+
+
+
+
+
+
+--> já conseguimos mt nesse módulo...
+
+
+
+
+EX:
+
+
+
+
+
+const http = require('http');
+
+const fs = require('fs');
+
+// http.createServer(); //////FUNÇÃO MAIS IMPORTANTE PARA A CRIAÇÃO DE UM SERVIDOR NODEJS (duh)
+
+// const reqListener = (req, res) => { ///objetos que representam A REQUEST que chega ao server e a RESPONSE que vamos enviar para fora dele....
+//    ^^^^^^
+///A DEFINIÇÃO DESSA FUNÇÃO 'REQUEST LISTENER' é desnecessária, podemos simplesmente escrever uma anonymous function DENTRO DO CALL DE 'createServer', e então escrever nosso código normalmente...
+// };
+
+// http.createServer(reqListener); ///////ESSA FUNÇÃO ACEITA/EXIGE UM PARÂMETRO QUE É UM  ''''REQUEST LISTENER'''' ---> ESSA FUNÇÃO-PARÂMETRO SERÁ EXECUTADA 'FOR EACH AND EVERY INCOMING REQUEST' que atinge o servidor.... (poderíamos, por exemplo, implementar um 'contador de visitas' no servidor, por meio dessa função...)
+                        ////^^^^^^ VERSÃO QUE USA UMA DEFINIÇÃO EXPLÍCITA DE 'reqListener'.... ---> MAS NÃO PRECISAMOS ESCREVER NOSSA 'REQUEST LISTENER' FUNCTION EXPLICITAMENTE; podemos simplesmente escrever uma função interna/ANONYMOUS FUNCTION DENTRO DO CALL DE 'createServer'...
+
+
+
+
+
+
+
+
+// http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+//         console.log(req);
+// }) ^^^^^ SINTAXE INCOMPLETA...
+
+
+
+
+
+const server = http.createServer((req, res) => { ////versão SIMPLIFICADA DO CÓDIGO QUE TEMOS MAIS ACIMA. É melhor... (a função interna desse 'createServer' será JUSTAMENTE UMA FUNÇÃO 'request listener', uma função QUE SERÁ EXECUTADA FOR EACH AND EVERY REQUEST QUE ALCANÇA O SERVER...)
+        // console.log(req); 
+        // console.log(req.url); ////método essencial (usado no ROUTING de requests, e outras coisas)...
+        // console.log(req.method); ///método essencial (usado para LIMITAR O TIPO DE INCOMING REQUESTS QUE RECEBEMOS)....
+        // console.log(req.headers); ///método essencial, usado para DETERMINAR/DESCOBRIR NOSSOS HEADERS...
+        // console.log(res);
+
+
+
+        const url = req.url;
+
+
+        // console.log(url);
+
+        // console.log(req);
+        // console.log(req.query);
+
+        if (url === '/') { ///ROUTING DE REQUESTS... --> se acessarmos uma url com 'slash nothing', vamos querer executar esse código aí...
+                res.write('<html>');
+                res.write('<head><title>My first page</title></head>');
+                res.write('<body>');
+                res.write('<div>');
+                res.write('<form action="/message" method="POST"');
+                res.write('<label htmlFor="message">Enter a Message!</label>')
+                res.write('<input type="text" name="message"></input>');
+                res.write('<button type="submit">SEND</button>');
+                res.write('</form>');
+                res.write('</div>');
+                res.write('</body>');
+                res.write('</html>');
+                return res.end(); // 'return' e '.end()' NECESSÁRIOS PARA EVITAR QUE AS LINHAS QUE ESTÃO FORA DESSE IF CHECK SEJAM executadas...
+        }
+
+
+        
+        if (url === '/message' && req.method === 'POST') {
+               
+
+                const body = [];
+
+
+                req.on(
+                        'data', ///evento 'data'.... --> vai fazer 'listen to' ao evento 'DATA', data de NOSSO REQUEST/anexada ao nosso request...
+                        (chunk) => { ///SERÁ EXECUTADO MÚLTIPLAS VEZES/re-executado múltiplas vezes, tudo devido ao COMPORTAMENTO DAS 'DATA STREAMS' e dos 'Buffers' (bus stops das data streams), que são o conceito/construct do javascript QUE _ FAZ __ COM QUE __ NOSSA DATA ANEXADA AO REQUEST SEJA ''''PROGRESSIVAMENTE OBTIDA''', obtida aos poucos...
+                           console.log(chunk);     ///EIS O CÓDIGO EM QUESTÃO. ESSE  CÓDIGO VAI SE 'REPETIR' MÚLTIPLAS VEZES, ATÉ QUE NOSSA DATA SEJA PARSEADA/MANIPULADA POR INTEIRO, pelo nodejs...
+                                body.push(chunk); //esse código tbm será executado múltiplas vezes... (eu acho)...
+                        }
+                )
+                req.on(
+                        'end',
+                        () => {
+                                const parsedBody = Buffer.concat(body).toString().split('=')[1]; ////'Buffer.concat(body)' ---> isso é um BUFFER/OBJETO BUFFER --> esse objeto é então CONVERTIDO EM UMA STRING por meio de 'toString()'...
+                                console.log(parsedBody);
+                                fs.writeFileSync('message.txt', parsedBody);
+                        }
+                )
+                
+
+
+                
+                // console.log(req.body); ///ISSO NÃO EXISTE.... --> ver conceito de 'data stream' e 'buffers' (os BUS STOPS), e o uso do mÉTOOD 'req.on(() => {})'...
+                
+               
+                // fs.writeFileSync('message.txt', 'DUMMY'); ///versão __SÍNCRONA___ de 'write a file'... depois professor vai explicar melhor a diferença entre isto e 'writeFile' (A VERSÃO ASSÍNCRONA)... 
+                // fs.writeFile('message.txt', ); /////versão ASSÍNCRONA DE 'write a file'. É mais utilizada do que a outra.
+
+                // fs.writeFileSync('message.txt', parsedBody);
+                // res.statusCode = 302; ///esses 2 códigos são a MESMA COISA QUE O 'writeHead', mas espalhados/escritos em 2 linhas....
+                // res.setHeader = ('Location', '/');
+      
+
+                res.writeHead(302
+                        , 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+        res.setHeader('Content-Type', 'text/html'); ////CÓDIGO QUE SERÁ IGNORADO PELA EXECUÇÃO DE NOSSA FUNÇÃO, se alcançamos esse primerio if check de 'url === /'....
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+        //process.exit(); ///fecha nosso webserver, TERMINA O 'ONGOING EVENT LOOP'/execução de nosso servidor (vai parar de receber requests, pois terminamos o MAIN PROCESS que continha o eventListener que fazia listen aos REQUESTS) ------> este recurso é raramente usado, pois se usarmos 'process.exit()', PARAMOS DE RECEBER INCOMING REQUESTS, E O SERVER PARA DE FUNCIONAR...
+}) 
+
+
+
+
+
+
+
+
+// server.listen(); ///////OUTRO CÓDIGO __ ESSENCIAL__ PARA MANTER/CRIAR NOSSO SERVER NODEJS... ---> isso aqui vai fazer 'LISTEN' por requests, e é o que vai DEIXAR NOSSO SERVER ABERTO A REQUESTS...
+////     ^^^^^^ CÓDIGO que ACEITA PARÂMETROS OPCIONAIS (como a porta a que vamos querer fazer 'LISTEN'...).
+
+
+
+
+
+server.listen(3000); /// EM PRODUCTION, VOCÊ TIPICAMENTE DEIXA ESSE NEGÓCIO EM BRANCO, para que ELE 'TAKE THE DEFAULT OF PORT 80'...
+        ////^^^^usamos a porta 3000 pq estamos em DEVELOPMENT...
+
+
+
+////PORTA 3000 --> FREQUENTEMENTE USADA ___ NO MODO DE DEVELOPMENT___....
+
+
+////PORTA 80 --> FREQUENTEMENTE USADA NO MODO DE __ PRODUCTION___...
+
+
+
+
+
+
+// VOCÊ PODE USAR QUALQUER PORTA QUE VOCÊ QUISER,
+// MAS 
+// AS PORTAS 
+// '1000'
+// SÃO 
+// TIPICAMENTE BEM SAFE....
+
+
+
+
+
+
+
+----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+O PROFESSOR APONTOU QUE O CÓDIGO PODE PARECER UM POUCO INTIMIDADOR.... --> 
+
+
+
+mas 
+
+não devemos nos preocupar,
+
+pq 
+
+ele 
+
+vai 
+
+se tornar bem mais fácil..
+.
+
+
+
+
+
+
+
+
+
+
+
+---> DEVEMOS APRENDER A PARTE DIFÍCIL ANTES,
+
+PARA 
+
+NUNCA 
+
+ESQUECERMOS DO QUE 
+
+ACONTECE POR TRÁS DAS CENAS...
+
+
+
+
+
+
+
+
+
+---> 1 COISA QUE AS PESSOAS TEM DIFICULDADES:
+
+
+
+
+
+
+
+É QUE A ORDEM DE EXECUÇÃO 
+
+DO 
+
+
+CÓDIGO QUE VOCÊ ESCREVE 
+
+
+
+NO JAVASCRIPT ___ NÃO É NECESSARIAMENTE__ A 
+
+ORDEM 
+
+
+EM QUE 
+
+VOCÊ 
+
+O DIGITA/ESCREVE.... ---->
+
+
+
+ex:
+
+
+
+
+
+
+
+                req.on(
+                        'end',
+                        () => {
+                                const parsedBody = Buffer.concat(body).toString().split('=')[1]; ////'Buffer.concat(body)' ---> isso é um BUFFER/OBJETO BUFFER --> esse objeto é então CONVERTIDO EM UMA STRING por meio de 'toString()'...
+                                console.log(parsedBody);
+                                fs.writeFileSync('message.txt', parsedBody);
+                        }
+                )
+
+                res.statusCode = 302;
+                res.setHeader('Location', '/');
+                return res.end();
+
+
+-----------------------------------------
+
+
+
+
+
+--> POR EXEMPLO,
+ 
+
+ O CODE BLOCK DENTRO 
+
+ DE 
+
+
+ 'req.on()',
+
+
+ nesse exemplo aí,
+
+ VAI SER __ EXECUTADO __ ANTES 
+
+
+ DAS 
+
+ LINHAS 
+
+ ''
+            res.statusCode = 302;
+                res.setHeader('Location', '/');
+                return res.end();
+
+'''
+
+
+
+
+
+------->  ISSO SIGNIFICA QUE 
+
+O 
+
+CÓDIGO DENTRO 
+
+DE 
+
+'req.on()'
+
+
+VAI SER EXECUTADO 
+
+
+'''EVEN AFTER __ WE ___ ALREADY SENT  THE RESPONSE TO THE CLIENT...''''
+
+
+
+
+
+
+-----> E ISSO TEM 
+
+2
+ 
+
+ IMPORTANT IMPLICATIONS:
+
+
+
+
+
+
+
+
+1) ____ O SEND DA 'RESPONSE' __ NÃO QUER DIZER/DOES NOT MEAN
+ 
+
+
+ QUE 
+
+ ___NOSSOS EVENT LISTENERS FICAM/FICARÃO 'DEAD'/MORTOS... ------> isso significa que 
+
+ ELES
+
+
+ AINDA VÃO EXECUTAR, MESMO 
+
+ SE 'THE RESPONSE IS ALREADY GONE'....
+
+
+
+
+
+
+
+2) MAS ISSO TAMBÉM SIGNIFICA QUE __ SE NÓS __ FAZEMOS ALGO __ NO 
+
+'EVENT LISTENER',
+
+dentro do código escrito no eventListener (como 'req.on'),
+
+
+
+SE VAMOS FAZER ALGO NO EVENTLISTENER __ QUE VÁ INFLUENCIAR__ 
+
+
+A 
+
+RESPONSE,
+
+
+
+
+
+ESTE MODO AQUI (modo errado):
+
+
+
+
+                req.on(
+                        'end',
+                        () => {
+                                const parsedBody = Buffer.concat(body).toString().split('=')[1]; ////'Buffer.concat(body)' ---> isso é um BUFFER/OBJETO BUFFER --> esse objeto é então CONVERTIDO EM UMA STRING por meio de 'toString()'...
+                                console.log(parsedBody);
+                                fs.writeFileSync('message.txt', parsedBody);
+                        }
+                )
+
+                res.statusCode = 302;
+                res.setHeader('Location', '/');
+                return res.end();
+
+
+
+
+
+
+
+É ___ UM 
+
+
+SETUP __ ERRADO, 
+
+É 
+
+A MANEIRA ERRADA 
+
+DE 
+
+'SET IT UP'... ----------> SE QUISERMOS/SABEMOS 
+
+QUE 
+
+A 
+
+
+
+RESPONSE ____ DEVERÁ__ SER 
+
+INFLUENCIADA 
+
+PELAS 
+
+
+'OPERAÇÕES'
+
+DENTRO DO NOSSO SERVIDOR, PELA AÇÃO DO NOSSO SERVIDOR,
+
+
+__TEMOS__ QUE 
+
+
+MOVER 
+
+
+AS LINHAS de 'send da response'
+
+
+'''síncronas''' (como 'res.statusCode', e 'return res.end()') 
+
+
+
+
+__ PARA_ _ DENTRO 
+
+__ 
+
+
+DO NOSSO 
+
+
+
+LISTENER/BLOCO DE CÓDIGO ASSÍNCRNO....
+
+
+
+
+ex (modo certo):
+
+
+
+
+
+
+
+
+
+
+
+
+                req.on(
+                        'end',
+                        () => {
+                                const parsedBody = Buffer.concat(body).toString().split('=')[1]; 
+                                console.log(parsedBody);
+                                fs.writeFileSync('message.txt', parsedBody);
+
+                                                res.statusCode = 302; ////AGORA ISSO ESTÁ CORRETO, SE NOSSA RESPONSE DEPENDE DESSAS LINHAS LOGO ACIMA...
+                                                 res.setHeader('Location', '/');
+                                                 return res.end();
+
+                        }
+                )
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+CERTO... ESSAS SÃO IMPLICAÇÕES 
+ADVINDAS DESSE 'DESCOMPASSO' 
+
+ENTRE 
+
+
+
+SYNC E ASYNC CODE... --------> MAS 
+
+ISSO 
+
+
+TBM SIGNIFICA UMA 
+
+TERCEIRA COISA:
+
+
+
+
+
+3) É SUPER IMPORTANTE 
+
+
+
+___ENTENDER__ QUE 
+
+___ COM 
+
+
+'req.on()'
+
+
+
+
+OU __ ENTÃO __ 
+
+
+CÓDIGOS 
+
+COMO 
+
+
+'http.createServer()',
+
+
+
+
+OU SEJA,
+
+
+
+SEMPRE QUE 
+
+
+
+___ VOCÊ _ TEM CÓDIGO__ 
+
+EM QUE 
+
+VOCÊ 
+
+
+
+______PASSA UMA FUNÇÃO___ COMO ARGUMENTO___ 
+
+
+A UMA FUNÇÃO,
+
+
+
+
+VOCÊ 
+
+
+
+
+TEM QUE RECONHECER __ QUE 
+
+EM CASOS __ COMO 
+
+
+ESSES __ VOCÊ/O NODEJS__ NUNCA VAI 'IMMEDIATELY' RODAR 
+
+
+AQUELA FUNÇÃO INTERNA... --------> EM VEZ DISSO,
+
+
+
+O 
+
+
+QUE 
+
+O 
+
+NODEJS 
+
+VAI 
+
+FAZER, SEMPRE QUE 
+
+ELE 
+
+ENCONTRAR 
+
+LINHAS 
+
+
+COMO 
+
+
+'
+
+
+
+
+ req.on('end', () => {
+
+ 
+ }
+
+
+
+ '',
+
+
+
+
+
+ É __ SIMPLESMENTE ___ 'ADD/REGISTER' A NEW EVENT LISTENER __ INTERNAMENTE... -----> 
+
+
+
+
+ E ELE 
+
+
+ FAZ O MANAGE DESSES 
+
+ TODOS
+
+
+
+
+ EVENT LISTENERS INTERNAMENTE, O NODEJS.... -------> 
+
+
+
+
+
+ NESSE CASO,
+  
+
+ELE VAI 
+
+
+
+__ REGISTRAR  UM LISTENER PARA 
+
+O 
+
+EVENTO 
+
+'end'
+
+
+
+__ NO NOSSO REQUEST (que aparece no NOSSO REQUEST, essencialmente),
+
+
+
+EVENTO QUE __ SERÁ TRIGGADO __ AUTOMATICAMENTE__ 
+
+
+
+QUANDO __ O NODEJS
+
+
+
+__ ESTIVER 
+
+
+
+'DONE PARSING THE REQUEST'... -----> E ISSO, ESSE EVENTO 'END' brotando É 
+
+
+ALGO QUE O __ NODEJS __ FAZ PARA NÓS__....
+
+
+
+
+
+
+
+
+
+---------> AÍ,
+
+
+
+
+QUANDO ISSO ACONTECE, QUANDO O EVENTO 'END' ACONTECE,
+
+O 
+
+
+NODEJS 
+
+vai chamar/executar 
+o 
+
+
+BODY DAQUELA CALLBACK FUNCTION,
+
+
+essas linhas aqui:
+
+
+
+
+                 const parsedBody = Buffer.concat(body).toString().split('=')[1]; 
+                                console.log(parsedBody);
+                                fs.writeFileSync('message.txt', parsedBody);
+
+                                                res.statusCode = 302; ////AGORA ISSO ESTÁ CORRETO, SE NOSSA RESPONSE DEPENDE DESSAS LINHAS LOGO ACIMA...
+                                                 res.setHeader('Location', '/');
+                                                 return res.end();
+
+
+
+
+
+
+
+
+
+
+--> ELE VAI 
+
+CHAMAR ESSAS LINHAS QUANDO 
+
+TIVER 
+
+ACABADO...
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+
+
+VOCÊ DEVE IMAGINAR QUE 
+O 
+
+NODEJS 
+
+
+POSSUI UM 
+
+'INTERNAL REGISTER' 
+
+
+de nossos events E __ OS LISTENERS__ VINCULADOS 
+
+
+A 
+ESSES 
+
+EVENTS... ------>  e uma função como 'req.on('end')'
+
+
+
+É JUSTAMENTE 1 DESSES LISTENERS...
+
+
+
+
+
+
+-----> E SEMPRE QUE 
+
+ALGO ACONTECE/QUANDO ALGO ACONTECE,
+
+
+
+QUANDO O 
+
+nodejs 
+
+TIVER ACABADO 
+
+
+O PARSING DO REQUEST,
+
+
+ELE VAI DISPARAR O 
+EVENTO 
+'end'... --> AÍ ELE VAI 
+
+VER __ QUAIS LISTENERS__ TEMOS 
+
+PARA 
+
+'END'... ---> aí ele vai encontrar 
+
+
+essa nossa função ( e quaisquer outras funções que você registrou para o evento de 'END'),
+
+
+
+
+E __ AÍ __ 
+
+VAI A EXECUTAR... --------> MAS O IMPORTANTE 
+
+
+DE 
+
+ENTENDER 
+É QUE 
+
+
+__ELE NÃO VAI PARAR A EXECUÇAÕ DO CÓDIGO EM GERAL (overall)
+
+PARA 
+
+__ QUERER __ EXECUTAR ESSA FUNCTION...
+
+
+
+
+
+
+
+
+
+-------> por exemplo,
+
+
+
+PQ 
+
+
+
+NÓS AGORA 
+
+
+
+MOVEMOS 
+
+
+'res.statusCode()',
+'res.setHeader()'
+'return res.end()'
+
+
+
+PARA 
+
+DENTRO DA CALLBACK FUNCTION 
+
+
+DE 
+
+
+
+'req.on('end')',
+
+
+
+
+O FLOW 
+
+SERÁ 
+
+BASICAMENTE:
+
+
+
+
+
+1) ELE ALCANÇA 
+
+o 
+
+IF STATEMENT... -----> 
+
+
+
+
+
+2) DENTRO DO IF STATEMENT, ELE VAI REGISTRAR OS 2 HANDLERS 
+
+DE 
+
+'data' e 'end' -------> mas as funções CALLBACK VINCULADAS A ESSES EVENTS por meio de 'req.on()' não serão executadas, 
+no caso...
+
+
+
+
+
+-----> ESSAS FUNÇÕES NÃO SERÃO EXECUTADAS,
+
+E SIM SERÃO 'REGISTRADAS INTERNAMENTE',
+
+
+
+dentro 
+
+
+do 
+
+'event emitter registry'
+
+DO NODEJS...
+
+
+
+
+-------> AÍ, ISSO FEITO, 
+
+O QUE O NODEJS 
+
+VAI 
+
+FAZER 
+
+é 
+'JUMP STRAIGHT AWAY TO THE NEXT LINE', ignorando/empurrando para o lado 
+
+esses 
+
+eventListeners e suas CALLBACK FUNCTIONS... (que não serão executadas, pq 
+
+seus events ainda não aconteceram/não foram disparados)
+
+
+
+
+
+
+
+
+--> O QUE ISSO VAI FAZER, BASICAMENTE,
+
+
+É __ EXECUTAR ___ AQUELE CÓDIGO 'RESTOLHO'
+ 
+ que 
+
+ deixamos 
+
+ ao final de nosso código,
+
+ aquelas linhas 
+
+ de 
+
+
+
+ '
+
+
+
+         res.setHeader('Content-Type', 'text/html'); ////CÓDIGO QUE SERÁ IGNORADO PELA EXECUÇÃO DE NOSSA FUNÇÃO, se alcançamos esse primerio if check de 'url === /'....
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end();
+
+
+
+
+'''''''''''
+
+
+
+
+
+CÓDIGO COMPLETO:
+
+
+
+
+
+
+
+     if (url === '/message' && req.method === 'POST') {
+               
+
+                const body = [];
+
+
+                req.on(
+                        'data', 
+                        (chunk) => { 
+                           console.log(chunk);     
+                                body.push(chunk); 
+                        }
+                )
+                req.on(
+                        'end',
+                        () => {
+                                const parsedBody = Buffer.concat(body).toString().split('=')[1]; 
+                                console.log(parsedBody);
+                                fs.writeFileSync('message.txt', parsedBody);
+                        }
+                )
+      
+
+                res.writeHead(302
+                        , 
+                        {
+                             'Location': '/'   
+                        })
+                return res.end();
+
+        }
+
+
+        res.setHeader('Content-Type', 'text/html'); ///EIS O CÓDIGO EM QUESTÃO.
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+É POR ISSO QUE AGORA, SE RECARREGARMOS NOSSO SERVER 
+
+E ENVIARMOS OUTRA MESSAGE 
+
+
+A ELE,
+
+
+
+VAMOS __ REALMENTE 
+
+
+teR A PÁGINA 
+
+
+DE 'Hello from my node.js server',
+
+
+renderizada 
+
+
+
+
+POR 
+
+
+
+''
+
+
+
+        res.setHeader('Content-Type', 'text/html'); ///EIS O CÓDIGO EM QUESTÃO.
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>')
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+        res.write('</html>');
+        res.end(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+''',
+
+
+
+QUE É UM CÓDIGO SÍNCRONO (executado imediatamente)...
+
+
+
+
+
+
+
+
+
+ISSO ACONTECE/ACONTECEU JUSTAMENTE 
+
+PQ 
+
+AS CALLBACK FUNCTIONS 
+
+
+
+Dos listeners de 'data' 
+
+e 
+'end'
+__ 
+
+
+NÃO SÃO __ EXECUTADAS INSTANTANEAMENTE QUANDO O CÓDIGO 
+
+DE SEUS LISTENERS É LIDO PELA PRIMEIRA VEZ... ----> 
+
+
+EM VEZ DISSO, O QUE O NODEJS FAZ É ARMAZENAR ESSAS CALLBACK FUNCTIONS 
+
+
+__DENTRO__ DE SEU 'EVENT EMMITER REGISTRY'.. . ------->
+
+
+
+
+
+
+
+OK, ISSO SIGNIFICA QUE 
+
+NOSSO 
+
+CÓDIGO 
+
+DENTRO 
+
+DO 
+
+
+
+'
+req.on()'
+
+NÃO SERÁ EXECUTADO IMEDIATAMENTE, ao contrário do resto das linhas ('res.setHeader', res.write() e 'res.end()'...
+
+
+
+
+
+
+
+
+
+
+-----> É CLARO QUE___ EVENTUALMENTE___ O USUÁRIO__ 
+
+
+
+
+O NODEJS VAI EXECUTAR 
+AQUELA 
+
+CALLBACK FUNCTION 
+
+DE 
+
+
+'req.on('end'),
+
+
+MAS É CLARO QUE 
+
+ATÉ ENTÃO 
+
+JÁ TERÁ SIDO TARDE,,
+
+
+
+E É JUSTAMENTE 
+
+
+POR ISSO QUE 
+
+
+
+
+RECEBEMOS ERROS, NO TERMINAL,
+
+
+COMO 
+
+'CANNOT SET HEADERS'... ----> ISSO ACONTECEU PQ 
+
+__ NOSSO CÓDIGO __ JÁ 'WENT ALONG',
+
+JÁ EXECUTOU 
+
+
+as linhas 
+
+de 
+'setHeader' e afins,
+
+
+
+
+NAQUELE CLIQUE DO BOTÃO,
+
+
+__  E __ AÍ__, LOGO 
+
+
+
+DEPOIS __ DO CÓDIGO __ 
+
+
+JÁ TER 
+
+SIDO 
+
+
+
+__ENVIADO___ (por causa de 'res.end()', depois de 'res.write('</html>')'),
+
+
+
+
+NÓS TENTAMOS ENVIAR A RESPONSE DE NOVO (por causa de 'return res.end()', depois de 'res.setHeader('Location', '/')' ),
+
+
+
+
+
+O QUE 
+
+
+__ VAI CAUSAR/CAUSA UM ERRO __ PQ 
+
+
+NOSSA RESPONSE JÁ TERÁ SIDO ENVIADA POR MEIO DAQUELE CÓDIGO SÍNCRONO...
+
+
+
+
+
+
+ex (ordem de execução do código):
+
+
+
+
+
+
+
+
+
+
+
+
+     if (url === '/message' && req.method === 'POST') { ////0.5
+               
+
+                const body = [];
+                req.on( /////2///
+                        'data',     /////2///
+                        (chunk) => {        /////2///
+                           console.log(chunk);          /////2///
+                                body.push(chunk);       /////2///
+                        }
+                )       /////2///
+                req.on( /////2///   executado EM ALGUM MOMENTO __ APÓS O '//1//'...
+                        'end',      /////2///
+                        () => { const parsedBody = Buffer.concat(body).toString().split('=')[1];    /////2/// 
+                                console.log(parsedBody);    /////2///
+                                fs.writeFileSync('message.txt', parsedBody); }  /////2///
+                                              res.writeHead(302 ,   /////2///
+                        {               /////2///
+                         'Location': '/'        /////2///   
+                        })          /////2///       
+                return res.end();       /////2/// É ISSO AQUI QUE ACABA CAUSANDO O ERRO, PQ NÓS TENTAMOS FAZER O 'SEND' DE _ UMA SEGUNDA RESPONSE, QUANDO A RESPONSE JÁ HAVIA SIDO ENVIADA LÁ EM 'res.end()' depois de 'res.write('<html/>')'...
+                                
+                                )
+  
+
+        
+
+
+      res.setHeader('Content-Type', 'text/html'); //////1 (execução síncrona)
+        res.write('<html>'); //////1
+        res.write('<head><title>My first page</title></head>');  //////1
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>'); //////1
+        res.write('</html>'); //////1
+        res.end();  //////1 (RESPONSE ENVIADA...)
+
+        }
+
+        
+
+
+-------------------------------------------
+
+
+
+
+
+
+OK... ISSO PODE PARECER 
+
+
+
+DIFÍCIL DE ENTENDER,
+
+
+mas 
+
+é necessário...
+
+
+
+
+
+
+
+
+
+
+
+--> É CRUCIAL QUE VOCÊ ENTENDA:
+
+
+
+
+
+*** VOCê PODE REGISTRAR FUNÇÕES QUE 
+
+
+__PODEM/PODERÃO RODAR 
+
+'SOME TIME IN THE FUTURE',
+
+
+
+E NÃO NECESSARIAMENTE AGORA.... -------> 
+
+
+
+E 
+
+É 
+
+
+JUSTAMENTE POR ISSO 
+
+ 
+
+
+ QUE 
+
+
+AS 
+
+
+
+LINHAS 
+
+DE 
+
+
+''
+
+
+      res.setHeader('Content-Type', 'text/html'); //////1 (execução síncrona)
+        res.write('<html>'); //////1
+        res.write('<head><title>My first page</title></head>');  //////1
+        res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>'); //////1
+        res.write('</html>'); //////1
+        res.end();  //////1 (RESPONSE ENVIADA...)
+
+
+
+
+''
+
+
+
+
+VÃO SER EXECUTADAS 
+
+
+ANTES 
+
+DE 
+
+'req.on()',
+
+PQ 
+
+
+'req.on()'
+
+EXECUTA UMA __ CALLBACK FUNCTION,
+
+
+
+aquele código 
+de 
+
+
+'''
+
+
+(chunk) => {        /////2///
+                           console.log(chunk);          /////2///
+                                body.push(chunk);       /////2///
+                        }
+                )       /////2///
+                req.on( /////2///   executado EM ALGUM MOMENTO __ APÓS O '//1//'...
+                        'end',      /////2///
+                        () => { const parsedBody = Buffer.concat(body).toString().split('=')[1];    /////2/// 
+                                console.log(parsedBody);    /////2///
+                                fs.writeFileSync('message.txt', parsedBody); }  /////2///
+                                              res.writeHead(302 ,   /////2///
+                        {               /////2///
+                         'Location': '/'        /////2///   
+                        })          /////2///       
+                return res.end();       /////2/// É ISSO AQUI QUE ACABA CAUSANDO O ERRO, PQ NÓS TENTAMOS FAZER O 'SEND' DE _ UMA SEGUNDA RESPONSE, QUANDO A RESPONSE JÁ HAVIA SIDO ENVIADA LÁ EM 'res.end()' depois de 'res.write('<html/>')'...
+                                
+
+
+
+''''
+
+
+
+
+
+
+
+OK.... 
+
+
+
+
+E ESSE SETUP É IMPORTANTE, PQ 
+
+
+
+CASO CONTRÁRIO O NODEJS 
+
+
+SERIA 
+
+OBRIGADO 
+
+A 
+
+
+'PAUSE UNTIL ITS DONE',
+
+
+'PAUSE ATÉ QUE 
+
+
+O 
+
+WRITE DA FILE TENHA ACABADO'... ------> E SE ISSO ACONTECESSE,
+
+
+
+NOSSO 
+
+SERVER 
+
+
+SERIA 
+
+SIMPLESMENTE 
+
+'SLOWED DOWN',
+
+
+
+
+__ E ISSO 
+
+
+
+FARIA COM QUE 
+
+ELE SE TORNASSE __ INCAPAZ__ DE RECEBER QUAISQUER OUTROS 
+
+
+'INCOMING REQUESTS'
+
+ATÉ QUE 
+
+
+
+
+TIVESSE ACABADO/ACABASSE 
+
+
+DE PROCESSAR 
+
+
+E ficar 'done' 
+
+COM A 
+
+OPERAÇÃO 
+
+DE 
+
+WRITE DE UM DETERMINADO REQUEST....
+
+
+
+
+
+
+
+
+
+
+-------> E ISSO _NÃO É O QUE QUEREMOS... --> nunca vamos querer 
+
+
+
+
+'BLOCK OUR CODE EXECUTION'.... -----> SEMPRE 
+
+VAMOS 
+
+QUERER 
+
+FICAR 
+
+NAQUELE 
+
+
+
+
+LOOP 
+
+DE 
+
+
+'WAIT FOR NEW EVENTS',
+
+
+
+
+O 'EVENT LOOP',
+
+
+E AÍ 
+
+
+
+
+SÓ 'EXECUTE CODE WHEN ITS DUE TO BE EXECUTED',
+
+
+
+E NUNCA 
+
+
+__BLOQUEAR__ AQUELE EVENT LOOP POR PERÍODOS DE TEMPO MT EXTENSOS...
+
+------------------------------
+
+
+
+
+E É EXATAMENTE POR ISSO QUE 
+
+TEMOS 
+
+ESSE SETUP... --------> 
+
+
+
+
+
+
+
+
+
+
+
+
+E ESSE SETUP 
+
+TEM 
+
+
+
+1 IMPLICAÇÃO IMPORTANTE 
+
+
+PARA 
+
+
+
+A LINHA 
+
+ 
+
+ DE 
+
+
+ 'fs.writeFileSync('message.txt', message);'
+
+
+
+
+ E 
+
+
+ A LINHA 
+
+ DE 
+
+
+
+
+ 'res.setHeader('Content-Type', 'text/html');
+
+
+
+
+ ------------------------------------
+
+
+
+
+
+ A IMPLICAÇÃO PARA ESSA SEGUNDA LINHA É 
+
+
+ __QUE NÓS 
+
+
+ 'REACH IT TOO EARLY',
+
+
+
+ por isso 
+
+
+ PARA QUE CONSIGAMOS 
+
+
+ 'AVOID ELA',
+
+
+
+DEVEMOS 
+
+
+
+ADICIONAR 
+
+
+UM 
+
+'return' 
+
+
+
+AO __ MÉTODO/RUN DO LISTENER 
+
+'req.on()',
+
+
+
+antes dele... ----> 
+
+
+
+
+
+FAREMOS ISSO PARA 
+
+
+QUE 
+
+
+__ A LINHA 
+
+
+'''''''
+
+
+return req.on( /////2///   executado EM ALGUM MOMENTO __ APÓS O '//1//'...
+                        'end',      /////2///
+                        () => { const parsedBody = Buffer.concat(body).toString().split('=')[1];    /////2/// 
+                                console.log(parsedBody);    /////2///
+                                fs.writeFileSync('message.txt', parsedBody); }  /////2///
+                                              res.writeHead(302 ,   /////2///
+                        {               /////2///
+                         'Location': '/'        /////2///   
+                        })          /////2///       
+                return res.end();       /////2/// É ISSO AQUI QUE ACABA CAUSANDO O ERRO, PQ NÓS TENTAMOS FAZER O 'SEND' DE _ UMA SEGUNDA RESPONSE, QUANDO A RESPONSE JÁ HAVIA SIDO ENVIADA LÁ EM 'res.end()' depois de 'res.write('<html/>')'...
+
+
+
+
+        '''''
+
+
+
+
+ACABE EXECUTADA,
+
+
+
+e para 
+
+que 
+
+o resto 
+
+das lines 
+
+subsequentes (o 'res.setHeader('Content-Type, 'text/html')' )
+
+
+NÃO SEJAM EXECUTADAS....
+
+
+
+(e isso realmente CONSERTOU O PROBLEMA do 'execute too early' daquelas linhas de 'res.setHeader()'...)
+
+
+
+
+
+
+
+
+------> E A IMPLICATION 
+
+
+sobre a linha 
+
+de 
+
+
+'fs.writeFileSync()'
+
+
+será 
+
+DISCUTIDA NA PRÓXIMA AULA...
+
+
+
+
+
+
+
+
+
+(eu ainda acho que o flow do código ficou prejudicado 
+
+
+com 
+esse 
+
+
+'return req.on('end')',
+
+
+
+mas veremos isso no futuro...
+
+
+
+
+)

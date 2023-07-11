@@ -1,0 +1,2442 @@
+
+
+
+
+
+
+
+
+
+
+----> VAMOS WRAPPAR ESTE MÓDULO... 
+
+
+
+
+
+
+
+
+-----> antes de terminar este módulo,
+
+
+
+DEVEMOS 
+
+
+
+__ 
+
+
+MELHORAR NOSSO CÓDIGO UM POUQUINHO...
+
+
+
+ELE ESTÁ ASSIM:
+
+
+
+
+
+
+
+const http = require('http');
+
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  const url = req.url;
+
+  if (url === '/') {
+    res.write('<html>');
+    res.write('<head><title>My first page</title></head>');
+    res.write('<body>');
+    res.write('<div>');
+    res.write('<form action="/message" method="POST"');
+    res.write('<label htmlFor="message">Enter a Message!</label>');
+    res.write('<input type="text" name="message"></input>');
+    res.write('<button type="submit">SEND</button>');
+    res.write('</form>');
+    res.write('</div>');
+    res.write('</body>');
+    res.write('</html>');
+    return res.end();
+  }
+
+  if (url === '/message' && req.method === 'POST') {
+    const body = [];
+
+    req.on('data', (chunk) => {
+      console.log(chunk);
+      body.push(chunk);
+    });
+    // req.on( ////esta linha precisa ter um 'RETURN' no seu início, para IMPEDIR a execução daquelas linhas síncronas de 'res.setHeader()', mais abaixo...
+    return req.on('end', () => {
+      const parsedBody = Buffer.concat(body).toString().split('=')[1];
+      console.log(parsedBody);
+    //   fs.writeFileSync('message.txt', parsedBody); ///versão síncrona. meio ruim.
+    fs.writeFile('message.txt', parsedBody,  ///versão assíncrona, que aceita 3 PARÂMETROS, SENDO O ÚLTIMO DELES __ UMA CALLBACK FUNCTION A SER EXECUTADA QUANDO TIVER ACABADO O 'WRITE' DO ARQUIVO (evento 'end do write')....
+     (err) => {   //writeFile também te deixa FAZER ERROR HANDLING (escrever cases de 'falta de permission' por exemplo, no write de arquivos.. --> aí você pode handle it gracefully, mandando uma response com error code ao usuário, show de outras páginas, etc etc...)
+        res.writeHead(302, {
+            Location: '/',
+          });
+          return res.end();
+        
+    });
+    //   res.writeHead(302, {
+    //     Location: '/',
+    //   });
+    //   return res.end();
+    });
+  }
+
+  res.setHeader('Content-Type', 'text/html');
+  res.write('<html>');
+  res.write('<head><title>My first page</title></head>');
+  res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+  res.write('</html>');
+  res.end();
+});
+
+server.listen(3000);
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE 
+
+ESTAMOS COM TODO NOSSO CÓDIGO DO SERVER __EM 1 ÚNICO ARQUIVO....
+
+
+
+
+
+CONTUDO,
+
+
+VOCÊ, NO NODEJS,
+
+
+TIPICAMENTE 
+
+
+___tRABALHA COM MÚLTIPLOS ARQUIVOS...
+
+
+
+
+
+
+
+
+
+----------> 
+
+
+
+E É POR ISSO QUE 
+
+O PROFESSOR 
+
+
+PROPÕE CRIAR UM ARQUIVO SÓ PARA 
+
+A NOSSA 
+ROUTING LOGIC,
+
+
+
+A LÓGICA EM QUE CHECAMOS A URL 
+
+
+E 
+
+ENTÃO FAZEMOS 
+
+DIFERENTES 
+
+COISAS..
+
+
+
+
+
+
+
+
+------> PARA ISSO, ELE CRIA UM 
+
+ARQUIVO 
+CHAMADO 
+
+DE 
+
+'routes.js'
+
+
+
+no folder de nosso projeto...
+
+
+
+
+
+
+
+-> ATÉ O ÍCONE FICA DIFERENTE (por causa do IDE)...
+
+
+
+
+
+
+
+
+
+------> DENTRO DESSE ARQUIVO, 
+
+VAMOS QUERER 
+
+TER NOSSOS IF STATEMENTS
+
+
+
+
+E BASICAMENTE __ NOSSA 
+
+'DEFAULT RESPONSE CODE'...
+
+
+
+
+
+
+
+
+
+------> POR ISSO VAMOS CORTAR TODO ESSE CÓDIGO/MOVÊ-LO DE 
+
+
+'app.js'
+
+
+PARA 
+
+ESSE ARQUIVO NOVO,
+
+
+
+
+
+tudo para que o arquivo 
+
+'app.js'
+
+FIQUE COM UM CÓDIGO BEM 'lean'...
+
+
+
+
+
+
+
+
+
+
+EX(routes.js):
+
+
+
+
+
+
+
+  if (url === '/') {
+    res.write('<html>');
+    res.write('<head><title>My first page</title></head>');
+    res.write('<body>');
+    res.write('<div>');
+    res.write('<form action="/message" method="POST"');
+    res.write('<label htmlFor="message">Enter a Message!</label>');
+    res.write('<input type="text" name="message"></input>');
+    res.write('<button type="submit">SEND</button>');
+    res.write('</form>');
+    res.write('</div>');
+    res.write('</body>');
+    res.write('</html>');
+    return res.end();
+  }
+
+  if (url === '/message' && req.method === 'POST') {
+    const body = [];
+
+    req.on('data', (chunk) => {
+      console.log(chunk);
+      body.push(chunk);
+    });
+    // req.on( ////esta linha precisa ter um 'RETURN' no seu início, para IMPEDIR a execução daquelas linhas síncronas de 'res.setHeader()', mais abaixo...
+    return req.on('end', () => {
+      const parsedBody = Buffer.concat(body).toString().split('=')[1];
+      console.log(parsedBody);
+    //   fs.writeFileSync('message.txt', parsedBody); ///versão síncrona. meio ruim.
+    fs.writeFile('message.txt', parsedBody,  ///versão assíncrona, que aceita 3 PARÂMETROS, SENDO O ÚLTIMO DELES __ UMA CALLBACK FUNCTION A SER EXECUTADA QUANDO TIVER ACABADO O 'WRITE' DO ARQUIVO (evento 'end do write')....
+     (err) => {   //writeFile também te deixa FAZER ERROR HANDLING (escrever cases de 'falta de permission' por exemplo, no write de arquivos.. --> aí você pode handle it gracefully, mandando uma response com error code ao usuário, show de outras páginas, etc etc...)
+        res.writeHead(302, {
+            Location: '/',
+          });
+          return res.end();
+        
+    });
+    //   res.writeHead(302, {
+    //     Location: '/',
+    //   });
+    //   return res.end();
+    });
+  }
+
+  res.setHeader('Content-Type', 'text/html');
+  res.write('<html>');
+  res.write('<head><title>My first page</title></head>');
+  res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+  res.write('</html>');
+  res.end();
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX(app.js):
+
+
+
+
+
+const http = require('http');
+
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  const url = req.url;
+});
+
+server.listen(3000);
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+COMO VOCÊ PODE TER PERCEBIDO, NOSSO CÓDIGO FICOU __BEM MAIS LEAN__....
+
+
+
+
+
+
+
+
+----> MAS É CLARO QUE ISSO NÃO VAI FUNCIONAR,
+
+esse código não vai funcionar assim...
+
+
+
+
+
+
+
+
+
+
+--> TEMOS QUE TWEAKAR NOSSO CÓDIGO...
+
+
+
+
+
+
+
+----------->  COMO PRIMEIRO TWEAK,
+
+
+PROFESSOR DIZ QUE 
+
+NÃO PRECISAMOS 
+
+MAIS DO FILESYSTEM (const fs = require('fs')' ) 
+
+
+
+LÁ 
+
+
+
+EM 
+
+'app.js',
+
+
+
+POR ISSO 
+O REMOVEMOS DE LÁ...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+const http = require('http');
+
+// const fs = require('fs'); //devemos nos concentrar no CREATE DO SERVER, e não no uso de filesystem (colocamos isso em outro arquivo)....
+
+const server = http.createServer((req, res) => {
+  const url = req.url;
+});
+
+server.listen(3000);
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+ENTRETANTO, AINDA VAMOS PRECISAR 
+
+DO 
+HTTP, pq usamos para criar o server...
+
+
+
+
+
+
+--> mas a 'url' é desnecessária, por isso a removemos..
+
+
+
+ex:
+
+
+
+
+
+const http = require('http');
+
+// const fs = require('fs'); //devemos nos concentrar no CREATE DO SERVER, e não no uso de filesystem (colocamos isso em outro arquivo)....
+
+const server = http.createServer((req, res) => {
+
+});
+
+server.listen(3000);
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+OK.... AÍ, DEPOIS DISSO, ADICIONAREMOS AQUELE IMPORT 
+
+
+DE 
+
+'fs'
+ 
+
+ AO ARQUIVO DE 
+
+ 'routes',
+
+
+
+ pois ele é necessário para nossas operações nos if statements...
+
+
+
+
+
+
+ ---------------------------------
+
+
+ OK... AGORA A PERGUNTA É:
+
+
+
+ O QUE DEVEMOS FAZER NO ARQUIVO 
+
+
+ 'routes.js'
+
+
+ para vincular seu funcionamento a 
+
+
+ 'app.js'?
+
+
+
+
+
+
+
+
+ ----------> PROFESSOR ADMITE que devemos estabelecer uma conexão 
+
+ entre os 2 arquivos, de fato...
+
+
+
+
+
+
+ -----> PRECISAMOS DESSA CONEXÃO PQ PRECISAMOS NOS TORNAR 
+
+ CAPAZES 
+
+ DE 
+
+ FAZER 
+
+ 'SEND' 
+
+
+ DO NOSSO INCOMING REQUEST 
+
+
+ àQUELE ARQUIVO DE ROUTES/POR DENTRO DAQUELE ARQUIVO DE 'ROUTES'...
+
+
+
+
+
+
+
+
+ ------------> PARA ISSO, DEVEMOS __ CRIAR UMA NOVA FUNÇÃO... (em 'routes.js')...
+
+
+
+
+
+
+
+ --> PROFESSOR VAI CHAMAR ESSA FUNÇÃO DE 
+
+ 'requestHandler'....
+
+
+
+ ex:
+
+
+
+
+ const requestHandler = () => {
+
+
+
+ }
+
+
+
+
+
+ ----------------------------
+
+
+
+
+ E ESSA FUNÇÃO ___ PRECISA___ RECEBER 
+
+
+ 'req' 
+
+ e 
+
+ 'res'
+
+
+ COMO ___ ARGUMENTOS,
+
+
+
+ EXATAMENTE 
+
+ COMO NOSSO 
+
+
+ server 
+
+ faz,
+
+ naquele código de 
+
+
+ 'const server = http.createServer((req, res) => {
+
+ })
+ ' 
+
+
+
+
+
+
+
+ ---> PRECISAMOS DESSES OBJETOS 
+ 'req' 
+
+
+ e 
+ 'res'
+
+ nessa função de 'requestHandler'
+
+
+
+ PQ __ NÓS VAMOS 
+
+ 'EFFECTIVELY REPLACE'
+
+
+ essa 
+ função 
+
+
+
+ de '(req, res) => {}' dentro 
+
+ do createServer...
+
+
+
+
+
+
+
+
+ --------> OU, EXPLICA O PROFESSOR,
+
+ PODEMOS 
+
+ USAR UMA 
+
+ ES6 FUNCTION... (arrow function)....
+
+
+
+
+
+
+
+
+
+(FOI O QUE EU HAVIA FEITO, ALI ANTERIORMENTE)....
+
+
+
+
+
+
+
+
+
+
+-----> ok,
+
+
+professor 
+
+escreverá:
+
+
+
+ const requestHandler = (req, res) => {
+
+
+
+ }
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+VAMOS QUERER 
+
+MOVER 
+
+
+TODO 
+
+
+NOSSO 
+
+CÓDIGO 
+
+
+QUE ESTAVA FORA DALI,
+
+que estava logo abaixo,
+
+
+PARA ___ DENTRO DESSA FUNÇÃO_...
+
+
+
+ex:
+
+
+
+
+const requestHandler = (req, res) => {
+
+
+    const url = req.url;
+
+
+    if (url === '/') {
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>');
+        res.write('<body>');
+        res.write('<div>');
+        res.write('<form action="/message" method="POST"');
+        res.write('<label htmlFor="message">Enter a Message!</label>');
+        res.write('<input type="text" name="message"></input>');
+        res.write('<button type="submit">SEND</button>');
+        res.write('</form>');
+        res.write('</div>');
+        res.write('</body>');
+        res.write('</html>');
+        return res.end();
+      }
+    
+      if (url === '/message' && req.method === 'POST') {
+        const body = [];
+    
+        req.on('data', (chunk) => {
+          console.log(chunk);
+          body.push(chunk);
+        });
+        // req.on( ////esta linha precisa ter um 'RETURN' no seu início, para IMPEDIR a execução daquelas linhas síncronas de 'res.setHeader()', mais abaixo...
+        return req.on('end', () => {
+          const parsedBody = Buffer.concat(body).toString().split('=')[1];
+          console.log(parsedBody);
+        //   fs.writeFileSync('message.txt', parsedBody); ///versão síncrona. meio ruim.
+        fs.writeFile('message.txt', parsedBody,  ///versão assíncrona, que aceita 3 PARÂMETROS, SENDO O ÚLTIMO DELES __ UMA CALLBACK FUNCTION A SER EXECUTADA QUANDO TIVER ACABADO O 'WRITE' DO ARQUIVO (evento 'end do write')....
+         (err) => {   //writeFile também te deixa FAZER ERROR HANDLING (escrever cases de 'falta de permission' por exemplo, no write de arquivos.. --> aí você pode handle it gracefully, mandando uma response com error code ao usuário, show de outras páginas, etc etc...)
+            res.writeHead(302, {
+                Location: '/',
+              });
+              return res.end();
+            
+        });
+        });
+      }
+    
+      res.setHeader('Content-Type', 'text/html');
+      res.write('<html>');
+      res.write('<head><title>My first page</title></head>');
+      res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+      res.write('</html>');
+      res.end();
+
+
+
+}
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+-----> PROFESSOR EXPLICA QUE USAMOS 'url' 
+
+e 
+
+'method' nesse negócio, por isso precisamos 
+READICIONAR ESSAS CONSTANTES AÍ...
+
+
+
+
+OK, JÁ FIZ ISSO....
+
+
+
+
+
+
+
+
+--> POR FIM, PROFESSOR DIZ QUE DEVEMOS 'EXPORT' 
+
+
+
+essa função 
+
+
+de 
+
+
+'requestHandler'...
+
+
+
+
+
+
+
+
+-----> ELE EXPLICA QUE 
+
+
+
+IMPORTAMOS COM AQUELA SINTAXE 
+
+de 
+'const fs = require('fs');',
+
+
+
+MAS QUE 
+
+AGORA 
+
+DEVEMOS 
+
+ESCREVER UMA SINTAXE __ PARA __ EXPORTAR 
+
+
+NOSSOS ARQUIVOS, NO NODEJS...
+
+
+
+
+
+
+
+----> eu __CHUTO__ Que 
+
+a sintaxe que 
+
+devemos usar é 
+
+
+'module.exports = {
+
+
+
+}
+'
+
+
+
+
+
+
+
+-------> BEM.... PROFESSOR 
+
+FALA QUE 
+
+EXISTEM 
+
+2 MANEIRAS 
+
+
+DE 
+
+EXPORTAR ALGO/UMA FUNÇÃO NO NODEJS....
+
+
+
+
+
+
+
+1A MANEIRA) ------> É IR 
+
+ATÉ 
+
+O FINAL 
+
+
+DE NOSSO 
+
+ARQUIVO 
+
+
+E 
+
+ESCREVER 
+
+
+'module.exports' ----------------> ISSO (o 'module')
+
+
+É OUTRA 
+
+
+KEYWORD/OBJECT 
+
+
+que 
+
+
+
+É EXPOSTA __GLOBALMENTE__ A NÓS PELO _ NODEJS,
+
+
+
+
+
+E __ ESSE MODULE TEM UMA PROPRIEDADE 
+
+de 
+
+'exports',
+
+
+EM QUE 
+
+PODEMOS 
+
+
+'ASSIGN A VALUE'
+
+
+A 
+
+ESSE 
+
+
+
+'module.exports'....
+
+
+
+
+
+
+------> NO CASO, O PROFESSOR DIZ QUE PODERÍAMOS DIRETAMENTE 
+
+ASSIGNAR 
+
+
+'requestHandler'
+
+
+
+COMO SEU VALOR...
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const requestHandler = (req, res) => {
+
+
+    const url = req.url;
+
+
+    if (url === '/') {
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>');
+        res.write('<body>');
+        res.write('<div>');
+        res.write('<form action="/message" method="POST"');
+        res.write('<label htmlFor="message">Enter a Message!</label>');
+        res.write('<input type="text" name="message"></input>');
+        res.write('<button type="submit">SEND</button>');
+        res.write('</form>');
+        res.write('</div>');
+        res.write('</body>');
+        res.write('</html>');
+        return res.end();
+      }
+    
+      if (url === '/message' && req.method === 'POST') {
+        const body = [];
+    
+        req.on('data', (chunk) => {
+          console.log(chunk);
+          body.push(chunk);
+        });
+        // req.on( ////esta linha precisa ter um 'RETURN' no seu início, para IMPEDIR a execução daquelas linhas síncronas de 'res.setHeader()', mais abaixo...
+        return req.on('end', () => {
+          const parsedBody = Buffer.concat(body).toString().split('=')[1];
+          console.log(parsedBody);
+        //   fs.writeFileSync('message.txt', parsedBody); ///versão síncrona. meio ruim.
+        fs.writeFile('message.txt', parsedBody,  ///versão assíncrona, que aceita 3 PARÂMETROS, SENDO O ÚLTIMO DELES __ UMA CALLBACK FUNCTION A SER EXECUTADA QUANDO TIVER ACABADO O 'WRITE' DO ARQUIVO (evento 'end do write')....
+         (err) => {   //writeFile também te deixa FAZER ERROR HANDLING (escrever cases de 'falta de permission' por exemplo, no write de arquivos.. --> aí você pode handle it gracefully, mandando uma response com error code ao usuário, show de outras páginas, etc etc...)
+            res.writeHead(302, {
+                Location: '/',
+              });
+              return res.end();
+            
+        });
+      }
+    
+      res.setHeader('Content-Type', 'text/html');
+      res.write('<html>');
+      res.write('<head><title>My first page</title></head>');
+      res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+      res.write('</html>');
+      res.end();
+
+
+
+}
+
+
+
+
+
+module.exports = requestHandler;
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+OK, ISSO SIGNIFICA QUE O 'requestHandler'
+
+
+ficará 
+
+
+ARMAZENADO DENTRO 
+
+
+D
+ESSE 
+
+
+'module.exports'..... ---------> 
+
+
+
+
+E COMO 
+
+
+
+'module É UM __ OBJETO _ GLOBAL __ EXPOSTO __ PELO NODEJS,
+
+
+
+
+O NODE 
+
+SERÁ 
+
+'ACTUALLY 
+
+
+ABLE TO WORK WITH THIS',
+
+
+
+
+E AGORA NÓS PODEMOS __ IMPORTAR__ 
+
+
+
+
+__ ESSA COISA (o 'requestHandler')
+
+
+EM OUTROS 
+
+
+ARQUIVOS,
+
+
+JUSTAMENTE 
+
+
+POR MEIO 
+
+DA SINTAXE 
+
+
+DO 
+
+'REQUIRE'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> ISSO FARÁ COM QUE 
+
+
+
+O NODEJS PROCURE DENTRO DE 'exports', em 'module',
+
+
+
+SE ALGO FOI REGISTRADO 
+
+PARA 
+
+
+ESSE 
+
+NOME AÍ... ---->  E VOCÊ 
+
+
+
+PODE 
+
+
+
+
+REGISTRAR QUALQUER COISA 
+
+EM 
+
+'module.exports'.... ---> VOCÊ 
+
+
+
+
+PODE 
+
+
+ADICIONAR/EXPORTAR UM 
+
+
+
+'NEW JAVASCRIPT OBJECT' com 
+
+MÚLTIPLOS KEY-VALUE PAIRS,
+
+ou qualquer outra coisa que 
+
+
+você precisar......
+
+
+
+
+
+
+
+
+
+
+
+
+----> AQUI, O PROFESSOR SÓ VAI EXPORTAR 
+
+ESSA FUNÇÃO...
+
+
+
+
+
+
+
+--------->  ISSO FEITO,
+
+
+o professor, lá em 
+
+
+
+'app.js',
+
+
+para 
+
+importar o 'requestHandler,'
+
+
+
+VAI ESCREVER:
+
+
+
+
+
+
+const routes (você pode colocar QUALQUER NOME QUE VOCÊ QUISER; o professor escolheu este)....
+
+
+
+
+
+
+
+
+
+
+const routes = require();
+
+
+
+
+
+
+
+
+
+
+-------------->  CERTO... MAS COMO 
+
+
+
+___ NOSSO ARQUIVO/ARQUIVO DE ONDE VAMOS 
+
+TIRAR 
+
+A FUNÇÃO 'requestHandler'
+
+
+
+__ NÃO É UM 
+
+
+'GLOBAL MODULE' (como 'fs' ou 'path'),
+
+
+
+NÓS NÃO VAMOS DIGITAR NO ARGUMENTO 
+
+DE 
+
+'require()'
+
+
+ALGO COMO 
+
+'fs'... -------> EM VEZ DISSO,
+
+
+VAMOS 
+
+
+TER QUE 
+
+
+
+__ESCREVER __ O RELATIVE __ PATH ( ou absolute path, se vocÊ tiver...)
+
+
+
+
+ATÉ 
+
+O 
+
+NOSSO ARQUIVo....
+
+
+
+
+
+
+----> NO CASO, 
+
+
+PROFESSOR 
+VAI ESCREVER 
+
+
+'./routes'... ------> ISSO 
+
+
+
+VAI 
+
+FAZER COM QUE O NODEJS 
+
+ENCONTRE 
+
+ESSE 
+
+ARQUIVO 
+
+'routes.js'
+
+
+DENTRO 
+
+DO 
+
+MESMO FOLDER EM QUE 
+
+
+
+'app.js' (que é onde escrevemos esse código está...)
+
+
+
+
+
+
+
+
+
+------> OK... PROFESSOR ESCREVEU 
+
+'routes'... ----> 
+
+
+
+
+E ELE 
+
+VAI 
+
+ARMAZENAR 
+
+
+
+
+TODAS AS FUNÇÕES EXPORTADAS COM 
+
+'module.exports' em 'routes.js'
+
+
+
+__DENTRO 
+
+DESSA 
+
+CONSTANTE 
+'routes'
+
+
+nesse 
+
+APP.JS..
+
+
+
+
+
+
+
+
+
+
+-----> ou seja,
+
+o 
+
+método 
+
+'requestHandler'
+
+TAMBÉM 
+
+TERÁ 
+
+SIDO 
+
+EXPORTADO....
+
+
+
+
+
+
+
+
+----------> constante 'routes'
+
+
+VAI, NO FINAL DAS CONTAS,
+
+
+SEGURAR A FUNÇÃO 
+'requestHandler'...
+
+
+
+
+
+
+
+
+
+----------> E AGORA,
+
+
+
+PORTANTO, PODEMOS 
+
+USAR 
+
+
+__ ESSA CONSTANTE 
+
+'routes'
+
+
+
+COMO UM _ HANDLER_, logo 
+
+ali 
+
+em 
+
+'http.createServer()'...
+
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+const routes = require('./routes');
+
+
+const server = http.createServer(routes);
+
+
+
+server.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+const http = require('http');
+
+const routes = require('./routes'); 
+
+
+const server = http.createServer(routes);
+
+server.listen(3000);
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+'HEY, POR FAVOR 
+
+
+EXECUTE A FUNÇÃO QUE ESTÁ ARMAZENADA 
+
+NESSA FUNCTION DE 'routes'
+
+PARA 
+TODO E QUALQUER REQUEST 
+
+QUE 
+
+CHEGA AO NOSSO SERVER'....
+
+
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+NOSSO CÓDIGO VAI CONTINUAR FUNCIONANDO COMO ANTES,
+
+
+
+
+
+__ MAS AGORA ELE TERÁ SIDO SPLITTADO (
+
+
+
+
+
+  e aí teremos um arquivo dedicado 
+
+  AO CREATE DO SERVER, o que é ideal... ----->
+
+
+
+E ESSE 
+
+
+ARQUIVO DEDICADO 
+
+FICA CONECTADO/VINCULADO 
+
+
+
+AO 
+
+arquivo 'routes.js'
+
+
+
+POR MEIO 
+
+
+DA SINTAXE DE IMPORTS/EXPORTS 
+
+DO 
+
+
+
+NODEJS....
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--OK, MAS UM DETALHE SOBRE O 'NODEJS MODULE SYSTEM'.... -----> o file content 
+
+AQUI 
+É 
+
+
+__ACTUALLY__ 'CACHED BY NODE',
+
+
+
+
+E __ ISSO SIGNIFICA QUE 
+
+__NÃO SOMOS CAPAZES DE 
+
+'EDIT IT 
+
+EXTERNALLY'.... -------> ISSO SIGNIFICA QUE 
+
+SE NÓS 
+
+
+ 
+ ACABARMOS 
+
+ DEFININDO
+  
+
+
+'routes' como um OBJETO 
+
+
+e então 
+
+
+TENTARMOS 
+
+
+
+_'ADD A NEW PROPERTY'
+
+
+
+
+a ESSE OBJETO, on the fly,
+
+
+
+
+ISSO 
+
+__ NÃO CONSEGUIRIA __ ALTERAR O ARQUIVO ORIGINAL (
+
+
+  isso significa que 
+
+
+  ARQUIVOS ALHEIOS/DIFERENTES DO ARQUIVO EM QUE ESCREVEMOS 
+
+  O 
+
+  IMPORT TERÃO SEU EDIT 'BLOQUEADOD' 
+
+
+  em relação a esse 
+
+
+  arquivo que os importa (no caso, a relação de 'app.js' com 'routes.js'; app.js não pode EDITAR O IMPORT DE 'routes.js'...)
+)
+
+
+
+
+
+
+ex(tentativa de edit do import 'routes/método routes' LÁ EM 'app.js'):
+
+
+
+
+
+
+
+
+
+const http = require('http');
+
+const routes = require('./routes'); 
+
+routes.propriedadeNova = 'xxxxx'; /////////// ISSO NÃO FUNCIONARÁ (justamente por causa dessa 'TRAVA' aí... --> tentamos editar um objeto EM UM ARQUIVO ALHEIO, que não podemos manipular...)
+
+
+const server = http.createServer(routes);
+
+server.listen(3000);
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+-------> OK.... CONSEGUIMOS CONECTAR NOSSOS ARQUIVOS,
+
+
+ESSENCIALMENTE...
+
+
+
+(por 
+
+
+
+meio 
+
+da sintaxe 
+
+de 
+
+EXPORT 
+
+de 
+
+'module.exports = requestHandler'
+
+
+
+E POR MEIO DA SINTAXE 
+
+DE 
+
+_IMPORT__ 
+
+
+de 
+
+
+
+'const routes = require('./routes');')
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+OK... DETALHE SOBRE O 'NODE' S MODULES SYSTEM'..
+
+
+
+
+
+
+--->
+
+
+SÓ PODEMOS 
+
+
+EXPORTAR 
+
+
+NEGÓCIOS QUE 
+
+PODEMOS 
+
+FAZER 
+
+'READ' no lado de fora (arquivos alheios),
+
+
+
+APESAR DE QUE VOCÊ PODE/PODERIA 
+
+TER FUNÇÕES QUE 
+
+
+
+VOCÊ EXPORTA __ QUE COMEÇAM  A MUDAR __ COISAS 
+
+
+
+
+DE DENTRO 
+DO ARQUIVO 
+
+
+
+'routes.js' (arquivo DE ONDE EXPORTAMOS ESSA FUNÇÃO),
+
+
+
+mas é claro que isso é um pouco avançado,
+
+
+
+
+POR ISSO N DEVEMOS 
+
+COMPLICAR 
+
+
+TANTO AGORA...
+
+
+
+
+
+
+
+
+
+
+
+---------> ok... temos essa sintaxe aí...
+
+
+
+
+
+
+
+
+
+
+-----> MAS TEMOS OUTRA SINTAXE 
+
+
+DE 
+
+EXPORTS 
+
+NO 
+
+NODEJS... ------> PROFESSOR EXPLICA QUE 
+
+àS VEZES 
+
+EXPORTAMOS 
+
+UM MONTE 
+
+DE COISAS....
+
+
+
+
+E É CLARO QUE 
+
+
+
+
+VOCÊ PODE FAZER ISSO 
+
+
+
+
+POR MEIO DO __ EXPORT __ DE UM OBJETO ___ COM 
+
+
+AS COISAS QUE 
+
+VOCÊ 
+
+
+QUER 
+
+EXPORTAR....
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+module.exports = {
+
+
+  handler: requestHandler,
+
+  someText: 'Some hard coded text'
+}
+
+
+
+
+
+
+
+
+
+
+-----> AGORA, SE DEIXARMOS ESSE CO´DIGO EM 'routes.js'
+
+
+ASSIM,
+
+
+
+TEREMOS EXPORTADO ___ DUAS COISAS___ (e é assim que 
+
+
+PODEMOS 
+
+TER 
+
+
+2
+ COISAS 
+
+ E MESMO ASSIM 
+
+ 1 IMPORT SÓ.... ---> isso pq 
+
+ VOCÊ SÓ PODE TER 
+
+ 1 
+
+ STATEMENT 
+
+ DE 
+
+ 'module.exports'
+
+
+ em um determinado arquivo...
+
+
+)
+
+
+
+
+
+
+
+
+-------> CERTO.... --> AGORA,
+
+LÁ EM 
+
+
+
+'app.js',
+
+
+
+
+
+aquela const 'routes'
+
+
+
+
+
+SERIA AQUELE OBJETO,
+
+E NÃO AQUELA FFUNCTION...
+
+
+
+
+
+
+
+
+
+
+SE OPTARMOS POR AQUELE EXPORT QUE RECÉM MENCIONEI, O CÓDIGO FICARIA ASSIM:
+
+
+
+
+
+
+
+
+const http = require('http');
+
+const routes = require('./routes'); 
+
+
+
+
+const server = http.createServer(routes.handler); /////EIS A ALTERAÇÃO EM QUESTÃO (usamos a dot notation para ACESSAR AQUELA PROPRIEDADE ESPECÍFICA...)
+
+server.listen(3000);
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+ACESSAMOS ESSA PROPRIEDADE 
+
+'handler',
+
+
+
+
+que está segurando/segura 
+
+
+a função 
+
+'requestHandler' 
+
+
+exportada lá 
+
+de 
+
+
+'routes.js'..
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+CERTO... E AÍ O PROFESSOR DIZ QUE PODEMOS 
+
+
+
+fazer um console.log 
+
+
+de 
+
+'routes.someText' 
+
+para 
+
+enxergar 
+
+
+
+'some hard coded text' 
+
+
+no nosso console, quando rodarmos 
+
+
+
+'app.js'
+
+
+com 
+
+
+'node app.js'....
+
+
+
+
+
+EX:
+
+
+
+
+
+const http = require('http');
+
+const routes = require('./routes'); ///nós exportamos 'requestHandler'/importamos 'requestHandler', lá de 'routes.js'...
+
+// const fs = require('fs'); //devemos nos concentrar no CREATE DO SERVER, e não no uso de filesystem (colocamos isso em outro arquivo)....
+
+// const server = http.createServer((req, res) => {
+//   // const url = req.url; ///desnecessário.
+
+
+// });
+
+
+
+// const server = http.createServer(routes);
+
+
+
+console.log(routes.someText)
+
+
+const server = http.createServer(routes.handler);
+
+
+server.listen(3000);
+
+
+
+
+
+-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ok...........
+
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ, ENTRETANTO,
+
+QUE 
+
+EXISTE UMA TERCEIRA MANEIRA 
+
+
+DE 
+
+EXPORTAR MÚLTIPLAS COISAS NO NODEJS...
+
+
+
+
+
+
+
+
+
+
+
+-----> para isso,
+
+vocÊ escreve 
+
+
+
+
+
+'module.exports.handler = requestHandler;'
+
+
+
+'module.exports.someText = 'Some Hard coded text'... 
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+^^^ SE VOCê ESCREVER ASSIM,
+
+
+VOCê AINDA TERÁ 
+
+SÓ 
+
+
+1 ÚNICO 
+
+
+'module.exports',
+
+
+
+mas a diferença é que 
+
+AQUI FOMOS ASSIGNANDO CADA 
+EXPORT 
+
+
+nesse objeto __INDIVIDUALMENTE...
+
+
+
+(OU SEJA,
+
+
+É 
+
+
+A 
+
+MESMA COISA QUE 
+o 
+
+CÓDIGO 
+
+DE 
+
+'''
+
+module.exports = {
+  handler: requestHandler,
+  someText: 'some hard coded text'
+}
+
+''
+
+
+)
+
+
+
+
+
+
+
+
+-------> ok......... POR FIM,
+ 
+
+ PROFESSOR 
+
+ NOS EXPLICA QUE 
+
+ EXISTE UM SHORTCUT 
+
+
+
+PARA ESSA SINTAXE 
+
+de 
+
+
+
+
+
+''''''''''''''''''''
+
+
+
+
+module.exports.handler = requestHandler;
+module.exports.someText = 'Some Hard coded text';
+
+
+
+
+''''''''''''''''''''''''''
+
+
+
+
+
+
+
+O SHORTCUT 
+
+
+
+é 
+
+
+__ omitir 'module'.... -----> 
+
+ISSO É SIMPLESMENTE UM SHORTCUT 
+
+SUPPORTADO 
+
+
+PELO NODEJS,
+
+
+e não alguma MÁGICA DO JAVASCRIPT....,
+
+
+
+
+
+é só um SHORTCUT EXPLÍCITO 
+
+suportado pelo nodejs...
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+--> ok, nosso código ainda vai funcionar como antes....
+
+
+
+
+
+
+--> E É ASSIM QUE PODEMOS 
+
+
+EXPORTAR 
+
+MÚLTIPLAS FUNÇÕES/COISAS (ou 1 só, se quisermos)....
+
+
+
+
+
+
+
+--> ESSE APPROACH DO EXPORT DE UM OBJETO COM MÚLTIPLAS COISAS É 
+
+
+
+O MAIS COMUM/FREQUENTE....
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+É DESSA MANEIRA 
+
+
+
+
+QUE OS IMPORTS/EXPORTS FUNCIONAM NO NODEJS...
+
+
+
+
+
+
+AGORA DEVEMOS WRAPPAR ESTE MÓDULO...

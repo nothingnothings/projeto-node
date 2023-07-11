@@ -1,0 +1,1008 @@
+
+
+NESSE 
+
+MÓDULO 
+
+
+VIMOS MTA COISA,
+
+E TRABALHAMOS MT COM ARQUIVOS...
+
+
+
+
+
+
+
+
+
+----> UMA COISA QUE PERCEBEMOS, ATÉ AGORA,
+É QUE 
+
+
+QUANDO 
+
+MUDAMOS UMA IMAGE DE 1 PRODUCT,
+
+
+OU DELETAMOS 1 PRODUCT,
+
+
+
+
+
+A FILE (image) CORRESPONDENTE ÀQUELE PRODUCT__ CONTINUA EXISTINDO, o que é um pROBLEMA...
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> O PROFESSOR EXPLICA QUE __ É ÓBVIO QUE __ VOCÊ SEMPRE PODE 
+
+DELETAR SEUS ARQUIVOS POR MEIO DO PACKAGE DE 
+
+'fs' (file system), manualmente... -------> 
+
+
+LÁ NESSA PACKAGE VOCÊ TAMBÉM TEM OPÇÕES PARA DELETAR ARQUIVOS...
+
+
+
+
+
+
+
+
+
+
+
+-----> VOCÊ TAMBÉM PODERIA 'DELETE FILES'
+
+
+
+
+SEMPRE QUE __ VOCê __EDITA_ 1 PRODUCT (
+
+    pq 
+
+    aí você 
+
+
+    vai 
+
+QUERER 
+
+'OVERWRITE'
+
+o arquivo da image...
+    
+)  -----> VOCÊ PDOE 
+
+
+ADICIONAR UM CÓDIGO 
+
+
+ASSIM LÁ 
+
+
+em 
+
+
+
+
+
+
+
+
+
+
+
+
+'editProduct',  o controller, NESSE TRECHO AQUI:
+
+
+
+
+
+
+
+
+
+--->       .then((product) => {
+
+        ////throw new Error('Dummy'); //////ESSE É O EXEMPLO USADO PELO PROFESSOR... é necessário esse THROW MANUAL DE UM ERROR (isso é só um exemplo, pq você não vai escrever assim...)
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          if(image) {
+            product.imageUrl = req.file.path; /////CÓDIGO MAIS RECENTE, USADO COM O 'MULTER'... ---> vai EDITAR/OVERWRITTAR O PATH A IMAGE ANTIGA (atribuída a esse product) SE CONSTATAR QUE ALGUMA FILE VÁLIDA (não undefined/inválida) TIVER SIDO ENVIADA AO NOSSO APP...
+          }
+          return product.save();
+        }
+      })
+
+
+
+
+
+
+
+
+
+
+      -----> NESSE IF BLOCK 
+
+      de 
+
+      'if(image) {}'....
+
+
+
+
+
+---> 
+
+
+
+
+
+SE ESTAMOS DENTRO DESSE IF BLOCK E SETTAMOS UMA NOVA 'imageUrl',
+
+
+PODERÍAMOS 
+
+TAMBÉM 
+
+
+
+FAZER 
+
+'KICK OFF' DE UMA __ FUNCTION__ 
+
+QUE 
+
+
+VAI EM FRENTE __ E __DELETA___ 
+
+
+
+A IMAGE ANTIGA (old image),
+
+TUDO POR MEIO 
+DE, PRIMEIRAMENTE,
+
+
+O 
+
+
+FETCH DESSA IMAGE LÁ 
+
+do 
+
+'product', por meio do fetch do PATH dessa image, em 'image.path'...
+
+
+
+
+
+
+
+
+
+------> AÍ PODERÍAMOS USAR ESSE 'image.path'
+
+
+
+PARA __ REMOVER__ A IMAGE ANTIGA, POR MEIO DO USO DE 'fs' (file system)...
+
+
+
+
+
+
+
+
+
+
+
+
+--> E, ALÉM DISSO,
+
+
+PODEMOS' DELETE THE IMAGE'
+
+
+
+QUANDO NÓS 
+
+__DELETARMOS__ 1 PRODUCT... (pq aí não precisaremos mais da image desse product)...
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE DEVEMOS ADICIONAR ESSA FUNCIONALIDADES, AGORA, COMO 
+
+ÚLTIMAS ETAPAS DESSE MÓDULO...
+
+
+
+
+
+
+
+
+
+--> CONSEGUI... USEI O MÉTODO 'fs.unlink()' (ASYNC) do node,
+
+
+
+PARA 
+
+REMOVER 
+
+ESSE ARQUIVO DO FILESYSTEM......
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  console.log(req.body);
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+
+
+  const image = req.file;  //usado nos nossos CHECKS, para saber se O 'PATH' de nosso arquivo (e, consequentemente, o arquivo atribuído 'for a given product') realmente precisa ser alterado... (ver aquele if check lá embaixo..)
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+
+  if (validationErrors.length > 0) {
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+  } else {
+    console.log(productId,'LINE5123');
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+
+      .then((product) => {
+
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          if(image) {
+
+
+              const oldImagePath = product.imageUrl;
+            fs.unlink(product.imageUrl, (err) => { ////////EIS O CÓDIGO EM QUESTÃO.
+                  if(err) {
+                    console.log(err);
+                  }
+            })
+            product.imageUrl = req.file.path; /////CÓDIGO MAIS RECENTE, USADO COM O 'MULTER'... ---> vai EDITAR/OVERWRITTAR O PATH A IMAGE ANTIGA (atribuída a esse product) SE CONSTATAR QUE ALGUMA FILE VÁLIDA (não undefined/inválida) TIVER SIDO ENVIADA AO NOSSO APP...
+          }
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {   //////// O __ ERRO__ DO 'throw new Error('Dummy')' (_ E QUALQUER OUTRO ERROR DESSE TIPO, do tipo que 'THROWS AN ERROR') É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        // console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); ///É ISSO QUE VAI FAZER O REPASSE DO ERRO A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js.... (é o middleware que  tem 4 argumentos, 'error, req, res, next'...)
+      });
+  }
+};
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+OK... MAS ACHO QUE ESSE CÓDIGO TAMBÉM É BOM DE SER USADO NO CONTROLLER DE 'deleteProduct',
+
+
+PARA QUE 
+
+A IMAGE 
+
+DO PRODUCT TAMBÉM SEJA REMOVIDA QUANDO ELE FOR DELETAOD...
+
+
+
+
+
+
+
+
+
+
+--> BEM, O CÓDIGO DESSE CONTROLLER, ATÉ AGORA, É ESTE:
+
+
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id;
+
+  Product.findByIdAndDelete(productId)
+    .then((result) => {
+      console.log(result);
+
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+
+
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ SEJA NECESSÁRIO REFORMULAR TODO ESSE CÓDIGO...
+
+
+
+
+
+
+
+
+
+CONSEGUI... CÓDIGO FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id;
+
+
+
+  Product.findById(productId)
+  .then(
+    (product) => {
+
+        fs.unlink(product.imageUrl, (err) => {
+
+          console.log(err);
+        })
+    }
+  )
+
+  Product.findByIdAndDelete(productId) ///////MÉTODO __ DO MONGOOSE__, USADO COM FREQUÊNCIA... (use sempre 'findByIdAndDelete()', que é a versão que DEPRECOU o 'findByIdAndRemove()'....)
+    .then((result) => {
+      console.log(result);
+
+
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... funcionou...
+
+
+
+
+
+--> MAS O PROFESSOR VAI FAZER DE FORMA DIFERENTE...
+
+
+
+
+
+
+
+--> ELE CRIA UM ARQUIVO NOVO NA PASTA DE 'util',
+
+
+
+UM ARQUIVO DE NOME 'file.js'...
+
+
+
+
+
+
+
+
+
+-> LÁ ELE IMPORTA O FILE SYSTEM PACKAGE,
+
+
+E AÍ 
+
+VAI 
+
+TER UMA 
+
+
+CONSTANTE 
+
+QUE VAI SEGURAR UMA FUNCTION,
+
+
+
+
+
+
+function de 
+
+
+'deleteFile'...
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const fs = require('fs');
+
+
+
+
+
+
+const deleteFile = (filePath) => {
+
+
+
+}
+
+
+
+
+
+
+-----------------------------
+
+
+
+AÍ O PROFESSOR DIZ QUE VAMOS USAR O MÉTODO 'fs.unlink()' (MESMO MÉTODO QUE EU USEI)...
+
+
+
+
+
+
+
+-> ELE EXPLICA QUE ESSE É UM MÉTODO QUE DELETA: 
+
+
+
+1) O ARQUIVO 
+
+
+2) O NOME ASSOCIADO A ESSE ARQUIVo,
+
+
+
+AMBOS DE NOSSO FILESYSTEM...
+
+
+
+
+
+
+
+
+
+
+
+--> 'fs.unlink'
+
+EXIGE O __ PATH__ 
+
+
+
+A ESSE ARQUIVO... 
+
+
+
+
+
+
+
+---> vamos escrever 'filePath',
+PQ QUEREMOS ISSO...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const fs = require('fs');
+
+
+
+
+
+
+const deleteFile = (filePath) => {
+
+
+fs.unlink(filePath, (err) => {
+
+            if (err) {
+                throw err;
+            }
+})
+}
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+CERTO.... AÍ VAMOS QUERER DAR THROW NESSE ERROR, SE ELE OCORRER, PARA QUE 
+
+
+nosso 
+
+
+MIDDLEWARE ERROR HANDLER ESPECIAL (código 500) 
+
+
+
+
+
+lá em app.js consiga catchear isso...
+
+
+
+
+
+
+
+
+
+------->  BASICAMENTE, É UM MÉTODO QUE PODEMOS SEMPRE CHAMAR PARA 
+
+
+
+
+
+PASSAR UM 'FILEPATH'
+
+e então 
+
+DELETAR 
+
+
+1 ARQUIVO...
+
+
+
+
+
+
+
+--> O PROFESSOR IMPORTA 
+
+ESSA 
+
+
+
+
+FUNÇÃO LÁ 
+
+
+NO CONTROLLER DE 'admin.js',
+
+
+
+
+
+COM O CÓDIGO 
+
+
+
+
+'const fileHelper = require('../util/file');'
+
+
+
+
+
+
+
+
+
+
+
+--> MAS O PROFESSOR ESQUECEU DE EXPORTAR 
+
+ESSA FUNÇÃO helper... --> exportar por meio de 
+
+
+
+'exports.deleteFile = deleteFile;'
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM O CÓDIGO:
+
+
+
+
+
+
+
+const deleteFile = (filePath) => {
+
+
+fs.unlink(filePath, (err) => {
+
+            if (err) {
+                throw err;
+            }
+})
+}
+
+
+
+
+
+
+
+
+
+exports.deleteFile = deleteFile;
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+AÍ, LÁ NO NOSSO CONTROLLER, PPROFESSOR ESCREVE ASSim:
+
+
+
+
+
+
+const fileHelper = require('../util/file');
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  console.log(req.body);
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+
+
+  const image = req.file;  //usado nos nossos CHECKS, para saber se O 'PATH' de nosso arquivo (e, consequentemente, o arquivo atribuído 'for a given product') realmente precisa ser alterado... (ver aquele if check lá embaixo..)
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+
+  if (validationErrors.length > 0) {
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+  } else {
+    console.log(productId,'LINE5123');
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+
+      .then((product) => {
+
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          if(image) {
+
+                        fileHelper.deleteFile(product.imageUrl);
+    
+            product.imageUrl = req.file.path; /////CÓDIGO MAIS RECENTE, USADO COM O 'MULTER'... ---> vai EDITAR/OVERWRITTAR O PATH A IMAGE ANTIGA (atribuída a esse product) SE CONSTATAR QUE ALGUMA FILE VÁLIDA (não undefined/inválida) TIVER SIDO ENVIADA AO NOSSO APP...
+          }
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {   //////// O __ ERRO__ DO 'throw new Error('Dummy')' (_ E QUALQUER OUTRO ERROR DESSE TIPO, do tipo que 'THROWS AN ERROR') É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        // console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); ///É ISSO QUE VAI FAZER O REPASSE DO ERRO A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js.... (é o middleware que  tem 4 argumentos, 'error, req, res, next'...)
+      });
+  }
+};
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+-----> OK.... COM ISSO, 
+
+
+ESTAMOS 
+'FIRING AND FORGETTING' 
+
+essa função,
+pq 
+
+não estamos vinculando nada a sua execução..
+
+
+
+(não nos importamos com seu resultado....)
+
+
+
+
+
+
+
+
+
+
+
+-----> E AÍ FAZEMOS A MESMA COISA LÁ NO CONTROLLER DE 'deleteProduct',
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.postDeleteProduct = (req, res, next) => {
+
+  const productId = req.body.id;
+
+
+
+
+Product.findById(productId).then(
+    (product) => {
+
+        if(!product) {
+                    return next( new Error ('Product Not Found!');
+
+        }
+        fileHelper.deleteFile(product.imageUrl);
+
+        return Product.deleteOne({_id: prodId, userId: req.user._id})
+    }
+)
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+
+}) 
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+1) DELETAMOS A IMAGE,
+
+
+
+2) DEPOIS DELETAMOS O PRODUCT EM SI.... (chainamos essas execuções por meio dos then blocks...)
+
+
+
+
+
+
+
+
+
+--> OK, ESSE CÓDIGO ESTÁ FUNCIONANDO...

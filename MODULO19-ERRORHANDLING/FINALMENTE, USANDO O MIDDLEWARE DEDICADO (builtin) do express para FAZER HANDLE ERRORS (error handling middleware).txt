@@ -1,0 +1,2432 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK, ESCREVEMOS AQUELE CÓDIGO:
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+
+            res.redirect('/500'); ////ESTE CÓDIGO AQUI...
+
+  }
+)
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+-----> NÓS ESTÁVAMOS REDIRECIONANDO PARA ESSA PAGE DE 
+
+'ERRO 500'
+
+
+nesse 
+
+
+CATCH BLOCK ESPECÍFICO DE 
+
+
+'add a product' (ou seja, quando ocorre/ocorria um TECHNICAL ERROR,
+
+
+erro do SERVERSIDE, por exemplo,
+
+
+ERA FEITO UM REDIRECT 
+
+à ROUTE DE '/500', O QUE 
+
+FAZIA COM QUE 
+
+O 
+
+VIEW 
+
+DE 
+
+'500.ejs'
+ 
+ fosse 
+
+ renderizado...
+
+
+)
+
+
+
+
+
+
+
+-------->  E O PROFESSOR ADMITE QUE 
+
+
+__PODEMOS/PODERÍAMOS 
+
+
+ADICIONAR 
+
+ESSE 
+
+
+
+
+CATCH BLOCK COM ESSE REDIRECT AÍ 
+
+
+
+__ EM QUALQUER LUGAR DE NOSSO APP 
+
+
+
+EM QUE 
+
+
+GOSTARÍAMOS DE 
+
+'ENSURE THAT WE DO HANDLE ERRORS'...
+
+
+
+
+
+
+
+
+
+
+
+---------> ok... -----> MAS O PROBLEMA 
+
+É 
+
+
+
+QUE, COM ISSO,
+
+RAPIDAMENTE 
+
+DUPLICARÍAMOS 
+
+NOSSO 
+
+CÓDIGO 
+
+PRA CARAMBA...  (
+
+
+    PQ 
+
+    NÓS VAMOS 
+
+
+
+    TER 1
+
+
+
+    MONTE DE CATCH BLOCKS EM QUE 
+
+    NOS COMUNICAMOS COM A DATABASE,
+
+
+E MUITOS 
+
+DESSES 
+
+
+
+CATCH BLOCKS VÃO REALMENTE REDIRECIONAR à PAGE 
+
+DE 
+
+500, pq 
+
+
+ESSE É UM ERRO COMUM...
+)
+
+
+
+
+
+
+--> EM MTOS CASES DE 'DATABASE FAILURE' ___ VAMOS QUERER __ 
+
+
+REDIRECIONAR DIRETAMENTE A PAGES DE 
+
+'ERRO 500'... ------>   MESMA COISA COM 
+
+PROBLEMAS 
+
+DE PERMISSÃO,
+
+
+
+VAMOS 
+
+RETORNAR ESSA PAGE AÍ... ----------> 
+
+
+
+
+
+
+
+MAS O PROBLEMA 
+É 
+
+QUE 
+
+REPLICAR
+
+
+
+ESSE 
+
+
+CÓDIGO DE 
+
+'.catch()'
+
+
+com esse redirect
+
+
+
+EM UM MONTE DE PARTES DE NOSSO APP  __ É __RARAMENTE __ O QUE 
+
+
+
+
+
+VAMOS QUERER FAZER.... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> É POR ISSO QUE, EM VEZ DE REDIRECIONAR 
+
+DIRETAMENTE 
+à 
+
+PAGE 
+
+de 
+
+'/500',
+
+
+O QUE 
+
+
+PODEMOS 
+
+FAZER,
+
+
+NAQUELE LOCAL,
+
+
+É 
+
+
+ESCREVER 
+
+O 
+
+
+_______tHROW___ DE UM ERROR...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+.then(
+  result => {
+
+    console.log('Created Product');
+    res.redirect('/admin/products');
+  }
+)
+.catch(
+  err => {
+
+
+        throw new Error()
+
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+      .catch((err) => {
+        // console.log(err);
+        // res.redirect('/product-list-admin');
+
+        
+        console.log(err);
+
+
+
+              // res.render('500'); //jeito ERRADO de fazer isso... (não usa o controller lá em 'error.js'...)
+              ///    res.redirect('/500'); //SEGUNDO jeito errado de fazer isso.... -> É MELHOR __ FAZER O THROW DE UM ERROR, E AÍ USAR A 'EXPRESSJS ERROR HANDLING MIDDLEWARE' para handlar esse THROWN ERROR...
+
+      throw new Error() ///jeito correto de fazer o error handling de TECHNICAL PROBLEMS (problemas como DATABASE CONNECTION FAILED)... --> isso vai resultar no RETURN DE UMA PAGE 500 AO USER, que é o que queremos... (e sem redirects ou render diretos... e sim o uso do EXPRESSJS ERROR HANDLING MIDDLEWARE...)
+
+
+
+
+
+
+
+    //     return  res.status(500).render( 'admin/edit-product', {  ////OUTRA OPÇÃO DE ERROR HANDLING === RE-RENDERIZAR A PAGE EM QUE O USER ESTAVA, MAS COM A ADIÇÃO DE UM MODAL/DIV  INFORMANDO-O DO ERRO QUE ACONTECEU, e que ele pode dar retry, etc etc...
+    //       pageTitle: 'Add Product',
+    //       path: 'admin/add-product',
+    //       editing: false,
+    //       hasError: true,
+    //       product: {
+    //         title: title,
+    //         imageUrl: imageUrl,
+    //         price: price,
+    //         description: description
+    //       },
+    //       errorMessage: 'Database operation failed, please try again',
+    //       validationErrors: [],
+    //       prods: products
+    
+        
+    //     }
+    // )
+
+
+
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      --------> OK, VAMOS 
+
+
+      USAR 
+
+
+
+      ESSE 
+
+
+      '
+      throw new Error()'....
+
+
+
+
+
+
+
+
+
+
+------> FAZEMOS ISSO 
+
+
+
+
+
+DENTRO DO CATCH BLOCK DE 
+
+
+
+NOSSOS 
+
+
+
+CONTROLLERS;
+
+no caso,
+
+
+
+no 
+
+
+
+CATCH BLOCK 
+
+do 
+
+controller 
+
+
+'postAddProduct'...
+
+
+
+
+
+
+
+
+
+------> CERTO... VAMOS FAZER THROW DE UM NOVO ERROR... --> 
+
+
+
+
+
+
+
+
+
+MAS O PROFESSOR VAI QUERER FAZER O THROW DE UM ERROR DE UMA FORMA UM POUCO MAIS DETALHADA...
+
+
+
+
+
+
+
+
+
+
+
+--> ele vai lá e escreve uma const,
+tipo assim:
+
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+ 
+
+const error = new Error('Creating a product failed.'), 
+
+
+
+
+
+OU ENTAÕ 
+
+
+
+
+
+const error = new Error(err);
+
+
+
+
+
+
+
+-----> OK, CRÍAMOS 
+
+NOSSO PRÓPRIO OBJETO 'error'...
+
+
+
+
+
+
+
+
+
+DEPOIS, PROFESSOR ESCREVE:
+
+
+
+
+
+
+
+
+
+''''''''''''''''''''''''''''''''''''''
+
+
+
+
+const error = new Error('Creating a product failed.')
+
+
+
+
+error.httpStatusCode = ...
+
+
+
+
+''''''''''''''''''''''''''''''''''
+
+
+
+
+
+
+
+--> '.httpStatusCode' -------> É UM __ FIELD__ DENTRO DOS OBJEtos 'Error' criados com 'new Error()'...
+
+
+
+
+
+
+-------->  PROFESSOR SÓ USA ESSE FIELD AÍ PARA __ DEFINIR __ 
+
+o 'httpStatusCode'
+
+desse 
+
+
+OBJETO error como sendo de valor '500' (serverside error)...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+const error = new Error('Creating a product failed.')
+
+
+
+
+error.httpStatusCode = 500;
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+OK... E AÍ O PROFESSOR DIZ QUE AGORA TEMOS ALGO LEGAL:
+
+
+
+
+
+
+nós podemos 
+
+
+
+
+
+ESCREVER 
+
+
+
+'return next()'
+
+
+E ENTÃO 
+
+
+
+
+
+_______PODEMOS __ PASSAR __ O 'error' ( constante )
+
+
+
+
+
+COMO ___________ PARÂMETRO 
+
+DESSE 
+
+CALL 
+
+de 
+'next()'...
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+const error = new Error('Creating a product failed.')
+
+
+error.httpStatusCode = 500;
+
+
+
+return next(error);
+
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+      .catch((err) => {
+        // console.log(err);
+        // res.redirect('/product-list-admin');
+
+        
+        console.log(err);
+
+
+
+              // res.render('500'); //jeito ERRADO de fazer isso... (não usa o controller lá em 'error.js'...)
+              ///    res.redirect('/500'); //SEGUNDO jeito errado de fazer isso.... -> É MELHOR __ FAZER O THROW DE UM ERROR, E AÍ USAR A 'EXPRESSJS ERROR HANDLING MIDDLEWARE' para handlar esse THROWN ERROR...
+
+
+            
+      // throw new Error() /// UM DOS JEITOS CORRETOS de fazer o error handling de TECHNICAL PROBLEMS (problemas como DATABASE CONNECTION FAILED)... --> isso vai resultar no RETURN DE UMA PAGE 500 AO USER, que é o que queremos... (e sem redirects ou render diretos... e sim o uso do EXPRESSJS ERROR HANDLING MIDDLEWARE...)
+      ///entretanto, prefira o código abaixo, que usa 'next(erroQueVocêQuerPassar)', pq esse approach de baixo usa o 'EXPRESSJS BUILTIN ERROR HANDLING MIDDLEWARE'....
+
+
+
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+
+
+
+      }
+      )
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+--> E NÓS, DE FATO,
+
+NUNCA HAVÍAMOS USADO O 
+
+
+
+'next()'
+
+
+ASSIM... 
+
+
+
+
+
+
+
+
+
+-------> ANTES,
+ 
+
+ 
+ QUANDO CHAMÁVAMOS/CHAMAMOS 
+
+ 'next()',
+
+
+
+
+
+
+
+
+ NÓS SEMPRE 
+
+ CHAMAMOS 
+
+
+ 
+
+ ELE ___ SEM___ ARGUMENTOS,
+
+ para que 
+
+
+
+
+
+
+
+'LET THE NEXT MIDDLEWARE TAKE OVER'... -------> BEM... E ESSE É UM 
+
+USO VÁLIDO DO NEXT.... -------> 
+
+
+ENTRETANTO,
+
+QUANDO 
+
+CHAMAMOS 
+
+
+
+'NEXT()'
+
+
+
+
+COM 1 
+
+__ERRO PASSADO __ COMO 
+
+
+
+
+ARGUMENTO,
+
+
+NÓS 
+
+___aCTUALLY__ 
+
+
+
+
+'LET EXPRESS KNOW'
+
+
+
+QUE __ UM ERRO __ ACONTECEU........ ---------> E QUANDO 
+
+
+
+O 
+
+
+
+EXPRESS 
+
+__SABE/SOUBER__ QUE 
+
+
+
+UM _____ ERRO ACONTECEU,
+
+ELE 
+
+VAI 
+
+
+
+'SKIP ALL THE MIDDLEWARES' E __ ENTÃO 
+
+VAI 
+
+
+
+'MOVE RIGHT AWAY TO ERROR HANDLING' (
+
+
+    ele essencialmente vai entrar 
+
+    no 
+
+
+    'MODO ERROR HANDLING, SÓ ERROR HANDLING MIDDLEWARE',
+
+    por assim dizer..
+)
+
+
+
+
+
+
+
+-------->  
+
+
+
+
+
+
+
+
+ISSO QUER DIZER QUE QUANDO ELE LER ESTE CÓDIGO AQUI:
+
+
+  const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error); ////este aqui.
+
+
+
+
+
+
+
+
+--> ELE  __VAI PULAR __ DIRETAMENTE__ 
+
+
+
+
+
+AOS 
+
+
+'MIDDLEWARES DE ERROR HANDLING',
+
+
+
+QUE 
+
+
+
+SÃO 
+
+
+
+realmente MIDDLEWARES DIFERENTES DOS MIDDLEWARES COMUNS...
+
+
+
+
+
+
+
+
+(
+
+
+
+    E O PROFESSOR 
+
+    VAI NOS ENSINAR SOBRE COMO SETTAR UM DESSES ERROR HANDLING MIDDLEWARES 
+
+
+    __aGORA__...
+)
+
+
+
+
+
+
+
+
+
+
+--> CERTO...
+ 
+
+
+
+ 'next(error)'
+
+
+ É 
+ O TRUQUE...
+
+
+
+
+
+
+ --> UM OBJETO 'error' foi PASSADO AO 'next()',
+
+
+
+ EM VEZ 
+
+
+
+DE 
+
+SER 
+
+'THROWN'
+
+por meio de 
+
+
+
+'throw new Error/throw error'....
+
+
+
+
+
+
+
+
+
+
+
+
+------> CERTO... E AGORA, PORTANTO,
+
+
+
+
+
+VAMOS ATÉ O 
+
+'app.js',
+
+
+E AÍ 
+
+
+
+LÁ 
+
+
+
+NO FINAL DO ARQUIVO VAMOS ADICIONAR UM NOVO CÓDIGO...
+
+
+
+
+
+
+
+
+
+--> VAOMS ADICIONAR UM NOVO MIDDLEWARE,
+
+
+
+com 
+
+
+'app.use()'...
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(authRoutes);
+
+app.get(errorController.error500);
+
+app.use(errorController.error404);
+
+
+app.use();
+
+
+
+
+
+
+
+
+
+
+
+---------> O PROFESSOR NOS EXPLICA QUE 
+
+
+
+
+
+______NORMALMENTE,
+
+
+
+COM CONDIÇÕES NORMAIS,
+
+
+ESSE 
+
+
+
+'app.use()'
+
+
+___________NUNCA __ SERIA __ ALCANÇADO.... -------->
+
+
+
+
+
+NUNCA SERIA ALCANÇADO _ PQ __ 
+
+
+
+
+
+
+
+NÓS TEMOS AQUELE MIDDLEWARE 
+
+
+'CATCH ALL' 
+
+
+
+de 
+
+
+
+
+
+'app.use(errorController.error404)'
+
+
+
+
+
+COLOCADO 
+
+
+
+
+POR ÚLTIMO 
+
+
+NO NOSSO FLOW 
+
+
+de 'app.js' (o que significa que TODAS AS ROUTES/PATHS QUE 
+
+USER 
+INPUTTAR 
+
+QUE 
+
+
+NÃO SE ENCAIXEM 
+
+NOS 
+
+'CASES' de 
+
+
+adminRoutes,
+ 
+
+ shopRoutes 
+
+
+ e 
+
+ 'authRoutes'
+
+
+
+ __AUTOMATICAMENTE __ VÃO ACABAR 
+
+ NO CASE DE 'NOT FOUND',
+
+ que 
+
+ é 
+
+ esse 
+
+
+ 'app.use(errorController.error404)'...
+
+
+)
+
+
+
+
+
+
+
+
+E SIM, ISSO É VERDADE... --> ENTRETANTO, 
+
+
+
+A 
+
+MAGIA 
+
+DO 
+
+
+'next(errorPassado)'
+
+
+É 
+
+
+QUE 
+
+
+
+_ELE __ VAI ___SKIPPAR_ TODOS ESSES 'COMMON MIDDLEWARE',
+
+
+E VAI 
+
+PASSAR 
+
+DIRETAMENTE 
+
+
+
+AOS 
+
+'ERROR MIDDLEWARES',
+
+
+que 
+
+
+
+SERÃO MIDDLEWARES COM A ESTRUTURA DESSE MIDDLEWARE QUE 
+
+ESCREVEREMOS  AGORA...
+
+
+
+
+
+
+
+
+
+
+
+
+-> OK, MAS COMO ESCREVEMOS UM 'ERROR MIDDLEWARE'?
+
+
+
+
+
+
+
+
+
+-------> É UM TIPO DE MIDDLEWARE QUE AINDA NÃO VIMOS, ATÉ AGORA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR EXPLCIA QUE TODOS OS MIDDLEWARES 
+
+que adicionamos até agora,
+
+
+
+
+
+
+COMO 
+
+AQUELE 
+
+
+
+middleware de 
+
+'app.use(errorController.error500)',
+
+
+
+
+
+TODOS ELES, SEM EXCEÇÃO,
+
+
+
+
+USAVAM 
+
+
+
+
+
+NOS SEUS CONTROLLERS____ 3 ARGUMENTOS 
+
+
+
+nas suas funções... --> os argumentos 
+
+
+
+'req, res, next'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+exports.error500 = (req, res, next) => {
+
+  res.status(500).render('500', {
+    pageTitle: 'Something went wrong',
+    path: '',
+    isLoggedIn: req.session.isLoggedIn,
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+---------> sim, de fato, 3 argumentos...
+
+
+
+
+
+
+
+
+
+
+
+-------> OK.... ------> MAS O EXPRESS TAMBÉM __ 
+
+
+
+
+
+CONHECE UM 
+MIDDLEWARE__ ESPECIAL,
+
+
+
+COM 
+
+
+__QUATRO__ ARGUMENTOS... ------>  
+
+
+
+
+
+
+
+
+
+SÃO OS FAMOSOS 
+
+
+'ERROR HANDLING MIDDLEWARES'... ------->
+
+
+
+
+
+
+E ELES SÃO ESCRITOS ASSIM:
+
+
+
+
+
+
+'error, req, res, next' ....
+
+
+
+
+
+
+
+
+
+
+
+-------> OU SEJA,
+
+
+O 
+
+
+ARGUMENTO DE __ 'ERROR'
+
+É 
+
+ESCRITO NO INÍCIO,
+
+
+E É ENTÃO SEGUIDO PELOS OUTROS 
+
+3 ARGUMENTOS PADRÃo...
+
+
+
+
+
+
+ex (em app.js):
+
+
+
+
+
+
+
+
+
+
+app.use((error, req, res, next) => {
+
+
+
+}
+)
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+------> E O EXPRESS É TÃO INTELIGENTE QUE __ ELE ___ 
+
+CONSEGUE __ IDENTIFICAR ___ AUTOMATICAMENTE __ QUE 
+
+ESSE 
+
+SE 
+
+TRATA 
+DE 
+UM 
+
+'MIDDLEWARE ESPECIAL',
+
+
+'SPECIAL ERROR HANDLING MIDDLEWARE',
+
+
+
+
+
+
+
+
+
+
+
+E ÁI, ELE VAI 
+
+
+'MOVE RIGHT AWAY'
+
+
+
+A 
+
+ESSES 
+
+
+
+'SPECIAL ERROR HANDLING MIDDLEWARE'
+
+
+
+
+
+
+
+
+
+
+__ ESPECIFICAMENTE QUANDO VOCÊ CHAMAR 
+
+
+
+'return next(error)'
+
+
+EM LUGARES DE SEU CÓDIGO (em que ocorrerem erros...)
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+--> OUTRO DETALHE:
+
+
+
+
+
+
+SE VOCÊ TEM/TIVER MAIS DE 1 ÚNICO 
+
+'ERROR-HANDLING MIDDLEWARE',
+
+
+
+
+
+
+o 
+
+
+
+
+EXPRESS __ VAI __ 
+
+
+EXECUTAR__ 
+ESSES 
+
+
+MIDDLEWARES ESPECIAIS 'TOP-TO-BOTTOM',
+
+
+
+EXATAMENTE 
+
+COMO 
+
+OS 
+
+MIDDLEWARES 'NORMAIS' (middlewares sem o argumento 'error' no início...)
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR 
+
+
+COMEÇA 
+
+ESCREVENDO ASSIM:
+
+
+
+
+
+
+app.use((error, req, res, next) => {
+
+
+
+        res.redirect('/500');
+
+
+}
+)
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+OK.... --> ISSO SIGNIFICA QUE AGORA,
+
+
+
+
+
+NOS CONTROLLERS DE NOSSO CÓDIGO,
+
+
+SE CHAMARMOS 
+
+
+'next(error)',
+
+VAMOS __ REDIRECIONAR __ AUTOMATICAMENTE 
+
+
+àQUELA PAGE DE 
+
+'500.ejs',
+
+
+
+
+
+GRAÇAS A ESSE MIDDLEWARE AÍ....
+
+
+
+
+
+
+
+
+
+--------> OK... PROFESSOR DEIXA O CÓDIGO ASSIM E RECARREGA.... 
+
+
+
+
+
+
+
+
+
+
+
+--> VOLTAMOS AO NOSSO APP,
+
+TENTAMOS ADICIONAR O PRODUCT COM AQUELE PROBLEMA... --> 
+
+
+
+
+
+
+
+
+BEM, NOSSA ERROR HANDLING PAGE SERÁ 
+
+CARREGADA EXATAMENTE COMO ANTES,
+
+
+MAS AGORA 
+
+
+POR MEIO DESSE 
+
+'CENTRAL ERROR HANDLING MIDDLEWARE',
+
+que 
+é 
+
+
+__BEM MAIS PRÁTICO__...
+
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO... AGORA QUE ADICIONAMOS ESSE 'ERROR HANDLING CODE' 
+
+
+
+de 
+
+
+
+
+
+
+  const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error); ////este aqui.
+,
+
+
+
+
+
+
+
+PODEMOS O REPETIR EM OUTROS LUGARES 
+
+
+
+
+de nosso app 
+
+em que 
+
+é possível 
+
+
+esse erro ocorrer...
+
+
+
+
+
+
+
+
+
+
+
+------> como na ROUTE DE 
+
+
+
+
+
+
+'edit a product'...
+
+
+
+
+
+
+
+
+
+------> É CLARO QUE PODEMOS REFATORAR
+
+ESSE 
+
+CÓDIGO (essas 3 linhas) em uma FUNÇÃO, função que 
+então 
+
+so´chamamos nos lugares cabíveis...
+ 
+
+
+
+
+
+
+
+ -------> CERTO... FAREI ISSO... ----> NESSES LUGARES TODOS,
+
+
+
+ você vai 
+
+ SIMPLESMENTE 
+
+
+
+ FAZER THROW DE UNS ERRORS (
+
+
+
+     'throw new Error('')',
+
+
+
+     
+ ),
+
+
+ PARA 
+
+ ENTÃO FAZER 
+
+ __CATCH___ no 
+ 'catch()' 
+
+ block
+  E ENTÃO 
+
+  EXECUTAR 
+
+
+
+  ESSAS LINHAS 
+
+  DE 
+
+
+  
+  const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error); ////este aqui.
+
+
+
+
+
+QUE VÃO TRIGGAR O SEU 'ERROR HANDLING MIDDLEWARE'
+
+especial,
+
+lá 
+
+em 
+
+'app.js'...
+
+
+
+
+
+
+-------> 
+
+
+
+
+
+
+
+
+
+
+
+AH... CERTO...
+ 
+
+ E QUANTO 
+
+ AOS LOCAIS 
+
+ DE NOSSO APP __ QUE __NÃO VÃO 'THROW AN ERROR' 
+
+
+ AUTOMATICAMENTE? 
+
+
+
+
+
+
+ bem, aí vamos ter que 
+
+ ESCREVER MANUALMENTE ESSE 'throw',
+
+
+
+ TIPO EM 
+
+
+ 'postEditProduct',
+
+
+ como o professor estava nos falando....
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+
+  if (validationErrors.length > 0) {
+
+
+    Product.find({ userId: userId }).then((products) => {
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    Product.findById(productId)
+      .then((product) => {
+
+              throw new Error('Dummy'); //////ESSE É O EXEMPLO USADO PELO PROFESSOR... é necessário esse THROW MANUAL DE UM ERROR (isso é só um exemplo, pq você não vai escrever assim...)
+        
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          product.imageUrl = imageUrl;
+
+          return product.save(); 
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => { //////// O __ ERRO__ DO 'throw new Error('Dummy')' É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.... COMO VOCÊ PODE VER,
+
+
+
+
+SÃO ESSES 2 COMPONENTES DO CÓDIGO QUE SÃO IMPORTANTES:
+
+
+
+
+
+'''
+
+ throw new Error('Dummy'); 
+
+
+ '''
+
+
+
+
+ e   
+ 
+ 
+ '''''
+ 
+  .catch((err) => { //////// O __ ERRO__ DO 'throw new Error('Dummy')' É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+
+      });
+
+  ''''
+
+
+
+
+
+  __PARA __ CAPTURAR__ ESSE ERROR E __ FAZER COM QUE O SPECIAL ERROR HANDLING MIDDLEWARE TRIGGUE...
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+OK... -------> SE DEIXARMOS __ ESSE 
+
+DUMMY ERROR 
+
+NO LGUAR 
+
+e TENTARMOS 
+
+ADDAR 
+
+
+1 PRODUCT,
+
+
+
+TAMBÉM VEREMOS 
+
+AQUELA
+ 
+ PAGE 
+ DE 
+
+ ERRO 500,
+
+
+
+
+ PQ __ ESSE 
+
+
+ ERROR 
+
+
+
+ VAI TRIGGAR 
+
+ aquele 
+
+
+
+
+ 'return next(error)'...
+
+
+
+
+
+
+
+ ----------------------------
+
+
+
+
+
+
+
+
+ O CÓDIGO COMPLETO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.editProduct = (req, res, next) => {
+  const productId = req.body.id;
+  const userId = req.user._id;
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  // const product = new Product( title, price, imageUrl, description, userId, productId) /////////CÓDIGO VELHO, QUE USAVA O 'MONGODB DRIVER' default, ___ SEM O MONGOOSE__ E SEUS HELPER METHODS, HELPER METHODS EXISTENTES NOS 'MODELOS MONGOOSE'...
+  //   product.save() ///CÓDIGO DO PROFESSOR... UM POUCO MAIS OPTIMIZADO DO QUE O MEU, POIS USA UM MESMO MÉTODO, 'save()', para RODAR 2 OPERAÇÕES DIFERENTES, 1 OPERAÇÃO DE EDIT E OUTRA DE ADD....
+  //   .then(
+  //     (result) => {
+
+  //       console.log(result);
+  //       res.redirect('/admin/product-list-admin');
+  //     }
+  //   )
+  //   .catch(
+  //     (err) => {
+  //       console.log(err);
+
+  //       res.redirect('/admin/product-list-admin');
+  //     }
+  //   )
+
+  //APPROACH DO MONGOOSE...
+
+  ///MÉTODO DO MONGOOSE QUE EXPERIMENTEI E FUNCIONOU, MAS QUE NÃO FOI USADO PELO PROFESSOR, por alguma razão....
+  // Product.findOneAndUpdate( ///MÉTODO BUILTIN DO MONGOOSE, BUILTIN NOS MODELS MONGOOSE DEFINIDOS POR NÓS....
+
+  //   {_id: ObjectId(productId)},
+
+  //   {
+  //       title: title,
+  //       imageUrl: imageUrl,
+  //       description: description,
+  //       price: price
+
+  //   }
+
+  // )
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+
+      return res.status(422).render('admin/product-list-admin', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    Product.findById(productId) //método MONGOOSE, builtin...
+
+
+      .then((product) => {
+
+        ////throw new Error('Dummy'); //////ESSE É O EXEMPLO USADO PELO PROFESSOR... é necessário esse THROW MANUAL DE UM ERROR (isso é só um exemplo, pq você não vai escrever assim...)
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } else {
+          product.title = title;
+          product.price = price;
+          product.description = description;
+          product.imageUrl = imageUrl;
+
+          return product.save();
+        }
+      })
+      .then((result) => {
+        console.log('UPDATED PRODUCT');
+        res.redirect('/admin/product-list-admin');
+      })
+      .catch((err) => {   //////// O __ ERRO__ DO 'throw new Error('Dummy')' (_ E QUALQUER OUTRO ERROR DESSE TIPO, do tipo que 'THROWS AN ERROR') É __ CAPTURADO AQUI....  e armazenado nessa variável 'err', que então PASSAMOS AO CALL DE 'next()" LOGO ABAIXO, PARA __CONSEGUIR __ TRIGGAR O 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js...
+        console.log(err);
+
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error); ///É ISSO QUE VAI FAZER O REPASSE DO ERRO A NOSSA 'SPECIAL ERROR HANDLING MIDDLEWARE', lá no app.js.... (é o middleware que  tem 4 argumentos, 'error, req, res, next'...)
+      });
+  }
+}; 
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+OK... MAS O QUE ESSE STATUS CODE (httpStatusCode = 500) VAI FAZER, AQUI? -----> BEM, NESSE 
+
+
+
+
+
+
+CENÁRIO ESTAMOS SEMPRE REDIRECIONANDO À ROUTE DE 
+
+
+
+'500',
+
+QUE 
+
+é 
+
+A 
+
+ROUTE QUE 
+
+ACABA 
+
+
+executando 
+
+'res.status(500).render('/500.ejs')' ----> MAS É CLARO QUE 
+
+
+
+
+EXISTEM/EXISTIRÃO CENÁRIOS __ EM QUE NÃO VAMOS QUERER 'REDIRECT',
+
+
+E SIM 
+
+
+VAMOS QUERER 
+
+
+'RENDER A PAGE INSTEAD',
+
+
+
+OU ENTÃO 
+
+
+
+'RETURN SOME JSON DATA' (algo que faremos mais tarde no curso...) ----->  NESSES CASES,
+
+
+
+REPASSAR 
+
+
+
+EXTRA INFO (status code) 
+
+
+
+
+NO ___ OBJETO 'error' 
+
+É ALGO POSSÍVEL, 
+
+
+E RECOMENDÁVEL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK.... MAS UM DETALHE FINAL:
+
+
+
+
+
+
+
+ESSE 
+
+'ERROR HANDLER'
+
+
+
+__NÃO VAI EXECUTAr__ 
+
+
+PARA 
+
+
+ERROS 404 (not found)... --> PQ 
+
+
+ERROS 
+
+404
+
+
+SÃO OUTRO TIPO DE ERRO, BEM DIFERENTE... (é not found, de fato...) -----> 
+
+
+
+
+COM OS 
+
+ERROS 
+
+404,
+
+
+
+NÓS AINDA FAZEMOS HANDLE MANUAL,
+
+isso 
+
+PQ 
+
+
+OS ERROS 
+
+404
+ 
+
+ SÃO SIMPLESMENTE 
+
+
+ ERROS 
+
+ DE 
+
+ 'INVALID URL'  ---->  ISSO PQ 
+
+
+
+
+
+ O HANDLE DE ERROS 404 
+
+
+ É 
+
+
+
+
+ O SIMPLES RENDER DA PAGE 404 
+
+
+
+ para as pages que NÃO EXISTEM NO NOSSO APP... (
+
+  
+
+  OU SEJA,
+
+  NÃO HÁ 
+
+  A 
+  CRIAÇÃO DE 
+
+  UM
+
+  'TECHNICAL ERROR OBJECT'
+
+
+  em qualquer ponto 
+
+
+  de seu render, como ocorre com os ERROS 500...
+ )

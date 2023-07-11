@@ -1,0 +1,815 @@
+
+
+
+
+
+
+
+-> CONSEGUI FAZER ISSO SOZINHO, 
+
+
+MAS 
+
+
+COM UMA 'MUTATION' (post request) 
+
+ORIGINALMENTE...
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR VAI ATÉ O LOGIN HANDLER,
+
+E AÍ 
+
+ESCREVE 
+
+
+
+
+
+
+
+'http://localhost:8080/graphql',
+
+
+
+
+
+
+
+
+O ÚNICO ENDPOINT QUE USAREMOS....
+
+
+
+
+
+
+
+--> aí ele escreve 
+
+
+
+
+'const graphqlQuery = {
+
+    query: `
+    
+    
+    
+    
+    `
+}
+
+
+
+
+
+---------------------------
+
+
+
+
+OK.... MAS O PROFESSOR 
+
+
+
+
+EXPLICA UM __ DETALHE__.... -_> 
+
+
+
+QUANDO 
+
+QUEREMOS __ FAZER UMA 'NORMAL QUERY'
+
+AO NOSSO BACKEND,
+
+
+
+__ NÓS _ NÃO VAMOS ESCREVER 
+
+ALGO COMO 
+
+
+
+''
+
+
+  const graphqlQuery = {
+        //sempre será esta estrutura..
+    query: ` 
+        
+    query {
+      loginUser(
+        email: "${authData.email}" 
+        password: "${authData.password}"
+     ) {
+          token
+          userId
+        }
+    }
+    `
+  }
+
+
+
+  '''
+
+
+
+
+
+
+
+  --> NESSE CÓDIGO AÍ,
+
+  VOCÊ PODE PERCEBER QUE 
+
+  ESTAMOS 'REPETINDO'/sendo redundantes,
+
+  pois escrevemos:
+
+
+
+  query: ` query {} `
+
+
+
+
+
+
+
+
+
+  --> QUANDO TRATAMOS DE UMA QUERY COMUM, SEM SER UMA MUTATION OU SUBSCRIPTION,
+
+  PODEMOS OMITIR 
+
+  esse 
+
+  'query {}' 
+
+
+  E DEIXAR SÓ 
+  '{}" (
+
+    O OBJETO QUERY EM SI...
+  )
+
+
+  ex:
+
+
+
+  query: `{}`
+
+
+
+  ------------
+
+
+  CERTO...
+
+
+
+
+
+
+
+
+  MAS COMO O PROFESSOR ESCREVE ESSA QUERY?
+
+
+
+
+
+
+
+
+
+
+  --> ele escreve assim:
+
+`
+
+  {
+
+
+
+
+loginUser(
+  email: "${authData.email}",
+  password: "${authData.password}"
+)
+
+    
+  }
+
+  `
+
+
+
+
+
+
+
+  ----> OK, MAS É ÓBVIO QUE VAMOS FAZER GET DE ALGUMA DATA DE VOLTA DISSO...
+
+
+
+
+
+  POR ISSO ESCREVEMOS 
+
+
+  '{
+    token 
+    userId
+  }
+
+
+
+
+
+
+  ex:
+
+  `
+
+  {
+
+
+
+
+loginUser(
+  email: "${authData.email}",
+  password: "${authData.password}"
+) {
+  token 
+  userId
+}
+
+    
+  }
+
+  `
+
+
+
+
+
+
+
+
+
+
+
+OK, FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+  //  const loginResult = await fetch(
+  //     'http://localhost:8080/auth/login',
+
+  //     {
+  //       body: JSON.stringify({
+  //         email: authData.email,
+  //         password: authData.password,
+  //       }),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       method: 'POST',
+  //       ///EIS O CÓDIGO EM QUESTÃO.
+  //     }
+  //   );
+  const graphqlQuery = {
+        //sempre será esta estrutura..
+    query:  //quando tratamos de umA QUERY PURA, sem 'mutation' ou 'subscription', PODEMOS OMITIR AQUELE 'query' em 'query: `query {}` ' --> colocamos só o OBJETO SOLTO, no caso....
+    ` 
+         {
+      loginUser(
+        email: "${authData.email}" 
+        password: "${authData.password}"
+     ) {
+          token
+          userId
+        }
+    }
+    `
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ESTÁ TUDO CERTINHO....
+
+
+
+
+
+
+
+  --> O MEU CÓDIGO DE VALIDATION DO INPUT TAMBÉM MUDOU BASTANTE (uso de 'validator', em vez de 'express-validator'; packages DIFERENTES....),
+
+
+
+
+
+  eu alterei e deixei assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+  //  const loginResult = await fetch(
+  //     'http://localhost:8080/auth/login',
+
+  //     {
+  //       body: JSON.stringify({
+  //         email: authData.email,
+  //         password: authData.password,
+  //       }),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       method: 'POST',
+  //       ///EIS O CÓDIGO EM QUESTÃO.
+  //     }
+  //   );
+  const graphqlQuery = {
+        //sempre será esta estrutura..
+    query:  //quando tratamos de umA QUERY PURA, sem 'mutation' ou 'subscription', PODEMOS OMITIR AQUELE 'query' em 'query: `query {}` ' --> colocamos só o OBJETO SOLTO, no caso....
+    ` 
+         {
+      loginUser(
+        email: "${authData.email}" 
+        password: "${authData.password}"
+     ) {
+          token
+          userId
+        }
+    }
+    `
+  }
+
+  const loginResult = await fetch(
+    'http://localhost:8080/graphql',
+
+    {
+      body: JSON.stringify(graphqlQuery),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      ///EIS O CÓDIGO EM QUESTÃO.
+    }
+  );
+
+
+  const manipulatedLoginResult = await loginResult.json();
+
+
+
+  console.log(manipulatedLoginResult);
+
+        if (manipulatedLoginResult.errors && manipulatedLoginResult.errors[0].status) {
+          throw new Error('Validation failed. Please make sure that the email has not been used before, and that the inputted data is valid.');
+        }
+
+        if (manipulatedLoginResult.errors) {
+          throw new Error('Could not log you in!');
+        }
+
+
+        // const decryptedResult = await loginResult.json();
+        // return res.json();
+      // })
+      // .then((data) => {
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          // token: decryptedResult.token,
+          token: manipulatedLoginResult.data.token,
+          userId: manipulatedLoginResult.data._id,
+          authLoading: false,
+          // userId: decryptedResult.userId,
+        });
+        // localStorage.setItem('token', decryptedResult.token);
+        // localStorage.setItem('userId', decryptedResult.userId);
+        localStorage.setItem('token', manipulatedLoginResult.data.loginUser.token);
+        localStorage.setItem('userId', manipulatedLoginResult.data.loginUser._id);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      // })
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+      // .catch((err) => {
+
+      // });
+  };
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+
+
+
+
+
+
+OK.... --> MAS AÍ O PROFESSOR FALA DO 'SET DO STATE' 
+
+
+em 
+
+
+
+
+
+        this.setState({
+          isAuth: true,
+          token: manipulatedLoginResult.data.token,
+          userId: manipulatedLoginResult.data._id,
+          authLoading: false,
+        });
+
+
+
+
+
+
+
+
+
+--> ELE EXPLICA QUE A MANEIRA PELA QUAL FAZEMOS 'RETRIEVE'
+
+
+DA 
+
+DATA 
+
+NA RESPONSE __ JÁ NÃO VAI FUNCIONAR AQUI,
+
+
+de primeira... ----> BEM, MAS PQ 
+
+
+
+ISSO NÃO VAI FUNCIONAR? 
+
+
+(
+
+
+  isso no código dele, e não no meu... -----> ACHO QUE É PQ ELE não especificou 'manipulatedLoginResult.data.loginUser.token
+)
+
+
+
+
+
+
+
+
+
+-> ISSO SIGNIFICA QUE 
+
+
+'manipulatedLoginResult' 
+
+
+
+VAI SER UM OBJETÃO COM 
+
+
+
+
+data {
+  loginUser: {
+    token: xxxx,
+    userId: yyyy
+  }
+}
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loginHandler = async (event, authData) => {
+
+
+
+    try {
+
+    
+    event.preventDefault();
+    this.setState({ authLoading: true });
+  //  const loginResult = await fetch(
+  //     'http://localhost:8080/auth/login',
+
+  //     {
+  //       body: JSON.stringify({
+  //         email: authData.email,
+  //         password: authData.password,
+  //       }),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       method: 'POST',
+  //       ///EIS O CÓDIGO EM QUESTÃO.
+  //     }
+  //   );
+  const graphqlQuery = {
+        //sempre será esta estrutura..
+    query:  //quando tratamos de umA QUERY PURA, sem 'mutation' ou 'subscription', PODEMOS OMITIR AQUELE 'query' em 'query: `query {}` ' --> colocamos só o OBJETO SOLTO, no caso....
+    ` 
+         {
+      loginUser(
+        email: "${authData.email}" 
+        password: "${authData.password}"
+     ) {
+          token
+          userId
+        }
+    }
+    `
+  }
+
+  const loginResult = await fetch(
+    'http://localhost:8080/graphql',
+
+    {
+      body: JSON.stringify(graphqlQuery),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      ///EIS O CÓDIGO EM QUESTÃO.
+    }
+  );
+
+
+  const manipulatedLoginResult = await loginResult.json();
+
+
+
+  console.log(manipulatedLoginResult);
+
+        if (manipulatedLoginResult.errors && manipulatedLoginResult.errors[0].status) {
+          throw new Error('Validation failed. Please make sure that the email has not been used before, and that the inputted data is valid.');
+        }
+
+        if (manipulatedLoginResult.errors) {
+          throw new Error('Could not log you in!');
+        }
+
+
+        // const decryptedResult = await loginResult.json();
+        // return res.json();
+      // })
+      // .then((data) => {
+        console.log(loginResult);
+
+        this.setState({
+          isAuth: true,
+          // token: decryptedResult.token,
+          token: manipulatedLoginResult.data.loginUser.token,
+          userId: manipulatedLoginResult.data.loginUser._id,
+          authLoading: false,
+          // userId: decryptedResult.userId,
+        });
+        // localStorage.setItem('token', decryptedResult.token);
+        // localStorage.setItem('userId', decryptedResult.userId);
+        localStorage.setItem('token', manipulatedLoginResult.data.loginUser.token);
+        localStorage.setItem('userId', manipulatedLoginResult.data.loginUser._id);
+        const remainingMilliseconds = 60 * 60 * 1000; ///3600 segundos, 1 hora.
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        );
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        this.setAutoLogout(remainingMilliseconds);
+      // })
+    } catch(err) {
+      console.log(err);
+      this.setState({
+        isAuth: false,
+        authLoading: false,
+        error: err,
+      });
+    }
+      // .catch((err) => {
+
+      // });
+  };
+
+
+
+
+
+-------------
+
+
+COM ISSO, COM ESSE FRONTEND CODE TODO SALVO,
+
+
+
+VOLTAMOS AO NOSSO APP 
+
+E 
+
+TENTAMOS 
+
+O LOGIn... -> 
+
+
+
+
+
+
+
+
+
+O LOGIN VAI FUNCIONAR, E VAMOS CONSEGUIR ARMAZENAR A 'TOKEN' (jwt) e o 'userId' 
+
+
+
+no local storage do user,
+
+
+AUTENTICANDO-O...
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+------> O FETCH DE POSTS AINDA ESTÁ FALHANDO, PQ ESTAMOS TENTANDO FAZER FETCH 
+
+
+DE POSTS POR MEIO DE UMA REST API __ QUE _ NÃO EXISTE (a route não existe mais)...
+
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA PRECISAMOS ADICIONAR ALGUMAS ROUTES/ENDPOINTS__ PARA FAZER O __ GET E ADD DE POSTS....
+
+
+
+
+
+
+
+
+
+
+
+
+--> AÍ, ALÉM DISSO,
+
+
+VAMOS QUERER _ USAR AQUELA TOKEN QUE GETTAMOS AGORA 
+
+
+
+PARA __ FAZER O 'PROTECT' 
+
+
+
+DE __ ALGUNS ___ DE NOSSOS ENDPOINTS GRAPHQL...__ (mas nem todos)... (
+
+
+  vamos querer deixar o endpoint de 'login' DESPROTEGIDO,
+
+
+
+
+  pq ainda vamos querer que o user consiga 'login'..
+)

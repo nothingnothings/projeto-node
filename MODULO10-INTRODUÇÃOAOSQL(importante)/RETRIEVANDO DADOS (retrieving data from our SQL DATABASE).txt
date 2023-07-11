@@ -1,0 +1,857 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO, ESTAMOS EXECUTANDO UMA QUERY com 
+
+
+
+O CÓDIGO DE 
+
+
+'
+
+db.execute('SELECT * FROM products').then().catch();
+'
+
+
+,
+
+
+
+LÁ EM 
+
+
+'app.js'... -----------> 
+
+
+
+
+
+
+
+
+
+
+E ESSA QUERY ESTÁ 
+
+
+SENDO EXECUTADO 
+
+__SOBRE UMA POOL ESPECÍFICA (representada por 'db'),
+
+
+DENTRO 
+
+
+DAQUELA 
+
+
+TABLE 
+
+
+'products' 
+
+QUE RECÉM CRÍAMOS 
+
+
+
+naquele SCHEMA/DATABASE SERVER de 'node-complete-course'...
+
+
+
+
+
+
+
+
+
+-----> E AÍ, O PROFESSOR ADICIONOU 'then' e 'catch' 
+
+
+
+
+
+
+ELE NOS EXPLICA QUE 
+
+ESSAS SÃO FUNÇÕES 
+
+QUE 
+
+PODEMOS 
+
+'CHAIN' 
+
+
+
+
+AO RESULTADO 
+
+
+
+do call de 
+
+'execute'...
+
+
+
+
+
+
+
+
+
+
+----> E AÍ, DENTRO DISSO,
+
+PROVAVELMENTE TEREMOS AQUELE CÓDIGO CLÁSSICO....
+
+
+
+ex:
+
+
+.then
+(
+    (products) => {
+            console.log(products);
+    }
+)
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
+
+
+PROMISE --> É UM OBJETO 
+
+JAVASCRIPT BÁSICO,
+
+
+
+que 
+
+
+
+é disponível no javascript BROWSER E SERVERSIDE...   
+
+
+
+
+
+
+
+
+--> PROMISES TE DEIXAM 
+
+
+
+TRABALHAR COM ASYNC CODE... ---> EM VEZ DE USAR 
+
+CALLBACKS (que podemos/podíamos usar COM A PACKAGE 'mysql2' tbm...),
+
+
+
+
+AS PROMISES 
+
+
+
+__NOS DEIXAM __ ESCREVER CÓDIGO __ ASSÍNCRONO DE MANEIRA UM POUCO MAIS ESTRUTURADA... --> 
+
+
+ISSO PQ 
+
+
+
+EM VEZ 
+
+
+DE 
+
+TERMOS UMA 
+
+
+
+
+'NESTED ANONYMOUS FUNCTION'
+
+
+horrorosa 
+
+
+
+dentro 
+
+
+
+do código de 'execute', como segundo argumento, 
+
+tipo assim:
+
+
+
+
+
+
+''''db.execute('SELECT * FROM products', () => {}).then().catch(); '''''''''',
+
+
+
+
+
+
+
+
+AS PROMISES 
+
+NOS DEIXAM 
+
+
+
+
+SIMPLESMENTE ESCREVER 'THEN BLOCKS',
+
+os quais
+
+
+
+ENTÃO 
+
+
+FAZEM 
+
+'GET' 
+
+
+da FUNÇÃO ANÔNIMA,
+
+para então 
+
+A 
+
+EXECUTAR...
+
+
+
+
+
+
+
+
+tipo isso aqui, msm:
+
+
+
+
+.then
+(
+    (products) => {
+            console.log(products);
+    }
+) 
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> A VANTAGEM É QUE PODEMOS ESCREVER ESSE CÓDIGO ASSIM:
+
+
+
+
+.then
+(
+    (products) => {
+            console.log(products);
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+),
+
+
+
+
+
+
+
+O QUE NOS 
+
+DEIXA 
+
+
+
+TER CÓDIGO BEM MAIS LEGÍVEL,
+
+
+bem melhor do que ter nested code 
+
+
+nas nossas functions....
+
+
+
+
+
+
+------->  __ PQ É CLARO QUE 
+
+
+ESSE APPROACH 
+
+DE TER 
+
+'NESTED ANONYMOUS FUNCTIONS'
+
+
+FICA 
+
+
+cada vez __PIOR__ quando temos 
+
+MAIS E MAIS 
+
+ASYNCHRONOUS TASKS
+
+
+DEPENDENTES 1 DAS OUTRAS...
+
+
+
+
+
+
+
+
+
+
+--> CERTO... E NÓS TAMBÉM TEMOS 'CATCH',,
+
+
+
+
+
+
+E O CATCH TAMBÉM TEM UMA 
+
+
+FUNÇÃO QUE É EXECUTADA,
+
+EXECUTADA EM CASOS DE  __ERRO__....
+
+
+
+
+
+PROFESSOR ESCREVE ISTO:
+
+
+
+
+
+
+
+
+
+
+.then
+(
+    (products) => {
+            console.log(products);
+    }
+)
+.catch(
+    (err) => {
+        console.log(err);
+    }
+),
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+OK... MAS ISSO AÍ FUI EU QUE ESCREVI.. --> 
+
+
+
+e aqui talvez eu 
+
+tenha feito uma cagada... --> eu NÃO SEI 
+
+
+O 
+
+
+
+DATATYPE 
+
+DESSES 
+
+DADOS QUE VOU RETRIEVAR 
+
+DA 
+
+DATABASE... ---> eles podem ser JSON,
+
+
+se forem json,
+
+preciso 
+
+ADICIONAR THEN BLOCKS ADICIONAIS PARA PARSEAR 
+
+
+
+ESSE RESULT POR MEIO DE 
+
+'JSON.parse(products)'...
+
+
+
+
+
+
+
+
+PROFESSOR SALVA TUDO ISSO E TESTA....
+
+
+
+
+
+
+
+
+
+
+
+--> CONSEGUI UM ERRO:
+
+
+
+  code: 'ER_BAD_DB_ERROR',
+
+
+
+
+
+
+
+  Error: Unknown database 'nodejs-complete-course'
+
+
+
+
+
+
+
+  --> sim, pq eu coloquei 
+
+  'nodejs-complete-course',
+
+  QUANDO DEVIA 
+
+  ESTAR 
+
+
+  'node-complete-course'....
+
+
+
+
+
+
+
+
+  --> CERTO... AGORA FUNCIONOU.
+
+
+  MEU OUTPUT FOI ESTE:
+
+
+
+
+
+
+
+  [
+  [
+    BinaryRow {
+      id: 1,
+      title: 'book',
+      price: 215125,
+      description: 'A BOOK',
+      imageUrl: 'asjasojasaso'
+    }
+  ],
+  [
+    ColumnDefinition {
+      _buf: <Buffer 01 00 00 01 05 3e 00 00 02 03 64 65 66 14 6e 6f 64 65 2d 63 6f 6d 70 6c 65 74 65 2d 63 6f 75 72 
+73 65 08 70 72 6f 64 75 63 74 73 08 70 72 6f 64 75 63 ... 388 more bytes>,
+      _clientEncoding: 'utf8',
+      _catalogLength: 3,
+      _catalogStart: 10,
+      _schemaLength: 20,
+      _schemaStart: 14,
+      _tableLength: 8,
+      _tableStart: 35,
+      _orgTableLength: 8,
+      _orgTableStart: 44,
+      _orgNameLength: 2,
+      _orgNameStart: 56,
+      characterSet: 63,
+      encoding: 'binary',
+      name: 'id',
+      columnLength: 10,
+      columnType: 3,
+      flags: 16935,
+      decimals: 0
+    },
+    ColumnDefinition {
+      _buf: <Buffer 01 00 00 01 05 3e 00 00 02 03 64 65 66 14 6e 6f 64 65 2d 63 6f 6d 70 6c 65 74 65 2d 63 6f 75 72 
+73 65 08 70 72 6f 64 75 63 74 73 08 70 72 6f 64 75 63 ... 388 more bytes>,
+      _clientEncoding: 'utf8',
+      _catalogLength: 3,
+      _catalogStart: 76,
+      _schemaLength: 20,
+      _schemaStart: 80,
+      _tableLength: 8,
+      _tableStart: 101,
+      _orgTableLength: 8,
+      _orgTableStart: 110,
+      _orgNameLength: 5,
+      _orgNameStart: 125,
+      characterSet: 224,
+      encoding: 'utf8',
+      name: 'title',
+      columnLength: 1020,
+      columnType: 253,
+      flags: 4097,
+      decimals: 0
+    },
+    ColumnDefinition {
+      _buf: <Buffer 01 00 00 01 05 3e 00 00 02 03 64 65 66 14 6e 6f 64 65 2d 63 6f 6d 70 6c 65 74 65 2d 63 6f 75 72 
+73 65 08 70 72 6f 64 75 63 74 73 08 70 72 6f 64 75 63 ... 388 more bytes>,
+      _clientEncoding: 'utf8',
+      _catalogLength: 3,
+      _catalogStart: 148,
+      _schemaLength: 20,
+      _schemaStart: 152,
+      _tableLength: 8,
+      _tableStart: 173,
+      _orgTableLength: 8,
+      _orgTableStart: 182,
+      _orgNameLength: 5,
+      _orgNameStart: 197,
+      characterSet: 63,
+      encoding: 'binary',
+      name: 'price',
+      columnLength: 22,
+      columnType: 5,
+      flags: 4097,
+      decimals: 31
+    },
+    ColumnDefinition {
+      _buf: <Buffer 01 00 00 01 05 3e 00 00 02 03 64 65 66 14 6e 6f 64 65 2d 63 6f 6d 70 6c 65 74 65 2d 63 6f 75 72 
+73 65 08 70 72 6f 64 75 63 74 73 08 70 72 6f 64 75 63 ... 388 more bytes>,
+      _clientEncoding: 'utf8',
+      _catalogLength: 3,
+      _catalogStart: 220,
+      _schemaLength: 20,
+      _schemaStart: 224,
+      _tableLength: 8,
+      _tableStart: 245,
+      _orgTableLength: 8,
+      _orgTableStart: 254,
+      _orgNameLength: 11,
+      _orgNameStart: 275,
+      characterSet: 224,
+      encoding: 'utf8',
+      name: 'description',
+      columnLength: 262140,
+      columnType: 252,
+      flags: 4113,
+      decimals: 0
+    },
+    ColumnDefinition {
+      _buf: <Buffer 01 00 00 01 05 3e 00 00 02 03 64 65 66 14 6e 6f 64 65 2d 63 6f 6d 70 6c 65 74 65 2d 63 6f 75 72 
+73 65 08 70 72 6f 64 75 63 74 73 08 70 72 6f 64 75 63 ... 388 more bytes>,
+      _clientEncoding: 'utf8',
+      _catalogLength: 3,
+      _catalogStart: 304,
+      _schemaLength: 20,
+      _schemaStart: 308,
+      _tableLength: 8,
+      _tableStart: 329,
+      _orgTableLength: 8,
+      _orgTableStart: 338,
+      _orgNameLength: 8,
+      _orgNameStart: 356,
+      characterSet: 224,
+      encoding: 'utf8',
+      name: 'imageUrl',
+      columnLength: 1020,
+      columnType: 253,
+      flags: 4097,
+      decimals: 0
+    }
+  ]
+]
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+OU SEJA,
+
+ESSES DADOS PRECISAM SER PARSEADOS, DE ALGUMA MANEIRA,
+PARA SEREM UTILIZÁVEIS...
+
+
+
+
+CLARO QUE 
+
+'JSON.parse()'
+
+
+NÃO DÁ CONTA DO RECADO,
+
+
+POIS ISSO AÍ NÃO É JSON DATA...
+
+
+
+
+ 
+
+------->
+
+
+
+
+ACHEI ESTRANHO ISSO; 
+
+'BinaryRow'..
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE A DATA PROPRIAMENTE DITA QUE NÓS 'GET BACK' AQUI 
+
+
+
+____ POSSUI UM FORMATO DE UM 
+
+
+__ARRAY__ COM UM NESTED ARRAY...
+
+
+
+ex:
+
+
+[
+  [
+      BinaryRow {
+          id:1, 
+          xxxx
+      }
+
+
+  ],
+
+
+  ....
+]
+
+
+
+
+
+
+
+E O PRIMEIRO 'NESTED ARRAY' 
+
+PARECE 
+
+
+
+
+__MOSTRAR NOSSA DATA,
+
+
+O ___ROW/RECORD 
+
+DAQUELE ÚNICO PRODUCT 'book' 
+
+que 
+
+armazenamos antes...
+
+
+
+
+
+
+
+
+--> JÁ O SEGUNDO ARRAY É __ UMA METADATA__ sobre 
+
+
+A TABLE 
+
+
+
+
+DE QUE FETCHEAMOS ESSA DATA...
+
+
+
+
+
+
+
+
+---> OK, RESULT É 
+
+
+UM ARRAY COM 2 NESTED ELEMENTS,
+
+2 NESTED ARRAYS.... --> é por isso que 
+
+podemos 
+
+
+simplesmente escrever 
+
+
+
+
+'result => {
+
+    console.log(result[0]);
+}
+
+
+
+
+
+
+
+PARA PEGAR NOSSA DATA PERTINENTE....
+
+
+
+
+
+
+
+OK... RECEBEMOS ISTO:
+
+
+[
+  BinaryRow {
+    id: 1,
+    title: 'book',
+    price: 215125,
+    description: 'A BOOK',  
+    imageUrl: 'asjasojasaso'
+  }
+]
+
+
+
+
+
+
+
+
+------> E PROFESSOR DIZ QUE 
+
+
+COM ISSO PODEMOS TRABALHAR...
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE É CLARO QUE NÃO QUEREMOS TRABALHAR COM APENAS DUMMY DATA,
+
+mas 
+
+que 
+
+agora 
+
+DEVEMOS 
+
+
+APENAS 
+
+VER COMO PODEMOS AJUSTAR 
+
+NOSSOS MODELS PARA TRABALHAR COM ESSA DATABASE SQL DE VERDADE... (em vez de LOCAL FILES)...
+
+
+
+
+
+-----------
+
+
+
+
+

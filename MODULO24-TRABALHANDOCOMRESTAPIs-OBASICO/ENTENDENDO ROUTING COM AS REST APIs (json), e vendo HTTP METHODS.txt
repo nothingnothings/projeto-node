@@ -1,0 +1,955 @@
+ 
+
+
+
+
+
+
+
+ AGORA QUE APRENDEMOS QUAL É A 'CORE IDEA' 
+
+
+ POR TRÁS DE 
+
+
+
+ REST APIs,
+
+
+
+
+
+
+
+ AGORA QUE SABEMOS QUE 
+
+ '
+ TRANSFER DATA' 
+
+ É 
+
+
+
+
+ A COISA MAIS IMPORTANTE EM REST APIs,
+  
+
+  E QUE 
+
+
+
+  'THE DATA IS KING IN REST APIs',
+
+
+
+
+  DEVEMOS 
+
+
+  DAR UMA OLHADA 
+
+
+  NO 
+
+  'ROUTING'....
+
+
+
+
+
+
+----> OK, __ COMO É FEITA A COMUNICAÇÃO ENTRE 
+
+'CLIENT'
+
+E 
+
+'SERVER'?
+
+
+
+
+
+
+
+
+
+--> BEM, NÓS TEMOS OS 2:
+
+
+
+
+
+
+
+
+
+CLIENT    <-------------------------->      SERVER   (SERVERSIDE LOGIC, DATABASE ACCESS, ETC..)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> A PRIMEIRA COISA QUE FAZEMOS É 'SEND A REQUEST', do client para o server....
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO FAZEMOS ISSO?
+
+
+
+
+
+
+
+
+
+--> BEM, 'IN A TRADITIONAL WEBAPP',
+
+
+como o que CONSTRUÍMOS ATÉ AGORA,
+
+
+
+
+
+NÓS ___ FAZÍAMOS TUDO ISSO POR MEIO 
+
+
+
+DE COISAS COMO 
+
+
+
+
+'ADDING A LINK ON OUR HTML PAGE', por exemplo...
+
+
+
+
+
+
+
+
+
+--> OU ENTÃO TÍNHAMOS UMA __ FORM___, COM UM BUTTON, 
+
+E AÍ NESSA FORM 
+
+DEFINÍAMOS/DEFINIMOS 'THE ACTION, AND THE METHOD'...
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+---> BEM, ISSO NÃO MUDA TANTO ASSIM EM REST APIs... --> 
+
+
+
+
+
+
+
+NÓS ___AINDA __ VAMOS ENVIAR O 'REQUEST',
+
+
+
+
+E O SEU SEND DO REQUEST 
+
+AINDA É UMA COMBINAÇÃO 
+
+DE 
+
+UM 
+
+'HTTP METHOD' (post, put, patch, delete, etC)  ___ COM __ UM 
+
+
+
+PATH __ NO SERVER.... 
+
+(
+
+como 
+
+'/checkout'...
+
+
+)
+
+
+
+
+
+
+
+---------> ISSO SIGNIFICA QUE _ TUDO AQUILO QUE DEFINIMOS ATÉ AGORA __ AINDA 
+
+
+VAI 
+
+
+SER 
+
+USADO  + OU - DA MESMA FORMA...
+
+
+
+
+
+
+
+
+------> NÓS AINDA DEFINIMOS 'PATHS' 
+
+
+NO SERVERSIDE ROUTING,
+
+
+
+EM QUE 
+
+NÓS 
+
+FAZEMOS 
+
+'WAIT FOR INCOMING REQUESTS',
+
+
+ 
+
+
+
+
+ E __ NÓS _ TAMBÉM __ AINDA DEFINIMOS 
+
+
+ 'CERTAIN HTTP METHODS' que 
+
+ vamos qeurer 
+
+
+ HANDLAR PARA ESSES PATHS....  ------> FAZEMOS ISSO PARA QUE 
+
+
+
+ 'NEM TODOS OS REQUESTS POSSAM ATINGIR NOSSOS PATHS' (exatametne como fizemos até agora)...
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> ESSES REQUESTS __ SERIAM__ ENVIADOS __ DO CLIENT,
+
+
+
+ __ POR MEIO DE 'ASYNCHRONOUS JAVASCRIPT' (ou seja,
+ 
+ 
+ 
+ COM 
+ 
+ 
+ A 
+ 
+
+ FETCH API,
+  
+  por exemplo.... (ou com AJAX )
+ )
+
+
+
+
+
+
+
+
+
+ ---> E COM MOBILE APPS e assim por diante,
+
+
+ TAMBÉM TEMOS CLIENTS...
+
+
+
+
+
+
+
+ ---------> A COISA 'CORE' AQUI 
+
+
+ É 
+
+ QUE 
+
+
+ NÓS, NO FINAL DAS CONTAS,
+
+
+ ___AINDA __ ACABAMOS 
+
+
+ 'SENDING NORMAL REQUESTS'...
+
+
+
+
+
+
+
+ ---> ENVIAMOS 'NORMAL REQUESTS',
+
+ A ÚNICA DIFERNEÇA 
+
+
+
+
+ É QUE 
+
+
+ 'THEY JUST DONT EXPECT ANY HTML RESPONSE'... -----> E A OUTRA DIFERENÇA 
+
+
+ É QUE 
+ ELES 
+
+
+
+ FREQUENTEMENTE 
+
+ ENVIARÃO 
+
+
+ __DADOS__ JSON _ embutidos __ no request... 
+
+
+
+
+
+
+
+
+
+
+ --> ok....
+
+
+
+ enviamos:
+
+
+
+
+
+
+ 1) UMA COMBINAÇÃO DE 'HTTP METHOD' e 'PATH' 
+
+
+
+
+ 2) JSON DATA, no BODY DO REQUEST...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> E É ASSIM QUE 
+ NÓS 
+
+
+
+ 'COMMUNICATE WITH THE SERVER'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ------> BEM, E DO OUTRO LADO, NO LADO DO 'REST WORLD'/'API WORLD',
+
+
+
+
+
+
+NÓS GOSTAMOS DE CHAMAR COISAS COMO 
+
+
+
+
+'POST /checkout' 
+
+
+
+'GET /orders' 
+
+
+
+'PATCH /options'
+
+
+
+'GET /posts/postId'
+
+
+
+
+___ DE __ 
+
+
+'API ENDPOINTS'...
+
+
+
+
+
+
+
+
+
+
+
+
+------> ISSO SIGNIFICA QUE QUANDO NÓS ESCUTARMOS O PROFESSOR FALANDO 'API ENDPOINT',
+
+
+DEVEMOS 
+
+NOS LEMBRAR DOS ARQUIVOS 
+
+'route',
+
+
+
+E DE CÓDIGOS 
+
+
+como 
+
+
+
+'GET /posts',
+
+
+
+
+
+
+
+DE UMA COMBINAÇAÕ DE UM 'HTTP METHOD' e seu RESPECTIVO 'PATH'....
+
+
+
+
+
+
+
+
+
+-------> ESSES SÃO OS ___ENDPOINTS_  QUE __ NÓS DEFINIMOS _ NA NOSSA REST API....
+
+
+
+
+
+
+---> E AÍ,
+
+
+O QUE FAREMOS É __ CONSTRUIR UMA LÓGICA __ QUE 
+
+
+
+DEVE SER EXECUTADA NO SERVER,
+
+QUANDO 
+
+
+1 
+
+REQUEST 
+
+
+ATINGIR 
+
+UMA DESSES ENDPOINTS...
+
+
+
+
+
+
+
+
+
+
+
+--------> OK.... -----> FALANDO DE HTTP METHODS,
+
+
+
+
+
+
+PROFESSOR RESSALTA QUE EXISTEM MAIS DO QUE APENAS 'GET' E 'POST'.......
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ELE HAVIA MENCIONADO ANTES,
+
+
+MAS 
+
+
+QUANDO 
+
+NÓS 
+
+
+
+TRABALHAMOS __ SÓ COM _ O BROWSER (e não 
+
+
+com o JAVASCRIPT NO BROWSER, E SIM 
+
+
+__ APENAS COM 'FORMS' E 'LINKS', COISAS __ TÍPICAS DO BROWSER),
+
+
+
+NÓS FICAMOS APENAS COM __ 'GET' E 'POST',
+
+
+
+
+OS ÚNICOS METHODS QUE O 
+
+
+BROWSER 
+
+
+CONHECE NATIVAMENTE... (são OS ÚNICOS METHODS CONHECIDOS PELOS ELEMENTOS HTML DO BROWSER...)
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS QUANDO USAMOS ASYNC REQUESTS (por meio de javascript ou MOBILE APPS E SEUS RESPECTIVOS HTTP CLIENTS),
+
+
+
+NÓS ___ TEMOS __ ACESSO ___ A __ MAIS __ HTTP METHODS... -----> 
+
+
+
+
+
+E NÓS 
+
+JÁ VIMOS ALGUNS DELES...
+
+
+
+
+
+
+
+
+CLÁSSICOS:
+
+
+
+
+
+'GET' --> GET A RESOURCE FROM THE SERVER....
+
+
+
+
+
+
+
+
+
+
+'POST' --> POST A RESOURCE TO THE SERVER (''create or append resource to the server'')....
+
+
+
+
+
+
+
+
+
+
+
+---> ALÉM DESSES 2 METHODS, QUE USAMOS MT AO LONGO DO CURSO,
+
+
+
+TIVEMOS 
+
+ACESSO A:
+
+
+
+
+
+
+
+
+1) PUT -----> USAMOS SE 
+
+
+' WE NEED TO PUT A RESOURCE ON THE SERVER (create or overwrite an existing resource)'..
+
+
+
+
+
+
+
+
+
+POST VS PUT ----> POST NUNCA DEVE 'OVERWRITE'.... --> já PUT ___ PODE__ OVERWRITE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2) PATCH --> USADO PARA 'UPDATE ___PARTS__ OF AN EXISTING RESOURCE'...
+
+      (ou seja,
+      
+      
+      NÃO É OVERWRITADO O RESOURCE INTEIRO, E SIM SO´UMA __ PARTE __ DELE....)
+
+
+
+
+
+
+
+
+
+3) DELETE --> NOS DEIXA 'DELETE A RESOURCE ON THE SERVER'...
+
+
+
+
+
+
+
+
+
+
+
+4) OPTIONS ---> É UM METHOD ESPECIAL,
+
+
+QUE USAREMOS NESSE MÓDULO...
+
+
+(
+
+
+'OPTIONS' --> 'DETERMINE WHETHER FOLLOW-UP REQUEST IS ALLOWED'
+
+
+
+)
+
+
+
+
+--> Os requests de tipo 'OPTIONS' SÃO ENVIADOS AUTOMATICAMENTE... --> 
+
+
+
+PROFESSOR DIZ QUE 
+
+ELE 
+
+É ENVIADO AUTOMATICAMENTE pelo browser... ------> O BROWSER VAI ENVIAR AUTOMATICAMENTE
+
+PARA 
+
+DETERMINAR 
+
+
+SE O PRÓXIMO REQUEST QUE ELE VAI TENTAR ENVIAR É VÁLIDO OU NÃO... (é enviado antecipadamente..)
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, ESSES SÃO OS METHODS 
+
+
+QUE USAREMOS QUANDO 
+
+
+
+TRABALHARMOS COM REST APIS...
+
+
+
+
+
+
+
+
+PRINCIPALMENTE GET, POST, PUT, PATCH E DELETE...
+
+
+
+
+
+
+
+
+--> O 'OPTIONS' NÃO É TÃO IMPORTNATE....
+
+
+
+
+
+
+
+
+
+
+
+
+--> EM TEORIA, VOCê PODE FAZER __ QUALQUER _ COISA QUANDO 
+
+1 
+
+REQUEST 
+
+
+COM UM CERTO METHOD 
+
+
+
+ATINGE 1 CERTO PATH...
+
+
+
+
+
+
+
+
+
+
+
+
+---> ISSO SIGNIFICA QUE 
+
+PARA O 'REST WORLD',
+
+
+NÓS DEVEOMS USAR 
+
+
+
+1 
+
+'POST REQUEST' 
+
+para 
+
+APPEND/CREATE A RESOURCE ON THE SERVER...
+
+
+
+
+
+
+
+
+--> E NINGUÉM  ESTÁ TE IMPEDINDO 
+
+
+
+DE DELETAR ALGO POR MEIO DE UM 
+
+
+
+VERB DE 
+
+'POST'....
+
+
+
+
+
+
+
+
+
+---> O QUE ACONTECE NO SEU CÓDIGO NÃO É RESTRITO PELO METHOD 
+
+QUE 
+
+FOI USADO  PARA EXECUTAR ESSE CÓDIGO..
+
+
+
+
+
+
+
+
+
+--> CONTUDO, VOCÊ PODE __FAZER ESSA RESTRIÇÃO POR CONTA PRÓPRIA, POR SUA 
+
+PRÓPRIA 
+VONTADE... --> e vocÊ vai querr 
+
+
+
+
+IMPLEMENTAR UMA REST API QUE 
+
+
+
+SEGUE 
+
+ESSAS IDEIAS,
+
+
+MAS  
+VOCÊ NÃO É OBRIGADO A FAZÊ-LO (apeasr de ser uma BEST PRACTICE.....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É BOM ESCREVER ASSIM PQ __ AÍ QUALQUER UM QUE UTILIZAR SUA REST API __ VAI SABER O QUE 
+
+ESPERAR,
+
+
+
+
+VAI 
+
+
+TER EXPECTATIVAS CORRETAS DAQUILO QUE VAI ACONTECER 
+
+
+NO SEU SERVER...
+
+
+
+
+
+
+
+
+--> OK, ESSES SÃO OS METHODS HTTP....

@@ -1,0 +1,328 @@
+
+
+TERMINAMOS ESTE MÓDULO....
+
+
+
+
+
+APRENDEMOS 
+
+
+
+SOBRE COMO 'TRANSFERIR NOSSO APP CLÁSSICO NODEEXPRESS PARA UMA VERSÃO RESTFUL',
+
+
+essencialmente...
+
+
+
+
+
+
+
+
+
+
+
+
+---------->  APRENDEMOS QUE QUANDO VOCÊ SAI DE UM APLICATIVO CLÁSSICO (render de views, no backend) PARA 
+
+
+1
+ 
+
+ APLICATIVO REST API,
+
+
+
+
+ APRENDEMOS 
+
+ QUE:
+
+
+
+
+
+ 1) A MAIOR PARTE DO CÓDIGO SERVERSIDE _ NÃO MUDA... --> A ÚNICA COISA QUE 
+
+ MUDA É 
+
+ A 
+
+ RELAÇÃO 'request-response' de seus dados (que precisam ser JSON)...
+
+
+
+
+
+
+
+ 2) COM REST APIs, 
+
+
+ desbloqueamos MAIS HTTP VERBS/METHODS... 
+
+
+PUT, PATCH, DELETE, OPTIONS, ETC ETC....
+
+
+(usamos esses negócios para construir nossos api endpoints)..
+
+
+
+
+
+
+
+
+
+
+
+
+
+3) O TAKEAWAY MAIS IMPORTANTE !!! --> O SERVER 'REST API '
+
+
+
+__ NÃO SE IMPORTA___ COM O CLIENT, ELE 
+
+NÃO FAZ 
+
+ARMAZENAMENTO DE SESSIONS EM UMA DATABASe, e 
+
+não retorna 'session cookies' ao user....
+
+
+
+
+
+(
+
+
+    THE REST API SERVER DOES NOT CARE ABOUT THE CLIENT,
+
+    REQUESTS ARE HANDLED IN ISOLATION --> NO SESSIONS...
+)
+
+
+
+
+
+--> AINDA ASSIM, OS REQUESTS SÃO 
+
+
+TRATADOS 'IN ISOLATION',
+
+são tratados 
+
+COMO 
+
+
+SE CHEGASSEM NO NOSSO SERVER 
+
+PELA PRIMEIRA VEZ (por meio de TOKENS nos nossos requests)...
+
+
+
+
+
+
+
+
+--> tokens são armazenadas no LOCALSTORAGE 
+
+
+do browser....
+
+
+
+
+
+
+
+
+
+------> AÍ 
+
+
+
+VEMOS A 'AUTHENTICATION'... --> AUTHENTICATION EM REST APIs é BEM DIFERENTE 
+
+
+DA AUTH 
+
+
+EM 
+
+
+APPS CLÁSSICOS NODEJS...
+
+
+
+
+
+
+
+
+1) DEVIDO AO FATO DE QUE NENHUMA SESSION É UTILIZADA,
+
+A AUTHENTICATION NOS REST APIs __ FUNCIONA DE FORMA DIFERENTE... 
+
+
+
+
+
+
+2) A DIFERENÇA NO TRATAMENTO DOS REQUESTS_ _ 
+
+FAZ COM QUE _ TENHAMOS __ 
+
+DE ENVIAR 
+
+NOS REQUESTS 
+
+'SOME PIECE OF DATA THAT PROVES THAT THE REQUEST IS AUTHENTICATEd'...
+
+
+(
+
+    ESSA PIECE OF DATA É __ O 'JSON WEB TOKEN',
+
+    O QUAL GERAMOS E COM QUE TRABALHAMOS, NESSE MÓDULO.... --> 
+
+
+    O JWT (json web token) É UMA MANEIRA COMUM 
+
+    DE 
+
+    FAZER 
+
+    'STORE' 
+
+    DE 
+
+UMA 'AUTHENTICATION INFORMATION'....... -------> A TOKEN É UMA PIECE OF DATA 
+
+QUE 
+
+VOCÊ 
+
+
+
+ENVIA AO CLIENT (gera no backend, e envia ao client)... ---> ESSA TOKEN É ENTÃO 
+
+ANEXADA 
+
+
+A 
+
+TODO 
+
+
+'OUTGOING REQUEST' feito por seu user...  (desde que você code essa token nos seus requests...),
+
+
+
+TODO OUTGOING REQUEST A UM 'PROTECTED RESOURCE'...
+
+
+ 
+
+)
+
+
+
+
+
+3) JSON WEB TOKENS SÃO 'SIGNED BY THE SERVER',
+
+
+E __SÓ O SERVER__ PODE OS VALIDAR,
+
+USANDO 
+
+UMA 'PRIVATE KEY'...
+
+
+
+
+
+4) 'JSON WEB TOKENS ARE A COMMON WAY OF STORING AUTHENTICATION INFORMATION ON THE 
+CLIENT AND PROVING AUTHENTICATION STATUS'....
+
+
+
+
+
+5) VOCÊ NÃO PODE FAKAR/MANIPULAR TOKENS NO CLIENT, ISSO É IMPOSSÍVEL...
+
+
+
+
+
+
+
+
+6) JWTs ARE SIGNED BY THE SERVER, AND CAN ONLY BE VALIDATED BY THE SERVER..
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+
+
+OK.. ERA ISSO, NESSE MÓDULO... --> DEMOS UMA BOA OLHADA NA MATÉRIA 
+DE 
+
+
+'COMO BUILD REST APIs',
+
+
+
+E E´UMA 
+
+
+
+FORMA COMUM 
+
+DE 
+
+APLICATIVO NODEJS, 
+
+
+
+QUE VOCÊ PRECISA EM MUITAS HIPÓTESES...
+
+
+
+
+
+
+
+
+
+--> AGORA VOCÊ JÁ TEM UM TOOLSET QUE TE 
+
+DEIXA 
+
+'BUILD EXTREMELY VERSATILE AND POWERFUL NODE APPLICATIONS'...
+
+
+
+
+
+
+
+
+
+
+------> AINDA NÃO ACABAMOS COM O CURSO, NO ENTANTO..

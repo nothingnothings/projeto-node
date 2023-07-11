@@ -1,0 +1,2207 @@
+
+
+
+
+
+
+
+
+
+
+
+
+-------> AGORA DEVEMOS USAR TODA AQUELA INFO QUE OBTEMOS 
+
+
+em 
+
+'getProducts'/getAdminProducts 
+
+
+
+
+para 
+
+
+
+CONSEGUIR OUTPUTTAR UMA VIEW ENCORPADA,
+
+COM UM MONTE DE 
+
+LINKS que ajudam a navegar com a PAGINATION...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+     res.render('shop/product-list', {
+       prods: products,
+       pageTitle: 'Shop',
+       path: '/products',
+       productCSS: true,
+       activeShop: true,
+       hasProducts: products.length > 0,
+       totalPages: totalItems, ////eis o código em questão.
+       hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+       hasPreviousPage: +pageNumber > 1,
+       nextPageNumber: +pageNumber + 1,
+       previousPageNumber: pageNumber - 1,
+       lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE) ///vai nos outputtar a MAIOR PAGE POSSÍVEL de nosso app, dada a quantidade atual de 'products/documents'...
+     });
+   })
+
+
+
+
+
+
+
+
+
+
+
+
+MINHA VIEW, ATÉ AGORA, ESTÁ MEIO GOZADA, ESTÁ ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+     res.render('shop/product-list', {
+       prods: products,
+       pageTitle: 'Shop',
+       path: '/products',
+       productCSS: true,
+       activeShop: true,
+       hasProducts: products.length > 0,
+       totalPages: totalItems, ////eis o código em questão.
+       hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+       hasPreviousPage: +pageNumber > 1,
+       nextPageNumber: +pageNumber + 1,
+       previousPageNumber: pageNumber - 1,
+       lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE) ///vai nos outputtar a MAIOR PAGE POSSÍVEL de nosso app, dada a quantidade atual de 'products/documents'...
+       // isLoggedIn: req.session.isLoggedIn
+       // isLoggedIn: isLoggedIn
+     });
+   })
+
+
+
+
+
+
+
+
+
+
+
+
+   -------------------------------------
+
+
+
+
+
+TEMOS TODAS ESSAS UTILITY INFORMATION/ UTILITY VARIABLES,
+
+como 
+
+'totalProducts'...
+
+
+
+
+
+
+
+-> VOLTAMOS AO view de 
+
+'product-list.ejs':
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+    <section class="pagination">
+            <% if (hasPreviousPage) { %>
+        <a href="/products/?page=<%= previousPageNumber %>"><</a>
+            <% } %>
+            
+            <% if (hasNextPage) { %>
+          <a href="/products/?page=<%= nextPageNumber %>">></a>
+          <% } %>
+
+
+        </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA UQE AGORA PODEMOS GERAR 
+
+
+
+
+ESSA 
+
+
+LISTA DE LINKS EM 'pagination' 
+
+
+DINAMICAMENTE..
+
+
+
+
+
+
+
+
+-----> BEM, NÓS SEMPRE VAMOS QUERER TER 
+
+A 
+
+'PAGE 1'...
+
+
+
+
+
+-> AO LADO DA 'PAGE 1',
+
+
+SEMPRE VAMOS QUERER TER 
+
+
+A 
+
+'CURRENT PAGE'... (é algo padrão)...
+
+
+
+
+
+
+
+
+
+| 1 |  |Previous Page|   | Current Page |   | Next Page |  | Last Page |
+
+
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA, SÃO 5 BUTTONS QUE VAMOS QUERER CODAR....
+
+
+
+
+
+
+
+
+
+--> É POR ISSO QUE O botão de '1' (first page) 
+
+
+SERÁ HARDCODADO... (ou MEIO hardcodado...)
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ENTÃO DECIDE TROCAR 'totalProducts'
+
+
+POR 'currentPage',
+
+
+POIS ESSA É UMA INFO BEM MAIS ÚTIL...
+
+
+
+
+
+
+
+
+--> E É ÓBVIO QUE 'currentPage' SERÁ SIMPLESMENTE REPRESENTADO POR 
+
+'pageNumber',
+
+QUE É 
+
+'req.query.page'... (extraído da url)...
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const pageNumber = req.query.page;
+
+
+
+     res.render('shop/product-list', {
+       prods: products,
+       pageTitle: 'Shop',
+       path: '/products',
+       productCSS: true,
+       activeShop: true,
+       hasProducts: products.length > 0,
+       currentPage = pageNumber;
+       hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+       hasPreviousPage: +pageNumber > 1,
+       nextPageNumber: +pageNumber + 1,
+       previousPageNumber: pageNumber - 1,
+       lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE) ///vai nos outputtar a MAIOR PAGE POSSÍVEL de nosso app, dada a quantidade atual de 'products/documents'...
+
+     });
+   })
+
+
+-------------------------
+
+
+
+
+
+
+--> VAMOS QUERER O 'PAGE NUMBER'
+
+PARA QUE __ SEMPRE SAIBAMOS__ EM QUE PAGE ESTAMOS NO MOMENTO...  (so that we ALWAYS KNOW WHATS THE CURRENTLY ACTIVE PAGE...)
+
+
+
+
+
+
+
+
+
+--->  provavelmente usaremos 'currentPage' 
+
+em um CHECK PARA 
+
+ALTERAR O 
+
+STYLE 
+
+
+DA 
+
+
+'FIRST PAGE'
+
+E 
+DA 
+
+
+'LAST PAGE'
+
+também... (se 'currentPage = 1', vamos querer que O BOTÃO DE 'CURRENT PAGE' SUMA, E QUE O BUTTON DE '1' FIQUE DESATIVADO/DISABLED...)
+
+
+
+
+E SE 'currentPage = lastPage', VAMOS QUERER A MESMA COISA, MAS COM O BOTÃO DE 'lastPage'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> COLOQUEI ALGO TIPO ASSIM:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+    <section class="pagination">
+        
+        <a href="/admin/products/?page=1" 
+       <% if (currentPage === 1) { %>
+        class="disabled"
+        <% } %>
+        >1</a>
+        </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM:
+
+
+
+
+
+
+
+.disabled {
+
+  cursor: not-allowed;
+  color: black;
+  background: grey;
+  pointer-events: none
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> o estilo não ficou espetacular, 
+
+
+mas funciona... 
+
+
+
+
+preciso fazer a mesma coisa com o button de 
+
+'lastPage'...
+
+
+
+
+
+
+
+
+
+
+
+--> FUNCIONOU...
+
+
+
+
+
+
+--> FICOU TIPO ASSIm:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+    <section class="pagination">
+        
+        <a href="/products/?page=1" 
+       <% if (currentPage === 1) { %>
+        class="disabled"
+        <% } %>
+        >1</a>
+
+
+
+
+
+
+        <a href="/products/?page=<%= lastPage %>" 
+        <% if (currentPage === lastPage) { %>
+         class="disabled"
+         <% } %>
+         ><%= lastPage %></a>
+        </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> OK, AGORA PRECISO DOS BUTTONS DE 'next' 
+
+
+e 
+
+
+'previous'... (
+
+
+    que serão números... numerais...
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-------> O ideal é criar mais products, para ter mais pages...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> criei mais alguns products, mas agora estou com 2 problemas...
+
+
+
+
+
+
+
+
+
+
+
+-----> 1 PROBLEMA) ------> NOSSO CONTROLLER DE 'ADMIN PRODUCTS'
+
+
+NÃO ESTÁ FUNCIONANDO...
+
+
+
+
+
+------> estou recebendo este erro:
+
+
+
+
+Error: Failed to lookup view "admin/product-list-admin/?page=1" in views directory "views"
+    at Function.render (A:\projeto4 - NODEJS\MODULO21-ADICIONANDOPAGINACAO(PAGINATION)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\application.js:580:17)
+    at ServerResponse.render (A:\projeto4 - NODEJS\MODULO21-ADICIONANDOPAGINACAO(PAGINATION)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\node_modules\express\lib\response.js:1012:7)
+    at A:\projeto4 - NODEJS\MODULO21-ADICIONANDOPAGINACAO(PAGINATION)\NOVONOVOPROJETO19-ADICIONANDOPAGINATION\controllers\admin.js:556:11
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+
+
+
+
+
+
+------> JÁ OUTRO PROBLEMA É NAS PAGES 
+
+DE 
+
+
+'DESCRIPTION' -----> 
+
+
+NOSSAS IMAGES NÃO ESTÃO SENDO CARREGADAS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI MOMENTANEAMENTE... (removido o '/?page=1' lá do res.render...)
+
+
+
+
+
+
+
+--> mas isso é um fix temporário, tenho que adaptar a view de 'product-list-admin' 
+
+para 
+
+
+ficar com a 
+
+pagination...
+
+
+
+
+
+
+
+
+------> Ok... 
+
+
+
+mas voltando ao product list do usuário comum....
+
+
+
+
+
+
+
+--> quero conseguir fazer um 'button' para 
+
+
+a 
+
+'CURRENT PAGE'...
+
+
+
+
+
+
+
+CONSEGUI O BUTTON DE 'CURRENT PAGE':
+
+
+
+    <% } %>
+        </div>
+    <section class="pagination">
+        
+        <a href="/products/?page=1" 
+       <% if (currentPage === 1) { %>
+        class="disabled"
+        <% } %>
+        >1</a>
+
+
+        <% if ((currentPage !== lastPage) && (currentPage !== 1)) { %>
+        <a href="/products/?page=<%= currentPage %>" 
+          class="disabled"
+            ><%= currentPage %></a>
+
+            </section>
+            <% } %>
+
+        <a href="/products/?page=<%= lastPage %>" 
+        <% if (currentPage === lastPage) { %>
+         class="disabled"
+         <% } %>
+         ><%= lastPage %></a>
+        </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+AGORA SÓ FALTA O 'PREVIOUS' 
+
+
+E O 
+
+'NEXT'...
+
+
+
+
+
+
+
+---> CONSEGUI UM VIEW _ + OU - FUNCIONAL, POR MEIO DESTE CÓDIGO...
+
+
+
+
+
+
+
+
+
+O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+    <section class="pagination">
+        
+        <a href="/products/?page=1" 
+       <% if (currentPage === 1) { %>
+        class="disabled"
+        <% } %>
+        >1</a>
+
+
+        <% if ((currentPage !== 1) && (currentPage > 2) ) { %>
+            <a href="/products/?page=<%= currentPage - 1 %>" 
+                ><%= currentPage - 1 %></a>
+   
+                <%  } %>
+
+
+        <% if ((currentPage !== lastPage) && (currentPage !== 1)) { %>
+        <a href="/products/?page=<%= currentPage %>" 
+          class="disabled"
+            ><%= currentPage %></a>
+
+          
+            <% } %>
+
+
+            <% if ((currentPage !== lastPage) && (currentPage + 1 !== lastPage)) { %>
+                <a href="/products/?page=<%= currentPage + 1 %>" 
+                    ><%= currentPage + 1 %></a>
+       
+                    <% } %>
+
+
+        <a href="/products/?page=<%= lastPage %>" 
+        <% if (currentPage === lastPage) { %>
+         class="disabled"
+         <% } %>
+         ><%= lastPage %></a>
+        </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> AGORA VOU VER A AULA DO PROFESSOR, PARA VER COMO ELE FEZ....
+
+
+
+
+
+
+
+
+
+
+
+----> professor começa assim:
+
+
+
+''''
+
+<section class="pagination">
+  <a href="/?page=1">1</a>
+  <a href="/?page=<%= currentPage %>" class="active"><%= currentPage %></a>
+</section>
+
+
+
+
+''
+
+
+
+----> PROFESSOR EXPLICA QUE ESSE 
+
+
+LINK/BUTTON DO 
+
+
+'currentPage' (o de baixo) 
+
+SEMPRE TERÁ 
+
+
+UMA CLASS DE 'active '
+aplicadaa,
+
+
+
+
+POIS 
+
+
+
+SEMPRE SERÁ A PAGE EM QUE ESTAMOS... (Faz sentido)...
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+O PROFESSOR VAI ATÉ 
+
+
+
+O ARQUIVO 'main.css',
+
+
+e adiciona um style para 
+
+'.pagination a.active {
+
+
+
+
+
+}
+
+',
+
+
+
+PARA QUE FIQUE IGUAL AO STYLE DE 'HOVER'... (realmente, fica mais bonito...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO... ISSO FUNCIONOU... agora ficamos com um style aplicado 
+
+quando estamos em 1 das pages,
+
+
+
+
+
+e mostra exatamente a page em que estamos...
+
+
+
+
+
+
+
+
+O ÚNICO PROBLEMA, NO CASO, É QUE 
+
+
+
+estamos 
+
+
+
+
+com esse button marcando '1' quando 
+
+estamos na page 1,
+
+
+MESMO NÓS JÁ TENDO AQUELE BUTTON DE '1', hardcodado...
+
+
+
+
+ISSO É VISTO NESSAS LINHAS:
+
+
+
+
+<section class="pagination">
+  <a href="/?page=1">1</a>
+  <a href="/?page=<%= currentPage %>" class="active"><%= currentPage %></a>
+</section>
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+--------> certo.... MAS SÓ NÓS VAMOS QUERER RENDERIZAR 
+
+
+
+
+AQUELE HARDCODE DE 'page 1'
+
+
+SE __ NOSSA 'currentPage'
+
+
+JÁ FOR '1',
+
+
+
+pq 
+
+
+
+isso seria 
+
+
+REDUNDANTE...
+
+
+
+
+
+
+--> É POR ISSO QUE O PROFESSOR ADICIONA UM 
+
+
+
+IF CHECK...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+<% if (currentPage !== 1) {   <a href="/?page=1">1</a> %>
+
+
+<% } %>
+
+
+
+
+
+---------------
+
+
+
+CERTO, 
+
+
+CORRIGMOS ESSE PROBLEMA...
+
+
+
+
+
+
+
+
+
+-------> A CURRENTPAGE, NO ENTANTO, (o button/link)
+
+
+SEMPRE SERÁ 'RENDERED'...
+
+
+
+
+
+
+
+
+
+
+-------> MAS QUEREMOS QUE ESSE BUTTON SEJA 
+
+
+'pointer-events: none', para que 
+
+
+USER NÃO CONSIGA CLICAR NELE...
+
+
+
+
+
+
+
+
+-_> TALVEZ ASSIM? 
+
+
+
+.disabled {
+
+  pointer-events: none
+}
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+       <section class="pagination">
+            <% if (currentPage !== 1) { %>
+            <a href="/products/?page=1">1</a>
+            <% } %>
+            <a href="/products/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+          </section>
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> CERTO, MAS AÍ VAMOS QUERER A 'NEXT PAGE'...
+
+
+
+
+
+
+
+--> para a nextPage,
+
+
+
+simplesmente 
+
+
+escrevemos:
+
+
+
+
+
+
+ <% if (hasNextPage) { %>
+ <a href="/products/?page=<%= nextPage %>" ><%= nextPage %></a>
+ <%  }  %>
+
+
+
+
+
+
+
+ ( OU SEJA, NOS UTILIZAMOS DAQUELA 'PIECE OF INFORMATION' de 'hasNextPage', passada LÁ NO NOSSO CONTROLLER, em 'shop.js'...)
+
+
+
+
+
+
+
+ -----> 'hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems'
+
+
+
+
+
+ ----------------------------
+
+
+
+
+ CERTO...
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+
+ <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+        <section class="pagination">
+            <% if (currentPage !== 1) { %>
+            <a href="/products/?page=1">1</a>
+            <% } %>
+            <a href="/products/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+ <% if (hasNextPage) { %>
+    <a href="/products/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+    <%  }  %>
+          </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... AGORA PRECISAMOS DO BUTTON DE 'previous page', é claro...
+
+
+
+
+
+
+
+
+
+
+----> MAS ANTES DISSO,
+
+
+
+PROFESSOR ADICIONA 'THE HIGHEST PAGE',
+
+
+
+
+
+
+que 
+
+
+será 
+
+
+
+
+ESCRITA ASSIM:
+
+
+
+
+
+<% If (lastPage !== currentPage) {  %>
+    <a href="/products/?page=<%= lastPage %>" ><%= lastPage %></a>
+
+  
+  <% } %>
+
+
+
+
+
+
+
+  --> OU SEJA, A LASTPAGE __ SO´__ DEVE APARECER NA NOSSA UI 
+
+  SE 
+
+
+  A 
+
+  'currentPage' NÃO FOR IGUAL A ELA... (pq se for IGUAL, NÃO HÁ NECESSIDADE DO LINK DA ÚLTIMA PAGE APARECER, PQ JÁ ESTAREMOS NELA...)
+
+
+
+
+
+
+
+---> CERTO.... mas também vamos querer que A LASTPAGE _ NÃO APARECA __ QUANDO A 
+
+'nextPage' 
+
+
+__ TAMBÉM 
+
+FOR IGUAL à 'lastPage'... (&&) --> (PQ AÍ TERÍAMOS LINKS DUPLICADOS, NOVAMENTE...)
+
+
+
+
+
+
+
+
+
+
+  ------> CERTO... AGORA SÓ FALTA A 'PREVIOUS PAGE'...
+
+
+
+
+
+
+
+
+
+
+  ----> FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+  
+    <% } %>
+        </div>
+        <section class="pagination">
+            <% if (currentPage !== 1) { %>
+            <a href="/products/?page=1">1</a>
+            <% } %>
+            <a href="/products/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+ <% if (hasNextPage) { %>
+    <a href="/products/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+    <%  }  %>
+    <% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+        <a href="/products/?page=<%= lastPage %>" ><%= lastPage %></a>
+      <% } %>
+
+
+          </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+
+
+
+
+
+
+
+
+
+        ---------------------------
+
+
+    
+
+
+
+        <% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+        <a href="/products/?page=<%= lastPage %>" ><%= lastPage %></a>
+      <% } %>
+
+
+
+
+
+
+
+  -----------------------------
+
+
+
+
+
+
+
+
+
+
+   OK... PROFESSOR RECEBE UM ERRO DE 'DATA FORMAT',
+
+
+
+
+
+   era pq 
+
+   ele não tinha convertido 'currentPage' em 
+
+   '+currentPage'....
+
+
+
+
+
+   -------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+   professor consertou por meio de 
+
+   'const pageNumber = +req.query.page;'
+
+
+
+(eu já havia consertado).
+
+
+
+
+   -----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+   ------> SE EU TENTO CARREGAR MINHA PAGE SEM 1 QUERY PARAMETER (
+
+     tipo assim:
+
+http://localhost:3000/products
+
+   ),
+
+
+   EU RECEBO 
+
+
+
+
+   AQUELE 'ERRO 500'...
+
+
+
+
+   -> UMA ALTERNATIVA É 
+
+
+   FAZER COM QUE ___ SE a 'pageNumber'
+
+   FOR UNDEFINED,
+
+
+
+
+   SEJA __UTILIZADO _ O VALOR DE 
+
+   '1'...
+
+
+
+
+
+
+   OK, MAS COMO FAZER ISSO....? 
+
+
+
+
+
+
+
+
+   bem simples,
+
+
+   professor escreve assim:
+
+
+
+
+
+
+   'const pageNumber = req.query.page || 1 '
+
+
+
+
+
+
+
+
+   (O SÍMBOLO DE PIPE, que significa 'or', VAI FAZER COM QUE SEJA USADO '1' SE O VALOR DE req.query.page ESTIVER COMO UNDEFINED....)
+
+
+
+
+
+
+
+   OK, FUNCIONOU.... CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   exports.getProductsPage = (req, res, next) => {
+
+const pageNumber = req.query.page || 1; ///se user NÃO INPUTTAR NADA no espaço dos 'query params' (parte de '/?page=xxx'), SERÁ ADOTADO O VALOR BASE DE '1', para pegar a primeira página, e evitar o erro 500 de nosso app...
+
+let totalItems;
+
+
+
+console.log(pageNumber, 'LINE');
+
+
+Product.countDocuments().then(
+
+(numProducts) => {
+
+
+  totalItems = numProducts;
+
+  return  Product.find() 
+  .skip(
+    (pageNumber - 1) * ITEMS_PER_PAGE    /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (2 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+  )  ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+ .limit(ITEMS_PER_PAGE) ///VAI LIMITAR A '2' (valor desse parâmetro) O NÚMERO ___ DE ITEMS/ENTRIES QUE VAMOS DEIXAR SER FETCHEADOS LÁ DA COLLECTION NA NOSSA DATABASE... (assim reduzimos a quantidade de data fetcheada.... pq fetchear todos os products/documents seria WASTEFUL e demorado)...
+ 
+ // .select('title price -_id') ////É A MESMA COISA QUE O SEGUNDO PARÂMETRO DE '.populate()', mas atua sobre OS PRODUCTS RETRIEVADOS por meio de '.find()', e não a DATA RETRIEVADA LÁ DO 'RELATED OBJECT' (que é 'user', no caso desse call inferior de '.populate()')....
+   .populate('userId', 'name') ///////// O 'POPULATE' (que deve ser chamado após '.find()', opcionalmente) TE DEIXA DIZER AO  'MONGOOSE' QUE  ELE  DEVE  ''''POPULATE A CERTAIN FIELD ___WITH ALL THE __  DETAILED INFORMATION ABOUT  THAT THING (no caso, o 'user'), NOT JUST ITS ID'''''... --> DE FATO, ISSO É ___MUITO, MAS MUITO ÚTIL... (OBS:: O PARâMETRO, no caso 'userId', é o FIELD QUE VOCÊ DESEJA QUE FIQUE PREENCHIDO POR TODA ESSA DETAILED INFORMATION acerca desse document envolvido na relation (no caso, 'user', o user RELACIONADO ao given product) ... ---> JÁ O SEGUNDO PARÂMETRO CUMPRE A MESMA TAREFA DE '.select('fields a serem retrievados de sua database...')'; OU SEJA, NELE VOCÊ PASSA, COMO PARÂMETRO, UMA STRING DIZENDO __QUAIS __ PRODUCTS __ DEVEM SER __RETRIEVADOS DA DATABASE... (é um parâmetro opcional, exatamente como '.select()' o é...)
+   .then((products) => {
+     console.log(products);
+
+     // const isLoggedIn = req.get('Cookie').trim().split('=')[1];
+
+     res.render('shop/product-list', {
+       prods: products,
+       pageTitle: 'Shop',
+       path: '/products',
+       productCSS: true,
+       activeShop: true,
+       hasProducts: products.length > 0,
+      //  totalPages: totalItems, ////eis o código em questão.
+      currentPage: +pageNumber, //será usado no render condicional da PRIMEIRA E ÚLTIMA PÁGINAS...
+       hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+       hasPreviousPage: +pageNumber > 1,
+       nextPageNumber: +pageNumber + 1,
+       previousPageNumber: pageNumber - 1,
+       lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE) ///vai nos outputtar a MAIOR PAGE POSSÍVEL de nosso app, dada a quantidade atual de 'products/documents'...
+       // isLoggedIn: req.session.isLoggedIn
+       // isLoggedIn: isLoggedIn
+     });
+   })
+}
+)
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+PROFESSOR SALVA ISSO, E ISSO FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PROFESSOR TBM DECIDE COLOCAR UM BUTTON PARA 'PREVIOUSPAGE'...
+
+
+
+
+
+
+
+
+
+
+aí escrevemos assim:
+
+
+
+
+
+
+        <% if (hasPreviousPage ) {  %>
+        <a href="/products/?page=<%= previousPageNumber %>" ><%=  previousPageNumber %></a>
+      <% } %>
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+OK, TUDO ISSO DEU CERTO, DE FORMA BRILHANTE....
+
+
+
+
+
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+        <section class="pagination">
+            <% if ((currentPage !== 1) && (previousPageNumber !== 1)) { %>
+            <a href="/products/?page=1">1</a>
+            <% } %>
+            <% if (hasPreviousPage) {  %>
+                <a href="/products/?page=<%= previousPageNumber %>" ><%=  previousPageNumber %></a>
+              <% } %>        
+            <a href="/products/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+ <% if (hasNextPage) { %>
+    <a href="/products/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+    <%  }  %>
+    <% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+        <a href="/products/?page=<%= lastPage %>" ><%= lastPage %></a>
+      <% } %>
+
+
+          </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> SÓ FICAMOS COM 1 PROBLEMINHA...
+
+
+
+
+
+
+
+---> EU QUERIA RENDERIZAR '...' 
+
+
+
+NO LUGAR DE MEUS <a>,
+
+
+
+
+quando eles 'sumissem' (isso para que 
+
+
+
+FICASSE IMPLÍCITO QUE 
+
+
+TEMOS 
+
+
+MAIS PAGES ENTRE '1' e '3', por exemplo, etc etc....)
+
+
+
+
+
+
+
+
+
+
+
+
+CONSEGUI COLOCAR OS '...' 
+
+
+
+
+E FICOU __BEM__ legal..
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (let product of prods) {  %>
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="/<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <a href="/products/<%= product._id %>" class="btn">Details</a>
+            <form action="/cart" method="POST">
+                <% if(isLoggedIn) {  %>
+                <button class="btn" type="submit">Add to Cart</button>
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <% } %>
+                <input type="hidden" name="productId" value="<%= product._id %>">
+              </form>
+        </div>
+          </article>
+
+
+
+    <% } %>
+        </div>
+        <section class="pagination">
+            <% if ((currentPage !== 1) && (previousPageNumber !== 1)) { %>
+            <a href="/products/?page=1" ex>1</a>
+            <% } %>
+            <% if (currentPage > 3) { %>
+                <a href="" class="disabled">...</a>
+                <% } %>
+            <% if (hasPreviousPage) {  %>
+                <a href="/products/?page=<%= previousPageNumber %>" ><%=  previousPageNumber %></a>
+              <% } %>        
+            <a href="/products/?page=<%= currentPage %>" class="active disabled"><%= currentPage %></a>
+  
+ <% if (hasNextPage) { %>
+    <a href="/products/?page=<%= nextPageNumber %>" ><%= nextPageNumber %></a>
+    <%  }  %>
+    <% if (currentPage <= 3) { %>
+        <a href="" class="disabled">...</a>
+        <% } %>
+    <% if ((lastPage !== currentPage) && (nextPageNumber !== lastPage) ) {  %>
+        <a href="/products/?page=<%= lastPage %>" ><%= lastPage %></a>
+      <% } %>
+
+
+          </section>
+
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+CONSEGUI POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+
+
+
+          <% if (currentPage > 3) { %>
+                <a href="" class="disabled">...</a>
+                <% } %>
+
+
+
+
+
+
+            E ESTE:
+
+
+
+
+                <% if (currentPage <= 3) { %>
+        <a href="" class="disabled">...</a>
+        <% } %>
+
+
+
+
+
+
+
+
+      -----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      CERTo...
+
+
+
+
+
+
+
+      AGORA TEMOS 'DYNAMIC PAGINATION LINKS'...
+
+
+
+
+
+
+
+
+      --> PROFESSOR DIZ QUE SEMPRE PODEMOS TWEAKAR 
+
+
+      ESSA PAGINATION PARA 
+
+
+
+      SE ADEQUAR AS NOSSAS NECESSIDADES, MAS QUE ELE CONSIDERA QUE ESSE NEGÓCIO ESTÁ BOM, POR ENQUNATO....

@@ -1,0 +1,481 @@
+
+
+
+
+
+
+--> NA ÚLTIMA LIÇÃO,
+INSERIMOS 
+
+
+
+UM PRODUCT 
+
+DENTRO DA NOSSA COLLECTION 'products', na database do mongodb...
+
+
+
+
+
+
+
+
+-> O CÓDIGO UTILIZADO FOI ESTE:
+
+
+
+
+(product.js):
+
+
+
+
+
+const getDb = require('../util/database').getDb; ///SINTAXE DE IMPORTS UM POUCO MAIS REBUSCADA....
+
+class Product {
+  constructor(title, price, imageUrl, description) {
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+  }
+
+  save() {
+   const db = getDb();
+
+
+ return db.collection('products').insertOne(this)
+   .then(
+      (result) => {
+        console.log(result);
+      }
+   )
+   .catch(
+     (err) => {
+       console.log(err);
+     }
+   )
+  }
+}
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+E ESTE('admin.js'):
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+
+
+  const newProduct = new Product(title, price, imageUrl, description); ///com isso, estamos usando A VERSÃO 'NOSQL'/mongodb do código de 'add a product to our database'... 
+
+   newProduct.save().then(
+     (result) => {
+
+          console.log(result);
+          res.redirect('/');
+
+     }
+   )
+   .catch(
+     (err) => {
+          console.log(err);
+          res.redirect('/');
+     }
+   )
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+AGORA O PROFESSOR VAI QUERER 
+
+TAMBÉM __VER__ ESSA 
+
+DATA_,
+
+
+FETCHEAR__ NOSSOS 
+
+PRODUCTS__ LÁ 
+
+
+NA 
+
+COLLECTION DE 'products',
+
+essencialmente...
+
+
+
+
+
+
+
+
+--> ANTES DE ACTUALLY FETCHEARMOS 
+
+ESSA DATA,
+
+
+
+
+
+o PROFESSOR QUER NOS MOSTRAR __OUTRA FERRAMENTA DO MONGODB,
+
+que é 
+
+o 
+
+'MONGODB COMPASS'...
+
+
+
+https://www.mongodb.com/pt-br/products/compass
+
+
+
+
+
+
+
+
+
+
+
+----->  PODEMOS BAIXAR ESSE NEGÓCIO E INSTALAR DE GRAÇA....
+
+
+
+
+
+
+--> PODEMOS COMEÇAR ESSE APP COMPASS.... --> 
+
+
+ISSO 
+
+BASICAMENTE É UMA FERRAMENTA 
+
+
+QUE TE DÁ 
+
+UMA 
+
+GUI (graphical user interface)
+ 
+
+ para  
+ SE CONECTAR A SUA DATABASE 
+
+ E INTERAGIR COM ELA....
+
+
+
+
+
+
+
+
+
+ -> QUANDO ELE COMEÇAR,
+
+ VOCÊ PODE SE CONECTAR 
+
+ A ELE...
+
+
+
+
+
+
+ --> PARA SE CONECTAR AO 'MONGODB COMPASS',
+
+ VOCÊ
+
+
+ DEVE IR novamente 
+
+ na sua 
+
+ página da database 
+
+ no MONGODB,
+
+ e aí 
+
+ clicar em 'connect > connect to compass'....
+
+
+
+
+ ----> AÍ COLOQUE 
+
+
+ 'i have mongoDB compass',
+
+
+
+
+
+ E AÍ COPIE AQUELA URL NO 
+
+
+ MONGODB ATLAS,
+
+ junto com a senha e etc...
+
+
+
+ AÍ REINICIE O 
+
+
+ MONGODB COMPASS,
+
+ QUE ELE 
+
+ VAI 
+
+ AUTOMATICAMENTE DETECTAR 
+
+ A URL 
+
+
+ QUE VOCÊ COPIOU E INSERIR 
+
+ SEUS PEDAÇOS 
+
+ NOS CAMPOS APROPRIADOS,
+
+
+ SETTANDO 
+
+
+ A DATABASE 
+
+ QUE 
+
+ DEVE SER CONECTADA A ELE 
+
+ __AUTOMATICAMENTE...
+
+
+
+
+
+
+
+ OK... DEU CERTO... ESTOU CONECTADO.
+
+
+
+
+
+
+
+ FICAMOS REALMENTE CONECTADO 
+
+ AO 
+
+ 'DATABASE SERVER',
+
+
+
+
+
+
+
+
+ vemos 
+
+ 3 
+
+ databases,
+
+
+
+
+
+ 'admin' 'local' 
+
+
+
+ e 
+
+ '
+ shop'
+
+
+
+
+
+ ---> ADMIN E LOCAL SÃO DATABASES DEFAULT,
+
+
+ em
+
+ QUE 
+
+ NÃO DEVEMOS ENCOSTAR...
+
+
+
+
+
+
+
+
+ --> MAS A DATABASE 
+
+ DE 
+
+ SHOP 
+
+
+ VAI _ TER __ UMA COLLECTION DE PRODUCTS,
+
+
+ ONDE ENCONTRAMOS OS DOCUMENTS QUE RECÉM 
+
+
+ INSERTAMOS...
+
+
+
+
+
+
+
+
+
+
+ --> A COISA LEGAL DO 'COMPASS'
+
+ É QUE 
+
+ VOCÊ 
+
+ PODE 
+
+ ACTUALLY 
+
+ INSERIR 
+ DOCUMENTS 
+
+ E 
+ OS 
+ EDITAR__ POR MEIO __ DELE 
+
+ MESMO,
+
+
+ sem usar o node...
+
+
+
+
+
+ --> HÁ VÁRIAS FEATURES,
+
+ QUE PODEMOS CHECAR 
+
+ NOS DOCS....
+
+
+
+
+
+ --> O PROFESSOR USA O 
+
+ COMPASS COMO 'VISUAL SUPPORT',
+
+ PARA QUE 
+
+
+ CONSIGAMOS 'VER NOSSA DATA'
+
+ ANTES 
+
+
+
+DE FETCHEAR 
+
+OS 
+
+DADOS 
+
+
+PARA OUTPUTTAR NA NOSSA PAGE..
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS 
+
+ESCREVER ALGUM CÓDIGO 
+
+NO NODEJS 
+PARA QUE CONSIGAMOS 
+
+VER NOSSA 
+
+'LIST OF PRODUCTS',
+
+nossa collection 
+
+de 
+'products'
+
+outputtada 
+
+na 
+
+'products page'
+
+e 
+
+na 
+
+'admin products page'...

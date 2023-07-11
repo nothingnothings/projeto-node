@@ -1,0 +1,1313 @@
+
+
+
+
+
+
+
+
+NA ÚLTIMA LIÇÃO,
+
+
+VIMOS COMO __ 'EXTEND MONGOOSE COM NOSSA PRÓPRIA FUNCIONALIDADE' (ou seja,
+
+
+COMO DEFINIR CUSTOM 
+
+METHODS 
+
+nos seus models mongoose/schema mongoose...
+
+
+
+) ------> E ISSO É __MUITO FORTE_.... ------> 
+
+
+
+
+
+
+
+
+
+
+SE QUISER APRENDER MAIS, VOCê DEVE 
+
+VISITAR OS OFFICIAL DOCS DO MONGOOSE,
+
+
+
+
+
+
+
+
+LÁ,
+
+
+DEBAIXO DE 
+
+'schema',
+
+
+
+APRENDEMOS MT MAIS SOBRE ISSO... ( a técnica de 'custom method' que recém utilizamos é a TECNICA DOS __ 'INSTANCE METHODS'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> NÓS PODEMOS VER TODAS AS FEATURES QUE 
+
+PODEMOS ADICIONAR AOS NOSSOS SCHEMAS E MODELS...
+
+
+
+
+
+
+
+
+
+--------> CERTO... MAS AQUI O PROFESSOR __ NOS EXPLICA UQE __ ELE 
+QUER 
+TRABALHAR NA 
+
+ROUTE QUE 
+
+NOS 
+
+DEIXA 
+
+
+'LOAD ALL THE CART ITEMS'... --> E ESSA É UMA __ BOA PRÁTICA PARA NÓS,
+
+para 
+
+
+nos acostumarmos ao 
+
+
+
+mongoose..
+
+
+
+
+
+
+
+
+O CÓDIGO COMEÇA ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => { 
+  
+  
+  
+  
+   req.user.getCart()
+  .then(
+    (products) => {
+
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+  
+    }) 
+
+    }
+    
+  )
+
+
+
+}
+  
+
+
+
+
+
+
+-----> OK... MAS ESSE 
+
+'getCart()'
+
+ERA/É UM MÉTODO DO
+
+
+'DEFAULT MONGODB DRIVER' para o node....
+
+
+
+
+
+
+
+--> DEVEMOS SUBSTITUIR ISSO __ POR UM CÓDIGO 
+
+'mongoose'
+
+QUE FAÇA RETRIEVE 
+
+DE 
+
+TOODS 
+
+
+OS 'CART ITEM'  dentro de 'products'... 
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+
+eu tento escrever:
+
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => { 
+  
+  
+  
+  
+  reutrn User.findById(req.user._id)
+  .then(
+    (user) => {
+
+        const products = user.cart.products;
+
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+
+  )
+  .catch(
+      (err) => {
+
+          console.log(err);
+      }
+  )
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+CERTO.... FUNCIONOU...
+
+
+
+
+
+
+
+CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => { 
+  
+  
+  
+  
+  //  req.user.getCart() MÉTODO MONGODB DRIVER COMUM...
+
+
+  const userId = req.user._id
+
+  User.findById(userId) //CÓDIGO DO MONGOOSE, BUILTIN METHOD DO MONGOOSe...
+  .then(  
+      (user) => {
+
+
+
+        const products = user.cart.products;
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+  
+    }) 
+
+    }
+    
+  )
+
+
+
+
+
+OK, MAS COMO FICOU O CÓDIGO DO PROFESSOR?
+
+
+
+
+
+
+---> ELE COMEÇA EXPLICANDO QUE JÁ TEMOS NOSSO 'NESTED CART products array'...., 
+
+dentro 
+
+do user....
+
+
+
+
+
+
+-----> AGORA SÓ PRECISAMOS 
+
+'POPULATE THE PRODUCT ID'
+
+
+
+com 
+
+
+
+TODA A DATA EM QUE ESTAMOS INTERESSADOS...
+
+
+
+
+
+
+
+
+
+--> AH.... AGORA ENTENDI...
+
+
+é pq 
+
+
+
+
+eu REALMENTE HAVIA CONSEGUIDO A DATA 
+
+
+
+
+DOS 'cart item', os 
+
+
+
+products 
+
+
+DENTRO do 
+
+
+
+
+array de 
+
+'products'
+
+
+
+em 'cart',
+
+dentro 
+
+do 
+
+'user'... ----> MAS 
+
+
+O __PROBLEMA__ É QUE 
+
+
+CADA 
+
+1
+ 
+ DESSES 
+
+ 'cart item' 
+
+
+
+
+ possui esta estrutura:
+
+
+
+
+ {productId: objectId(xxxx),
+ quantity: yyyyy
+ 
+ 
+ 
+ }
+
+
+
+
+
+
+
+
+
+ E, DE FATO, EU VOU QUERER EXIBIR ESSES PEDAÇOS DE DATA 
+
+ LÁ 
+
+
+ NA PÁGINA DE 'cart',
+
+ QUE VAI FETCHEAR TODA A INFO ACERCA DE NOSSO CART.... ----> __ENTRETANTO__, 
+
+
+
+
+ EU TAMBÉM VOU QUERER __ MAIS INFO ACERCA DESSES PRODUCTS,
+
+
+ como 
+
+
+
+ o 'title' e 'price ' 
+
+
+ 
+
+ de cada product.... ---> PARA CONSEGUIR ESSA DATA,
+
+
+
+
+ DEVO USAR 
+
+ o 
+
+
+
+ método chain 
+
+
+
+ '.populate()' 
+
+
+ EM CIMA DO __RESULTADO__ desse 'findById()'...
+
+
+
+
+
+
+
+
+
+ TIPO ASSIM, CREIO EU:
+
+
+
+
+
+
+
+
+
+
+ 
+exports.getCart = (req, res, next) => { 
+  
+  
+  
+  
+  //  req.user.getCart() MÉTODO MONGODB DRIVER COMUM...
+
+
+  const userId = req.user._id
+
+  User.findById(userId) //CÓDIGO DO MONGOOSE, BUILTIN METHOD DO MONGOOSe...
+  .then(  
+      (user) => {
+
+
+
+            user.cart.products.find(
+            )
+            .populate(
+              '
+            )
+
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+  
+    }) 
+
+    }
+    
+  )
+
+
+
+
+--------------------
+
+
+
+
+
+TENTEI ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => { 
+  
+  
+  
+  
+  //  req.user.getCart() MÉTODO MONGODB DRIVER COMUM...
+
+
+  const userId = req.user._id
+
+  User.findById(userId) //CÓDIGO DO MONGOOSE, BUILTIN METHOD DO MONGOOSe...
+  .then(  
+    // (products) => {
+      (user) => {
+
+
+          user.cart.products.find(
+
+          )
+          .populate('productId', 'title price')
+          .then(
+(products) => {
+
+
+
+  res.render('shop/cart', {
+    path: '/cart',
+    pageTitle: 'Your Cart',
+    products: products
+
+}) 
+
+
+
+}
+          )
+    }
+    
+  )
+  .catch(
+    (err) => {
+      console.log(err);
+    }
+  )
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  MAS RECEBI ESTE ERRO:
+
+
+
+
+
+
+
+
+  TypeError: undefined is not a function
+    at Proxy.find (<anonymous>)       
+    at A:\projeto4 - NODEJS\MODULO13-TRABALHANDOCOM'MONGOOSE'\NOVONOVOPROJETO11-USANDOMONGOOSEPARAESCREVERQUERIESMONGODBNOSQL\controllers\shop.js:120:30
+
+
+
+
+
+
+
+
+
+
+
+
+    ----> OK... O FUNCIONAMENTO DE '.populate()'
+
+
+    NÃO FAZ O MENOR SENTIDO...
+
+
+
+
+
+
+
+
+--> vou ver a aula do professor...
+
+
+
+
+
+
+
+
+
+
+--> ELE NOS EXPLICA QUE 
+
+
+
+
+vamos precisar POPULAR o 'productId' em cada CART ITEM 
+
+com 
+
+a data em que estamos interessados...
+
+
+
+
+
+
+
+
+--> para fazer isso,
+
+
+o professor começa 
+
+
+
+pelo 
+
+
+
+'req.user',
+
+mesmo... 
+
+
+
+
+
+
+
+
+-----> AÍ ELE DIZ QUE PODEMOS CHAMAr 
+
+
+
+'.populate()'
+
+
+EM CIMA 
+
+de 
+
+'req.user',
+
+
+
+
+MESMO __ NÓS JÁ 
+
+
+
+TENDO FETCHEADO ESSE USER,
+
+
+
+
+
+
+
+
+pq tbm podemos chamar '.populate()' nisso.... ---> E AÍ VAMOS 
+
+
+PEDIR 
+
+
+
+AO MONGOOSE QUE 
+
+
+
+ELE FETCHEIE DATA 
+
+
+
+PARA O PATH 
+
+de 
+
+'cart.items.productId'...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+
+
+    req.user
+    .populate('cart.items.productId') //////EIS O CÓDIGO EM QUESTÃO
+    .then(
+      ...
+    )
+
+
+
+
+}
+
+
+
+
+-----------------------> quanto ao RESTO 
+
+
+do código, 
+
+ELE CONTINUA O MESMO:
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+
+
+    req.user
+    .populate('cart.items.productId') //////EIS O CÓDIGO EM QUESTÃO
+    .then(
+      (user) => { ///////aqui vamos receber 'user', e não 'products'... (pq ´so vaoms ter POPULADO o 'user', por meio de 'populate', que vai nos entregar esse 'user modificado'...)
+
+            console.log(user);
+
+
+            res.render(
+              'shop/cart', {
+
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: user.cart.products
+              }
+            )
+
+
+      }
+    )
+
+}
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+------>> PORTANTO, O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+
+
+    req.user
+    .populate('cart.items.productId') //////EIS O CÓDIGO EM QUESTÃO
+    .then(
+      (user) => { ///////aqui vamos receber 'user', e não 'products'... (pq ´so vaoms ter POPULADO o 'user', por meio de 'populate', que vai nos entregar esse 'user modificado'...)
+
+            console.log(user);
+
+
+            res.render(
+              'shop/cart', {
+
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: user.cart.products
+              }
+            )
+
+
+      }
+    )
+
+}
+
+
+
+
+
+--------------------------------------
+
+
+
+
+AGORA TEMOS UMA 
+
+PAGE 
+
+de 
+
+'cart'
+
+com cada 
+product RECHEADO com 
+
+seu 
+
+
+
+'title' 
+
+
+e 
+
+'price' 
+
+
+
+naquele field de 'productId'... (também forramos com outras coisas, como 'description' e 'imageUrl'....)
+
+
+
+
+
+
+
+
+
+
+
+-----> CLARO QUE ISSO é uma ESPÉCIE DE DATA DUPLICATION, mas é no 
+
+
+servidor, e não na database...
+
+
+
+
+
+
+
+
+
+
+
+--> ENTRETANTO, O PROFESSOR, NA VERSÃO DELE DO CÓDIGO,
+
+recebeu 
+
+
+
+'req.user.populate(...) IS NOT A FUNCTION'... -------> 
+
+
+
+
+
+
+
+
+ELE NOS EXPLICA QUE ISSO ACONTECE PQ 
+
+
+
+'.populate()'
+
+NÃO VAI 
+
+
+
+RETORNAR EXATAMENTE UMA PROMISE,
+
+por isso 
+
+somos obrigados 
+
+
+
+A EXECUTAR 
+
+
+
+
+'.execPopulate()'
+
+
+
+EM CIMA ___ 
+
+DELE__... -----> 
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+req.user.populate('cart.items.productId')
+.execPopulate() 
+.then(
+  (products) => {
+    ...
+  }
+)
+
+
+
+
+
+
+
+
+
+---> O 'execPopulate',
+
+
+
+nas palavras do professor,
+fará com QUE 
+
+O 
+
+POPULATE RETORNE UMA 'PROMISE',
+
+
+o que nos deixa chamar then e catch 
+
+em cima 
+
+
+
+desse call de populate, que é o que quremos....
+
+
+
+
+
+--------------------------------
+
+
+OK.... AGORA ISSO ESTÁ FUNCIONANDO...
+
+
+
+
+
+
+
+O CÓDIGO COMPLETO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+    req.user ///CÓDIGOS/métodos BUILTIN do mongoose....
+    .populate('cart.products.productId') //////EIS O CÓDIGO EM QUESTÃO
+    ///.execPopulate() ///OPCIONAL. antes era obrigatório, vocÊ tinha que chamar isso para poder EXECUTAR then/catch em cima do 'populate' (pq antigamente o POPULATE NÃO RETORNAVA SEMPRE UMA PROMISE, como hoje em dia...)
+    .then(
+      (user) => { ///////RESTO DO CÓDIGO CONTINUA O MESMO....
+
+            console.log(user.cart.products);
+
+
+            res.render(
+              'shop/cart', {
+
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: user.cart.products
+              }
+            )
+
+
+      }
+    )
+
+
+
+
+
+
+
+
+
+
+
+E ASSIM (nossa view):
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/cart.css"><link>
+    <style>
+    
+         @media(min-width: 400px) {
+
+              .center {
+                  margin: 0;
+                  position: absolute;
+
+                  left: 50%;
+
+
+              }
+
+            .btn {
+              width: 7rem;
+              align-self: center;
+            }
+         }
+    
+    </style>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <% if (products.length <= 0) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% products.forEach(p => { %>
+            <li class="cart__item">
+              <h1><%= p.productId.title %></h1>
+              <h2>Quantity: <%= p.quantity %></h2>
+              <h1>$ <%= p.productId.price %></h1>
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" name="id" value="<%= p._id %>">
+                <button class="btn danger" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% }) %>
+        </ul>
+          <hr>
+        <form action="/cart/order" method="POST">
+          <button class="btn center" type="submit">Place an Order</button>
+        </form>
+        <% } %>
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+EU MUDEI UM POUCO A ESTRUTURA DA VIEW, 
+
+nessas linhas aqui:
+
+
+
+
+
+          <% products.forEach(p => { %>
+            <li class="cart__item">
+              <h1><%= p.productId.title %></h1> ///aqui
+              <h2>Quantity: <%= p.quantity %></h2>
+              <h1>$ <%= p.productId.price %></h1> //aqui
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" name="id" value="<%= p._id %>">
+                <button class="btn danger" type="submit">Remove from cart</button>
+            </form>
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO... ISSO FUNCIONOU.
+
+
+ SÓ TEVE UM NEGÓCIO QUE EU ESQUECI,
+
+ que é 
+
+ aquele 
+
+ 'input' de type hidden ali de baixo, que é USADO NO 'remove from cart'... --> ALI 
+
+ DEVO MUDAR o 
+
+
+
+ 'p._id' PARA 
+
+ FICAR 
+
+
+
+ 'p._productId._id',
+
+
+
+ PQ 
+
+
+ AGORA 
+
+
+ ESSE VALOR/chave 
+
+ está enfiado no meio DO RESTO DA 'POPULATED DATA' em 'productId', em cada 1 dos meus cart items....
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+ 
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <link rel="stylesheet" href="/css/cart.css"><link>
+    <style>
+    
+         @media(min-width: 400px) {
+
+              .center {
+                  margin: 0;
+                  position: absolute;
+
+                  left: 50%;
+
+
+              }
+
+            .btn {
+              width: 7rem;
+              align-self: center;
+            }
+         }
+    
+    </style>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+      <% if (products.length <= 0) { %>
+        <h1>There are no products in your Cart.</h1>
+      <% } else { %>
+        <ul>
+          <% products.forEach(p => { %>
+            <li class="cart__item">
+              <h1><%= p.productId.title %></h1>
+              <h2>Quantity: <%= p.quantity %></h2>
+              <h1>$ <%= p.productId.price %></h1>
+              <form action="/cart/delete-cart-item" method="POST">
+                <input type="hidden" name="id" value="<%= p.productId._id %>">
+                <button class="btn danger" type="submit">Remove from cart</button>
+            </form>
+            </li>
+            <% }) %>
+        </ul>
+          <hr>
+        <form action="/cart/order" method="POST">
+          <button class="btn center" type="submit">Place an Order</button>
+        </form>
+        <% } %>
+
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+--------------------
+
+
+
+
+
+COM ISSO, 
+
+SALVAMOS TUDO ISSO E RECARREGAMOS 
+
+A PÁGNIA DE 
+
+
+
+
+'cart'....  -----> AGORA SOMOS CAPAZES DE 'POPULATE NOSSO CART COM DATA'....

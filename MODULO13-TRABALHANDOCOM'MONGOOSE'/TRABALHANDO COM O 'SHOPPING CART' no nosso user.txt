@@ -1,0 +1,2416 @@
+
+
+
+
+
+
+--> AGORA QUE SOMOS 
+
+CAPAZES 
+
+
+DE 
+
+FAZER 
+
+
+'RELATE' 
+
+DE 
+
+
+DATA/models,
+
+ 
+
+ (armazenar/criar products, relacionados a 1 user...),
+
+
+
+
+
+
+
+
+DEVEMOS TRABALHAR NAQUELA FEATURE 
+
+
+
+DO 
+
+'SHOPPING CART'
+
+
+
+E 
+
+
+DAS 'ORDERS',
+
+
+
+
+tudo para que 
+
+CONSIGAMOS FAZER MAIS DO QUE 
+
+APENAS 
+
+
+'LOOK AT THE PRODUCTS'...
+
+
+
+
+
+
+
+
+----> ANTERIORMENTE,
+
+  
+
+  QUANDO NÃO ESTAVÁVMOS USANDO MONGOOSE,
+
+
+
+
+  no 
+
+
+  MODEL 
+
+  de 
+
+  'user.js'
+
+
+  TÍNHAMOS 
+
+  UTILITY METHODS 
+
+
+
+  como 
+
+
+
+  'addToCart(product) {
+
+  }',
+
+
+
+
+  METHODS QUE 
+
+  ADICIONAVAM
+   
+   'PRODUCTS'
+
+   ao 
+
+
+   cart do user... ------> E , NA VERDADE, 
+
+
+
+   ERA REALMENTE 
+
+   MUITO ÚTIL 
+
+   TER 
+
+
+
+   MÉTODOS COMO ESSES,
+
+
+   PQ 
+
+   ISSO 
+
+
+   NOS DEIXAVA 
+
+   MOVER 
+
+
+
+   LÓGICA 
+
+   __PARA __ LONGE __ DE NOSSOS CONTROLLERS,
+
+
+   separar 
+
+   essa lógica 
+
+
+
+
+   E A COLOCAR NOS NOSSOS MODELS,
+
+
+   o que 
+
+   deixava 
+
+
+
+   nosso código bem mais limpo (
+
+
+       e é geralmente 
+
+
+       NOS MODELS QUE 
+
+       VOCê VAI QUERER DEIXAR SUA 
+
+
+
+       'DATA-RELATED LOGIC'
+   )
+
+
+
+
+
+
+-----> OK.... 
+
+
+
+EU, PORTANTO,
+
+VOU QUERER ___ READICIONAR _ 
+
+ALGUNS 
+
+
+
+DESSES MÉTODOS 
+
+de 
+
+'user'
+
+
+relacionados 
+
+
+À manipulação 
+
+de 
+
+
+'cart'.... ---------->
+
+
+
+
+E O MONGOOSE, NO CASO,
+
+
+
+
+__DEIXA__ A 
+
+
+
+REIMPLEMENTAÇÃO DESSES MÉTODOS __ MUITO SIMPLES__... 
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE 
+
+
+
+PODEMOS TRABALHAR NO NOSSO 
+
+'Schema',
+
+
+ou seja,
+
+
+
+
+
+
+
+
+OBSERVE O CÓDIGO:
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  cart: { products: [
+    {
+      productId: { type: Schema.Types.ObjectId, 
+        ref: 'Product', /////AQUI DEFINIMOS UMA RELATION/reference AO MODEL/COLLECTION de 'products'...
+        required: true },
+      quantity: { type: Number, required: true },
+    },
+  ],
+}
+}
+);
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> PROFESSOR DIZ QUE PODEMOS TRABALHAR NO NOSSO 'schema',
+
+ou seja,
+
+
+NAQUELE 
+
+'userSchema'
+
+QUE FOI CRIADO,
+
+
+
+
+referenciando-o 
+
+E ENTÃO 
+
+
+
+
+
+
+EXECUTANDO UM MÉTODO ESPECIAL EM CIMA DELE,
+
+
+chamado 
+de 
+
+'.methods()'...
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSA É UMA KEY ESPECIAL...
+
+
+ex:
+
+
+
+
+
+
+
+
+
+userSchema.methods.....
+
+
+
+
+
+
+
+
+
+--------> O PROFESSOR NOS EXPLICA, 
+
+
+
+IMPORTANTE,
+
+
+QUE 
+
+
+
+
+A KEY/METHOD 
+
+DE 
+
+
+'methods'
+
+É 
+
+UM 
+
+
+
+_OBJETO __ QUE 
+
+NOS DEIXA__ ADICIONAR __ NOSSOS __PRÓPRIOS__ METHODS 
+
+
+ao nosso model... ------> 
+
+
+
+
+
+
+
+PARA ADICIONAR NOSSOS MÉTODOS AOS MODELS,
+
+
+
+simplesmente escrevemos 
+
+
+eles 
+
+depois 
+
+de 
+
+
+'userSchema.methods.....' 
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+userSchema.methods.addToCart = ....
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+OK... MAS AÍ O NEGÓCIO FICA CADA VEZ MAIS ESQUISITO...
+
+
+
+
+
+
+
+
+A sintaxe para definir nosso method é esta:
+
+
+
+
+
+userSchema.methods.addToCart = function() {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+--> SIM, DE FATO,
+
+__SOMOS OBRIGADOS A USAR ESSA SINTAXE VELHA DE FUNCTION,
+
+essa sintaxe 
+
+
+'function() {}',
+
+
+
+
+
+PRECISAMOS DESSA 
+
+
+
+SINTAXE ANTIQUADA 
+
+
+POR UMA SIMPLES RAZÃO:
+
+
+
+O COMPORTAMENTO DA 'THIS KEYWORD'...
+
+
+
+
+
+
+
+
+-------> NÓS VAMOS QUERER 
+
+QUE 
+
+
+
+A KEYWORD 
+
+'this'
+
+
+
+SE COMPORTE DE MODO que 
+
+
+ELA 
+
+
+
+
+SE REFIRA 
+
+
+AO 
+
+
+'schema'
+
+
+
+em si,
+
+
+E NÃO 
+
+
+__ A QUALQUER OUTRA COISA NE NOSSO CÓDIGO....
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+userSchema.methods.addToCart = function() {  ////////PROFESSOR EXPLICA QUE É __ DESSA FORMA QUE ADICIONAMOS 'CUSTOM METHODS' AOS NOSSOS MODELS CRIADOS POR MEIO DO MONGOOSE (mongoose models).... --> é um approach REALMENTE BEM DIFERENTE, pq dependemos de um object/key/method chamado de '.methods' nos SCHEMAS DEFINIDOS POR nós (como 'userSchema') para DEFINIR METHODS CUSTOM...
+                ///usamos a sintaxe CLÁSSICA de functions, aqui, porque QUEREMOS QUE a keyword 'this' TENHA UM COMPORTAMENTO ESPECÍFICO, QUEREMOS QUE O 'this' se refira, nessa função, AO 'schema' em si, e NÃO A QUALQUER OUTRA COISA...
+
+
+
+                // this   //vai se referir ao SCHEMA, que é o que queremos...
+
+}
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+--> 
+
+
+
+AÍ, DENTRO DESSA FUNÇÃO/MÉTODO,
+
+
+
+PODEMOS ___ ESCREVER/ADICIONAR NOSSA 
+
+
+PRÓPRIA LÓGICA,
+QUE 
+
+
+É 
+
+
+EXATAMENTE O QUE O PROFESSOR QUER FAZER..... --------> 
+
+
+
+
+
+
+
+
+
+PROFESSOR QUER, 
+
+
+DENTRO 
+
+
+
+
+DESSA FUNÇÃO,
+
+ADICIONAR 
+
+A LÓGICA QUE TÍNHAMOS 
+
+
+EM 
+
+
+'addToCart(product)'
+
+
+ANTERIORMENTE... (antes do mongoose)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+o CÓDIGO ANTIGO DE 'addToCart'
+
+
+era:
+
+
+
+
+
+
+
+
+//     //VERSÃO DO PROFESSOR... BEM MAIS SUCINTA DO QUE A NOSSA... (ver aula 'Armazenando múltiplos products no nosso cart'..)
+//     //é mais optimizada do que a nossa..... menos código.
+//     console.log(product, 'THIS');
+
+//     const cartProductIndex = this.cart.products.findIndex((prod) => {
+//       return product._id.toString() === prod.productId.toString();
+//     });
+
+//     let newQuantity = 1;
+
+//     const updatedCartItems = [...this.cart.products];
+
+//     if (cartProductIndex >= 0) {
+//       newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+//       updatedCartItems[cartProductIndex].quantity = newQuantity;
+//     } else {
+//       updatedCartItems.push({
+//         productId: ObjectId(product._id),
+//         quantity: newQuantity,
+//       }); //////EIS O CÓDIGO EM QUESTÃO.
+//     }
+
+//     const updatedCart = {
+//       products: updatedCartItems,
+//     };
+
+//     const db = getDb();
+
+//     return db
+//       .collection('users')
+//       .updateOne(
+//         { _id: ObjectId(this._id) },
+
+//         {
+//           ///é o 'update object', que vai updatar esse objeto 'user' específico, especificamente seu field/objeto 'cart'....
+
+//           $set: {
+//             cart: updatedCart,
+//           },
+//         }
+//       )
+//       .then((result) => {
+//         console.log('ADDED PRODUCT TO CART!');
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   }
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+PEGAMOS TODO O CÓDIGO DE 
+
+'addToCart'
+
+
+
+e enfiamos dentro 
+
+dessa função 
+
+de 
+
+
+''
+
+
+
+
+
+
+
+
+
+userSchema.methods.addToCart = function() { 
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fica tipo assim:
+
+
+
+
+
+
+
+
+
+
+userSchema.methods.addToCart = function() { 
+
+
+
+    const cartProductIndex = this.cart.products.findIndex((prod) => {
+      return product._id.toString() === prod.productId.toString();
+    });
+
+    let newQuantity = 1;
+
+    const updatedCartItems = [...this.cart.products];
+
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: ObjectId(product._id),
+        quantity: newQuantity,
+      }); 
+    }
+
+    const updatedCart = {
+      products: updatedCartItems,
+    };
+
+    const db = getDb();
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        {
+          $set: {
+            cart: updatedCart,
+          },
+        }
+      )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+}
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+É CLARO QUE VAMOS QUERER DAR UMA TWEAKADA NESSE CÓDIGO...
+
+
+
+
+
+
+
+
+----> NESSE CÓDIGo,
+
+
+
+
+A FUNCTION OBVIAMENTE DEVERÁ __ TAMBÉM __ RECEBER UM 'product',
+
+
+
+O __ PRODUCT__ QUE 
+
+
+
+VOU QUERER EFETIVAMENTE ADICIONAR AO CART....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+userSchema.methods.addToCart = function(product) { 
+
+
+
+    const cartProductIndex = this.cart.products.findIndex((prod) => {
+      return product._id.toString() === prod.productId.toString();
+    });
+
+    let newQuantity = 1;
+
+    const updatedCartItems = [...this.cart.products];
+
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: ObjectId(product._id),
+        quantity: newQuantity,
+      }); 
+    }
+
+    const updatedCart = {
+      products: updatedCartItems,
+    };
+
+    const db = getDb();
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: ObjectId(this._id) },
+
+        {
+          $set: {
+            cart: updatedCart,
+          },
+        }
+      )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+}
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+aí, a primeira linha, esta aqui:
+
+
+
+    const cartProductIndex = this.cart.products.findIndex((prod) => {
+      return product._id.toString() === prod.productId.toString();
+    });
+
+
+
+-----> CREIO QUE ELA 
+
+
+JÁ 
+
+ESTÁ CORRETA... --> isso 
+
+pq 
+
+
+o 
+
+'this'
+ 
+
+ já vai se 
+
+ referir 
+
+ AO 
+
+
+
+ SCHEMA DE 'user',
+
+
+ E É REALMENTE EM 'user'
+
+ QUE TEMOS 
+ AQUELE 
+
+
+ 'cart' com 
+
+ os products e etc...
+
+
+
+
+
+
+
+
+
+
+ --> SIM, PROFESSOR CONFIRMA MEU PENSAMENTO,
+
+
+ ainda podemos usar 
+
+ aquele 
+
+
+ 'this.cart.items',
+
+
+
+ ISSO PQ NOSSO SCHEMA 
+
+ AINDA 
+
+
+
+ tem 
+
+
+ 1 cart,
+
+
+
+ e 1 
+
+ array de products DENTRO DESSE 
+
+ CART... 
+
+
+
+
+
+
+
+
+
+ --> O QUE DEVEMOS TER EM MENTE É QUE 
+
+
+
+ 'addToCart()'
+
+
+ vai 
+
+ ser chamado, no futuro,
+
+ EM 
+
+ UMA 
+
+ 'REAL INSTANCE' 
+
+
+
+ baseada nesse schema de 'user', 
+
+
+
+
+
+ UMA INSTANCE TIPO 
+
+
+
+
+ 'req.user.addProduct(product)'....
+
+
+
+
+
+
+
+
+
+ -------> ESSA REAL INSTANCE SERÁ,
+
+
+ DE FATO,
+
+
+
+ 1 __OBJECT__ Que terá um 'populated cart',
+
+
+
+ um cart POPULADO COM __ OU __ 
+
+
+ UM ARRAY _ VAZIO DE PRODUCTS,
+
+
+
+
+ OU __ ENTÃO UM ARRAY DE ITEMS__ QUE JÁ TEM ALGUNS ITEMS DENTRO DELE....
+
+
+
+
+
+
+
+
+
+ --> OK, ISSO SIGNIFICA QUE ESSE CÓDIGO DE 
+
+ ''
+ 
+    const cartProductIndex = this.cart.products.findIndex((prod) => {
+      return product._id.toString() === prod.productId.toString();
+    });
+  
+'''
+
+
+AINDA DEVE FUNCIONAR.... (
+
+
+
+  funciona 
+  PARA CONSEGUIR O 
+
+  PRODUCT INDEX....
+)
+
+
+
+
+
+
+
+
+
+ok... aí temos:
+
+
+
+
+
+
+
+
+
+
+
+
+let newQuantity = 1;
+
+const updatedCartItems = [...this.cart.products];,
+
+
+
+
+
+
+
+
+
+
+COMO __NÓS AINDA VAMOS QUERER CONTROLAR NOSSA 'QUANTITY' 
+
+de 1 product exatamente como antes,
+
+
+deixamos essas 
+
+variáveis/constantes assim....
+
+
+
+
+
+
+
+
+
+--> NÓS __TAMBÉM__ VAMOS QUERER UPDATAR NOSSO CART EXATAMENTE COMO ANTES,
+
+
+por isso mantemos 
+
+o 
+
+
+código de 
+
+
+
+''''
+
+
+
+   if (cartProductIndex >= 0) {
+      newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: ObjectId(product._id),
+        quantity: newQuantity,
+      }); 
+    }
+
+
+
+''''
+
+
+
+
+
+
+
+
+
+ISTO TAMBÉM:
+
+
+
+    const updatedCart = {
+      products: updatedCartItems,
+    };
+
+
+
+
+
+
+----->  OK... MAS AÍ O PROFESSOR APONTA UMA DIFERENÇA...
+
+
+
+
+
+
+A linha 
+
+
+'productId: new ObjectId(product._id)'
+
+
+NÃO VAI MAIS FUNCIONAR ASSIM....
+
+
+
+
+-> VAMOS TROCAR PARA 
+FICAR 
+
+
+'productId: product._id',
+
+
+
+
+
+ISSO PQ __ O MONGOOSE VAI __ AUTOMATICAMENTE WRAPPAR __ 
+
+ESSE 
+
+
+
+'product._id' 
+
+
+em 
+
+
+
+1 'ObjectId()'....
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+   if (cartProductIndex >= 0) {
+      newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: product._id,
+        quantity: newQuantity,
+      }); 
+    }
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO.... ----> E ISSO AÍ,
+
+
+
+essa definição de 
+
+
+'updatedCartItems.push(
+  {
+    productId,
+    quantity
+  }
+)
+',
+
+
+
+
+
+AINDA 
+
+ENCAIXA 
+
+NO NOSSO 
+
+
+SCHEMA DE 
+
+
+'productId' 
+
+e 
+'quantity',
+
+
+QUE DEFINIMOS 
+
+
+MAIS PARA CIMA,
+ 
+
+ em 
+
+
+
+ 'const userSchema = new Schema(
+   {
+     ...
+   }
+ )
+ '
+
+
+
+
+
+
+ --------------------------------------------
+
+
+
+
+ OK.... COM ISSO,
+
+
+
+
+vamos estar com nosso 'updatedCart',
+
+
+
+
+por meio daquela linha de 
+
+
+
+'
+
+
+    const updatedCart = {
+      products: updatedCartItems,
+    };
+
+
+
+''
+
+
+
+
+
+
+----> CERTO... AÍ VAMOS 
+
+PRESENCIAR UMA MUDANÇA DRÁSTICA,
+
+que 
+
+É 
+
+A 
+
+
+REMOÇÃO 
+DAQUELAS LINHAS 
+
+
+'db = getDb()',
+
+e 
+
+
+'return db.collection(xxxx).updateOne()'...
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR ADMITE QUE ELE VAI RETORNAR ALGO __ PARECIDO__ COM 'updateOne',
+
+
+mas que 
+
+
+
+
+___ ELE NÃO VAI __ UPDATAR ESSA COLLECTION MANUALMENTE ASSIM....
+
+
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+
+
+
+
+    // const db = getDb();   ///deprecado, pois agora estamos usando o MONGOOSE, que faz esse 'connect à database' PARA NÓS, por meio de poucos códigos lá em 'app.js' (mongo.connect()) e nos nossos models, por meio desses schemas...
+
+    // return db  ///////PROFESSOR DEIXA DE UPDATAR NOSSA COLLECTION/DOCUMENT MANUALMENTE assim... --> passamos a usar o mongoose, o approach do mongoose, que é diferente, e está escrito logo aabaixo... 
+    //   .collection('users')
+    //   .updateOne(
+    //     { _id: ObjectId(this._id) },
+
+    //     {
+
+
+    //       $set: {
+    //         cart: updatedCart,
+    //       },
+    //     }
+    //   )
+      .then((result) => {
+        console.log('ADDED PRODUCT TO CART!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+EM VEZ DE CHAMAR 
+
+
+'return db.collection().updateOne()',
+
+
+
+
+O PROFESSOR 
+
+
+
+
+NOS EXPLICA QUE 
+
+
+__ELE VAI __SIMPLESMENTe__ 
+
+
+CHAMAR 
+
+
+
+'this.save()' 
+
+
+
+
+
+
+__________PARA ___ SALVAR ESSE NOSSO objeto 'user'
+
+
+
+
+
+POR CIMA DO OBJETO 'user' QUE TÍNHAMOS NA DATABASE ANTERIORMENTE, 
+
+
+
+
+
+salvaremos no mesmo lugar em que estava o antigo...
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE __ ANTES DE FAZER ISSO,
+
+
+PROFESSOR PRECISA 
+
+
+EXECUTAR O _ IMPORTANTE__ CÓDIGO DE 
+
+
+'this.cart = updatedCart',
+
+
+
+QUE 
+
+_ VAI DEFINIR__ 
+
+
+
+NOSSO CART que será updatado por 'this.save()',
+
+
+
+definir a data que será aplicada nesse 
+
+'this.save()'....
+
+
+
+
+
+
+
+
+
+
+--> FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+    this.cart = updatedCart; /////EXTREMAMENTE NECESSÁRIO, pois 'SETTA' a data/mudanças na data de nosso document/objeto  QUE DEVERÃO SER _ APLICADAS A ESSE OBJECT NA COLLECTION, por meio do 'this.save()' escrito logo abaixo...
+    this.save(); ////VAI ___SALVAR___ AS MUDANÇAS efetuadas sobre nosso objeto 'user', mudanças realizadas no mesmo 'block' em que esse call de 'this.save()' se encncontra....
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+ISSO, NO CASO,
+
+
+
+
+__É/DEVERÁ SER _UM UTILITY METHOD __ QUE 
+
+'SAVES ITSELF',
+
+
+ou seja,
+
+
+
+
+
+
+__ EM QUE O OBJETO 
+
+
+
+
+SE SALVA SOZINHO,
+
+
+TUDO POR MEIO 
+
+
+DO USO 
+
+DO 
+
+
+MÉTODO BUILTIN 
+
+
+'.save()'...,
+
+
+do mongoose....
+
+
+
+
+
+
+
+
+
+--> OK,
+
+
+
+ESSE 
+
+
+
+
+
+
+
+MÉTODO AÍ DEVE 
+
+'update the cart',
+
+
+BASTA 
+
+O CONECTARMOS 
+
+
+AO NOSSO CONTROLLER ADEQUADO....
+
+
+
+
+
+
+
+
+--> PARA ISSO, VAMOS CHAMÁ-LO 
+
+LÁ 
+
+Em 
+
+
+
+
+
+
+'exports.postToCart = (req, res, next) => {
+
+
+
+
+}
+'
+
+
+
+
+
+
+
+
+
+
+------> OK... PROFESSOR VAI ESCREVER ASSIm:
+
+
+
+
+
+
+
+
+'exports.postToCart = (req, res, next) => {
+
+
+
+
+    const prodId = req.body.productId;
+
+
+
+
+    Product.findById(prodId)
+    .then(
+      (product) => {
+
+        
+        if(!product) {
+
+
+
+
+        }
+
+
+        return req.user.addToCart(product);
+
+
+      }
+    )
+
+
+}
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+NESSE CÓDIGO AÍ,
+
+É CLARO QUE VAMOS 
+
+
+__ENCONTRAR__ 1 PRODUCT/não vamos encontrar 
+
+1 
+
+product 
+
+
+por meio 
+
+daquele 
+
+'productId'....
+
+
+
+
+
+(
+
+
+  e o 'findById' utilizado, aqui, será 
+
+
+  1 dos métodos BUILTIN do mongoose....
+)
+
+
+
+
+
+
+--> AÍ, NO CASO, 
+
+
+
+VAMOS REALMENTE 
+
+
+
+executar 
+
+esse 
+
+
+
+'return req.user.addToCart(product)',
+
+
+
+QUE 
+
+
+BASICAMENTE 
+
+AGORA 
+
+É 
+
+
+AQUELE 
+
+MÉTODO 
+
+
+CUSTOM que definimos 
+
+lá 
+
+
+
+no model mongoose 
+
+
+'user'
+
+
+
+por meio do código 
+
+
+
+
+
+
+userSchema.methods.addToCart = function() {   ////EIS O CÓDIGO EM QUESTÃO.
+      
+
+
+    const cartProductIndex = this.cart.products.findIndex((prod) => {
+      return product._id.toString() === prod.productId.toString();
+    });
+
+    let newQuantity = 1;
+
+    const updatedCartItems = [...this.cart.products];
+
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: product._id,
+        quantity: newQuantity,
+      }); 
+    }
+
+    const updatedCart = {
+      products: updatedCartItems,
+    };
+
+
+
+    this.cart = updatedCart; /////EXTREMAMENTE NECESSÁRIO, pois 'SETTA' a data/mudanças na data de nosso document/objeto  QUE DEVERÃO SER _ APLICADAS A ESSE OBJECT NA COLLECTION, por meio do 'this.save()' escrito logo abaixo...
+    this.save(); ////VAI ___SALVAR___ AS MUDANÇAS efetuadas sobre nosso objeto 'user', mudanças realizadas no mesmo 'block' em que esse call de 'this.save()' se encncontra....
+        ////^^^^ método BUILTIN do mongoose, é builtin em TODOS OS MODELS MONGOOSe..
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  
+  
+
+
+  const productId = req.body.productId;
+
+  
+
+Product.findById(productId) ///método MONGOOSE... builtin em TODOS NOSSOS MODELS... --> vai automaticamente 'wrappar' o 'productId' em um 'objectId(xxxx)'....
+.then(
+  (product) => {
+
+
+
+      return req.user.addToCart(product); ////esse método, MÉTODO CUSTOM, criado por NÓS, já contém a lógica que determina se NÓS VAMOS 'CREATE A NEW PRODUCT' (nenhum product com esse '_id' encontrado no 'cart' do 'user'....)  __ OU SE VAMOS SÓ ADICIONAR 1 unidade 'quantity'  no field de 'quantity' de um object QUE JÁ EXISTE (ou seja, já temos 1 product com esse '_id' no array de 'products', dentro do 'cart', dentro de 'user'.....)
+
+
+
+  }
+)
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+Product.findById(productId) ///método MONGOOSE... builtin em TODOS NOSSOS MODELS... --> vai automaticamente 'wrappar' o 'productId' em um 'objectId(xxxx)'....
+.then(
+  (product) => {
+
+
+
+      return req.user.addToCart(product); ////esse método, MÉTODO CUSTOM, criado por NÓS, já contém a lógica que determina se NÓS VAMOS 'CREATE A NEW PRODUCT' (nenhum product com esse '_id' encontrado no 'cart' do 'user'....)  __ OU SE VAMOS SÓ ADICIONAR 1 unidade 'quantity'  no field de 'quantity' de um object QUE JÁ EXISTE (ou seja, já temos 1 product com esse '_id' no array de 'products', dentro do 'cart', dentro de 'user'.....)
+
+
+
+  }
+)
+.then(
+  (result) => {
+
+    console.log(result);
+    res.redirect('/cart');
+  }
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+OK... VAMOS TESTAR SE ISSO FUNCIONA...
+
+
+
+
+SALVAMOS TUDO E RECARREGAMOS A PÁGINA,
+
+E AÍ 
+TENTAMOS 
+
+ADICIONAR ALGO AO NOSSO 'CART'...
+
+
+
+
+
+
+
+
+
+
+----> OK, VAMOS ATÉ O 'products'
+
+
+
+
+E TENTAMOS CLICAR EM 'ADD TO CART'...
+
+
+
+
+
+
+
+
+
+
+--> RECEBI UM __ ERRO__:
+
+
+
+
+ReferenceError: product is not defined
+    at model.userSchema.methods.addToCart (A:\projeto4 - NODEJS\MODULO13-TRABALHANDOCOM'MONGOOSE'\NOVONOVOPROJETO11-USANDOMONGOOSEPARAESCREVERQUERIESMONGODBNOSQL\models\user.js:82:20)
+    at A:\projeto4 - NODEJS\MODULO13-TRABALHANDOCOM'MONGOOSE'\NOVONOVOPROJETO11-USANDOMONGOOSEPARAESCREVERQUERIESMONGODBNOSQL\controllers\shop.js:546:23
+
+
+
+
+
+
+
+
+
+  --> ERA SÓ UM PARÂMETRO 
+
+
+
+
+  faltando, lá 
+
+
+  em 
+
+
+  'model.userSchema.methods.addToCart()' (faltou escrever o 'product' dentro de '()'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ok... funcionou?
+
+
+
+
+
+
+
+  --> devemos analisar nosso objeto 'user',
+
+  ver 
+
+  se 
+
+  ele 
+
+
+  TEM 
+
+
+
+  UM 'cart'
+
+  COM 
+
+  ESSES PRODUCTS ADDADOS 
+
+
+  por meio de 
+
+  'add to cart'
+
+
+
+  lá 
+
+  no seu interior...
+
+
+
+
+
+
+
+
+
+
+
+  --> DE FATO, ISSO FUNCIONOU....
+
+
+
+
+
+
+
+
+
+
+  -----> CONSEGUIMOS ADICIONAR 'products'
+
+
+
+
+  ao 
+
+
+  nosso 
+
+
+
+  'cart'
+
+  em 
+
+  'user'... 
+
+
+
+
+
+
+  --> BASTA VER O 
+
+  CONTÉUDO 
+
+  DE NOSSO OBJETO 'userr',
+
+
+
+
+
+  lá 
+
+  no 'MONGODBCOMPASS':
+
+
+
+
+  {
+    "_id": {
+        "$oid": "6178c60a90464c24983b0847"
+    },
+    "name": "Max",
+    "email": "max@test.com",
+    "cart": {
+        "products": [{
+            "productId": {
+                "$oid": "6178c95a034366e935717476"
+            },
+            "quantity": 3,
+            "_id": {
+                "$oid": "6179bc4da05105d79005d6dd"
+            }
+        }, {
+            "productId": {
+                "$oid": "6179bcb8a05105d79005d70b"
+            },
+            "quantity": 1,
+            "_id": {
+                "$oid": "6179bcbea05105d79005d71f"
+            }
+        }]
+    },
+    "__v": 2
+}
+
+
+
+
+
+
+
+
+-----> PROFESSOR NOS EXPLICA QUE OS 
+
+
+
+'_id'
+
+
+
+de cada 
+
+PRODUCT ITEM no cart 
+
+
+
+
+__ FORAM ADICIONADOS PELO 'MONGOOOSE'
+
+AUTOMATICAMENTE... (
+
+
+  pq 
+
+  ele
+
+
+ADICIONA IDS para 
+
+
+SUBDOCUMENTS também...
+
+)
+
+
+
+
+
+
+
+
+
+
+--> MAS MAIS IMPORTANTE DO QUE ISSO,
+
+
+
+O PROFESSOR __ CONSEGUIU 
+
+
+'productId'
+
+em
+
+cada 
+
+
+
+'CART/PRODUCT ITEM'
+ 
+
+ no cart.... -----> 
+
+
+
+ E ESSE PRODUCTID/ESSES PRODUCTIDS 
+
+
+
+
+ DEVEM SER 
+
+
+
+ ___O MESMO ID __ DO PRODUCT QUE VOCÊ 
+
+
+
+
+ TEM LÁ 
+
+
+ em 
+
+ 'products' (pq é assim que são estabelecidas as RELATIONS...)
+
+
+
+
+
+
+
+
+
+
+
+--------> OK..... ------> CONFIRMAMOS QUE ISSO 
+
+
+TUDO ESTÁ FUNCIONANDO,
+
+
+
+
+
+
+
+E 
+
+ISSO NOS MOSTRA __o  PODER DE 'MONGOOSE',
+
+
+
+
+PQ NÓS FICAMOS COM UM MONTE DE NICE 
+
+BUILTIN METHODS 
+
+
+
+QUE TAMBÉM 
+
+
+
+
+
+USAMOS/COMBINAMOS __ COM NOSSOS 
+
+
+
+
+__PRÓPRIOS METHODS,
+
+
+como 
+
+
+
+visto no código 
+
+
+do 
+
+
+method custom de 
+
+'userSchema.methods.addToCart = function(product) {}'...
+
+
+
+
+
+(que possui calls, por exemplo, de 
+
+
+'
+this.save()'
+),
+
+
+
+
+
+METHODS QUE 
+
+PODEMOS/PODEREMOS ENTÃO 
+
+
+
+__CHAMAR NOS OBJETOS 
+
+
+
+__cRIADOS A PARTIR DE NOSSO SCHEMA/model mongoose....

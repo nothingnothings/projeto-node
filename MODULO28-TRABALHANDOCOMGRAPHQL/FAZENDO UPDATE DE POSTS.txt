@@ -1,0 +1,1036 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... AGORA QUE CONSEGUIMOS FAZER LOAD DE UM SINGLE POST,
+
+
+é 
+
+
+hora 
+
+de 
+
+aprender 
+
+a enviar uma query 
+
+PARA 
+
+
+
+
+updatar 1 único post...
+
+
+
+
+
+
+
+
+--> ACHO QUE VAMOS COMEÇAR 
+
+
+
+PELO 
+
+SCHEMA,
+
+
+onde adicionaremos uma nova operação.... --> será uma MUTATION...
+
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): SinglePostData!
+      updatePost(userInput: UserPostInputData): SinglePostData!
+
+}
+
+
+
+
+
+
+
+
+
+
+
+--> essa operação vai ter a mesma estrutura do 'createPost',
+
+penso eu...
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR ESCREVE 
+
+
+
+
+
+isso...
+
+
+
+
+--> MAS 
+
+
+
+EU ESQUECI 1 PARÂMETRO... --> ESSE PARÂMETRO SERÁ O 'ID DO POST'... 
+
+
+
+(
+
+
+    é por isso que 
+
+    editamos nossa mutation,
+
+    para que fique assim:
+
+
+
+
+
+type RootMutation {
+      createUser(userInput: UserInputData): User!
+      createPost(userInput: UserPostInputData): SinglePostData!
+      updatePost(userInput: UserPostInputData, id: ID!): SinglePostData!
+
+}
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO... EU IMAGINO QUE VOU PRECISAR DO 'ID'
+
+
+para 
+
+IDENTIFICAR ESSE POST NA DATABASE, PARA QUE 
+
+ENTÃO CONSIGA FAZER OVERWRITE NELE...
+
+
+
+
+
+
+
+
+------> COMO RESULT, VAMOS QUERER O 'UPDATED POST',
+
+tudo normal...
+
+
+
+
+
+
+
+
+--> AÍ VAMOS ATÉ OS RESOLVERS,
+
+EM QUE 
+
+ADICIONAMOS 
+
+UM RESOLVER DE 
+
+'updatePost'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+começo tipo assim:
+
+
+
+
+
+
+
+  updatePost: async function(args, req) {
+
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+      const postId = args.postId;
+
+
+
+
+
+      
+
+
+  }
+
+
+
+
+
+
+
+  -------------------------------------------
+
+
+
+
+
+
+--> vou precisar também do 'title', 'content',
+ 
+ etc etc, 
+
+ do post...
+
+
+
+
+
+
+
+
+
+
+----------> CHECAMOS PELA AUTHENTICATION NO INÍCIO,
+
+
+
+exatamente como nos outros 
+
+
+resolvrs...
+
+
+
+
+
+
+
+
+--> AÍ VAMOS 
+
+
+
+
+
+
+QUERER __ ENCONTRAR ESSE POST NA DATABASE, POR MEIO DO MÉTODO MONGOOSE DE 'Post.findOne()'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O MEU CÓDIGO FOI FICANDO ASSIM:
+
+
+
+  updatePost: async function(args, req) {
+
+        
+    if (!req.isAuth) {
+        ///informação (propriedade) que existirá/será enfiada no nosso objeto request POR _ MEIO _ DE __ NOSSA TOKEN, e POR MEIO DO MIDDLEWARE DE 'is-auth-graphql.js'... ---> ver 'app.js', trecho logo acima do MIDDLEWARE QUE DEFINE NOSSA ÚNICA ROUTE DO GRAPHQL (app.use('/graphql')....)
+        const error = new Error('Not authenticated!');
+        error.code = 401;
+        throw error;
+      }
+
+      const postId = args.postId;
+
+
+      const userId = req.userId
+
+
+      
+      const post = await Post.findOne({_id: ObjectId(postId)}).populate('creator.userId')
+
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.code = 404;
+        throw error;
+      }
+
+
+      if(post.creator.userId.toString() !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 403;
+        throw error;
+      }
+
+
+
+      post.title = args.userInput.title;
+      post.content = args.userInput.content;
+      post.imageUrl = args.userInput.imageUrl;
+
+
+
+
+      const savedPost = await post.save();
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OU SEJA:
+
+
+
+  1) PRIMEIRAMENTE CHECAMOS SE O USER 'ISAUTH' (está authenticated como ALGUM USER NO NOSSO APP)...
+
+
+
+
+
+  2) DEPOIS, ENCONTRAMOS O POST NA DATABASe (e damos throw  de um error, se ele não existe na database)...
+
+
+
+
+
+  3) APÓS ISSO, NÓS IDENTIFICAMOS SE ESSE POST REALMENTE PERTENCE A ESSE USER, POR MEIO DE SUA TOKEN.... (SE ELES MATCHAM, EU SEI QUE É O USER QUE CRIOU O POST QUE ESTÁ TENTANDO O EDITAR)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> CERTO.... mas se esse realmente for o user verdadeiro,
+
+  executamos aqueles códigos:
+
+
+
+   
+
+
+   
+      post.title = args.userInput.title;
+      post.content = args.userInput.content;
+      post.imageUrl = args.userInput.imageUrl;
+
+
+
+
+      const savedPost = await post.save();
+
+
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE DEVEMOS ADICIONAR UM POUCO DE VALIDATION NESSE EDIT, TAMBÉM,
+
+
+POR ISSO 
+
+ELE COPIA O CÓDIGO DO 
+
+'CREATEPOST',
+lá de cima, 
+
+de validation...
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+    const errors = [];
+
+
+      const post = await Post.findOne({_id: ObjectId(postId)}).populate('creator.userId')
+
+      if (!post) {
+        const error = new Error('Could not find post.');
+        error.code = 404;
+        throw error;
+      }
+
+
+      if(post.creator.userId.toString() !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.code = 403;
+        throw error;
+      }
+
+      if (
+        validator.isEmpty(args.userInput.title) ||
+        !validator.isLength(args.userInput.title, { min: 6 })
+      ) {
+        ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+        errors.push({
+          message: 'Please insert a valid title, with more than 6 characters.',
+        });
+      }
+  
+      if (
+        validator.isEmpty(args.userInput.content) ||
+        !validator.isLength(args.userInput.content, { min: 6 })
+      ) {
+        ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+        errors.push({
+          message: 'Please input valid content, with more than 6 characters.',
+        });
+      }
+  
+      if (errors.length > 0) {
+        const error = new Error('Invalid data entered!');
+        error.data = errors;
+        error.code = 422;
+        throw error;
+      }
+
+
+
+
+
+
+
+
+-----------------------------
+
+
+]]
+
+ok, agora que sabemos que nossos inputs são válidos,
+
+podemos 
+
+
+COMEÇAR 
+
+A EDITAR 
+
+
+AS COISAS.... -----> ENTRETANTO,
+
+SÓ VAMOS UPDATAR NOSSA 
+
+'IMAGEURL'
+
+
+SE ELA REALMENTE 
+
+
+
+FOI ALTERADA  PELO USER... --> é por isso que 
+
+vamos 
+
+
+escrever um if check aqui,
+
+checando pela equivalência 
+
+
+
+da imageUrl que foi inputtada e aquela que já existia no nosso post....
+
+
+
+ex:
+
+
+
+
+
+
+
+      if (post.imageUrl !== args.userInput.imageUrl) {  
+
+        fs.unlink
+
+        post.imageUrl = args.userInput.imageUrl;
+      }
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+É CLARO QUE O CÓDIGO NÃO SERÁ ASSIM, MAS O QUE INTERESSA É QUE __ VAMOS TER QUE _ EXECUTAR ALGUM CÓDIGO 
+
+
+
+
+QUE FAÇA COM QUE __ A FILE _ ANTIGA VINCULADA A ESSE POST SEJA __ DELETADA_...
+
+
+
+
+
+
+
+
+
+--> MAS MEU CHECK TAMBÉM FICOU ERRADO... --> 
+
+o check correto, aqui,
+
+é checar 
+
+
+
+SE 
+
+
+'postInput.imageUrl !== 'undefined' --->  OU SEJA, VAMOS CHECAR _ SE O USER __ REALMENTNE ENVIOU UMA IMAGE NO REQUEST DELE...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+      if (post.imageUrl !== 'undefined') {  
+
+        post.imageUrl = args.userInput.imageUrl;
+      }
+
+
+
+
+
+
+
+
+
+--------> MAS SE ISSO NÃO ESTIVER COMO UNDEFINED,
+
+VAMOS QUERER OVERWRITTAR A IMAGEURL 
+
+
+QUE TEMOS 
+
+NESSE POST, LÁ NA DATABASE... (com a nova imageURL)... 
+
+
+
+
+
+
+
+
+
+
+--> CASO CONTRÁRIO, NÃO VAMOS TOCAR NA IMAGEURl.. -------->
+
+
+
+
+
+
+aí salvamos o post,
+
+
+
+e aí _ RETORNAMOS UMA DATA __ DESSE POST AÍ,
+
+para que 
+
+
+nosso frontend seja atualizado...
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+      return {
+            ...savedPost._doc,
+            _id: savedPost._id.toString(),
+            createdAt: savedPost.createdAt.toISOString(),
+            updatedAt: savedPost.updatedAt.toISOString()
+      }
+
+
+
+
+
+
+
+--------------------------
+
+
+
+CERTO.... ESSA É A DATA QUE QUEREMOS ENVIAR AO NOSSO CLIENT, AQUI....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> AGORA TEMOS O RESOLVER 
+
+
+
+COLOCADO NO LUGAR....
+
+
+
+
+
+DEVEMOS VOLTAR AO CÓDIGO DE NOSSO FRONTEND, E AÍ TESTAR ESSE EDIT DO POST....
+
+
+
+
+
+
+
+
+--> ganhei um ERROR:
+
+
+Cannot read properties of undefined (reading 'replace')
+
+
+
+
+
+
+
+
+
+
+
+---> resolvi esse problema, mas ainda estou com um erro de 
+
+
+
+''Cannot read properties of null (reading 'createPost')'',
+
+
+
+
+QUE 
+
+
+
+
+OCORREU DEVIDO A ESTE ERRO:
+
+
+
+"Cannot return null for non-nullable field Post.title."
+
+
+
+
+
+
+
+
+
+
+--> DEI UMA BOA TWEAKADA NO FRONTEND, E AGORA O CONJUNTO INTEIRO FUNCIONA (tanto edit como add de posts):
+
+
+
+
+
+
+
+
+
+  finishEditHandler = async (postData) => {
+    ///usado tanto para o ADD como para o EDIT de posts...
+
+    try {
+      this.setState({ editLoading: true });
+
+      //Set up data (with image!)
+      // let url = 'URL';
+
+      ////esse objeto/const de 'formData' JÁ VAI SETTAR AUTOMATICAMENTE OS HEADERS APROPRIADOS PARA ESSE REQUEST, para nós... (não escreva aquele header de 'Content-Type: application/json', pq isso vai QUEBRAR O SEU APP....)
+      // let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+      // formData.append('title', postData.title);
+      // formData.append('content', postData.content);
+      // formData.append('image', postData.image);
+
+      // console.log(postData.image);
+
+      // let url = 'http://localhost:8080/feed/post';
+
+
+
+
+
+      const formData = new FormData(); ///ainda USAREMOS ISSO PARA CONSEGUIR UPLOADAR NOSSAS IMAGES, MESMO EM UMA 'GRAPHQL API' (pq ainda vamos usar uma rest api, CONJUNTAMENTE COM ESES GRAPHQL API, para fazer o MANAGE DO STORE DE NOSSAS IMAGES)....
+
+      formData.append('image', postData.image);
+
+
+      if (this.state.editPost) {
+        formData.append('oldPath', this.state.editPost.imagePath);
+
+
+      }
+
+
+
+    const imageSend = await  fetch('http://localhost:8080/post-image', 
+
+      {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${this.props.token}`,
+        }
+      }
+      );
+
+
+const manipulatedImageSend = await imageSend.json();
+
+
+
+console.log(manipulatedImageSend);
+
+
+
+let imageUrl;
+
+if(manipulatedImageSend.filePath) {
+   imageUrl = manipulatedImageSend.filePath.replace(/\\/g, '/');
+} else {
+  imageUrl = 'undefined'
+}
+
+
+
+
+
+
+console.log(imageUrl, 'IMAGEURL');
+
+
+
+
+      let graphqlQuery = {
+        query: `
+        mutation {
+          createPost(
+            userInput: {
+                  title: "${postData.title}",
+                  content: "${postData.content}",
+                  imageUrl: "${imageUrl}"
+            }
+         ) {
+
+            title
+            content 
+            _id
+            imageUrl
+            createdAt
+            creator {
+                name
+            }
+        }
+      }
+      `,
+      };
+
+
+
+      if (this.state.editPost) {
+
+        graphqlQuery = {
+          query: `
+          
+          mutation {
+            updatePost(postId: "${this.state.editPost._id}", userInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "${imageUrl}" } )
+           {
+              _id 
+              title 
+              content
+              imageUrl
+              creator {
+                name
+              }
+              createdAt
+          }
+        }
+          
+          `
+        }
+
+
+
+      }
+
+      // for (var pair of formData.entries()) {
+      //   // console.log(pair[0] + ', ' + pair[1]);
+      // }
+
+      const editAndAddResults = await fetch('http://localhost:8080/graphql', {
+        method: 'POST',
+
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+          Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+          'Content-Type': 'application/json' ///colocamos isto na VERSÃO __ 'GRAPHQL' de nosso código, pois é necessário lá... (é necessário em muitas outras hipóteses, também, mas neste curso, passou a ser necessário quando trocamos para um bakcned GRAPHQL..)
+          
+          
+          
+          // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE, não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ  ENVIANDO DATA por meio daquele 'formData.append()'... APENAS precisamos settar, nesse case, UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+        },
+
+      });
+
+      if(editAndAddResults.errors && editAndAddResults[0].status === 400) {
+        throw new Error(
+          'Please input values that are valid and not equal to previous ones.'
+        )
+      }
+
+
+      if(
+        editAndAddResults.errors
+      ) {
+        throw new Error('Creating or editing a post failed!')
+      }
+
+      // return res.json();
+      // })
+      // .then((data) => {
+
+      const manipulatedEditAndAddResults = await editAndAddResults.json();
+
+      console.log(manipulatedEditAndAddResults);
+
+      // console.log(manipulatedEditAndAddResults);
+
+
+      let post;
+
+      if (this.state.editPost) {
+
+    post = {
+          _id: manipulatedEditAndAddResults.data.updatePost._id,
+          title: manipulatedEditAndAddResults.data.updatePost.title,
+          content: manipulatedEditAndAddResults.data.updatePost.content,
+          creator: manipulatedEditAndAddResults.data.updatePost.creator,
+          createdAt: manipulatedEditAndAddResults.data.updatePost.createdAt,
+          imagePath: manipulatedEditAndAddResults.data.updatePost.imageUrl
+        } 
+
+      } else {
+        post = {
+          _id: manipulatedEditAndAddResults.data.createPost._id,
+          title: manipulatedEditAndAddResults.data.createPost.title,
+          content: manipulatedEditAndAddResults.data.createPost.content,
+          creator: manipulatedEditAndAddResults.data.createPost.creator,
+          createdAt: manipulatedEditAndAddResults.data.createPost.createdAt,
+          imagePath: manipulatedEditAndAddResults.data.createPost.imageUrl
+        };
+      }
+
+      // console.log(post, 'Line');
+      this.setState((prevState) => {
+        let updatedPosts = [...prevState.posts];
+        if (prevState.editPosts) {
+          const postIndex = prevState.posts.findIndex((post) => {
+            return post._id === prevState.editPost._id;
+          });
+          updatedPosts[postIndex] = post;
+        } else if (prevState.posts.length < 2) {
+          updatedPosts = prevState.posts.concat(post);
+        }
+        return {
+          posts: updatedPosts,
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+        };
+      });
+
+      this.loadPosts();
+      // })
+    } catch (err) {
+      // .catch((err) => {
+      //   console.log(err);
+      this.setState({
+        isEditing: false,
+        editPost: null,
+        editLoading: false,
+        error: err,
+      });
+      this.loadPosts();
+      // });
+    }
+  };

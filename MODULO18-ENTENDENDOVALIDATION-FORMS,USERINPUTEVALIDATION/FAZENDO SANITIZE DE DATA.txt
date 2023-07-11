@@ -1,0 +1,671 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> APRENDEMOS UM MONTE SOBRE VALIDATION E O PROVIDE DE UMA 
+
+
+
+BOA USER EXPERIENCE..
+
+
+
+
+
+
+
+
+
+-----> BEM, MAS É CLARO QUE ÀS VEZES VOCÊ VAI querer
+ 
+
+
+ 'SANITIZE THE USER INPUT'....
+
+
+
+
+
+
+
+
+
+ --> SANITIZE === REMOVER TODO O CÓDIGO MALICIOSO QUE PODE 
+
+ EXISTIR 
+
+
+ NO INPUT DO USER...
+
+
+
+
+
+
+
+
+
+
+ ----> SANITIZE-------> LÁ NA PACKAGE 
+
+ DE 
+
+ 'express-validator'
+
+
+
+
+ ENCONTRAMOS MAIS DO QUE APENAS 
+
+ 'VALIDATORS',
+
+
+
+
+ __ENCONTRAMOS TBM __ SANITIZERS__.... ------> AÍ 
+
+
+
+
+ VEMOS O QUE 
+
+
+
+ CADA 1 DELES FAZ....
+
+
+
+
+
+
+
+
+ --> EX:
+
+
+
+ ETC.... --------> ISSO ASSEGURA QUE NÃO EXISTA NENHUM WHITESPACE 
+
+
+
+ NO INÍCIO/FIM DE SEUS INPUTS...
+
+
+
+
+
+OUTRA:
+
+
+
+'
+normalizeEmail' ------> ESSE SANITIZER__ VAI __ ASSEGURAR_ QUE 
+
+TODOS 
+
+OS EMAILS INPUTTADOS __ 
+
+
+SEJAM __ CONVERTIDOS__ AUTOMATICAMENTE PARA 'LOWERCASE' (eu já havia feito isso, manualmente),
+
+
+
+
+
+
+
+____ E COISAS ASSIM.... ------> HÁ 
+
+
+UM MONTE 
+
+DE 
+COISAS QUE 
+
+
+
+VOCÊ PODE FAZER PARA QUE 
+
+
+
+
+
+
+
+''' A DATA QUE VOCê USA _ FIQUE NÃO SÓ VÁLIDA,
+ 
+ MAS 
+
+ TAMBÉM 
+
+ 'STORED IN A UNIFORM WAY''''... -----> OU SEJA,
+
+
+ SEM NENHUM 
+
+
+ EXTRA SPACE OU QUALQUER COISA DO TIPO..
+
+
+
+
+
+
+
+ -------> É POR ISSO QUE O SANITIZE DE INPUT É ALGO QUE TAMBÉM FAZ SENTIDO 
+
+ DE 
+ SE 
+
+ FAZER...
+
+
+
+
+
+ -------> CROSS-SITE SCRIPTING ATTACK SANITATION --> É UMA ___ FEATURE___ 
+
+ DE 
+
+
+
+ SEGURANÇA,
+
+ QUE 
+
+ O 
+
+ PROFESSOR NOS MOSTRARÁ NO FUTURO... -----> VEREMOS NO MÓDULO DE SEGURANÇA DO CURSO.... -------> POR ENQUANTO FOCAREMOS 
+ NA 
+
+
+ 'VISUAL SANITIZATION',
+
+
+
+ E NÃO 
+
+
+ NA 
+
+ SECURITY
+  
+
+
+  __ RELEVANT __ SANITIZING.... -------> OK... PODEMOS SANITIZAR NOSSOS INPUTS.... MAS COMO ISSO FUNCIONA?
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> BEM, 
+
+
+
+
+  VOCÊ 
+
+
+
+
+
+  FAZ ISSO EM 1 ÚNICA ETAPA,
+
+
+
+
+  __ COM O 'VALIDATING'... ----------> VOCÊ VAI ATÉ 
+
+
+
+
+
+
+
+  ______ AS ROUTES__, ARQUIVOS DE ROUTES.... ------> 
+
+
+
+
+
+
+
+
+
+
+  LÁ EM 'auth.js',
+
+
+  LÁ 
+
+
+
+
+
+  NA ROUTE DE 'router.post('/login')',
+
+
+
+  VAMOS QUERER ___ 
+
+
+
+  ASSEGURAR__ QUE 
+
+
+  NOSSO EMAIL ___ 
+
+
+  É 
+
+
+  ARMAZENADO 'IN A NORMALIZED WAY'... (eu já fiz isso....) ------> ISSO SIGNIFICA QUE 
+
+
+  VAMOS 
+
+  QUERER 
+
+  QUE 
+  ELE 
+
+
+
+  SEJA 
+
+  ARMAZENADO DE FORMA 
+
+  'LOWERCASE',
+
+
+  SEM UPPERCASE 
+
+  CHARACTER,
+
+  E SEM 
+
+  WHITESPACE....
+
+
+
+
+
+  ----------> PODEMOS FAZER ISSO 
+
+  POR MEIO 
+
+
+  DO 
+
+  CHAIN 
+  DE UM 
+
+
+  METHOD ADICIONAL,
+
+
+
+
+
+
+  _____ DEPOIS __ DA 'VALIDATION LOGIC',
+
+
+
+com o 
+
+
+'normalizeEmail()',
+
+
+
+
+
+
+
+  TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+      check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .custom( 
+    (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+      
+      return User.findOne({email: value}) 
+            (user) => {
+
+
+                        if (!user) {
+                            return Promise.reject('No account assigned to that email, please try another one.')
+                        } 
+
+                      
+        
+    }
+        )
+  }
+        
+)
+.normalizeEmail() ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+ok...
+
+
+
+
+VAMOS COMEÇAR ESCREVENDO ISSO AÍ...
+
+
+
+
+
+
+
+
+--> normalizeEmail É UM DESSES 'BUILTIN SANITIZERS'
+
+
+que 
+
+
+
+o professor queria nos mostrar....
+
+
+
+
+
+
+-----------> JÁ 
+
+PARA 
+O 
+
+PASSWORD,
+
+
+
+PODEMOS O 'TRIMMAR',
+
+por meio 
+de 
+
+
+'.trim()',
+
+PARA __ REMOVER___ TODOS OS WHITE SPACES...
+
+
+
+
+
+
+eX:
+
+
+
+
+
+
+
+
+
+router.post(
+  '/login',
+
+
+  [
+    check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .custom( 
+    (value, { req } ) => { ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+      
+      return User.findOne({email: value}) ///////EIS O CÓDIGO EM QUESTÃO.
+        .then(
+            (user) => {
+
+
+                        if (!user) {
+                            return Promise.reject('No account assigned to that email, please try another one.')
+                        } 
+
+                      
+        
+    }
+        )
+  }
+        
+)
+.normalizeEmail()
+,
+
+
+check('password')
+.isAlphanumeric()
+.withMessage('Password must be made of only letters and numbers.')
+.custom(
+  (value, { req }) => {
+
+    console.log(req.body.email, 'EMAIL');
+
+   return User.findOne(
+     {email: req.body.email}
+   )
+   .then(
+     (user) => {
+
+      
+        return bcrypt.compare(
+          user.password.toString(), value.toString()
+        )
+        .then(
+          (result) => {
+
+            if(result) {
+              return value;
+            } else {
+
+                if(value.length < 6) {
+                  return Promise.reject('Your Password must contain 6 or more characters.')
+                } else {
+                      
+              return Promise.reject('Invalid Password')
+                }
+
+
+            }
+          }
+        )
+     }
+   )
+  }
+)
+.trim(); //////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> E PODEMOS FAZER 
+A MESMA 
+
+
+
+
+COISA NA ROUTE DE 'signup',
+
+PODEMOS 
+
+
+
+COLOCAR 
+
+AQUELE 
+
+SANITIZER 
+
+
+
+de 
+
+
+'.normalizeEmail()'
+
+
+no nosso email,
+
+E 
+
+o 
+
+
+
+'.trim()'
+
+
+no NOSSO PASSWORD....
+
+
+
+
+
+-------------------
+
+
+
+
+OK...
+
+
+
+
+
+
+PARA VER O RESULTADO DISSO,
+
+
+
+O PROFESSOR CONECTA-SE 
+
+
+
+à 
+
+DATABASE,
+
+
+
+E AÍ __ 
+
+
+
+ELE 
+
+
+
+
+CRIA UM NOVO USER, para ver a feature do 'normalizeEmail'
+
+
+APLICADA 
+
+AO 
+
+
+
+field de email (todas as letras maiúsculas são convertidas em lowercase. )
+
+
+
+
+
+
+
+
+
+
+
+--_> OK.... ISSO SIGNIFICA QUE O SANITIZE DE DATA É 
+
+IMPORTANTE PARA QUE 
+
+
+SUA 
+
+DATA/INPUTS DOS USERS 
+
+SEJA 
+
+
+ARMAZENADA 
+
+'IN A UNIFORMED FORMAT',
+
+
+
+para que 
+
+SEUS 
+
+
+EMAILS E PASSWORDS SEJAM PARECIDOS, ETC ETC...

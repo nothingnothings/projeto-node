@@ -1,0 +1,706 @@
+
+
+
+
+
+
+
+
+
+
+
+---> FALANDO SOBRE O 'DELETE' DE POSTS,
+
+
+
+
+
+
+
+
+há uma OUTRA COISA QUE 
+
+DEVEMOS FAZER,
+
+
+EM CASO 
+
+DE 
+
+'SUCCESS' 
+
+desse delete...
+
+
+
+
+
+
+
+
+
+
+
+--> DEVEMOS LIMPAR A RELATION entre 'posts' e 'users' 
+
+(
+
+
+
+    EU JÁ FIZ ISSO,
+
+
+    MEU CÓDIGO 
+
+    FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+
+
+
+  const userId = ObjectId(req.userId); //extraído de nossa token, por meio do middleware de 'isAuth'...
+
+  User.findOne({ _id: userId })
+    .then((user) => {
+      if (!user) {
+        const error = new Error('User not found in database.');
+        error.statusCode = 401; //unauthenticated
+        throw error;
+      }
+
+      const oldPosts = [...user.posts];
+
+      const postIndex = oldPosts.findIndex((post) => {
+        return post.postId === postId;
+      });
+
+      if (!postIndex) {
+        const error = new Error(
+          'That post has not been encountered for your user.'
+        );
+        error.statusCode = 403;
+        throw error;
+      }
+
+      oldPosts.splice(postIndex, 1);
+
+      user.posts = oldPosts;
+
+      return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+    })
+    .then((result) => {
+      Post.findById(postId).then((post) => {
+        if (!post) {
+          const error = new Error('Post not found.');
+          error.statusCode = 404;
+          throw error;
+        }
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+        return Post.findByIdAndRemove(postId).then((result) => {
+          console.log(result);
+          res.status(200).json({
+            message: 'The post was deleted.',
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+--> COMO VOCÊ PODE VER,
+
+
+NESSE CÓDIGO AÍ EU JÁ FAÇO A LIMPEZA DO ARRAY DE 'posts' 
+
+
+
+do user...
+
+
+
+
+
+
+eX:
+
+
+
+      const oldPosts = [...user.posts];
+
+      const postIndex = oldPosts.findIndex((post) => {
+        return post.postId === postId;
+      });
+
+      if (!postIndex) {
+        const error = new Error(
+          'That post has not been encountered for your user.'
+        );
+        error.statusCode = 403;
+        throw error;
+      }
+
+      oldPosts.splice(postIndex, 1);
+
+      user.posts = oldPosts;
+
+      return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+OK... ----> essa lógica aí LIMPA NOSSOS POSTS, a relation entre post-user,
+
+quando 
+
+
+
+apagamos 1 post...
+
+
+
+
+
+
+
+
+
+--------> 
+
+professor vai fazer EXATAMENTE A MESMA COISA QUE EU FIZ,
+
+
+
+vai escrever 
+
+
+
+
+
+'
+
+
+return User.findOne(req.userId);
+
+
+.then(
+  (user) => { 
+
+      ....
+  }
+)
+
+
+
+',
+
+
+
+
+
+
+
+
+
+
+
+
+até agora,
+ 
+ FOI EXATAMENTE A MESMA COISA QUE EU HAVIA FEITO...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> MAS AÍ, O PROFESSOR NOS MOSTRA UM NOVO MÉTODO, MÉTODO 
+
+
+ 
+
+
+ FORNECIDO PELO __ MONGOOSE___... --> É O MÉTODO 
+
+
+
+ '.pull()'... --------> EU CHUTO QUE 
+
+ ESSE MÉTODO AÍ __ SÓ PODE SER USADO EM ARRAYS 
+
+ NOS NOSSOS DOCUMENTS...
+
+
+
+
+
+
+
+
+ --------> no caso,
+  
+
+
+  professor escreve 
+
+
+
+  'user.posts.pull()' 
+
+
+
+
+
+  (OU SEJA,
+  
+  CHAMOU SOBRE O ARRAY DE 'posts') ----------> 
+
+
+
+
+
+
+  ESSE MÉTODO 
+
+
+  'pull()'
+
+
+
+
+  __EXIGE 1 PARÂMETROO.....- -> ESSE PARÂMETRO É SEMPRE 
+
+
+  O 
+
+
+
+  'id do objeto que você quer REMOVER'.... -----> NO CASO, 
+
+
+  VAMOS 
+
+
+  PASSAR O ID 
+
+
+  DO POST...
+
+
+
+
+
+
+
+
+
+  --> É POR ISSO QUE O PROFESSOR ESCREVE 
+
+
+
+  'user.posts.pull(postId)'...
+
+
+
+
+
+
+
+  --> DEPOIS DISSO O PROFESSOR ESCREVE 
+
+  'user.save()',
+
+  para SALVAR ESSE USER...
+
+
+
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+
+
+
+  const userId = ObjectId(req.userId); //extraído de nossa token, por meio do middleware de 'isAuth'...
+
+  User.findOne({ _id: userId })
+    .then((user) => {
+      if (!user) {
+        const error = new Error('User not found in database.');
+        error.statusCode = 401; //unauthenticated
+        throw error;
+      }
+
+      // const oldPosts = [...user.posts]; ///ESSE CÓDIGO FAZ A MESMA COISA QUE aquele 'user.posts.pull()' -------> ESSE '.pull()' é um MÉTODO DO MONGOOSE, FORNECIDO POR ELE, QUE NOS DEIXA CHAMAR ISSO SOBRE UM ARRAY NOS NOSSOS DOCUMENTS, PARA ENTÃO __ EXTRAIR 1 OBJECT, por meio do seu id (no caso, o 'postId')...
+
+      // const postIndex = oldPosts.findIndex((post) => {
+      //   return post.postId === postId;
+      // });
+
+      // if (!postIndex) {
+      //   const error = new Error(
+      //     'That post has not been encountered for your user.'
+      //   );
+      //   error.statusCode = 403;
+      //   throw error;
+      // }
+
+      // oldPosts.splice(postIndex, 1);
+
+      // user.posts = oldPosts;
+
+
+      user.posts.pull(postId); ///////VAI __ TIRAR__ ESSE POST específico (desse id aí) DO NOSSO ARRAY DE 'posts'... (método fornecido pelo mongoose)... ------> ISSO VAI SUBSTITUIR AQUELE NOSSO CÓDIGO MANUAL, QUE ESCREVEMOS LOGO ACIMA....
+
+      return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+    })
+    .then((result) => {
+      Post.findById(postId).then((post) => {
+        if (!post) {
+          const error = new Error('Post not found.');
+          error.statusCode = 404;
+          throw error;
+        }
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+        return Post.findByIdAndRemove(postId).then((result) => {
+          console.log(result);
+          res.status(200).json({
+            message: 'The post was deleted.',
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+---------------------
+
+
+
+CERTO... AGORA É SÓ TESTAR ISSO AÍ...
+
+
+
+
+
+
+
+
+
+
+-> mas isso não funcionou... 
+
+
+
+
+--> esse método de 'user.posts.pull()'
+
+
+NÃO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+TALVEZ ASSIM:
+
+
+
+
+user.posts.pull({postId: postId});
+
+
+
+
+
+
+NÃO, AINDA NÃO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+CONSERTEI.... O CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+  // const postId = req.params.postId;
+
+  // const postId = req.body.postId; ///approach que usávamos COM __ O 'router.post('/delete-post/...')' -----> MAS NÃO VAMOS USAR com o approach do 'router.delete()', PQ o method 'DELETE' naõ PERMITE O SEND DE REQUEST BODIES... (e antes estávamos extraindo o id do request body....) ---> agora vamos extrair esse id LÁ DA URL, POR MEIO DE 'req.params.postId'...
+
+  const postId = req.params.postId;
+
+  // Post.findById(postId).then((post) => {
+  //   ////// isto vai apagar a image correspondente a esse post, lá de nossa database...
+  //   fs.unlink(post.imageUrl, (err) => {
+  //     console.log(err);
+  //   });
+  // });
+
+  // Post.findByIdAndDelete(postId) ///já isto vai deletar o ACTUAL POst  de nossa database.... --> mas vamos USAR O 'findById()' + deleteone(), PQ _ QUEREMOS __FAZER AS COISAS POR PARTES, ANTES IDENTIFICAR SE O USER REALMENTE TEM AQUELE POST (post é realmente desse user), etc tetc....
+  //   .then((result) => {
+  //     console.log(result);
+
+  //     res.status(200).json({
+  //       message: 'Product successfully deleted',
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).json({
+  //       message: 'Failed to delete product.',
+  //       err: err,
+  //     });
+  //   });
+
+  const userId = ObjectId(req.userId); //extraído de nossa token, por meio do middleware de 'isAuth'...
+
+  User.findOne({ _id: userId })
+    .then((user) => {
+
+      console.log('USER', user);
+      if (!user) {
+        const error = new Error('User not found in database.');
+        error.statusCode = 401; //unauthenticated
+        throw error;
+      }
+
+      // const oldPosts = [...user.posts]; ///ESSE CÓDIGO FAZ A MESMA COISA QUE aquele 'user.posts.pull()' -------> ESSE '.pull()' é um MÉTODO DO MONGOOSE, FORNECIDO POR ELE, QUE NOS DEIXA CHAMAR ISSO SOBRE UM ARRAY NOS NOSSOS DOCUMENTS, PARA ENTÃO __ EXTRAIR 1 OBJECT, por meio do seu id (no caso, o 'postId')...
+
+      // const postIndex = oldPosts.findIndex((post) => {
+      //   return post.postId === postId;
+      // });
+
+      // if (!postIndex) {
+      //   const error = new Error(
+      //     'That post has not been encountered for your user.'
+      //   );
+      //   error.statusCode = 403;
+      //   throw error;
+      // }
+
+      // oldPosts.splice(postIndex, 1);
+
+      // user.posts = oldPosts;
+
+      console.log('USER2', user);
+      user.posts.pull({postId: ObjectId(postId)}); ///////VAI __ TIRAR__ ESSE POST específico (desse id aí) DO NOSSO ARRAY DE 'posts'... (método fornecido pelo mongoose)... ------> ISSO VAI SUBSTITUIR AQUELE NOSSO CÓDIGO MANUAL, QUE ESCREVEMOS LOGO ACIMA....
+
+      return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+    })
+    .then((result) => {
+      Post.findById(postId).then((post) => {
+        if (!post) {
+          const error = new Error('Post not found.');
+          error.statusCode = 404;
+          throw error;
+        }
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+
+        return Post.findByIdAndRemove(postId).then((result) => {
+          console.log(result);
+          res.status(200).json({
+            message: 'The post was deleted.',
+          });
+        });
+      });
+    })
+    // Post.findById(postId)
+    //   .then((post) => {
+    //     //check logged in user (LATER IN THE COURSE, when we have 'logged in users'...)...
+
+    //     if (!post) {
+    //       const error = new Error('Post not found.');
+    //       error.statusCode = 404;
+    //       throw error;
+    //     }
+    //     fs.unlink(post.imageUrl, (err) => {
+    //       console.log(err);
+    //     });
+
+    //     return Post.findByIdAndRemove(postId).then((result) => {
+    //       console.log(result);
+    //       res.status(200).json({
+    //         message: 'The post was deleted.',
+    //       });
+    //     });
+    //   })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+---> eu estava escrevendo a query de 'user.posts.pull()'
+
+
+de forma errada... (a propriedade que tínhamos que buscar era 'postId', e não '_id'...)
+
+
+
+
+
+
+
+
+
+--> ok. hora de ver a última aula deste módulo...

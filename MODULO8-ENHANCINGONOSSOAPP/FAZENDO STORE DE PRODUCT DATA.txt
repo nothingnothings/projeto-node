@@ -1,0 +1,1214 @@
+
+
+
+
+
+
+
+-----> É HORA DE ADICIONAR MAIS LÓGICA.... ----> OK, POR QUAL LÓGICA QUEREMOS COMEÇAR?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE PODERÍAMOS ADICIONAR MAIS LÓGICA 
+
+
+
+AO 
+
+
+'Add Product',
+
+
+JUSTAMENTE 
+
+
+PARA QUE 
+
+CONSIGAMOS 
+
+
+__ ADICIONAR __ MAIS DO QUE 
+
+
+APENAS 
+
+1 
+
+'TITLE',
+
+
+
+MAS TAMBÉM 
+
+
+
+1 IMAGE,
+
+
+1 PRICE 
+
+
+E UMA 
+
+DESCRIPTIOn...
+
+
+
+
+
+
+
+
+
+
+--------> PARA FAZER ISSO, PRIMEIRAMENTE PRECISAMOS TRABALHAR NO NOSSO 'MODEL'..
+
+
+
+
+
+
+
+
+
+--> DENTRO DO 'MODEL',
+
+
+
+
+
+QUE É ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const fs = require('fs');
+
+const path = require('path');
+
+const pathHelper = require('../util/path'); 
+
+const filePath = path.join(pathHelper, 'data', 'ProductList.json');
+
+
+
+const getProductsFromFile = (callback) => { 
+
+  fs.readFile(filePath, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    }
+
+    else {
+    callback(JSON.parse(fileContent));
+    }
+  });
+};
+
+
+
+module.exports = class Product {
+  constructor(title) {
+    this.title = title;
+  }
+
+
+
+  save() {
+      getProductsFromFile((products) => {
+
+        products.push(this);
+
+        fs.writeFile(filePath, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      })
+ 
+
+  }
+
+        static fetchAll(cb) {
+            getProductsFromFile(cb);
+
+      }
+      };
+
+
+---------------------------------
+
+
+
+
+
+
+DENTRO 
+
+
+
+
+DESSE 'MODEL',
+
+
+
+
+PROFESSOR QUER 
+
+
+
+
+__TRABALHAR MAIS DO QUE COM 
+
+
+'this.title = title',
+
+
+
+
+MAS TAMBÉM 
+
+
+COM 
+
+
+COISAS COMO 
+
+
+
+
+o price,
+ etc...
+
+
+
+
+
+
+
+
+ --> PARA ISSO, ELE VAI ___ QUERER 
+
+
+
+
+ COLOCAR 
+
+
+
+
+
+ um 
+
+ 'description',
+
+
+ um
+
+
+ 'price',
+
+
+
+
+
+
+ _ E UMA IMAGE__....
+
+
+
+
+
+
+ FICARÁ TIPO ASSIM:
+
+
+
+
+
+module.exports = class Product {
+
+
+ constructor(title, imageUrl, price, description) {
+   this.title = title;
+   this.imageUrl = imageUrl;
+   this.price = price;
+   this.description = description;
+ }
+
+
+}
+
+ ----------------------------------------
+
+
+
+
+
+
+
+ --> COM ISSO, TODOS OS OBJETOS/MODEL 
+
+
+ futuros
+  
+
+  'product' 
+
+  QUE CRIARMOS 
+
+
+
+  TERÃO 
+
+  ESSA 
+
+  DATA 
+  DENTRO DELES... -----> E OS PRODUCTS QUE FETCHEARMOS 
+
+
+
+  _tAMBÉM __ TERÃO ESSA ESTRUTURA/DATA....
+
+
+
+
+
+
+
+
+
+  --------> ok......  --> MAIS TARDE NO CURSO,
+
+  VAMOS ADICIONAR 'IMAGE UPLOAD',
+
+
+  em vez 
+
+  de uma 
+
+  URL DE ALGUMA 
+
+
+
+
+  IMAGE da web..
+
+
+
+
+
+
+
+
+
+  ----------> AGORA SÓ 
+
+
+
+
+  PRECISAMOS 
+
+
+  TRABALHAR 
+
+
+
+  NO 
+
+
+
+  VIEW DE 
+
+
+  'add-product',
+
+
+
+  __ PARA QUE 
+
+
+  TENHAMOS 
+
+  MAIS INPUTS PARA _ _FETCHEAR__ ESSA DATA...
+
+
+
+
+
+
+
+
+
+  --> PARA ISSO, TEMOS O CÓDIGO DO NOSSO VIEW:
+
+
+
+
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+EU ACHO QUE VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+
+
+
+      
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css"></link>
+    <link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <form action="/admin/add-product" class="product-form" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title"></title>
+                    <label for="image">Image</label>
+                <input type="text" name="image"></title>
+                    <label for="description">Description</label>
+                <input type="text" name="description"></title>
+                    <label for="price">Price</label>
+                <input type="number" name="price"></title>
+            </div>
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+</main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+OK.... ISSO DEU CERTO... -----. 
+
+
+OS INPUT FIELDS 
+
+
+
+
+estão 
+
+realmente funcionando, pois FOI CRIADO UM 
+
+
+'ProductList.json'
+
+
+LÁ EM 
+
+'data'
+
+
+COM ESTE CÓDIGO AQUI:
+
+
+
+
+
+[{"title":"adsasda","imageUrl":"asdad","description":"aassad","price":"21221"}]
+
+
+
+
+
+
+
+
+
+-------> SINAL QUE ESSES INPUT FIELDS REALMENTE ESTÃO SALVANDO O INPUT DO USUÁRIO 
+
+EM UM OBJETO 
+
+'product',
+
+que é então salvo nesses arquivos...
+
+
+
+
+ex:
+
+
+
+               <label for="description">Description</label>
+                <input type="text" name="description"></title>
+
+
+
+
+
+
+                ^^^^^A PARTE IMPORTANTE DESSES INPUT FIELDS É 
+
+                'name',
+
+                POIS É 
+
+                ISSO QUE 
+
+
+                __ VIRA O 'KEY' do key-value pair _ DO 
+
+
+                SEU OBJETO/model 
+
+
+
+                que você cria com este formato:
+
+
+                
+module.exports = class Product {
+  constructor(title, imageUrl, description, price) { ///ESTE FORMATO AÍ...
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
+
+}
+
+
+
+
+----------------------------------
+
+
+
+
+
+E É CLARO QUE O QUE ESTÁ 
+
+
+FAZENDO 
+
+
+O ASSIGN/CONSTRUÇÃO DESSE PRODUCT é 
+
+
+
+este código aqui(dentro do controller 'products.js'...):
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  
+  
+    const newProduct = new Product(req.body.title, req.body.image, req.body.description, req.body.price ); 
+    newProduct.save(); ////CÓDIGO/LÓGICA QUE EXISTE NO NOSSO MODEL, NA VERDADE....
+    res.status(302).redirect('/');
+  };
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+ou seja,
+
+
+o controller, aqui,
+
+
+AGE __ INSTANCIANDO UM OBJETO A PARTIR DO 'model',
+
+
+
+E AÍ 
+
+___ ___ PASSA A DATA CAPTADA DO ___ REQUEST__ _DISPARADO __ por meio 
+
+dos input fields 
+
+
+INSERIDOS NO 
+
+
+VIEW... ---->
+
+
+(que 
+
+são 
+
+então 
+
+acessados 
+
+por 
+
+
+códigos 
+
+como ''' req.body.title, req.body.image, req.body.description, req.body.price''''....
+
+
+
+'
+
+
+)
+
+
+
+
+
+
+
+
+--> A ÚNICA DIFERENÇA DO CÓDIGO DO PROFESSOR PARA O NOSSO É QUE 
+
+cada 
+
+
+'input field'
+
+ficou 
+
+
+
+faltando 
+
+auqele 
+
+
+
+'<div class="form-control">'
+
+
+
+
+DE WRAPPER...
+
+
+
+
+
+
+
+EU CORRIJO E FICA ASSIM:
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs'); %>
+<main>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <input type="text" name="description"></title>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price"></title>
+        </div>
+        <button type="submit" class="btn">Add Product</button>
+    </form>
+</main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+--> OUTRA DIFERENÇA É 
+
+
+A 
+
+'description',
+
+QUE NÃO 
+
+SERÁ UM INPUT FIELD,
+
+E SIM UMA 
+
+'textarea'....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css"></link>
+<link rel="stylesheet" href="/css/product.css"></link>
+</head>
+<body>
+<%- include('../includes/navigation.ejs'); %>
+<main>
+    <form action="/admin/add-product" class="product-form" method="POST">
+        <div class="form-control">
+            <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title"></title>
+        </div>
+        <div class="form-control">
+                <label for="image">Image URL</label>
+            <input type="text" name="image" id="titleUrl"></title>
+        </div>
+        <div class="form-control">
+                <label for="description">Description</label>
+            <textarea type="text" rows="5" name="description" id="description"></textarea>
+        </div>
+        <div class="form-control">
+                <label for="price">Price</label>
+            <input type="number" name="price" id="price"></title>
+        </div>
+        <button type="submit" class="btn">Add Product</button>
+    </form>
+</main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+---> PROFESSOR DIZ QUE ESTÁ BOM,
+
+MAS 
+
+
+
+O 
+
+
+
+'textarea'
+
+ESTÁ COM O STYLING FODIDO... ---> ISSO PODE 
+
+
+
+
+
+SER 
+
+
+CONSERTADO 
+
+LÁ 
+
+
+NO 
+
+CSS 
+
+de 
+
+
+'forms.css'..
+
+
+
+
+
+
+
+--> PROFESSOR QUER 
+
+
+
+DAR ___ O MESMO STYLING QUE OS INPUT FIELDS TÊM,
+
+
+POR ISO 
+
+ELE 
+
+ESCREVE ISTO:
+
+
+
+
+
+
+.form-control label,
+.form-control textarea,
+.form-control input {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.form-control input,
+.form-control textarea
+{
+  border: 1px solid #a1a1a1;
+  font: inherit;
+  border-radius: 2px;
+} 
+
+
+
+
+
+-----------------------
+
+
+
+SALVAMOS, E AGORA O NEGÓCIO 
+
+
+FICA BEM MELHOR,
+ 
+
+ o
+
+  TEXTAREA....
+
+
+
+
+
+
+
+  ----------->
+
+
+
+
+
+
+
+
+
+
+
+
+  ok.... aí o professor 
+
+  fala 
+
+  de 
+
+
+  'postAddProduct',
+
+
+
+
+
+
+  E DO CÓDIGO DE :
+
+
+
+
+
+
+
+
+
+
+  
+exports.postAddProduct = (req, res, next) => {
+    // products.push({ title: req.body.title });
+  
+  
+    const newProduct = new Product(req.body.title, req.body.image, req.body.description, req.body.price ); 
+    newProduct.save();  //é código assíncrono, no final das contas...
+    res.status(302).redirect('/');
+  };
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+-------> ok... isso está funcionando...
+
+
+
+
+
+
+
+----------
+
+
+
+
+
+
+CRÍAMOS UM PRODUCT COM TODA AQUELA DATA...
+
+
+
+
+
+
+
+
+--> COMO PRÓXIMO PASSO,
+
+DEVEMOS 
+
+'EXTRACT ALL THAT DATA'
+
+
+
+
+ E ENTÃO 
+
+
+ EXIBIR
+  
+
+  ESSE 'PRODUCT'
+
+  QUANDO FIZERMOS 'show all products'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------> E MEU 
+
+
+
+  CÓDIGO NÃO ESTAVA FUNCIONANDO... ---> A DATA 
+
+
+  DE CADA 
+
+  'PRODUCT'
+
+
+  NÃO ESTAVA SENDO 
+
+  OUTPUTTADA 
+
+
+  CORRETAMENTE...
+
+
+
+
+
+
+
+
+
+  A CAUSA 
+
+  PARA ISTO ERA:
+
+
+
+
+
+
+
+
+
+
+  <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css"></link>
+  </head>
+  <body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+          <% for (const product in prods) {  %> ///ESTA LINHA AQUI...
+        
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="<%= product.image %>"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"></h2>$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
+          <div>
+          <div class="card__actions">
+              <button class="btn">Add to Cart</button>
+          </article>
+
+    <% } %>
+</div> 
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+    <% for (const product in prods) {  %>  ---------> ESSA LINHA ESTAVA ERRADA....
+
+
+
+
+
+
+
+    --> A SINTAXE CORRETA É :
+
+
+
+    'for (let product OF prods)'...
+
+
+
+
+
+    -------------------
+
+
+
+OK... AGORA 
+
+CADA 
+
+
+UM DE NOSSOS 'PRODUCT'
+
+
+ESTÁ SENDO OUTPUTTADO 
+
+DE FORMA CORRETA... --> MENOS A IMAGE... --> vou ver o que deu de errado... (consegui, 
+
+o nome de minha propriedade no VIEW estava errado, estava como 
+
+
+'image', quando devia ser 'imageUrl'...)
+
+
+
+
+ex:
+
+
+
+      <img src="<%= product.imageUrl %>" alt="<%= product.title %>"></img>
+
+
+
+
+
+
+
+
+  -------------------------------
+
+
+
+
+
+
+
+
+-----> AGORA DEVEMOS MEXER NA PÁGINA DE 'ADMIN ALL PRODUCTS'... --> 
+
+A DIFERENÇA 
+
+
+DESSA PÁGINA DE 
+
+
+'ADMIN'
+
+PARA 
+
+
+
+
+A DO CUSTOMER É QUE TEREMOS NÃO SÓ UMA LISTA DOS PRODUCTS,
+
+MAS TAMBÉM
+
+
+
+
+OPÇÕES PARA OS __EDITAR__ E DELETAR...
+
+
+
+
+
+
+
+
+
+

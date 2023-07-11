@@ -1,0 +1,1550 @@
+
+
+
+
+
+
+
+
+
+
+PROFESSOR COMEÇA A EXPLICAÇAÕ....
+
+
+
+
+
+LÁ EM 'fetchAll',
+
+
+ELE EXPLICA QUE 
+
+
+
+ESTE CÓDIGO AQUI:
+
+
+
+
+
+
+
+ fs.readFile(filePath, (err, fileContent) => {
+
+        if(err) {
+          alert('Whoops, something went wrong. No products are displayed...');
+          return [];
+        }
+        console.log(JSON.parse(fileContent));
+
+        return JSON.parse(fileContent);
+      })
+
+
+
+
+
+
+
+
+
+
+      É __ ASSÍNCRONO___.... É ASYNC CODE...
+
+
+
+
+
+
+-----> ISSO SIGNIFICA QUE PRECISAMOS ___ ESPERAR __ ATÉ 
+
+ESSA FUNÇÃO 
+
+__aCABAr___ PARA QUE CONSIGAMOS __ 
+
+
+A 
+
+'DATA'
+
+
+de 
+'
+TODOS OS PRODUCTS'...
+
+
+
+
+
+
+------> é por isso que eu ACHO que 
+
+essa função 
+
+
+'fetchAll()'
+
+
+DEVE 
+
+SER ASYNC....
+
+
+
+--> ASYNC PARA QUE CONSIGAMOS USAR 
+
+
+
+'await'
+
+
+com o 
+
+'fs.readFile()'...
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+static fetchAll() {
+ const result = fs.readFile(filePath, (err, fileContent) => {
+
+        if(err) {
+          alert('Whoops, something went wrong. No products are displayed...');
+          return [];
+        }
+
+        return JSON.parse(fileContent);
+      })
+  }
+
+
+
+
+
+
+
+
+  ---->  PROFESSOR EXPLICA QUE 
+
+
+
+
+
+  ESSE CÓDIGO DEVE RETRIEVE NOSSOS PRODUCTS...
+
+
+
+
+
+
+
+
+  ENTRETANTO, HÁ ALGO DE __ERRADO__ COM ESSE CÓDIGO__...
+
+
+
+
+
+
+
+  --> O PROFESSOR DE FATO ESTÁ RETRIEVANDO 
+  DATA
+
+
+
+  LÁ 
+
+
+  em 
+
+  'return []'
+
+
+
+  E 
+
+
+
+
+'return JSON.parse(fileContent);'
+
+
+
+(em ambos casos...)
+
+
+
+
+
+
+
+
+
+
+
+----> MAS O PROBLEMA, AQUI, É 
+
+QUE 
+
+'readFile'
+
+
+
+É UM ___ CÓDIGO ASSÍNCRONO... ---> ISSO SIGNIFICA QUE 
+
+
+AQUELA 
+
+CALLBACK FUNCTION (função interna)
+
+
+
+DE 
+
+
+
+'(err, fileContent) => {
+
+    ....
+}'
+
+
+
+
+É APENAS REGISTRADA 
+
+
+
+NAQUELE 
+
+TAL 
+
+
+DE 
+
+'EVENT EMITTER REGISTRY' DO NODEJS,
+
+
+
+
+
+
+MAS AÍ 
+
+
+
+
+
+O NODEJS PROSSEGUE E SIMPLESMENTE 'FINISHES WITH THIS FETCHALL FUNCTION'... ----> 
+
+
+
+E O PROBLEMA É QUE 
+
+A FUNÇAÕ 
+
+
+
+
+'fetchAll()'
+
+POR SI SÓ __ NÃO VAI RETORNAR COISA ALGUMA... ---> ISSO PQ 
+
+
+AQUELES 
+
+
+RETURN STATEMENTS PERTENCEM 
+
+À FUNÇÃO 
+
+
+INTERNA 
+
+DE 
+
+
+'readFile',
+
+
+
+
+
+E NÃO 
+
+
+
+
+
+PERTENCEM À 'outer function' 
+
+
+
+de 
+
+'fetchAll()'.. ----> 
+
+
+
+ISSO SIGNFIICA QUE 
+
+
+
+'fetchAll'
+
+NÃO VAI RETORNAR COISA ALGUMA...
+
+
+
+
+
+
+
+-------> FETCHALL VAI RETORNAR 'UNDEFINED',
+
+BASICAMENTE.......
+
+
+
+
+
+
+
+----> E AÍ TODO O FLOW DO CÓDIGO VAI FALHAR, PQ HÁ PARTES QUE DEPENDEM 
+
+DE 
+
+
+'products.length',
+
+
+E O PRODUCTS VAI ESTAR COMO 'undefined'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> PARA CONSERTAR ESSE PROBLEMA, PROFESSOR NOS EXPLICA QUE 
+
+
+___HÁ MÚLTIPLAS SOLUÇÕES....
+
+
+
+
+
+
+
+
+
+
+
+
+--> POR ENQUANTO, PARA CONSERTAR ESSE PROBLEMA,
+
+
+O PROFESSOR 
+
+VAI SIMPLESMENTE _ ACEITAR__ UM 
+
+
+'ARGUMENT'
+
+
+em 
+
+
+FETCHALL,
+
+
+
+
+ARGUMENTO QUE 
+
+SERÁ 
+
+um 
+
+'callback'
+
+(uma CALLBACK FUNCTION)...
+
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+ static fetchAll(callback) { ///EIS O CALLBACK EM QUESTÃO...
+ fs.readFile(filePath, (err, fileContent) => {
+
+        if(err) {
+          alert('Whoops, something went wrong. No products are displayed...');
+          return [];
+        }
+        console.log(JSON.parse(fileContent));
+
+        return JSON.parse(fileContent);
+      })
+    
+  }
+
+
+
+
+
+
+
+
+
+------->  E 
+
+ESSE PARÂMTRO VAI 
+
+
+ME 
+
+DEIXAR 
+
+
+
+
+__ PASSAR UMA FUNÇÃO 
+
+
+A 
+
+ESSE 
+
+'fetchAll',
+
+
+
+__FUNÇÃO__ QUE O 
+
+
+'fetchAll'
+
+
+VAI __ EXECUTAR__ QUANDO 
+
+
+
+
+
+
+_____ ELE ESTIVER 'DONE',
+
+
+
+
+
+
+
+TUDO PARA QUE __ A COISA QUE 
+
+ESTIVER 
+
+CHAMANDO 
+
+
+
+'fetchAll'
+
+
+
+
+
+__POSSA __ PASSAR UMA FUNCTION__... QUE ENTÃO 
+
+TERÁ 
+
+
+
+CIÊNCIA DE 
+
+
+QUE ESTÁ SENDO CHAMADA,
+
+
+E QUE 
+
+ENTÃO SEGURARÁ 
+
+
+A 
+
+'DATA'
+
+QUE VOU QUERER 
+
+RETORNAR... 
+
+
+
+
+
+
+
+
+
+
+
+--> PARECE BEM COMPLEXO... -> professor nos mostra como funciona...
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR EXPLICA QUE 
+
+
+'callback'
+
+VAI SEGURAR UMA FUNÇÃO...
+
+
+
+
+
+
+
+
+----> OK... AÍ LÁ EMBAIXO,
+
+
+em 
+
+
+'fs.readFile(filePath, (err, fileContent) => {
+
+    if(err) {
+
+        return [];
+    }
+
+
+
+})
+
+',
+
+
+
+
+
+
+__ EM VEZ 
+
+DE 
+
+RETORNARMOS ESSE 
+
+ARRAY VAZIO ALI,
+
+
+
+
+__VAMOS CHAMAR __ UM 
+
+
+CALLBACK (aquele argumento 'callback'),
+
+
+
+CALLBACK 
+
+EM QUE 
+
+
+VAMOS PASSAR, COMO PARÂMETRO,
+
+
+
+
+UM 'EMPTY ARRAY'...
+
+
+
+
+
+
+EX:
+
+
+
+
+fs.readFile(filePath, (err, fileContent) => {
+
+    if(err) {
+
+        cb([]);
+    }
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+--> E FAREMOS A MESMA COISA NO CASE EM QUE NÃO TEMOS ERRO,
+
+só que no caso 
+
+
+VAMOS CHAMAR 
+
+'callback'
+
+
+ E ENTÃO PASSAREMOS __ 
+
+
+ O VALOR DE 
+
+
+ 'JSON.parse(fileContent);'
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+
+
+
+
+
+ static fetchAll(callback) {
+ fs.readFile(filePath, (err, fileContent) => {
+
+        if(err) {
+          alert('Whoops, something went wrong. No products are displayed...');
+          callback([])
+        }
+ 
+
+        callback(JSON.parse(fileContent))
+      })
+    
+  }
+
+
+
+
+  ---------------
+
+
+
+
+
+
+
+
+
+
+
+
+  COM ISSO,
+
+  ISSO FEITO,
+
+
+
+
+
+
+
+  PROFESSOR DIZ QUE ELE SÓ 
+
+  TEM QUE 
+
+  VOLTAR 
+
+  LÁ NO 
+
+
+  ARQUIVO 
+
+  'products.js',
+
+
+  NO CONTROLLER,
+
+
+
+
+  LÁ NAQUELE CÓDIGO DE 
+
+  'getProducts',
+
+  PQ 
+
+  É __ LÁ QUE 
+
+  NÓS __ EXECUTAMOS/CHAMAMOS 
+
+  'Product.fetchAll()'...
+
+
+
+
+
+
+
+
+
+  ex:
+
+
+
+
+
+
+  exports.getProducts = (req, res, next) => {
+
+  const products =  Product.fetchAll(); //////////EIS O CÓDIGO EM QUESTÃO...
+
+   res.render('shop', {
+    prods: products,
+    pageTitle: 'Shop',
+    path: '/',
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0,
+  });
+};
+
+
+
+------------------------------------
+
+
+
+
+BEM, É NESSE CALL 
+
+
+de 
+'fetchAll'
+
+
+
+QUE VAMOS QUERER_ _ 
+
+PASSAR 
+
+
+
+__ UMA FUNÇÃO... ---> 
+
+
+
+
+
+
+
+
+A FUNÇÃO QUE VAMOS PASSAR É UMA __ANÔNIMA__, que recebe 
+
+'products'...
+
+
+
+
+
+
+
+
+-----> 
+
+
+
+
+
+ex:
+
+
+
+const products = Product.fetchAll((products) => {
+
+
+
+
+}
+
+
+
+res.render('shop', {
+
+    ...
+})
+
+
+
+)
+
+
+
+
+
+
+
+
+------> CERTO... MAS AÍ O PROFESSOR 
+
+
+
+NOS EXPLICA QUE ELE NÃO VAI QUERER 
+
+ARMAZENAR O RESULTADO DESSE CALL DE 'fetchAll'
+
+
+NESSA CONST 
+de 
+
+'products',
+
+
+JUSTAMENTE PQ 
+
+ESSA FUNÇÃO 
+
+de 
+
+'fetchAll'
+
+__NÃO VAI NOS RETORNAR COISA ALGUMA... (e sim será 
+
+só uma FUNÇÃO 
+
+
+
+EXECUTADORA DE NOSSO __FLOW _ de código, em outras palavras...)
+
+
+
+
+
+
+
+
+--> EM VEZ DISSO,
+
+PROFESSOR DIZ QUE 
+
+
+
+ELE VAI/CRIA __ O SEU 'MY OWN CALLBACK PROCESS',
+
+
+
+E _ AÍ ELE VAI QUERER 
+
+FAZER 
+
+'render'( 'res.render()' ) 
+
+
+
+
+__DENTRO ___ DESSA 
+
+PRÓPRIA FUNÇÃO QUE 
+
+
+ELE VAI QUERER 
+
+FAZER 
+
+
+PASS 
+
+ao 
+
+'fetchAll()'....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProducts = (req, res, next) => {
+
+    Product.fetchAll((products) => {
+
+        res.render('shop', {
+    prods: products,
+    pageTitle: 'Shop',
+    path: '/',
+    productCSS: true,
+    activeShop: true,
+    hasProducts: products.length > 0,
+  });
+
+
+    });
+
+};
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... É UM FLOW BIZARRO, MAS FAZ SENTIDo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NÓS, AQUI, BASICAMENTE ESCREVEMOS UMA 
+
+
+
+'FUNÇÃO EXTENDIDA'.... --->
+
+
+
+
+
+
+pense no flow assim:
+
+
+
+
+
+
+
+
+1)  exports.getProducts = (req, res, next) => {
+
+
+}
+
+
+
+
+
+
+
+^^^^^ESSE É O PRIMEIRO CÓDIGO A SER EXECUTADO....
+
+
+
+
+
+
+
+
+
+
+
+DEPOIS, TEMOS:
+
+
+
+
+
+
+
+2)  exports.getProducts = (req, res, next) => {
+
+  Product.fetchAll((products) => { ///////2
+
+      res.render('shop', {
+  prods: products,
+  pageTitle: 'Shop',
+  path: '/',
+  productCSS: true,
+  activeShop: true,
+  hasProducts: products.length > 0,
+});
+
+
+  });
+
+};
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+--> ESSA FUNÇÃO 'Product.fetchAll()'
+
+__REALMENTE__ SERÁ EXECUTADA __ INSTANTANEAMENTE... -----> ENTRETANTO,
+
+O PROBLEMA/DETALHE, AQUI, é 
+
+que 
+
+a FUNÇÃO QUE 
+
+PASSAMOS COMO SEU PARÂMETRO ('(products) => { res.render() } ')
+
+
+
+
+___ É __ UMA __ CALLBACK FUNCTION... (isso significa que 
+
+SEU CÓDIGO 
+
+
+
+______sÓ SERÁ EXECUTADO__ QUANDO ESTIVER 'done', 
+
+
+
+
+o código 
+
+
+no seu BODY,
+
+
+como 
+
+
+''
+
+{
+  prods: products,
+  pageTitle: 'Shop',
+  path: '/',
+  productCSS: true,
+  activeShop: true,
+  hasProducts: products.length > 0,
+}
+
+
+
+'''
+
+
+_SÓ SERÁ EXECUTADO 
+
+
+
+QUANDO 
+
+
+
+
+
+ELA MESMA ESTIVER 'done'... 
+
+
+
+
+)
+
+
+
+
+
+
+
+
+3) AO MESMO TEMPO EM QUE __EXECUTAMOS __ ESSA FUNÇÃO 'fetchAll', sua parte INSTANTANEA,
+
+
+__TAMBÉM EXECUTAMOS SUA 'PARTE ASSÍNCRONA'.... --> isso pq 
+
+
+
+
+O 
+
+
+
+'fetchAll()' TAMBÉM TEM SEU PRÓPRIO CÓDIGO,
+
+QUE 
+
+É:
+
+
+
+
+static fetchAll(callback) { 
+...
+}
+
+
+
+
+
+
+
+
+
+
+
+4) A PRIMEIRA LINHA DESSE 'fetchAll' que é executada é:
+
+
+'''''
+  fs.readFile(filePath, (err, fileContent) => {
+ 
+         if(err) {
+          callback([]); ////vai executar esse callback 'WHEN ITS DONE'...
+         }
+        callback(JSON.parse(fileContent)); //vai executar esse 'callback' ONCE ITS DONE (como um callback comum)...
+       })
+     
+   
+  '''''''''
+
+
+
+
+
+  -------> E A QUESTÃO É __ QUE ESSE 'readFIle'
+
+
+
+  __ TAMBÉM É CÓDIGO ASSÍNCRONO____.... ---> ISSO SIGNFIICA QUE 
+
+
+  ELE SÓ VAI 
+
+  EXECUTAR 
+
+
+  'callback([])'/'callback(JSON.parse(fileContent))' 
+
+
+
+
+  QUANDO 
+
+  ESTIVER ___ DONE, 
+
+
+  pois sua 
+  callback function é 
+
+
+
+  '(err, fileContent) => {
+    ....
+  }
+'
+
+
+
+
+
+
+
+-----> ok...
+
+
+
+
+
+
+
+
+
+5) ---> QUANDO ESSE PROCESSAMENTO DE 'readFile'
+
+ACABA,
+
+
+
+IMEDIATAMENTE É CHAMAdo 'callback(PARÂMETRO)'... -------->
+
+
+OK.... 
+
+
+
+
+MAS E O QUE É ESSE PARÂMETRO AÍ? -----> 
+
+
+
+
+
+
+
+
+6) esse parâmetro 'PARÂMETRO' (que pode ser '[]' ou 'JSON.parse(fileContent)' )
+
+
+
+É LITERALMENTE ISTO,
+ 
+
+ ESTA FUNÇÃO CALLBACK PASSADA ANTECIPADAMENTE:
+
+
+
+
+
+
+ (products) => {
+
+      res.render('shop', {
+  prods: products,
+  pageTitle: 'Shop',
+  path: '/',
+  productCSS: true,
+  activeShop: true,
+  hasProducts: products.length > 0,
+});
+
+
+  }
+
+
+
+
+
+
+
+
+-------- E NESSA FUNÇÃO AÍ,
+
+
+
+o 'products' SERÁ ___ OU '[]' ou 'fileContent',
+
+
+
+
+DEVIDO àQUELE CÓDIGOS
+
+ESPECIAIS
+
+
+DA CALLBACK FUNCTION DE 
+
+
+
+'readFile' 
+
+que escrevemos anteriormente.. (callback([]) ou callback(JSON.parse(fileContent)))
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+--> ou seja, são 2 callbacks conjugados 1 em cima do outro (o do readFile e o do 'fetchAll' em si....)
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+---------> SALVAMOS TUDO ISSO E RECARREGAMOS A PÁGINA...
+
+
+
+
+
+--> VEREMOS TODOS OS PRODUCTS QUE TÍNHAMOS NO PASSADO,
+
+
+
+ASSIM COMO QUAISQUER NOVOS PRODUCTS QUE 
+
+
+
+ADICIONARMOS...
+
+
+
+
+
+
+
+
+
+
+---> OK... --> ISSO SIGNIFIICA QUE 
+
+AGORA 
+
+
+
+NÃO TEMOS UMA DATABASE,
+
+MAS 
+
+
+
+JÁ É MELHOR DO QUE AQUELE 'IN ARRAY STORAGE'...
+
+
+
+
+
+
+
+
+--> PROFESSOR DIZ QUE ESSE NÃO É UM CÓDIGO SUPER COMPLEXO,
+
+
+
+MAS CLARAMENTE É 
+
+CÓDIGO QUE 
+
+
+
+
+PERTENCE A  _____ ESSA DATA,
+
+A 
+ESSE 
+
+MODEL,
+
+e portanto 
+É 
+
+OUTSOURCEADO 
+
+EM 
+
+SEU PRÓPRIO ARQUIVO SEPARADO (arquivo 'product.js')...
+
+
+
+
+
+(certo, mas um problema... --> apenas 1 único 'PRODUCT' está sendo mostrado na minha page,
+
+
+MESMO QUANDO TENHO MAIS DE 1 SALVO NAQUELE ARQUIVO 
+
+'ProductList.json'...)
+
+
+
+
+
+
+
+--> PROVAVELMENTE É ALGUMA COISA FALTANDO NA MINHA VIEW DE 'shop.ejs'...
+
+
+
+
+
+
+
+
+--> CONSERTEI, ERA UM 'for const product in products' ( for loop),
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css"></link> 
+    <link rel="stylesheet" href="/css/product.css"></link>
+    <title>Shop</title>
+
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+          <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+          <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        <% if (prods.length > 0) { %>
+          <% for (const product in prods) { %>
+      <!-- <div class="grid">
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">Great Book</h1>
+            <div class="card__image">
+                <img src="xxxxx"></img>
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many events</p>
+            <div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </article>
+    </div>  -->
+    <div class="grid">
+      <article class="card product-item">
+          <header class="card__header">
+              <h1 class="product__title"><%= product.title %></h1>
+          <div class="card__image">
+              <img src="xxxxx"></img>
+          </div>
+          <div class="card__content">
+              <h2 class="product__price"><%= product.price %></h2>
+              <p class="product__description"><%= product.desc %></p>
+          <div>
+          <div class="card__actions">
+              <button class="btn">Add to Cart</button>
+          </article>
+  </div> 
+    <% } %>
+        <% } else { %>
+
+            <h1>No Products Found!</h1>
+
+            <% }  %>
+                
+    </main>
+  </body>
+</html>

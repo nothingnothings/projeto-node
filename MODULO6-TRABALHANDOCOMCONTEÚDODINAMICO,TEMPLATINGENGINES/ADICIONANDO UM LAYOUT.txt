@@ -1,0 +1,1386 @@
+
+
+
+
+
+
+
+
+----> VOCÊ JÁ DEVE TER PERCEBIDO QUE NÓS REPETIMOS UMA ESTRUTURA BASE 
+
+
+EM TODOS ___ OS NOSSOS ARQUIVOS DE NOSSO PROJETO...
+
+
+
+
+
+
+
+
+
+--> E É CLARO QUE É MEIO IRRITANTE TER DE REPETIR ISSO CONSTANTEMENTE, manualmente,
+
+
+
+nos nossos arquivos html/pug....
+
+
+
+
+
+
+
+
+
+
+--> OU SEJA,
+
+
+NÓS REPETIMOS AQUELE 
+
+'HEADER'/TOOLBAR/NAVBAR _ EM TODAS 
+
+NOSSAS PAGES,
+
+ESTE CÓDIGO 
+
+AQUI FOI 
+
+
+REPETIDO AD NAUSEAM:
+
+
+
+
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+
+
+
+
+
+
+
+
+
+---> É MEIO RUIM DE FICAR MANUALMENTE COPIANDO E COLANDO ESSE SETUP/IMPORT TODA HORA.... 
+
+
+
+
+
+
+
+
+
+
+--> O QUE PODEMOS FAZER, ENTÃO, PARA SOLUCIONAR ISSO? ------> 
+
+PROFESSOR DIZ QUE PODEMOS 
+
+CRIAR AQUILO QUE CHAMAMOS 
+
+
+DE UM 
+
+'LAYOUT'...
+
+
+
+
+
+
+
+
+----> PARA ISSO,
+
+PROFESSOR CRIA UM NOVO FOLDER,
+
+
+
+DENTRO DE 'VIEWS',
+
+
+CHAMADO DE 
+
+'LAYOUTS' (para o caso de termos vários deles...)
+
+
+
+
+
+
+
+----> E AÍ 
+
+
+ADICIONAMOS UM 
+
+
+
+ARQUIVO CHAMADO 
+
+
+'main-layout.pug'....
+
+
+
+
+
+
+
+
+-----> dentro desse FOLDER,
+
+
+
+nesse arquivo,
+
+
+
+
+enfiamos 
+
+
+
+esse código de 
+
+
+
+'''
+
+
+
+
+
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item 
+                        a.active(href="/") Shop
+                    li.main-header__item 
+                        a(href="/admin/add-product") Add Product
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+--> PROFESSOR QUER REUTILIZAR 
+
+
+UM MONTE DO 
+
+ESQUELETO DE 
+
+'shop.pug'
+
+
+
+
+
+
+NAS NOSSAS PAGES... --> mas sabemos que um monte desse conteúdo é dinâmico,
+
+
+
+
+POR ISSO NÃO SABEMOS COMO 
+
+
+REUTILIZAR ESSE ESQUELETO COM ESSE PORÉM..
+
+
+
+
+
+
+
+-----> O PROFESSOR EXPLICA QUE PODEMOS 
+
+
+______'EXTEND' ESSE LAYOUT 
+
+(main-layout)
+
+
+
+
+DE __ DENTRO ___ DE NOSSOS 
+
+OUTROS 
+
+
+'PUG VIEWS'... -------> E NÓS PODEMOS 
+DEFINIR 
+
+ALGUNS 
+
+'PLACEHOLDERS'/hooks  nesse 'main-layout',
+
+HOOKS.......
+
+
+
+
+
+
+
+
+
+OBS:::: O QUE O PROFESSOR USA DE 'MAIN-LAYOUT', NA VERDADE, É 
+
+
+
+UMA 'BASE 'INSPIRADA NO NOSSO ARQUIVO 
+
+PUG 
+
+DO 
+
+'404.pug',
+
+
+
+PQ ESSE 
+
+É O ARQUIVO 
+
+
+MAIS SIMPLES de página que temos....
+
+
+
+ex:
+
+
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+
+        main 
+            h1 Page not found, please 
+                a(href="/") &nbsp;return to the Home Page 
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+--> OK, MAS COMO PODEMOS REUTILIZAR ESSE 
+
+
+
+ESQUELETO AÍ?
+
+
+
+
+-----> BEM, O PROFESSOR EXPLICA QUE 
+
+
+podemos 
+
+
+'extend' 
+
+
+
+esse '''MODELO''' de main-layout.pug 
+
+
+
+
+
+A OUTROS ARQUIVOS PUG 
+
+
+de nosso projeto... --> e aí, 
+
+
+podemos 
+
+
+DEFINIR ALGUNS 
+
+'HOOKS'
+
+
+
+DENTRO 
+DESSE 
+
+
+'main-layout' estendido 
+
+
+neles,
+
+
+HOOKS 
+
+
+EM QUE 
+
+PODEREMOS 
+
+
+
+___ ESCREVER __ O CONTEÚDO ESPECÍFICO DE CADA PÁGINA ( ou seja,
+
+poderemos 
+
+
+reutilizar 
+
+
+
+de forma tri eficiente esse 'esqueleto' ao longo de nossas páginas/arquivos 
+
+.pug...)
+
+
+
+
+
+
+
+
+
+--> POR EXEMPLO AQUI,
+
+
+NOS LINKS,
+
+
+T
+EMOS UM LAYOUT BÁSICO QUE SE PARECE ASSim:
+
+
+
+        link(rel="stylesheet", href="/css/main.css")
+
+
+
+
+
+--> MAS EM OUTROS 'VIEWS'/arquivos pug,
+
+
+___ QUE DEVEM ESTENDER ESSE LAYOUT,
+
+
+
+ELES PROVAVELMENTE VAO USAR ESSE MODELO/LAYOUT com esse link
+
+E AÍ 
+
+VAO __ ADICIONAR __ MAIS LINKS de imports css/javascript... (bem nesse lugar)....
+
+
+
+
+
+
+
+
+
+--> PARA INSERIR UM DESSES 'HOOKS' 
+
+
+NESSE TEMPLATE PUG/overlay pug,
+
+
+
+
+
+
+NÓS DEVEMOS USAR A KEYWORD
+ 
+
+ 'block'
+
+
+
+ NO LUGAR EM QUE OS LINKS  PODERÃO/VÃO SER INSERIDOS...
+
+
+
+
+
+ ex:
+
+
+
+
+
+ doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block /////////EIS O CÓDIGO EM QUESTÃO.
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+
+        main 
+            h1 Page not found, please 
+                a(href="/") &nbsp;return to the Home Page 
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+--> DEPOIS DE ADICIONAR ESSA KEYWORD BLOCk,
+
+
+
+
+DEFINIMOS QUALQUER NOME 
+
+DE NOSSA ESCOLHA... --> nesse caso, professor 
+
+vai definir um name 
+
+de 
+
+'styles'...
+
+
+
+EX:
+
+
+
+
+ doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block styles /////////EIS O CÓDIGO EM QUESTÃO.
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+
+        main 
+            h1 Page not found, please 
+                a(href="/") &nbsp;return to the Home Page 
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+--> SE FIZERMOS ISSO/QUANDO FIZERMOS ISSO,
+
+
+SEREMOS 
+
+CAPAZES __ DE ADICIONAR __ MAIS 
+
+
+'STYLES' __ lá 
+
+de dentro __ de nossos outros arquivos,
+
+exatamente nesse lugar aí.... ("block styles" )
+
+
+
+
+
+
+
+
+
+--> E O PROFESSOR VAI NOS MOSTRAR COMO ISSO FUNCIONA LOGO LOGO...
+
+
+
+
+
+
+
+
+
+
+----> AQUI, NO CASO, PROFESSOR 
+
+
+
+TAMBÉM TIRA O ESTILO ACTIVE DE NOSSO LINK, pq 
+
+nessa página 
+
+
+
+'404' NÃO TEREMOS LINK ALGUM 'ATIVADO'....
+
+
+
+
+
+
+(E O PROFESSOR TAMBÉM VAI NOS MOSTRAR COMO ADICIONAR ISSO DINAMICAMENTE  DAQUI A POUCO, TBM)
+
+
+
+
+
+
+
+
+
+
+
+
+--> CERTO.. E O CONTEÚDO EMBAIXO DO 
+
+
+'header',
+
+AQUELE 
+
+'main' 
+
+
+com 
+
+
+
+
+
+'''
+
+
+        main 
+            h1 Page not found, please 
+                a(href="/") &nbsp;return to the Home Page 
+
+
+
+''',
+
+
+
+
+__TAMBÉM DEVERÁ SER DINÂMICO... ---->  
+
+
+
+
+E PARA 
+
+
+ESSE 
+
+
+LUGAR AÍ DE NOSSO 
+
+
+'LAYOUT',
+
+
+VAMOS DEFINIR 
+
+
+'block content' (poderíamos definir qualquer outro nome, mas o que interessa é que isso será um 'BLOCK'...)
+
+
+
+
+
+
+
+
+
+
+----> CERTO... ISSO SIGNIFICA QUE AGORA TEMOS ESSE 'BASIC LAYOUT',
+
+
+
+
+
+
+
+TEMOS ESTE LAYOUT AQUI:
+
+
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Page not Found
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+    body 
+        header.main-header 
+            nav.main-header__nav 
+                ul.main-header__item-list 
+                    li.main-header__item
+                        a(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+        block content
+
+,
+
+
+
+
+COM __ 2 HOOKS (block de content e de styles)
+
+
+
+QUE __ PODEMOS 
+
+'DYNAMICALLY ENTER CONTENT',
+
+
+
+__ ENTER CONTENT 'FROM INSIDE OUR 
+OTHER FILES'...
+
+
+
+
+
+
+
+
+
+------> E DEVEMOS COMEÇAR COM A PÁGINA DE '404.pug'...
+
+
+
+
+
+
+
+
+
+
+--> LÁ, EM '404.pug',
+
+
+
+
+
+SÓ VAMOS QUERER MANTER COMO 'DIFERENCIAL' aquela 
+
+linha 
+
+
+
+de 
+
+'h1 Page not Found!'
+
+
+
+
+
+
+
+
+
+
+-------> DEPOIS DISSO,
+
+
+REMOVEMOS O RESTO DO CÓDIGO....
+
+
+
+
+
+
+
+
+
+
+
+-------> ISSO FEITO,
+ 
+ PROFESSOR EXPLICA QUE PODEMOS 'EXTEND' NOSSO LAYOUT DE 'main-layout' por meio 
+
+ DE UMA SINTAXE ESPECÍFICA....
+
+
+
+ ESCREVEMOS:
+
+
+
+
+
+ 1) keyword de 'extends'... (KEYWORD COMPREENDIDA PELO PUG....)
+
+
+
+
+
+
+
+2) DEPOIS DISSO, APENAS PRECISAMOS 'POINT TO THE MAIN-LAYOUT.PUG FILE'...
+
+
+
+--> PARA ISSO,
+
+
+
+VAMOS ESCREVER 
+
+'layouts/main-layout',
+
+
+
+PQ ISSO FARÁ __ COM QUE O FOLDER DE 'layouts' (que críamos no MESMO NÍVEL desse template de '404.pug') 
+
+
+
+SEJA ABERTO,
+
+
+
+e AÍ FARÁ COM QUE 
+
+
+o arquivo 
+
+'main-layout' 
+
+SEJA ABERTO...
+
+
+
+ex:
+
+
+
+
+
+
+extends layouts/main-layout.pug
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+OK... COM ISSO, ESTAREMOS DIZENDO AO PUG QUE 'WE WANT TO EXTEND THIS LAYOUT'...
+
+
+
+
+
+
+
+------> AGORA, DEPOIS  DISSO, APENAS PRECISAMOS COMUNICAR AO PUG __ 
+
+
+EXATAMENTE O QUE ELE DEVE RENDERIZAR 
+
+
+
+
+DENTRO DAQUELES BLOCKS 
+
+
+de 
+
+
+'content' 
+
+
+e 
+
+de 
+
+'styles' que 
+
+
+definimos lá 
+
+
+naquele 
+
+LAYOUT de 'main-layout.pug' 
+
+
+(
+
+    como visto 
+
+    em 
+
+
+    '''        block styles''''
+
+
+
+    e 
+
+
+    '''block content'''..
+)
+
+
+
+
+
+
+
+
+------> OK... ----> NO CASO __ DO ARQUIVO/TEMPLATE/PAGE '404.pug',
+
+
+
+
+NÓS __ NÃO VAMOS QUERER __ ADICIONAR ALGUM ESTILO EXTRA__, 
+
+PARTICULAR 
+
+
+AO 
+
+'404.pug',
+
+
+__MAS 
+
+
+
+
+___ VAMOS, NO ENTANTO,
+
+
+QUERER 
+
+__ADICIONAR ___ 
+
+
+UM CONTENT 
+
+ESPECÍFICO A ESSE LAYOUT... -------> 
+
+
+
+
+PARA ISSO,
+
+
+PROFESSOR 
+
+ESCREVE:
+
+
+
+
+
+'block content'     (SIM, EXATAMENTE COMO ANTES)...
+
+
+
+
+
+
+
+
+-> É A MESMA SINTAXE QUE __ DEFINE__ NOSSO block de 'content',
+
+
+
+MAS AQUI, QUANDO ESSA SINTAXE É 
+
+
+USADA __ 
+
+
+EM CONJUNTO COM 
+
+
+UMA LINHA 
+
+DE 
+
+'extends .....',
+
+
+
+
+_ ESSE BLOCK __ ACABA SENDO ____ 
+
+
+
+
+ENFIADO NO MEIO DO BLOCK QUE JÁ TÍNHAMOS 
+
+
+
+DEFINIDO NO NOSSO LAYOUT ANTERIOR (no caso, em 'main-layout.pug'...)
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+extends layouts/main-layout.pug
+
+
+
+
+
+
+block content 
+    h1 Page Not Found!
+
+
+
+
+--------------------------------
+
+
+
+
+
+AÍ, NESSA 
+
+'ADIÇÃO AO BLOCK',
+
+
+
+VAMOS ___ DEFINIR EXATAMENTE O CONTEÚDO QUE DEVERÁ 
+
+
+SER 
+
+'INJECTED'
+
+NAQUELE ESPAÇO....
+
+
+
+(esse conteúdo de 'h1' 
+
+
+
+
+será 
+
+ENFIADO NO 
+
+
+TRECHO 
+
+'block content'
+
+
+DEFINIDO LÁ EM 
+
+'main-layout.pug'....
+
+
+
+
+)
+
+
+
+
+
+
+--------> COM ISSO, 
+
+
+
+
+
+SALVAMOS TODO ESSE CÓDIGO E TESTAMOS....
+
+
+
+
+
+
+--> NOSSA PÁGINA DE ERRO 404 
+
+VAI FUNCIONAR 
+
+
+
+EXATAMENTE COMO ANTES,
+
+MAS 
+
+AGORA,
+
+
+BEHIND THE SCENES,
+
+
+
+ESSA 
+
+
+
+PÁGINA/NOSSO SERVIDOR __ VAI 
+
+
+UASR __ ESSE 
+
+'LAYOUT' QUE 
+
+CRÍAMOS 
+
+
+em 
+
+'layouts'...
+
+
+
+
+
+
+
+-----> E É CLARO QUE PODEMOS FAZER A MESMA COISA PARA 
+
+
+'add-product.html' 
+
+
+e 
+
+'shop.html'...
+
+
+
+
+
+
+
+-----------------
+
+OK, OS CÓDIGOS FUNCIONARAM:
+
+
+
+
+
+
+
+
+
+
+
+extends layouts/main-layout.pug
+
+block styles
+    link(rel="stylesheet", href="/css/product.css")
+
+block content
+             if prods.length > 0
+                .grid 
+                    each product in prods
+                        article.card.product-item 
+                            header.card__header 
+                                h1.product__title #{product.title}
+                            .card__image 
+                                img(src="https://m.media-amazon.com/images/I/41tCIsGV8UL.jpg", alt="chair")
+                            .card__content 
+                                h2.product__price #{product.price}
+                                p.product__description #{product.desc}
+                            .card__actions 
+                                button.btn Add to Cart
+             else
+               h1 No Products
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+REESTRUTUREI A PAGE DE 
+
+'add-product.pug' 
+
+E 
+
+A 
+
+DE 
+
+
+'shop.pug'...
+
+
+
+
+
+
+
+--> TAMBÉM EDITEI/USEI O BLOCK DE 
+
+'styles',
+
+para adicionar 
+
+IMPORTS 
+
+ADICIONAIS 
+
+DE 
+
+STYLES,
+
+styles 
+QUE 
+NÃO FAZIAM 
+PARTE 
+
+
+DO 
+
+LAYOUT 
+
+
+PRINCIPAL/básico..
+
+
+
+-----------------------------------------
+
+
+
+
+
+AGORA TEMOS ARQUIVOS PUG QUE REALMENTE ESTENDEM NOSSO LAYOUT...
+
+
+
+
+
+
+
+
+--> AS COISAS VAO FUNCIONAR EXATAMENTE COMO ANTES,
+
+
+MAS AGORA COM UM APPROACH  BEM MAIS CONCISO,
+
+um approach 
+
+QUE 
+
+GARANTE QUE 
+
+SE ALGUMA HORA MUDARMOS 
+
+
+
+ALGUAM 
+
+
+COISA 
+LÁ 
+
+
+NO 
+
+'main-layout.js',
+
+
+NÃO PRECISAREMOS 
+
+ALTERAR 
+
+TUDO 
+
+NOS OUTROS 
+
+ARQUIVOS/TEMPLATES/PUG FILES/VIEWS 
+
+
+
+DE NOSSO APP...
+
+
+(só vamos precisar 
+
+
+MUDAR AS COISAS 
+
+NO 
+
+'MAIN-LAYOUT' FILe,
+
+
+
+pq todos os outros arquivos 
+
+vão 
+'EXTEND' 
+
+esse aí...
+)
+
+
+
+
+
+-----> O ÚNICO PROBLEMA É O STYLE ESPECIAL DE 
+
+
+
+'active',
+
+
+
+AQUELA COR AMARELA QUE DEVE FICAR 
+
+
+EM CADA 1 DE NOSSOS LINKS NO HEADER,
+
+indicando a page em que estamos no momento... (class= 'active'... )
+
+
+
+
+
+
+
+
+
+----> A 'ACTIVE CLASS' está missing...
+
+
+
+
+
+----> ISSO ACONTECE/ACONTECEU 
+PQ 
+
+ 
+ LÁ 
+
+
+ NO 
+
+ 'main-layout.pug'
+
+
+ 'WE DIDNT MAKE ANY ASSUMPTION OF WHAT IS ACTIVE'...
+
+
+
+
+
+
+
+
+
+ A PERGUNTA É:
+
+
+ COMO PODEMOS 
+
+ SETTAR 
+
+ ESSE STYLE DINAMICAMENTE?

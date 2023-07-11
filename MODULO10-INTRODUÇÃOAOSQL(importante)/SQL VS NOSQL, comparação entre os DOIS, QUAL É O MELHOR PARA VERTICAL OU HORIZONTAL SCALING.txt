@@ -1,0 +1,1019 @@
+
+
+
+
+
+COMPARANDO SQL E NOSQL...
+
+
+
+
+
+
+
+
+ 
+
+ VAMOS COMEÇAR COM O SCALING HORIZONTAL E O SCALING VERTICAL...
+
+
+
+
+
+
+
+
+
+
+
+ --> PROFESSOR HAVIA MENCIONADO QUE 
+
+
+
+
+ MUITAS VEZES PRECISAMOS PENSAR SOBRE __ SCALING__ COM NOSSOS APPS,
+
+
+ PQ ELES VAO CRESCER,
+
+
+ E 
+
+ AÍ  O MANAGE 
+
+
+ DE 
+
+ DADOS 
+
+
+
+ SERÁ CADA VEZ MAIOR.... (mais e mais users)..
+
+
+
+
+
+
+
+
+
+
+
+
+
+ HORIZONTAL SCALING 
+
+
+
+
+
+
+ VERTICAL SCALING 
+
+
+
+
+
+
+
+
+
+
+ __SÃO OS 2 APPROACHES QUE PODEMOS USAR __ PARA 
+
+
+ 'SCALE' O NOSSO APLICATIVO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> OK, MAS O QUE SIGNIFICAM?
+
+
+
+
+
+
+
+
+
+
+ 1) HORIZONTAL SCALING --> NESSA MODALIDADE, NÓS SIMPLESMENTE 
+
+ 'ADD MORE SERVERS', vamos usar MAIS COMPUTADORES, E AÍ 
+
+
+ __VAMOS 
+
+ ___ MERGE___ TODA A DATA __ EM 1  ÚNICA DATABASE....
+
+
+
+
+
+SERVER SERVER SERVER SERVER SERVER SERVER....
+
+
+
+ --------> A VANTAGEM DO 'HORIZONTAL SCALING' É QUE PODEMOS FAZER ESSA EXPANSÃO __INFINITAMENTE....
+
+ --> sempre podemos COMPRAR NOVOS SERVERS,
+
+
+ SEJA 
+
+
+ EM 
+
+
+ 1 'CLOUD PROVIDER'
+
+
+ OU NO NOSSO __PRÓPRIO DATA CENTER, e aí __ vamos 
+
+ CONECTAR __ ESSES SERVERS A NOSSA DATABASE,
+
+ E AÍ vamos 
+
+ SPLITTAR NOSSA 
+
+
+ DATA 
+
+ AO LONGO DE TODOS ESSES SERVERS.... 
+
+
+
+
+
+
+
+
+ ** É CLARO QUE ISSO SIGNIFICA QUE __ VAMOS PRECISAR __ DE ALGUM PROCESSO QUE 
+
+
+ RODA/RODARÁ QUERIES ___ EM ____TODOS ESSES SERVERS; QUE RODE QUERIES E QUE ENTÃO 
+
+
+ FAÇA 'MERGE' DE TODOS ESSES CONJUNTOS DE DATA ___ DE FORMA INTELIGENTE__..... ----->  E ISSO,
+
+
+
+
+ ESSE 
+
+
+
+ 'MERGE DE FORMA INTELIGENTE',
+
+
+
+
+ _ NÃO É ALGO QUE É TÃO FÁCIL DE SE FAZER... ----------> MESMO ASSIM,
+
+
+
+
+ ESTA 
+
+
+ É 
+
+
+ CONSIDERADA UMA 
+
+ 'BOA' FORMA DE SCALING...
+
+
+
+
+
+
+(MAS CARA....)
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+2) VERTICAL SCALING ---> ISSO SIMPLESMENTE SIGNIFICA QUE 
+
+
+
+
+__DEIXAMOS __ NOSSO SERVER 
+
+
+JÁ 
+
+EXISTENTE 
+
+
+
+__________MAIS FORTE___, encorpamos ele... -----> 
+
+
+
+
+NÓS DEIXAMOS O SERVIDOR QUE JÁ TEMOS MAIS FORTE POR MEIO DO ADD 
+
+
+DE MAIS 
+
+PODER DE CPU,
+
+
+OU MEMÓRIA.... -------> O 'VERTICAL SCALING' É VISTO PRINCIPALMENTE 
+
+
+COM CLOUD PROVIDERS,
+
+
+
+ONDE ISSO É BEM FÁCIL; VOCÊ SÓ VAI LÁ E ESCOLHE UMA OPÇÃO NOS DROPDOWN,
+
+
+troca entre 'plano simples' para 'plano premium', etc etc....
+
+
+
+('IMPROVE SERVER CAPACITY/HARDWARE')... --> VOCê PAGA UM POUCO MAIS, E AÍ ACABOU....
+
+
+
+
+
+
+| SERVER | -----> |           SEEEEEEEEEEEERVEEEEEEEEEEER     |
+
+
+
+
+**** O PROBLEMA DO VERTICAL SCALING É QUE __VOCê TEM UM CERTO LIMITE:
+
+
+VOCÊ 
+___ NÃO PODE/NÃO É POSSÍVEL ENFIAR __PODER COMPUTACIONAL INFINITO EM UMA MESMA MÁQUINA,
+
+
+a máquina 
+
+sempre terá um LIMITE...
+
+
+
+
+
+
+
+
+
+--> OK, ESSAS 
+
+
+
+
+SÃO 
+
+
+
+
+AS 2 FORMAS DE 'SCALING'..
+
+
+
+
+
+
+
+
+MAS E QUANTO AO SQL E O NOSQL,
+
+
+
+
+como 
+
+
+
+elas se relacionam a essas formas de scaling?
+
+
+
+
+
+
+
+
+
+
+
+
+->BEM:
+
+
+
+
+
+
+1) SQL 
+
+
+
+
+
+a) USA SCHEMAS... (regras bem definidas/estruturas bem definidas)....
+
+
+
+
+b) usa RELATIONS...
+
+
+
+
+^^^^^essas são AS  2 CORE CHARACTERISTICS DO SQL....
+
+
+------> E NAS DATABASES 'SQL', a data dos usuários é tipicamente DISTRIBUÍDA AO LONGO 
+
+DE MUITAS E MUITAS __TABLES__ diferentes... ---> ESSAS TABLES SÃO ENTÃO CONECTADAS__ POR MEIO 
+
+DE ___RELATIONS__....
+
+
+
+
+
+
+
+quanto ao ___SCALING____ DE SQL DATABASES, ___ O HORIZONTAL SCALING FREQUENTEMENTE É ___ 
+
+MUITO DIFÍCIL, OU ATÉ MESMO ____IMPOSSÍVEL____... -----> IMPOSSÍVEL DEVIDO 
+
+__à MANEIRA PELA QUAL 
+
+O SQL FUNCIONA...
+
+
+
+
+
+
+
+
+
+
+STRUCTURED QUERY LANGUAGE....
+
+
+
+
+
+
+
+
+-----> É CLARO QUE ___ VOCÊ _______ PODE ADICIONAR __ MAIS SERVERS_ _ 
+
+
+NA SUA DATABASE SQL,
+
+
+
+
+
+MAS AQUELE SEGUNDO PASSO, O PASSO DE 'MERGE THEM ALL TOGETHER, MERGE DESSES SERVERS EM 1 ÚNICA DATABASE',
+
+
+
+ISSO AÍ É BEM DIFÍCIL COM O SQL -->  rodar 
+
+
+
+TODOS ESSES SERVERS 'IN ONE SHARED DATA CLOUD/DATABASE' é algo 
+
+
+__BEEEM DIFÍCIL.... 
+
+
+
+
+
+
+
+
+
+
+-----> RESUMINDO: com as databases SQL  ___O __ HORIZONTAL SCALING (add de NOVOS SERVERS ao 
+seu 'conjunto database') __ É ABSURDAMENTE DIFÍCIL,
+
+
+AO PASSO QUE 
+
+O 
+
+'VERTICAL SCALING' É ___EASILY POSSIBLE___- ---> ou SEJA,
+
+
+O UPGRADE 
+
+
+
+DAS MÁQUINAS EM QUE SEUS SERVERS ESTÃO RODANDO É 
+
+
+FÁCIL; BASTA VOCê ___ DEIXAR __OS SEUS SERVERS JÁ EXISTENTES MAIS PODEROSOs...  --> mas o add 
+
+
+de 
+
+servers __ É REALMENTE QUASE IMPOSSÍVEL, MUITO DIFÍCIL, ALGO NADA TRIVIAL...
+
+
+
+
+
+
+----> E ISSO, ESSE FATO DO HORIZONTAL SCALING SER DIFÍCIL,
+
+É ALGO QUE __VIRA UM PROBLEMA, POSSIVELMENTE,
+
+
+
+__ QUANDO __ TEMOS ___ MÚLTIPLOS/MILHARES 
+
+
+DE QUERIES 
+
+
+DE TIPO 'READ/WRITE'
+
+POR SEGUNDO....  ------> NESSES CASOS, ESPECIALMENTE SE NOSSA DATABASE SQL 
+
+
+FAZ ___ 'JOINS' EXTREMAMENTE COMPLEXOS ENTRE 'RELATED TABLES',  ___O LIMITE 
+
+PODE 
+
+SER 
+
+ATINGIDO... ---> nossa database NÃO VAI MAIS DAR CONTA DO RECADO, BASICAMENTE...
+
+
+
+
+
+
+('LIMITATIONS FOR LOTS OF (thousands) READ AND WRITE QUERIES PER SECOND'....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOSQL:
+
+
+
+a) NÃO TEM SCHEMA... SCHEMA-LESS...
+
+
+
+
+B) TEM POUCSA RELATIONS, àS VEZES NENHUMA...
+
+
+
+
+
+C) A DATA __ NÃO É TIPICAMENTE DISTRIBUÍDA AO LONGO DE 
+
+
+VÁRIAS TABLES/collections; tipicamente nós trabalhamos 
+
+COM 
+
+
+'MERGED/NESTED DOCUMENTS IN AN EXISTING DOCUMENT'.... ----> apesar de que 
+
+
+É CLARO QUE 
+
+___NÓS TAMBÉM __ TEMOS UM PUNHADO DE COLLECTIONS PARA DIFERENTES FEATURES 
+
+
+DE NOSSO APP,
+
+
+tipicamente..... 
+
+
+
+
+
+
+
+
+D) --> COM O NOSQL,
+
+
+TANTO O HORIZONTAL COMO O VERTICAL SCALING SÃO POSSÍVEIS.... --------->
+
+
+
+O HORIZONTAL SCALING É BEM MAIS FÁCIL DO QUE NO 
+
+
+'SQL'... ------->O 
+
+
+
+
+SCALING AINDA É ALGO QUE 
+
+'VOCÊ DEVE SABER O QUE VOCÊ ESTÁ FAZENDO',
+
+
+
+MAS HÁ __ 
+
+CLOUD PROVIDERS __ QUE 
+
+
+FAZEM ESSE SERVIÇO DE SCALING PARA NÓS.... (
+
+    o que significa que 
+
+
+    NÃO PRECISAMOS SABER 
+
+
+    OBRIGATORIAMENTE OS INS E OUTS 
+
+
+
+    do scaling....
+) ---------> E, EM GERAL,
+
+
+
+
+DEVIDO 
+
+
+
+A 
+
+
+MANEIRA PELA QUAL 
+
+
+
+DATABASES NOSQL FUNCIONAM E ASSIM POR DIANTE (pq o NOSQL funciona com 
+
+MENOS CONEXÕES do que o SQL, por isso sua maior eficiência),
+
+
+
+
+
+É POSSÍVEL FAZER 
+
+
+
+ESSES 2 TIPOS DE SCALING....
+
+
+
+
+
+
+E) ALÉM DISSO,
+
+
+
+TAMBÉM 
+
+
+
+CONSEGUIMOS 
+
+
+
+'GREAT PERFORMANCE FOR MASS READ AND WRITE REQUESTS'... --> aqui 
+
+
+
+não são queries, e sim REQUESTS...
+
+
+
+
+
+
+
+
+-----> NOSQL PODE SER ALTAMENTE 'PERFORMANT' 
+
+
+EM UM APP COM 
+
+'
+
+HIGH THROUGHPUT'...
+
+
+()
+Taxa de transferência
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE TODAS ESSAS VANTAGENS FAZEM O SQL PARECER UMA BOSTA... --> mas a 
+
+
+
+
+verdade 
+
+
+é 
+
+que 
+
+
+
+__ O TIPO DE DATABASE QEU VOCê VAI ESCOLHER 
+
+
+__SEMPRE VAI __ DEPENDER__ DO TIPO DE DATA (kind of data)
+
+
+
+
+
+QUE VOCÊ 
+
+
+ESTARÁ ARMAZENANDO....
+
+
+
+
+
+
+
+
+
+--> *** SE VOCÊ ESTÁ ARMAZENANDO DATA EM QUE 
+
+
+
+RELATIONS SÃO ___ MUITO IMPORTANTES_, E EM QUE 
+
+
+
+
+
+___VOCê ___ QUER TER UM 'SPLIT UP' DESSA 
+
+DATA 
+
+
+AO LONGO DE VÁRIAS TABLES,
+
+
+
+
+
+
+E TAMBÉM__ SE VOCÊ ESTÁ ARMAZENANDO DADOS 
+
+
+QUE __ PRECISAM __ SEGUIR 
+
+'STRONG SCHEMAS',
+
+
+
+AÍ __O 
+
+
+
+
+SQL É PERFEITO PARA ISSO.... ------------>
+
+
+
+
+
+
+TAMBÉM É RECOMENDADO O SQL 
+
+
+
+__NOS CASOS EM QUE 
+
+
+SUA DATA/PARTE DE SUA DATA 
+
+NÃO SERÁ 
+
+
+ACESSADA 
+
+
+MÚLTIPLAS VEZES POR SEGUNDO... ------> VOCÊ PODE TER PARTES 
+
+
+DE SEU APP, POR EXEMPLO,
+
+
+QUE 
+
+
+MEXEM COM USER DATA, __ MAS USER DATA QUE 
+
+
+
+NÃO SERÁ/NÃO É MUDADA COM TANTA FREQUÊNCIA.... -----> em casos 
+
+
+
+COMO ESSE,
+
+
+
+
+UMA SQL DATABASE PODE SER UMA BOA PEDIDA... 
+
+
+
+
+
+
+
+
+
+-----> JÁ OUTRAS PARTES 
+
+
+
+
+DE SEU APP,
+
+
+COMO 'ORDERS'
+
+
+OU 
+
+'SHOPPING CARTS',
+
+
+
+
+__COISAS QUE MUDAM __ COM GRANDE FREQUÊNCIA,
+
+
+
+
+
+ESSAS COISAS PODERÃO SER ARMAZENADAS ____ COM NOSQL... (E aparentemente, é possível TER AMBOS TIPOS DE STORAGE NO SEU APP, tanto o SQL como o NOSQL... --> para partes diferentes do app)...
+
+
+
+-----> EM COISAS COMO 'ORDERS' E 'SHOPPING CARTS',
+
+
+
+AS 
+
+
+
+RELATIONS __ PODEM ___ 
+
+
+NÃO SER TÃO IMPORTANTES,
+
+PQ 
+
+
+
+VOCÊ __ ___SEMPRE ___ PODE COLOCAR __tODA A INFORMAÇÃO que pertence 
+
+a 
+
+um 
+
+
+SHOPPING CART/ORDER 
+
+
+
+__EM 1 ÚNICO DOCUMENT (in one single document)...
+
+
+
+
+
+
+
+
+
+
+--------->
+
+você provavelmente não terá de mexer nesse document, pq você 
+
+PROVAVELMENTE 
+
+NÃO A ARMAZENOU COM A ORDER DE QUALQUER FORMA...
+
+
+
+
+
+
+
+
+
+
+
+---> NESTE CURSO, VEREMOS 
+
+
+
+
+
+
+
+AS 2 FORMAS DE DATABASE...
+
+
+
+
+
+-> O PROFESSOR QUER NOS 
+
+
+ENSINAR OS 2...
+
+
+
+
+
+
+
+
+
+--> ESSE APRENDIZADO NÃO É MT APLICADO AO NOSSO COURSE APP,
+
+
+
+
+
+MAS __ NÓS DEVEMOS SABER COMO USAR 
+
+
+SQL com NODEJS  (pq existirão casos em que VOCÊ 
+
+TALVEZ QUEIRA ADICIONAR ESSE TIPO DE DATABASE NO SEU APP, OU 
+
+
+PROJETOS DE UMA EMPRESA EM QUE TE FORÇAM A USAR 'SQL' EM VEZ DE 'NOSQL'...),
+
+
+
+
+
+
+
+
+
+
+
+-----> POR ISSO, VAMOS USAR SQL ANTES... 
+
+
+
+
+--> DEPOIS O PROFESSOR VAI NOS MOSTRAR COMO USAR 
+
+
+
+___ NOSQL, COM O MONGODB...
+
+
+
+
+
+
+
+---> VAMOS VER COMO INTERAGIR COM 
+
+
+AMBAS AS DATABASES....
+
+
+
+
+
+
+
+
+
+--> SQL... --> VAMOS INSTALAR A DATABASE DE 'mySQL',
+
+
+e aí 
+
+vamos ver como INTERAGIR COM ESSA DATABASE,
+
+LÁ 
+
+DE DENTRO DO NOSSO CÓDIGO NODEJS....
+
+
+
+
+https://academind.com/learn/web-dev/sql-vs-nosql/
+
+
+
+
+
+Additionally, you typically put related data into the same collection. So if you got a bunch of orders, you would store your order documents in your Orders collection by including all data you typically query.
+
+So you would end up with documents that already got everything you need - no need to join multiple tables/ collections.
+
+Indeed, NoSQL databases don't know the concept of joining tables/ collections.
+
+You can manually do that (by retrieving a foreign id in collection A and looking it up in collection B) but this will not be your typical flow.
+
+Instead, you duplicate data across collections so that each collection yields exactly the data some part of your app might be looking for.
+
+
+
+
+
+
+The concept of data duplication looks disturbing at first. Doesn't that introduce the danger of making mistakes and updating data in collection A without adjusting it in collection B, too?
+It does and it will be your job to ensure that data updates are performed in all collections that use a certain data piece.
+
+But the huge advantage is that you don't need to work with complex (and at some point slow) join statements. All the data is already stored in the structure you need it in.
+
+This is especially great for data that doesn't change a dozen times every second.
+
+
+
+This is especially great for data that doesn't change a dozen times every second.??????
+
+
+
+
+
+
+
+
+Queries in NoSQL databases can be faster than SQL databases.
+ Why? Data in SQL databases is typically normalized, 
+ so queries for a single object or entity require you to join data from multiple tables. 
+ As your tables grow in size, the joins can become expensive.
+  However, data in NoSQL databases is typically stored in a way that 
+  is optimized for queries. The rule of thumb when you use MongoDB is Data is that
+   is accessed together should be stored together. Queries typically do not require joins,
+    so the queries are very fast.

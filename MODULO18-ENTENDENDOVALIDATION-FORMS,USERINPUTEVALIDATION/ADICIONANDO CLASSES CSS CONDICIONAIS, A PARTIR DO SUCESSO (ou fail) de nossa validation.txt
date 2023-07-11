@@ -1,0 +1,912 @@
+
+
+
+
+
+
+
+
+
+--> AGORA SOMOS CAPAZES DE 'KEEP THE OLD INPUT DATA'
+
+
+
+
+
+ao FALHARMOS/o user falhar O VALIDATE.... -----> ISSO É BOM, PQ 
+
+
+SE 
+
+O USER 
+
+
+FALHAR 
+
+
+AO INPUTTAR ALGUMA DATA do password/email,
+
+ELE NÃO VAI TER QUE REDIGITAR TUD...
+
+
+
+
+
+
+
+--> FOI BEM FÁCIL, USAMOS 
+
+AQUELE 
+
+
+attribute de 'value' 
+
+
+
+
+na tag de '<input>',
+
+LÁ NA VIEW,
+
+
+
+
+E AÍ 
+
+
+
+UMA MÁGICA 
+
+COM OS CONTROLLERS, lá 
+
+
+
+em 'auth.js'....
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+--> É ÓBVIO QUE PODEMOS FAZER __ BEM MAIS COISAS LEGAIS, NO NOSSO FRONTEND....
+
+
+
+
+
+
+
+
+--> NÓS PODEMOS 
+
+DAR, POR EXEMPLO,
+
+
+
+UMA 
+
+
+'RED BORDER'
+
+A 
+
+ESSES 
+
+
+INPUT FIELDS,
+
+QUANDO ELES 
+
+APARECESSEM COMO INVÁLIDOS/fossem considerados INVÁLIDOS....
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, VAMOS TER QUE __ ESCREVER UM 
+
+
+<%= %> CONDICIONAL,
+
+LÁ 
+
+
+NA NOSSA VIEW,
+
+
+
+em um attribute de 'class= xxx',
+
+
+
+PARA QUE __ CONSIGAMOS __ 
+
+
+
+
+RENDERIZAR ESSA RED BORDER.... --> para isso, vamos ter que passar A __INFORMAÇÃO __ 
+
+DA 
+
+
+VALIDAÇÃO (se deu certo ou não)
+
+
+
+
+
+
+AO NOSSO VIEW,
+
+
+por meio de nossos controllers...
+
+
+
+
+
+
+
+
+
+
+--------> ok... para isso,
+
+
+
+
+vamos ter que 
+
+
+
+
+
+
+
+pensar na lógica das ROUTES e dos VALIDATORS QUE COLOCAMOS LÁ...
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+--> NO NOSSO CASO,
+
+
+
+LÁ NO CONTROLLER 
+
+
+
+
+
+
+de 
+
+'postSignup',
+
+TEMOS O SEGUINTE CÓDIGO:
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+  // console.log(errors.array()[0].msg);
+
+  if(!errors.isEmpty()) { ///ou seja, se NOSSO OBJETO/ARRAY 'errors' __ NÃO ESTIVER EMPTY (ou seja, o email que o user inputtou é INVÁLIDO E GEROU ERRORS), vamos querer executar esse código do block...
+///isEmpty é um method que existe DENTRO DO OBJETO RETORNADO por 'validationResult(req'), e vai sempre retornar OU TRUE OU FALSE (dependendo se estiver VAZIO ou PREENCHIDO COM ERRORS)...
+    return res.status(422).render(
+                //OU SEJA, SE NÓS/USER (validation failed)_ __ FALHARMOS_, VAMOS QUERER __ SIMPLESMENTE 'RENDER THE PAGE AGAIN'.. ( E NÃO VAMOS REDIRECIONAR, E SIM __ APENAS RENDERIZAR A PAGE DE 'SIGNUP' MAIS UMA VEZ)...
+
+                'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: errors.array()[0].msg,////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                  oldInput: {   ///usado para MANTER OS VALORES/INPUTS que o user enfiou nos input fields antes de tomar uma message de error na cara e ser redirecionado...
+                      
+                    email: email, 
+                    password: password,
+                  }             
+                
+                
+                }
+
+    ); 
+
+  }
+
+
+
+
+
+
+
+
+
+  --------> NESSE LOCAL AÍ,
+
+
+  ESTÁVAMOS FAZENDO O CONSOLE.LOG 
+
+
+
+daquele 
+
+
+'errors.array()' ---->   E ESSE 'errors.array()'
+
+
+CONTÉM JUSTAMENTE 
+
+
+_TODOS OS 'PROBLEMATIC FIELDS'... --------->  AÍ,
+
+ALI 
+
+
+
+EMBAIXO,
+
+
+
+NÓS FAZEMOS 
+
+O RETURN DE UMA 
+
+'errorMessage'
+
+
+
+
+
+COM BASE NESSE ARRAY AÍ... --------> MAS PROFESSOR EXPLICA QUE 
+
+
+
+__´E EVIDENTE __ QUE PODEMOS/PODERÍAMOS PASSAR 
+
+
+UMA OUTRA 
+
+
+KEY 
+
+
+
+NESSE OBJETO 'data'
+
+
+dese render,
+
+UMA KEY 
+
+
+
+
+DIZENDO 
+
+'validationErrors',
+
+
+
+
+
+
+
+QUE ENTÃO PODE 
+
+SER 
+
+
+SÓ 
+
+
+uma referência a 'errors.array()'...
+
+
+
+
+
+
+
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+
+  if(!errors.isEmpty()) { 
+    return res.status(422).render(
+               
+
+                'auth/signup', { 
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: errors.array()[0].msg,
+                  oldInput: {   
+                      
+                    email: email, 
+                    password: password,
+                  },
+                  validationErrors: errors.array() ///////EIS O CÓDIGO EM QUESTÃO....            
+                
+                
+                }
+
+    ); 
+
+  }
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+CERTO... E É JUSTAMENTE ESSA KEY AÍ QUE VAMOS USAR __ PARA __ RENDERIZAR CONDICIONALMENTE UMA 
+
+BORDA VERMELHA EM VOLTA DE NOSSOS INPUT FIELDS...
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+
+
+
+OK... CONSEGUI... O VIEW FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+            <form class="login-form" action="/signup" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control <%- !validationErrors ? '' : 'error' %>">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email" 
+                    <% if (oldInput !== []) {   %>
+                            value="<%= oldInput.email %>"
+                 <%    }  %> 
+                    >
+                </div>
+                <div class="form-control <%- !validationErrors ? '' : 'error' %>">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password"
+                    <% if (oldInput !== []) {   %>
+                        value="<%= oldInput.password %>"
+             <%    }  %> 
+       
+                    >
+                </div>
+                <div class="form-control">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="confirmPassword">
+                </div>
+                <button class="btn" type="submit">Signup</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+MAS EU PODERIA DEIXAR ISSO AINDA MELHOR.... ---> SERIA AINDA MELHOR __ SE 
+
+
+
+APENAS __ 
+
+
+
+O 
+
+INPUT FIELD __ DO NEGÓCIO QUE DEU ERRO __ (seja o password, seja o EMAIL)
+
+
+
+fosse highlighteado...
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+--> CERTO... MAS PARECE QUE O PROFESSOR __ USOU UM APPROACH UM POUCO DISTINTO DO NOSSO...
+
+
+
+
+
+
+
+
+
+--> O QUE ELE ESCREVEU, NA VIEW,
+
+lá em 
+
+'class',
+
+
+PARA 
+
+CONSEGUIR 
+
+O 
+
+RENDER CONDICIONAL,
+
+
+
+foi 
+
+'find()'...
+
+
+
+
+
+
+
+-> tipo assim:
+
+
+
+
+
+
+
+<div class="form-control">
+  <label form="email">E-Mail</label>
+
+    <input 
+      class="<%= validationErrors.find(
+
+        (error) => {
+              error.param === 'email'
+
+        }
+
+
+
+      ) %>"
+
+
+
+
+
+
+
+-------------------------
+
+
+
+CERTO.... 
+
+
+agora faz mais sentido.... realmente, esse approach do professor é melhor do que o nosso,
+
+PQ 
+
+
+VAI 
+
+HIGHLIGHTEAR JUSTAMENTE O FIELD QUE DEU PROBLEMA...
+
+
+
+
+
+
+
+
+
+
+--> O MEU CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+            <form class="login-form" action="/signup" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input 
+                    
+                    type="email" 
+                    
+                    name="email" 
+                    
+                    class="<%= validationErrors.find(
+
+                        (error) => {
+                                error.param === 'email'
+                        }
+                    ) %>"
+                    
+                    
+                    id="email" 
+                    <% if (oldInput !== []) {   %>
+                            value="<%= oldInput.email %>"
+                 <%    }  %> 
+                    >
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password"
+                    
+                    name="password"
+
+
+
+                    class="<%= validationErrors.find(
+
+                        (error) => {
+                               return error.param === 'password'
+                        }
+                    ) ?  'error' : '' %>"
+                    
+                    
+                    id="password"
+
+
+
+
+                    <% if (oldInput !== []) {   %>
+                        value="<%= oldInput.password %>"
+             <%    }  %> 
+       
+                    >
+                </div>
+                <div class="form-control">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" 
+                    name="confirmPassword" 
+                    id="confirmPassword"
+                    
+                    class="<%= validationErrors.find(
+
+                        (error) => {
+                               return error.param === 'password'
+                        }
+                    ) ? 'error' : ''%>"
+                    
+                    
+                    >
+                </div>
+                <button class="btn" type="submit">Signup</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+------> É, ACHO QUE ISSO VAI FUNCIONAR....
+
+
+
+
+
+
+
+
+
+-> CERTO... FUNCIONOU, DE FORMA BRILHANTE...
+
+
+
+
+
+--> agora o negócio realmente mostra qual input field o usuário errou, 
+
+
+junto de uma mensagem de erro...
+
+
+
+
+
+
+
+
+
+--> certo.... mas o negócio ainda está bem louco; quando temos MÚLTIPLOS ERROS,
+
+ELE PARECE 
+
+ESCOLHER APENAS 
+
+
+
+1 INPUT FIELD PARA DEIXAR VERMELHO, e ignora os outros....
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS AGORA CONSEGUI FAZER FUNCIONAR... CÓDIGO FINAL DO VIEW FICOU ASSIM:
+
+
+
+
+
+
+
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include('../includes/navigation.ejs'); %>
+    <main>
+        <% if (errorMessage) {  %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+            <% } %>
+            <form class="login-form" action="/signup" method="POST">
+                <input type="hidden" value="<%= csrfToken %>" name="_csrf"> <!--  VOCÊ _ _DEVE UTILIZAR ESSE NAME de '_csrf' para esse INPUT FIELD DE TYPE 'hidden' SE VOCê QUER__ QUE A PACKAGE 'csurf' CONSIGA DETECTAR ESSE INPUT FIELD__ COMO AQUELE RESPONSÁVEL/SEGURADOR DE SUA CSRF TOKEN...-->
+                <div class="form-control">
+                    <label for="email">E-Mail</label>
+                    <input 
+                    
+                    type="email" 
+                    
+                    name="email" 
+                    
+                    class="<%= validationErrors.find(
+
+                        (error) => {
+                              return error.param === 'email'
+                        }
+                    ) ? 'error' : '' %>"
+                    
+                    
+                    id="email" 
+                    <% if (oldInput !== []) {   %>
+                            value="<%= oldInput.email %>"
+                 <%    }  %> 
+                    >
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password"
+                    
+                    name="password"
+
+
+
+                    class="<%= validationErrors.find(
+
+                        (error) => {
+                               return error.param === 'password'
+                        }
+                    ) ?  'error' : '' %>"
+                    
+                    
+                    id="password"
+
+
+
+
+                    <% if (oldInput !== []) {   %>
+                        value="<%= oldInput.password %>"
+             <%    }  %> 
+       
+                    >
+                </div>
+                <div class="form-control">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" 
+                    name="confirmPassword" 
+                    id="confirmPassword"
+                    
+                    class="<%= validationErrors.find(
+
+                        (error) => {
+                               return error.param === 'confirmPassword'
+                        }
+                    ) ? 'error' : ''%>"
+                    
+                    
+                    >
+                </div>
+                <button class="btn" type="submit">Signup</button>
+            </form>
+    </main>
+<%- include('../includes/end.ejs'); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK.... COLOCAMOS ESSA LÓGICA ÚTIL EM __TODOS __OS INPUT FIELDS__ 
+
+
+DE NOSSO APP...
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+OK, ESSA É OUTRA MANEIRA DE ENHANCE THE USER EXPERIENCE...
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+OK, ESSE É O PODER DAQUELA 'SERVERSIDE VALIDATION PACKAGE',
+
+
+
+e a information que ela nos dá, e COMO __ PODEMOS PASSAR ESSA INFO 
+
+
+
+__AOS NOSSOS VIEWS,
+
+PARA 
+
+
+FAZER RENDER CONDICIONAL DE COISAS... (passar info ao frontend)...

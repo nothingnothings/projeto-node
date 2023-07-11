@@ -1,0 +1,1235 @@
+
+
+
+
+
+
+
+
+
+
+-----> NÓS JÁ DEFINIMOS O MODEL __SEQUELIZE__  DE 'PRODUCT'...
+
+
+
+
+SEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+const Sequelize = require('sequelize'); ////OBTIDO POR MEIO DE 'npm install --save sequelize', pacote que TAM´BEM REQUER UM INSTALL PRÉVIO DE 'npm install --save mysql2'...
+
+const sequelize = require('../util/database'); ///definimos isso lá no folder 'util', no arquivo 'database.js', em que EXPORTAMOS esse 'sequelize' configurado...
+
+const Product = sequelize.define('product', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+
+  title: Sequelize.STRING, ////shorthand do DEFINE visto logo acima... (com esse shorthand, definimos apenas o TYPE daquele field, sem definir mais nada acerca das características que esse field deve ter....)
+
+  price: {
+    type: Sequelize.DOUBLE, ///CASAS DECIMAIS... considera '0.99', etc...
+    allowNull: false, ////_IMPOSSIBILITA O WRITE DE VALORES NULOS.... produto sempre deverá custar alguma coias....
+  },
+
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+module.exports = Product;
+
+
+
+
+
+
+
+
+
+
+
+--------> O PROFESSOR MENCIONOU QUE 
+
+PODEMOS 
+
+
+TRABALHAR COM ESSE MODEL PARA CRIAR 
+
+
+NOVOS PRODUCTS NA DATABASE...
+
+
+
+
+
+
+
+
+
+
+
+---> MAS PARA FAZER ISSO,
+
+
+
+
+
+_____PRECISAMOS PRIMEIRAMENTE__ DE UMA TABLE 
+
+'products',
+
+
+QUE 
+
+
+AINDA NÃO TEMOS (não temos mais pq __ O PROFESSOR __ A DELETOU DE NOSSA DATABASE 
+
+'node-complete-course', por meio do MYSQL WORKBENCH....)
+
+
+
+
+
+
+
+
+----------> OK... COMO NÃO TEMOS TABLE,
+
+
+PRECISAMOS 
+
+
+
+CRIAR UMA TABLE 
+
+'products', para nossos products...
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR HAVIA MENCIONADO QUE SEQUELIZE __CONSEGUE_ _ CRIAR TABLES _ 
+
+
+
+NAS NOSSAS DATABASES SQL __ para nós...
+
+
+
+
+
+
+
+
+
+
+
+--> e ela realmente consegue... 
+
+
+
+
+
+
+
+
+----> PARA FAZER COM QUE ELE CRIE 1 TABLE PARA NÓS,
+
+
+VOCÊ 
+
+SÓ TEM QUE 
+
+COMUNICAR ISSO 
+
+A 
+ELE...
+
+
+
+
+
+
+
+
+--> PARA FAZER ISSO,
+
+
+VAMOS 
+
+
+
+
+AO ARQUIVO 
+
+'app.js' de nosso aplicatiov 
+
+
+
+NODEJS....
+
+
+
+
+
+
+
+
+
+
+--> LÁ, O PROFESSOR QUER 
+
+ASSEGURAR 
+QUE 
+
+TODOS 
+
+OS 
+
+'MODELS' 
+
+
+
+
+SEJAM __ BASICAMENTE__ 
+
+'TRANSFERRED'
+
+
+
+PARA DENTRO 
+
+DE 
+
+TABLES,
+
+
+
+
+
+
+
+
+
+
+OU... EM OUTRAS PALAVRAS,
+
+
+___ 'GET A TABLE' que PERTENÇA 
+
+A 
+
+ESSES 
+
+MODELS 
+
+
+
+_________SEMPRE____ QUE 
+
+INICIARMOS NOSSO APP NODE/EXPRESSJS........... 
+
+
+
+
+
+
+
+----> E É CLARO QUE 
+
+SE A TABLE __ JÁ EXISTE__, VAMOS QUERER _ QUE 
+
+NOSSO APP NÃO FAÇA 'OVERWRITE' DELA POR DEFAULT (apesar de que É POSSÍVEL DIZER AO NODE/EXPRESS/SEQUELIZE O CONTRÁRIO, É POSSÍVEL PEDIR A ELE QUE __ DÊ OVERWRITE __ NA NOSSA TABLE QUANDO INICIAMOS NOSSO APP...)
+
+
+
+
+
+
+
+
+--------> OK.... COMO FAZER ISSO?
+
+
+
+
+
+
+
+NO ARQUIVO app.js,
+
+
+
+TEMOS O SEGUINTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express(); 
+
+
+
+
+
+app.set('view engine', 'ejs'); 
+
+
+
+
+
+
+const adminRoutes = require('./routes/admin');
+
+
+const shopRoutes = require('./routes/shop');
+
+
+const errorController = require('./controllers/error');
+
+
+const db = require('./util/database');
+
+
+
+
+app.use(bodyParser.urlencoded({extended: false}));
+
+
+
+
+app.use(express.static(path.join(__dirname, 'public'))); 
+
+
+
+app.use(
+ 
+
+  '/admin', 
+
+
+      
+
+    adminRoutes 
+);
+
+
+
+app.use(
+  shopRoutes  
+)
+
+
+
+
+app.use(
+
+  errorController.error404
+)
+
+
+
+
+app.listen(3000); 
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+O ARQUIVO 'app.js'
+
+É 
+
+O 
+
+ARQUIVO QUE É EXECUTADO 
+
+
+QUANDO INICIO MEU PROGRAMA/backend... 
+
+
+
+
+
+
+
+
+
+
+-----> E O PROFESSOR QUER IMPORTAR,
+
+
+LÁ 
+
+
+
+DO 
+
+
+
+
+
+
+ARQUIVO 
+'database',
+
+EXATAMENTE 
+
+
+COMO 
+
+
+FEZ ANTERIORMENTE,
+
+
+por meio de 
+
+
+'''const db = require('./util/database')'''',
+
+
+
+
+
+
+
+
+
+
+
+__ A ÚNICA COISA QUE ELE VAI FAZER É RENOMEAR 
+
+ESSE NEGÓCIO PARA QUE FIQUE 
+
+
+'''''const sequelize = require('./util/database')''''
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+OK....... 
+
+
+
+AÍ 
+
+LÁ 
+
+NO __ FINAL_ _ 
+
+
+
+DO ARQUIVO 
+
+
+'app.js',
+
+
+
+
+
+__ ANTES DE 
+
+'app.listen(3000)',
+
+
+ 
+
+
+O PROFESSOR 
+
+
+VAI 
+
+
+QUERER 
+
+CHAMAR 
+
+
+'sequelize',
+
+
+MAS O 
+
+'
+sequelize'
+
+com um método... ---> 
+
+
+
+
+
+O MÉTODO QUE ELE VAI QUERER 
+
+CHAMAR 
+
+é 
+
+
+
+'sequelize.sync()'... 
+
+
+
+
+
+
+
+
+
+
+
+
+MÉTODO 
+
+'.sync()' ------->  O MÉTODO 'SYNC'
+
+
+
+
+
+______ DÁ UMA OLHADA ____ EM TODOS OS MODELS QUE VOCÊ DEFINIU....
+
+(
+e 
+
+ele 
+
+CONSIDERA 
+
+
+
+como 
+
+'models'
+
+
+
+AS COISAS QUE 
+
+VOCÊ 
+
+
+DEFINE 
+
+
+por meio 
+
+de 
+
+'sequelize.define()',
+
+
+
+COMO 
+
+
+
+TEMOS 
+
+
+
+NO CÓDIGO DE 'Product',
+
+que 
+é 
+
+este:
+
+
+
+const Product = sequelize.define('product', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+
+  title: Sequelize.STRING, ////shorthand do DEFINE visto logo acima... (com esse shorthand, definimos apenas o TYPE daquele field, sem definir mais nada acerca das características que esse field deve ter....)
+
+  price: {
+    type: Sequelize.DOUBLE, ///CASAS DECIMAIS... considera '0.99', etc...
+    allowNull: false, ////_IMPOSSIBILITA O WRITE DE VALORES NULOS.... produto sempre deverá custar alguma coias....
+  },
+
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+
+
+
+
+
+)
+
+
+)
+
+
+
+
+
+
+ELE CONSEGUE RECONHECER ISSO COMO 
+
+
+
+um 'model'
+ 
+ JUSTAMENTE 
+
+ PQ 
+
+ ELE (o model)
+
+ FOI DEFINIDO NESSE 
+
+
+ MESMO 
+
+ OBJETO 
+
+
+ 'sequelize'
+
+
+
+ que você usa quando chama 
+
+ 'sequelize.sync()'...
+
+
+
+ ------------------------------------
+
+
+
+
+
+
+
+ OK, ELE FICA 'AWARE OF ALL YOUR MODELS'.... --> 
+
+
+
+
+
+ e aí 
+
+ ele 
+
+ BASICAMENTE 
+
+
+
+
+
+ _____________CRIA TABLES__ PARA 
+
+ OS 
+
+ SEUS MODELS, PARA 
+ TODOS 
+
+ ELES....
+
+
+
+
+
+
+
+
+
+
+
+ --> E É EXATAMENTE ISSO QUE 
+
+ 'sequelize.sync()'
+
+
+ FAZ:
+
+
+
+ ELE 
+
+
+ 'SYNCS YOUR MODELS TO THE DATABASE BY ___ CREATING THE APPROPRIATE TABLES'....
+
+
+
+
+
+
+
+
+
+ --> E AÍ, SE VOCÊ 
+
+
+
+ TIVER 'RELATIONS',
+
+
+  
+
+  ELE TAMBÉM VAI AS ASSIGNAR, TUDO AUTOMATICAMENTE...
+
+
+
+
+
+
+
+
+
+
+
+  --------> OK... PROFESSOR VAI CHAMAR 
+
+
+
+  'sequelize.sync()',
+
+
+  e aí 
+
+  vai chamar 
+
+
+
+  '.then()'
+
+
+  SOBRE 
+
+  ESSE 
+
+  CALL 
+
+
+  de 
+
+  '.sync()'...
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+
+
+
+  sequelize.sync().then() 
+
+
+
+
+
+
+
+
+
+
+  --> ELE FARÁ ISSO PARA QUE 
+
+
+  ELE 
+
+
+  CONSIGA 
+
+  'LISTEN TO THE RESULT',
+
+
+
+  ESCUTAR O RESULTADO 
+
+
+  DE 
+
+
+
+  'sync'....
+
+
+
+
+
+
+
+
+  --> PARA ISSO,
+
+  ELE ESCREVE:
+
+
+
+
+
+
+    sequelize.sync().then(
+      (result) => {
+
+            console.log(result);
+      }
+    )
+    .catch(
+      (err) => {
+            console.log(err);
+      }
+    )
+
+  
+
+  -----------------------
+
+
+
+
+  AÍ ELE 
+
+  VAI CONSOLE.LOGGAR O 
+
+  'result'....
+
+
+
+
+
+
+  --------------------------
+
+
+
+
+
+  ---> E AÍ O _ PROFESSOR_ 
+
+
+
+
+
+
+
+
+  VAI FAZER UMA ALTERAÇÃO BRUTAL.... ---> 
+
+
+  ELE 
+
+  SÓ 
+
+  VAI QUERER 
+
+  'START THE SERVER' ( ou seja, executar 'app.listen(3000)')  
+
+
+
+
+  __ 
+
+
+  SE 
+
+
+  NÓS CONSEGUIRMOS 
+
+  'ENTER THE THEN BLOCK'... (ou seja, se A TABLE FOR CRIADA COM SUCESSO NA NOSSA DATABASE....)
+
+
+
+
+
+
+
+
+  ---------
+
+
+  OK... RODAMOS NOSSO APP COM 
+  'npm start',
+
+
+
+  E AÍ VEREMOS 
+
+
+  UM 
+
+  LOG OUTPUT no terminal...
+
+
+
+
+
+
+
+
+
+
+  --> SE SCROLLARMOS 
+
+
+
+  UM MONTE PARA CIMA,
+
+
+
+  veremos um 
+
+
+  DEFAULT LOG CRIADO PELO 
+
+  SEQUELIZE, PARA NÓS....
+
+
+  ex:
+
+
+
+
+
+
+Executing (default): CREATE TABLE IF NOT EXISTS 
+`products` (`id` INTEGER NOT NULL auto_increment , `title` VARCHAR(255), 
+`price` DOUBLE PRECISION NOT NULL, `imageUrl` VARCHAR(255) NOT NULL,
+ `description` VARCHAR(255) NOT NULL, `createdAt` DATETIME NOT NULL, 
+ `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `products`
+<ref *1> Sequelize {
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ISSO AÍ, DE FATO, 
+
+  É UMA 
+
+
+  'SQL QUERY'... --> SQL QUERY QUE FOI ESCRITA PARA NÓS,
+
+  SEM 
+
+
+  TERMOS DE MEXER 1 DEDO,
+
+  tudo por conta do sequelize...
+
+
+
+
+
+
+
+  -> ELE:
+
+
+
+  1) CRIOU UMA TABLE ('CREATE TABLE IF NOT EXISTS')
+
+
+
+
+  2) NOMEOU ESSA TABLE COMO 'products' ('products') -------> ESSE NOME É AUTOMATICAMENTE 'INFERRED' ( presumido) a partir DO MODEL NAME QUE VOCÊ DEFINIU lá em 'sequelize.define()'; COMO NÓS DEFINIMOS 'sequelize.define('product')', ELE USOU O PLURAL DE 'product', que é 'products'... (s no final...)
+
+
+
+
+
+  3) DEPOIS DISSO, ASSIGNOU UM PUNHADO DE FIELDS A ESSA TABLE, COMO VISTO EM 
+
+
+  (`id` INTEGER NOT NULL auto_increment , `title` VARCHAR(255), 
+`price` DOUBLE PRECISION NOT NULL, `imageUrl` VARCHAR(255) NOT NULL,
+ `description` VARCHAR(255) NOT NULL, `createdAt` DATETIME NOT NULL, 
+ `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB; 
+
+
+
+
+
+
+
+ --> ELE CONFIGUROU ESSES FIELDS __ DE 
+
+ ACORDO ___ COM O NOSSO 'MODEL DEFINITION'....
+
+
+
+
+
+
+
+
+ -> AÍ, EMBAIXO DISSO,
+
+
+
+
+ temos o 'return value' 
+
+ que recebemos de volta... --> é basicamente 
+ o 
+
+ nosso 
+
+ SEQUELIZE OBJECT....
+
+
+
+
+
+
+
+
+
+ -> E SE AGORA QUITARMOS ESSE 
+
+
+ 
+ SERVER 
+
+
+
+
+
+
+
+E O EXECUTARMOS DE NOVO,
+
+
+
+
+___ A TABLE __ ANTERIOR (criada pela primeira vez)
+
+
+__NÃO SERÁ APAGADA_,
+
+
+TUDO 
+
+
+POR CAUSA 
+
+DAQUELE 
+
+CHECK 
+
+
+de 
+
+
+'CREATE TABLE IF NOT EXISTS' (como a table já EXISTE, UMA NOVA TABLE NÃO SERÁ CRIADA POR 'CREATE TABLE'....)
+
+
+
+
+
+
+tudo isso acontece AUTOMATICAMENTE....
+
+
+
+
+
+
+--------------------------------
+
+
+
+
+--> E NOSSO SERVER VAI INICIAR mesmo assim,
+
+
+MESMO 
+
+
+SE 
+ESSA 
+
+TABLE 
+
+
+'ALREADY EXISTS',
+
+ainda assim vamos alcançar aquele then block 
+
+e iniciaremos o server...
+
+
+
+
+
+
+
+
+--> PROFESSOR COMENTA 
+
+PARA FORA O 'console.log(result)',
+
+
+
+
+E AGORA SE DERMOS UMA OLHADA NO 
+
+WORKBENCH,
+
+VEREMOS QUE 
+
+A 
+
+PRODUCTS TABLE 
+
+TERÁ SIDA 
+
+CRIADA, EXATAMETNE COMO 
+FIZEMOS 
+
+
+NO 
+último MÓDULO,
+
+MAS AGORA USANDO SEQUELIZE...
+
+
+
+
+
+
+
+
+--> NÓS TBM TEREMOS 2 NOVOS FIELDS,
+
+
+FIELDS 
+
+DE 
+
+'createdAt'
+
+
+e 
+
+'updatedAt'... -------> ESSES TIMESTAMPS 
+
+
+
+SÃO MANAGEADOS PELO 
+
+
+
+SEQUELIZE PARA NÓS;
+
+PODEMOS OS DESABILITAR,
+
+
+MAS É 
+
+
+UMA FEATURE LEGAL... vamos deixar...
+
+
+
+
+
+
+
+
+
+--> OK... É ISSO QUE O SEQUELIZE E 'sync()'
+
+fazem para nós...
+
+
+
+
+Próxima aula...

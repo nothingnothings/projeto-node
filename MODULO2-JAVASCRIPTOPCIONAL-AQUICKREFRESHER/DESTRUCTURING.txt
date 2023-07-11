@@ -1,0 +1,277 @@
+
+
+
+
+
+
+
+
+
+
+-----> REST E SPREAD SÃO SINTAXES IMPORTANTES DE COMPREENDER...
+
+
+
+
+
+
+
+
+
+
+-_> OUTRA FEATURE IMPORTANTE É 
+
+O 
+
+DESTRUCTURING...
+
+
+
+
+
+
+
+
+-----> OBJECT DESTRUCTURING....
+
+
+
+
+
+
+---> temos 
+
+nosso objeto 
+
+
+'person',
+
+QUE TEM 
+
+ESTE CÓDIGO:
+
+
+
+
+
+
+
+'''''''''''''''
+
+const person = {
+
+    name: 'Max',
+    age: 29,
+    greet: () {
+        console.log('Hi, I am ' + this.name);
+    }
+}
+
+
+''''''''''''''
+
+
+
+
+
+
+
+
+
+PARA FAZER DESTRUCTURING DESSE NEGÓCIO, BASTA ESCREVERMOS 
+
+
+
+
+const { name, age, greet } = person;
+
+
+
+
+
+
+
+
+ISSO VAI CRIAR 3 CONSTS,
+
+
+
+'name',
+
+
+'age' 
+
+
+
+e 
+
+'greet',
+
+
+
+a partir 
+
+das PROPERTIES CONTIDAS DENTRO DE 
+
+'person'...
+
+
+
+
+
+
+
+
+--> VOCÊ PODE USAR DESTRUCTURING NO LADO DE FORA 
+
+DE UMA FUNÇÃO, 
+
+
+CRIAR UMA 
+
+
+CONSTANTE 'GLOBAL' ( ou interna a uma função/class)....
+
+
+
+
+
+
+
+
+
+A MESMA COISA FUNCIONA COM 
+
+
+
+ARRAYS:
+
+
+
+
+        const hobbies = ['Sports', 'Cooking'];
+
+
+const [hobby1, hobby2] = hobbies;
+
+
+
+
+
+console.log(hobby1, hobby2);
+
+
+
+
+
+--> O CONSOLE.LOG VAI OUTPUTTAR 
+
+
+
+'Sports' 
+
+e 
+
+'Cooking' 
+
+
+(os 2 sem square brackets....)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> NO OBJECT DESTRUCTURING DE 
+
+
+___ ARRAYS__, 
+
+
+
+OS VALORES PUXADOS PARA FORA DO 
+
+ARRAY SÃO COLOCADOS NAS CONSTANTES COM BASE NA SUA ORDEM/POSIÇão...
+
+(é por 
+
+isso 
+
+que 
+
+'hobby1' será SPORTS,
+
+e o outro 
+
+será 
+
+
+'COOKING', pq COOKING É O SEGUNDO NA LISTA...)
+
+
+
+
+
+
+
+
+JÁ COM 
+
+
+OBJECTS ({}),
+
+
+
+
+O DESTRUCTURING É 
+
+
+FEITO COM BASE NO __ NOME ___ DAS PROPRIEDADES__, 
+
+
+
+
+e não a posição.... 
+
+(
+
+
+    por isso 'name' vai ser realmente uma const com o valor da propriedade 'name' dentro de 'person', etc etc....
+)
+
+
+
+
+
+
+
+
+-----> ok, esse é o destructuring ---> SIMPLESMENTE 
+
+
+NOS 
+
+
+
+DEIXA ACESSAR 
+
+
+
+VALORES RAPIDAMENTE 
+
+POR NOMES 
+
+específicos 
+
+
+nas 
+
+
+partes do código em que queremos os utilizar....

@@ -1,0 +1,629 @@
+
+
+
+
+
+
+
+
+
+--> PROCESSO DE PAGAMENTO....
+
+
+
+
+
+
+
+
+
+
+
+
+--> COMO ISSO FUNCIONA?
+
+
+
+
+
+
+
+--> BEM, É UM PROCESSO BEM LONGO.... 
+
+
+
+
+
+
+
+
+
+
+
+1o passo --> COMEÇAMOS PELO 'COLLECT OF THE PAYMENT METHOD'... --> OU SEJA,
+
+
+COLETAMOS A 'CREDIT CARD DATA', TIPICAMENTE...... -----> 
+
+
+
+2o passo --> PRECISAMOS ___ VERIFICAR___ ESSE CARTÃO DE CRÉDITO... --> ESSA DATA ESTÁ CORRETA? O CARTÃO ESTÁ EXPIRADO^?
+
+
+ O NÚMERO ESTÁ CERTO? 
+
+
+
+
+
+
+
+
+
+3o PASSO --> COBRAMOS O VALOR DO USER... 
+
+
+
+
+
+
+
+
+4o --> DEPOIS DE COBRAR,
+
+NÓS TEMOS QUE 
+
+'MANAGE PAYMENTS' -------> ESSE PASSO INCLUI ETAPAS COMO 'FRAUD PROTECTION',
+
+
+
+MANAGING DISPUTES,
+
+E ASSIM POR DIANTE...
+
+
+
+
+
+
+5o  ----> POR FIM, DEPOIS DE TUDO ISSO, PRECISAMOS 
+
+'PROCESSAR 
+
+A ORDER NO NOSSO APP'... ---->  ou seja,
+
+
+PRECISAMOS 
+
+ARMAZENAR ESSA ORDER NA DATABASE, ETC ETC....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE __ TODASAS COISAS RELACIONADAS A PAGAMENTO, AQUI, 
+
+
+TODAS 
+
+AS COISAS 
+
+
+DOS PASSOS 1-4,
+
+
+
+___ SÃO __ COISASS __ 
+
+BEM COMPLEXAS... 
+
+
+
+
+
+
+
+
+-> SÃO TAREFAS BEM COMPLEXAS,
+
+
+TANTO DE UM PONTO DE VISTA LEGAL COMO TÉCNICO... ------> É POR ISSO QUE, TIPICAMENTE,
+
+
+
+FAZEMOS ___ OUTSOURCE DESSAS TAREFAS___....
+
+
+
+
+
+
+
+----> E, BTW, 
+
+ 
+ ATÉ 
+
+
+ __GRANDES_ COMPANHIAS_ _ FAZEM O OUTSOURCE DESSAS TAREFAS...
+
+
+
+
+
+
+
+
+
+
+ ------> STRIPE  É UMA COMPANHIA 
+
+ BEM POPULAR QUE OFERECE 
+
+
+
+ PAYMENT SERVICES.... --> 
+
+
+
+ ELA OFERECE UMA EXCELENTE INTEGRAÇÃO,
+
+
+
+
+ E TE DEIXA INTEGRAR A QUASE QUALQUER APP...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> COMO ISSO FUNCIONA?
+
+
+
+
+
+
+
+
+ BEM, NOVAMENTE,
+
+
+ TEMOS O CLIENT E O SERVERSIDE DE NOSSO APP, escrito por nós...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CLIENTSIDE (browser)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ SERVERSIDE (node app)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> DENTRO DO CLIENT, VAMOS 'COLLECT CREDIT CARD DATA'...
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+ 
+
+ CLIENTSIDE (browser) --> COLLECT CREDIT CARD DATA...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ SERVERSIDE (node app)
+
+
+
+
+
+
+
+
+
+
+
+--> VAMOS FAZER GET DESSA 
+
+'CREDIT CARD DATA'
+
+
+
+COM A AJUDA DO STRIPE,
+
+
+E AÍ __ VAMOS 
+
+
+'SEND IT (cc data) 
+
+
+AOS SERVIDORES DO STRIPE'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+ CLIENTSIDE (browser) --> COLLECT CREDIT CARD DATA...
+                                        |
+                                        |
+                                        |
+                                        |
+                                        V 
+
+                                STRIPE SERVERS (3rd party);.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ SERVERSIDE (node app)
+
+
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+OBS: OS SERVIDORES DO STRIPE _ NÃO SÃO 
+
+
+ADMINISTRADOS POR NÓS, E SIM PELA COMPANHIA 'STRIPE'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> OK, DENTRO DOS SERVIDORES DO 'STRIPE',
+
+
+ESSE INPUT DO CARTÃO DE CRÉDITO SERÁ VALIDADO...
+
+
+
+
+
+--> UMA VEZ VALIDADO,
+
+
+
+___ O STRIPE__ 
+
+VAI 
+
+
+RETORNAR UMA __ TOKEN __a NÓS... ------> ESSA TOKEN 
+
+
+'ENCODES/INCLUI' 
+
+
+essa 
+
+
+CREDIT CARD DATA NO SEU INTERIOR.... (e também 
+
+A CONFIRMAÇÃO DE QUE ESSAS INFOS ESTÃO CORRETAS ) ------> NÓS 
+
+
+
+EMBUTIMOS ESSA TOKEN NO REQUEST 
+
+
+
+
+ENVIADO AO NOSSO SERVIDOR,
+
+
+
+
+
+AO NOSSO CÓDIGO,
+
+
+
+E 
+
+NO NOSSO CÓDIGO 
+
+NÓS 
+
+
+
+
+
+FAZEMOS 
+
+'CHARGE'
+
+DESSE 
+
+'PAYMENT METHOD',
+
+
+COM A AJUDA DO STRIPE, NOVAMENTE...
+
+(
+
+
+NÓS ESSENCIALMENTE CRIAMOS UM 'PAYMENT OBJECT'/CHARGE OBJECT,
+
+
+
+E AÍ ENVIAMOS ESSE OBJETO AO STRIPE __ COM 
+
+ESSA TOKEN DO PRÓPRIO STRIPE,
+
+
+ E COM 
+
+
+
+NOSSO PREÇO INCLUÍDO... -------->  MUNIDO DESSE PAYMENT OBJECT COM ESSA TOKEN,
+
+
+
+O
+ 
+
+
+
+ STRIPE 
+
+ FAZ O 'ACTUAL CHARGING' 
+
+
+ E 
+
+ 'ACTUAL MANAGING'
+
+
+
+ do valor 
+
+ cobrado ao user...
+
+
+) ------>  E AÍ, 
+
+
+NÓS VAMOS 
+
+
+
+__'GET A RESPONSE'
+
+UMA VEZ QUE 
+
+
+ESSE ACTUAL CHARGING E ACTUAL MANAGING TIVER SIDO CONCLUÍDO,
+
+
+
+
+E AÍ 
+
+PODEMOS 
+
+
+
+'CONTINUE WITH OUR CODE',
+
+
+e aí 
+
+
+
+EDITAR/ARMAZENAR ESSA ORDER NA NOSSA DATABASE, 
+
+e assim por diante...
+
+
+
+
+
+
+
+
+
+--> O ESQUEMA FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CLIENTSIDE (browser) --> COLLECT CREDIT CARD DATA...
+    |                                   |
+    |                                   |
+    |(envia request com token do stripe) |
+    |                                   |
+    |                                   |
+    |                                   |                
+   |                                    |
+   |                                    V 
+   |                 (CRIA)
+   TOKEN     <-----------------  STRIPE SERVERS (3rd party); ---------------------------------------> TERMINAM FAZENDO O 'ACTUAL CHARGE' e 'ACTUAL MANAGE' do charge...
+
+    |                                   ^
+    |                                   |
+    |                                   |
+    |                                   | (envia PAYMENT OBJECT COM TOKEN DO STRIPE AO STRIPE)
+    |                                   |
+    |                                   |
+    |                                   |
+    |                                   |
+    V                                   |
+                                        |
+ SERVERSIDE (node app)  ---> CRIA 'PAYMENT DATA'/PAYMENT OBJECT com a TOKEN DO STRIPE  -------> ARMAZENA-SE A ORDER NA NOSSA DATABASE... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, É ASSIM QUE ISSO VAI FUNCIONAR, EM GERAL..
+
+
+
+
+
+
+
+
+
+--> VAMOS ESTUDAR ISSO ETAPA POR ETAPA....

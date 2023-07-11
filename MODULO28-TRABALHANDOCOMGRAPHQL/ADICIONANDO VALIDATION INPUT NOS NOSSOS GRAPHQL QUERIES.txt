@@ -1,0 +1,1636 @@
+
+
+
+
+
+
+
+
+
+--> OK... NÓS HAVÍAMOS ADICIONADO 
+
+
+
+
+
+
+NOSSA PRIMEIRA MUTATION 
+
+
+
+e query...
+
+
+
+
+
+
+
+
+
+-> E MUTATIONS, É CLARO ,
+
+
+
+SIGNFICAM QUE NÓS TAMBÉM FAZEMOS __ STORE__ DE DATA _ NA DATABASE de nosso app...
+
+
+
+
+
+
+
+
+
+
+--> E QUANDO ALGO ASSIM ACONTECE,
+
+
+
+NÓS __ QUEREMOS ASSEGURAR_ _QUE A DATA__ QUE ARMAZENAMOS 
+
+
+É __ VÁLIDA___ .... ---------> ANTERIORMENTE 
+
+
+
+
+
+
+NA REST 
+
+API,
+
+E 
+
+
+
+NOS APLICATIVOS 
+
+
+NODEEXPRESS CLÁSSICOS (em que renderizamos views),
+
+
+
+
+NÓS __ USÁVAMOS/USAMOS__ 
+
+
+'EXPRESS-VALIDATOR'... 
+
+
+
+
+
+
+
+
+
+
+--> E ESSE 'EXPRESS-VALIDATOR',
+
+
+NÓS __ O ADICIONÁVAMOS__ COMO __ MIDDLEWARE,
+
+LÁ 
+
+
+
+
+NAS NOSSAS ROUTES (
+
+
+
+
+    era aquelas 
+
+    coisas 
+
+    como 
+
+    '
+    body()'
+
+
+    e 
+
+
+    'check()' ,
+
+
+    lá nas routes...
+) 
+
+
+
+
+
+--> NÓS TAMBÉM USÁVAMOS AQUELE 
+
+
+
+OBJETO 'validationResult' 
+
+
+PARA 
+
+
+HANDLAR __ O RESULTADO __ 
+
+
+
+DESSE 'check()' 
+
+e 
+desse 
+
+'body()' (
+
+
+    ERROS DE VALIDATION/PROBLEMAS NO VALIDATION ERAM CAPTADOS POR ESSE 
+
+    OBJETO...
+) 
+
+
+
+
+
+
+
+
+
+
+
+---------> ok... MAS COM O 'GRAPHQL',
+
+
+ISSO __ NÃO É UMA OPÇÃO... ---> ISSO SIGNIFICA UQE __ NÃO __ TEMOS _ COMO __ USAR __ 
+
+
+
+
+AQUELES
+
+
+
+
+'body()' 
+
+
+e 
+
+'check()',
+
+JUSTAMENTE__  
+
+
+PQ __ COM O 'GRAPHQL'
+
+
+
+
+__ NÓS VAMOS TER 1 ENDPOINT __ ÚNICO... --> TODOS OS REQUESTS DOS USERS VÃO SER ENVIADOS 
+
+A 
+
+ESSE ENDPOINT... ------------------> E É ___ ÓBVIO__ QUE 
+
+
+
+
+NÓS __ NÃO VAMOS QUERER 
+
+'VALIDATE ALL THE SAME 
+INPUTS IN THE REQUESTS'
+
+
+
+__ DO EXATO MESMO MODO__ (passwords, por exemplo, vão ser 'strings', enquanto 'DATES' vão ser EM __ NÚMEROS, POR EXEMPLO... --> E como seríamos forçados 
+
+a escrever 
+
+validation para __ APENAS 1 ÚNICO ENDPOINT,
+
+
+OS 'CHECKS' iriam se sobrepor,
+
+
+não funcionariam....
+
+
+
+)
+
+
+
+
+
+
+
+
+
+--> OK, MAS 
+
+COMO PODEMOS FAZER VALIDATION, ENTÃO, DE NOSSOS INPUTS,
+
+
+
+
+
+ENQUNATO USAMOS 
+
+
+'GRAPHQL'?
+
+
+
+
+
+
+
+
+
+
+
+------> PROFESSOR DIZ QUE ___ A SOLUÇÃO É JUSTAMENTE 
+
+
+
+'''MOVE VALIDATION __ INTO OUR RESOLVERS''''' ---> 
+
+
+
+
+
+nossos resolvers,
+
+que são/serão
+
+basicamente 
+
+
+os 
+
+
+'CONTROLLERS'
+
+
+de nosso app __ __ VÃO REALIZAR ESSA 
+
+TAREFA_ DE 
+
+
+'
+VALIDATE' 
+
+
+
+dos inputs 
+
+
+do usuário...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK...
+
+
+
+
+
+ex:
+
+
+
+
+
+//////OBS: É NESTE ARQUIVO 'RESOLVERS' (nos resolvers) que vamos ESCREVER A VALIDATION PARA CADA 1 DOS INPUTS NOS REQUESTS__ DOS USERS, em suas queries... --> FAZEMOS ESSE VALIDATION NOS 'RESOLVERS' __ JUSTAMENTE__ PQ O PACOTE 'express-validator' __ NÃO FUNCIONA__ COM 'GRAPHQL' (pq o express-validator DEPENDE DA EXISTÊNCIA DE __ MÚLTIPLAS ROUTES/ENDPOINTS, AO PASSO QUE NO __ GRAPHQL __ TEMOS/TEREMOS __ SEMPRE APENAS 1 ÚNICO ENDPOINT, ENDPOINT DE 'POST /graphql'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK, 
+
+
+É 
+
+
+AQUI 
+
+QUE VAMOS 
+
+'VALIDATE OUR INCOMING REQUEST 
+
+DATA'....
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA FAZER VALIDATION 
+
+
+EM 
+
+'resolvers.js',
+
+
+
+
+O PROFESSOR EXPLICA QUE 
+
+ELE VAI 
+INSTLAR 
+
+UMA 
+
+NOVA PACKAGE, 
+
+
+
+POR MEIO 
+
+DO 
+
+
+CÓDIGO 
+
+
+
+'npm install --save validator' ... 
+
+
+
+
+(WTF, É MT SIMPLES)...
+
+
+
+
+
+
+
+
+
+-> E ESSA PACKAGE, 'validator',
+
+É ''ACTUALLY'
+
+
+
+A PACKAGE ___ QUE __ O 'EXPRESS-VALIDATOR'
+
+
+USA__, POR TRÁS DAS CENAS.....
+
+
+
+
+
+----------------
+
+
+
+
+
+
+
+
+--> ISSO FEITO,
+
+
+vamos 
+
+até 
+
+
+
+o arquivo 'resolvers.js',
+
+
+E LÁ 
+
+
+
+IMPORTAMOS 
+
+O PACOTE DE 
+
+'validator'..
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+const validator = require('validator');
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+----> CERTO.... AGORA EM 'createUser',
+
+
+
+PODEMOS __ 
+
+
+
+ADICIONAR UMA LÓGICA DE VALIDATION....
+
+
+
+
+
+
+ex:
+
+
+const User = require('../models/user'); 
+
+const ObjectId = require('mongodb').ObjectId;
+
+
+const validator = require('validator');
+
+const { hash, compare } = require('bcryptjs');
+
+module.exports = {
+
+
+
+    hello() {
+
+        return 'Hello World!';
+    },
+
+    hello2() {
+           return {
+            textTest: 'TESTANDO',
+            views: 12321480
+           } 
+    },
+
+
+
+    createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+         
+        //  const user = await new User(
+            const user = new User( ///talvez esse '''await'''' não seja necessário, com essa INSTANCIAÇÃO...
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+
+
+
+
+         return { ///devemos seguir o SCHEMA de 'createUser', que demanda QUE SEJA RETORNADO UM OBJETO 'User' COM UM DETERMINADO __ LAYOUT__...
+             ...savedUser._doc, /////'._doc' FAZ COM QUE TODAS AS PROPRIEDADES/DATA __ 'REAL' DESSE DOCUMENT SEJAM __ RETORNADAS (ou seja, DEIXAMOS DE LADO A 'METADATA' DESSE DOCUMENT, QUE SERÁ INÚTIL PARA __ O FIM DE 'RETURN SOME DATA TO THE USER; RETURN THE DATA OF THE USER THAT WAS CREATED, TO THE USER'...)
+                _id: savedUser._id.toString(), ///esse field LÁ NO NOSSO 'TYPE' DE USER, LÁ NO SCHEMA DO GRAPHQL, está como 'STRING', por isso precisamos CONVERTER ESSE _id de valor 'ObjectId()', LÁ DA DATABASe_, PARA UM FORMATO __ 'string'....
+
+            }
+     
+
+        // return 'String';
+     
+     },
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+CERTO.... --->  E COMO ADICIONAREMOS 
+
+
+ESSE 
+
+'VALIDATE'?
+
+
+
+
+
+
+BEM, POR MEIO __ DE SIMPLES __ IF __ STATEMENTS,
+
+
+
+DIZ O PROFESSOR...
+
+
+
+
+
+lá em createUser,
+
+
+por exemplo,
+
+
+
+ESCREVEMOS ISTO:
+
+
+
+
+
+
+
+
+
+
+    createUser: async function(args, req) {
+ 
+         const { name, email, password } = args.userInput; 
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if () ///eis o código em questão....
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+            const user = new User( ///talvez esse '''await'''' não seja necessário, com essa INSTANCIAÇÃO...
+             {
+                 name: name,
+                 email: email,
+                 password: hashedPassword
+             }
+         )
+ 
+         const savedUser = await user.save();
+
+
+
+
+         return { 
+             ...savedUser._doc, 
+                _id: savedUser._id.toString(), 
+
+            }
+     
+
+    
+     
+     },
+
+
+
+
+
+
+
+
+
+
+
+
+     --> vamos checar,
+
+
+      no CASO, 
+
+
+
+
+      SE O EMAIL INPUTTADO PELO USER 
+
+
+
+
+      É VÁLIDO...
+
+
+
+
+
+      --> PARA ISSO,
+      ESCREVEMOS 
+
+
+
+
+
+
+      logo no início desse método a linha 
+
+
+
+      'if (!validator.isEmail(userInput.email)) {
+
+      }
+      '
+
+
+
+
+
+
+
+
+
+
+      -> OU SEJA,
+
+
+    
+
+    O 'VALIDATOR' 
+
+
+    USA __ EXATAMENTE O MESMO RULESET 
+
+
+    DO 
+
+    'express-validator',
+
+    MAS 
+
+
+    COM UMA SINTAXE UM POUCO MAIS CLÁSSICA....
+
+
+
+
+
+
+    esse método 
+
+    'isEmail()'
+
+    EXIGE 
+
+    O EMAIL EM SI...
+
+
+
+    (
+
+
+        e todos os outros 
+
+        'isXXXX' 
+
+        seguem a mesma lógica....
+    )
+
+
+
+
+
+
+
+
+
+    EX:
+
+
+
+
+
+
+
+
+
+    
+    createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+
+
+        if (!validator.isEmail(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK... 
+
+
+
+SE O INPUT 'email'
+
+
+QUE RECEBERMOS __ NÃO FOR UM 'EMAIL ADDRESS',
+
+VAMOS QUERER 
+
+CRIAR 
+
+UM 
+
+ERRO,
+
+E AÍ 
+
+DAR THROW DESSSE ERRO...
+
+
+
+
+
+
+
+--> MAS O PROFESSOR DIZ QUE O IDEAL _ É 
+
+
+
+'''CRIAR UM ARRAY DE ERRORS LÁ NO INÍCIO''',
+
+
+
+
+
+E AÍ 
+
+
+__  IR __ ADICIONANDO __ OS ERRORS 
+
+
+EM NOSSO 'VALIDATION' 
+
+A 
+
+ESSE ARRAY AÍ...
+
+
+
+
+
+
+
+
+
+
+
+
+--> 
+
+
+
+
+
+
+
+
+
+    
+    createUser: async function(args, req) {  
+ 
+         const { name, email, password } = args.userInput; 
+
+        const errors = [];
+
+
+        if (!validator.isEmail(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+
+
+
+---------------------------------
+
+
+
+ 
+
+
+ CERTO, __ FAREMOS __o PUSH __ DE 1 
+
+ ERROR 
+
+ PARA DENTRO DESSE ARRAY DE 
+ 'errors'...
+
+
+
+
+
+
+ --> MAS AÍ,
+
+ O PROFESSOR 
+
+ EXPLICA QUE 
+
+
+
+
+ a IMPLEMENTAÇÃO 
+
+
+
+ __PESSOAL__ DELE 
+
+
+
+ vai 
+
+ ser 
+
+
+
+ um 
+
+
+
+ OBJETO ({}),
+
+
+
+
+ EM QUE 
+
+
+ TEREMOS UMA 
+
+ MESSAGE (key) DE 
+
+
+'Error is invalid',
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+    
+    createUser: async function(args, req) {  
+ 
+         const { name, email, password } = args.userInput; 
+
+        const errors = [];
+
+
+        if (!validator.isEmail(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+
+
+
+
+
+---------------------------------
+
+
+
+MAS É CLARO QUE 
+
+
+
+
+VAMOS 
+
+QEURER VALIDATE 
+
+
+__ MAIS DO QUE APENAS O 'EMAIL'... -_> VAMOS QUERER 
+
+TAMBÉM 
+
+CHECAR 
+
+SE 
+
+o 
+
+
+'password'
+
+
+
+É UMA STRING...
+
+
+
+
+
+
+
+
+--> TAMBÉM __ VAMOS QUERER __ CHECAR__ SE 
+
+
+
+O 
+
+
+
+'PASSWORD'
+
+
+
+EXISTE (isEmpty() ),
+
+
+
+
+
+
+
+
+
+
+E SE _ ELE É 'TOO SHORT' 
+
+
+EX:
+
+
+        if (validator.isLength(password, {min: 6})) { ///O SEGUNDO ARGUMENTO É O QUE ESPECIFICA O TAMANHO NECESSÁRIO PARA ESSE INPUT...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+    
+    createUser: async function(args, req) {  
+ 
+         const { name, email, password } = args.userInput; 
+
+        const errors = [];
+
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+
+
+        if (validator.isEmpty(password) || validator.isString(password) {
+
+            errors.push({message: 'Password is invalid!'})
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        )
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+EX (código completo):
+
+
+
+
+
+
+
+    createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password) || validator.isString(password)) {
+            errors.push({message: 'Password is invalid!'})
+        }
+
+
+        if (validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is invalid!'})
+        }
+        
+
+
+        const foundUser = await User.findOne({email: email});
+
+
+        if (foundUser) {
+                const error = new Error('An user for that email already exists on the database, please choose another one.');
+                throw error;
+        }
+
+
+
+        const hashedPassword = await hash(password, 12);
+
+
+
+
+
+
+
+
+
+        -----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.... --> AGORA SE ESCREVERMOS 
+
+
+
+
+UM PASSWORD QUE NÃO É UMA STRING,
+
+
+OU SE É 
+
+EMPTY,
+
+
+
+
+OU 
+
+SE 
+
+É LONG DEMAIS,
+
+
+
+
+
+TEREMOS UM PASSWORD IS INVALID...
+
+
+
+
+
+
+
+
+--> CERTO... POR FIM,
+
+
+
+
+PARA FAZER O HANDLE DE _ _TODOS __ESSES ERRORS,
+
+
+
+
+professor 
+
+
+adiciona um IF CHECK FINAL....
+
+
+
+
+
+
+
+
+
+
+if check de 
+
+
+
+'if (errors.length > 0) {
+
+
+
+}
+
+'
+
+
+
+
+OU SEJA,
+
+
+SE TIVERMOS UM NÚMERO QUALQUER DE ERRORS QUE NÃO SEJA 0,
+
+
+
+
+__ EU VOU QUERER 
+
+
+
+
+
+executar um código de CRIAÇÃO DE ERRO 
+
+
+,
+
+
+tipo 
+
+
+'const error = new Error()',
+
+
+E AÍ 
+
+DENTRO 
+
+DESSE 
+
+'new Error()'
+
+
+
+VAMOS QUERER __ PASSAR 
+
+O 
+
+VALOR _ de 
+
+
+'errors[0].message'.... ----> ESSA É  __ UMA DAS OPÇÕES... --> com essa opção, vamos retornar o PRIMEIRO ERROR DE NOSSO ARRAY.... 
+
+
+
+
+
+
+
+-----> na versão do professor, ele decide só fazer um return genérico de 
+
+
+
+'const error = new Error('Invalid input.');'
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password) || validator.isString(password)) {
+            errors.push({message: 'Password is invalid!'})
+        }
+
+
+        if (validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is invalid!'})
+        }
+        
+
+        if(errors.length > 0 ) {
+            // const error = new Error(errors[0].message); ///vai retornar a 'message' property NO PRIMEIRO 'error' object no nosso array.... (assim entregamos mais information acerca do validation error ao useR).... ---> esse código dá mais info que o throw GENÉRICO do professor...
+            const error = new Error('Invalid input'); ///throw genérico de error, se for constatado QUALQUER ERRO DE INPUT, nas hipóteses acima....
+            throw error;
+        }
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+CERTO...
+
+
+
+SE FOR CAPTADO QUALQUER UM DAQUELES ERROR,
+
+VAMOS FAZER THROW DO MESMO...
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS TESTAR PARA VER SE ISSO FUNCIONA...
+
+
+
+--> LÁ NO 'GRAPHQL api ',
+
+
+
+
+vamos 
+
+escrever uma mUTATION de 'createUser'
+
+
+COM
+
+INPUT DATA INVÁLIDA...
+
+
+
+
+(email address que não é um VALID EMAIL ADDRESS.... )
+
+
+
+
+
+
+
+-_> GANHEI 1 ERRO:
+
+
+'isString'
+
+IS NOT A FUNCTION...
+
+
+
+
+
+
+
+
+
+
+-_> PQ DIABOS RECEBEMOS ESTE ERRO?
+
+
+
+
+
+
+
+
+
+É POR ISTO:
+
+
+https://www.npmjs.com/package/validator
+
+
+
+This library validates and sanitizes strings only.
+
+If you're not sure if your input is a string, coerce it using input + ''. Passing anything other than a string will result in an error.
+
+
+
+
+FAZ SENTIDO....
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+    createUser: async function(args, req) {  ///sintaxe _ ANORMAL__ (COM ASYNC/AWAIT OPERATIONS)... --> PREFIRA ESTA SINTAXE, POIS É MAIS LIMPA... --> é opcional, mas é melhor.
+
+        //////EM QUERIES/MUTATIONS/SUBSCRIPTIONS MAIS COMPLEXAS (tanto get, como post, patch, delete, etc etc), VAMOS TER ARGUMENTOS SENDO PASSADOS A NOSSOS METÓDOS, ARGUMENTOS QUE SÃO DEFINIDOS LÁ NO NOSSO 'SCHEMA', by the way.... (e aí, vamos ter esses 2 argumentos, o argumento 'args', ARGUMENTS, e o ARGUMENTO 'req', QUE É O __ OBJETO REQUEST__ EM SI)...
+ 
+         const { name, email, password } = args.userInput; ///ver nosso SCHEMA para perceber que temos esse objeto aí no interior de 'args', pq é isso que definimos lá no schema...
+
+        const errors = [];
+
+        if (!validator.isEmail(email) || validator.isEmpty(email)) { ////EIS O CÓDIGO DE __'VALIDATE INPUT' de PROJETOS GRAPHQL... (depende da package de 'validator', que usa o mesmo RULESET DO 'express-validator'...).
+            errors.push({message: 'E-mail is invalid!'})
+        }
+
+
+        if (validator.isEmpty(password)) { ////OBS: nunca use 'validator.isString()', PQ _ _ TODOS NOSSOS INPUT FIELDS SEMPRE SERÃO CONSIDERADOS __ COMO __ STRINGS_ pelo 'validator' package... (por isso, não existe essa função '.isString()')...
+            errors.push({message: 'Password is invalid!'})
+        }
+
+
+        if (validator.isLength(password, {min: 6})) {
+            errors.push({message: 'Password is too short!'})
+        }
+        
+
+        if(errors.length > 0 ) {
+            const error = new Error(errors[0].message); ///vai retornar a 'message' property NO PRIMEIRO 'error' object no nosso array.... (assim entregamos mais information acerca do validation error ao useR).... ---> esse código dá mais info que o throw GENÉRICO do professor...
+            // const error = new Error('Invalid input'); ///throw genérico de error, se for constatado QUALQUER ERRO DE INPUT, nas hipóteses acima....
+            throw error;
+        }
+
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+CERTO.... 
+
+
+
+
+
+E AGORA?
+
+
+
+
+
+
+
+
+
+--> SE INPUTTAMOS UM INPUT INVÁLIDO, como um user no formato 'number,'
+
+
+
+RECEBEMOS 
+
+
+
+
+
+
+ISTO LÁ 
+
+
+
+
+NA RESPONSE 
+
+
+DO 
+
+
+
+'graphql':
+
+
+
+
+
+{
+  "errors": [
+    {
+      "message": "E-mail is invalid!",
+      "locations": [
+        {
+          "line": 2,
+          "column": 3
+        }
+      ],
+      "path": [
+        "createUser"
+      ]
+    }
+  ],
+  "data": null
+}
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+certo.... 
+
+
+
+
+
+COMO PRÓXIMO PASSO,
+ 
+
+
+ VAMOS 
+
+
+ VER O 'ERROR HANDLING'
+
+
+ DE NOSSO APP, COM O GRAPHQL....
+
+
+
+
+
+
+
+ --> e se quiséssemos passar MAIS DATA COM NOSSA ERROR MESSAGE, PRA FAZER O ERROR HANDLING SER MELHOR?

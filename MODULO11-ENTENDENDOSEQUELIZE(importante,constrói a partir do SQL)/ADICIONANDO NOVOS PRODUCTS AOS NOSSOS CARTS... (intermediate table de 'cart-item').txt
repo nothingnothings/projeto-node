@@ -1,0 +1,3208 @@
+
+
+
+
+
+
+
+
+
+
+
+----> PARA CONESGUIR 
+
+
+
+ADICIONAR 
+
+A FEATURE 
+
+DE 
+
+
+'ADD PRODUCTS TO THE CART,
+
+
+
+
+
+precisamos 
+
+
+TRABALHAR 
+
+
+NO CONTROLLER 
+
+
+
+
+
+QUE 
+
+ADICIONA 
+
+
+
+
+PRODUCTS A ELES...
+
+
+
+
+
+Ex(seu código atual):
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+
+
+
+
+
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+--------> 
+
+
+
+
+
+
+
+professor explica que realmente, vamos precisar de uma lógica nova...
+
+
+
+
+
+
+
+----------> A ÚNICA COISA QUE PRECISAMOS É DO PRODUCTID,
+
+
+inicialmente....
+
+
+
+
+
+
+
+-----> A PRIMEIRA COISA A SE FZER 
+
+É 
+
+CONSEGUIR 
+
+ACESSO 
+
+AO 
+
+CART 
+
+
+
+
+__VINCULADO AO USER QUE ESTÁ USANDO NOSSO APP...
+
+
+
+
+
+
+
+
+fazemos isso com este código:
+
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+
+
+
+req.user.getCart()
+.then(
+    (cart) => {
+
+    }
+)
+.catch(
+    (err) => {
+
+
+        console.log(err);
+    }
+)
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+-----------> aí o then block.... ----> no then block,
+
+
+
+
+temos acesso ao cart.... ----> A PRIMEIRA 
+
+STEP 
+
+É 
+
+
+VERIFICAR SE 
+
+O 
+
+PRODUCT 
+
+QUE 
+
+
+EU ESTOU 
+
+TENTANDO ADICIONAR __ JÁ FAZ _ PARTE__ DO CART OU NÃO....
+
+
+
+
+
+
+
+
+
+-----> ISSO PQ SE 
+
+
+O 
+
+PRODUCT JÁ FAZ PARTE DO CART,
+
+
+A ÚNICA COISA QUE EU TENHO QUE FAZER É 'INCREASE ITS QUANTITY',
+
+a quantity que 
+
+
+está 
+
+
+
+INSERIDA LÁ EM 
+
+'cart-item', no caso...
+
+
+
+
+
+
+-----------> e se esse product não existe previamente no carrinho,
+
+vou ter que criar 1 novo product, com uma quantity de '1'...
+
+
+
+------> para isso,
+
+
+vamos ter que executar algum método especial...
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> para isso,
+
+
+
+professor vai executar 
+
+
+
+
+'return cart.getProducts()',
+
+
+
+PARA __ CONSEGUIR __ TODOS OS 
+
+
+
+PRODUCTS 
+
+
+associados a esse 'cart' desse usuário específico  ------> 
+
+
+
+
+
+
+
+E AÍ O PROFESSOR 
+
+VAI COLOCAR UM OBJETO CONFIGURADOR COM UMA WHERE CONDITION,
+
+
+
+
+em que 
+
+
+
+diz 
+
+'where: {id: productId}'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO VAI FICANDO ASSIM:
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+
+
+
+req.user.getCart()
+.then(
+    (cart) => {
+
+                return cart.getProducts({where: {id: productId}}) ////eis o código em questão.
+    }
+)
+.catch(
+    (err) => {
+
+
+        console.log(err);
+    }
+)
+
+
+
+};
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+E, DE FATO, 
+
+isso
+
+
+vai 
+
+
+me 
+
+
+dar 
+
+
+
+
+UM ÚNICO PRODUCT, o product que eu quero addar, ENFIADO EM UM ARRAY ([]),
+
+
+
+RETORNADO POR ESSE MÉTODO 'cart.getProducts()' com esse WHERE que 'narrows it down'....
+
+
+
+
+
+
+
+
+
+ok..... RETORNADO ESSE VALOR DE 
+
+
+''' return cart.getProducts({where: {id: productId}})''',
+
+
+
+
+POSSO USÁ-LO NO 
+
+PRÓXIMO THEN BLOCK
+
+
+
+
+
+__P ARA __ CHECAR__ SE ESSE PRODUCT EXISTE OU NÃO...
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+
+
+
+req.user.getCart()
+.then(
+    (cart) => {
+
+                return cart.getProducts({where: {id: productId}}) ////eis o código em questão.
+    }
+)
+.then(
+    (product) => {
+
+            if(!product) {
+                cart
+            }
+    }
+)
+.catch(
+    (err) => {
+
+
+        console.log(err);
+    }
+)
+
+
+
+};
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+CÓDIGO ESTÁ FICANDO ASSIM:
+
+
+
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (product) => {
+
+      if(!product) {
+        
+      }
+
+
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+
+
+
+
+---------> o único problema é que naquele 
+
+'if block'
+
+ali eu NÃO CONSIGO ACESSAR 
+
+'cart.createProduct()' 
+
+para 
+
+
+adicionar 1 product ao carrinho, pois 
+
+
+___EU NÃO TENHO ESSE PARÂMETRO 'cart' naquele then block...
+
+
+-------------------------------------
+
+
+
+https://medium.com/@jsmney/a-more-in-depth-look-at-sequelizes-magic-methods-428928c70d58
+
+
+cat.addOwner()	M:M	owner {}, or ownerId	created join table row	
+cat.addOwners()	M:M	array of owner {} or ownerId, can be a combination	array of created join table rows	
+cat.countOwners()	M:M	none	int	
+cat.createOwner()	1:1, 1:M, M:M	new owner {} (what you could also pass into Owner.create() )	created owner object	cat instance will have updated ownerId
+cat.getOwner()	1:1, 1:M	none	owner object (if exists), or null	
+cat.getOwners()	M:M	none	array of owner object(s)	
+cat.hasOwner()	M:M	owner {}, or ownerId	boolean	
+cat.hasOwners()	M:M	array of owner {} or ownerId, can be a combination	boolean	returns true only if ALL owners own this cat
+cat.removeOwner()	M:M	owner {}, or ownerId	int	number of owners removed
+cat.removeOwners()	M:M	array of owner {} or ownerId, can be a combination	int	number of owners removed
+cat.setOwner()	1:1, 1:M	owner {}, or ownerId	cat object	with updated ownerId
+owner.addCat()	1:M, M:M	cat {}, or catId	owner object if 1:M, created join table row if M:M	
+owner.addCats()	1:M, M:M	array of cat {} or catId, can be a combination	owner object if 1:M, array of created join table rows if M:M	
+owner.countCats()	1:M, M:M	none	int	
+owner.createCat()	1:1, 1:M, M:M	new cat {} (what you could also pass into Cat.create() )	created cat {}	with associated ownerId
+owner.getCat()	1:1	none	cat object (if exists), or null	
+owner.getCats()	1:M, M:M	none	array of cat {}	
+owner.hasCat()	1:M, M:M	cat {}, or catId	boolean	
+owner.hasCats()	1:M, M:M	array of cat {} or catId, can be a combination	boolean	returns true only if ALL cats are owned
+owner.removeCat()	1:M, M:M	cat {}, or catId	object 'cats' (referencing the table) if 1:M, # rows removed if M:M	
+owner.removeCats()	1:M, M:M	array of cat {} or catId, can be a combination	object 'cats' (referencing the table) if 1:M,# rows removed if M:M	
+owner.setCat()	1:1	cat {}, or catId	cat object	with updated ownerId
+owner.setCats()	1:M, M:M	array of cat {} or catId, can be a combination	owner {}
+
+
+
+
+
+
+
+
+
+
+
+
+--> e eu escrevi um erro.... --> 
+
+
+
+
+não é 'product', e sim 'products',
+
+pq eu vou 
+
+GET AN ARRAY OF PRODUCTS... ---> vamos ter que manipular esse array...
+
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+        const product = products[0];
+
+
+      if(!product) {
+        
+      }
+
+
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+
+
+
+  --------------------------------------
+
+
+
+
+
+  --> MAS ANTES DE MAIS NADA,
+
+  professor 
+
+
+  escrve 
+  um if check melhor,
+
+  ele escreve um if check 
+
+  de 
+
+
+  'if(products.length > 0) {}'...
+
+  -------------------------------
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+    req.user.getCart()
+  .then(
+    (cart) => {
+
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+    
+
+
+
+
+
+    }
+  )
+  .catch(
+
+  )
+
+
+
+----------------------------------------------
+
+
+
+isso feito,
+
+
+professor vai ESCREVER 
+uma 
+
+
+variável 
+
+
+
+de nome 
+
+'newQuantity',
+
+
+
+CUJO VALOR DEFINIRÁ COMO '1'...
+
+
+
+
+
+
+Ex:
+
+
+
+
+
+
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+
+      let newQuantity = 1;
+    
+
+
+
+
+
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+---> ISSO FEITO, PROFESSOR CHECARÁ 
+
+PELA 
+
+
+EXISTÊNCIA/VALIDADE DO product,
+
+com 
+
+
+'if (product) {}'...
+
+
+
+
+
+
+--> SE ESSE FOR O CASO, 
+
+
+PROFESSOR VAI QUERER 'INCREASE THE QUANTITY' 
+
+
+desse product específico...
+
+
+
+
+
+--> ELE BASICAMENTE VAI QUERER PEGAR A 
+
+'OLD QUANTITY' 
+
+
+E ENTÃO 
+
+ACRESCER O VALOR DE '1' À ela..
+
+
+
+
+
+
+
+-----> PROFESSOR DIZ QUE __ FAREMOS ESSE ADD DA QUANTITY__ MAIS TARDE..... ----> 
+
+
+
+FAREMOS ISSO MAIS TARDE PQ __ ATÉ AGORA NÓS NEM TEMOS __ 
+
+PRODUCTS__ NO CARRINHO, NEM UMA FEATURE PARA OS ADICIONAR... -----> é por isso que 
+
+
+devemos trabalhar, por enquanto, apenas 
+
+
+no 
+
+'NEW PRODUCT CASE'....
+
+
+
+
+
+
+
+
+-------> OK .... SE NÃO TEMOS NENHUM PRODUCT igual a esse no cart,
+
+
+
+sabemos que 
+
+
+vamos ter que criar um novo 
+
+
+
+product desses no cart... ----> para fazer isso,
+
+
+
+
+professor vai 
+
+RETORNAR UM CALL 
+
+
+
+de 
+
+
+'return Product.findByPk()'... ------> (ISSO PQ ELE VAI PRECISAR DA 'GENERAL PRODUCT DATA' para esse product específico, para criar um 'cart-item' EQUIVALENTE A ELE, eu acho...)
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+
+      let newQuantity = 1;
+    
+
+        if(product) {
+
+            //// ....raise quantity by 1....
+        }
+
+
+        return Product.findByPk(productId);
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+A PARTIR 
+
+DESSE 
+
+
+'return Product.findByPk(productId)',
+
+
+O PROFESSOR VAI ESCREVER UM 
+
+
+'NESTED THEN CALL'....
+
+
+
+
+
+
+
+
+
+   return Product.findByPk(productId)
+
+   .then(
+
+
+
+       (product) => {}
+   )
+
+
+
+
+
+
+
+
+
+   --> AQUI, NO CASO, VAMOS EXECUTAR 2 
+
+
+   TIPOS DE CÓDIGO COMPLETAMENTE DIFERENTES...
+
+
+
+
+
+
+
+   --> no case de 
+
+
+   'if (product) {
+
+
+   }',
+
+
+
+
+   VAMOS EXECUTAR 1 TIPO DE CÓDIGO....
+
+
+
+
+   ---> JÁ NO CASE QUE EVITAMOS O 'product' (ou seja, '!product'),
+
+
+
+   NÓS VAMOS EXECUTAR __ OUTRO TIPO DE CÓDIGO__....
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> CERTO...
+
+
+
+
+
+   ex:
+
+
+         return Product.findByPk(productId)
+      .then(
+        product => {
+
+        }
+      )
+
+    }
+
+
+
+
+
+
+    ESSE
+
+
+    'product' recebido aí ___ SERÁ CERTAMENTE O 
+
+
+
+    'product' que desejo, lá da table de 'products',
+
+
+    E QUE 
+
+    EU VOU QUERER 
+
+    AGORA 'ADICIONAR'
+
+
+
+
+    NO MEU CARRINHO/CARRINHO DAQUELE USER ESPECÍFICO...
+
+
+
+
+    ok, mas como adicionar esse 'product' 
+
+
+    ao 
+
+    'cart'? 
+
+
+
+
+
+
+
+
+--------> PROFESSOR EXPLICA QUE ESSE 
+
+'ADD' 
+
+PODE 
+
+SER 
+
+FEITO 
+
+
+
+__POR MEIO __ DO ACESSO 
+
+
+À 
+
+'Cart' (a table)
+
+
+_____ DE NOVO...
+
+
+
+
+----> 
+
+
+por isso 
+
+
+ele 
+
+
+vai começar assim:
+
+
+
+
+
+
+
+
+        return Product.findByPk(productId)
+      .then(
+        product => {
+            return Cart. ///////EIS O CÓDIGO EM QUESTÃO.
+        }
+      )
+
+    }
+
+
+
+
+
+----> nosso cart já estava disponível LÁÁAÁ´´A atrás
+ 
+
+
+ na anonymous function,
+
+
+
+
+ mas __não fica disponível __ 
+
+
+
+ nesse then block,
+
+
+ isso nós já sabemos... 
+
+
+
+
+
+
+
+
+ --------> __ E PARA CONSEGUIR__
+
+
+
+ DEIXAR 
+
+ O 
+
+ 'cart'
+
+
+ DISPONÍVEL 
+
+
+ __LÁ EMBAIXO,
+
+
+
+ PROFESSOR 
+
+ USA UMA GAMBIARRA.... -----> 
+
+
+
+
+ LÁÁÁÁ em cima no código, logo abaixo 
+
+
+ do 
+
+
+ 'const productId',
+
+
+
+ O PROFESSOR 
+
+
+
+
+ __cRIA UMA NOVA VARIÁVEL,
+
+
+ de 'fetchedCart',
+
+ que deixa undefined...
+
+
+
+
+
+
+
+ EX:
+
+
+
+
+
+
+
+const prodId = req.body.productId;
+
+let fetchedCart; ///////EIS O CÓDIGO EM QUESTÃO.
+
+   req.user.getCart()
+  .then(
+    (cart) => {
+
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+
+      let newQuantity = 1;
+    
+
+        if(product) {
+
+            //// ....raise quantity by 1....
+        }
+
+
+        return Product.findByPk(productId);
+    }
+  )
+  .catch(
+
+  )
+
+
+-----------------------
+
+
+
+
+
+
+
+
+------> OK... ISSO FEITO,
+
+
+
+NO PRIMEIRO 
+
+'then block'
+
+
+O PROFESSOR 
+
+VAI 
+
+FAZER 
+
+UM 
+
+STORE 
+
+
+
+do objeto 
+
+'cart' (objeto sequelize 'cart') 
+
+
+
+
+__RETRIEVADO DA DATABASE SQL E MANIPULADO PELO SEQUELIZE,
+
+
+
+DENTRO 
+
+
+
+DESSA VARIÁVEL de 'fetchedCart',
+
+
+que antes estava como undefined...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const prodId = req.body.productId;
+
+let fetchedCart; ///////EIS O CÓDIGO EM QUESTÃO.
+
+   req.user.getCart()
+  .then(
+    (cart) => {
+    fetchedCart = cart; //////EIS O CÓDIGO EM QUESTÃO.
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+
+      let newQuantity = 1;
+    
+
+        if(product) {
+
+            //// ....raise quantity by 1....
+        }
+
+
+        return Product.findByPk(productId);
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+  --------------------------------
+
+
+
+
+
+
+
+
+  OK, ISSO FARÁ COM QUE 
+
+  NOSSO 
+
+  OBJETO 
+
+
+  'cart'
+
+
+
+  AGORA FIQUE 
+
+  DISPONÍVEL NESSA 
+
+  'OVERALL FUNCTION'  
+
+
+
+
+
+  ESCRITA DENTRO DE  'postToCart',
+
+
+
+  o que é ótimo,
+
+
+  é o que queremos,
+
+  para 
+
+  poder acessá-lo 
+
+  lá 
+
+  embaixo...
+
+
+
+
+
+
+
+
+
+--> FINALMENTE, LÁ 
+
+
+
+
+
+NAQUELE 
+
+
+then block lááá embaixo, then block de 'findByPk',
+
+
+
+O PROFESSOR 
+
+
+
+__DIZ QUE ELE 
+
+
+VAI 
+
+PODER 
+
+
+
+ESCREVER/ACESSAR 
+
+
+
+'.addProduct()'
+
+
+
+DENTRO 
+
+
+
+DO 
+
+
+
+OBJETO sequelize armazenado dentro de 'fetchedCart'/repreesntado por 'fetchedCart',
+
+
+tipo assim:
+
+
+
+
+  
+const prodId = req.body.productId;
+
+let fetchedCart; ///////EIS O CÓDIGO EM QUESTÃO.
+
+   req.user.getCart()
+  .then(
+    (cart) => {
+    fetchedCart = cart; //////EIS O CÓDIGO EM QUESTÃO.
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+
+      let newQuantity = 1;
+    
+
+        if(product) {
+
+            //// ....raise quantity by 1....
+        }
+
+
+        return Product.findByPk(productId)
+        .then(
+            (product) => {
+
+
+                return fetchedCart.addProduct(); ////////EIS O CÓDIGO EM QUESTÃO.
+            }
+        )
+    }
+  )
+  .catch(
+
+  )
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+OK........ --> VOCÊ DEVE ANOTAR ISTO:
+
+
+
+
+
+
+'addXXXXXX() '----> É AINDA OUTRO __ MÉTODO __ ADICIONADO 
+
+
+
+PELO SEQUELIZE,
+
+
+UM MÉTODO MÁGICO... --> É UM MÉTODO MÁGICO ___ USADO 
+
+
+
+________eSPECIALMENTE__ PARA 
+
+
+RELATIONSHIPS 
+
+
+'many-to-many'...
+
+
+
+
+
+
+
+
+
+
+
+--> o addProduct faz:
+
+
+
+
+
+
+1) ELE ADICIONA 1 'SINGLE PRODUCT' 
+
+
+
+
+2) E ELE VAI __aDICIONAR _ ESSE '1 SINGLE PRODUCT' 
+
+
+a 
+ESSA 
+
+
+
+'IN-BETWEEN TABLE' QUE CRIAMOS, ESSA 
+
+
+INBETWEEN TABLE 
+
+CHAMADA 
+
+
+DE 
+
+'cart-items'... -----> e esse '1 single product' terá SEU PRÓPRIO ID,
+
+nessa 
+
+table 
+
+
+de 
+
+'cart-items'...
+
+
+
+
+
+
+
+
+como primeiro parâmetro de 
+
+
+
+'addProduct', nesse case aí,
+
+
+
+PROFESSOR 
+VAI 
+
+
+COLOCAR OS VALORES 
+
+
+de 'product', por meio de um simples write de 'product'....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+const prodId = req.body.productId;
+
+let fetchedCart; ///////EIS O CÓDIGO EM QUESTÃO.
+
+   req.user.getCart()
+  .then(
+    (cart) => {
+    fetchedCart = cart; //////EIS O CÓDIGO EM QUESTÃO.
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => {
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+
+      let newQuantity = 1;
+    
+
+        if(product) {
+
+            //// ....raise quantity by 1....
+        }
+
+
+        return Product.findByPk(productId)
+        .then(
+            (product) => {
+
+
+                return fetchedCart.addProduct(product); ////////EIS O CÓDIGO EM QUESTÃO.
+            }
+        )
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+MAS É CLARO QUE 
+
+
+ELE TAMBÉM VAI PRECISAR DE UM ARGUMENTO EXTRA... ----> 
+
+
+
+
+É 
+
+
+UM EXTRA FIELD,
+
+
+
+
+UM EXTRA FIELD QUE DEVE SER ADICIONADO 
+
+
+A 
+
+ESSE 
+
+
+
+'cart-item' ......... ---->  PROFESSOR EXPLICA QUE 
+
+
+
+
+'cart-item'
+
+
+
+será/é 
+
+
+NOSSA 
+
+'IN-BETWEEN TABLE',
+
+
+
+
+
+mas que 
+
+ele TAMBÉM VAI QUERER TER A 'QUANTITY' DE CADA 
+
+PRODUTO 
+
+
+TAMBÉM 
+
+ESCRITA 
+
+EM CADA 
+
+'cart-item'....
+
+
+
+
+--------------------
+
+
+
+
+OK....
+
+
+
+EM 
+
+CADA 
+
+
+'cart-item',
+
+
+temos os fields:
+
+
+
+
+
+
+
+
+
+id: 3 (é o id que DIFERENCIA OS CART-ITEMS ENTRE SI...)
+
+
+quantity:  null --> ainda não settamos isso direito....
+
+
+
+cartId: 1 --> DIZ QUAL USER/CART está vinculado a esse cartItem...
+
+
+
+
+productId --> diz QUAL PRODUCT REPRESENTA esse cartItem (o número do 'productId' é o 'id' de cada product...)
+
+
+
+
+
+
+
+
+-----> ok... 
+
+
+
+temos 
+
+
+3 ids, portanto....
+
+
+
+e esses ids foram settados, respectivamente, por:
+
+
+
+
+
+id ---> (código de DEFINIÇÃO do cartItem....)
+
+
+
+const CartItem = sequelize.define('cart-item', {
+
+
+
+
+
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true,
+    },
+    quantity: Sequelize.INTEGER
+
+});
+
+
+
+
+
+
+
+
+'cartId': foi definido por meio de ''  
+
+
+
+
+''''' 
+
+
+Product.belongsToMany(Cart, { through: CartItem});
+
+
+
+
+
+
+
+-----> esse código aí posicionou um 'cartId' field 
+
+
+em 
+
+TODO ''''__CART__ITEM__ ''' (por causa do argumento 'through: CartItem'...)
+'''''
+
+
+
+
+
+---> JÁ O CÓDIGO 
+
+
+
+'''  
+
+
+
+Cart.belongsToMany(Product, { through: CartItem });
+
+
+
+'''''
+
+
+
+
+POSICIONOU um field de 'productId' DENTRO 
+
+
+
+DE 
+
+CADA
+
+'CartItem'...
+
+
+
+
+
+---------------
+
+
+
+
+
+
+
+
+
+cada 'CartItem', portanto,
+
+
+tem 
+
+
+1 '''DONO''' (cartId) 
+
+
+
+e 
+
+
+
+1 ''''PRODUCT/IMAGEM''' que ele representa... (productId).....
+
+
+
+
+
+
+--------------------------------
+
+
+
+OK... RECAPITULANDO....
+
+
+
+
+
+
+
+
+temos a 
+
+
+INBETWEEN TABLE 
+
+de 
+
+
+'cart-item', que 
+
+foi definida por meio deste código:
+
+
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const CartItem = sequelize.define('cart-item', {
+
+
+
+
+
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true,
+    },
+    quantity: Sequelize.INTEGER
+
+});
+
+module.exports = CartItem;
+
+
+
+
+
+
+
+
+
+
+
+
+-------> como você pode ver,
+ 
+
+ TEMOS 
+
+
+ 1 FIELD 
+
+ EXTRA....- -> o field 
+
+
+ de 'quantity'... 
+
+
+
+
+
+
+
+
+
+ --> NO CASO DE 'postToCart',
+
+
+
+ SE 
+
+ NESSE 
+
+ CASE 
+
+
+
+NÓS SABEMOS QUE O PRODUCT NÃO FOI ENCONTRADO, É ÓBVIO QUE 
+
+VAMOS QUERER 
+
+
+ADICIONAR 
+
+
+
+1 FIELD DE 'quantity: 1' 
+
+
+
+A ESSE RECORD Aí, o record de 'cart-item'...
+
+
+
+
+
+
+
+--> PARA FAZER ISSO,
+
+
+ESCREVEMOS:
+
+
+
+
+
+
+
+        return Product.findByPk(productId)
+        .then(
+            (product) => {
+
+
+                return fetchedCart.addProduct(product,
+                
+                {
+                    through: { quantity: newQuantity} ///newQuantity será '1', por causa daquele código de 'let newQuantity = 1'....
+
+                }
+                
+                
+                ); 
+            }
+        )
+
+
+
+
+
+
+
+
+
+--> O IMPORTANTE A SER DESTACADO É O FATO 
+
+
+DE QUE 
+
+'cart-item'/cart-items 
+
+REPRESENTAM 
+
+OS 
+
+
+
+ITEMS DO SHOP/PRODUCTS 
+
+
+ENFIADOS NO NOSSO CARRINHO... (e os products em si nõa fazem isso...) --> ou seja,
+
+
+~sao 
+
+
+as 
+
+'INSTÂNCIAS DE PRODUCT'/unidades de product enfiadas no nosso carrinho...
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE 
+
+VS 
+
+
+ADD 
+
+
+
+
+
+
+--> I've been looking for the same thing and from what i've seen, it looks like :
+
+Create will quite literally create an instance of the targetted model and do the association altogether
+Add will create the association between the instance of the souce model and the instance of the target model
+I am not 100% sure of that, but i believe it works this way.
+
+
+
+
+
+Create
+
+const todo = Todo.create ({ ... });
+todo.createItem({ tite: " item 1" }); //creates the item and does the corresponding association
+
+Add
+
+const todo = Todo.create ({ ... });
+const item = Item.create({ title : " item2" });
+todo.addItem( item, item.id ); // does the association for an existing item
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-_> ESTE CÓDIGO É BEM CONFUSO:
+
+
+
+
+
+       return fetchedCart.addProduct(product);
+
+
+
+
+
+
+-------> O CÓDIGO MAIS COMPLETINHO É ESTE:
+
+
+
+      return Product.findByPk(productId) ///executamos isto pq queremos ADICIONAR ESSE PRODUCT ESPECÍFICO, sua data, ao nosso cart....
+      .then(
+        product => {
+          console.log(product, 'O product encontrado no database...');
+
+          console.log(fetchedCart, 'O cart em questão');
+              return fetchedCart.addProduct(product);
+        }
+      )
+
+
+
+
+
+-----------------------> 
+
+
+
+a confusão, aqui, para mim,
+
+
+é 
+
+
+
+a 
+
+exigência desse 'product' coomo PARÂMETRO 
+
+
+
+
+
+
+de 'addProduct'... -----> 
+
+
+
+
+O QUE INTERESSA É O RESULTADO DESSA LINHA:
+
+
+
+
+
+
+o call de 'fetchedCart.addProduct(product)'
+
+__
+
+
+__VAI __ ADICIONAR __ COM SUCESSO 1 NOVO RECORD 
+
+DE 
+
+
+CART-ITEM 
+
+
+
+em 'cart-items',
+
+
+
+e esse 
+
+
+cart-item 
+
+terá 
+
+os 
+
+
+fields de 
+
+
+
+id, cartId e 'productId'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+2. Methods gained by hasOne(), hasMany() and belongsTo()/belongsToMany()
+Associations give the Data Access Object (DAO) methods:
+
+hasOne():
+In setting a Parent.hasOne(Child), methods available to parent DAO instance:
+
+DB.Parent.findOne({ where: { id: 1 } }).then(parent => {
+
+    // `parent` is the DAO
+    // you can use any of the methods below:
+    parent.getChild
+    parent.setChild
+    parent.addChild
+    parent.createChild
+    parent.removeChild
+    parent.hasChild
+
+})
+hasMany():
+In setting a Parent.hasMany(Child), methods available to parent DAO instance:
+
+parent.getChildren,
+parent.setChildren,
+parent.addChild,
+parent.addChildren,
+parent.createChild,
+parent.removeChild,
+parent.hasChild,
+parent.hasChildren,
+belongsTo()/belongsToMany:
+In setting a Child.belongsTo(Parent), methods available to child DAO instance:
+
+child.getParent,
+child.setParent,
+child.createParent,
+
+//belongsToMany
+child.getParents,
+child.setParents,
+child.createParents,
+
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+BEM... 
+
+
+
+O PRODUCT, QUANDO CONSOLE.LOGGADO,
+
+
+
+nos dá isto aqui:
+
+
+
+
+
+
+
+product {
+  dataValues: {
+    id: 1,
+    title: 'EXEMPLO',
+    price: 221,
+    imageUrl: 'assas',
+    description: 'asasa',
+    createdAt: 2021-10-14T04:38:34.000Z,
+    updatedAt: 2021-10-14T04:38:34.000Z,
+    userId: 1
+  },
+  _previousDataValues: {
+    id: 1,
+    title: 'EXEMPLO',
+    price: 221,
+    imageUrl: 'assas',
+    description: 'asasa',
+    createdAt: 2021-10-14T04:38:34.000Z,
+    updatedAt: 2021-10-14T04:38:34.000Z,
+    userId: 1
+  },
+  _changed: Set(0) {},
+  _options: {
+    isNewRecord: false,
+    _schema: null,
+    _schemaDelimiter: '',
+    raw: true,
+    attributes: [
+      'id',
+      'title',
+      'price',
+      'imageUrl',
+      'description',
+      'createdAt',
+      'updatedAt',
+      'userId'
+    ]
+
+
+
+
+
+
+
+
+
+--> desse output aí, o que me interessa é isto:
+
+
+
+
+
+
+
+
+
+
+
+
+product {
+  dataValues: {
+    id: 1,
+    title: 'EXEMPLO',
+    price: 221,
+    imageUrl: 'assas',
+    description: 'asasa',
+    createdAt: 2021-10-14T04:38:34.000Z,
+    updatedAt: 2021-10-14T04:38:34.000Z,
+    userId: 1
+  },
+
+    attributes: [
+      'id',
+      'title',
+      'price',
+      'imageUrl',
+      'description',
+      'createdAt',
+      'updatedAt',
+      'userId'
+    ]
+
+
+
+
+
+
+
+
+
+
+------> TALVEZ O QUE O NEGÓCIO 
+
+PEGUE, DE FATO, 
+
+
+é apenas o valor do 'id' nesse product, para então colocar no field 'productId', em 'cart-item'/cart-items....
+
+
+
+
+
+-->o resto dos fields parecem ser IGNORADOS COMPLETAMENTE.... 
+
+
+
+
+
+
+
+---> parece que é isso que acontece quando 
+
+
+escrevemos, portanto,
+
+
+isto:
+
+
+
+
+
+
+'fetchedCart.addProduct(product)'
+
+
+
+
+
+
+(o que acontece é basicamente que o sequelize 
+
+
+
+pega o valor  do field 'id'/identificador/whatever 
+
+dentro 
+
+
+
+do negócio que você passou como argumento e então 
+
+O COLOCA 
+
+
+lá no field 'xxxxId', na INTERMEDIATE TABLE (no caso, em 'cart-item'/'cart-items')....
+
+
+
+
+
+
+)
+
+
+
+
+
+
+--> E PROFESSOR DIZ QUE AINDA PODEMOS ADICIONAR FIELDS EXTRAS 
+
+
+AO 
+
+
+RECORD QUE SERÁ CRIADO 
+
+
+em 
+
+
+'cart-item'
+
+por meio 
+
+desse 
+
+'fetchedCart.addProduct(product)',
+
+
+
+
+__BASTA USAR O SEGUNDO PARÂMETRO,
+
+
+e escrever 
+
+
+'{
+    through: {quantity: newQuantity}
+}
+'
+
+--------------------------------------
+
+
+
+
+
+
+
+Certo... acho que agora está começando a fazer mais sentido, esse negócio dos MAGIC METHODS...
+
+
+
+
+
+
+
+
+
+CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+  let fetchedCart;
+  // const productPrice = req.body.price; //não consigo adquirir essa informação dessa forma...
+
+  // console.log(productId);
+
+  // Product.findProduct(
+  //   productId,
+
+  //   (product) => {
+  //     Cart.addProduct(product.id, product.price);
+  //     res.redirect('/cart');
+  //   }
+  // );
+
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+      fetchedCart = cart;
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => { //array que precisa ser MANIPULADO, como visto no código de 'product = products[0]'...
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+    
+      let newQuantity = 1;
+
+      if(product) {
+          ////como um PRODUCT com aqueles critérios JÁ FOI ENCONTRADO NO NOSSO CART, NÃO VAMOS QUERER CRIAR 1 NOVO 'PRODUCT', E SIM vamos querer adicionar 1 unidade À 'quantity' 'old' de nossos products....
+
+
+      }
+
+      return Product.findByPk(productId) ///executamos isto pq queremos ADICIONAR ESSE PRODUCT ESPECÍFICO, sua data, ao nosso cart....
+      .then(
+        product => {
+          console.log(product, 'O product encontrado no database...');
+
+          console.log(fetchedCart, 'O cart em questão'); ///este 'addProduct' aqui de baixo é bem bugado, professor passou 'product' como seu parâmetro, e ele não dá erro, realmente aceita esse parâmetro....
+              return fetchedCart.addProduct(product, {quantity: newQuantity}) ///ver anotações em 'adicionando novos produts ao nosso cart', ou a aula '163' do professor....
+        }
+      )
+      .catch((err) => {console.log(err)})
+
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> PROFESSOR DIZ QUE DEVEMOS SALVAR TUDO ISSO E TESTAR...
+
+
+
+
+
+
+
+ok, estamos com coisas erradas... a quantity ainda está como 'null' 
+
+
+nos cart-item..
+
+
+
+
+
+
+---------------
+
+
+
+
+
+CONSERTEI...
+
+
+FICOU ASSIM:
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+  let fetchedCart;
+  // const productPrice = req.body.price; //não consigo adquirir essa informação dessa forma...
+
+  // console.log(productId);
+
+  // Product.findProduct(
+  //   productId,
+
+  //   (product) => {
+  //     Cart.addProduct(product.id, product.price);
+  //     res.redirect('/cart');
+  //   }
+  // );
+
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+      fetchedCart = cart;
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => { //array que precisa ser MANIPULADO, como visto no código de 'product = products[0]'...
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+    
+      let newQuantity = 1;
+
+      if(product) {
+          ////como um PRODUCT com aqueles critérios JÁ FOI ENCONTRADO NO NOSSO CART, NÃO VAMOS QUERER CRIAR 1 NOVO 'PRODUCT', E SIM vamos querer adicionar 1 unidade À 'quantity' 'old' de nossos products....
+
+
+      }
+
+      return Product.findByPk(productId) ///executamos isto pq queremos ADICIONAR ESSE PRODUCT ESPECÍFICO, sua data, ao nosso cart....
+      .then(
+        product => {
+          console.log(product, 'O product encontrado no database...');
+
+          console.log(fetchedCart, 'O cart em questão'); ///este 'addProduct' aqui de baixo é bem bugado, professor passou 'product' como seu parâmetro, e ele não dá erro, realmente aceita esse parâmetro....
+              return fetchedCart.addProduct(product, {through: {quantity: newQuantity}}) ///ver anotações em 'adicionando novos produts ao nosso cart', ou a aula '163' do professor....
+        }
+      )
+      .catch((err) => {console.log(err)})
+
+    }
+  )
+  .catch(
+
+  )
+
+
+
+
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+OK, AGORA 
+
+
+NÓS REALMENTE ESTAMOS CONSEGUINDO CRIAR 
+
+
+
+
+
+1 
+
+
+
+
+'cart-item' (Que representa 1 product, product vinculado Àlgum cart)
+
+
+
+com sucesso,
+
+
+e 
+
+
+ele fica com 'quantity: 1'
+
+
+quando 
+
+NÃO TIVERMOS 
+
+ALGUM 
+
+
+
+
+'product' prévio vinculado 
+
+
+a 
+
+
+
+esse cart....
+
+
+
+
+
+
+
+
+
+
+
+--> QUANTO AO CASE DE 
+
+
+
+
+'1 PRODUCT JÁ EXISTIA NO CART',
+
+
+
+eu tento 
+
+
+escrever 
+
+
+
+
+sua lógica, tentando usar um método tipo este:
+
+
+
+
+
+      if(product) {
+          ////como um PRODUCT com aqueles critérios JÁ FOI ENCONTRADO NO NOSSO CART, NÃO VAMOS QUERER CRIAR 1 NOVO 'PRODUCT', E SIM vamos querer adicionar 1 unidade À 'quantity' 'old' de nossos products....
+          product.update(
+            {quantity: product.quantity + 1}
+          )
+
+      }
+
+
+
+
+
+
+
+      ---> SÓ NÃO SEI SE ISSO FUNCIONARÁ...
+
+
+
+
+
+
+
+
+      ---> NÃO FUNCIONOU....
+
+
+
+
+
+
+
+
+      LOGO DEPOIS,
+
+      TENTEI ESTE CÓDIGO:
+
+
+
+
+
+       return fetchedCart.addProduct(product, {through: {quantity: product.quantity + 1}})
+
+
+
+
+
+    ---> MAS ISSO AÍ 
+
+
+    ME 
+
+
+    DEU 
+
+
+    UMA QUANTITY DE '0',
+
+
+    em vez de uma 
+
+    quantity progressivamente maior...
+
+
+
+
+
+
+
+
+
+
+
+
+    ----> a única coisa que eu quero fazer é 
+
+    
+
+
+
+    CONSEGUIR ACESSAR O VELHO 
+
+    VALOR 
+
+
+    DE 
+
+
+    'quantity' de 
+
+
+    meu cart-item específico atribuído àquele product...
+
+
+
+
+
+
+    ------------------------------
+
+
+
+    CONSEGUI... DEPOIS DE MUITA LUTA,
+
+    CONSEGUI....
+
+
+
+
+
+
+
+    --> a sintaxe desse 'sequelize' é uma bosta....
+
+
+
+
+
+
+
+
+    --> mas 
+
+    o código ficou assim, anyways:
+
+
+
+
+
+
+
+
+  
+
+
+        if(product) {
+        console.log('ENTERED BLOCK');
+        console.log('TESTE', product, 'TESTE',);
+        CartItem.findAll({where: {productId: productId}})     ////como um PRODUCT com aqueles critérios JÁ FOI ENCONTRADO NO NOSSO CART, NÃO VAMOS QUERER CRIAR 1 NOVO 'PRODUCT', E SIM vamos querer adicionar 1 unidade À 'quantity' 'old' de nossos products...
+        .then(
+          (cartItems) => {
+
+            const cartItem = cartItems[0];
+
+           CartItem.update({quantity: cartItem.quantity}, {where: {productId: productId}}) ////CÓDIGO ABSURDAMENTE CLUNKY, MAS QUE FUNCIONOU..
+           .then(
+             (result) => {console.log(result)}
+           )
+
+
+          }
+        )
+      }
+
+
+
+
+
+
+
+
+      ----------> ou seja, primeiramente tive de usar 
+
+
+
+      'CartItem.findAll()'
+
+
+
+
+COM AQUELE 
+
+CONFIG OBJECT para encontrar exatamente o 'cartItem' com aquele 
+
+productId 
+
+específico....
+
+
+
+
+
+--> aí, isso feito,
+
+
+
+tive de executar 'CartItem.update',
+
+
+
+no 
+
+CARTITEM MODEL,
+
+para 
+
+CONSEGUIR
+
+UPDATAR O FIELD 
+
+de 
+
+
+'
+{quantity: xxx}'
+
+
+
+no 
+
+
+CARTITEM que satisfizesse 
+
+
+aquele critério de 
+
+
+'productId: productId'...
+
+
+
+
+
+
+
+
+
+
+--> ESQUECEMOS NOSSO REDIRECT à PÁGINA DE 
+
+'cart',
+
+
+
+QUE ESCREVEMOS AGORA..
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+  let fetchedCart;
+
+  req.user.getCart()
+  .then(
+    (cart) => {
+      fetchedCart = cart;
+    return cart.getProducts({where: {id: productId}}); ////retornamos o valor dessa promise para PODERMOS RODAR CHECKS NELA, NO PRÓXIMO THEN BLOCK...
+
+    }
+  )
+  .then(
+    (products) => { //array que precisa ser MANIPULADO, como visto no código de 'product = products[0]'...
+
+      let product; 
+
+      if(products.length > 0) {
+       product = products[0];
+      }
+    
+      let newQuantity = 1;
+
+      if(product) {
+        console.log('ENTERED BLOCK');
+        console.log('TESTE', product, 'TESTE',);
+        CartItem.findAll({where: {productId: productId}})     ////como um PRODUCT com aqueles critérios JÁ FOI ENCONTRADO NO NOSSO CART, NÃO VAMOS QUERER CRIAR 1 NOVO 'PRODUCT', E SIM vamos querer adicionar 1 unidade À 'quantity' 'old' de nossos products...
+        .then(
+          (cartItems) => {
+
+            const cartItem = cartItems[0];
+
+           CartItem.update({quantity: cartItem.quantity}, {where: {productId: productId}}) ////CÓDIGO ABSURDAMENTE CLUNKY, MAS QUE FUNCIONOU..
+           .then(
+             (result) => {console.log(result)}
+           )
+
+
+          }
+        )
+      } else {
+        return Product.findByPk(productId) ///executamos isto pq queremos ADICIONAR ESSE PRODUCT ESPECÍFICO, sua data, ao nosso cart....
+        .then(
+          product => {
+            console.log(product, 'O product encontrado no database...');
+  
+            console.log(fetchedCart, 'O cart em questão'); ///este 'addProduct' aqui de baixo é bem bugado, professor passou 'product' como seu parâmetro, e ele não dá erro, realmente aceita esse parâmetro....
+                return fetchedCart.addProduct(product, {through: {quantity: newQuantity}}) ///ver anotações em 'adicionando novos produts ao nosso cart', ou a aula '163' do professor....
+          }
+        )
+        .catch((err) => {console.log(err)})
+      }
+    }
+  )
+  .
+  then(
+    () => {
+      res.redirect('/cart'); //////////EIS O CÓDIGO EM QUESTÃO.
+    }
+  )
+  .catch(
+
+  )
+
+};
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+OK... AGORA 
+
+FALTA 
+
+
+
+FAZER COM QUE 
+
+A PÁGINA 
+
+DE 
+
+'CART'
+
+realmente 
+
+FAÇA DISPLAY 
+
+
+DA 
+
+DATA 
+
+
+ADEQUADA,
+
+
+
+da data 
+acerca 
+
+dos 
+
+
+PRODUCTS (cartItems) no nosso carrinho...
+
+
+

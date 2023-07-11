@@ -1,0 +1,1702 @@
+
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO DE APP.JS ESTÁ ASSIM:
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/error');
+
+// const db = require('./util/database'); ///versão que NÃO USAVA SEQUELIZE
+
+const sequelize = require('./util/database'); ////VERSÃO QUE USA SEQUELIZE... (é a CONNECTION POOL manageada pelo sequelize + conjunto de features do sequelize... tudo isso definido no arquivo 'database.js'...)
+
+const Product = require('./models/product'); /////necessário para DEFINIR RELATIONS, NESSE NOSSO ROOT...
+const User = require('./models/user');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  ////MIDDLEWARE CLÁSSICO, QUE VAI EXECUTAR ESSA ANON FUNCTION A PARTIR DE INCOMING REQUESTS QUE ATINJAM NOSSO BACKEND... ----> detalhe: esse código da anon function sempre SERÁ EXECUTADO__ DEPOIS __ DE 'sequelize', no momento em que 1 REQUEST ATINGIR NOSSO BACKEND... --> E ESSE BACKEND SÓ SERÁ ABERTO, com 'app.listen(3000)', SE O CO´DIGO DE 'sequelize.sync()' (CÓDIGO QUE SETTA NOSSA DATABASE SQL/vincula-a ao nosso app nodeJS) tiver sido executado com sucesso, pois o 'app.listen(3000)' se encontra DENTRO DELA, NO THEN BLOCK FINAL....
+
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user; ///vai definir uma nova propriedade/field de USER __DENTRO DO NOSSO OBJETO 'request', objeto request de nosso usuário/admin... esse valor, 'user', será o USER QUE FOI RETRIEVADO LÁ DE NOSSA DATABASe por meio de 'User.findByPk(1)'...
+      //// ^^^^ essa nova propriedade/field __VAI CONTER UM VALOR ('user', retrievado da nossa database MYSQL pelo sequelize) QUE SERÁ MAIS DO QUE UM OBJECT JAVASCRIPT COMUM.... --> isso pq esse valor será um 'OBJETO SEQUELIZE', que é um objeto javascript comum MAS _ COM __ TODOS OS MÉTODOS/PROPRIEDADES ESPECIAIS 'SEQUELIZE' enfiadas no seu interior.... --> isso significa que COM ESSE OBJETO ESPECIAL SOMOS CAPAZES DE chamar métodos especiais sequelize sobre ele, em qualquer parte de nosso código... --> ex: lá em 'admin.js', arquivo controller, podemos chamar 'req.user.destroy()' PARA APAGAR__ ESSE VALUE NA NOSSA PROPRIEDADE 'user' enfiada dentro do nosso objeto 'request', no browser do user... 
+      ///ex: req.user.destroy(); --> método SEQUELIZE que pode ser encontrado dnetro desse 'req.user', agora (pq o valor é um 'user' que foi retrievado LÁ DA DATABASE SQL por meio do SEQUELIZE, pq é o sequelize que adiciona esses convenience methods...)....
+      next(); //precisamos disto, senão a execução do nosso app NODEJS vai parar....
+      console.log(req.user), 'LINE';
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.use(
+  '/admin',
+
+  adminRoutes
+);
+
+app.use(shopRoutes);
+
+app.use(errorController.error404);
+
+////sempre execute/defina relations ENTRE SEUS MODELS ___ANTES__ DO CALL de 'sequelize.sync()'
+
+Product.belongsTo(
+  User, ///DEFINE __ UMA RELATION ONE-TO-ONE ENTRE 'Product' e 'User'...
+
+  {
+    constraints: true,
+    onDelete: 'CASCADE', ////ver anotação 'ADICIONANDO UMA RELATIONSHIP one-to-many', LÁ NO MÓDULO 11, 'entendendoSEQUELIZE'... ---> esse objeto são OPÇÕES, é um objeto OPCIONAL PARA CONFIGURAR A RELATION...
+  }
+);
+User.hasMany(Product); //////DEFINE/CRIA UMA RELATION 'ONE-TO-MANY' entre User e Product (cada user terá MÚLTIPLOS PRODUCT)....
+
+///^^^^^professor diz que VOCÊ SÓ PRECISARIA DO CALL de 'User.hasMany(Product, {constraints: true, onDelete: 'CASCADE'})' MAS QUE AQUI ELE GOSTA DE DEIXAR TANTO o 'belongsTo' como o 'hasMany' pARA ___DEIXAR__ BEM CLARO COMO ESSA RELATION DEVE FUNCIONAR...
+
+sequelize
+  .sync ///ISTO AQUI __VAI BASICAMENTE__ CRIAR TABLES, NA DATABASE, PARA ___ TODOS __OS MODELS QUE DEFINIMOS COM sequelize.define(), como visto lá em 'product.js'... (local em que definimos o model de 'Product.js'...)
+  ///e ele vai criar essas tables/vincular seus models a essas tables __JÁ NO INÍCIO DO SEU APP, NO STARTUP...
+
+  // {force: true} ////esta é uma setting EXPLOSIVA. Você SÓ DEVE A UTILIZAR DURANTE O DEVELOPMENT... --> ISSO PQ ELA SEMPRE VAI OVERWRITTAR _ SUAS TABLES 'VELHAS/PRESENTES' __ PELAS TABLES CRIADAS PELO SEQUELIZE/QUE SERÃO CRIADAS PELO SEQUELIZE QUANDO ELE RODA/RODARÁ ESSE '.sync()'... (no caso, só vamos usar isso durante development para OVERWRITTAR NOSSAS TABLES VELHA DE PRODUCTS e USERS, que não tinha  UMA RELATION DEFINIDA ENTRE ELAS, por NOVAS TABLES, COM ESSA RELATION COLOCADA NO SEU INTERIOR...)
+  ()
+  .then((result) => {
+    // console.log(result);
+
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user; /////esse 'user' é automaticamente convertido para ficar 'Promise.resolve(user)', por trás das cenas... (todo OBJETO retornado DENTRO DE UMA PROMISE é wrappado EM UMA NOVA PROMSE.... por trás das cenas...)
+  })
+  .then((user) => {
+    console.log(user);
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// app.listen(3000); ////cria o nosso server... ongoing process...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> DE AGORA EM DIANTE,
+
+
+
+
+
+TODOS OS PRODUCTS QUE FOREM CRIADOS PELO ADMIN/ADMINS DE NOSSA PÁGINA 
+
+DEVERÃO 
+
+
+SER 
+
+ASSOCIADOS 
+
+
+AO 
+
+'CURRENTLY LOGGED IN USER'...
+
+
+
+
+
+
+
+---> e por enquanto, esse 
+
+'logged in user'
+
+
+será 
+
+
+apenas 
+1,
+
+
+será 
+
+
+aquele 
+
+
+
+DUMMY USER
+CRIADO 
+
+
+
+POR LINHAS DE CÓDIGO COMO ESTA:
+
+
+app.use((req, res, next) => {
+
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user; 
+      next(); //precisamos disto, senão a execução do nosso app NODEJS vai parar....
+      console.log(req.user), 'LINE';
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+
+
+-----------> ISSO SIGNIFICA QUE 
+
+
+SE NÓS 
+
+ESTIVERMOS 
+
+LÁ 
+
+
+
+NAQUELE 
+
+
+CONTROLLER 
+
+
+DE 
+
+'admin.js',
+
+
+
+
+QUANDO CRIARMOS UM NOVO PRODUCT COM 
+
+
+
+
+'exports.postAddProduct',
+
+
+que tem este código:
+
+
+exports.postAddProduct = (req, res, next) => {
+  ////VERSÃO QUE USA SEQUELIZE...
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  Product.create(
+    ///EIS O CÓDIGO EM QUESTÃO. --> ISSO VAI __CRIAR UM OBJECT A PARTIR DO MODEL DE 'Product', com aqueles FIELDS QUE DEFINIMOS ALI EMBAIXO ASSIGNADOS àQUELES VALORES de 'title', 'price', etc etc, E AÍ __ VAI AUTOMATICAMENTE __ SALVAR ISSO NA NOSSA DATABASE DE 'products'... (tudo graças ao sequelize)...
+    {
+      description: description,
+      imageUrl: imageUrl,
+      title: title,
+      price: price,
+    }
+  )
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+-------> QUANDO CRIARMOS UM NOVO PRODUCT,
+
+
+
+__ PROFESSOR __ DIZ QUE DEIXAREMOS DE CRIAR 1 PRODUCT 
+
+POR MEIO DO 
+
+
+CÓDIGO 
+
+
+DE 
+
+
+''''
+
+
+
+ Product.create(
+    {
+      description: description,
+      imageUrl: imageUrl,
+      title: title,
+      price: price,
+    }
+  )
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+''''''''',
+
+
+
+
+
+
+
+
+PQ __ AGORA __ NÓS PRECISAMOS __ 
+
+PASSAR 
+
+
+'EXTRA INFORMATION REGARDING THE USER THAT CREATED THAT PRODUCT'...
+
+
+
+
+
+
+--> 
+
+precisamos associar 
+
+essa informação extra aos 
+
+products que 
+
+vão sendo criados..
+
+
+
+
+
+
+
+--> uma maneira de fazer 
+
+
+essa ASSOCIAÇÃO
+
+
+
+
+É ___ SETTAR__ 
+
+
+
+esse 
+
+
+novo 
+
+field 
+
+de 
+
+'userId'
+
+
+que 
+
+
+
+vamos começar a ter nos nossos products... --> OBS:::
+
+
+
+
+
+
+
+OBS::: VOCÊ DEVE SE LEMBRAR --> 
+
+
+O 'userId'
+
+
+
+foi ADICIONADO COMO 'DATABASE FIELD'
+
+
+
+graças àquele código de 
+
+
+'Product.belongsTo(User)'... --> É ISSO QUE SETTOU A RELATION ENTRE 
+
+
+
+O MODEL 'Product' 
+
+e o 
+model 
+
+'User'...
+
+
+
+
+----> CERTO....
+
+
+
+
+
+
+
+
+--> E LÁ EM 
+
+
+''
+
+ Product.create(
+    ///EIS O CÓDIGO EM QUESTÃO. --> ISSO VAI __CRIAR UM OBJECT A PARTIR DO MODEL DE 'Product', com aqueles FIELDS QUE DEFINIMOS ALI EMBAIXO ASSIGNADOS àQUELES VALORES de 'title', 'price', etc etc, E AÍ __ VAI AUTOMATICAMENTE __ SALVAR ISSO NA NOSSA DATABASE DE 'products'... (tudo graças ao sequelize)...
+    {
+      description: description,
+      imageUrl: imageUrl,
+      title: title,
+      price: price,
+    }
+  )
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+'''''',
+
+
+
+
+VAMOS QUERER 
+
+
+
+editar um field extra,
+
+
+vamos querer colocar um 
+
+
+
+
+'userId'... ----------> E O VALOR DESSE ID SERÁ JUSTAMENTE 
+
+
+
+'req.user.id' ----------> 
+
+
+
+
+
+E ESSE 
+
+
+
+objeto sequelize 
+
+'user',
+
+contido 
+
+dentro 
+
+
+do 
+
+
+'req',
+
+
+
+passou a existir graças a este código:
+
+
+
+
+
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+
+    .then((user) => {
+      req.user = user;  ////ESTE CÓDIGO AQUI....
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+É claro que 
+
+essa propriedade/objeto user 
+
+FOI RETRIEVADO 
+
+da nossa própria 
+
+database 
+
+SQL por meio do sequelize,
+
+pois 
+
+
+executamos 
+
+o 
+
+
+método 
+
+'User.findByPk(1)'....--> e, de fato,
+
+
+
+
+
+ESSE CÓDIGO 
+
+AÍ VAI/JÁ PEGOU 
+
+
+
+___ O 
+
+
+
+ÚNICO 'User' que temos na table 
+
+
+de 
+
+'users',
+
+lá na nossa database...
+
+
+
+----> E CONFORME O PROFESSOR NOS EXPLICOU,
+
+
+COMO 
+
+ARMAZENAMOS ESSE 
+
+
+
+OBJETO 'user' no OBJETO REQUEST (ou seja, TODOS OS REQUESTS QUE SERÃO EMITIDOS PELO USUÁRIO CONTERÃO esse 'user', esse objeto aí),
+
+
+
+
+
+
+PODEREMOS CITÁ-LO EM QUALQUER LUGAR DO NOSSO APP NODE.... --> é 
+
+
+por isso 
+
+que 
+o 
+
+
+professor 
+
+pode simplesmente 
+
+escrever 
+
+
+
+
+'''''
+
+
+Product.create(
+    {
+        title: title,
+        price: price,
+        imageUrl: imageUrl, 
+        description: description,
+        userId: req.user.id ////ESTE CÓDIGO AQUI...
+    }
+)
+
+
+
+''''
+
+
+
+
+
+-->  E DENTRO DESSE 'user' 
+objeto sequelize,
+
+TEREMOS 
+
+
+
+
+OS HELPER METHODS DE SEQUELIZE INCLUSOS TBM, O QUE É MT ÚTIL...
+
+
+
+
+
+
+---> OK .... COM 
+
+
+
+ESTE CÓDIGO AQUI:
+
+
+
+
+ Product.create(
+    {
+      description: description,
+      imageUrl: imageUrl,
+      title: title,
+      price: price,
+      userId: req.user.id
+    }
+  )
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+
+,
+
+
+COM ESTE CÓDIGO AÍ,
+
+
+TODOS OS PRODUCT QUE CRIARMOS NO FUTURO 
+
+
+TERÃO 
+
+ESSE 
+
+CAMPO DE 
+
+'userId',
+
+
+com o valor de '1',
+
+
+ASSOCIANDO-OS 
+
+
+
+AO 
+
+
+USER QUE 
+
+EFETIVAMENTE FOI RESPONSÁVEL POR SUA CRIAÇÃO (user de id '1', até agora único, dummy...)
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+TESTAMOS ISSO... .----> 
+
+
+
+CRIAMOS UM NOVO PRODUCT ALEATÓRIO,
+
+
+PARA 
+
+
+VER 
+
+
+SE ESSES CAMPOS REALMENTE FORAM CRIADOS NOS RECORDS/users/products 
+
+
+criados nas nossas tables...
+
+
+
+
+
+
+
+
+--> DEU CERTO... 
+
+
+
+
+
+
+
+-_> agora cada 'product' 
+
+tem 
+
+
+
+
+DOIS 'ids'....
+
+
+
+
+
+
+
+1) 'id' --> É O NÚMERO/IDENTIFICADOR DO PRODUCT __NA SUA PRÓPRIA TABLE DE 'products'...
+
+
+
+
+
+2) 'userId' ---> É O NÚMERO QUE IDENTIFICA O USER QUE EFETIVAMENTE CRIOU ESSE PRODUCT ESPECÍFICO...
+
+
+
+
+
+
+
+
+----> OK.... vemos o userId 
+
+armazenado na nossa table.... 
+
+
+
+
+
+
+
+
+
+
+
+----> MAS PROFESSOR NOS DIZ QUE 
+
+AGORA 
+
+TEMOS 
+
+
+1 
+PEQUENO PROBLEMA.... ---> 
+
+
+
+
+É UMA COISA QUE 
+
+
+PODEMOS MELHORAR... ->  
+
+
+
+
+
+
+
+
+
+
+
+
+é algo que realmente podemos melhorar... -----> 
+
+
+
+
+
+
+
+
+
+NÓS, em 
+
+
+
+''
+
+ Product.create(
+    {
+      description: description,
+      imageUrl: imageUrl,
+      title: title,
+      price: price,
+      userId: req.user.id
+    }
+  )
+    .then((result) => {
+      console.log(result);
+      res.redirect('/admin/product-list-admin');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
+'',
+
+
+
+
+
+
+naquela 
+
+
+escrita de 
+
+
+'userId: req.user.id',
+
+
+
+__FAZEMOS FETCH MANUAL DO 
+
+
+USERID.... --------> 
+
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE ISSO NÃO DÁ MT TRABALHO, ESSA ESCRITA AÍ,
+
+DE 
+
+'RETRIEVE MANUAL' do userId, por meio da escrita 'userId: req.user.id'....
+
+
+
+
+
+
+
+
+------> MAS É CLARO QUE EXISTE _ UMA MANEIRA__ MAIS ELEGANTE __ 
+
+
+DE 
+
+SETTAR ESSE CÓDIGO AÍ,
+
+
+conseguir esse mesmo efeito... --------> É UMA MANEIRA 
+
+
+
+MAIS ELEGANTE 
+
+
+
+QUE 
+
+
+
+
+EVITA A NECESSIDADE DE SETTAR MANUALMENTE O 
+
+'userId'
+
+
+
+quando você cria/updata um product no 
+
+
+
+seu database... 
+
+
+
+
+
+
+
+
+-------> QUANTO A ESSE 'APPROACH ELEGANTE',
+
+professor 
+
+fala 
+
+de 
+
+
+
+UMA OUTRA FEATURE 
+
+DE 
+
+SEQUELIZE........ ------->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+É UMA FEATURE/METHOD __ ARMAZENADA __ DENTRO DO 
+
+
+
+
+OBJETO SEQUELIZE (qualquer objeto sequelize retrievado da DATABASE MYSQL, não precisa obrigatoriamente ser 'user') 
+
+
+
+DE 'user' -------> 
+
+
+
+
+
+
+
+E COMO 
+
+
+ESSE USER 
+
+AGORA ESTÁ ARMAZENADO NO OBJETO 'request'
+
+
+
+daquele que está visitando nossa página,
+
+
+
+
+
+
+
+PODEMOS 
+
+
+USAR __ ESSE 'req.user' 
+
+EM QUALQUER LUGAR 
+
+DE NOSSO 
+
+
+APP... -> 
+
+
+
+E 
+
+ESSE 
+
+
+'req.user'
+
+
+
+CONTÉM 
+
+TODAS AS 
+
+'MAGIC FEATURES '
+
+
+do sequelize... ----------> 
+
+
+
+
+
+
+
+___________ E LÁ, DENTRO ___ DE ESSE OBJETO 
+
+
+
+'user',
+
+que acessamos 
+
+
+por 
+
+
+
+meio 
+
+de 
+
+
+'req.user',
+
+
+___TEREMOS 
+
+
+ACTUALLY_ UM 
+
+
+MÉTODO
+
+
+
+___MÁGICO___, 
+
+CHAMADO 
+
+DE 
+
+
+
+'.createProduct()' ....     é realmente mágico, pois é DINÂMICO...
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  ////VERSÃO QUE USA SEQUELIZE...
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+
+  req.user.createProduct( ///////MÉTODO ''MÁGICO'''__ DO sequelize.... --> é mais conveniente do que o código de '.create()' visto logo abaixo, pois vai ADICIONAR o campo 'userId' ao nosso 'Product' AUTOMATICAMENTE... (não vamos precisar escrever aquele 'userId: req.user.id', visto logo abaixo no '.create()')
+
+
+  );
+
+  // Product.create( //// MÉTODO 'NÃO MÁGICO' do sequelize.... ----> é melhor usar a versão 'mágica' desse method, vista logo acima...
+  
+  //   ///EIS O CÓDIGO EM QUESTÃO. --> ISSO VAI __CRIAR UM OBJECT A PARTIR DO MODEL DE 'Product', com aqueles FIELDS QUE DEFINIMOS ALI EMBAIXO ASSIGNADOS àQUELES VALORES de 'title', 'price', etc etc, E AÍ __ VAI AUTOMATICAMENTE __ SALVAR ISSO NA NOSSA DATABASE DE 'products'... (tudo graças ao sequelize)...
+  //   {
+  //     description: description,
+  //     imageUrl: imageUrl,
+  //     title: title,
+  //     price: price,
+  //     // userId: req.user.id ///////approach __ NÃO MUITO ELEGANTE (não é um MAGIC METHOD, método mágico do sequelize....)__, usado para settar nossa RELATION/association entre 'Product' e 'User'... ---> ver aula 159 do professor (using magic association) e também o arquivo de texto 'usando magic association', do módulo 11... //// OBS:: VOCÊ DEVE USAR __ O 'MÉTODO MÁGICO' DE 'createProduct()', do sequelize.... --> esse método é MA´GICO PQ ELE´E DINÂMICO, seu nome MUDA DE ACORDO COM A RELATION QUE VOCÊ SETTOU E OS NOMES DOS SEUS 'models' envolvidos na relation...
+  //   }
+  // )
+  //   .then((result) => {
+  //     console.log(result);
+  //     res.redirect('/admin/product-list-admin');
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+};
+
+
+
+
+
+
+
+
+
+------------> OK.......
+
+
+
+
+MAS DE ONDE DIABOS 
+
+ESTAMOS 
+
+CONSEGUINDO 
+
+ESSE 
+
+
+'MÉTODO MÁGICO'? ------> 
+
+
+
+PROFESSOR EXPLICA QUE 
+
+
+ELE PODE SER ENCONTRADO NO OFFICIAL DOCS 
+
+
+
+DO 
+
+SEQUELIZE...
+
+
+
+
+
+
+
+
+--> (isso pq, por alguma razão, não consigo console.loggar seus methods 
+
+
+
+no meu app....
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... NOS DOCS OFICIAIS,
+
+
+APRENDEMOS 
+
+QUE 
+
+o 
+
+SEQUELIZE 
+
+
+___ADICIONA MÉTODOS ESPECIAIS AOS 
+
+
+'OBJETOS SEQUELIZE',
+
+
+
+
+
+DEPENDENDO DAS ASSOCIATIONS QUE VOCÊ FEZ/FAZ....
+
+
+
+
+ex:
+
+
+
+
+any-to-many association with a join table.
+
+When the join table has additional attributes, these can be passed in the options object:
+
+UserProject = sequelize.define('user_project', {
+  role: Sequelize.STRING
+});
+User.belongsToMany(Project, { through: UserProject });
+Project.belongsToMany(User, { through: UserProject });
+// through is required!
+
+user.addProject(project, { through: { role: 'manager' }});
+All methods allow you to pass either a persisted instance, its primary key, or a mixture:
+
+const project = await Project.create({ id: 11 });
+await user.addProjects([project, 12]);
+If you want to set several target instances, but with different attributes you have to set the attributes on the instance, using a property with the name of the through model:
+
+p1.UserProjects = {
+  started: true
+}
+user.setProjects([p1, p2], { through: { started: false }}) // The default value is false, but p1 overrides that.
+Similarly, when fetching through a join table with custom attributes, these attributes will be available as an object with the name of the through model.
+
+const projects = await user.getProjects();
+const p1 = projects[0];
+p1.UserProjects.started // Is this project started yet?
+})
+In the API reference below, add the name of the association to the method, e.g. for User.belongsToMany(Project) the getter will be user.getProjects().
+
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+E PARA ASSOCIATIONS 
+
+DE 
+
+
+
+'belongsTo()'
+
+
+
+e 
+
+
+'hasMany()',
+
+
+
+como ESCREVEMOS LÁ NO APP.JS,
+
+
+
+
+
+
+
+
+__o  SEQUELIZE ADICIONA 
+
+
+
+
+METHODS __ QUE 
+
+
+NOS DEIXAM __ CRIAR
+
+
+'a new associated object'...
+
+
+
+
+
+
+(e também a manipular objects que já foram CRIADOS, e que estão associados a 
+
+esse 
+
+model seu...
+)
+
+
+
+
+
+
+
+
+
+
+PENSE ASSIM:
+
+
+
+
+
+
+req.user.createProduct();
+
+
+
+
+
+
+
+
+
+--> os PRODUCTS __ PERTENCEM __ aos users...  (isso pq 'Product.belongsTo(User)', lá em 'app.js'...)
+
+
+
+
+
+
+
+e é por isso que 
+
+quando 
+
+chamarmos 
+
+
+'req.user.createProduct()',
+
+
+
+
+
+ESSE PRODUCT AÍ, criado por meio de 'createProduct',
+
+
+__JÁ VAI TER 
+
+
+UM 
+
+
+'userId' 
+
+
+EQUIVALENTE A 
+
+'req.user.id'
+
+
+___ DENTRO DE SEU OBJECT/INTERIOR....
+
+
+
+
+
+
+
+
+
+--> O QUE O 'sequelize' faz, aqui, é simplesmente 
+
+
+
+
+colocar um 
+
+
+'create' 
+
+
+ANTES 
+
+
+
+do method que você usou....
+
+
+
+
+
+
+por ex:
+
+
+
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
+
+
+
+VIRA 
+
+
+
+
+'createProduct(...)', 
+
+
+
+
+pq O 
+
+
+
+'create' É COLOCADO NO SEU INÍCIO...
+
+
+
+
+
+
+-----> O CÓDIGO FICA ASSIM:
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  ////VERSÃO QUE USA SEQUELIZE...
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+    ///VVVVVVV ---> este método 'createProduct' foi/é adicionado no OBJETO SEQUELIZE de 'user' __NO EXATO MOMENTO EM QUE DEFINIMOS UMA ASSOCIATION ENTRE 'User' e 'Product', vista lá no 'app.js', com os métodos 'Product.belongsTo(user)'...  
+  req.user.createProduct( ///////MÉTODO ''MÁGICO'''__ DO sequelize.... --> é mais conveniente do que o código de '.create()' visto logo abaixo, pois vai ADICIONAR o campo 'userId' ao nosso 'Product' AUTOMATICAMENTE... (não vamos precisar escrever aquele 'userId: req.user.id', visto logo abaixo no '.create()')
+    {
+      title: req.body.title,
+      price: req.body.price,
+      imageUrl: req.body.imageUrl,
+      description: req.body.description
+
+        ///userId: req.user.id; //////FIELD e valor de field adicionado __ AUTOMATICAMENTE pelo sequelize, por estarmos usando esse MAGIC METHOD de 'req.user.createProduct()'  (pq esse 'createProduct' realmente passa a existir dentro de 'user', devido à relation estabelecida em app.js pela escrita de 'Product.belongsTo(user)'....)
+
+
+    }
+
+  );
+
+  // Product.create( //// MÉTODO 'NÃO MÁGICO' do sequelize.... ----> é melhor usar a versão 'mágica' desse method, vista logo acima...
+  
+  //   ///EIS O CÓDIGO EM QUESTÃO. --> ISSO VAI __CRIAR UM OBJECT A PARTIR DO MODEL DE 'Product', com aqueles FIELDS QUE DEFINIMOS ALI EMBAIXO ASSIGNADOS àQUELES VALORES de 'title', 'price', etc etc, E AÍ __ VAI AUTOMATICAMENTE __ SALVAR ISSO NA NOSSA DATABASE DE 'products'... (tudo graças ao sequelize)...
+  //   {
+  //     description: description,
+  //     imageUrl: imageUrl,
+  //     title: title,
+  //     price: price,
+  //     // userId: req.user.id ///////approach __ NÃO MUITO ELEGANTE (não é um MAGIC METHOD, método mágico do sequelize....)__, usado para settar nossa RELATION/association entre 'Product' e 'User'... ---> ver aula 159 do professor (using magic association) e também o arquivo de texto 'usando magic association', do módulo 11... //// OBS:: VOCÊ DEVE USAR __ O 'MÉTODO MÁGICO' DE 'createProduct()', do sequelize.... --> esse método é MA´GICO PQ ELE´E DINÂMICO, seu nome MUDA DE ACORDO COM A RELATION QUE VOCÊ SETTOU E OS NOMES DOS SEUS 'models' envolvidos na relation...
+  //   }
+  // )
+  //   .then((result) => {
+  //     console.log(result);
+  //     res.redirect('/admin/product-list-admin');
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+};
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK..... --> isso feito,
+
+professor 
+
+
+explica que 
+
+
+podemos concluir pelo chain 
+
+
+
+dos 
+
+
+nossos 
+
+then e catch blocks 
+
+anteriores,
+
+
+nesse código...
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.postAddProduct = (req, res, next) => {
+  ////VERSÃO QUE USA SEQUELIZE...
+
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+    ///VVVVVVV ---> este método 'createProduct' foi/é adicionado no OBJETO SEQUELIZE de 'user' __NO EXATO MOMENTO EM QUE DEFINIMOS UMA ASSOCIATION ENTRE 'User' e 'Product', vista lá no 'app.js', com os métodos 'Product.belongsTo(user)'...  
+  req.user.createProduct( ///////MÉTODO ''MÁGICO'''__ DO sequelize.... --> é mais conveniente do que o código de '.create()' visto logo abaixo, pois vai ADICIONAR o campo 'userId' ao nosso 'Product' AUTOMATICAMENTE... (não vamos precisar escrever aquele 'userId: req.user.id', visto logo abaixo no '.create()')
+    {
+      title: req.body.title,
+      price: req.body.price,
+      imageUrl: req.body.imageUrl,
+      description: req.body.description
+
+        ///userId: req.user.id; //////FIELD e valor de field adicionado __ AUTOMATICAMENTE pelo sequelize, por estarmos usando esse MAGIC METHOD de 'req.user.createProduct()'  (pq esse 'createProduct' realmente passa a existir dentro de 'user', devido à relation estabelecida em app.js pela escrita de 'Product.belongsTo(user)'....)
+
+
+    }
+
+  )
+       .then((result) => { ///EIS O CÓDIGO EM QUESTÃO.
+       console.log(result);
+       res.redirect('/admin/product-list-admin');
+     })
+     .catch((err) => {
+       console.log(err);
+   });
+};
+
+
+
+
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK.... O RESTO DAS COISAS NÃO VAI MUDAR,
+
+
+MAS O QUE 
+
+INTERESSA 
+
+É 
+QUE 
+
+
+
+__ ESSE 
+
+'req.user.createProduct()'
+
+JÁ 
+
+VAI NOS CRIAR 
+
+
+
+AUTOMATICAMENTE UM 'CONNECTED MODEL'...
+
+
+
+
+
+
+
+-----> PODEMOS TESTAR ISSO COM O ADD DE UM NOVO PRODUCT...
+
+
+
+
+
+
+
+
+
+
+CHECAMOS NOSSA DATABASE,
+
+E AGORA 
+
+PERCEBEMOS QUE REALMENTE,
+
+OS 
+
+PRODUCTS ESTÃO FICANDO COM AQUELE 
+
+FIELD 
+
+de 
+
+'userId',
+
+TUDO 
+
+
+POR CAUSA DE SUA 
+
+
+ADIÇÃO 
+
+IMPLÍCITA 
+
+
+EM RAZÃO 
+
+DO FUNCIONAMENTO DO SEQUELIZE E SEU 
+
+
+MAGIC METHOD 
+
+DE 
+
+'.createXXXX', no caso, '.createProduct()'....
+
+
+
+
+
+
+
+--> É A 'MAGIC WAY' DE 
+
+
+
+FAZER CONNECT DE SEUS MODELS,
+
+
+
+tudo graças 
+
+ao sequelize.... -----> AGORA 
+
+NOSSOS MODELS 
+
+
+
+CONHECEM 1 AO OUTRO....
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1294 @@
+
+
+
+
+
+
+
+
+
+
+
+---> AGORA É HORA DE ADICIONAR NOSSO BUTTON DE 'CHECKOUT'.... ---> 
+
+
+para isso,
+
+vamos até o view de 
+
+'cart'
+
+
+
+
+
+E ENTÃO 
+
+
+
+
+
+colocamos 
+
+
+
+um BUTTON 
+
+
+___ EMBAIXO DA UL,
+
+
+
+
+
+ele coloca 
+
+
+<form action="/cart/order" method="POST"> 
+<button class="btn>Place an Order</button>
+
+
+</form>
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+---> AGORA QUEREMOS 
+
+
+QUE 
+
+ESSE 
+
+BUTTON 
+
+DE 
+
+'Order Now'
+
+
+
+
+FAÇA O
+
+
+'MOVE' dos 
+
+
+'cartItems'
+
+
+
+
+
+
+__DAQUELE ___ USUÁRIO ___ ESPECÍFICO/cart específico,
+
+
+
+
+
+PARA __ DENTRO _ 
+
+DE 
+'ORDERITEMS',
+
+
+nossa outra table...
+
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+------> OU SEJA,
+
+
+
+VAMOS QUERER 
+
+
+
+
+__cRIAR UMA ORDER COM TODOS 
+
+OS 
+
+ELEMENTOS 
+
+
+QUE ESTÃO VINCULADOS àQUELE CART, lá em 
+
+'cart-items',
+
+
+
+e 
+
+essa 
+
+ORDER, por sua vez,
+
+
+ESTÁ/FICA VINCULADA 
+
+
+AO ID 
+
+
+DOS 
+
+
+
+'orderItems',
+
+na table 'orderItems'... ('orderId', lá em 'orderItems'...)
+
+
+
+
+
+
+
+
+
+
+----> professor adiciona 
+
+
+3 products 
+
+
+na lista de products... 
+
+
+
+
+
+
+
+OK.... 
+
+
+
+O BOTÃO 
+
+DEVE:
+
+
+
+1) CRIAR UM NOVO 'order'
+
+
+
+
+COM ESSES 
+
+ITEMS 
+
+VINCULADOS AO USER 
+
+
+
+
+2) 'CLEAR' o cart, dar CLEAR nos 'cartItems' vinculados 
+
+
+àquele cart específico...
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+VAMOS 
+
+ATÉ 
+
+
+ao controller 
+
+
+de 
+
+
+
+
+'shop.js'
+
+
+e escrevemos:
+
+
+
+
+
+
+
+
+exports.postOrder = (req, res, next) => {
+
+
+}
+
+
+
+
+
+
+
+
+
+
+--> AÍ TAMBÉM CRIAMOS UMA ROUTE PARA 
+
+ESSE NEGÓCIO,
+
+
+
+com um código de 
+
+
+
+
+'router.post('/cart/order', shopController.postOrder)'...
+
+
+
+
+
+
+-------------------
+
+
+
+--> O 'postOrder'
+
+
+deve:
+
+
+
+
+
+
+
+
+
+
+1) TAKE ALL THE CARTITEMS E ENTÃO 
+
+__OS MOVER _ PARA 
+
+
+__DENTRO 
+
+DE 
+
+
+'orderItems'...
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, DEVEMOS PRIMEIRAMENTE CONSEGUIR TODOS OS 
+'CARTITEMS',
+
+
+
+por meio 
+do call 
+
+
+de 
+
+
+
+
+
+'req.user.getCart()'....
+
+
+
+
+
+
+
+--> ISSO VAI NOS DAR ACESSO AO CART,
+
+
+como fizemos anteriormente....
+
+
+
+
+
+
+
+
+
+-> COM ACESSO AO CART,
+
+
+PODEMOS CONSEGUIR ACESSO
+
+A TODOS 
+
+OS 
+
+
+PRODUCTS VINCULADOS A ELE,
+
+por meio 
+
+
+
+de 
+
+
+'cart.getProducts()'...
+
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          cart.getProducts();
+        }
+
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+
+------------------------------
+
+
+
+ADICIONAMOS UM OUTRO THEN BLOCK,
+para então trabalhar com os PRODUCTS que GETTAMOS..
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          return cart.getProducts();
+        }
+
+      )
+      .then(
+          (products) => {
+
+console.log(products);
+
+          }
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+---------------------------
+
+
+
+
+
+
+
+
+
+O PROFESSOR ENTÃO CONSOLE.LOGGA 
+
+ESSES PRODUCTS:
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          return cart.getProducts();
+        }
+
+      )
+      .then(
+          (products) => {
+
+console.log(products);
+
+          }
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+-----------> 
+
+
+
+
+AGORA, EXAMINANDO O TERMINAL/CONSOLE,
+
+
+
+VEMOS OS PRODUCTS QUE FORAM RETRIEVADOS... --> 
+
+
+
+E 
+
+
+CADA 
+1 
+
+DELES
+ 
+
+
+ POSSUI UMA 
+
+
+ PROPRIEDADE 
+
+
+
+ de 
+
+ 'cartItem',
+
+ QUE POR SUA VEZ 
+
+
+ NOS DÁ 
+
+ INFO 
+
+
+
+ __SOBRE __ O CARTITEM 
+
+
+ nessa 
+
+
+ 'in-between table' (o cart-item associado a esse PRODUCT...)
+
+
+
+
+
+
+
+
+
+
+ --> AGORA A IDEIA É MOVER ESSES 
+
+ 'products'
+
+ PARA 
+
+ DENTRO 
+
+
+ DE UMA 
+
+ ORDER QUE VAMOS CRIAR AGORA,
+
+
+
+
+
+
+
+ --> POR ISSO VAMOS IMPORTAR 
+ O 
+
+ MODEL 
+
+ de 
+
+ 'Order'.... 
+
+
+
+
+
+
+
+
+
+
+
+
+ ---> MAS PROFESSOR DIZ QUE __ NÃO PRECISAMOS __ IMPORTAR 
+
+
+
+ o model 'Order'
+  
+  por meio do código 
+
+  de 
+
+
+  'const Order = require('../models/order')',
+
+
+
+
+
+  JUSTAMENTE PQ 
+
+
+  __ AS ORDERS ___ TEM RELAÇÃO COM O __USER__ EXATAMENTE COMO 
+
+
+  o 
+
+  'cart' 
+
+  tinha... 
+
+
+
+
+
+
+
+
+-----> COMO VAMOS _ CRIAR UMA 'NEW ORDER' 
+
+
+ASSOCIADA A ESSE USER ESPECÍFICO QUE ESTÁ USANDO NOSSO APP,
+
+
+
+professor 
+
+
+diz uqe 
+
+devemos 
+
+executar algo como 
+
+
+'req.user.createOrder()'.... ----> OU SEJA, 
+
+
+
+EXATAMENTE A MESMA SINTAXE QUE 
+
+USAMOS 
+
+
+LÁ 
+
+EM 
+
+'app.js',
+
+com o 
+
+
+'return user.createCart()'....,
+
+
+
+MAS AGORA 
+
+
+COM 
+
+
+
+ESSE 
+
+RECORD DE 
+
+'order'...
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          return cart.getProducts();
+        }
+
+      )
+      .then(
+          (products) => {
+
+                req.user.createOrder(); ///EIS O CÓDIGO EM QUESTÃO.
+
+          }
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+
+
+
+-> ISSO VAI CRIAR UMA NOVA 'ORDER', 
+
+
+
+associada ao nosso USER...
+
+
+
+-----------------------
+
+
+É CLARO QUE ESSE CALL VAI NOS DAR UMA 
+
+'ORDER',
+
+
+
+MAS É ÓBVIO QUE 
+
+
+
+VAMOS PRECISAR MAIS DO QUE UMA ORDER,
+
+
+PRECISAMOS 
+
+'ASSOCIATE OUR PRODUTS TO THAT ORDER'... -----> 
+
+
+
+PARA ISSO,
+
+
+
+
+
+
+PROFESSOR DIZ QUE VAI QUERER MANIPULAR ESSA ORDER CRIADA 
+
+por 
+
+'req.user.createOrder()'
+
+lá 
+
+NO SEU THEN BLOCK,
+
+
+algo tipo assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          return cart.getProducts();
+        }
+
+      )
+      .then(
+          (products) => {
+
+                req.user.createOrder()
+                .then() ///EIS O CÓDIGO EM QUESTÃO
+
+
+
+                .catch(
+
+                  (err) => {
+                    console.log(err);
+                  }
+                )
+
+          }
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+--------------
+
+
+
+DENTRO DESSE THEN BLOCK,
+
+VAMOS FAZER GET DESSA 
+
+'CREATED ORDER',
+
+
+
+
+
+E AGORA VOU QUERER 'ASSOCIATE MY PRODUCTS TO THAT ORDER'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          return cart.getProducts();
+        }
+
+      )
+      .then(
+          (products) => {
+
+                req.user.createOrder()
+                .then(
+
+             (order) => {     ///EIS O CÓDIGO EM QUESTÃO
+
+
+
+             }             
+
+                ) 
+
+
+
+                .catch(
+
+                  (err) => {
+                    console.log(err);
+                  }
+                )
+
+          }
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+PODEMOS 
+
+ASSIGNAR ESSES PRODUCTS 
+
+
+
+FACILMENTE,
+
+
+por meio 
+
+
+do 
+
+call 
+
+
+
+de 
+
+
+
+'order.addProducts()',
+
+
+
+
+E AÍ __ PASSAMOS __ OS 
+
+
+
+NOSSOS 
+
+'products'
+
+
+como __ PARÂMETRO...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+
+
+          return cart.getProducts();
+        }
+
+      )
+      .then(
+          (products) => {
+
+                req.user.createOrder()
+                .then(
+
+             (order) => {    
+
+                order.addProducts(products);           ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'...
+
+
+             }             
+
+                ) 
+
+
+
+                .catch(
+
+                  (err) => {
+                    console.log(err);
+                  }
+                )
+
+          }
+      )
+
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+exports.orderPost = (req, res, next) => {
+
+
+
+      req.user.getCart(
+      ).then(
+
+        (cart) => {
+
+          console.log(cart);
+         return cart.getProducts(
+         );
+        }
+
+      )
+      .then(
+        (products) => {
+
+          console.log(products, 'LINEE');
+
+           req.user.createOrder(  //////método mágico criado com  ''''User.hasMany(Order);''' e   '''Order.belongsTo(User);'''
+           )
+            .then(
+              (order) => {
+                                  ///aqui vemos um uso de MAP para __ EDITAR/ACRESCENTAR_  UM FIELD EXTRA (quantity) aos PRODUCTS que serão convertidos/adicionados como 'orderItem' na table de 'orderItems'...
+               return order.addProducts(products.map(  ///////// ///EIS O CÓDIGO EM QUESTÃO. quando falamos de 'Products', aqui, falamos que esses 'records' vão ser adicionados LÁ NA TABLE DE 'orderItems', exatamente como visto neste código aqui: '''' Order.belongsToMany(Product, {through: OrderItem});  e  '''' Product.belongsToMany(Order, {through: OrderItem});  '''''''' ------> PQ SÃO ESSAS 2 LINHAS DE CÓDIGO QUE SETTARAM ESSE COMPORTAMENTO E ESSE MAGIC METHOD DE 'addProducts' nesse OBJETO/instance de 'order'... --> como consequência disso, teremos records/linhas 'orderItem' ADICIONADAS À table de 'orderItems', e cada um desses records terá um field 'orderId', VINCULADO ESPECIFICAMENTE A ESSA 'order' que escrevemos em 'order.addProducts()', aqui...
+                 product => {
+
+                  product.orderItem = { quantity: product.cartItem.quantity} //professor escreve esse 'product.orderItem' PARA __EDITAR__  O VALOR DE CADA propriedade 'mágica' 'orderItem' dentro de cada 1 de nossos product.... --> e ele vai editar isso para COLOCAR O VALOR CORRETO DO FIELD 'quantity' de cada um desses records 'orderItem', justamente por meio do acesso ao valor 'product.cartItem.quantity', específico a esse product... 
+                   return product;
+                 }
+               ));
+              }
+            )
+            .catch(err => {console.log(err)})
+          }
+      )
+      .then(
+        result => {
+          res.redirect('/orders');
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      )
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+------> É ASSIM QUE FICOU O MEU CÓDIGO... 
+
+
+(bem complexo 
+
+
+esse código de sequelize,
+
+
+seria bom dar uma olhada nos docs mais tarde...)
+
+
+
+
+
+
+--> QUANDO SALVAMOS TUDO ISSO,
+
+
+
+
+
+TESTAMOS NOSSA PÁGINA...
+
+
+
+
+
+
+
+--> AGORA, QUANDO COLOCAMOS 'place an order',
+
+
+
+VAMOS 
+
+
+_sER REDIRECIONADOS A 'orders',
+
+
+
+
+ONDE AINDA NÕA TEREMOS COISA ALGUMA... (mas no futuro, teremos...)
+
+
+
+-----------------------
+
+
+
+--> CERTO.... MAS UM PROBLEMA É QUE 
+
+
+
+__A PAGE__ DE 
+
+
+
+'Cart'
+
+AINDA ESTÁ COM NOSSO CART FORMADO... --> 
+
+
+PRECISAMOS 
+
+
+
+____ESVAZIAR ESSE 'CART'
+
+
+QUANDO UMA ORDER 
+
+
+for formulada com aqueles products....
+
+
+
+
+
+
+
+
+--> e também precisamos DISPLAYAR 
+
+A DATA DE NOSSA 
+
+
+ORDER 
+
+lá na page 
+
+de 
+
+
+'orders'...
+
+
+
+
+
+
+-> MAS NA TABLE DE 
+
+
+'orders' 
+
+vamos 
+
+
+VER A ORDER QUE FIZEMOS,
+
+E EM 
+
+'orderItems'
+
+
+VEREMOS OS PRODUCTS 
+
+RELACIONADOS A ESSA ORDER... (é só checar o 'orderId' field...)
+
+
+
+
+
+
+
+
+OK.... AGORA VEREMOS A ÚLTIMA AULA DO MÓDULo.....

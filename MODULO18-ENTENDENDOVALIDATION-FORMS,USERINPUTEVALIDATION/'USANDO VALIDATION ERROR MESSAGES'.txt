@@ -1,0 +1,467 @@
+
+JÁ CONSEGUI USAR UMA DESSAS MESSAGES...
+
+
+
+
+
+
+
+--> MEU CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+
+  const errors = validationResult(req); //ver aula 286 - SETUP BASIC VALIDATION... --> esse method de 'validationResult' SEMPRE VAI QUERER NOSSO OBJETO REQUEST, e só vai funcionar se estivermos usando o method/middleware de 'check' NAS NOSSAS ROUTES.... (check === OUTRO METHOD IMPORTADO DE 'express-validator'...)
+
+
+  console.log(errors.array()[0].msg);
+
+  if(!errors.isEmpty()) { ///ou seja, se NOSSO OBJETO/ARRAY 'errors' __ NÃO ESTIVER EMPTY (ou seja, o email que o user inputtou é INVÁLIDO E GEROU ERRORS), vamos querer executar esse código do block...
+///isEmpty é um method que existe DENTRO DO OBJETO RETORNADO por 'validationResult(req'), e vai sempre retornar OU TRUE OU FALSE (dependendo se estiver VAZIO ou PREENCHIDO COM ERRORS)...
+    return res.status(422).render(
+                //OU SEJA, SE NÓS/USER (validation failed)_ __ FALHARMOS_, VAMOS QUERER __ SIMPLESMENTE 'RENDER THE PAGE AGAIN'.. ( E NÃO VAMOS REDIRECIONAR, E SIM __ APENAS RENDERIZAR A PAGE DE 'SIGNUP' MAIS UMA VEZ)...
+
+                'auth/signup', { ///mesma page de signup, vamos querer renderizar de novo nessa hipótese...
+                  path: '/signup',
+                  pageTitle: 'Signup',
+                  errorMessage: errors.array()[0].msg ////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+                }
+
+    ); 
+
+  }
+
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+NÓS ADICIONAMOS UMA VALIDATION BEM BÁSICA, E AGORA JÁ CONSEGUIMOS 
+
+
+
+O __ RETURN DE UMA MESSAGE DE ERROR E 1 RE-RENDER 
+
+
+DE 
+
+NOSSA PAGE,
+
+EM 
+CASOS 
+
+DE 
+
+VALIDATION ERRORS...
+
+
+
+
+
+
+
+
+
+------> ok, professor ESCREVEU __ EXATAMENTE ___ A MESMA COISA QUE 
+
+
+EU ESCREVI.... --> MAS 
+
+
+O PROBLEMA 
+É QUE 
+
+POR MEIO DO WRITE DE 
+
+''
+
+
+
+  errorMessage: errors.array()[0].msg ////alteração. (precisamos de '.array' nesse objeto 'errors' do express-validator PARA __CONESGUIR _ RETORNAR 1 ARRAY COM NOSSOS ERRORS...)
+
+
+
+  '',
+
+
+
+  VAMOS SEMPRE 
+
+
+
+
+  FAZER GET  APENAS __ DO PRIMEIRO__ VALOR NO ARRAY DE 'errors',
+
+  E NÃO DO RESTO... (para que conseguíssemos OUTPUTTAR MAIS DE 1 'ERROR' 
+  
+  NESSE ARRAY, SERÍAMOS OBRIGADOS A MUDAR TODA A LÓGICA DE NOSSA VIEW e 
+  
+  desse 
+  
+  'errorMessage'...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -------> OK...  professor fez exatamente o que eu fiz...
+
+
+
+
+
+
+
+
+  ------> MAS PROFESSOR NOS FALA DE ALGO BÔNUS:
+
+
+
+
+  ELE NOS DIZ QUE 
+
+  __PODEMOS NÃO SÓ 
+
+
+  'OUTPUT THAT MESSAGE',
+
+  MAS 
+QUE 
+
+
+  TAMBÉM 
+
+
+
+  __ PODEMOS 'CUSTOMIZE IT'... --------> 
+
+
+
+
+
+
+
+  PARA ISSO,
+
+
+  DEVEMOS 
+  IR 
+
+  ATÉ 
+
+
+
+
+
+
+  AO ARQUIVO route de 
+
+  'auth.js',
+
+
+
+
+
+  ___ E __ LÁ,
+   
+   DEPOIS 
+
+   DE 
+
+
+
+
+   'isEmail()',
+
+
+
+   VOCÊ PODE 
+
+   ADICIONAR/CHAINAR 
+
+   O 
+
+   METHOD DE 
+
+   'withMessage()'............. ------------> O PROFESSOR NOS EXPLICA QUE 
+
+
+   __ESSE 
+
+   METHOD 
+
+
+   '.withMessage()'
+
+
+
+
+   _____vAI SEMPRE __ SE REFERIR à 'VALIDATION LOGIC' 
+
+ 
+
+
+ __ QUE _ FOI  ESCRITA POUCO ANTES DELA... (ou seja, 'isEmail()', nesse caso...) ------> ISSO 
+
+
+
+ PQ 
+
+
+
+ VOCÊ SEMPRE PODERIA 
+
+ ESCREVER ___ MÚLTIPLOS __ '.check()'  (tipo 'check().check().check().'...) ..... 
+
+
+
+
+
+
+
+
+
+
+
+
+ok, o que interessa é que esse 'withMessage()"
+
+VAI __SEMPRE __ SE REFERIR __ AO CHECK 
+
+
+IMEDIATAMENTE ANTERIOR A SI... ------> 
+
+
+
+
+ex:
+
+
+
+
+
+check('email').isEmail().withMessage().check('STRING').isAlphanumeric().withMessage()
+                          ^^^VAI SE REFERIR À 'isEmail()'                   ^^^VAI SE REFERIR À 'isAlphanumeric()'...
+
+
+
+
+
+
+
+------> 'isAlphanumeric' -----> É PARA __ CHECAR__ 
+
+
+SE 
+
+
+O INPUT DO USER __ REALMENTE__ CONTINHA APENAS 
+
+'NUMBERS' 
+
+E 
+
+'KEY CHARACTERS'... (sem SÍMBOLOS, PORTANTO...)
+
+
+
+
+
+
+
+
+
+------> OK....
+
+
+
+
+
+NESSE 'withMessage()'
+
+DE AGORA,
+
+PROFESSOR EXPLICA QUE PODERÍAMOS/PODEMOS __ ADICIONAR 
+ALGO como 
+
+
+
+'Please enter a valid email', 
+
+OU ALGO ASSIM.... ------> 
+
+
+
+
+
+
+
+
+
+SE VOCÊ ESCREVER ISSO AÍ,
+ 
+
+ ESSA 
+
+ STRING de 
+
+
+ 'PLease enter a valid email'
+
+
+
+ __ VAI SER ADICIONADA NAQUELE _ ARRAY DE 'msg', LÁ NO ARRAY de 'errors':
+
+
+
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+ 
+router.post('/signup', 
+
+check('email').isEmail().withMessage('Please enter a valid email address.'),   
+                          
+authController.postSignup);
+
+
+
+
+
+--------------
+
+
+
+
+
+
+
+NA VERDADE, O QUE 'withMessage()'
+
+faz é __ SUBSTITUIR_ TODO 
+
+
+O 
+
+
+ARQUIVO 
+
+
+''
+
+
+[
+  {
+    value: 'mad',
+    msg: 'Invalid value',
+    param: 'email',
+    location: 'body'
+  }
+]
+
+
+
+''
+
+PELA 
+
+
+STRING QUE VOCê DEFINIU.... --> no caso,
+
+é 
+
+
+a 
+string 
+
+
+''Please enter a valid email address.''
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+MAS AINDA ASSIM, ESSA É UMA MANEIRA DE 'WORKING WITH AND CUSTOMIZING MESSAGES..'
+
+
+
+
+
+
+
+
+
+
+
+-------> E O PROFESSOR MENCIONOU ANTERIORMENTE _ QUE PODEMOS _ ADICIONAR 
+
+
+MAIS 
+
+'VALIDATORS'
+
+
+
+AO 
+
+
+
+
+NOSSO 
+
+
+APP,
+
+
+
+
+E ISSO É ALGO QUE VEREMOS NA PRÓXIMA LIÇÃO....

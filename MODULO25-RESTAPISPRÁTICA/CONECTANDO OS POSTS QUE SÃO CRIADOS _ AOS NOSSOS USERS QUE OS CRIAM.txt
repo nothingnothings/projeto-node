@@ -1,0 +1,3637 @@
+
+
+
+
+
+
+
+
+
+--> VOU TENTAR FAZER ISSO SOZINHO...
+
+
+
+
+
+
+
+
+
+
+
+
+--> LÁ EM 
+
+
+
+'feed.js',
+
+
+TENHO O SEGUINTE CÓDIGO DE 'CREATE A POST':
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = new Post({
+      title: title,
+      content: content,
+      // imageUrl: 'DUMMY',
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        name: 'Maximillian',
+      },
+      //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+    });
+
+    post
+      .save()
+      .then((result) => {
+        console.log(result);
+        res.status(201).json({
+          message: 'Post created successfully',
+          post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+      });
+  }
+};
+
+
+
+
+
+
+
+
+------------------------------------------------------------------
+
+
+
+
+
+para ver como 
+
+
+
+___ASSIGNAR__ ESSE POST QUE É CRIADO,
+ 
+
+
+ A 1 USER ESPECÍFICO,
+
+
+ POSSO 
+
+
+ RECORRER às ANOTAÇÕES ANTERIORES 
+
+
+
+
+ sobre isso, 
+
+
+
+ de meu projeto anterior, dos products...:
+
+
+
+
+
+
+ exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+
+  const validationErrors = errors.array();
+
+  console.log(validationErrors);
+
+  const title = req.body.title;
+  // const imageUrl = req.body.imageUrl; ///versão que ainda usava urls..
+  // const image = req.body.image; ////versão que usa o FILE UPLOAD de uma IMAGE...
+  const image = req.file;
+
+  console.log(image, 'POSTADDPRODUCT');
+
+  const price = req.body.price;
+  const description = req.body.description;
+
+  if (!image) {
+    ///se image estiver como UNDEFINED, isso significa que o multer RECUSOU o arquivo... --> se ele RECUSOU O ARQUIVO, vamos querer RE-RENDERIZAR A PAGE DE ADD/EDIT PRODUCT e aí __ INFORMAR O USER (por meio de 'errorMessage') QUE __ ELE INPUTTOU/SUBMITTOU UMA IMAGE INVÁLIDA (ao mesmo tempo que enviamos um RESPONSE STATUS DE 422, invalid input...)
+
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: 'admin/add-product',
+      editing: false,
+      errorMessage: 'Attached file is not an image.',
+      validationErrors: validationErrors,
+      prod: {
+        price: price,
+        description: description,
+        title: title,
+      },
+    });
+  }
+
+  console.log(req.user);
+  const userId = req.user._id; ////importante
+
+  const imageUrl = image.path; //só vamos querer ARMAZENAR O PATH NA NOSSA DATABASE (em cada 'product'), E NÃO O ARQUIVO EM SI...
+
+  if (validationErrors.length > 0) {
+    console.log(validationErrors);
+    console.log(errors.array(), 'saasas');
+
+    // req.file === null; não funciona.
+    // console.log(req.file, 'EXEMPLO'); /
+
+    Product.find({ userId: userId }).then((products) => {
+      // let errorMessage = null;
+      console.log(req.session, 'EXAMPLE');
+      return res.status(422).render('admin/product-list-admin/?page=1', {
+        pageTitle: 'Admin Products Page',
+        path: 'admin/product-list-admin',
+        errorMessage: errors.array()[0].msg,
+        validationErrors: validationErrors,
+        prods: products,
+      });
+    });
+  } else {
+    const product = new Product({
+      ///VERSÃO _MONGOOSE__ do código acima... --> vamos instanciar nosso MODEL MONGOOSE, e aí vamos passar um OBJETO como seu parâmetro... (sintaxe distinta daquela usada com o NORMAL MONGODB DRIVER, em que INSTANCIÁVAMOS UM MODELO 'Product', e em que A ORDEM DE PASS DOS PARÂMETROS IMPORTAVA, PQ NÃO ESTÁVAMOS USANDO 1 JAVASCRIPT OBJECT PARA PASSAR OS PARÂMETROS, COMO ESTAMOS FAZENDO AQUI, nessa linha....)
+
+      title: title,
+      price: price,
+      description: description,
+      imageUrl: imageUrl, ////por meio desse código/referência a essa const, armazenamos o PATH A ESSE ARQUIVO (que é o que interessa) lá na nossa database... (é o path AO ARQUIVO ARMAZENADO LÁ NO NOSSO SERVER/APP NODEEXPRESS...., no filesystem dele...)
+      // image: image, ////NUNCA ARMAZENE 'A IMAGE EM SI' nas suas databases... (o store de arquivos em databases É INEFICIENTE E RUIM... SEMPRE PREFIRA __ ARMAZENZA O 'PATH' A ESSA IMAGE, IMAGE QUE DEVE SER ARMAZENADA NO SEU APP NODEEXPRESS/backend servidor...) -------> no caso, vamos __ ARMAZENAR A 'FILE' da image NO BACKEND, no folder de 'images', e APENAS __ ARMAZENAREMOS __ O PATH__ ('req.file.path') NA NOSSA DATABASE, dentro dos documents 'product'...
+      userId: userId, //////IMPORTANTE, vincula cada product que é criado AO USER QUE O CRIOU... (relation por meio de REFERENCING, field de 'userId' em cada PRODUCT...)
+    });
+
+    product ///esse agora é um MODEL INSTANCIADO __ MONGOOSE, E NÃO 'MONGODB NORMAL' (sem o mongoose).... --> isso significa que ELE VAI TER, NO SEU INTERIOR, TODOS OS MÉTODOS ESPECIAIS DE MODELS MONGOOSE, models definidos com o MONGOOSE, métodos que FACILITAM O WRITE DE QUERIES NOSQL....
+      .save() ///// esse, agora, não é o método 'save()' que era escrito por nós, por nossas próprias mãos, e SIM __ O MÉTODO '.save()' PROVIDENCIADO PELO PRÓPRIO MONGOOSE, dentro dos MODELS mongoose...
+      .then((result) => {
+        // console.log(result);
+        console.log(req.session, 'EXAMPLE');
+        res.redirect('/admin/product-list-admin/?page=1');
+      })
+      .catch((err) => {
+        const error = new Error(err); //poderíamos definir nossa própria error message aqui, e não usar esse objeto 'err' --> ex: new Error('Database connection error. Please sit tight!');
+        console.log('TEST52');
+        error.httpStatusCode = 500;
+        console.log(req.session, 'EXAMPLE');
+        return next(error); ////o pass de um ERROR a um call de 'next()' faz com que ocorra um JUMP diretamente para os 'ERROR HANDLING MIDDLEWARES'... todos os MIDDLEWARES COMUNS de nosso app são PULADOS.... -------> FAZ COM QUE O MIDDLEWAER DE 'app.use((error, req, res, next) => { res.redirect(/'500')}' LÁ EM 'app.js' SEJA __ EXECUTADO, POIS É ESSE TAL DE 'MIDDLEWARE ESPECIAL DE ERROR HANDLING'... )
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+----> como podemos perceber,
+
+
+
+
+nós 
+
+
+
+
+
+REALMENTE 
+
+ESTÁVAMOS USANDO 
+
+
+
+
+'userId' 
+
+
+nesses 
+
+
+'PRODUCTS', para 
+
+
+
+__VINCULAR __ O USER A CADA 1 DOS PRODUCT...  (relation por meio de REFERENCING...)
+
+
+
+
+
+
+
+para isso,
+
+
+
+para 
+
+
+
+
+copiar esse comportamento,
+
+
+devemos 
+
+
+editar 
+
+
+
+
+nossos models...
+
+
+
+
+
+
+
+
+
+--> nosso model de user tem este código:
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    // required: true,
+    default: 'I am new!' ///por meio dessa propriedade 'default', FAZEMOS COM QUE SEMPRE QUE __ O FIELD DE 'status' não tiver nada definido como seu valor, seja adotado AUTOMATICAMENTE ESSE VALOR DE 'I am New!'....
+  },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E O MODEL DE 'post' 
+
+TEM ESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+
+const Schema = mongoose.Schema;
+
+
+
+const postSchema = new Schema(
+    {
+        title: {
+            required: true,
+            type: String
+        },
+        content: {
+            required: true,
+            type: String
+        },
+        imageUrl: {
+            required: true,
+            type: String
+        },
+        creator: {
+            required: true,
+            type: Object
+        }
+
+    
+    },
+
+    {timestamps: true}  ///SEGUNDO PARÂMETRO DO call de 'new Schema()' --> SE DEIXAMOS a key de 'timestamps' como true, FAZEMOS COM QUE  UM TIMESTAMP SEJA ADICIONADO A CADA OBJECT/DOCUMENT 'post', SEMPRE __ QUE UM NOVO _ DOCUMENT FOR ADICIONADO NA NOSSA DATABASE... (isso será usado na propriedade de 'createdAt', de cada POST...)
+                        //automaticamente recebemos propriedades 'createdAt' e 'updatedAt' a partir de 'timestamps: true'...
+)
+
+module.exports = mongoose.model('Post', postSchema);
+
+
+
+
+---------------------------------------------------------------------
+
+
+
+
+
+
+
+ok...
+
+
+
+
+
+--> para fazer com que a connection entre os dois (products e user)
+
+
+exista,
+
+
+precisamos 
+
+
+EDITAR AQUELE 
+
+
+'creator: {}' 
+
+
+LÁ 
+
+
+
+NO 
+
+'post',
+
+
+eu acho....
+
+
+
+
+
+
+
+
+talvez assim:
+
+
+
+        creator: {
+            required: true,
+            type: Object,
+            userId: {
+              required: true, 
+              type: Schema.Types.ObjectId,
+              ref: 'User' ////vai pegar o 'userId' do user que cria um product, eu acho....
+            }
+        }
+    
+
+
+
+
+
+
+
+--> ISSO PQ 
+
+LÁ 
+
+
+NO NOSSO 
+
+
+
+model de 'USER'
+
+
+temos esta propriedaed:
+
+
+
+
+
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
+
+
+
+
+
+
+
+
+
+
+  --> OU SEJA, UMA PROPRIEDADE QUE JÁ POSSUI UM VÍNCULO A ESSE 'USER'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ok... agora só precisamos 
+
+
+
+  ALTERAR NOSSOS CONTROLLERS PARA REFLETIR ESSA MUDANÇA... 
+  (
+
+
+    lá em 'fetchPosts' (arquivo controller de 'feed.js'),
+
+    vamos querer 
+
+
+
+    fetchear 
+
+
+    APENAS OS POSTS RELACIONADOS A ESSE USER...
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> nosso código, no momento, é este:
+
+
+
+
+
+
+
+
+
+
+    const pageNumber = req.query.page || 1;
+
+  console.log(pageNumber);
+
+  let totalItems;
+
+  Post.countDocuments()
+    .then((numPosts) => {
+      totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+      return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+        .skip(
+          (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+        ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+        .limit(ITEMS_PER_PAGE)
+        .then((posts) => {
+          if (!posts) {
+            res.status(404).json({
+              message:
+                'No posts encountered on database, please try again later.',
+            });
+          }
+          // console.log(posts);
+          res.status(200).json({
+            posts: posts,
+            currentPage: +pageNumber,
+            // hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+            // hasPreviousPage: +pageNumber > 1,
+            // nextPageNumber: +pageNumber + 1,
+            // previousPageNumber: pageNumber - 1,
+            // lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+            totalItems: totalItems,
+          });
+        });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      }
+    });
+
+
+
+
+
+
+
+
+
+o problema, aqui, é que 
+
+estamos 
+
+fazendo 'count' 
+
+DE __ TODOS ___ OS DOCUMENTS 
+
+
+
+NA NOSSA COLLECTION DE 'posts'... -> entretanto,
+
+vamos querer 
+
+
+fazer count APENAS 
+
+DOS 
+
+DOCUMENTS 
+
+ASSIGNADOS AO NOSSO USER...
+
+
+
+
+
+
+
+--> APARENTEMENTE,
+
+ESSE MÉTODO 'countDocuments'
+
+
+__ACEITA 1 PARÂMETRO 'FILTER', que vamos utilizar para filtrar 
+
+
+
+por 
+
+'{userId: userId}',
+
+
+ou algo assim...
+
+
+
+
+
+
+
+EX (docs - https://mongoosejs.com/docs/api/query.html):
+
+
+
+
+
+
+Query.prototype.countDocuments()
+Parameters
+[filter] «Object» mongodb selector
+[callback] «Function» optional params are (error, count)
+Returns:
+«Query» this
+Specifies this query as a countDocuments() query. Behaves like count(), except it always does a full collection scan when passed an empty filter {}.
+
+There are also minor differences in how countDocuments() handles $where and a couple geospatial operators. versus count().
+
+Passing a callback executes the query.
+
+This function triggers the following middleware.
+
+countDocuments()
+Example:
+const countQuery = model.where({ 'color': 'black' }).countDocuments();
+
+query.countDocuments({ color: 'black' }).count(callback);
+
+query.countDocuments({ color: 'black' }, callback);
+
+query.where('color', 'black').countDocuments(function(err, count) {
+  if (err) return handleError(err);
+  console.log('there are %d kittens', count);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+TALVEZ ALGO ASSIM:
+
+
+
+
+  Post.countDocuments({userId: ObjectId(req.userId}))
+    .then((numPosts) => {
+
+
+
+
+--------------------------
+
+
+
+
+
+
+COM ISSO, TALVEZ CONSIGAMOS OBTER ESSE 'userId' 
+
+de nosso objeto request (e esse userId terá sido armazenado no nosso objeto request 
+
+devido 
+
+À ação de 'isAuth', nosso middleware que EXTRAI O VALOR DE 'userId' de 
+
+NOSSA TOKEN 
+
+e então 
+
+
+o armazena no objeto request do user...)
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CERTO.... MAS PARA VER SE ISSO FUNCIONA,
+
+
+PRECISAMOS TAMBÉM MUDAR 
+
+
+
+
+O 
+
+NOSSO CONTROLLER DE 
+
+'getPosts',
+
+
+PARA QUE 
+
+SEJAM MOSTRADOS __ APENAS __ OS POSTS VINCULADOS A ESSE NOSSO USR...
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+TEMOS O CÓDIGO ATUAL DO CONTROLLER DE 'getPOsts':
+
+
+
+
+
+
+  const pageNumber = req.query.page || 1;
+
+  console.log(pageNumber);
+
+  let totalItems;
+
+  Post.countDocuments({userId: ObjectId(req.userId}))
+    .then((numPosts) => {
+      totalItems = numPosts; ////isso vai nos dar o NÚMERO TOTAL DE POSTS, que será usado mais abaixo...
+
+      return Post.find({}) ///vai nos dar TODOS OS POSTS de nossa database...
+        .skip(
+          (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+        ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+        .limit(ITEMS_PER_PAGE)
+        .then((posts) => {
+          if (!posts) {
+            res.status(404).json({
+              message:
+                'No posts encountered on database, please try again later.',
+            });
+          }
+          // console.log(posts);
+          res.status(200).json({
+            posts: posts,
+            currentPage: +pageNumber,
+            // hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+            // hasPreviousPage: +pageNumber > 1,
+            // nextPageNumber: +pageNumber + 1,
+            // previousPageNumber: pageNumber - 1,
+            // lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+            totalItems: totalItems,
+          });
+        });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+    -_> COMO VOCÊ PODE VER, ainda estamos com aquele 
+
+    'Post.find({})' 
+
+
+    ali de baixo,
+
+    QUE 
+
+    VAI _ PROCURAR__ POR TODOS __ OS POSTS( sem se importar com o 'userId' de cada post)....
+
+
+
+
+
+
+
+
+
+
+    --> PARA CONSERTAR ISSO,
+
+
+    colocamos aquele parâmetro 
+
+    de ({userId: ObjectId(req.userId)})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --> TAMBÉM ALTEREI UM POUCO 
+
+
+
+    O CONTROLLER DE 'CREATEPOST',
+
+    para 
+
+    que 
+
+
+
+    SEJA ADICIONADO
+
+    A CADA DOCUMENT 'Post' 
+
+
+
+    aquela propriedade de 
+
+    'userId'
+
+
+
+    no CREATOR:
+
+
+
+
+
+
+    exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); 
+
+  if (!errors.isEmpty()) {
+   
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error;
+
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; 
+
+    const title = req.body.title; 
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = new Post({
+      title: title,
+      content: content,
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId ///EIS O CÓDIGO EM QUESTÃO.
+      },
+     
+    });
+
+
+
+
+-----------------------
+
+
+
+CERTO... AGORA É HORA DE TESTAR ISSO,
+
+
+
+LOGGAR COM OUTROS USUÁRIOS,
+ 
+ VER 
+
+
+ SE 
+
+ OS POSTS ESTÃO COMPARTILHADOS OU NÃO...
+
+
+
+
+
+
+
+
+
+
+ --> não, não funcionou... 
+
+
+
+
+
+ --> todos os posts ainda estão sendo fetcheados...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> no caso, cada 1 de meus users NÃO ESTÁ FICANDO COM ESSE 
+
+ 'post'
+
+
+ armazenado no seu interior,
+
+ quando o criamos...
+
+
+
+
+
+
+
+
+
+ nossos objetos 'user' estão assim:
+
+
+
+
+
+
+ {
+    "_id": {
+        "$oid": "61b18374490e93e1cdffca6c"
+    },
+    "name": "arthur",
+    "email": "exemplo@teste4.com",
+    "password": "$2a$12$tx0gP5P9Edg8NrvIxvxU9u6D.Qekfi8ynDU6YZVmBUcaL4O7tYAOe",
+    "status": "I am new!",
+    "posts": [],
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+
+
+
+--> QUEREMOS QUE 
+
+
+
+
+ESSES POSTS, SEUS 'ids',
+
+
+
+SEJAM ADICIONADOS EM OBJECTS DENTRO DESSE ARRAY Aí...
+
+
+
+
+
+
+
+
+
+
+
+---> CONSERTEI O PROBLEMA... ERA UM PROBLEMA DE NESTING ('userId' ficava dentro de 'creator', e era isso que estava causando o problema, pq eu especifiquei o critério ERRADO)...:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const pageNumber = req.query.page || 1;
+
+
+  const userId = ObjectId(req.userId); ///userId extraído de nossa token e armazenado no objeto request do user... tudo graças ao middleware de 'isAuth', lá no folder de 'middlewareHelpers'...
+
+  console.log(userId);
+  console.log(pageNumber);
+
+  let totalItems;
+
+  Post.countDocuments({creator: { userId: userId }})
+    .then((numPosts) => {
+      totalItems = numPosts; 
+
+      return Post.find({ creator: {userId: userId }}) ////vai nos dar APENAS os posts VINCULADOS A ESSE NOSSO USER...
+        .skip(
+          (pageNumber - 1) * ITEMS_PER_PAGE ///lógica para fazer nossos items aparecerem -->  /////vai ser o NÚMERO DA PÁGINA - 1, VEZES O NÚMERO DE ITEMS QUE DESEJAMOS POR PAGE.... --> essa será a QUANTIDADE DE ITEMS QUE VAMOS QUERER SKIPPAR, ignorar, ao renderizar os products em 1 given page... (10 products por page, é isso que configuramos em 'ITEMS_PER_PAGE')...
+        ) ///método que só pode ser chamado em cima de CURSORS (como esse aí, retrievado por 'find()') ---> O método 'skip()' VAI SEMPRE _ SKIPPAR __ O NÚMERO QUE VOCÊ PASSOU COMO PARÂMETRO (quantidade), DE ENTRIES NA SUA COLLECTION... (nesse caso, ele vai skippar TUDO MENOS os 2 items que desejamos, de forma dinâmica...)
+        .limit(ITEMS_PER_PAGE)
+        .then((posts) => {
+          if (!posts) {
+            res.status(404).json({
+              message:
+                'No posts encountered on database, please try again later.',
+            });
+          }
+          // console.log(posts);
+          res.status(200).json({
+            posts: posts,
+            currentPage: +pageNumber,
+            // hasNextPage: ITEMS_PER_PAGE * pageNumber < totalItems,
+            // hasPreviousPage: +pageNumber > 1,
+            // nextPageNumber: +pageNumber + 1,
+            // previousPageNumber: pageNumber - 1,
+            // lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+            totalItems: totalItems,
+          });
+        });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      }
+    });
+
+};
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+
+
+
+OK, CONSEGUI IMPLEMENTAR TUDO ISSO, POR CONTA PRÓPRIA...
+
+
+
+
+
+
+
+
+
+
+--> QUAL O PRÓXIMO PASSO?
+
+
+
+
+
+
+
+
+
+--> É FAZER COM QUE 
+
+
+
+A 
+
+
+
+FUNÇÃO DE 'deletePost' 
+
+
+funcione,
+
+
+mas que 
+
+funcione 
+
+APENAS 
+
+
+PARA O USER QUE EFETIVAMENTE 
+
+
+CRIOU AQUELE POST...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> também temos __ OUTRO PROBLEMA.... ------> 
+
+
+
+
+
+
+nosso array de 'posts' 
+
+em cada 
+
+user 
+
+
+___ NÃO _ ESTÁ 
+
+
+
+ficando com os posts que 
+
+criamos... 
+
+
+
+
+
+
+
+--> como podemos resolver isso?
+
+
+tenho que ver o código do projeto antigo...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, NO NOSSO CÓDIGO ANTIGO DO MONGOOSE,
+
+
+USÁVAMOS UM CUSTOM MONGOOSE METHOD 
+
+no nosso model 
+
+de 
+
+'user',
+
+que 
+
+
+era 
+
+
+
+ESTE 
+
+MÉTODO AQUI:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+userSchema.methods.addToCart = function(product) {  ////////PROFESSOR EXPLICA QUE É __ DESSA FORMA QUE ADICIONAMOS 'CUSTOM METHODS' AOS NOSSOS MODELS CRIADOS POR MEIO DO MONGOOSE (mongoose models).... --> é um approach REALMENTE BEM DIFERENTE, pq dependemos de um object/key/method chamado de '.methods' nos SCHEMAS DEFINIDOS POR nós (como 'userSchema') para DEFINIR METHODS CUSTOM...
+                ///usamos a sintaxe CLÁSSICA de functions, aqui, porque QUEREMOS QUE a keyword 'this' TENHA UM COMPORTAMENTO ESPECÍFICO, QUEREMOS QUE O 'this' se refira, nessa função, AO 'schema' em si, e NÃO A QUALQUER OUTRA COISA...
+
+
+
+                // this   //vai se referir ao SCHEMA, que é o que queremos...
+
+    const cartProductIndex = this.cart.products.findIndex((prod) => {
+      return product._id.toString() === prod.productId.toString();
+    });
+
+    let newQuantity = 1;
+
+    const updatedCartItems = [...this.cart.products];
+
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.products[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        // productId: ObjectId(product._id),
+        productId: product._id, ////colocamos 'product._id' em vez de 'ObjectId(product._id)', aqui, PQ O MONGOOSE VAI AUTOMATICAMENTE WRAPPAR ESSE VALOR DE 'product._id' em 1 'ObjectId()'....
+        quantity: newQuantity,
+      }); 
+    }
+
+    const updatedCart = {
+      products: updatedCartItems,
+    };
+
+    // const db = getDb();   ///deprecado, pois agora estamos usando o MONGOOSE, que faz esse 'connect à database' PARA NÓS, por meio de poucos códigos lá em 'app.js' (mongo.connect()) e nos nossos models, por meio desses schemas...
+
+    // return db  ///////PROFESSOR DEIXA DE UPDATAR NOSSA COLLECTION/DOCUMENT MANUALMENTE assim... --> passamos a usar o mongoose, o approach do mongoose, que é diferente, e está escrito logo aabaixo... 
+    //   .collection('users')
+    //   .updateOne(
+    //     { _id: ObjectId(this._id) },
+
+    //     {
+
+
+    //       $set: {
+    //         cart: updatedCart,
+    //       },
+    //     }
+    //   )
+    //   .then((result) => {
+    //     console.log('ADDED PRODUCT TO CART!');
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+
+
+
+
+    this.cart = updatedCart; /////EXTREMAMENTE NECESSÁRIO, pois 'SETTA' a data/mudanças na data de nosso document/objeto  QUE DEVERÃO SER _ APLICADAS A ESSE OBJECT NA COLLECTION, por meio do 'this.save()' escrito logo abaixo...
+    this.save(); ////VAI ___SALVAR___ AS MUDANÇAS efetuadas sobre nosso objeto 'user', mudanças realizadas no mesmo 'block' em que esse call de 'this.save()' se encncontra....
+        ////^^^^ método BUILTIN do mongoose, é builtin em TODOS OS MODELS MONGOOSe..
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+ou seja, vamos ter que criar um custom method para 
+
+
+
+FAZER O ADD DESSE POST NO NOSSO MODEL/OBJETO de user...
+
+
+(não sei se isso é realmente necessário, pois nós JÁ TEMOS UMA RELATION POR MEIO DE __ REFERENCING___ entre esse 
+
+
+user e os post...  ------> talvez seja desnecessário fazer esse referencing por inclusão... incluir os posts dentro do user....)
+
+
+
+
+
+
+
+
+
+--> ok.. mas se fossemos replicar essa estrutura,
+
+escreveríamos:
+
+
+
+
+
+
+
+
+userSchema.methods.addPost = function(post) {
+
+
+
+    const updatedPosts = [...this.posts];
+
+
+        updatedPosts.push(
+          {
+            postId: post._id
+          }
+        )
+
+      
+
+      this.posts = updatedPosts;
+
+      this.save();
+}
+
+
+
+
+
+
+
+
+
+
+--> TALVEZ ISSO FUNCIONE...
+
+
+
+
+
+
+
+
+
+
+O CÓDIGO COMPLETO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    // required: true,
+    default: 'I am new!', ///por meio dessa propriedade 'default', FAZEMOS COM QUE SEMPRE QUE __ O FIELD DE 'status' não tiver nada definido como seu valor, seja adotado AUTOMATICAMENTE ESSE VALOR DE 'I am New!'....
+  },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
+});
+
+userSchema.methods.addPost = function (post) {
+  const updatedPosts = [...this.posts];
+
+  updatedPosts.push({
+    postId: post._id,
+  });
+
+  this.posts = updatedPosts;
+
+  this.save();
+};
+
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA BASTA CHAMARMOS ESSE MÉTODO CUSTOM LÁ NO NOSSO CONTROLLER DE 
+
+'createPost'... (vou tentar fazer isso):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MEU CÓDIGO FICOU MEIO QUE UMA BAGUNÇA,
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+
+    const post = new Post({
+      title: title,
+      content: content,
+      // imageUrl: 'DUMMY',
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+      //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+    });
+
+    post
+      .save()
+      .then((result) => {
+        console.log(result);
+
+        const post = result;
+        
+        return User.find({_id: userId})
+        .then(
+          (user) => {
+          return user.addPost(post);
+
+          }
+        )
+        // res.status(201).json({
+        //   message: 'Post created successfully',
+        //   post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+        // });
+      })
+      .then(
+        (result) => {
+          res.status(201).json({
+          message: 'Post created successfully',
+          post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+        });
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> O PROBLEMA É QUE MEU 
+
+
+
+TERMINAL ME DEU UM __ ERRO_...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+TypeError: user.addPost is not a function
+
+
+
+
+
+
+
+
+-----> esse método 
+
+não está funcionando, aparentemente... (não sei se posso utilizar um método custom mongoose assim, ou se só posso chamar me coisas como 'req.user.método'....)
+
+
+
+
+
+
+
+
+
+
+
+
+--> acho que é porque 
+
+
+
+
+
+
+objetos/documents retrievados diretamente do mongodb não possuem esses métodos 
+
+
+
+handy do mongoose...
+
+
+
+
+
+
+
+
+
+
+
+-> era pq eu estava usando 'find' em vez de 'findOne()'...
+
+
+
+
+
+
+
+
+
+
+--> depois disso, recebo outro erro:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  reason: CastError: Cast to ObjectId failed for value "{ postId: new ObjectId("61b19198878626435dbe2964") }" (type Object) at path "posts"
+          at ObjectId.cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schema\objectid.js:247:11)
+          at ObjectId.SchemaType.applySetters (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1135:12)
+          at SchemaArray.cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schema\array.js:385:32)
+          at SchemaArray.SchemaType.applySetters (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1135:12)
+          at model.$set (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\document.js:1407:20)
+          at model.set [as posts] (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\helpers\document\compile.js:174:19)
+          at model.userSchema.methods.addPost (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\models\user.js:41:14)
+          at A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\controllers\feed.js:176:23
+          at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+        stringValue: '"{ postId: new ObjectId("61b19198878626435dbe2964") }"',
+        messageFormat: undefined,
+        kind: 'ObjectId',
+        value: { postId: ObjectId { [Symbol(id)]: [Buffer [Uint8Array]] } },
+        path: 'posts',
+        reason: BSONTypeError: Argument passed in must be a string of 12 bytes or a string of 24 hex characters
+            at new BSONTypeError (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\bson\lib\error.js:41:28)
+            at new ObjectId (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\bson\lib\objectid.js:65:23)
+            at castObjectId (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\cast\objectid.js:25:12)
+            at ObjectId.cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schema\objectid.js:245:12)
+            at ObjectId.SchemaType.applySetters (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1135:12)
+            at SchemaArray.cast (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schema\array.js:385:32)
+            at SchemaArray.SchemaType.applySetters (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\schematype.js:1135:12)
+            at model.$set (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\document.js:1407:20)
+            at model.set [as posts] (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\node_modules\mongoose\lib\helpers\document\compile.js:174:19)
+            at model.userSchema.methods.addPost (A:\projeto4 - NODEJS\MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO\NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress)\models\user.js:41:14),
+        valueType: 'Object'
+      },
+      valueType: 'string'
+    }
+  },
+  _message: 'User validation failed'
+
+
+
+
+
+
+
+
+
+
+  ----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------> CONSEGUI...:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+
+    const post = new Post({
+      title: title,
+      content: content,
+      // imageUrl: 'DUMMY',
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+      //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+    });
+
+    post
+      .save()
+      .then((result) => {
+        console.log(result);
+
+        const post = result;
+        
+        return User.findOne({_id: userId}) //use 'findOne', e não 'find()', pq você NÃO VAI QUERER RETORNAR 'an iterable cursor of results'...
+        .then(
+          (user) => {
+          return user.addPost(post);
+
+          }
+        )
+      })
+      .then(
+            (result) => {
+                console.log(result, 'LINE');
+
+
+
+          res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+        });
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> por meio desse código,
+
+
+
+estamos:
+
+
+
+
+
+
+
+1) ASSIGNANDO 1 'userId' a cada post....
+
+
+
+
+2) COLOCANDO ESSE 'post' (na verdade, um objeto com uma propriedade de 'postId') DENTRO DE CADA DOCUMENT 'user', lá na collection de users, na propriedade 'posts'.. (array)...
+
+
+
+
+
+
+3) RECARREGANDO NOSSA UI/frontend, com esse novo post, quando é recebida a response do nosso servidor.... 
+
+
+
+
+
+4) fazendo error handling 
+
+
+
+
+5) FAZENDO A PAGINATION...
+
+
+
+
+
+
+6) FAEZNDO O DISPLAY DOS POSTS ASSIGNADOS A CADA 1 DE NOSSOS USER...
+
+
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+AGORA É HORA DE TENTAR FAZER O __ DELETE__ FUNCIONAR... --> funcionar 
+
+
+
+
+
+de forma geral.... --> 
+
+
+
+vai deletar esse post para aquele user, mas de nossa database tbm.. --> e vamos querer 
+
+
+
+DELETAR TBM A 
+
+IMAGE ASSOCIADA A ESSE POST
+
+
+
+
+
+
+
+
+
+-> NO NOSSO CÓDIGO DE 'deletePost',
+
+
+
+TEMOS:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deletePost = (req, res, next) => {
+
+  const postId = req.params.postId;
+
+  Post.findById(postId)
+    .then((post) => {
+      //check logged in user (LATER IN THE COURSE, when we have 'logged in users'...)...
+
+
+
+
+
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+      fs.unlink(post.imageUrl, (err) => {
+        console.log(err);
+      });
+
+      return Post.findByIdAndRemove(postId).then((result) => {
+        console.log(result);
+        res.status(200).json({
+          message: 'The post was deleted.',
+        });
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+--------------------------------------
+
+
+
+O IDEAL, NO CASO,
+
+
+
+SERIA
+ 
+
+
+ ACHAR O USER PRIMEIRO, PARA DEPOIS 
+ FAZER O DELETE DO PRODUCT..
+
+
+
+
+
+ -_> tentar fazer isso sozinho...
+
+
+
+
+
+
+
+
+
+ -_> PRIMEIRA VERSÃO DO CÓDIGO FICOU ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); //extraído de nossa token, por meio do middleware de 'isAuth'...
+
+  User.findOne({ _id: userId }).then((user) => {
+
+
+
+    if(!user) {
+      const error = new Error('User not found in database.');
+      error.statusCode = 401; //unauthenticated
+      throw error;
+    }
+
+    const oldPosts = [...user.posts];
+
+    const postIndex = oldPosts.findIndex((post) => {
+      return post.postId === postId;
+    });
+
+    if (!postIndex) {
+      const error = new Error(
+        'That post has not been encountered for your user.'
+      );
+      error.statusCode = 404;
+      throw error;
+    }
+
+    oldPosts.splice(postIndex, 1);
+
+    user.posts = oldPosts;
+
+    return user.save(); ///deleta o post de dentro de nosso 'user', naquela propriedade de 'posts' (que é um array)...
+  })
+  .then(
+    (result) => {    
+  Post.findById(postId)
+  .then((post) => {
+
+    if (!post) {
+      const error = new Error('Post not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    fs.unlink(post.imageUrl, (err) => {
+      console.log(err);
+    });
+
+    return Post.findByIdAndRemove(postId).then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'The post was deleted.',
+      });
+    });
+  })
+    }
+  )
+
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+-------------------------------
+
+
+OK... ACHO QUE FUNCIONOU...
+
+
+
+
+
+
+
+
+--> só tenho que observar, ver se a image também some 
+
+
+do meu folder de 'images'
+
+quando realizo esse delete...
+
+
+
+
+
+
+
+
+--> sim, funciona...
+
+
+
+
+
+
+
+--> ok, o código está funcionando muito bem... estranho.
+
+
+
+
+
+
+
+
+
+--------> agora, como próxima feature,
+
+
+poderia fazer com que 
+
+
+
+OS POSTS DAQUELE USER FOSSEM DELETADOS 
+
+
+SE ELE MESMO FOSSE DELETADO...
+
+
+(
+
+
+  talvez algum botão de 'delete account', ou algo assim.... --> esse button basicamente triggaria:
+
+
+
+
+  1) a destruição de todos os posts associados a esse user (tanto no object 'user', no array de 'posts', como na collection de posts)
+
+
+  2) a destruição de todas as images associadas a esses posts....
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok... veremos isso depois...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ok, mas e quanto ao 'EDIT A PRODUCT'? ----> seu código ainda está antigo... --> temos que mudar,
+
+
+para que 
+
+ele considere essa authorization do user...
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> CÓDIGO ATUAL:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findOne({ _id: ObjectId(postId) })
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+      return post.save();
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: result,
+      });
+    })
+    .catch((err) => {
+      ///reutilização de error catching logic...
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+OK.... PRECISAMOS DAR UMA EDITADA....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+agora que parei para pensar... talvez usar esse 'userId' 
+
+
+para 
+
+realizar nossas operações é algo bem IDIOTA, algo que não devíamos estar fazendo.... -----> 
+
+
+
+pq se algum espertinho 
+
+
+
+tiver o postman, ou algum outro 
+
+
+jeito de fazer requests,
+
+ele poderia só 
+
+
+colocar 
+
+
+o 'userId' 
+
+
+dentro do request,
+
+
+para então enviar ao nosso backend... -----> bem, vou ver isso na aula do professor...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> CÓDIGO FICOU ASSIM, MAS NÃO SEI SE ESTÁ BOM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.editPost = (req, res, next) => {
+  ///versão do professor do código de cima....
+  const postId = req.params.postId;
+
+
+  const userId = ObjectId(req.userId); /// USERID extraído de nossa TOKEN, lá no middleware de 'isAuth'...
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+  }
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+
+  if (!imageUrl) {
+    //worst case scenario
+    const error = new Error('No file was picked.');
+    error.statusCode = 422; //invalid input;
+    throw error;
+  }
+
+  Post.findOne({ _id: ObjectId(postId) })
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(post.creator.userId !== userId) {
+        const error = new Error('Your user was not responsible for that post');
+        error.statusCode = 404;
+        throw error;
+      }
+
+
+      if (imageUrl !== post.imageUrl) {
+        fs.unlink(post.imageUrl, (err) => {
+          console.log(err);
+        });
+      }
+
+      console.log('TEST42');
+      post.title = title;
+      post.imageUrl = imageUrl.replace(/\\/g, '/');
+      post.content = content;
+      return post.save();
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: 'Post updated!',
+        post: result,
+      });
+    })
+    .catch((err) => {
+      ///reutilização de error catching logic...
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> tenho que ver essa coisa do 
+
+'userId',
+
+
+talvez esse approach não seja bom, por 
+
+
+questões de segurança....
+
+
+
+
+
+
+------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... ASSISTO À AULA DO PROFESSOR, AULA 387,
+
+
+connecting posts to users...
+
+
+
+
+
+
+
+
+
+
+--> ANTES DISSO,
+
+
+FAÇO UM BACKUP DO MEU PROJETO,
+
+
+e deixo como 
+
+
+NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- BACKEND (nodeexpress) - MINHA VERSÃO,ULTRAPASSADA
+
+
+
+
+
+
+--> LÁ NO CÓDIGO BACKEND,
+
+
+
+
+
+LÁ NO MODEL DE 'post',
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+
+DIZ QUE 
+
+
+
+AQUELE OBJETO DE 
+
+
+
+'creator: {
+
+  type: Object,
+  required: String
+}
+
+'
+
+
+
+foi como uma 
+
+'INTERMEDIATE SOLUTION'... ------------> AGORA, DIZ O PROFESSOR,
+
+
+
+QUE 
+
+
+SABEMOS QUE 
+
+
+
+TEREMOS USERS NO NOSSO APLICATIVO (modelo 'user'),
+
+
+
+
+
+
+VAMOS TER QUE 
+
+ALTERAR O TYPE 
+
+DESSE NEGÓCIO, TROCAR DE TIPO 'Object'
+
+
+PARA TIPO 
+
+
+'Schema.Types.ObjectId',
+
+
+
+_JUSTAMENET__ PQ 
+
+VAMOS 
+
+
+'STORE A REFERENCE TO A USER' 
+
+
+nesse 
+
+
+
+'creator'...
+
+
+
+
+
+
+
+
+
+
+-> O MEU CÓDIGO, NO CASO, HAVIA FICADO ASSIM, ANTERIORMENTE:
+
+
+
+
+
+
+
+
+        creator: {
+            required: true,
+            type: Object,
+            userId: {
+                required: true, 
+                type: Schema.Types.ObjectId,
+                ref: 'User' ////vai pegar o 'userId' do user que cria um product, eu acho....
+              }
+        }
+
+
+
+
+
+
+
+
+  -----> NA VERDADE,
+
+
+
+  NOSSO CÓDIGO É QUASE IGUAL AO DO PROFESSOR,
+
+  A ÚNICA DIFERENÇA 
+
+
+
+  é que 
+
+
+  nossa propriedade 'creator' 
+
+
+
+
+  era tipo assim 
+
+
+
+
+  creator: {
+    userId: ObjectId(xxxxxx)
+  },
+
+
+
+
+  e não assim:
+
+
+
+
+  creator: ObjectId(xxxx)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ------------> OK... ISSO SIGNIFICA QUE AGORA TEMOS UMA RELATION DE TIPO 'REFERENCING' ENTRE POSTS E USERS...
+
+
+
+
+
+  --> NÓS FAZEMOS STORE DO USERID/CREATOR 
+
+  em 
+
+  CADA POST QUE CRIAMOS .. 
+
+
+
+
+
+
+
+
+
+  -----> E LÁ 
+
+
+  NO MODEL DE 'user',
+
+
+  NÓS ADICIONAMOS 
+
+
+
+
+
+
+
+
+
+  ESSE POST 
+
+
+  QUE CRÍAMOs,
+
+
+
+
+  naquela lista de 'posts' dentro de cada user...
+
+
+
+
+
+
+
+
+
+
+  ----> ISSO QUER DIZER, É CLARO,
+
+  QUE TEMOS DE AJUSTAR NOSSO FEED CONTROLLER 
+
+
+
+
+  NAS PARTES EM QUE DE FATO CRÍAMOS NOVOS POSTS...
+
+
+
+
+
+
+
+
+
+  --> MEU CÓDIGO HAVIA FICADO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+  const errors = validationResult(req); //EIS O CÓDIGO EM QUESTÃO.
+
+  if (!errors.isEmpty()) {
+    //é retornada esta response, se a validation do input FALHA... (na criação do post)...
+    console.log(errors);
+    const error = new Error('Validation failed, entered data is incorrect.');
+    error.statusCode = 422;
+    throw error; //vai fazer com que entremos NO MIDDLEWARE ESPECIAL DE ERROR HANDLING, LÁ EM 'app.js'...  (USE 'throw err' com códigos SYNC, e 'next(err)' com códigos ASYNC... )
+
+    // return res //throw manual de erro, pior do que o visto logo acima...
+    //   .status(422)
+    //   .json({ message: 'Validation failed, entered data is incorrect.', errors: errors.array()});
+  } else {
+    console.log(req.file);
+    console.log(req.files);
+
+    if (
+      !req.file ///se nossa image (image upload, extraído pelo multer) NÃO ESTIVER ANEXADA NO REQUEST...
+    ) {
+      const error = new Error('No image attached to request.');
+      error.statusCode = 422; ///se não for encontrada uma image no request, não deixa de ser um ERRO DE VALIDATION, por isso o '422' (invalid input)..
+      throw error;
+    }
+
+    const imageUrl = req.file.path; ////precisamos disso, vamos querer armazenar esses PATHS/imageUrls em cada 1 dos nossos documents, lá na database....
+
+    const title = req.body.title; ////obtido de nosso SEND DE JSON DATA, lá em 'fetch()'...
+    const content = req.body.content;
+
+    const userId = ObjectId(req.userId);
+
+    console.log(title, content);
+
+    console.log(req.body);
+
+    console.log('REQUEST RECEIVED');
+
+    const post = new Post({
+      title: title,
+      content: content,
+      // imageUrl: 'DUMMY',
+      imageUrl: imageUrl.replace(/\\/g, '/'),
+      creator: {
+        userId: userId,
+      },
+      //não precisamos passar nem '_id' (settado automaticamente pelo mongoose, ao salvarmos doc no server), nem 'createdAt', nem 'updatedAt' (são criados automaticamente pelo parâmetro 'timestamps: true', lá no model de 'Post'...)
+    });
+
+    post
+      .save()
+      .then((result) => {
+        console.log(result);
+
+        const post = result;
+
+        return User.findOne({ _id: userId }) //use 'findOne', e não 'find()', pq você NÃO VAI QUERER RETORNAR 'an iterable cursor of results'...
+          .then((user) => {
+            return user.addPost(post);
+          });
+        // res.status(201).json({
+        //   message: 'Post created successfully',
+        //   post: result, ///vai conter info sobre o post que foi armazenado na nossa database...
+        // });
+      })
+      .then((result) => {
+        console.log(result, 'LINE');
+
+        res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err); ////DEVEMOS USAR 'next(err)' em códigos ASYNC, em vez de 'throw err'.... ---> com isso, conseguimos atnigir a 'special nodeexpress error handling middleware'..
+      });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> PROFESSOR EXPLICA QUE A VALIDATION QUE FAZEMOS NO INÍCIO (erros de input) AINDA 
+
+ESTÁ ALL RIGHT,
+
+
+
+
+MAS 
+
+
+QUE 
+
+
+ANTES DE 
+
+
+
+CRIARMOS NOSSO POST,
+
+devemos 
+
+
+'GET OUR USER ID'...
+
+
+
+
+
+
+
+
+
+
+--> bem.... pelo visto o professor REALMENTE VAI USAR ESSE 'userId'
+
+
+
+DE 
+NOSSA 
+
+
+TOKEN... 
+
+
+
+--> exatamente como eu fiz...
+
+
+
+
+
+
+
+
+
+
+
+ele vai escrever assim:
+
+
+
+
+
+
+
+const userId = req.userId; 
+
+
+const post = new Post(
+  {
+    title: title,
+    content: content,
+    imageUrl: imageUrl,
+    creator: {
+      userId: userId
+    }
+  }
+)
+
+
+
+
+
+------------------------------------
+
+
+
+ok... 
+
+
+
+
+
+
+
+--> COM ISSO,
+
+
+VAMOS TER CRIADO 1 NOVO POST,
+
+
+ASSIGNADO 
+
+A 
+
+ESSE USER....
+
+
+
+(
+
+  ok, até agora,
+
+
+  professor fez EXATAMENTE O QUE EU FIZ...
+)
+
+
+
+
+
+
+
+
+
+
+------> OK.... MAS QUANDO EU TIVER SALVADO ESSE POST NA COLLECTION DE 'posts',
+
+
+
+EU__ NÃO VOU QUERER __ IMEDIATAMENTE ENVIAR UMA RESPOSTA... --> não, em vez disso,
+
+
+VOU QEURER SALVAR ESSE POST TBM 
+
+LÁ 
+
+
+
+NA 
+
+
+LISTA DE 'POSTS',
+
+dentro de meu user específico....
+
+
+
+
+
+
+
+
+
+
+-----> PARA CONSEGUIR FAZER ISSO,
+
+
+
+eu 
+
+
+me utilizei daquele CUSTOM METHOD, criado por mim... 
+(anteriormente):
+
+
+
+
+        return User.findOne({ _id: userId }) //use 'findOne', e não 'find()', pq você NÃO VAI QUERER RETORNAR 'an iterable cursor of results'...
+          .then((user) => {
+            return user.addPost(post);
+          });
+
+
+
+
+
+
+
+      
+
+
+      é esse método 'user.addPost(post)'..
+
+
+
+
+
+
+
+
+
+  o método que eu havia criado era este:
+
+
+
+
+  userSchema.methods.addPost = function(post) {
+  const updatedPosts = [...this.posts];
+
+  updatedPosts.push({
+    postId: ObjectId(post._id),
+  });
+
+  this.posts = updatedPosts;
+
+  this.save();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> E ELE HAVIA FUNCIONADO... 
+
+
+
+
+
+
+
+
+
+mas não sei se o professor fará a mesma coisa....
+
+
+
+
+
+
+------> depois, ele 
+
+importa 
+
+
+o 
+
+
+modelo de 
+
+
+
+'User'
+
+
+nesse 
+
+controller de 'feed.js'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> e aí,
+
+
+em 'createPost',
+
+
+
+DEPOIS 
+
+do 
+
+
+'post.save()',
+
+
+
+
+professor escreve um then block, assim:
+
+
+
+
+
+.then(
+  (result) => {
+
+
+    return  User.findById(req.userId)
+
+  }
+)
+.then(
+  (user) => {
+
+
+      user.posts.push(post);
+
+
+       
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+----> OU SEJA,
+ 
+ PROFESSOR FEZ ALGO BEM SIMILAR àQUILO QUE FIZEMOS,
+
+
+ só que com 
+
+
+ '
+      user.posts.push(post);
+'
+
+
+
+em vez de 
+
+
+'user.addPost(post)'... (método custom criado por nós, mas que faz + ou - a mesma coisa...).
+
+
+
+
+
+
+
+
+
+
+
+
+--> mas meu código de certa forma ficou MELHOR do que o do professor,
+
+
+
+pois os objetos 'post' 
+
+
+dentro 
+
+
+de cada 'user'
+
+
+
+
+SÃO MAIS __ SIMPLES (portanto, leves) 
+
+
+NA MINHA VERSÃO,
+
+
+pois 
+
+POSSUEM APENAS 
+
+o 
+
+'postId'....
+
+
+
+
+
+
+
+
+
+
+
+-----> O PROFESSOR TAMBÉM VAI 
+
+ADICIONAR UMA NOVA VARIÁVEL 
+
+
+AO INÍCIO DESSE CONTROLLER,
+
+VARIÁVEL 
+
+DE 
+NOME 
+
+'creator'... ---> AÍ, O PROFESSOR 
+
+
+
+
+VAI QUERER __ ARMZENAR__ O USER NESSA VARIÁVEL 'creator',
+tipo assim:
+
+
+
+
+
+
+
+
+
+
+let creator;
+
+
+
+
+
+.then(
+  (result) => {
+
+
+    return  User.findById(req.userId)
+
+  }
+)
+.then(
+  (user) => {
+      creator = user; ///EIS O CÓDIGO EM QUESTÃO.
+
+      user.posts.push(post);
+
+
+       
+  }
+)
+
+
+
+
+-------------------------
+
+
+
+
+OK, MAS POR QUE MOTIVO PROFESSOR PRECISARÁ 
+
+DESSA 
+
+
+VARIÁVEL/ coisa aí?
+
+
+
+
+
+
+
+
+
+
+
+
+--> BEM, É PQ MAIS PARA BAIXO, NAQUELE 
+
+
+
+'res.status(201).json(
+  {
+    message: 'Post created successfully',
+    post: post
+  }
+)
+'
+,
+
+
+
+
+O PROFESSOR VAI QUERER ENVIAR AO FRONTEND MAIS DO QUE APENAS O POST QUE FOI CRIADO,
+
+
+ELE  VAI QUERER __ ENVIAR TAMBÉM 'INFORMATION ABOUT THE CREATOR'... ----> e é por isso 
+
+
+
+que ele escreve:
+
+
+'res.status(201).json(
+  {
+    message: 'Post created successfully',
+    post: post,
+    creator: creator
+  }
+)
+'
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+        res.status(201).json({
+          message: 'Post created successfully',
+          post: post, ///vai conter info sobre o post que foi armazenado na nossa database...
+          creator: {
+            _id: creator._id,
+            name: creator.name
+          }
+        });
+
+
+
+
+
+
+    -------------------------------
+
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+passamos essa informação OPCIONAL À response...
+
+
+
+
+
+
+
+
+
+
+OK... AGORA 
+
+
+OS POSTS 
+
+
+
+SÃO SALVOS 
+
+
+E 'CONNECTED' AOS USERS, 
+
+
+
+EM AMBAS AS DIREÇÕES ( nos 'user' e na collection de 'posts')... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> CERTO.... ISSO FUNCIONOU...
+
+
+
+
+
+
+--> meu código havia funcionado, pelo visto....
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS VER O RESTO;
+
+
+ASSEGURAR QUE __ O 'EDIT E O DELETE'
+
+
+
+
+SEJAM SÓ POSSÍVEIS PARA POSTS 
+
+
+
+ATRIBUÍDOS AO USER QUE OS CRIOU... (currently logged in user)...

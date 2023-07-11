@@ -1,0 +1,1413 @@
+
+
+
+
+
+
+
+
+ANTES TÍNHAMOS CRIADO UM PDF COM 
+
+
+
+'Hello world',
+
+
+POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+exports.getFatura = (req, res, next) => { /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf'; 
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+ 
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+const pdfDoc = new PDFDocument();
+
+res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+  
+pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+
+pdfDoc.text('Hello World');////NOS DEIXA ADICIONAR/INCORPORAR 1 LINHA DE TEXTO NO INTERIOR DESSE DOCUMENTO PDF que criamos com 'new PDFDocument()'....
+pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+
+
+
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA É HORA DE CRIAR UM PDF UM POUCO MAIS __ ÚTIL__...
+
+
+
+
+
+
+
+-----> CERTO... --> PROFESSOR 
+
+
+
+ADMITE UQE 
+
+PODEMOS 
+
+CONFIGURAR
+
+ UM MONTE 
+
+
+ DE COISAS 
+
+ COM O 
+
+
+ 'PDFkit',
+
+
+
+ MAS 
+
+
+ ELE 
+
+
+
+
+ QEUR NOS MOSTRAR __ COMO PODEMOS __ GERAR 
+ UM 
+
+ PDF BEM 
+
+
+ BONITO,
+
+
+
+
+
+ EM POUCO TEMPO....
+
+
+
+
+
+
+
+
+
+
+ --> POR EXEMPLO,
+
+
+ ele escreve 
+
+
+
+ 'PdfDoc.fontSize(26).text('xxxx')' 
+
+
+
+
+
+
+
+
+
+ ---> O MÉTODO 'fontSize()'
+
+
+ faz com que __
+
+
+
+ AQUELE TEXT QUE VOCÊ INPUTTA EM '.text()''
+
+
+
+ FIQUE COM O TAMANHO ESPECIFICADO, em número, 
+
+dentro dele...
+
+
+
+
+
+
+------> PROFESSOR VAI QUERER COLOCAR UM 
+
+
+texto de 'Invoice',
+
+
+PARA QUE 
+
+
+
+
+
+NOSSO INVOICE FIQUE COMO TÍTULO....
+
+
+
+
+---> '.text()'
+
+
+
+
+POSSUI MAIS DO QUE APENAS 1 PARÂMETRO;
+
+
+ELE ACEITA__ UM 
+
+
+SEGUNDO PARÂMETRO,
+
+
+QUE É UM OBJETO CONFIG EM QUE VOCÊ 
+
+PODE 
+
+
+DEFINIR ALGUMAS CARACTERÍSTICAS DO TEXTO...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+ PdfDoc.fontSize(26).text('Invoice', {
+
+
+     underline: true
+
+
+ })
+
+
+
+
+
+ --------------------------
+
+
+
+
+
+
+
+ ----> COM ISSO, TEREMOS UMA UNDERLINE...
+
+
+
+
+
+
+
+
+
+
+
+ ---> PROFESSOR EXPLICA QUE PODEMOS __ EDITAr__ BEM MAIS DO QUE ISSO.... PODEMOS ADICIONAR IMAGES
+  
+  e
+   UM MONTE DE OUTRAS COISAS,
+
+
+
+
+
+
+
+   MAS O PROFESSOR ESTÁ FELIZ COM ESSE TITLE...
+
+
+
+
+
+
+   --> DEPOIS DISSO, ELE ADICIONA ALGUNS '--------------------' COMO PRÓXIMA LINHA...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+
+
+ANTES TÍNHAMOS CRIADO UM PDF COM 
+
+
+
+'Hello world',
+
+
+POR MEIO DESTE CÓDIGO:
+
+
+
+
+
+exports.getFatura = (req, res, next) => { /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf'; 
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+ 
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+const pdfDoc = new PDFDocument();
+
+res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+  
+pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+ pdfDoc.fontSize(26).text('Fatura', {
+     underline: true
+ })
+ pdfDoc.text('-------------------------------------');
+
+
+
+
+
+
+pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+
+
+
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+
+DEPOIS DISSO, DEPOIS DESSA LINHA,
+
+
+PROFESSOR 
+
+VAI QUERER 
+
+TER 
+
+OS 
+
+
+
+'DIFERENTES ITEMS/PRODUCTS' DE NOSSA ORDER/invoice........
+
+
+
+
+
+
+
+
+--> PARA ISSO, PROFESSOR TERÁ DE 'LOOP THROUGH' 
+
+
+todos 
+
+os items/products QUE FAZEM PARTE DA 
+
+
+
+'Order'... (array de 'products')...
+
+
+
+
+
+
+
+
+
+------> mas como adicionar esse código de loop through os products?
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO, ELE ADICIONA UM FOR OF LOOP,
+
+
+OU ENTÃO SÓ PEGAR 
+
+
+
+O OBJETO 'order' mesmo , pq já temos acesso 
+
+a 
+
+ele por 
+termos 
+
+lido/fetcheado a database antes....
+
+
+
+
+
+
+
+
+
+
+
+-----> É SÓ ESCREVER 'order.products' para conseguir os products dessa order...
+
+
+
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => { /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf'; 
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+ 
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+const pdfDoc = new PDFDocument();
+
+res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+  
+pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+ pdfDoc.fontSize(26).text('Fatura', {
+     underline: true
+ })
+ pdfDoc.text('-------------------------------------');
+
+
+ order.products.
+
+
+
+
+
+
+pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+
+
+
+      }
+    }
+  });
+};
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+
+ISSO FEITO,
+
+PROFESSOR VAI USAR 
+
+
+
+'.forEach()'
+
+
+PARA __ PROVAVELMENTE_ LOOPAR_ _ POR DENTRO DE CADA 'PRODUCT OBJECT',
+
+ 
+
+
+ para então 
+ chamar 
+
+
+
+ 'pdfDoc.fontSize(13).text(product)',
+
+
+
+ PARA 
+
+
+
+ REGISTRAR
+  
+
+
+
+
+  OS NOSSOS PRODUCTS EM VÁRIAS LINHAS NESSA 'FATURA' pdf...
+
+
+
+
+
+  ex:
+
+
+
+
+
+
+
+
+
+  
+
+
+exports.getFatura = (req, res, next) => { /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf'; 
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+ 
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+        // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.')
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+
+const pdfDoc = new PDFDocument();
+
+res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+
+
+  
+pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+ pdfDoc.fontSize(26).text('Fatura', {
+     underline: true
+ })
+ pdfDoc.text('-------------------------------------');
+
+
+ order.products.forEach(
+     (product) => {
+
+         pdfDoc.fontSize(13).text(product);
+     }
+ )
+
+
+
+
+
+
+pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+
+
+
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> OK.... PROFESSOR FEZ EXATAMENTE ISSO....
+
+
+----> MAS ELE NÃO VAI SÓ 
+
+
+ESCREVER 
+
+
+'product' (nosso product SOLTO);
+
+
+
+ELE 
+
+VAI ESCREVER 
+
+
+
+
+ASSIM:
+
+
+
+
+
+ order.products.forEach(
+     (prod => {
+
+         pdfDoc.fontSize(13).text(prod.product);
+     }
+ )
+
+
+----------------------------
+
+
+
+
+
+
+
+
+ISSO PQ NA NOSSA DATABASE, CADA ORDER TEM ESTE FORMATO:
+
+
+
+
+
+{
+    "_id": {
+        "$oid": "61966d050dd562509c7febe7"
+    },
+    "products": [{
+        "product": {
+            "_id": {
+                "$oid": "61966cdc0dd562509c7febc7"
+            },
+            "title": "GUNDAM",
+            "price": 111111000000000,
+            "description": "asasaas",
+            "imageUrl": "images\\1637248219516-Deep_Striker_Sentinel.jpg",
+            "userId": {
+                "$oid": "619326d1482ffb8a77b2cfcb"
+            },
+            "__v": 0
+        },
+        "quantity": 1,
+        "_id": {
+            "$oid": "61966d050dd562509c7febe8"
+        }
+    }],
+    "totalPrice": 0,
+    "user": {
+        "userId": {
+            "$oid": "619326d1482ffb8a77b2cfcb"
+        }
+    },
+    "__v": 0
+}
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+ESTE FORMATO AQUI:
+
+
+
+
+
+
+"products": [{
+        "product": {
+            "_id": {
+                "$oid": "61966cdc0dd562509c7febc7"
+            },
+            "title": "GUNDAM",
+            "price": 111111000000000,
+            "description": "asasaas",
+            "imageUrl": "images\\1637248219516-Deep_Striker_Sentinel.jpg",
+            "userId": {
+                "$oid": "619326d1482ffb8a77b2cfcb"
+            },
+            "__v": 0
+        },
+        "quantity": 1,
+        "_id": {
+            "$oid": "61966d050dd562509c7febe8"
+        }
+    }],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ----------> OK... AÍ 
+
+
+
+
+    O PROFESSOR VAI QUERER 
+
+
+
+    OUTPUTTAR o 
+
+
+    title,
+
+
+    a quantity,
+
+
+
+    e o price...
+
+
+
+
+
+    ex:
+
+
+
+
+
+     order.products.forEach(
+     (prod => {
+
+         pdfDoc.fontSize(13).text(prod.product.title + ' - ' + prod.quantity + ' x ' + ' $ ' + prod.product.price);
+     }
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -----> O PROFESSOR ADMITE QUE PODERÍAMOS USAR A SINTAXE DE ' `` '
+
+
+ PARA DEIXAR ESSE CÓDIGO UM POUCO MAIS FÁCIL DE LER,
+
+
+
+
+ MAS 
+
+
+nos diz que acha que 
+
+
+assim está bom..
+
+
+
+
+
+
+
+CERTO... AGORA RECARREGAMOS E TESTAMOS O RESULTADO...
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.');
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        //         return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => { ///////CÓDIGO RUIM, CÓDIGO QUE NÃO FAZ O 'STREAM OF DATA'... (ver aula 325....) --> DEVEMOS SEMPRE 'STREAM THE DATA', tudo para: 1) EVITAR O OVERFLOW DA MEMÓRIA TEMPORÁRIA DE NOSSO APP NODE, que será ocupada pelo READ e RETURN desses arquivos.... 2) EVITAR O ___ LONGO __ TEMPO ATÉ RECEBER UMA 'RESPONSE' POR PARTE DO SERVER....
+        //           if (err) {
+        //             return next(err);
+        //           } else {
+        //             console.log(data);
+        //             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+        //             // res.setHeader('Content-Disposition', 'attachment' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+        //             res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+        // //inline vs attachment; decida qual é o melhor para seu aplicativo, dependendo do caso concreto (queremos que o user baixe o arquivo sem qualquer conversinha? ou queremos que ele VISUALIZE O ARQUIVO no 'pdf viewer'/mp3 viewer do browser antes de o baixar? se quisermos essa lenga-lenga, devemos escrever 'inline')
+        //             return res.send(data);
+        //           }
+        //         });
+
+        const pdfDoc = new PDFDocument();
+
+        res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+        res.setHeader(
+          'Content-Disposition',
+          `inline; filename="${invoiceName}"`
+        );
+
+        pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+        pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+
+        // pdfDoc.text('Hello World');////NOS DEIXA ADICIONAR/INCORPORAR 1 LINHA DE TEXTO NO INTERIOR DESSE DOCUMENTO PDF que criamos com 'new PDFDocument()'....
+
+        pdfDoc.fontSize(26).text('Fatura', {
+          // underline: true,
+          align: 'center',
+        });
+        pdfDoc.text('------------------------------------------------------');
+        order.products.forEach((prod) => {
+          pdfDoc
+            .fontSize(20)
+            .text(
+              'Produto: ' +
+                prod.product.title +
+                ' - ' +
+                prod.quantity +
+                'x' +
+                ' $ ' +
+                prod.product.price
+            );
+        });
+        pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+--------------------------- 
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+
+
+QUEREMOS TAMBÉM ADICIONAR UM 'TOTALPRICE'
+
+
+
+NO FINAL DA 
+
+
+FATURA,
+
+
+
+que obteremos a partir 
+
+daquela propriedade 'totalPrice' que temos em CADA ORDER...
+
+
+
+
+
+
+
+FICA TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.');
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        //         return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => { ///////CÓDIGO RUIM, CÓDIGO QUE NÃO FAZ O 'STREAM OF DATA'... (ver aula 325....) --> DEVEMOS SEMPRE 'STREAM THE DATA', tudo para: 1) EVITAR O OVERFLOW DA MEMÓRIA TEMPORÁRIA DE NOSSO APP NODE, que será ocupada pelo READ e RETURN desses arquivos.... 2) EVITAR O ___ LONGO __ TEMPO ATÉ RECEBER UMA 'RESPONSE' POR PARTE DO SERVER....
+        //           if (err) {
+        //             return next(err);
+        //           } else {
+        //             console.log(data);
+        //             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+        //             // res.setHeader('Content-Disposition', 'attachment' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+        //             res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+        // //inline vs attachment; decida qual é o melhor para seu aplicativo, dependendo do caso concreto (queremos que o user baixe o arquivo sem qualquer conversinha? ou queremos que ele VISUALIZE O ARQUIVO no 'pdf viewer'/mp3 viewer do browser antes de o baixar? se quisermos essa lenga-lenga, devemos escrever 'inline')
+        //             return res.send(data);
+        //           }
+        //         });
+
+        const pdfDoc = new PDFDocument();
+
+        res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+        res.setHeader(
+          'Content-Disposition',
+          `inline; filename="${invoiceName}"`
+        );
+
+        pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+        pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+
+        // pdfDoc.text('Hello World');////NOS DEIXA ADICIONAR/INCORPORAR 1 LINHA DE TEXTO NO INTERIOR DESSE DOCUMENTO PDF que criamos com 'new PDFDocument()'....
+
+        pdfDoc.fontSize(26).text('Fatura', {
+          // underline: true,
+          align: 'center',
+        });
+        pdfDoc.text('------------------------------------------------------');
+        order.products.forEach((prod) => {
+          pdfDoc
+            .fontSize(20)
+            .text(
+              'Produto: ' +
+                prod.product.title +
+                ' - ' +
+                prod.quantity +
+                'x' +
+                ' $ ' +
+                prod.product.price
+            );
+        });
+
+        pdfDoc.text(order.totalPrice);
+        pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+      }
+    }
+  });
+};
+
+
+
+CERTO.. MAS ESTOU COM UM BUG NO TOTALPRICE... ELE ESTÁ MARCANDO '0' SEMPRE..
+
+
+
+
+
+
+
+
+
+--> e o estranho é que 
+
+NA PÁGINA DE 'ORDERS' 
+
+nós vemos o preço de verdade... (ele é mostrado normalmente...)
+
+
+
+
+
+
+
+
+
+--> O PROBLEMA ESTÁ NESTE CÓDIGO:
+
+
+
+
+
+
+
+
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      totalPrice: 0,
+    });
+
+
+
+
+
+(lá em 'postOrder'...)
+
+
+
+
+
+
+
+
+CONSERTEI... código ficou assim:
+
+
+
+
+
+
+
+
+
+
+  req.user.populate('cart.products.productId').then((user) => {
+    const products = user.cart.products.map((product) => {
+      return {
+        quantity: product.quantity,
+        // product: product.productId,
+        product: { ...product.productId._doc }, /////// professor explica que VAI USAR  o SPREAD OPERATOR nesse  'product.productId', MAS QUE  NÃO VAI USAR  ISSO  NESSE 'id' aí, e SIM __ EM  __UM __ FIELD ESPECIAL__  QUE O  MONGOOSE NOS DÁ, QUE É  O   FIELD DE  '._doc'..         PROFESSOR NOS EXPLICA QUE PODEMOS CHAMAR '... xxxx._doc' NESSE 'productId' aÍ  _JUSTAMENTE__/APENAS  PQ   O 'productId' _SERÁ ACTUALLY___ UM  OBJETO  COM __ UM MONTE___ DE METADATA  ANEXADA A ELE... ( ainda que  essa metadata seja COMPLETAMENTE INVISÍVEL.... mesmo com console.logs.. ) --> MAS COM '._doc', O QUE  CONSEGUIMOS É O __ ACESSO__  A ___rEALMENTE__  'just the data thats in there'...           ____ OU SEJA___, VAMOS ___ CONSEGUIR __ SÓ A DATA DO 'PRODUCT' VINCULADO a esse  'productId', E NÃO _O 'productId' em si... o que é conveniente... --------> E É CLARO QUE  USAMOS  o  'spread operator' chainado ali  PARA _ 'PULL OUT ALL THE DATA'  desse document que retrievamos, para completar a manipulação de dados e conseguir os encaixar naquela key de 'product'...
+      };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+
+      products: products,
+
+      // totalPrice: 0,
+      totalPrice: products.map(
+        (product) => {
+          console.log(product, 'LINE3');
+          // return product.productId.price * product.quantity;
+          return product.product.price * product.quantity; })
+      .reduce((prevValue, curValue) => {
+        return prevValue + curValue;
+      }, 0)
+  });
+
+
+    order
+      .save()
+      .then((result) => {
+        return req.user.clearCart().then((result) => {
+          res.status(302).redirect('/orders');
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO.... mas ainda faltaram algumas coisinhas...
+
+
+
+
+
+
+
+
+
+-> Certo, arrumei tudo...
+
+
+
+
+
+
+
+
+
+
+
+FICOU TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+exports.getFatura = (req, res, next) => {
+  /////VERSÃO DO CÓDIGO QUE __ FAZ AUTO-GENERATE DE PDFS para nossas faturas/invoices...
+  const orderId = req.params.orderId; //necessário..
+  const invoiceName = 'fatura-' + orderId + '.pdf';
+  const invoicePath = `${pdfPath}/${invoiceName}`;
+  console.log(invoiceName);
+
+  Order.findById(ObjectId(orderId)).then((order) => {
+    if (!order) {
+      // console.log('ENTER');
+      req.flash('error', 'Your order could not be found.');
+      return res.redirect('/orders');
+    } else {
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        // console.log(req.user._id, 'LINE5125');
+        // console.log('ENTER2');
+        req.flash('error', 'Your user was not responsible for that order.');
+        return res.redirect('/orders');
+      } else {
+        //         return fs.readFile(`${pdfPath}/${invoiceName}`, (err, data) => { ///////CÓDIGO RUIM, CÓDIGO QUE NÃO FAZ O 'STREAM OF DATA'... (ver aula 325....) --> DEVEMOS SEMPRE 'STREAM THE DATA', tudo para: 1) EVITAR O OVERFLOW DA MEMÓRIA TEMPORÁRIA DE NOSSO APP NODE, que será ocupada pelo READ e RETURN desses arquivos.... 2) EVITAR O ___ LONGO __ TEMPO ATÉ RECEBER UMA 'RESPONSE' POR PARTE DO SERVER....
+        //           if (err) {
+        //             return next(err);
+        //           } else {
+        //             console.log(data);
+        //             res.setHeader('Content-Type', 'application/pdf'); ////EIS O CÓDIGO EM QUESTÃO. Usamos esse código aí para __ ALTERAR O FILENAME do arquivo que o user vai baixar( pegar um filename mais simples) E TAMBÉM ____ PARA __ CONSEGUIR COLOCAR A EXTENSION DE '.pdf' ao nosso arquivo retornado... (se não fizermos isso, ele será BAIXADO COMO UM ARQUIVO SEM EXTENSÃO.. o que é um lixo...)
+        //             // res.setHeader('Content-Disposition', 'attachment' );  //////'inline' --> faz com que seja aberto um 'PDF VIEWER' no nosso browser, para visualizar esse arquivo (e dar a opção de o baixar, se o user quiser)... ---> entretanto, os nomes das files vão ficar zoados, vão ficar em um formato tipo ''61966d050dd562509c7febe7''  ------> o contrário de 'inline' é 'attachment', QUE É O VALOR QUE VAI FAZER COM QUE __ NOSSAS FILES SEJAM BAIXADAS DIRETAMENTE, sem abrir esse VISUALIZADOR DE PDF prévio....
+        //             res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"` )
+        // //inline vs attachment; decida qual é o melhor para seu aplicativo, dependendo do caso concreto (queremos que o user baixe o arquivo sem qualquer conversinha? ou queremos que ele VISUALIZE O ARQUIVO no 'pdf viewer'/mp3 viewer do browser antes de o baixar? se quisermos essa lenga-lenga, devemos escrever 'inline')
+        //             return res.send(data);
+        //           }
+        //         });
+
+        const pdfDoc = new PDFDocument();
+
+        res.setHeader('Content-Type', 'application/pdf'); ////esses 2 headers sempre são meio necessários, o de 'DEFINE THE FILE TYPE' E O DE 'DEFINE THE FILENAME'...
+        res.setHeader(
+          'Content-Disposition',
+          `inline; filename="${invoiceName}"`
+        );
+
+        pdfDoc.pipe(fs.createWriteStream(invoicePath)); ////vai criar/armazenar esse pdf LÁ NO FILESYSTEM DO NOSSO APP NODEEXPRESS... lá na pasta 'faturas'... OBS: o documento pdf inicialmente estará em BRANCO, temos que editar por meio das linhas seguintes...
+        pdfDoc.pipe(res); ////É ISSO QUE VAI FORWARDAR/RETORNAR ESSE PDF AO USER, VAI DAR UMA CÓPIA DESSE PDF AO USER...
+
+        // pdfDoc.text('Hello World');////NOS DEIXA ADICIONAR/INCORPORAR 1 LINHA DE TEXTO NO INTERIOR DESSE DOCUMENTO PDF que criamos com 'new PDFDocument()'....
+
+        pdfDoc.fontSize(26).text('Fatura', {
+          // underline: true,
+          align: 'center',
+        });
+        pdfDoc.text('------------------------------------------------------');
+        order.products.forEach((prod) => {
+          pdfDoc
+            .fontSize(20)
+            .text(
+              'Produto: ' +
+                prod.product.title +
+                ' - ' +
+                prod.quantity +
+                'x' +
+                ' $ ' +
+                prod.product.price
+            );
+        });
+        pdfDoc.fontSize(25).text(' ');
+            pdfDoc.text('------------------------------------------------------');
+        pdfDoc.fontSize(25).text('Preço total: $' + order.totalPrice);
+        pdfDoc.end(); ///É ISSO __ QUE ___ TERMINA/CONCLUI AS OPERAÇÕES DE WRITE nas 'writable streams' de  pdfDoc.pipe(fs.createWriteStream(invoicePath)); E pdfDoc.pipe(res); -------> VOCÊ DEVE CHAMAR 'pdfDoc.end()' PARA __ TERMINAR__ ESSE WRITE AÍ, O WRITE DO PDF, que será feito por meio de 'streams'...
+      }
+    }
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> adicionamos mais alguns styles...
+
+
+
+
+
+OK... É ASSIM QUE PODEMOS 'GENERATE DATA ON THE FLY'
+
+e então RETORNAR ESSA DATA NA RESPONSE...
+
+
+
+
+
+
+(E TAMBÉM SALVAR ESSA FATURA EM UMA FILE...)
+
+
+
+
+
+
+
+
+
+
+
+--> OK... AGORA VIMOS UM POUCO DO PODER DO NODEJS,
+
+
+
+
+PRINCIPALMENTE  O ASPECTO DESSAS 
+
+
+'WRITABLE' E 'READABLE STREAMS'... ->  AQUI, NO CASO ,
+
+
+
+
+ESTAMOS ___ 
+
+
+CRIANDO UM PDF 'ON THE FLY',
+
+E AÍ ESTAMOS 
+
+STREAMANDO DATA PARA DENTRO DELE, nessa file pdf,
+
+
+E __ TAMBÉM __ DE VOLTA AO CLIENT (esse pdf aí, de volta ao client), tudo ao mesmo tempo....

@@ -1,0 +1,1083 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> AGORA QUE SABEMOS UM MONTE SOBRE_ _ COMO PREPARAR_ NOSSO APP PARA DEPLOYMENT,
+
+
+
+DEVEMOS EFETIVAMENTE O DEPLOYAR....
+
+
+
+
+
+
+
+
+
+
+
+-----> PARA ISSO,
+
+DEVEMOS USAR UM HOSTING PROVIDER CHAMADO DE 'heroku'...
+
+
+
+
+
+
+
+
+
+
+-----> HEROKU É UMA CLOUD PLATFORM que 
+
+te 
+
+deixa 
+
+
+
+
+
+HOSTEAR 
+
+APLICATIVOS NODEEXPRESS (backends)..
+
+
+
+
+
+
+
+
+
+
+
+--> EXISTEM MILHARES DE HOSTING PROVIDERS...
+
+
+
+
+
+
+
+
+
+
+
+
+--------> PROFESOR VAI NOS MOSTRAR COMO USAR O HEROKU, como deployar um app nele....
+
+
+
+
+
+
+
+
+
+
+--> EU JÁ VI COMO FAZER ISSO....
+
+
+curso de javascript ORIGINAl,
+
+ etc etc..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> JÁ SEI UM POUCO SOBRE ISSO:
+
+
+
+
+
+
+
+
+
+
+
+ 
+--------> OK... 
+
+
+mas e quanto à NOSSO APLICATIVO DO NODE.JS.... (APLICATIVO DINÂMICO, POIS TEM CÓDIGO QUE 
+RODA DIRETO NO SERVIDOR/SERVERSIDE...)?
+
+
+
+
+
+
+--------> NÃO IMPORTA A 'MODALIDADE' Desse node.js/serverside...
+
+
+
+pode ser:
+
+
+
+1) AQUELA VARIANTE QUE PRODUZ OS HTML NO SERVIDOR E ENTÃO OS RETORNA AO USUÁRIO (é a modalidade 
+
+que vimos NO INÍCIO DO MÓDULO DO NODE.JS, aquela parte DO FORM e tals....)
+
+
+
+
+
+2) A SEGUNDA VARIANTE, QUE TEM UM MONTE DE 'ROUTES' E QUE 
+
+TROCA (exchanges) .JSON DATA   COM O BROWSERSIDE....
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+NÃO INTERESSA A ROTA QUE VOCÊ ESCOLHER, O PROCEDIMENTO PARA HOSTEAR ESSA 'PÁGINA COM CONTEÚDO DINÂMICO'/ 'PÁGINA DINÂMICA' 
+
+É O __MESMO____....
+
+
+
+
+VOC~E AINDA TEM QUE RODAR O NODE.JS NO SERVIDOR....
+
+
+
+
+
+
+FIREBASE ___NÃO É UM SERVIDOR___ QUE SUPORTA O 'RUN' de node.js em um servidor...
+
+
+
+
+
+
+---> eles tem, na verdade, um 'cloud function service' QUE TE PERMITE 
+
+EXECUTAR ALGUM CÓDIGO/UM POUCO DE CÓDIGO NO SERVIDOR,  MAS 
+
+
+
+É ___UM POUCO DIFERENTE___...
+
+
+NÃO É FEITO PARA ESSE TIPO DE DEPLOYMENT QUE O PROFESSOR ESTÁ NOS ENSINANDO, APESAR DE 
+
+EXISTIREM MANEIRAS DE FAZER ELE FUNCIONAR de forma similar a um servidor executando node.js...
+
+
+
+
+
+--------------------------------
+
+
+
+NÃO USAREMOS O FIREBASE....
+
+
+
+
+PROCURAREMOS 
+
+
+'nodejs hosting'....
+
+
+
+
+USAREMOS O HEROKU. (mas não é o único, AWS também tem serviços disso.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+PODEMOS VISITAR A PÁGINA DO HEROKU....
+
+
+
+CRIAMOS UMA CONTA...
+
+
+etc etc
+
+
+
+
+
+PODEMOS CLICAR EM 
+
+
+'CREATE NEW APP'...
+
+
+
+
+---> DOCUMENTAÇÃO DO HEROKU NOS MOSTRA COMO HOSTEAR APLICATIVOS NODE.JS NELE...
+
+
+
+Professor usa qualquer app name...
+
+
+
+Create app (não faça nada com a PIPELINE)...
+
+
+
+
+
+
+---> temos algumas OPÇÕES...
+
+
+
+USE 'HEROKU GIT'...
+
+
+
+Para que o heroku FUNCIONE, você precisa ter 
+
+
+
+O __GIT___ instalado na sua máquina...
+
+
+
+
+
+ENCONTRAMOS  A PÁGINA 
+
+'git-scm'...
+
+
+
+
+----> GIT É UMA FERRAMENTA DE 
+
+
+'VERSION-CONTROL'...
+
+
+
+
+ELA TE PERMITE 
+
+
+
+_________CRIAR MÚLTIPLOS ___SNAPSHOTS ___ DO SEU CÓDIGO 
+
+
+ENQUANTO VOCÊ ESTÁ O DESENVOLVENDO... 
+
+
+
+
+ELE TE AJUDA, ADEMAIS, A 'PUSH' o seu código 
+
+
+A REPOSITORIES REMOTOS, REPOSITÓRIOS EM QUE VOCÊ PODE _aRMAZENAR ESSES SEUS CÓDIGOS__....
+
+
+-------------------------------
+
+
+NO CASO DO HEROKU, VOCÊ ___ARMAZENA O CÓDIGO DOS SEUS SERVIDORES ____ NOS SERVIDORES 
+
+
+DO HEROKU...
+
+
+
+
+
+
+INSTALE O GIT....
+
+
+
+
+
+DEPOIS INSTALE O HIROKU-CLI por meio 
+
+
+do instalador DO WINDOWS...
+
+
+
+
+
+Certo... instale tudo...
+
+
+
+
+Aí vocÊ terá o 'heroku CLI'...
+
+
+
+
+
+com o heroku CLI, você pode rodar 
+
+
+
+'heroku login'
+
+
+no TERMINAL DO IDE....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... executo 'heroku login'....
+
+
+
+
+heroku: Press any key to open up the browser to login or q to exit: 
+Opening browser to https://cli-auth.heroku.com/auth/cli/browser/d2c89004-69eb-46d2-862d-2fb651142134?requestor=SFMyNTY.g2gDbQAAAAwxNzkuMjE5LjU5LjNuBgBQGr79fQFiAAFRgA.IPhvvjWEPYqAlX8c67yp0qYX3-LXcN5sW_5uWDRrMuc
+Logging in... done
+Logged in as arthur.panazolo@acad.pucrs.br
+PS A:\projeto4 - NODEJS\MODULO29-FAZENDODEPLOYDONOSSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY> c
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---> comando GIT disponível na nossa máquina....
+
+
+
+
+
+
+
+
+
+
+
+--> abro A PASTA DO MEU APP com 
+
+
+'open in integrated terminal'
+
+
+E AÍ 
+
+
+
+
+ESCREVO, NO TERMINAL,
+
+
+
+'git init'....
+
+
+
+
+
+
+
+-> certo.... isso inicializou nosso projeto com o git....
+
+
+
+
+(vejo vários 'U')...
+
+PS A:\projeto4 - NODEJS\MODULO29-FAZENDODEPgit initSOAPP\NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY>  
+Initialized empty Git repository in A:/projeto4 - NODEJS/MODULO29-FAZENDODEPLOYDONOSSOAPP/NOVONOVOPROJETO26-APPDOSHOP,RENDERDEVIEWS,ENOSSOEXEMPLODEDEPLOY/.git/
+
+
+
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA QUE, DEPOIS DE INSTALAR E RODAR O 'GIT' na pasta de nosso 
+
+projeto com 'git init', 
+
+
+DEVEMOS 
+
+
+RODAR 
+
+
+O código 
+
+
+'heroku git:remote -a js-node-js-deployment'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------->  »   Warning: heroku update available from 7.51.0 to 7.59.2.
+ »   Error: You do not have access to the app js-node-js-deployment.
+ »
+ »   Error ID: forbidden
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---------> ganhei esses errors aí....
+
+
+
+
+
+
+
+
+
+ --> talvez seja pq eu nõa conheco esse 'js-node-js-deployment'...
+
+
+
+
+
+
+
+
+
+ ----> talvez eu tenha que usar 'novoprojeto29'...
+
+
+
+
+
+
+
+
+
+ --> DEU CERTO....
+
+
+ FICOU ASSIM;
+
+
+
+
+
+
+ set git remote heroku to https://git.heroku.com/novoprojeto29.git
+
+
+
+
+
+
+
+ ------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ COM ESSE COMANDO, BASICAMENTE CONFIGURAMOS NOSSO CÓDIGO, 
+
+ FIZEMOS COM QUE 
+
+ ELE FOSSE 'DEPLOYDO' 
+
+ pelo heroku...
+
+
+
+
+
+
+
+
+
+
+
+
+DEPOIS QUE VOCÊ FEZ ISSO, 
+
+
+VOCÊ PRECISA 
+
+
+RODAR ___3 COMANDOS__, 
+
+
+
+3 comandos para que o 
+
+
+SEU CÓDIGO NODE.JS dentro dessas suas PASTAS 
+
+SEJA EFETIVAMENTE ADICIONADO E EXECUTADO NO 
+
+
+APLICATIVO/SERVIDOR HEROKU QUE 
+
+
+
+ESTÁ NA WEB...
+
+
+(para deployar seus arquivos...).....
+
+
+
+
+os códigos são:
+
+
+
+
+'git add .'   (O '.' DEVE SER ESCRITO...)
+'git commit -am "make it better"
+'git push heroku master'
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
+
+
+
+
+
+
+
+
+
+git push heroku master
+
+
+
+
+
+
+
+
+
+
+
+--> O OUTPUT FINAL FOI ESTE:
+
+
+
+
+
+remote:        https://novoprojeto29.herokuapp.com/ deployed to Heroku
+remote:
+remote: Verifying deploy... done.
+To https://git.heroku.com/novoprojeto29.git
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> o link que posso acessar é 'novoprojeto29.herokuapp.com'...
+
+
+
+
+
+
+
+
+
+
+--> O QUE __ NÃO POSSO ACESSAR É 
+
+'git.heroku.com/novoprojeto29.git'...
+
+
+
+
+
+
+
+
+-> AO ACESSAR ESSE LINK ALI DE CIMA (herokuapp),
+
+
+RECEBI _ UM ERRO__...
+
+
+
+
+
+
+
+
+
+
+
+
+https://devcenter.heroku.com/articles/logging#view-logs
+
+
+
+
+
+
+
+
+
+
+
+--> O ERRO FOI ESTE:
+
+
+
+021-12-27T21:23:30.706950+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=novoprojeto29.herokuapp.com request_id=dd2478e1-f20f-452e-aa36-21262d33732b fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+2021-12-27T21:23:31.275325+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=novoprojeto29.herokuapp.com request_id=efa78304-9e39-4a9c-81fc-42de6038bc10 fwd="179.219.59.3" dyno= connect= service= status=503 bytes= protocol=https
+
+
+
+-----------------------
+
+
+
+
+
+
+
+
+
+
+PROFESSOR 
+
+
+
+
+CONTINUA.... --> ELE 
+
+FALA 
+
+DAS ALTERNATIVAS AO HEROKU... ---> UMA ALTERNATIVA É CODAR SEU PRÓPRIO COMPUTADOR,
+
+
+
+
+seu próprio servidor... -> PROVAVELMENTE VAI SER INSECURE,
+
+
+
+
+
+NOT SCALABLE,
+
+COMPLEXO 
+E 
+
+CARO,
+
+
+ETC ETC... -> É POR ISSO QUE TIPICAMENTE USAMOS 
+
+HOSTING PROVIDERS COMO O HEROKU/AWS --> 
+
+
+
+
+
+
+
+PEGAMOS NOSSO CÓDIGO E DEPLOYAMOS ELE EM 'MANAGED SPACES'
+
+
+
+
+NOS COMPUTADORES DOS HOSTING PROVIDERS...  (
+
+
+
+    'virtual server/managed space'
+) 
+
+
+
+
+
+
+-> ESSES HOSTING PROVIDERS POSSUEM MÁQUINAS MT POTENTES NOS SEUS 
+
+
+
+DATA CENTERS... -> você aluga 
+
+parte dessas máquinas, 
+
+para 
+
+então as utilizar para hostear seu app,
+
+
+de forma totalmente desconectada dos outros apps, apps de outras pessoas.....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OK..... --> MAS TIPICAMENTE VOCê __ NÃO __ CONECTA__ DIRETAMNETE 'SEU ESPAÇO' 
+
+
+NAQUELA MÁQUINA DIRETAMENTE AOS SEUS USERS,
+
+E SIM 
+
+
+
+
+UM MONTE DOS PROVIDERS FAZEM MANAGE DO 'HEAVY LIFTING' para nós.... ---> ELES NOS DÃO 
+
+
+SEUS PRÓPRIOS 'MANAGED SERVERS',
+
+
+na frente dos seus servers,
+
+
+e em que 
+
+
+
+
+
+__ PODEMOS _ CONVENIENTEMENTE  ADICIONAR COISAS COMO 
+
+'SSL',
+
+
+'COMPRESSION',
+
+
+'logging',
+
+
+
+
+
+
+E ATÉ MESMO 'LOAD BALANCING' --> isso significa quando você tem MÚLTIPLOS ___ VIRTUAL SERVERS,
+
+
+
+ISSO PQ __ SEU APP PODE ESTAR 'DOING WELL',
+e aí 
+VOCÊ PRECISA DE MAIS RECURSOS.. -> nesse caso,
+
+
+
+
+OS REQUESTS SÃO ENVIADOS A 'SERVERS COM AVAILABLE CAPACITIES' 
+
+de uma maneira eficiente 
+
+
+
+
+
+
+
+
+
+
+
+
+(
+
+
+
+    TODAS ESSAS FEATURES,
+
+
+
+    SSL, COMPRESSION, LOGGING E 'LOAD BALANCING',
+
+
+
+    SÃO __ GERENCIADASS POR 
+
+AQUILO QUE CHAMAMOS DE 'managed servers'... ->  são ___ SERVERS INVISÍVEIS, 
+
+
+INDETECTADAS POR NÓS,
+
+MAS QUE 
+FAZEM PARTE DO PACOTE 
+
+'hosting package'...
+
+)
+
+
+
+
+
+
+
+-----> AÍ, NESSES CASOS, VOCÊ APENAS USA UMA 'NICE USER INTERFACE'
+
+providenciada pelo HOSTING PROVIDER  PARA __ ENTÃO __ 
+
+
+'SETUP HOW YOUR APP BEHAVES ABOUT SSL/LOGGING/COMPRESSION, ETC'..
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> E É CLARO QUE TUDO ISSO, ESSES PROCESSOS,
+
+
+
+__ RODAM___ EM UMA 'PRIVATE NETWORk' ... -> ISSO SIGNFICA QUE 
+
+
+
+
+
+
+SEU PRÓPRIO CÓDIGO, SEU PRÓPRIO 'VIRTUAL SERVER',
+
+
+
+__ NÃO É 'DIRETAMENTE EXPOSTO' à web,
+
+
+
+
+E SIM __ É EXPOSTO __ DIRETAMENTE__ A 
+
+ESSE 
+
+
+
+'MANAGED SERVER',
+
+que por sua vez 
+
+
+
+__ CONVERSa__ COM O APP, 
+
+
+E COM OS SEUS USERS,
+
+
+POR MEIO DE 
+
+
+
+
+
+
+1 'PUBLIC SERVER GATEWAY'   
+
+
+
+
+
+
+
+
+
+
+
+
+PUBLIC SERVER GATEWAY ---> É ESSENCIALMENTE UMA 'PORTA' 
+
+EM QUE 
+
+
+_ REQUESTS__ PODEM ENTRAR E EM QUE __ SÃO ENTÃO FORWARDADOS  __ ao seu SERVER... (E as responses também são forwardadas, no caso)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+---_> É ASSIM, PORTANTO, COMO HOSTING PROVIDERS FUNCIONAM...
+
+
+
+
+
+
+
+
+
+----> É IMPORTANTE SABER ISSO, MAS NÃO HÁ MT COISA QUE VOCÊ PRECISA FAZER SOBRE ISSO...
+
+
+
+
+
+
+
+
+
+
+
+-> OK, ESSA ERA A PARTE POR TRÁS DAS CENAS,
+
+
+AGORA 
+
+
+
+
+DEVEMOS VER COMO O DEPLOY COM O HEROKU FUNCIONA...

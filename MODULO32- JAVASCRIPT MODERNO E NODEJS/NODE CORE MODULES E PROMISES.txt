@@ -1,0 +1,1098 @@
+
+
+
+
+
+
+
+
+
+O PROFESSOR HAVIA MENCIONADO OUTRA FEATURE MODERNA 
+
+QUE 
+
+PODEMOS USAR 
+
+
+
+
+
+NO NODE,
+
+atualmente,
+
+
+que 
+
+
+
+NÃO USÁVAMOS ANTIGAMENT.E.
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> É UMA FEATURE QUE __ NÃO USAMOS AO LONGO DESSE CURSO,
+
+MAS QUE PODE SER USADA...
+
+
+
+
+
+
+
+
+
+
+
+--> É A FEATURE DAS 'PROMISES EM CORE APIs' (apis como FILESYSTEM, etc etC)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR USOU, SIM,
+
+PROMISES AO LONGO DO CURSO,
+
+
+
+
+
+mas 
+
+
+
+
+
+
+
+
+
+NUNCA EM CORE APIs...
+
+
+
+
+
+
+
+
+
+--> USAMOS PROMISES PQ 
+
+UM MONTE DE 
+
+CÓDIGOS/PACKAGES AS UTILIZAM PARA HANDLAR ASYNC OPERATIONS...
+
+
+
+
+
+
+
+
+
+
+--> HÁ 1 PARTE DOS NODEAPPS
+ 
+ que 
+
+ não são nativamente compatíveis 
+
+ com 
+
+
+
+
+ PROMISES... 
+
+
+
+
+
+
+
+
+
+ --> SÃO AS CORE APIs e seus mé´todos,
+
+ como 
+
+
+
+
+ 'fs.readFile()'....
+
+
+
+
+
+
+
+
+ --> A RAZÃO DE PROMISES NÃO FUNCIONAREM COM ESSES NEGÓCIOS (que só funcionam nativamente com CALLBACKS nas funções),
+
+
+ é que quando o node foi desenvolvido,
+
+ essa tecnologia/sintaxe NÃO EXISTIA..
+
+
+
+
+
+
+ -_> essas core APIS não 
+
+ consideram
+  
+as promises, nativamente...
+
+
+
+
+
+
+
+
+
+
+-->  É POR ISSO QUE O NODEJS E OS SEUS CORE APIs são CALLBACK BASED....
+
+
+
+
+
+
+
+
+
+
+
+--> É CLARO QUE COM 
+
+
+'res.sendFile()'
+
+
+ESTAMOS USANDO um diferente approach,
+
+approach em que 
+
+
+
+
+
+ENVIAMOS 
+
+A FILE 
+
+DE VOLTA DE QUALQUER FORMA... 
+
+
+
+
+
+
+
+
+
+
+MAS SE VOCÊ TIVER ALGUMA OPERATION/OPERAÇÃO QUE 
+
+
+PRECISE FAZER ALGO COM UM 'CORE NODE MODULE',
+
+
+
+
+VOCÊ TALVEZ 
+
+PREFIRA/GOSTE MAIS DE 
+
+
+SER 
+
+CAPAZ 
+DE 
+
+
+UTILIZAR 
+
+
+UMA PROMISE (then-catch, ou async/await) 
+
+
+
+
+EM VEZ DE SER FORÇADO A USAR ESSA SINTAXE DE CALLBACK 
+
+
+nojenta,
+
+
+
+
+sintaxe tipo assim:
+
+
+
+
+
+fs.readFile('my-page.html', 'utf8', (err, data) => {
+    res.send(data)
+}
+)
+
+
+
+
+
+
+
+
+
+-----------> BEM, HÁ BOAS NOTÍCIAS:
+
+
+
+
+
+
+MUITAS DAS 'CORE APIs'
+
+
+
+
+BAKED INTO O NODE JS
+
+
+
+
+
+AGORA_ _ JÁ POSSUEM 
+
+
+SUPORTE A PROMISES...
+
+
+
+
+
+
+
+
+
+
+----> SE EXAMINRMOS OS OFFICIAL DOCS,
+
+
+
+
+
+LÁ NA DOCUMENTAÇÃO DO FILESYSTEM,
+
+
+ENCONTRAMOS UMA COISA INTERESSANTE:
+
+
+
+
+
+
+
+
+LÁ 
+
+ENCONTRAMOS 
+
+TODOS OS METHODS QUE PODEMOS CHAMAR NO FILE SYSTME,
+
+
+E ISSO É NICE... -----> MAS 
+
+
+
+SE SCROLLARMOS LÁÁÁÁ 
+
+
+
+embaixo,
+
+
+
+
+veremos 
+
+
+
+QUE 
+
+EXISTE 
+
+
+
+UM NEGÓCIO CHMAADO 
+DE 
+
+
+
+
+
+
+'fs Promises API'...
+
+
+
+
+
+
+
+
+
+
+
+
+------------> ESSENCIALMENTE,
+
+ISSO AÍ __ É 'TODAS AS FEATURES/METHODS DO FILE SYSTEM',
+
+mas agora 
+
+
+
+DISPONÍVEIS EM UMA VERSÃO 'PROMISE-BASED'....
+
+
+
+
+
+
+
+
+
+
+----> ISSO SIGNIFICA QUE 
+
+AGORA TEMOS UM 
+
+
+METHOD DE 'writeFile'
+
+QUE 
+
+'ACTUALLY EMBRACES PROMISES'.... -----> ISSO SIGNIFICA QUE 
+
+PODEMS 
+
+
+
+__ USAR_ 
+
+PROMISES COM ESSAS 
+
+CORE APIs...
+
+
+
+
+
+
+
+
+
+
+--> E MTAS CORE APIs possuem 
+
+
+1 'versão promise'....
+
+
+
+
+
+
+
+
+
+------------> MAS COMO USAMOS ISSO?
+
+
+
+
+
+
+
+--> BEM, ATÉ AGORA NOSSO CÓDIGO ESTÁ ASSIM:
+
+
+
+
+
+
+ 
+import { fileURLToPath } from 'url'; ///gambiarra para podermos usar '__dirname'...
+
+import { dirname } from 'path';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+import fs from 'fs';
+
+
+import path from 'path';
+
+const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+      res.send(data);
+    });
+  }
+
+
+
+
+
+  const pageRoute = (req, res, next) => {
+    fs.readFile('my-page.html', 'utf8', (err, data) => {
+    //   res.sendFile(path.join(__dirname, 'my-page.html')) //ISSO __ NÃO FUNCIONARÁ, NOS DARÁ UM __ ERRO ('__dirname' is not defined)....
+
+    res.sendFile(path.join(process.cwd(), 'my-page.html' )) ///já o 'process.cwd()', no lugar de DIRNAME, funciona...
+    });
+  }
+
+
+
+
+  export const chinelo = () => {
+      console.log('exemplo');
+  }
+
+
+
+  export default pageRoute;
+
+
+
+
+
+
+
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------> 
+
+
+ MAS EM VEZ DE 
+
+ IMPORTAR 
+
+
+
+
+ o filesystme com as sintaxes de 
+
+
+
+ 'import fs from 'fs'' 
+
+
+
+ ou 
+
+
+
+
+ 'const fs = require('fs')',
+
+
+
+
+
+
+ ___ 
+
+ DEVEMOS IMPORTAR ESSE MODULE ( e qualquer outro module)
+
+
+ DE UMA MANEIRA UM POUCO DIFERENTE...
+
+
+
+
+
+
+
+
+
+
+
+
+ -------> PARA CONSEGUIR IMPORTAR ESSA VERSÃO 'promise' 
+
+
+ do módulo,
+
+ VOCÊ DEVE USAR A SINTAXE 
+
+
+
+
+ 'import fs from 'fs/promises'.... 
+
+
+
+
+
+
+
+
+
+
+
+ OU SEJA,
+
+ de 'fs/promises'...
+
+
+
+
+
+
+
+ ESSA É A __ ÚNICA DIFERENÇA...
+
+
+
+
+
+
+
+
+
+
+
+
+ --> porra, se eu puder usar a versão PROMISE-BASED,
+
+
+ vai ser muito mais fácil de codar, eu acho....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+import { fileURLToPath } from 'url'; ///gambiarra para podermos usar '__dirname'...
+
+import { dirname } from 'path';
+
+import fs from 'fs/promises'; //VERSÃO 'PROMISE-BASED' de 'fileSystem' (a única diferença é a MANEIRA QUE VOCê ESCREVE AS OPERAÇÕES, PQ A FUNCIONALIDADE EM SI É IGUAL)... --> EM VEZ DE USARMOS 'CALLBACKS', como na versão 'from fs' NORMAL, __ AQUI__ VAMOS ESCREVER then-catch blocks, ou então 'ASYNC/AWAIT'.... (bem mais legível e moderno)...
+// import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+E SE VOCê USAR A SINTAXE DE IMPORTS VELHA (SINTAXE DO NODE),
+
+
+você 
+
+deve escrever assim:
+
+
+
+
+
+
+
+const fs = require('fs').promises;
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------> certo..... ------->  DEVEMOS 'ACESSAR A PROPRIEDADE PROMISES DENTRO DE 'fs' ',
+
+
+
+para conseguir usar isso na VERSÃO DE IMPORTS ANTIGA...
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+import fs from 'fs/promises'; //VERSÃO 'PROMISE-BASED' de 'fileSystem' (a única diferença é a MANEIRA QUE VOCê ESCREVE AS OPERAÇÕES, PQ A FUNCIONALIDADE EM SI É IGUAL)... --> EM VEZ DE USARMOS 'CALLBACKS', como na versão 'from fs' NORMAL, __ AQUI__ VAMOS ESCREVER then-catch blocks, ou então 'ASYNC/AWAIT'.... (bem mais legível e moderno)...
+
+
+// const fs = require('fs').promises; ////versão DE __ 'IMPORT VELHO' (node) DESSE PACOTE DE 'PROMISES' (pq você não é obrigado a USAR A SINTAXE DE IMPORTS NOVA, ES6, para conseguir USAR ESSA NOVA SINTAXE DE 'PROMISES' no lugar da sintaxe dos callbacks, com seus módulos)...
+
+// import fs from 'fs';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ESSA PROPRIEDADE 
+
+'promises'
+
+
+EXPÕE 
+
+O 
+
+
+
+OBJETO 'file SYSTEM'
+
+COM __TODOS ESSES METODOS EM UM 'FORMATO DE PROMISES'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> COM ISSO, 
+
+
+TEMOS O OBJETO 'fs'
+
+
+DISPONIBILIZADO...
+
+
+
+
+
+
+
+
+
+
+--> CONTINUAMOS CHAMANDO 'fs.readFile()',
+
+
+
+mas agora 
+
+
+ESSE METHOD
+
+
+
+__ VAI ACTUALLY__ NOS RETORNAR UMA PROMISE..
+
+
+
+
+
+
+
+é por isso que escrevemos + ou - assim:
+
+
+
+
+
+export const pageRoute = (req, res, next) => {
+
+    fs.readFile('my-page.html', 'utf8')
+    .then(
+        (data) => {
+            res.send(data);
+        }
+    )
+    .catch(
+        (err) => {
+            console.log(err);
+        }
+    )
+}
+
+
+
+
+
+
+-----------------------------
+
+
+
+
+
+
+
+
+
+
+acho que será assim... --> 
+
+PQ ESSE METHOD VAI RETORNAR UMA PROMISE,
+
+
+
+
+
+
+
+E VAMOS UTILIZAR ESSA PROMISE NOS THEN/CATCH BLOCKS..
+
+
+
+
+
+
+
+--> PODEMOS USAR ASYNC/AWAIT,
+
+
+
+se 
+
+
+acharmos melhor....
+.
+
+
+
+
+
+
+eX:
+
+
+
+
+
+export const pageRoute = async (req, res, next) => {
+
+
+    try {
+
+   const examinedFile = await fs.readFile('my-page.html', 'utf8');
+
+   res.send(examinedFile);
+
+    } catch (err) {
+                console.log(err);
+    }
+
+
+}
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+// const pageRoute = (req, res, next) => { ///VERSÃO COM CALLBACK (sintaxe antiga, sem A VERSÃO 'promise' do pacote 'fs'.... ) --> se quisermos a versÃO promise, devemos escrever 'import fs from 'fs/promises'.. 
+//     fs.readFile('my-page.html', 'utf8', (err, data) => {
+//       res.send(data);
+//     });
+//   }
+
+
+
+export const pageRoute = (req, res, next) => { ///VERSÃO __ COM PROMISES (then-catch)....
+
+  fs.readFile('my-page.html', 'utf8')
+  .then(
+      (data) => {
+          res.send(data);
+      }
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+      }
+  )
+}
+
+
+
+
+
+
+
+
+
+
+//   export const pageRoute = async (req, res, next) => { //versão async/await.... (TAMBÉM COM PROMISES, MAS SINTAXE ALTERNATIVA)..
+
+
+//     try {
+
+//    const examinedFile = await fs.readFile('my-page.html', 'utf8');
+
+//    res.send(examinedFile);
+
+//     } catch (err) {
+//                 console.log(err);
+//     }
+
+
+// }
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+
+
+
+
+AGORA, PORTANTO, PODEMOS USAR 
+
+
+
+
+
+
+'PROMISE CHAINING' PARA 
+
+
+ESCAPAR O 'CALLBACK HELL'...
+
+
+
+
+
+
+
+
+
+
+----> OK... MAS SE QUEREMOS HANDLAR ERRORS, TEMOS QUE 
+
+ADICIONAR UM CATCH BLOCK NO FINAL,
+E AÍ 
+
+
+
+
+escrever o 'console.log(err)'...
+
+
+
+
+
+
+
+
+
+-> CERTO... MESMA COISA COM 'ASYNC/AWAIT', com 
+
+'try-catch'....
+
+
+
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+
+
+
+
+
+
+
+
+
+-----------> esse negócio dos PROMISES É TOTALMENTE OPCIONAL, MAS É __ REALMENTE _ MUITO MELHOR, ESPECIALMENTE 
+
+SE 
+
+VOCê 
+
+
+VAI CHAINAR MÚLTIPLAS PROMISES...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+Attached, you find the code snapshots for this module.
+
+More on Node & ES Modules: https://nodejs.org/dist/latest-v14.x/docs/api/esm.html
+
+
+
+
+
+
+
+
+
+
+
+AACABAMOS ESTE MÓDULO....

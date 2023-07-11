@@ -1,0 +1,394 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> UM GRANDE EXEMPLO DE 
+
+RUNTIME ERROR 
+
+PODE 
+
+SER 
+
+VISTO 
+
+
+COM 
+
+
+
+
+
+O CÓDIGO 
+
+DE 
+
+'res.write()'...
+
+
+ex:
+
+  
+
+
+
+
+
+    if (url === '/') {
+        res.write('<html>');
+        res.write('<head><title>My first page</title></head>');
+        res.write('<body>');
+        res.write('<div>');
+        res.write('<form action="/message" method="POST"');
+        res.write('<label htmlFor="message">Enter a Message!</label>');
+        res.write('<input type="text" name="message"></input>');
+        res.write('<button type="submit">SEND</button>');
+        res.write('</form>');
+        res.write('</div>');
+        res.write('</body>');
+        res.write('</html>');
+        return res.end();
+      }
+
+
+
+
+
+
+
+
+    
+
+
+    COMO MENCIONADO ANTERIORMENTE,
+
+    VOCÊ 
+    É 
+
+    OBRIGADO 
+
+    A 
+    ESCREVER 
+
+    'return res.end()'
+
+    NAQUELE LOCAL
+
+
+    AUXILIA 
+    __PARA __ PREVENIR__ 
+
+
+
+
+    A EXECUÇÃO 
+
+
+    __ DO CÓDIGO ___ APÓS __ 
+
+
+    ESSE 
+
+    IF STATEMENT DE 'url === '/''
+
+
+
+
+
+
+
+
+
+
+    --> CASO CONTRÁRIO, E ISSO É ALGO NODE SPECIFIC, É CLARO,
+
+
+
+
+    ___ O REQUEST __ SERIA __ TERMINADO_ 
+
+
+    NAQUELA 
+
+    LINHA 
+
+    DE 
+
+    
+
+    'res.end()',
+
+
+    MAS 
+
+
+
+    ___ O RESTO DO CÓDIGO, O RESTO DA EXECUÇAÕ DO CÓDIGO__ _ SEGUIRIA/SEGUIRÁ__ 
+
+    ACONTECENDO,
+
+
+
+
+    O QUE 
+
+
+
+
+    EVENTUALMENTE 
+
+     
+
+
+
+FARÁ COM QUE 
+
+CHEGUEMOS 
+
+à LINHA 
+
+DE 
+
+
+'
+
+
+     res.setHeader('Content-Type', 'text/html');
+      res.write('<html>');
+      res.write('<head><title>My first page</title></head>');
+      res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+      res.write('</html>');
+      res.end();
+
+
+
+
+'''''
+
+
+
+
+
+
+--> E AÍ, AO ALCANÇAR 'res.end()',
+
+
+
+
+ENCONTRAREMOS UM ERRO COM ESSE SEND __DUPLICADO__ de uma response.... ---> 
+
+
+
+E O PROFESSOR 
+
+NOS EXPLICA QUE 
+
+
+__ISSO AÍ __ NÃO É UM 
+
+'SYNTAX ERROR',
+
+
+
+
+e sim  QUE É UM __ RUNTIME __ ERROR.... -------> 
+
+
+
+
+
+
+É CHAMADO DE RUNTIME ERROR 
+
+
+
+PQ SÓ OCORRE QUANDO 
+
+
+EXECUTAMOS NOSSO CÓDIGO E FAZEMOS ALGO QUE ENVOLVE AQUELA LINHA....
+
+
+
+
+
+
+
+
+
+
+
+--> QUANDO ENCONTRARMOS NOSSO ERRO,
+
+
+quando 
+
+
+encontrarmos SUA MESSAGE,
+
+DEVEMOS A LER POR INTEIRO..
+
+
+
+------> EX:
+
+
+
+
+'[ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client'... ------>
+
+
+
+
+
+
+ESSA MENSAGEM É BEM ÚTIL,
+
+
+
+VOCÊ SÓ 
+
+DEVE SABER COMO 
+
+
+__LÊ-LA... -----> 
+
+
+
+
+
+AQUI, NO CASO,
+
+
+__ O PROBLEMA É QUE A 'RESPONSE' JÁ HAVIA SIDO 
+
+
+
+
+ENVIADA,
+
+
+
+
+
+e mesmo assim linhas de código foram executadas DEPOIS DISSO,
+
+
+linhas de código em que SETTAMOS HEADERS (tentamos settar headers na response)
+
+E AÍ 
+
+
+TENTAMOS 
+
+
+ENVIAR ___ NOSSA RESPONSE DE NOVO (o que causou o erro).... -------->
+
+
+
+
+
+E, NÓS, NESSE EXEMPLO,
+
+
+
+
+
+
+__ PODEMOS/CONSEGUIMOS __ 
+
+SOLUCIONAR 
+
+O PROBLEMA 
+
+
+
+OU:
+
+
+
+1) POR AQUELE 
+
+'return' em 'return res.end()'
+
+
+
+
+
+2) POR 
+
+MEIO DE UM 
+
+
+
+IF STATEMENT 
+
+
+EXTRA WRAPPANDO 
+
+
+
+''''
+
+
+      res.setHeader('Content-Type', 'text/html');
+      res.write('<html>');
+      res.write('<head><title>My first page</title></head>');
+      res.write('<body><div><h1>Hello from my Node.js Server!</h1></div></body>');
+      res.write('</html>');
+      res.end();
+
+
+
+'''',
+
+
+
+
+
+
+que garantirá 
+
+QUE NÃO EXECUTAREMOS/EXECUTAMOS ESSE CÓDIGO 
+
+SE 
+
+O 
+
+
+STATEMENT 
+
+DE 
+
+
+'url === '/' '
+
+
+FOR SATISFEITO....
+
+
+
+
+
+
+
+
+
+----------------
+
+
+
+
+
+AGORA, COM ISSO, PODEMOS 
+
+
+
+VER O RESULTADO COM O NODEMON.... -> a página vai funcioanr de novo...

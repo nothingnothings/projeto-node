@@ -1,0 +1,1164 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> PARA IMPLEMENTAR AUTHENTICATION, 
+
+
+
+
+EM REST APIS,
+
+
+
+
+PRIMEIRAMENTE PRECISAMOS DE UMA 'FITTING ROUTE'... -------> para isso,
+
+
+
+
+
+PROFESSOR __ PROVAVELMENTE___ UTILIZARÁ UMA 
+
+
+
+ROUTE DE TIPO 
+
+
+'post'... (
+
+    para anexar um body a esse request...
+)
+
+
+
+
+
+
+
+----> LÁ NO ARQUIVO ROUTE DE 'auth.js',
+
+
+
+
+PROFESSOR ADICIONA UMA NOVA ROUTE,
+
+
+
+route de post,
+
+
+
+EM QUE 
+
+
+
+ELE 
+
+
+VAI 
+
+FAZER LOGIN DO USER...
+
+
+
+
+
+
+
+
+
+--> portnato, será algo como:
+
+
+
+
+router.post('/login', authController.login);
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+----------> O PROFESSOR EXPLICA QUE PODERÍAMOS ADICIONAR VALIDATION 
+
+
+
+NESSE 
+
+'router.post',
+
+
+
+
+
+MAS QUE 
+
+ELE NÃO VAI FAZER ISSO PQ 
+
+
+'I DONT REALLY CARE ABOUT THIS,
+
+
+BECAUSE I WILL CHECK 
+
+
+
+THE PAIR EMAIL-PASSWORD ANYWAYS' (é 
+
+um 
+
+
+pensamento 
+
+que 
+
+até faz sentido,
+
+
+mas 
+
+que às vezes pode ser ruim para a user experience....
+
+
+)
+
+
+
+
+
+
+
+
+
+
+-------> OK..... ------> então  VAMOS TRABALHAR NA CONTROLLER ACTION,
+ 
+
+
+ por enquanto...
+
+
+
+
+
+
+
+ ----> escrevemos:
+
+
+
+
+
+
+
+ exports.login = (req, res, next) => {
+
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+ --> COMO SEMPRE,
+
+ VAMOS RETRIEVAR NOSSO EMAIL E PASSWORD 
+
+ DO 
+
+ body 
+ DO REQUEST,
+ tipo assim:
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ exports.login = (req, res, next) => {
+
+
+     const email = req.body.email;
+     const password = req.body.password;
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+-------> Ok.... 
+
+AÍ, DEPOIS 
+
+DISSO,
+
+
+
+
+
+vamos 
+
+
+
+EXECUTAR 
+
+
+
+AQUELE 
+
+
+CÓDIGO DE 
+
+FIND.... 
+
+
+
+
+
+
+
+do mongoose....
+
+
+
+
+
+
+
+
+--> 
+
+
+
+
+
+
+PRIMEIRAMENTE,
+
+VAMOS CHECAR ___ SE ___ EXISTE__ 1 USER__  
+
+
+COM ESSE EMAIL,
+
+LÁ 
+
+
+
+NA NOSSA DATABASE...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+ exports.login = (req, res, next) => {
+
+
+     const email = req.body.email;
+     const password = req.body.password;
+
+
+    
+
+    User.findOne({email: email})
+    .then(
+        (user) => {
+
+
+            if(!user) {
+                    const error = new Error('No user could be found for the entered email.')
+                    error.statusCode = 404;
+                    throw error;
+
+
+            }
+        }
+    )
+    .catch(
+        (err) => {
+
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+
+            next(err);
+        }
+    )
+
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... PROFESSOR FEZ EXATAMENTE A MESMA COISA QUE EU....
+
+
+
+
+
+
+
+
+-> usei 404 (not found)...
+
+
+
+
+
+--> professor usou '401' (not authenticated)...
+
+
+
+
+
+
+
+
+--> SE PASSAMOS DESSE IF CHECK DO USER,
+
+
+SABEMOS QUE 
+
+NOSSO EMAIL 
+É 
+
+VÁLIDO...
+
+
+
+
+
+
+
+--> AGORA BASTA 
+
+DESCOBRIR 
+
+SE 
+
+O 
+
+
+PASSWORD QUE 
+
+O USER 
+
+
+INPUTTOU REALMENTE BATE COM O 
+
+
+PASSWORD 
+
+NA DATABASE (ou não)...
+
+
+
+
+
+
+--> para isso,
+
+
+provavelmente usaremos uma 
+
+
+sintaxe 
+
+
+
+
+
+return compare(password, passwordInputtado)
+.then(
+    (result) => {
+
+        if(result) {
+            xxxx
+        }
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ALGO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+
+      return compare(password, user.password);
+    })
+    .then((result) => {
+      if (!result) {
+        const error = new Error(
+          'Invalid Password. Please try again.'
+        );
+        error.statusCode = 422;
+        throw error;
+      } else {
+
+        
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+certo, mas aqui já cometi um erro/coisa diferente do professor.... -----> 
+
+
+
+
+O PROFESSOR DECIDE 
+
+
+
+
+DECLARAR UMA VARIÁVLE DE 'loadedUser',
+
+lá 
+
+
+
+no INÍCIO desse controller:
+
+
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser; ///////EIS O CÓDIGO EM QUESTÃO.
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+
+      return compare(password, user.password);
+    })
+    .then((result) => {
+      if (!result) {
+        const error = new Error(
+          'Invalid Password. Please try again.'
+        );
+        error.statusCode = 422;
+        throw error;
+      } else {
+
+        
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+---> ele diz que VAI QUERER ARMAZENAR ESSE 'user' retrievado em 'findOne'
+
+dentro dessa variável,
+
+para que 
+
+ele 
+
+
+POSSA SER USADO _ EM OUTRAS FUNCTIONS MAIS PARA BAIXO....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser; ///////EIS O CÓDIGO EM QUESTÃO.
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+        loadedUser = user; //EIS O CÓDIGO EM QUESTÃO.
+
+      return compare(password, user.password);
+    })
+    .then((result) => {
+      if (!result) {
+        const error = new Error(
+          'Invalid Password. Please try again.'
+        );
+        error.statusCode = 422;
+        throw error;
+      } else {
+        
+        
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+--> ok... mas aí ele vai usar o método 
+
+'compare',
+
+
+
+
+para 
+
+
+
+escrever 
+
+
+'return compare(password, user.password)'  --------> OU SEJA,
+
+
+
+EXATAMENTE COMO EU FIZ antes...
+
+
+
+
+
+
+
+
+
+
+--> QUANTO ÀQUELE 'result',
+
+
+é melhor escrever 
+
+
+'isEqual', pq 
+
+aí 
+
+SABEMOS
+
+
+que 
+
+está se referindo ao compare entre password e hashedPassword...
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+      loadedUser = user; ///aqui armazenamos a data de nosso user naquela variável inicial... vamos o utilizar mais para baixo, em execuções dentro dessa promise chain...
+      return compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error(
+          'Invalid Password. Please try again.'
+        );
+        error.statusCode = 422;
+        throw error;
+      } else {
+
+
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+--> MAS O USER 
+
+COLOCOU UM STATUS CODE DE '401' (unauthenticated 
+)
+
+
+
+
+
+
+------> 
+
+
+
+
+
+
+
+O CÓDIGO FICOU, ENFIM, ASSIM:
+
+
+
+
+
+
+
+
+exports.login = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error(
+          'No user could be found for the entered email.'
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+      loadedUser = user; ///aqui armazenamos a data de nosso user naquela variável inicial... vamos o utilizar mais para baixo, em execuções dentro dessa promise chain...
+      return compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error(
+          'Invalid Password. Please try again.'
+        );
+        error.statusCode = 401; //'unauthenticated'...
+        throw error;
+      } else {
+
+
+      }
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> AGORA, POR FIM, 
+
+NAQUELE 'else block',
+
+PRECISAMOAS 'GENERATE A JSON WEB TOKEN'...
+
+
+
+
+
+
+
+
+--> eu já havia feito isso uma vez,
+
+lá 
+
+
+no curso de 'NEXTJS'...
+
+
+
+
+
+---> devo procurar por esse código...
+
+
+
+
+
+
+
+
+
+
+--> era um código RADICALMENTE DIFERENTE (package de NEXTAUTH):
+
+
+
+
+
+
+
+
+
+
+
+
+
+  providers: [
+    //o valor desse negócio SEMPRE SERÁ UM ARRAY....
+    Providers.Credentials({
+      async authorize(credentials) {
+        const client = await connectToDatabase();
+
+        const usersCollection = client.db().collection('users');
+
+        const user = await usersCollection.findOne({
+          email: credentials.email,
+        });
+
+        if (!user) {
+          ///esse erro é atirado no case em que AQUELE EMAIL NÃO EXISTE NA NOSSA DATABASe...
+          client.close();
+          throw new Error('No user found for that email!'); //////o comportamento DEFAULT do nextauth é REDIRECIONAR O VISITANTE A UMA PÁGINA DIFERENTE DA QUE ESTÁ __ QUANDO __ É ATIRADO (throw) um ERROR dentro de 'authorize'... ---> mas nós vamos OVERWRITTAR ESSE COMPORTAMENTO; FAREMOS COM QUE A MENSAGEM/AS MENSAGENS DE ERRO __ SEJAM DISPLAYED__ NA MESMA PÁGINA EM QUE ELE ESTÁ (lá na signin form, essencialmente)...
+        }
+
+        const passwordIsValid = await verifyPassword(
+          credentials.password,
+          user.password
+        );
+
+        if (!passwordIsValid) {
+            client.close(); ///CHAMAMOS ISSO __ ANTES_ DO THROW DO ERROR...
+          throw new Error('Invalid Password, please try again.');
+        }
+
+        
+
+        client.close();
+
+
+if (passwordIsValid) {
+  return {  ////////ISSO AQUI SERÁ NOSSO 'ACTUAL JSON WEB TOKEN' (JWT)... ---> ESSE OBJETO AQUI, retornado ao FINAL DO METHOD/FUNÇÃO 'authorize', É O QUE VAI SER CONSIDERADO/EMBUTIDO/TRANSFORMADO EM UMA WEBTOKEN, que será fornecida/retornada ao browser do usuário, caso ele seja autenticado com sucesso... --> esse objeto aí vai ser 'ENCODED IN A JSON WEB TOKEN'....
+    email: user.email  //vamos retornar só o EMAIl do usuário na nossa json web token, e NÃO O 'hashed password' contido na nossa database, pq isso é inseguro, exporíamos um pouco o usuário (apesar de esse password ser hashed/encriptado....)
+}
+}
+      
+
+        // client.close(); ////CHAMAR ANTES __ DO RETURN DO 'JWT', e não depois....
+      },
+    }),
+  ],
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+ok.... naquelas anotações temos apenas o funcionamento de 'NEXTAUTH',
+
+que 
+é uma package 
+
+que 
+
+faz o generate dessa 
+
+json web token __ PARA NÓS, AUTOMATICAMENTE...
+
+
+
+
+
+
+
+
+
+
+
+----> por isso é meio inútil tentar utilizar aqueles conhecimentos, agora...(
+
+
+
+    pq para nós AUTHENTICATE O USER,
+    VAMOS 
+
+    PRECISAR FAZER 
+
+    3 
+
+COISAS, POR CONTA PRÓPRIA:
+
+
+
+
+
+
+
+
+
+
+
+1) JSON DATA  (é data javascript, no final das contas...)
+
+
+
+
+
++ 
+
+
+
+
+
+2) UMA ASSINATURA (assinatura que é GERADA NO SERVER EM SI)... -------> É GERADO POR MEIO DE UMA 'SPECIAL PRIVATE KEY',
+
+
+
+UMA KEY __ QUE __ SÓ __ FICA DISPONÍVEL/É DISPONÍVEL __ DENTRO 
+
+
+DO 
+
+SERVER EM SI...
+
+
+(ASSINATURA PODE SER VERIFICADA PELO SERVER, POR MEIO DE KEY SECRETA...)
+
+
+
+
++ 
+
+
+
+
+
+3) UMA 'JSON WEB TOKEN' (JWT) ------> 
+
+
+
+
+
+
+ESSA 'JSON WEB TOKEN' 
+
+
+
+É ENTÃO __ RETORNADA_ _ AO CLIENT,
+
+
+
+e A
+ 
+
+
+
+ 'SIGNATURE',
+
+
+ COMO O PROFESSOR EXPLICOU,
+
+
+
+
+
+
+ _________ SÓ PODE __ SER VERIFICADA ___ PELO __ SERVER QUE 
+
+
+
+ A CRIOU... --------> ISSO SIGNIFICA QUE 
+
+ VOCÊ 
+
+
+ NÃO CONSEGUE 
+
+ 'EDIT/CREATE'
+
+
+
+
+ A TOKEN NO CLIENT DO USER/seu client... (
+
+
+     BEM, VOCÊ PODE,
+
+     MAS 
+
+O SERVER VAI DETECTAR ESSA FUTRICAGEM,
+
+E VAI 
+
+
+
+
+TRATAR O TOKEN COMO INVÁLIDO...
+
+ )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> vamos começar, no caso,
+
+
+
+PELO 'GENERATE DA JSON WEB TOKEN'....
+
+
+
+
+
+-> faremos isso na próxima aula...

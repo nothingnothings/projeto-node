@@ -1,0 +1,1140 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> NÓS CRIAMOS AQUELE MIDDLEWARE DE AUTHENTICATION/VERIFICATION 
+
+
+DA 
+
+TOKEN,
+
+o 
+
+'isAuth',
+
+
+
+LÁ 
+
+
+NO NOSSO BACKEND...
+
+
+
+
+
+
+
+
+
+--. FICOU COM UM CÓDIGO DE 
+
+
+'   ''''
+
+
+
+
+
+
+
+
+
+
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+  ///POR MEIO DESTA SINTAXE, EXPORTAMOS APENAS 1 ÚNICA FUNÇÃO...
+
+  const header = req.get('Authorization'); ///ESSE MÉTODO '.get()' É UM MÉTODO __ QUE NOS PERMITE__ FAZER 'get' DO VALOR _de 1 DE NOSSOS HEADERS, DENTRO DO NOSSO REQUEST...
+  ///vamos querer fazer get DESSE HEADER DE 'Authorization', QUE É O LOCAL EM QUE EMBUTIMOS NOSSA TOKEN (JSON WEB TOKEN)...
+  ////O VALOR EXTRAÍDO DESSE HEADER SERÁ 'Bearer ashsiahasihasasi' (o gibberish é a __TOKEN EM SI___)...
+
+  if (!header) { ////cases em que NEM MESMO O HEADER FOI ANEXADO AO REQUEST...
+    const error = new Error('Not authenticated.');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const actualToken = header.split(' ')[1]; ////VAMOS QUERER __ SEPARAR A STRING DE 'bearer' da TOKEN EM SI, portanto usamos esse método split para pegar a token... é algo bem padrão, visto frequentemente...
+
+  let decodedToken;
+
+  try {
+    ///com essa sintaxe FAREMOS O 'DECODE/verify' (ou verificação, na verdade) DE NOSSA TOKEN, da token recebida no nosso backend...
+
+    decodedToken = jwt.verify(
+      actualToken, ///o método 'verify' de 'jsonwebtoken' vai TANTO DECODIFICAR (parsear, extrair valores) como __ VALIDAR/VERIFICAR SUA TOKEN (ver se não é inválida)...
+      /// outro método, mais situacional, é '.decode()', que apenas DECODIFICA A TOKEN, SEM SE IMPORTAR POR/CHECAR SUA VALIDADE...
+      'zVzS42wNmzOOmlRgYCNWE1dxTH4n_sL6JuDnNj2srF2B7YxRsAgVmvqO8z14Wd3nzOqXzseBAjJ7PA5RSzjs0GsdrR5nxrVu8NPQJjooJLq2GqEl4h9JxwJ8zg5d_Fl2l3Q3n8yf13Gydum25V3mYRUy--L1EskSMs2PcEXLOJM' /// ESSE É O SEGUNDO ARGUMENTO DESSE MÉTODO '.verify()', que __ TAMBÉM É OBRIGATÓRIO... --> NESSE ARGUMENTO, PASSAMOS __ O __ SECRET__ QUE VOCÊ USOU NA CRIAÇÃO DAS TOKENS, criação feita no seu próprio backend (no nosso caso, lá no controller de 'auth.js', no controller de 'exports.login'...)..
+    );
+  } catch (err) {
+    err.statusCode = 500;
+    throw err; ///vai fazer com que o SPECIAL EXPRESS ERROR HANDLER MIDDLEWARE assuma o comando...
+  }
+
+  if (!decodedToken) {
+    const error = new Error('Not authenticated');
+    error.statusCode = 401;
+    throw error; // de novo, para engatilhar aquele middleware de error handling geral....
+  }
+
+  req.userId = decodedToken.userId; ////////////VAMOS QUERER ARMAZENAR, NO OBJETO 'REQ' DO USER, VALORES QUE ESTAVAM CONTIDOS DENTRO DA TOKEN QUE RECEBEMOS NO BACKEND...
+
+  next(); ///após armazenar o userId no request, fazemos forward do request, para que continue com o flow do runtime, para que alcance os controllers como o de 'getPosts'...
+};
+
+
+
+
+
+
+
+
+
+
+''''
+
+
+
+
+
+
+
+
+
+
+
+
+--> AGORA DEVEMOS ___ PROTEGER__ TODAS AS ROUTES DE 'feed' com ele...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ACHO QUE EU JÁ HAVIA FEITO ISSO:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const feedController = require('../controllers/feed');
+
+//GET /feed/posts
+router.get(
+  '/posts',
+
+  isAuth,  ////vamos usar isso para fazer   'GUARD' dessa route... --> user só poderá ver POSTS se estiver AUTHENTICATED ( ou seja, se estiver com uma TOKEN no seu browser...) ------> essa token é então verificada nesse middleware de 'isAuth', tudo coisa padrão...
+          ///esse middleware de 'isAuth' então faz o STORE do valor de 'userId' contido nessa token em uma PROPRIEDADE DE NOME 'userId' no request object do usuário... (se tudo der certo, validation for bem sucedida).... 
+  feedController.getPosts
+);
+
+//POST /feed/post
+router.post(
+  '/post',
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.')
+
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return Post.findOne({ title: value }).then((post) => {
+          console.log(post);
+          if (post) {
+            console.log(post, 'LINE');
+            return Promise.reject(
+              'A post with the chosen title already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      }),
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ],
+
+    isAuth, //route guard. Authentication/authorization
+
+  feedController.createPost
+);
+
+// router.patch('/edit-post/:postId', feedController.editPost); //minha antiga versão do código
+
+// router.patch('/post-edit', feedController.editPost); /////minha versão do código....
+
+router.put(
+  '/post/:postId',
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.'),
+
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ], 
+  isAuth, ///route guard. Authentication/authorization
+
+  feedController.editPost
+); ///versão do professor... ele encoda o postId na url, e também usa esse method de 'put' em vez de 'patch' (pq PUT VAI SUBSTITUIR RESOURCES NO NOSSO DATABASE, no caso as INFORMAÇÕES CONTIDAS EM 1 'POST'... isso é uma substituição, no caso, pq A OLD DATA desse post é PERDIDA, exceto o _Id....)
+
+// router.post('/delete-post/:postId', feedController.deletePost);
+
+// router.post('/delete-post', feedController.deletePost);
+
+router.delete('/delete-post/:postId', 
+
+isAuth, ///route guard. Authentication/authorization
+
+feedController.deletePost); ////route com o METHOD/verbo http mais correcto... (em REST APIS...)
+////DELETE __ ROUTES_ NÃO __ ACEITAM/PERMITEM O SEND DE 'bodies' com o REQUEST... (ao contrário de POST requests, que permitem esse send....)
+////e é exatamente por isso que aqui (e na grande maioria dos casos de DELETE ALGUMA COISA, EM REST APIs) VAMOS PREFERIR __ O APPROACH DO 'extract postId lá da url' em vez de 'extract postId lá do request body'...
+
+//PATCH /feed/post
+
+// router.patch('/post', feedController.editPost);
+
+// GET  /feed/post/:postId
+
+router.get('/post/:postId', 
+isAuth, ///route guard. Authentication/authorization
+
+feedController.getSinglePost);
+
+//DELETE /feed/post/:postId
+
+// router.delete('/post', feedController.deletePost);
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK... ------> MAS EU FIZ ALGO ERRADO... -----> 
+
+
+
+
+EU DEVERIA TER COLOCADO 
+
+
+
+O 'isAuth'
+
+
+__ ANTES__ DO CHECK 
+
+
+
+dos input fields/valores dos input fields,
+
+
+
+
+
+
+
+PQ __ SE A TOKEN _ NÃO ESTIVER ANEXADA AO NOSSO REQUEST (ou se for inválida),
+
+
+
+NÃO PRECISAMOS 
+NEM MESMO 
+
+
+CONTINUAR COM COISA ALGUMA 
+
+
+NO NOSSO BACKEND..
+
+
+
+
+
+--> é por isso que eu __REFORMULO TUDO...:
+
+
+
+
+
+
+
+
+
+PRONTO:
+
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const Post = require('../models/post');
+
+const router = express.Router();
+
+const { body, check } = require('express-validator');
+
+const isAuth = require('../middlewareHelpers/is-auth'); ///nossa validation é feita a partir DE TOKENS... --> e esse middleware é responsável pelo store da propriedade 'userId' no NOSSO REQUEST, a partir dessas tokens __ ENVIADAS__ por nosso client (mas tokens são PRODUZIDAS NO BACKEND, quando é realizado o login... esse é o flow)...
+//vamos colocar esse 'guard de auth' EM TODAS NOSSAS ROUTES, EXCETO AS DE 'auth', pq o user não precisará estar authenticated para as acessar... (ao contrário das outras, que precisam disso)...
+
+
+
+const feedController = require('../controllers/feed');
+
+//GET /feed/posts
+router.get(
+  '/posts',
+
+  isAuth,  ////vamos usar isso para fazer   'GUARD' dessa route... --> user só poderá ver POSTS se estiver AUTHENTICATED ( ou seja, se estiver com uma TOKEN no seu browser...) ------> essa token é então verificada nesse middleware de 'isAuth', tudo coisa padrão...
+          ///esse middleware de 'isAuth' então faz o STORE do valor de 'userId' contido nessa token em uma PROPRIEDADE DE NOME 'userId' no request object do usuário... (se tudo der certo, validation for bem sucedida).... 
+  feedController.getPosts
+);
+
+//POST /feed/post
+router.post(
+  '/post',
+  isAuth, //route guard. Authentication/authorization
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.')
+
+      .custom((value, { req }) => {
+        ////EIS O CÓDIGO EM QUESTÃO. //////ESSE BLOCO '.custom()' É UM __ EXEMPLO DE ' ASYNC VALIDATION'.. --> para mais informações, VER AULA 291, adding async validation.... (é async validation pq NOSSO APP VAI QUERER CONTATAR A DATABASE PARA CHECAR SE O EMAIL INPUTTADO PELO USER JÁ NÃO EXISTE DENTRO DE 1 USER PRÉVIO, O QUE O TORNARIA INVÁLIDO/INUSÁVEL...)
+
+        console.log(value);
+        return Post.findOne({ title: value }).then((post) => {
+          console.log(post);
+          if (post) {
+            console.log(post, 'LINE');
+            return Promise.reject(
+              'A post with the chosen title already exists, please choose another one.'
+            );
+          } else {
+            return value;
+          }
+        });
+      }),
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ],
+
+
+
+  feedController.createPost
+);
+
+// router.patch('/edit-post/:postId', feedController.editPost); //minha antiga versão do código
+
+// router.patch('/post-edit', feedController.editPost); /////minha versão do código....
+
+router.put(
+  '/post/:postId',
+  isAuth, ///route guard. Authentication/authorization
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Title should be more than 6 characters long.')
+      // .isString()
+      .isAlpha()
+      .withMessage('Post Titles must contain only letters.'),
+
+    body('content')
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage('Content should be more than 6 characters long.'),
+  ], 
+ 
+
+  feedController.editPost
+); ///versão do professor... ele encoda o postId na url, e também usa esse method de 'put' em vez de 'patch' (pq PUT VAI SUBSTITUIR RESOURCES NO NOSSO DATABASE, no caso as INFORMAÇÕES CONTIDAS EM 1 'POST'... isso é uma substituição, no caso, pq A OLD DATA desse post é PERDIDA, exceto o _Id....)
+
+// router.post('/delete-post/:postId', feedController.deletePost);
+
+// router.post('/delete-post', feedController.deletePost);
+
+router.delete('/delete-post/:postId', 
+
+isAuth, ///route guard. Authentication/authorization
+
+feedController.deletePost); ////route com o METHOD/verbo http mais correcto... (em REST APIS...)
+////DELETE __ ROUTES_ NÃO __ ACEITAM/PERMITEM O SEND DE 'bodies' com o REQUEST... (ao contrário de POST requests, que permitem esse send....)
+////e é exatamente por isso que aqui (e na grande maioria dos casos de DELETE ALGUMA COISA, EM REST APIs) VAMOS PREFERIR __ O APPROACH DO 'extract postId lá da url' em vez de 'extract postId lá do request body'...
+
+//PATCH /feed/post
+
+// router.patch('/post', feedController.editPost);
+
+// GET  /feed/post/:postId
+
+router.get('/post/:postId', 
+isAuth, ///route guard. Authentication/authorization
+
+feedController.getSinglePost);
+
+//DELETE /feed/post/:postId
+
+// router.delete('/post', feedController.deletePost);
+
+module.exports = router;
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+OK... 
+
+
+
+
+
+
+
+
+assim que você adicionou isso 
+
+
+
+a todas as routes,
+
+
+VOCê __ TEM QUE ___ ASSEGURAR __ QUE 
+
+
+SUA 
+
+
+TOKEN TAMBÉM ESTÁ SENDO __ PASSADA LÁ 
+
+
+
+NO FRONTEND__ (
+
+
+  em todas essas routes/send de requests, lá no frontend..
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ISSO SIGNIFICA QUE VOCÊ VAI TER QUE COPIAR E COLAR ESSE 
+
+
+
+'headers: {
+  'Authorization': 'Bearer' + this.props.token
+}
+
+
+'
+
+
+
+___ EM 
+
+
+
+TODOS OS LUGARES EM QUE 
+
+
+
+HÁ O SEND DE UM REQUEST,
+
+LÁ NO SEU FRONTEND...
+
+
+
+
+
+
+(
+
+  eu achei isso meio estranho... --> não seria melhor ter um approach em que 
+
+  adicionamos 
+
+
+  esse 
+
+
+header a TODOS NOSSOS REQUESTS, DE UMA VEZ SÓ? 
+) --> oh well,
+
+
+vou fazer 
+
+isso, 
+
+
+mesmo assim...
+
+
+
+
+
+
+
+
+
+
+
+--> POR EXEMPLO,
+
+
+NO NOSSO 
+
+
+
+REQUEST DE 
+
+
+'editHandler',
+
+
+
+ESCREVEMOS 
+
+ESSE HEADER AÍ, TAMBÉM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+finishEditHandler = (postData) => {
+    this.setState({ editLoading: true });
+
+    let formData = new FormData(); ///usado para conesguirmos UPLOADAR FILES E 'text inputs' AO MESMO TEMPO, EM UM REUQEST, AO NOSSO BACKEND...
+    formData.append('title', postData.title);
+    formData.append('content', postData.content);
+    formData.append('image', postData.image);
+
+    console.log(postData.image);
+
+    let url = 'http://localhost:8080/feed/post';
+    let method = 'POST';
+
+
+    if (this.state.editPost) {
+      url = `http://localhost:8080/feed/post/${postData.id}`;
+      method = 'PUT';
+
+
+    } 
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(url, {
+      method: method,
+      body: formData, //isso vai conter a DATA EM FORMATO TEXT   __ MAIS__ A image que queremos uploadar...
+
+
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+    })
+      .then((res) => {
+        if (res.status === 400) {
+          throw new Error(
+            'Please input values that are valid and not equal to previous ones.'
+          );
+        }
+          console.log(res.status);
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating or editing a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data.post);
+        const post = {
+          _id: data.post._id,
+          title: data.post.title,
+          content: data.post.content,
+          creator: data.post.creator,
+          createdAt: data.post.createdAt,
+        };
+
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPosts) {
+            const postIndex = prevState.posts.findIndex((post) => {
+              return post._id === prevState.editPost._id;
+            });
+            updatedPosts[postIndex] = post;
+          } else if (prevState.posts.length < 2) {
+            updatedPosts = prevState.posts.concat(post);
+          }
+          return {
+            posts: updatedPosts,
+            isEditing: false,
+            editPost: null,
+            editLoading: false,
+          };
+        });
+
+        this.loadPosts();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isEditing: false,
+          editPost: null,
+          editLoading: false,
+          error: err,
+        });
+        this.loadPosts();
+      });
+  };
+
+
+
+
+
+
+
+
+
+  ------------------------------
+
+
+
+
+  OK.... 
+
+
+
+
+  ISSO 
+
+
+  VAI 
+
+  FAZER O ADD DESSE HEADER AÍ, header com nossa authToken...
+
+
+
+
+
+
+
+
+
+  --> VAMOS FAZER A MESMA COISA COM O 
+
+  'deletePostHandler':
+
+
+
+
+
+
+    deletePostHandler = (postId) => {
+    this.setState({ postsLoading: true });
+
+    fetch(`http://localhost:8080/feed/delete-post/${postId}`, {
+      // method: 'POST',
+      method: 'DELETE',
+
+
+      headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+
+
+
+
+
+
+      // headers: {  
+      //   'Content-Type': 'application/json',
+      // },
+      // body: JSON.stringify({ ///Não é mais necessário, pois não vamos mais querer extrair o 'postId' de dentro do BODY DO REQUEST de tipo 'POST', e sim vamos extrair LÁ DA URL DESSE REQUEST de method de tipo 'DELETE' (que nunca aceitam BODIES, deve-se relembrar...)
+      //   postId: postId,
+      // }),
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Deleting a post failed!');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter((post) => {
+            return post._id !== postId;
+          });
+          return { posts: updatedPosts, postsLoading: false };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ postsLoading: false });
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------------------------------
+
+
+
+
+  CERTO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ALGUM OUTRO LUGAR?
+
+
+
+
+
+
+
+
+
+
+
+  BEM, TEMOS O LUGAR EM QUE FAZEMOS 'FETCH DE UM SINGLE POST'... ---> É POR ISSO QUE VAMOS
+
+
+
+
+  ATÉ O 
+
+
+
+PAGE COMPONENT de 'SinglePost',
+
+
+
+em que 
+
+
+temos este código:
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`,
+    
+    {
+
+
+            headers: { //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+        'Authorization': `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+        // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+      }
+
+
+
+    }
+    
+    
+    )
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          image: data.post.imageUrl,
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> NESSE LOCAL AÍ,
+
+NO FETCH,
+
+
+
+
+TAMBÉM
+
+VAMOS QUERER COLOCAR ESSE HEADER...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+
+import Image from '../../../components/Image/Image';
+
+import './SinglePost.css';
+
+class SinglePost extends Component {
+  state = {
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: '',
+  };
+
+  componentDidMount() {
+    const postId = this.props.match.params.postId;
+    fetch(`http://localhost:8080/feed/post/${postId}`)
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch status');
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          title: data.post.title,
+          author: data.post.creator.name,
+          date: new Date(data.post.createdAt).toLocaleDateString('en-US'),
+          image: data.post.imageUrl,
+          content: data.post.content,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`http://localhost:8080/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+}
+
+export default SinglePost;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... 
+
+
+
+
+
+
+
+TUDO CERTO...
+
+
+
+
+
+temos esse header 
+
+
+
+
+adicionado 
+
+
+EM TODAS NOSSAS ROUTES PERTINENTES (com exceção das routes de 'signup' e 'login'... )
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS O PROFESSOR TAMBÉM VAI QUERER 
+
+
+
+
+
+
+COLOCAR MAIS RESTRIÇÕES NO NOSSO APP... ----> ELE VAI QUERER 
+
+
+ASSEGURAR _ QUE APENAS__ 
+
+
+POSTS QUE __ NÓS EFETIVAMENTE CRIAMOS (nosso user em si criou)
+
+
+
+PODEM SER EDITADOS E 
+
+
+DELETADOS... (
+
+
+  para isso,
+
+
+  vamos usar '.find()' 
+  do mongoose, provavelmente...
+)
+
+
+
+ 
+
+
+
+
+
+
+---> PRIMEIRAMENTE,
+
+ANTES DE MAIS NADA,
+
+VAMOS QUERER 
+
+
+'CONNECT POSTS TO USERS, WHEN WE CREATE NEW POSTS'... 
+
+(
+
+  já vimos como isso 
+
+  é feito, + ou -....
+
+
+)
+
+
+
+--> VEREMOS ISSO NA PRÓXIMA AULA...

@@ -1,0 +1,11 @@
+When it comes to Deno imports, we use ES Modules with URLs that point at the files you want to import.
+
+These can be local files (import something from './my_file.ts';) but these can also be remote files (import { serve } from 'https://deno.land/std/http/server.ts';).
+
+Here are a couple of useful bits of information on those remote imports:
+
+To get better auto-completion in the IDE, execute your code once and let Deno download + cache those remote files locally. Thereafter, you should get better autocompletion
+
+If you ever want to force Deno to re-fetch the remote files (i.e. to clear the local cache), you can do so by executing your script with the --reload flag (e.g. deno run --reload my_file.ts)
+
+If you want to lock in a certain version for a remote file, you can do so: import { serve } from 'https://deno.land/std@0.51.0/http/server.ts';

@@ -1,0 +1,809 @@
+
+ 
+
+
+ NÓS BRINCAMOS UM POUCO COM O NODE.JS...
+
+
+
+
+ VIMOS UM DOS SEUS 'BUILT-IN CORE MODULES', o módulo DO FILE SYSTEM ('fs')...
+
+
+
+ VIMOS QUE PODEMOS USAR ESSES MÓDULOS PARA USAR ALGUMAS FUNCIONALIDADES QUE NÃO 
+
+ SÃO DISPONÍVEIS NO BROWSER, MAS QUE SÃO DISPONÍVEIS EM 'NODE.JS'...
+
+
+
+
+ UMA IMPORTANTE DIFERENÇA EM RELAÇÃO AO 'BROWSERSIDE' JAVASCRIPT É QUE 
+
+
+ ___ALGUNS MÓDULOS/APIs___ TEM DE SER __IMPORTADOS__ por MEIO DA 
+
+ SINTAXE 
+
+
+
+ 'const xxx = require(xxx)' 
+
+
+ PARA SERMOS CAPAZES DE OS UTILIZAR...
+
+
+
+
+ Entretanto, vimos também que ALGUNS DESSES 'APIs'/MÓDULOS DO NODE.JS 
+
+
+ESTÃO SEMPRE DISPONÍVEIS GLOBALMENTE, COMO o 
+
+método 
+
+'setTimeout()'  
+
+(que podemos 
+
+escrever 
+
+solto,
+
+
+'setTimeout()', no nosso código a ser 
+
+
+executado pelo node.js...)
+
+
+
+
+
+--> Entretanto, a grande maioria dos módulos de node.js 
+
+
+PRECISAM SER IMPORTADAS....
+
+
+
+
+Já no browser, TODAS AS 'COISAS' (APIs) ESTÃO 
+DISPONÍVEIS GLOBALMENTE __POR DEFAULT___.
+
+
+
+
+---> isso significa que você não 
+
+pode escrever
+
+
+'document.blablabla' 
+
+
+e 
+
+'localStorage.blablabla' 
+
+
+
+NO NODE.JS.... VOCÊ NÃO PODE FAZER ISSO NO NODE.JS 
+
+
+PQ ESSAS 
+
+COISAS AINDA NÃO ESTÃO __DISPONÍVEIS ___ GLOBALMENTE NO SEU CÓDIGO...
+
+-------------------------------------------------------------------
+
+
+Em node.js, o acesso às coisas é mais no sentido de 
+
+'VOCÊ TEM QUE ME DIZER O QUE VOCÊ PRECISA' ---> esse É O APPROACH ADOTADO PELO NODE.JS...
+
+
+
+---> fora isso, o javascript e o node.js 
+
+SÃO BEM COMPARÁVEIS....
+
+
+Temos a mesma linguagem BASE e então alguns APIs específicos...
+
+
+
+
+
+----> Devemos agora usar OUTRO SCRIPT, E NÃO MAIS ESSE 'dummy script' de 'app.js'...
+
+
+
+----> renomeamos esse script para 'files.js'
+
+
+
+e então CRIAMOS UM NOVO 'app.js'...
+-----------------------------------
+
+
+
+
+------> AGORA DEVEMOS VER __O QUE PODEMOS FAZER COM __ NODE.JS ___ QUANDO 
+
+O ASSUNTO É 'TRABALHAR COM INCOMING HTTP REQUESTS...'
+
+
+
+----> pq isso, 'arguably', É UMA 
+
+SITUAÇÃO/SCENARIO IMPORTANTE EM QUE VOCÊ 
+
+PROVAVELMENTE RECORRERIA/RECORRERÁ AO 'NODE.JS'...
+
+
+
+a noção de RODAR UM SERVIDOR... o node.js nos deixa fazer isso...
+
+
+rodar um webserver com o node.js....
+
+
+
+------------------------------------
+
+com o node.js, tudo começa com 
+
+
+
+A keyword 'REQUIRE'.... vocÊ deve 
+
+
+inserir essa keyword no arquivo de script que rodará o servidor...
+
+
+
+criamos uma const de nome 'http' e então armazenamos o 'require()' com algum parâmetro (que já veremos) nele...
+
+
+
+
+
+ex:
+
+
+const http = require();
+
+
+
+
+-----------------------
+
+
+
+O MÓDULO QUE VOCÊ DEVE REQUERER, por meio do 'require()', é o MÓDULO 
+
+'http' ----> ESSE MÓDULO TE DEIXA TRABALHAR COM HTTP REQUESTS....
+
+
+
+ex:
+
+
+
+
+
+
+
+const http = require('http');
+
+
+---------------------------------------
+
+
+
+OBS:::: O USO DE HTTP REQUESTS NO NODE.JS não significa SOMENTE QUE 
+
+
+PODEMOS ''FAZER LISTEN'' A ELES (listen to http requests on node.js) MAS 
+
+TAMBÉM QUE VOCê PODE ___CRIAR UM HTTP REQUEST__ POR MEIO 
+
+DO NODE.JS...
+
+
+Você pode __CRIAR UM HTTP REQUEST__ POR MEIO DO NODE.JS E ENTÃO 
+
+ENVIÁ-LO A UM SERVIDOR... mas isso não é tão comum...
+
+
+O mais comum é você USAR O NODE.JS PARA SETTAR UM SERVIDOR (setup a server),
+
+
+SETTAR UM SERVIDOR __QUE FAZ 'LISTEN TO'__ DE INCOMING HTTP REQUESTS.....
+
+
+Você faz isso para QUE VOCÊ TENHA SEU PRÓPRIO WEBSERVER...
+
+
+
+-----> E ISSO, NO FINAL DAS CONTAS, É TAMBÉM A MESMA COISA QUE 
+O WEBPACK DEV SERVER E TODOS ESSES OUTROS DEV SERVERS FAZEM:
+
+ELES USAM O NODE.JS PARA SETTAR UM WEBSERVER BÁSICo...
+
+
+---> eles SETTAM UM WEBSERVER BÁSICO que então roda 
+LOCALMENTE NO SEU SISTEMAA... para HOSTEAR seus arquivos 
+HTML, hostear sua SIMPLES 'WEB APPLICATION'... 
+
+
+
+
+-----> AGORA NÓS VAMOS FAZER BASICAMENTE A MESMA COISA AQUI, por meio desses códigos, 
+
+mas nós não vamos construir NOSSO PRÓPRIO DEV SERVER; em vez disso,
+
+VAMOS ___CONSTRUIR___ UM SERVIDOR___ que AO MESMO TEMPO EXECUTA 
+
+ALGUMA LÓGICA 'SERVERSIDE'... -----------> "executar alguma lógica SERVERSIDE" ----> ISSO TIPICAMENTE OS DEV SERVERS __NÃO FAZEM__... OS DEV SERVERS GERALMENTE APENAS SERVEM NOSSOS ARQUIVOS LOCAIS....
+
+
+
+
+
+
+---> PARA PODERMOS 'GET STARTED' com isso tudo, devemos 
+
+CRIAR UM SERVER...
+
+
+
+
+----> para isso devemos chamar o método 'createServer()' NA 
+
+CONST 'http' QUE CRÍAMOS A PARTIR DO 'require' do módulo 'http'...
+
+
+----------------------------------------------------------------
+
+
+
+O MÉTODO 'createServer()' FAZ EXATAMENTE AQUILO QUE ELE DIZ:
+
+ele cria um servidor...
+
+
+
+ex:
+
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer();
+
+
+
+----------------------------------------
+
+
+
+esse método SEMPRE EXIGE ___UM IMPORTANTE ____ ARGUMENTO....
+
+
+
+ESSE ARGUMENTO, DIZ O PROFESSOR, É UM ___REQUEST LISTENER____......
+
+
+
+REQUEST LISTENER -------> É UMA FUNÇÃO QUE, NO FINAL DAS CONTAS, TRIGGA (é triggada)
+PARA __CADA___ 'INCOMING HTTP REQUEST'....
+
+
+
+
+ex:
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer(() => {
+
+});
+
+
+
+---------------------------------------
+
+
+
+
+ESSE REQUEST LISTENER/FUNÇÃO INTERNA, POR SUA VEZ, ___EXIGE 2 ARGUMENTOS___....
+
+
+SÃO 2 ARGUMENTOS QUE SÃO PASSADOS __AUTOMATICAMENTE ___ PELO NODE.JS...
+
+
+
+É UM OBJETO 'REQUEST' E UM OBJETO 'RESPONSE'...
+
+
+
+ex:
+
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer((request, response) => {
+
+});
+
+
+----------------------------------------------------- 
+
+
+
+
+
+Esses parâmetros serão passados automaticamente pelo node.js, basicamente, 
+E VÃO REFLETIR __O REQUEST__ QUE ESTAVA 'COMING IN'... ----> ESSE REQUEST ESTARÁ NO OBJETO 'request' --- > ('o request que estava 'coming in' ---> isso significa OS __HEADERS___ QUE ERAM/SÃO PARTE DO INCOMING REQUEST...) ---> também pode ser a DATA (dados) QUE PODE SER PARTE DO REQUEST...
+
+
+
+
+objeto 'RESPONSE' ---> esse objeto TAMBÉM É DADO A NÓS PELO NODE.JS... ---> é um objeto que você pode então usar para ___CONFIGURAR A ___RESPONSE___ que você vai querer ENVIAR DE VOLTA AO USUÁRIO... (para então, por último, enviar essa RESPONSE AO USUÁRIO....)...
+
+
+
+
+
+---> agora, dentro do function body da função interna de 'createServer()', podemos 
+
+TRABALHAR COM ESSAS 2 'PIECES', com 'request' e 'response'..
+
+podemos trabalhar com elas PARA ___LER____ DADOS (read data) DO 
+
+'INCOMING HTTP REQUEST' E PARA ENVIAR UMA 'RESPONSE' de volta ao usuário, 
+de acordo com o request que nos foi enviado....
+
+
+
+
+Para começar de forma simples, o professor vai lá e escreve uma referência 
+
+ao objeto 
+
+'response' -----> ele explica QUE, POR ENQUANTO, ELE VAI QUERER __ENVIAR___ UM RESPONSE DE VOLTA NATURALMENTE (ou seja, sem depender do 'request'; uma RESPOSTA __AUTOMÁTICA__ do servidor ao usuário, basicamente...)...
+
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer((request, response) => {
+    response
+});
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+CERTO.
+
+
+
+Mas o professor não acaba por aí:
+
+
+ele precisa chamar um MÉTODO nesse objeto 'response'...
+
+
+
+ELE CHAMA O MÉTODO 'WRITE' nesse objeto....
+
+
+
+ex:
+
+
+
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer((request, response) => {
+    response.write();
+});
+
+
+
+----------------------------------------
+
+
+
+
+
+
+AÍ ELE VAI E PASSA UMA STRING COMO PARÂMETRO, A STRING 'hello'...
+
+
+
+Por fim, ele digita 
+
+uma call de 'response.end()' ---> RESPONSE.END() VAI 
+
+___ENVIAR ____ A RESPONSE___ AO USUÁRIO____ ...
+
+
+
+
+RESPONSE.END() ----> diz ao node.js: "ACABAMOS POR AQUI com A ADIÇÃO DE DADOS/DATA À ESSA RESPONSE... você pode agora FECHAR E ENVIAR ESSA RESPONSE...'
+
+
+
+
+'response.end()' --->  é o 'return statement' de um servidor DE NODE.JS...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer((request, response) => {
+    response.write('Hello');
+    response.end();
+});
+
+
+
+--------------------------------------
+
+
+
+E esse é um exemplo de UM SERVIDOR 
+
+
+MUITO SIMPLES QUE PODERÍAMOS ESCREVER COM O NODE.JS....
+
+
+
+----> com o servidor criado, precisamos fazer mais 1 única coisa, na verdade...
+
+NÓS PRECISAMOS 
+
+____CHAMAR____ '.LISTEN' NESSE SERVIDor.....
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer((request, response) => {
+    response.write('Hello');
+    response.end();
+}).listen(); ////////////EIS O CÓDIGO EM QUESTÃO...
+
+
+--------------------------------------------------
+
+
+
+
+
+OU SEJA, TEMOS 2 ALTERNATIVAS PARA CHAMAR 'LISTEN' NESSE SERVIDOR...
+
+
+podemos OU ESCREVER ASSIM:
+
+
+
+1)
+
+
+
+
+const http = require('http');
+
+
+
+http.createServer((request, response) => {
+    response.write('Hello');
+    response.end();
+}).listen(); ////////////EIS O CÓDIGO EM QUESTÃO...
+
+
+
+
+
+--------------------------------------
+
+
+OU ASSIM (com a criação de uma CONSTANTE com o código do servidor, e então o chamado de '.listen()' na referência a essa constante...):
+
+
+2)
+
+
+const http = require('http');
+
+
+
+const server = http.createServer((request, response) => {
+    response.write('Hello');
+    response.end();
+});
+
+
+server.listen();
+
+
+-------------------------------------
+
+
+
+(é melhor usar o approach 2, fica menos aglutinado o código)...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+const server = http.createServer((request, response) => {
+    response.write('Hello');
+    response.end();
+});
+
+
+server.listen();
+
+
+
+
+-------------------------------------
+
+
+
+'.listen()', PORTANTO, É NECESSÁRIO PARA ___DE FATO___ INICIAR O SERVIDOR....
+
+
+Ou seja, podemos resumir essas linhas de código todas em:
+
+
+                                                                    const http = require('http');
+1) LINHAS QUE __CRIAM___ O SERVIDOR -----------------------------> const server = http.createServer((request, response) => {
+                                                                                                    response.write('Hello');
+                                                                                                         response.end();
+                                                                                                                    });
+
+
+
+2) LINHAS QUE ___INICIAM__ O SERVIDOR, O EXECUTAM... e aí fazem 'listen to' a incoming requests --------------------> server.listen();
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+'.listen()' TAMBÉM 
+
+EXIGE O _____PORT_____ EM QUE VOCÊ VAI QUERER FAZER 'LISTEN TO'...
+
+
+
+
+o professor vai lá e usa '3000' como porta... mas ele explica que isso é 'local development only'; NUNCA 
+USE ESSA 
+
+PORTA SE VOCÊ QUER REALMENTE CRIAR UM SERVIDOR LEGIT, sem falhas de segurança.
+
+--------------------------------------------------------
+
+
+
+
+COM ISSO, SE AGORA SALVARMOS E EXECUTARMOS NOSSO APP, esse script 'app.js' QUE 
+
+AGORA SEGURA O NOSSO SERVER, 
+
+
+veremos...
+
+VEREMOS ALGO INTERESSANTE...
+
+
+
+
+
+----> SE NÓS EXECUTARMOS ISSO, NÓS NÃO RECEBEMOS UM ERRO, 
+
+MAS MEU CURSOR NO TERMINAL FICA 'stuck'...
+
+
+o processo nunca é terminado...
+
+
+
+
+VOCÊ SEMPRE PODE __QUITAR__ A EXECUÇÃO DESSE PROCESSO POR MEIO DE 'CONTROL + C'...
+
+
+
+MAS ESSE NEGÓCIO ESTÁ 'STUCK' POR UMA BOA RAZÃO: 
+
+ele está EM UM ONGOING PROCCESS....
+
+
+
+
+
+
+---> esse script que escrevemos no 'app.js', essas linhas de código 
+
+------------------------------------------
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { ///////DEFINE O SERVIDOR
+    response.write('hello there!');
+    response.end();
+});
+
+
+
+server.listen(3000); //////EXECUTA O SERVIDOR.
+
+
+-----------------------------------------------
+
+
+
+NÃO PARAM DE SER EXECUTADAS DEPOIS DE TODAS AS LINHAS TEREM SIDO 
+LIDAS/PARSEADAS...
+
+
+EM VEZ DISSO, 
+
+'listen()', no final das contas, 
+
+SETTA 
+
+
+
+
+um 'ONGOING EVENT LISTENER' (tipo isso) 
+
+POR TRÁS DAS CENAS...
+
+
+ESSE ONGOING EVENT LISTENER FICA SEMPRE NA __ESPERA____ DE 'incoming requests'....
+
+
+
+
+
+E O NODE.JS TEM UMA FUNÇÃO ESPECIAL DELE:
+
+
+
+SE O NODE.JS DETECTA QUE ELE TEM 'ONGOING EVENT LISTENERS' disparados no fundo, 
+
+
+ELE __NÃO DESLIGA___ A SCRIPT EXECUTION....
+
+
+
+É POR ISSO QUE A NOSSA EXECUÇÃO DO SCRIPT AINDA ESTÁ ACONTECENDO, 
+
+ESTÁ ACONTECENDO PORQUE NÓS AINDA TEMOS 'ONGOING EVENT LISTENERs'...
+
+
+
+
+----> E ISSO, É CLARO, É ALGO QUE VOCê __QUER__.. VOCÊ QUER QUE O SEU SERVER 
+CONTINUE RODANDO.. (e que ele não quite logo após o código ter sido lido 1 única vez, código quitar depois de ler a config do seu servidor... )
+
+
+
+
+
+
+AGORA, PORTANTO, TEMOS ESSE 'ONGOING SERVER...' 
+
+
+
+
+
+PARA VER ESSE SERVIDOR EM AÇÃO, 
+
+
+
+TUDO QUE PRECISAMOS FAZER É VISITAR 'LOCALHOST:3000'...
+
+
+
+
+
+SE FIZERMOS ISSO, SERÁ POSSÍVEL VER 'hello' NESSA PÁGINA, no browser...
+
+
+
+
+--> 'hello'  ---> ESSA É A DATA QUE ESTAMOS RETORNANDO POR MEIO DAQUELA SIMPLES 'response' no nosso app.js....
+----> isso não é HTML DATA OU QUALQUER COISA DO GÊNERO, NÃO; AQUI ESTAMOS FALANDO DE SIMPLES __TEXTO___.
+
+---> esse texto foi produzido pelo nosso próprio servidor node.js... ----> E, AGORA, ESTAMOS DE VOLTA NO BROWSER, MAS ISSO QUE ESTAMOS VENDO ___NÃO É ____ BROWSERSIDE JAVASCRIPT... ISSO QUE ESTAMOS VENDO, ESSE 'HELLO', é, no final das contas, RESULTADO DE UM JAVASCRIPT __SERVERSIDE___... UM JAVASCRIPT SERVERSIDE QUE CRIA UM SERVIDOR, O EXECUTA E ENTÃO RETORNA UMA 'RESPONSE' a nós... (de acordo com a request que enviamos a ele...)  
+
+
+-----

@@ -1,0 +1,943 @@
+
+
+
+
+
+
+
+-> já resolvemos o 'add' e o 'create',
+
+
+e 
+
+agora 
+
+
+é 
+
+
+HORA 
+
+
+
+
+__ DE RESOLVER O 'delete'..
+
+
+
+--> queremos que 
+
+o 
+
+delete 
+
+de um 
+
+
+post reflita 
+
+
+no feed de todos os outros clients conectados ao nosso app....
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+PRECISAMOS IR AO NOSSO BACKEND,
+
+
+ao controller de 'deletePost'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O CÓDIGO FICOU BEM PARECIDO COM O DE EDIT/ADD POST,
+
+
+
+
+
+
+MAS O PROBLEMA É QUE 
+
+
+SE 
+
+O 
+
+USER 
+
+
+
+APAGA 1 POST,
+
+
+
+
+
+NA TELA DOS OUTROS USERS 
+
+
+
+
+
+EXISTIRÃO APENAS 4 POSTS ( o state não vai automaticamente 'puxar' um novo post, da outra página,
+
+para 
+
+
+essa 
+
+página atual...) ---> ainda não sei como resolver isso..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> O CÓDIGO ATÉ AGORA ESTÁ ASSIm:
+
+
+
+
+
+
+deletePost = (postId) => {
+
+  this.setState(prevState => {
+    const updatedPosts = [...prevState.posts];
+
+const updatedPostsDelete = updatedPosts.filter(
+(p) => {
+      return postId !== p._id
+}
+)
+
+    return {
+        posts: updatedPostsDelete,
+
+        // totalPosts: prevState.totalPosts + 1
+    }
+})
+
+}
+
+
+
+------------------------------
+
+
+
+
+
+
+precisarei de if checks, provavelmente....
+
+
+
+
+
+-> e provavelmente precisarei de data acerca de 'posts' (TODOS OS POSTS DE NOSSO APP, no caso)... --> para updatar nosso state CORRETAMENTE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> melhorei um pouco o código, mas ainda não funciona 100% (
+
+
+
+
+    acho que os posts estão sendo fetcheados em uma ordem errada...
+)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+deletePost = (postId, posts) => {
+  this.setState(prevState => {
+
+    const updatedPosts = [...prevState.posts];
+
+
+    const databasePosts = posts;
+
+
+
+    const postDeleteIndex = updatedPosts.findIndex(
+      (post) => {
+            return post._id === postId
+      }
+    )
+
+    const neededDatabasePostIndex = postDeleteIndex + 1;
+
+
+      if (postDeleteIndex <= 4) {
+
+        updatedPosts[postDeleteIndex] = databasePosts[neededDatabasePostIndex];
+      }
+
+
+    return {
+        posts: updatedPosts
+        // totalPosts: prevState.totalPosts + 1
+    }
+})
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> além disso,
+
+
+encontrei um NOVO BUG __ no meu app...
+
+
+
+
+
+
+
+
+--> agora quando não temos post algum,
+
+o spinner fica girando para sempre,
+
+e nunca aparece 
+
+
+'NO POSTS FOUND'...
+
+
+
+
+
+
+
+
+
+--> É POR CAUSA DISTO:
+
+
+
+
+    const neededUserDocuments = await Post.find({}, null,
+      {skip: (pageNumber - 1) * ITEMS_PER_PAGE, limit: ITEMS_PER_PAGE}
+    ).populate(
+      'creator.userId'
+  ).sort({_id: -1})
+
+
+
+
+
+
+
+
+
+
+
+
+  Error: TypeError: Cannot read properties of undefined (reading 'creator')
+    at exports.getPosts (A:\projeto4 - NODEJS\MODULO27-ENTENDENDOWEBSOCKETS( Socket.io)\NOVONOVOPROJETO22-BACKEND,VERSAODOPROFESSOR\controllers\feed.js:161:21)
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  httpStatusCode: 500
+
+
+
+
+  --> CONSERTEI, FOI SÓ TIRAR ESTE CONSOLE.LOG:
+
+
+      // console.log(neededUserDocuments[0].creator, 'LINE52');
+
+
+
+
+--------------
+
+
+
+
+certo, mas 
+
+
+acho que aquele problema ainda persiste...
+
+
+
+
+--> outro problema:
+
+
+
+
+quando adiciono 1 post,
+
+
+
+
+
+NO MEU USER ORIGINÁRIO (que cria o post),
+
+eu 
+
+brevemente vejo 
+
+DUAS CÓPIAS daquele post..
+
+
+
+
+
+
+--> mas o estranho é que isso SÓ ACONTECE SE EU TIVER 0 POSTS NO INÍCIO DO 
+
+MEU RUNTIME...
+
+
+
+
+
+
+
+--> ok, eu tentei usar 'broadcast' no lugar de 'emit'... ----> entretanto,
+
+
+isso 
+
+
+INTRODUZIU OUTRO PROBLEMA:
+
+
+
+
+agora 
+
+quando eu DELETO 1 
+
+'post',
+
+
+
+
+NO CLIENT DAQUELE USER QUE 
+
+
+DELETOU O POST,
+
+O POST NÃO É DELETADO __ DO 
+
+
+SEU 
+
+FEED (do visual do seu browser).... --> acontece um RELOAD dos posts,
+
+e aquele post que 
+
+deletamos ainda aparece,
+
+
+
+
+só que sem 'edit' ou 'add'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok... desisto... vou ver o vídeo do professor....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> ele pede que voltemos ao contrller de 'deletePost'....
+
+
+
+
+
+
+
+
+--> LÁ,
+ 
+
+
+
+
+ ELE VAI QUERER 
+
+
+
+ EMITIR UM EVENT,
+
+
+ QUANDO 
+
+ TIVER ACABADO DE 'delete'...
+
+
+
+
+
+
+
+
+
+ --> por isso ele vai escrever 
+
+
+
+
+ 'io.getIo.emit('posts', {});' 
+
+
+
+
+
+ (ELE NÃO VAI USAR BROADCAST, PQ ESSE MÉTODO É MEIO RUIM, COMO PUDE CONSTATAR...)
+
+
+
+
+
+
+
+
+
+ EU HAVIA ESCRITO ASSIM:
+
+
+
+
+ 
+    io.getIo().emit('posts',  //uso de 'broadacast', para disparar esse request para TODOS OS USERS, EXCETO AQUELE QUE __ EFETIVAMENTE __ COMEÇOU ESSE 'delete' do post....
+
+    {
+      action: 'delete',
+      postId: postId,
+      posts: posts
+    }
+    
+    
+    )
+
+
+
+    --> E ISSO DEVE ESTAR ___ ERRADo__...
+
+
+
+
+
+
+
+-----> o professor coloca 
+
+
+'postId: postId'
+
+também.... 
+
+
+
+
+
+
+
+
+
+----> o backend fica assim:
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+    io.getIo().emit('posts', 
+
+    {
+      action: 'delete',
+      postId: postId,
+      // posts: posts //não precisamos disto.
+    }
+
+
+
+
+
+
+
+
+
+--> no frontend,
+
+
+VAMOS QUERER 
+
+
+
+
+EXECUTAR__ ALGO __ QUANDO __ 
+
+
+
+
+
+
+
+ACONTECER __ O 'DELETE DE UM POST'... 
+
+
+
+
+-------. PROFESSOR DIZ QUE 
+
+VAI QUERER 
+
+
+'KEEP IT SIMPLE',
+
+
+QUE 
+
+ELE 
+
+VAI 
+
+QUERER __ SIMPLESMENTE___ RECARREGAR__ A 
+
+
+PÁGINA QUANDO __ ACONTECER 
+
+O 
+
+'delete' de um post...
+
+
+
+
+
+--> professor 
+
+
+
+
+'ACOVARDA-SE' 
+
+
+(
+
+    ou seja,
+
+    ele não vai tentar fazer o que fizemos,
+
+    de tentar implementar uma super lógica 
+
+    para 
+
+    fazer os posts mais 'para frente' aparecerem antes...
+)
+
+
+
+
+
+
+
+--> professor admite que __ VOCÊ PODERIA, SIM,
+
+
+
+
+ADICIONAR UM CÓDIGO QUE __ SÓ DELETA___ AQUELE __ POST ESPECÍFICO 
+
+
+
+NO FRONTEND DOS OUTROS USERS,
+
+
+
+MAS QUE 
+
+ELE PREFERE 
+
+
+'KEEP IT SIMPLE'
+
+e apenas 
+
+
+
+RECARREGAR A PAGE/APP 
+
+
+
+nos apps dos outros users,
+
+quando isso ocorrer....
+
+
+
+
+
+
+
+
+
+--> PARA FAZER ISSO, 
+
+
+ELE 
+
+
+
+
+
+
+
+
+vai até o 'deletePostHandler'
+
+
+
+E DIZ QUE 
+
+PODEMOS COMENTAR PARA FORA AQUELE CÓDIGO DE 
+
+
+'this.setState(
+    prevState => {
+        const updatedPosts = prevState.posts.filter(p => p._id !== postId);
+        return { posts: updatedPosts, postsLoading: false}
+    }
+)
+',
+
+
+
+
+
+JUSTAMENTE __ PQ N VAMOS MAIS PRECISAR DISSO (
+
+
+    pq 
+
+    o 
+    delete de 1 post agora 
+
+    vai __ RECARREGAR__ A PAGE__ DO USER_ _ E DE TODOS OS USERS 
+
+    CONECTADOS AO APP,
+
+
+    AUTOMATICAMENTE...
+)
+
+
+
+
+
+
+
+-----------------
+
+
+
+para conseguir RECARREGAR NOSSA PAGE 
+
+quando ocorrer 
+
+o 
+
+delete 
+
+de 
+
+um post,
+
+
+
+PROFESSOR 
+
+vai lá 
+
+e 
+
+
+adiciona só um call de 'this.loadPosts()' 
+
+em 
+
+
+'deletePostHandler',
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  deletePostHandler = async (postId) => {
+    try {
+      this.setState({ postsLoading: true });
+
+      const deleteResult = await fetch(
+        `http://localhost:8080/feed/delete-post/${postId}`,
+        {
+          // method: 'POST',
+          method: 'DELETE',
+
+          headers: {
+            //vamos ter que adicionar esse HEADER ESPECÍFICO DE 'Authorization'/token __ _em TODOS OS REQUESTS __ FEITOS NO NOSSO FRONTEND... (menos os de 'login' e 'signup')...
+            Authorization: `Bearer ${this.props.token}`, //obs: esse 'Authorization' foi DEFINIDO COMO 'PERMITIDO' lá ___ no 'app.js' DO NOSSO BACKEND, naquele middleware do CORS...
+            // 'Content-Type': 'application/json' ///PROFESSOR EXPLICA QUE AQUI, NESSE CASE DESSE 'GET REQUEST', não precisamos __ SETTAR 'content-type' como sendo json __ JUSTAMENTE_ PQ NÃO ESTAMOS ENVIANDO NENHUMA DATA CONCRETA, E SIM APENAS UM 'AUTHORIZATION HEADER' no nosso request... (pq REQUESTS DE TIPO GET REALMENTE __ NÃO PODEM/CONSEGUEM ENVIAR BODIES CONSIGO... só headers)...
+          },
+
+        }
+      );
+
+      // .then((res) => {
+      if (deleteResult.status !== 200 && deleteResult.status !== 201) {
+        throw new Error('Deleting a post failed!');
+      }
+
+
+
+      this.loadPosts(); //EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+--> CERTO, MAS MESMO ASSIM,
+
+O 
+
+
+POST DELETADO __ NÃO ESTÁ SUMINDO AUTOMATICAMENTE__ 
+
+
+DA PAGE DO OUTRO USER....
+
+
+
+
+
+--> ESTOU RECEBENDO ESTE ERRO:
+
+Error: Post could not be found
+    at exports.buttonDisplay (A:\projeto4 - NODEJS\MODULO27-ENTENDENDOWEBSOCKETS( Socket.io)\NOVONOVOPROJETO22-BACKEND,VERSAODOPROFESSOR\controllers\feed.js:1144:23)
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  statusCode: 404
+}
+{
+
+
+
+
+
+
+--> hmmm... isso aconteceu pq 
+
+
+PROFESSOR NÃO VAI CHAMAR 
+
+
+
+'this.deletePostHandler()'
+
+
+lá 
+
+
+
+
+
+
+
+no
+
+
+'if (data.action === 'DELETE'),
+
+
+
+e sim 
+
+
+_ VAI SÓ _ CHAMAR 
+
+'this.loadPosts()' (para recarregar a page)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... FUNCIONOU BEM.
+
+
+
+
+
+
+
+
+AGORA O DELETE ESTÁ FUNCIONANDO AO LONGO DE MÚLTIPLOS CLIENTS,
+
+GRAÇAS AO SOCKET.IO..
+
+
+
+
+
+
+
+
+
+
+--> ISSO TUDO ESTÁ FUNCIONANDO BEM...

@@ -1,0 +1,428 @@
+
+
+
+
+
+
+
+
+
+
+
+-----> OK... COMO PODEMOS ADICIONAR AUTHORIZATION AO NOSSO APP?
+
+
+
+
+
+
+
+
+
+-> BEM, O PROFESSOR QUER ASSEGURAR 
+
+
+
+
+QUE SEJA IMPOSSÍVEL O 
+'EDIT/DELETE'
+
+
+
+
+
+
+DOS PRODUCTS QUE 
+
+NÃO ESTEJAM 
+
+SUBMETIDOS/VINCULADOS 
+
+
+
+
+
+AO 
+
+USER 
+
+
+QUE FAZEMOS 'LOGIN'... -----> PARA ISSO, É __ÓBVIO_ QUE É 
+
+
+MUITO MELHOR 
+
+
+
+SÓ MANIPULAR __ O VIEW__ PARA MOSTRAR APENAS __ OS 
+
+
+PRODUCTS__ QUE 
+
+
+PERTENCEM AO NOSSO 
+
+USER,
+
+
+
+e não renderizar os outros products naquela lista de 'products'...
+
+
+
+
+
+
+
+
+
+
+--> OK, MAS  COMO FAZEMOS ISSO?
+
+
+
+
+
+
+--> BEM, TEMOS QUE IR ATÉ O 
+
+
+CONTROLLER DE 
+
+'admin products'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+
+  Product.
+  find()
+  .then(
+    (products) => {
+
+        res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products,
+
+      })
+
+    }
+)
+
+};
+
+
+
+--------------------------------
+
+
+
+
+
+POR ENQUANTO, 
+
+
+
+
+
+ESSE CONTROLLER ESTÁ UM LIXO... ele está fazendo find DE TODOS 
+
+OS PRODUCTS DE NOSSO APP,
+
+
+
+
+E não só daqueles que foram realmente criados pelo nosso 
+
+
+user/admin...
+
+
+
+
+
+
+
+
+---> para CONSEGUIR fazer isso,
+
+
+VAMOS 
+
+
+PRECISAR __ 
+
+
+
+usar 
+
+a 'session', eu acho...
+
+
+
+
+
+
+
+
+
+
+--> ESCREVI UM CÓDIGO RÚSTICO, QUE FOI ESTE:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  console.log(req.session.user);
+
+  const userId = req.session.user._id;
+
+  Product.find({ userId: userId })  //////////EIS O CÓDIGO EM QUESTÃO.
+  
+    .then((products) => {
+
+      if (!products) {
+        res.render('admin/product-list-admin', {
+          path: '/admin/products-list',
+          pageTitle: 'Admin Products Page',
+          prods: [],
+        });
+      }
+
+      res.render('admin/product-list-admin', {
+        path: '/admin/products-list',
+        pageTitle: 'Admin Products Page',
+        prods: products, 
+      });
+    });
+
+};
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+
+PROFESSOR EXPLICA:
+
+
+
+
+
+'NÓS SABEMOS QUE TEMOS A INFORMAÇÃO IMPORTANTE DE 'userId' 
+dentro 
+
+DE 
+
+CADA
+
+PRODUCT'.... 'PORTANTO, SABEMOS QUE NO FINAL DAS CONTAS SÓ VAMOS QUERER CHECAR 
+
+
+SE 
+
+O 
+
+'CURRENTLY LOGGED IN USER' É __ REALMENTE __ O USER __ QUE 
+
+
+CRIOU ESSE PRODUCT,
+
+
+
+
+ANTES __ DE PERMITIR__ QUAISQUER EDITS/REMOVES NESSE ITEM...
+
+
+
+
+
+
+
+
+
+
+------> PARA ISSO,
+
+
+
+
+professor DIZ QUE DEVEMOS IR ATÉ 
+
+o 
+
+
+CONTROLLER 
+
+
+de 
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  console.log(req.session.user);
+
+  const userId = req.session.user._id;
+
+  Product.find({ userId: userId })  //////////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+
+
+
+
+
+
+
+  --> OK... E AÍ O PROFESSOR __ FEZ EXATAMENTE O QUE EU FIZ... ------> 
+
+
+
+
+  AUTHORIZATION É 
+
+
+
+
+  O SIMPLES 'RESTRICT THE PERMISSIONS'--> E O RESTRICT DE PERMISSIONS PODE/É FEITO,
+
+  POR 
+
+  EXEMPLO,
+
+
+
+  PELO SIMPLES RESTRICT DA DATA/INFORMATION QUE RETRIEVAMOS... ----> E O PROFESSOR 
+
+
+  VAI 
+
+  RESTRINGIR 
+
+  por meio de 
+
+
+
+  'Product.find({userId: req.user._id})'
+
+
+
+
+
+  (ok, mas a diferença, aqui, é que eu usei 'req.session.user._id', em vez de 'req.user._id'....)
+
+
+
+
+
+
+
+  BEM, MAS PARECE QUE ISSO DÁ NA MESMA...
+
+
+
+
+
+
+
+
+  ---------------
+
+
+
+
+
+
+
+COM ISSO MUDADO,
+
+
+SE RECARREGARMOS NOSSA PAGE,
+
+SÓ VEREMOS OS PRODUCTS QUE FORAM EFETIVAMENTE CRIADOS POR ESSE USER QUE USAMOS PARA O LOGIN...
+
+
+
+
+
+
+
+
+
+
+
+
+OK, MAS AINDA EXISTE 1 PROBLEMA:
+
+
+
+
+
+
+
+
+EU AINDA POSSO/PODERIA, TEORICAMENTE,
+
+'ISSUE REQUEST POR TRÁS DAS CENAS',
+
+
+
+
+REQUESTS_ _EM QUE _ EU __ REALMENTE__ TENTO DELETAR 1 PRODUCT QUE 
+
+
+_ NÃO FOI CRIADO 'POR MIM'... ------> E É EXATAMENTE POR ISSO 
+
+QUE 
+
+
+'MORE PROTECTION IS NEEDED'...
+
+
+
+
+
+
+
+
+-------> VAMOS ADICIONAR MAIS PROTEÇÃO 
+
+
+
+AO NOSSO EDIT/DELETE DE PRODUCTS, por meio de authorization, _NA PRÓXIMA AULA__...

@@ -1,0 +1,2309 @@
+
+
+
+
+
+
+
+
+
+
+
+
+--> FINALMENTE, ANTES DE 
+
+SAIRMOS DESTE MÓDULO,
+
+
+HÁ 1 ÚLTIMA COISA QUE PODEMOS OPTIMIZAR....
+
+
+
+
+
+
+
+
+
+
+
+--> HÁ 1 COISA QUE 
+
+
+O 
+
+
+
+
+
+
+PROFESSOR FEZ DE UMA MANEIRA QUE 
+
+'VAI FUNCIONAR',
+
+
+mas que 
+
+NÃO É IDEAL...
+
+
+
+
+
+
+
+
+
+
+
+NÃO É RECOMENDADO... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> O QUE PODEMOS FAZER DE MANEIRA SUPERIOR?
+
+
+
+
+
+
+
+
+
+--> BEM, SEMPRE QUE NÓS PASSAMOS 
+
+1 
+
+'DYNAMIC VALUE'
+
+a
+
+
+UMA QUERY GRAPHQll,
+
+
+TIPO 
+
+
+LÁ 
+
+
+
+
+
+NO 'Feed.js' (frontend),
+
+
+EM QUE 
+
+
+TEMOS O GETPOSTS,
+
+com esta query aqui:
+
+
+
+
+
+
+
+      const graphqlQuery = {
+
+        query: `
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+      --> NESSE LOCAL AÍ,
+
+
+
+      nós temos 
+
+      aquele 
+
+
+
+      trecho de 
+
+
+
+      ''''
+
+
+      getPosts(pageNumber: ${page}) 
+
+
+
+      ''''
+
+
+
+
+
+
+
+
+      --> NÓS ATUALMENTE ESTAMOS USANDO A 'SINTAXE DE INTERPOLAÇÃO'
+
+
+      PARA INSERIR ESSE VALOR AÍ.... -> professor está usando 
+
+      '${}' 
+
+
+      para 
+
+      INJETAR/INTERPOLATE 
+
+
+
+
+      UM __ VALOR __ DINÂMICO __ DENTRO 
+
+      DO NOSSO STRING LITERAL.... --> É CLARO QUE 
+
+
+
+      -___ ISSO FUNCIONA__, 
+
+      É 
+
+
+
+      TOTALMENTE VÁLIDO.... --> ENTRETANTO,
+
+
+
+
+      essa 
+
+
+      NÃO _É _ A MANEIRA__ RECOMENDADA _ __
+
+
+
+
+
+      DE ADICIONAR VARIABLES 
+
+
+
+
+      NAS NOSSAS GRAPHQL QUERIES.... --> HÁ UMA MANEIRA MELHOR.... --> TALVEZ 
+
+
+
+EU CONSIGA ME LEMBRAR,
+
+
+
+
+mas 
+
+o 
+
+professor 
+
+
+
+disse que 
+
+
+ 
+
+
+
+ para 'mutations' nós devíamos obrigatoriamente adicionar 'mutation {}',
+
+
+ E QUE 
+
+
+ PARA QUERIES 
+
+
+ ISSO NÃO ERA NECESSÁRIO.... ('{}")
+
+
+
+
+
+
+
+ -----> E, DE FATO,
+  
+
+
+
+
+
+  SE VOCê FAZ 
+
+  
+
+  A REDUNDÂNCIA DE ESCREVER 
+
+
+
+  'const graphqlQuery = {
+
+      query: `
+      query {}
+      
+      `
+  }
+  ',
+
+
+
+
+  VOCÊ 
+
+
+  REALMENTE 
+
+  RECEBERÁ 
+
+  UM ERRO....
+
+
+
+
+
+
+
+
+
+
+
+  --------> BEM, O PROFESSOR AGORA __ VAI ___ REINTRODUZIR ESSA ESCRITA DE 
+
+  'query' no início, mesmo com 'query:' antes... ---> ELE VAI FAZER ISSO __ PQ 
+
+
+  AGORA ___ 
+
+
+  NOSSA QUERY__ VAI __ TER 1 
+
+
+  NAME.... ------> VAMOS DAR 1 NAME 
+
+
+
+
+
+A NOSSA QUERY
+
+
+
+
+
+
+
+
+
+
+-----> NAMES EM QUERIES 
+
+
+
+'''NÃO FAZEM DIFERENÇA''',
+
+
+teoricamente,
+
+ISSO PQ 
+
+
+ESSE NOME 
+
+NÃO VAI MUDAR O SEU COMPORTAMENTO... -> A ÚNICA COISA 
+
+QUE MUDA 
+
+QUANDO 
+
+
+COLOCAMOS UM NOME EM UMA QUERY/NOMEAMOS UMA QUERY
+ 
+
+
+
+
+ É __ O ERROR HANDLING, PQ 
+
+
+
+ FICARÁ MAIS FÁCIL DE VISUALIZAR NOS CONSOLE.LOGS 
+
+
+
+
+
+ quais queries estão dando causas a errors... -----------> MAS O NAME 
+
+
+
+ TAMBÉM 
+
+
+
+ NOS DEIXA  __ FAZER __ ALGUMAS OUTRAS COISAS.... ------> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LÁ NESSA QUERY 
+
+
+
+DE 'getPosts',
+
+ESTAMOS FAZENDO QUERY DE TODOS OS POSTS,
+
+
+
+
+POR ISSO 
+
+O PROFESSOR 
+
+
+VAI 
+
+
+CHAMAr 
+
+ESSE NEGÓCIO DE 
+
+
+'FetchPosts'....
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+      const graphqlQuery = {
+
+        query: `
+
+        query Fetchposts() {
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `
+
+        }
+        ,
+      };
+
+
+
+
+
+
+
+
+
+
+
+---------> CERTO.... E ESSES () do lado do 
+
+
+NOME __ DA QUERY_ 
+
+
+
+
+
+possuem um propósito.... --> eles nos deixam 
+
+ESPECIFICAR 
+
+
+
+
+
+____ QUAIS__ 'VARIABLES' 
+
+
+ESSA 
+
+QUERY 
+
+VAI 
+
+
+UTILIZAR... -------> 
+
+
+
+
+
+
+
+E PARA CRIAR UMA VARIABLE 
+
+
+
+NESSA QUERY,
+
+
+
+você 
+
+
+deve 
+
+
+
+USAR UM '$' (NO INÍCIO, e sem {} depois)....
+
+
+
+
+
+
+
+
+
+
+
+--> OK, VOCÊ VAI USAR '$' E ENTÃO VAI ESCREVER O _ _NOME __ QUE VOCÊ VAI QUERER USAR PARA ESSA VARIÁVEL...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> O PROFESSOR, NESSE EXEMPLO, USARÁ 'page'...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+     const graphqlQuery = {
+
+        query: `
+
+        query Fetchposts($page) {
+        {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `
+
+        }
+        ,
+      };
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+      const graphqlQuery = {
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        query: `
+       
+       query FetchPosts($page) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ---------> CERTO.... MAS PARA DEFINIR 
+
+      o 
+
+
+      QUE 
+
+      SERÁ 
+
+
+      ESSA 
+
+
+
+VARIABLE,
+
+
+
+
+nós _ DEVEMOS COLOCAR 
+
+':'
+
+
+
+DO LADO DO SEU NOME COM $,
+
+
+
+
+E AÍ __ ESPECIFICAR ___  O GRAPHQL TYPE/DATATYPE 
+
+
+QUE 
+
+
+SERÁ 
+
+
+
+
+ESSA VARIABLE....
+
+
+
+
+
+
+ex:
+
+
+
+      const graphqlQuery = {
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> AQUI, NO CASO, 
+
+COLOCAMOS 
+
+'Int!,'
+
+
+
+
+
+
+PQ 
+
+
+
+
+ESSA VARIABLE DE 
+
+'page'
+
+
+VAI 
+
+SER 
+
+
+
+
+UM NÚMERO....
+
+
+
+
+
+
+
+
+
+------> OK... -> MAS ISTO, AGORA, É MT IMPORTANTE DE ENTENDER:
+
+
+
+
+
+
+ISTO:::::
+
+
+
+
+       query FetchPosts($page: Int!) {
+
+
+
+
+
+
+ISTO AÍ É 
+
+
+
+'SINTAXE GRAPHQL'....  --------> ISSO SIGNIFICA QUE 
+
+
+ 
+
+ ESSA ESCRITA NÃO É, DE MANEIRA ALGUMA,
+
+
+
+
+ __ CÓDIGO JAVASCRIPT.... ------> 
+
+
+
+ EM OUTRAS PALAVRAS,
+
+
+ ESSE CÓDIGO/SINTAXE GRAPHQL 
+
+
+
+ __ VAI __ SER PARSEADA ___ NO 
+
+ SERVER,
+
+
+
+
+
+
+
+ NÃO É JAVASCRIPT QUE RODA NO CLIENT.... ---> A ÚNICA FUNÇÃO DESSE NEGÓCIO/ESCRITA 
+
+ É 
+
+
+
+ 'TELL OUR GRAPHQL SERVER THAT WE HAVE A QUERY __ WHICH WILL __ USE AN INTERNAL VARIABLE'....
+
+
+
+
+
+
+
+
+
+
+
+
+----------> OK... É UMA _ VARIÁVEL___ INTERNA,
+
+ENTÃO... ------>  SURGE ENTÃO A PERGUNTA:
+
+
+
+
+
+
+
+
+
+
+
+
+EM QUE LUGAR DE NOSSO CÓDIGO __ LOCAL__ VAMOS USAR ___ ESSA 
+
+
+
+variável de 
+
+'$page'?
+
+
+
+
+
+
+
+
+
+
+---> BEM ,
+
+
+
+
+
+NÓS ___ DEVEMOS A UTILIZAR __ NO LOCAL__ EM QUE 
+
+
+
+NÓS ACTUALLY _ TEMOS 
+
+
+
+
+
+
+'DYNAMIC/VARIABLE VALUE'...  -------> e em que lugar temos isto?
+
+
+
+
+
+
+
+--> EXATAMENTE NA SEGUNDA LINHA/LINHA APÓS ESTA,
+
+
+EM QUE 
+
+
+_ NÓS ESTAMOS, NO PRESENTE,
+
+
+INJETANDO NOSSO VALOR DINÂMICO DA PÁGINA em '${page}'....
+
+
+
+
+
+Ex:
+
+
+
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {  ///<<<<<<<<< EXATAMENTE AQUI.... É NESTE LUGAR QUE USAREMOS NOSSA VARIABLE DE '$page'...
+            posts {
+
+
+
+
+
+----------------------------------------------
+
+
+
+
+
+
+
+
+
+-> OK.... 
+
+
+
+
+MAS COMO 
+
+USAMOS 
+
+ESSA VARIABLE?
+
+
+
+BASTA SUBSTITUIR 
+
+'${page}'
+
+
+
+POR 
+
+
+
+'$page'....  (E ESSE NOME da 'utilização da variable' DEVE MATCHEAR O NOME QUE VOCê DEFINIU NA VARIABLE EM SI)...
+
+
+
+( e também tem que começar com '$', nessas 2 ocorrências....)
+
+
+
+
+
+ex:
+
+
+
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: $page) {  ///<<<<<<<<< EXATAMENTE AQUI.... É NESTE LUGAR QUE USAREMOS NOSSA VARIABLE DE '$page'...
+            posts {
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+
+
+OK.... ISSO FARÁ COM QUE 
+
+O 
+
+
+
+
+GRAPHQL 
+
+saiba 
+
+que 
+
+
+
+
+ESSA PARTE ALI DE BAIXO É _ DINÂMICA..... A OUTRA INFORMAÇÃO QUE ELE TEM _ É QUE ___ 
+
+
+ESSE VALOR _ SERÁ _ UM INTEGER (número),
+
+
+
+
+
+
+ISSO PQ 
+
+ESTAMOS DIZENDO ISSO NA PRÓPRIA VARIABLE... (dentro dos parênteses)
+
+
+
+
+
+A ÚNICA PERGUNTA AGORA É:
+
+
+
+
+como 
+
+
+
+VAMOS INJETAR UM VALOR DINÂMICO DENTRO 
+
+DESSA VARIABLE,
+
+dentro 
+
+de, em outras palavras,
+
+
+
+
+''       query FetchPosts($page: Int) {'''
+                            ^^^^ ISTO AQUI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------> SE EXAMINARMOS NOSSO CÓDIGO COMPLETO, TEMOS ISTO:
+
+
+
+
+
+
+
+
+ let page = this.state.postPage;
+      console.log(page);
+
+      if (direction === 'next') {
+        page++;
+        this.setState({ postPage: page });
+      }
+
+      if (direction === 'previous') {
+        page--;
+        console.log(this.state.postPage);
+        this.setState({ postPage: page });
+        console.log(this.state.postPage);
+      }
+
+      console.log(this.state.postPage, 'NEEDPOSTPAGE');
+      // fetch('URL')
+
+      const graphqlQuery = {
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        ///quando definimos a variable, somos obrigados a indicar o GRAPHQLTYPE (datatype) que ele será... (no caso, será um número, portanto 'Int')..
+
+
+        
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -----> NO CASO, 
+
+
+
+    QUEREMOS SOCAR ESSA CONST/VAR de 
+
+
+
+
+    'page'
+
+
+
+    DENTRO 
+
+    DESSA
+
+    VARIABLE de 
+
+
+
+    '$page'...
+
+
+
+
+
+
+
+
+
+
+
+    --> PARA FAZER ISSO,
+
+
+    DEVEMOS ADICIONAR 
+
+
+
+
+
+    __ UMA SEGUNDA _ PROPRIEDADE __ NESSE 
+
+
+    OBJETO 
+
+    'query'
+
+
+
+    QUE 
+
+    ESTAMOS CONSTRUINDO... ----------> ATÉ AGORA,
+
+    NÓS 
+
+
+
+
+
+
+    SÓ TÍNHAMOS A 'QUERY EXPRESSION'
+
+
+    escrita 
+
+
+
+
+    no nosso frontend... --> AGORA, NO CASO,
+
+
+    DEPOIS DISSO,
+
+
+
+
+
+    VAMOS __ ESCREVER UMA VÍRGULA (
+
+
+        depois do 
+
+        `
+        {
+        }
+            `,
+
+
+            EM OUTRSA PALAVRAS
+    ),
+
+
+
+
+
+    E 
+
+
+    AÍ 
+
+
+
+    VAMOS ESCREVER O PARÂMETRO DE 'variables', a segunda KEY nesse objeto 'graphqlQuery':
+
+
+
+
+
+
+
+
+
+
+
+
+
+    EX:
+
+
+
+
+
+
+
+
+
+ const graphqlQuery = {
+        
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+
+        variables:  //////EIS O CÓDIGO EM QUESTÃO.
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        ///quando definimos a variable, somos obrigados a indicar o GRAPHQLTYPE (datatype) que ele será... (no caso, será um número, portanto 'Int')..
+
+
+
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+
+        variables: ///exemplo do uso de VARIABLES ('$page') COM UMA DE NOSSAS QUERIES... (é a maneira certa de inserir VALORES DINÂMICOS NAS NOSSAS QUERIES GRAPHQL)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------> certo....
+
+
+
+E 'VARIABLES'
+
+será um 
+
+OBJETO... -----> 
+
+
+
+
+
+DENTRO DESSE OBJETO,
+
+
+VAMOS 
+
+
+'ASSIGNAR VALORES/VALUES 
+
+
+ÀS VARIABLES QUE PASSAMOS DENTRO DE NOSSAS QUERIES, LOCALMENTE'...
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        ///quando definimos a variable, somos obrigados a indicar o GRAPHQLTYPE (datatype) que ele será... (no caso, será um número, portanto 'Int')..
+
+
+
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+
+        variables: ///exemplo do uso de VARIABLES ('$page') COM UMA DE NOSSAS QUERIES... (é a maneira certa de inserir VALORES DINÂMICOS NAS NOSSAS QUERIES GRAPHQL)...
+                {
+
+
+
+
+                }
+
+
+
+
+
+
+------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+como nós havíamos definido '$page',
+
+
+AQUI DEVEMOS TER UMA KEY de 
+
+
+'page'...
+
+
+
+
+
+
+
+ex:
+
+
+
+
+        variables: ///exemplo do uso de VARIABLES ('$page') COM UMA DE NOSSAS QUERIES... (é a maneira certa de inserir VALORES DINÂMICOS NAS NOSSAS QUERIES GRAPHQL)...
+                {
+
+
+                        page: 
+
+                }
+
+
+
+
+--------------------
+
+
+
+
+FINALMENTE,
+
+
+
+
+NO SLOT DO VALUE DESSA PROPRIEDADE,
+
+
+passamos 
+
+nosso 
+
+'JAVASCRIPT VALUE',
+o valor que 
+
+vai ser usado 
+
+
+
+
+naquelas variables....
+
+
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+
+
+
+      const graphqlQuery = {
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        ///quando definimos a variable, somos obrigados a indicar o GRAPHQLTYPE (datatype) que ele será... (no caso, será um número, portanto 'Int')..
+
+
+
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+
+        variables: { ///exemplo do uso de VARIABLES ('$page') COM UMA DE NOSSAS QUERIES... (é a maneira certa de inserir VALORES DINÂMICOS NAS NOSSAS QUERIES GRAPHQL)...
+
+          page: page ///AQUI ENFIAMOS OS VALORES DINÂMICOS JAVASCRIPT QUE QUEREMOS QUE SEJAM SOCADOS NOS CALLS DAS 'VARIABLES' ali em cima, na nossa query GRAPHQL...
+
+
+        }
+      };
+
+
+
+
+
+
+
+
+
+
+      ---------------------------------------------
+
+
+
+
+
+
+
+
+
+
+      variables: {
+          page: page
+      }
+
+
+
+
+
+
+
+
+      --> SIM, TEMOS 
+
+      'page'
+
+
+
+      2 VEZES,
+
+
+      MAS 
+
+
+      O PRIMEIRO 
+
+      'page'
+
+      SE REFERE AO VARIABLE NAME,
+
+
+      e 
+      o 
+
+      segundo se refere 
+
+
+      AO NOSSO VAR/CONST 
+
+      javascript,
+
+
+      escrito láaá´´aá em cima....
+
+
+
+
+
+
+
+
+
+      o código completo fica assim:
+
+
+
+
+
+     let page = this.state.postPage;
+      console.log(page);
+
+      if (direction === 'next') {
+        page++;
+        this.setState({ postPage: page });
+      }
+
+      if (direction === 'previous') {
+        page--;
+        console.log(this.state.postPage);
+        this.setState({ postPage: page });
+        console.log(this.state.postPage);
+      }
+
+      console.log(this.state.postPage, 'NEEDPOSTPAGE');
+      // fetch('URL')
+
+      const graphqlQuery = {
+        ////o graphql nos ajuda, pois nos deixa fetchear APENAS O QUE PRECISAMOS/DESEJAMOS, deixando de lado pedaços de data que são inúteis no nosso caso específico (como 'imageUrl', ou o 'email' do 'creator' e 'updatedAt' do 'post' .... --> esses pedaços de data não são necessários nesse run de 'loadPosts', pois NÃO SÃO USADOS NO LOAD DESSA NOSSA STARTING PAGE....)
+        //só precisamos do write de 1 termo 'query', e não 2... (pois isso seria redundante). --> e vamos querer que os POSTS sejam retornados....
+
+        /// em 'posts { _id, title, content}'  estamos ACTUALLY ESPECIFICANDO QUAIS FIELDS NESSES OBJETOS 'Post' VAMOS QUERER QUE SEJAM RETORNADOS pelo graphql.... (aí podemos escolher ´SO OS FIELDS QUE NOS INTERESSAM.... ESSE É O PROPÓSITO DO GRAPHQL....).
+       
+        
+        ///aqui também temos um EXEMPLO DE uso de 'VARIABLES' (é esse '()' com essas coisas com $ .... --> isso são variáveis, que podem ser usadas LOCALMENTE, nessa nossa query...)
+        
+        //o uso de NOMES para nossas queries só serve para facilitar no error handling (vemos o nome de quais queries originam os errors, etc), e no development... (mas fora isso, são inúteis)....
+        
+        ///quando COLOCAMOS UM NOME EM UMA QUERY, é permitido a nós 'ser redundantes ' (escrever 'query: query FetchPosts', etc etc)....
+        
+        ///quando definimos a variable, somos obrigados a indicar o GRAPHQLTYPE (datatype) que ele será... (no caso, será um número, portanto 'Int')..
+
+
+
+        query: `
+       
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: ${page}) {
+            posts {
+              _id
+              content 
+              title
+              imageUrl
+              creator {
+                name 
+                _id
+              }
+              createdAt
+            }
+            page
+            totalItems
+          }
+        } `,
+
+        variables: { ///exemplo do uso de VARIABLES ('$page') COM UMA DE NOSSAS QUERIES... (é a maneira certa de inserir VALORES DINÂMICOS NAS NOSSAS QUERIES GRAPHQL)...
+
+          page: page ///AQUI ENFIAMOS OS VALORES DINÂMICOS JAVASCRIPT QUE QUEREMOS QUE SEJAM SOCADOS NOS CALLS DAS 'VARIABLES' ali em cima, na nossa query GRAPHQL...
+
+
+        }
+      };
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+CERTO... ----> COM TUDO ISSO SALVO,
+
+RECARREGAMOS 
+
+
+NOSSO APP,
+
+PARA 
+
+VER 
+
+SE 
+
+ISSO FUNCIONOU...
+
+
+
+
+
+
+
+
+
+VAMOS RECEBER OS POSTS EXATAMENTE 
+
+
+COMO ANTES....
+
+
+
+
+
+
+
+
+
+------> certo.... mas o meu código BUGOU... -> 
+
+
+
+
+não estou conseguindo fazer get dos posts....
+
+
+
+EX:
+
+
+
+
+"Variable "$page" is never used in operation "FetchPosts"."
+
+
+
+
+
+
+
+
+
+
+--> CONSERTEI:
+
+
+       query FetchPosts($page: Int) {
+          getPosts(pageNumber: $page) {
+
+
+
+
+
+
+              OUTRO ERRO:
+
+              "Variable "$page" of type "Int" used 
+              in position expecting type "Int!"."
+
+
+
+
+
+
+
+
+CONSERTEI DE NOVO:
+
+
+       query FetchPosts($page: Int!) {
+          getPosts(pageNumber: $page) {
+
+
+
+
+----------------------
+
+
+
+
+PARECE QUE MEU APP AGORA 
+
+
+BUGOU... -->
+
+
+
+quando crio um novo post,
+
+
+
+MEU 
+
+
+
+
+
+FRONTEND NÃO É UPDATADO PARA REFLETIR 
+
+ESSA 
+
+CRIAÇÃo (o novo post não aparece na tela)....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> também tenho OUTRO PROBLEMA:
+
+
+
+quando UPDATO MEU POST/um post,
+
+
+recebo a mensagem 
+
+
+
+de erro:
+
+
+''
+
+"Cannot return null for non-nullable field User.posts."
+
+
+
+''
+
+
+
+
+
+
+
+
+QUANTO AO PRIMEIRO BUG, o problema é que 
+
+esse 
+
+
+post que é criado está OVERWRITTANDO O PRIMEIRO POST 
+
+
+
+
+na nossa lista de posts...
+
+
+
+
+
+
+
+
+
+
+
+
+CONSERTEI O PRIMEIRO BUG...:
+
+
+
+        else {
+          updatedTotalPosts++;
+          if(prevState.posts.length >= 5) {
+            updatedPosts.pop();
+          }
+          updatedPosts.unshift(post);
+        }
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+agora falta o outro...
+
+
+
+
+
+
+
+
+
+
+
+
+ok.... consertei esses problemas... era uns GRAPHQL SHENANIGANS... 
+
+
+
+
+
+
+
+
+-----------------------
+
+
+
+
+OK... O NEGÓCIO ESTÁ FUNCIONANDO COMO ANTES,
+
+
+MAS 
+
+AGORA 
+
+
+COM ESSA MANEIRA MELHOR DE INSERIR VALORES DINÂMICOS NAS NOSSAS 'GRAPHQL QUERIES'...
+
+
+
+
+
+
+
+
+
+-----> AGORA PODEMOS FAZER ISSO,
+
+
+SUBSTITUIR OS VALORES DINÂMICOS __ EM __ TODAS __ AS NOSSAS QUERIES....
+
+
+
+
+
+(
+
+    colocar essa sintaxe do 'inserir 
+
+
+
+    valor dinâmico javascript na nossa variable graphql'...
+)
+
+
+
+
+
+
+
+
+--> começamos pela mutation de 'statusUpdateHandler'
+
+
+
+
+ex:
+
+
+
+
+
+
+statusUpdateHandler = async (event) => {
+    event.preventDefault();
+
+    // console.log(event.target.value);
+
+    this.setState(
+      {
+        statusLoading: true
+      }
+    )
+
+    const graphqlQuery = {
+
+    //   query: `  ///versão ___ SEM__ o uso de 'GRAPHQL VARIABLES' (ou seja, só com template literals e inserção direta de valores javascript)....
+    //  mutation {
+    //   updateUserStatus(status: "${this.state.status}")
+    //   }
+    //   `
+
+      ///versão COM USO DE 'GRAPHQL VARIABLES' (ver key de 'variables').....
+    query: `
+    mutation UpdateUserStatus($status: String!) {
+     updateUserStatus(status: $status)
+     }
+     `,
+
+     variables: {
+       status: this.state.status
+     }
+
+
+    }
+
+    try {
+      const updateStatusResult = await fetch(
+        // 'http://localhost:8080/auth/status', ////versão REST API de nosso código...
+        'http://localhost:8080/graphql', ///vERSÃO __GRAPHQL__ de nosso código...
+        {
+          // method: 'PATCH', ///versão REST API de nosso código
+          method: 'POST', ///versão GRAPHQL de nosso código....
+
+          body: JSON.stringify(graphqlQuery), ///VERSÃO __ GRAPHQL DE NOSSO CÓDIGO (body)...
+
+          // body: JSON.stringify({ ///versão REST API de nosso código...
+          //   status: this.state.status,
+          // }),
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json', //isto ainda é necessário.... (request de tipo patch/post/put...)
+          },
+        }
+      );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ----------> CERTO... ISSO FEITO,
+
+      EU TENTO FAZER LOGIN NO MEU APP,
+
+
+      MAS 
+
+      OBTENHO UM ERRO DE 
+
+
+      'Could not log you in'...
+
+
+
+
+
+
+
+
+
+      --> deu alguma coisa de errado com 
+
+
+
+      esse uso dessas ''variables''...
+
+
+
+
+
+
+
+
+
+
+      OK.... CONSERTEI TODOS ELES..
+
+
+
+
+
+
+
+
+      ---> O ÚNICO CÓDIGO QUE AINDA ESTÁ BUGANDO É O DE 'updatePost'.... 
+
+
+
+
+
+      --> ESTOU RECEBENDO ESTE ERRO:
+
+
+
+      "Variable "$imageUrl" is not defined by operation "UpdatePostOperation"."
+
+
+      "Variable "$imageurl" is never used in operation "UpdatePostOperation"."
+      
+
+
+
+
+
+
+
+
+
+      E MEU CÓDIGO ESTÁ ASSIM:
+
+
+
+
+
+
+      
+      if (this.state.editPost) {
+        graphqlQuery = { //versão COM USO DE VARIABLES GRAPHQl...
+          query: `
+          
+          mutation UpdatePostOperation($postId: ID!, $title: String!, $content: String!, $imageurl: String!){
+            updatePost(postId: $postId, userInput: {title: $title, content: $content, imageUrl: $imageUrl } )
+           {
+              _id 
+              title 
+              content
+              imageUrl
+              creator {
+                name
+                posts {
+                  title
+                }
+              }
+              createdAt
+          }
+        }
+          
+          `,
+          variables: {
+            postId: this.state.editPost._id,
+            title: postData.title,
+            content: postData.content,
+            imageUrl: imageUrl
+          }
+        };
+      }
+
+
+
+
+
+
+
+--> ERA UM ERRO DE SINTAXE... (maiúscula e minúscula...)
+
+
+
+
+
+
+
+
+OK.... -----> fizemos 
+
+essa conversão em TODAS AS QUERIES...
+
+
+
+
+
+
+
+
+
+OK.... ESTAMOS COM TUDO NO LUGAR, PORTANTO... (
+
+    AGORA TEMOS UMA GRAPHQL COM A SINTAXE MAIS CORRETA,
+
+    SINTAXE DE VARIABLES,
+    QUE É A MANEIRA MAIS RECOMENDADA DE 
+
+    'PASS DATA INTO YOUR QUERIES'...
+)
+
+
+
+
+
+
+-> PROFESSOR CONSERTA UM PEQUENO BUG DE PAGINATION,
+
+ANTES DE FAZER O _ _ WRAPUP_....

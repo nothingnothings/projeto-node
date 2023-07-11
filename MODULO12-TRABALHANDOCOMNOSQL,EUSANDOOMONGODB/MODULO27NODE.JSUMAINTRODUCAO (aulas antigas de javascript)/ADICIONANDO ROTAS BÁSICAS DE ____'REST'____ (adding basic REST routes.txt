@@ -1,0 +1,2849 @@
+
+
+(OBS: DEVEMOS USAR O PROJETO ANEXADO A ESSA LIÇÃO....)
+
+
+PARA IMPLEMENTAR ESSE NOVO __APPROACH__ no nosso código, o approach da 'REST API', 
+
+
+
+
+NÓS PODERÍAMOS, de fato, DELETAR O FOLDER 'views'....
+
+
+
+
+Mas nós também podemos ignorá-lo, não há problema nisso.
+
+
+
+
+---> O PROJETO QUE UTILIZAREMOS ESTÁ 
+
+na pasta 
+
+'projetodosmapasrevisitado'...
+
+
+
+---> O professor comenta para fora do código 
+
+
+
+as linhas 
+
+
+
+'//app.set('view engine', 'ejs');
+//app.set('views', 'views');
+'
+
+
+
+ELE FAZ ISSO PQ, DIZ ELE, NÃO VAMOS MAIS ENVIAR 
+
+DE VOLTA AO CLIENT NENHUM 'html template' renderizado (pelo servidor)....
+
+
+
+
+Em vez de enviar esses html templates renderizados pelo servidor AO USUÁRIO, 
+
+
+agora o professor quer FAZER ___ O EXCHANGE__ (a troca) de 
+
+
+__JSON DATA__....
+
+
+
+
+Em razão disso, nós também podemos comentar para fora as linhas de código 
+
+relativas aos 'app.use' (as linhas dos MIDDLEWARES, das 'etapas' da criação da response)...
+
+ex:
+
+
+
+
+'
+
+app.use((req, resp, next) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.userName || 'Unknown User';
+    resp.render('index', {
+        user: userName
+    });
+});
+
+-----------------------------------
+
+
+
+PODEMOS COMENTAR ESSAS LINHAS PARA FORA...
+
+
+
+
+
+
+Certo.
+
+
+Naquela parte 
+
+
+em que 
+
+escrevemos 
+
+
+'app.use(express.urlencoded({extended: false}));', 
+
+
+EM QUE NÓS 
+
+FAZEMOS O EFETIVO 'PARSING' da  'incoming data' (incoming request; isso faz o parsing do BODY do incoming request),
+
+
+Nesse trecho aí, como 
+
+estaremos 
+
+
+construindo uma API/construindo POR UMA API, 
+
+
+EU AGORA NÃO VOU MAIS ESPERAR 'form data' (essa form data que era parseada por meio desse código), 
+
+
+E SIM ___VOU ESPERAR/expect POR ___ 'JSON DATA'.....
+
+
+
+como vou esperar DADOS '.json', ESPERO QUE DADOS JSON SERÃO RECEBIDOS PELO SERVIDOR, 
+
+
+eu utilizo 
+
+o método 
+
+'.json' em 'express' NESSE TRECHO AÍ DO 'app.use()'....
+
+
+
+
+
+
+eX:
+
+
+
+const app = express();
+
+app.use(express.json());
+
+
+---------------------------
+
+
+
+
+ESSE CÓDIGO VAI TENTAR/CONSEGUIR PARSEAR O 'INCOMING JSON DATA' que vai entrar no nosso servidor...
+
+
+
+
+Feita a recepção a esse código JSON, eu agora vou querer SETTAR 2 ROTAS (routes), 
+
+
+DUAS ___URLS____...  essas 
+
+
+
+DUAS URLS __SERÃO GERENCIADAS (handled) ____ POR MEIO DESSE 'node.js', por meio desse 
+
+BACKEND SERVER QUE ESTAMOS CRIANDO NESSE ARQUIVO 'app.js'...
+
+
+UMA DESSAS URLs (A primeira) poderá 
+
+SER TRIGGADA POR MEIO DO ARQUIVO 
+
+
+'SharePlace.js'....
+
+
+
+
+Lembre-se do código de 'share-place.js'...:
+
+
+
+
+selectPlace(coordinates, address) {
+    if (this.map) {
+      this.map.render(coordinates);
+    } else {
+      this.map = new Map(coordinates);
+    } 
+    this.shareBtn.disabled = false;
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${location.origin}/my-place?address=${encodeURI(address)}...
+
+
+------------------------------------------------------------------------
+
+
+BASICAMENTE:
+
+
+nesse lugar aí, quando nós SELECIONAMOS UM LUGAR ('when we select a place'), 
+
+EU VOU QUERER ___ENVIAR O/UM REQUEST__ A ESSE NOSSO 'BACKEND SERVER'...
+
+
+Um request COM AS 'CHOSEN ADDRESS AND COORDINATES'....
+
+vamos querer que o request seja enviado com esses dados PARA QUE 
+
+NO BACKEND NÓS SEJAMOS CAPAZES ____dE ARMAZENAR ___ ESSES DADOS EM UMA 
+
+DATABASE___ ... SE FORMOS CAPAZES DE ARMAZENAR ESSES DADOS NA DATABASE, 
+
+SERÁ POSSÍVEL CRIAR 
+
+UM __UNIQUE ID__ para esses dados... esse ID único SERÁ ENTÃO 
+
+__ENVIADO DE VOLTA___ AO FRONTEND....
+
+
+
+
+
+
+JÁ A ___sEGUNDA URL___ que eu quero é alcançada por meio do arquivo 
+
+
+'my-place.js'....... é alcançada NO LUGAR EM QUE 
+
+EXTRAÍMOS UMA 'ID' DE DENTRO DE UMA URL/da url E EM QUE REQUISITAMOS 
+OS DADOS PARA ESSE 'PLACE' POR MEIO Do nosso servidor, também... (queremos que isso aconteça, no futuro; agora isso não está implementado ainda).
+
+
+
+ex (é esse código):
+
+
+const url = new URL(location.href);
+const queryParams = url.searchParams;
+const coords = {
+    lat: parseFloat(queryParams.get('lat')),
+    lng: +queryParams.get('lng');
+}
+const address = queryParams.get('address');
+new LoadedPlace(coords, address);
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+PARA SPLITTAR NOSSO CÓDIGO UM POUCO MAIS E PARA TER UMA ESTRTURA MAIS _LIMPA___, 
+
+
+o professor vai criar um NOVO FOLDER...
+
+
+Um folder chamado de 
+
+'
+ROUTES'...
+
+
+
+
+
+ESSE FOLDER VAI REALMENTE SEGURAR ESSAS 'routes'....
+
+
+
+
+
+FAZEMOS ISSO PARA QUE EM 'APP.JS' NÓS APENAS TENHAMOS 
+
+O 'SETUP GERAL'... (como aquele body parsing que o professor settou, aquele 
+código de 
+
+'app.use(express.json());') ------> esse co´digo de body parsing é indispensável EM TODAS AS 'ROUTES', não interessa qual estejamos seguindo/o usuário esteja seguindo no código....
+
+
+
+
+
+NO FOLDER 'ROUTES' teremos nossas ROUTES, rotas A DIFERENTES CAMINHOS, caminhos específicos, 
+
+
+os PATHS QUE QUEREMOS SUPPORTAR.... E A LÓGICA PARA ISSO tudo, EM UM __ARQUIVO SEPARADO___...
+
+
+
+
+
+DEVEMOS ENTRAR NO FOLDER 'routes'
+
+
+E ENTÃO ADICIONAR um arquivo chamado de 'location.js' (pode ser qualquer nome, mas esse é bom).
+
+
+
+
+DENTRO DESSE ARQUIVO, TAMBÉM TEREMOS DE IMPORTAR O 'express.js'...
+
+
+
+
+
+fazemos isso por meio do código 
+
+
+'const express = require('express');'
+
+
+
+
+
+( PQ NÓS SEMPRE PRECISAMOS FAZER ISSO EM QUALQUER ARQUIVO EM QUE VAMOS QUERER USAR O EXPRESS.JS..)
+
+
+
+
+
+
+
+
+Dentro dessa 'location.js',
+
+
+O PROFESSOR NÃO VAI QUERER CRIAR UM NOVO 
+
+
+APLICATIVO 'express()' (we won't create a new 'EXPRESS APP'),
+
+
+
+POR ISSO ELE N VAI QUERER 
+
+EXECUTÁ-LO COM O CÓDIGO 'express();'...
+
+
+
+
+
+EM VEZ DISSO PODEMOS/DEVEMOS USAR OUTRA FEATURE __QUE FAZ PARTE __ DA PACKAGE DO 'express'...
+
+
+O NOME DESSA FEATURE É O 'EXPRESS ROUTER'...
+
+
+'express.Router()'...
+
+
+
+
+
+ESSE É O CÓDIGO, MESMO....
+
+
+'express.Router();'
+
+
+
+
+
+EU POSSO EXECUTAR ESSE NEGÓCIO COMO UMA FUNÇÃO DESSA FORMA,
+
+e então 
+
+
+o armazeno em UMA CONSTANTE...
+
+
+ex:
+
+
+
+
+
+const router = express.Router();
+
+
+
+------------------------------------
+
+
+
+
+O 'router' faz com que a tarefa de registrar diferentes 
+
+ROTAS 
+fique fácil....
+
+
+Você pode simplesmente especificar O TIPO 
+
+
+
+DE 'HTTP METHOD' que você vai querer suportar nessa 'rota'...
+
+
+
+
+Por exemplo, aqui o professor vai querer suportar métodos de tipo __POST____...
+
+
+isso vai fazer todos os incoming requests com método 
+
+'POST' serem RECEBIDOS NO NOSSO SERVIDOR e ENCAMINHADOS POR ESSA 
+
+ROTA, se as condições para tal forem preenchidas....
+
+
+
+
+SE O INCOMING REQUEST FOR ENVIADO ____A ESSE PATH___ QUE VOCÊ ESPECIFICAR 
+
+NESSE código 
+
+
+'router.post('')',
+
+
+
+ELE IRÁ EXECUTAR AS LINHAS DE CÓDIGO JAVASCRIPT QUE ESTÃO NESSE ARQUIVO 
+
+onde está esse 'router.post('')'...  (isso está errado, na verdade... ele vai executar o CÓDIGO QUE ESTÁ DENTRO DA 'FUNÇÃO INTERNA'/MIDDLEWARE, que é o segundo parâmetro dessas funções 'router'....) ---> mas veremos isso mais embaixo, leia aquele trecho.
+
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+router.post('/'); -----------> //ISSO, POR EXEMPLO, FARÁ TODOS OS 'INCOMING REQUESTS' de tipo POST SEREM ENCAMINHADOS POR ESSA ROTA ('slash nothing' ==== nosso domínio, nosso 'DOMAIN', como 'google.com',  sem nada acrescentado do lado), por esse arquivo em que escrevemos esse código.....
+
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+PROFESSOR UTILIZA O EXEMPLO, AQUI, DE 'PATH' de 'add-location'....
+
+
+mas ele diz que pode ser qualquer coisa.......
+
+
+
+
+esse 'path' especificado NO PRIMEIRO PARÂMETRO 
+
+
+desse 
+
+
+
+'router.xxxx()' 
+
+
+
+SERÁ REGULADO ___PELO SEGUNDO ARGUMENTO____ DESSE MESMO 
+
+MÉTODO....
+
+
+
+
+
+
+Segundo parâmetro ----------> ELE SEMPRE SERÁ UMA 'FUNÇÃO INTERNA' 
+
+
+
+de 
+
+'
+(req, resp, next) => {
+
+}' -------------> OU SEJA, É QUASE COMO UMA MIDDLEWARE, 
+
+
+É TIPO UMA MIDDLEWARE, MAS """___FILTRADA____""" por UM 
+
+PATH ('/add-location') E POR UM HTTP METHOD ESPECÍFICO ('post')...
+
+
+
+
+
+
+ex:
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+router.post('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+-----------------------------------------------------------------------
+
+
+
+
+
+
+CERTO.
+
+
+IMPORTANTE !!!! ----> ____APENAS____ HTTP REQUESTS DE TIPO POST ('.post') ____ ENVIADOS ___ A ESSE ___ PATH ESPECÍFICO ('/add-location') CONSEGUIRÃO 
+ENTRAR NESSE 'BLOCK' 
+
+dO MIDDLEWARE ('(req, resp, next) => {}' ) 
+
+
+
+
+--------------------------------------
+
+
+
+
+
+Ok....
+
+
+
+mas há algo de que nos esquecemos...
+
+
+queríamos que nosso código TIVESSE 2 ROTAS (routes) DIFERENTES...
+
+
+
+Bem, para que seja criada uma nova rota no nosso código, 
+
+O PROFESSOR DIZ QUE DEVEMOS COPIAR O CÓDIGO DO PRIMEIRO ROUTER E ENTÃO modificá-lo 
+
+para que ele seja a segunda rota...
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+router.post('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+----------------------------------------------------------------------
+
+
+
+
+
+Professor explica que a segunda rota deverá ser UMA 'GET' route... pq 
+
+nessa rota nós/o usuário vamos querer fazer o 'GET' de dados... (será um request de tipo 'GET')....
+
+
+
+
+
+
+O professor coloca um path de '/location', pois nós/o usuário vamos querer uma localização específica para 
+
+um ID específico....
+
+(o professor nos explicará como isso funciona mais tarde)....
+
+
+
+
+
+Por enquanto, devemos focar na route do 'POST'....
+
+
+
+
+
+
+AQUI, NA ROUTE DO 'post', 
+
+
+
+A IDEIA AGORA É QUE NÓS 
+
+CONSIGAMOS alguns dados ('some data')...
+
+
+
+
+você deve estar se perguntando... 'ué, mas nós não deveríamos PARSEAR OS DADOS antes de utilizá-los 
+no nosso código?' ---------> BEM, NÓS JÁ FIZEMOS ISSO ANTES...
+
+JÁ FIZEMOS ISSO ANTES EM 'APP', COM AQUELE CÓDIGO 
+
+DE 
+
+
+
+'app.use(express.json());' 
+
+
+
+
+
+O QUE ISSO SIGNIFICA?
+
+
+
+Significa que O 'app.js' É TIPO A 'NASCENTE DO RIO', ele sempre 
+
+será o 
+
+primeiro negócio a ser executado, antes mesmo das routes serem alcançadas 
+pelo request do usuário.... e essas 
+
+
+
+routes, todas elas, acabam se aproveitando dessa CONVERSÃO de dados 
+
+
+JSON realizada pelo código de 'app.js', o primeiro arquivo .js a ser executado 
+no flow do nosso projeto....
+
+
+---------------------------------
+
+
+Isso significa que, em 'app.js', o body do incoming request JÁ FOI EXTRAÍDO 
+E ARMAZENADO AUTOMATICAMENTE NA PROPRIEDADE 
+
+'BODY' do objeto 'REQUEST' ('req')....
+
+
+
+
+------------------------------------
+
+
+
+
+Os dados que conseguimos no BODY desse 
+
+
+objeto 'request' SÃO ESSENCIALMENTE 
+
+AS 'COORDINATES' E O 'ADDRESS' do usuário...
+
+
+
+
+Nós vamos querer, agora, ARMAZENAR ESSAS INFORMAÇÕES EM UMA 
+
+_______DATABASE_____.
+
+
+
+
+Devemos adicionar essa database __DEPOIS__
+
+
+Por enquanto, o professor diz que devemos usar, como substituta, uma 
+
+
+tal de 'IN MEMORY STORAGE'...... essa 'in memory storage' sempre 
+
+VIVE ___ENQUANTO O NOSSO SERVIDOR VIVE___; quando nosso servidor é 
+
+
+DESLIGADO, essa 'in memory storage' É DESTRUÍDA/PERDIDA.... (resumindo: NÃO É UMA STORAGE __PERMANENTE__, mas é boa para algumas coisas e para começar a entender o node.js)...
+
+
+--------------------------------------------------
+
+
+
+
+
+
+
+Professor cria uma constante de nome 
+
+
+'locationStorage'... essa const será/vai segurar um OBJETO JAVASCRIPT....
+
+
+DENTRO DESSE OBJETO 
+
+
+TEREI uma propriedade 
+
+
+de 'locations'... essa propriedade será um array...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+CERTO...
+
+
+
+AÍ, NAQUELE CÓDIGO DE 'router.post', vou querer escrever 
+
+UM CÓDIGO A SER EXECUTADO QUANDO ESSAS CONDIÇÕES (o path e o tipo de request) FOREM PREENCHIDAS...
+
+
+
+Esse código ALCANÇARÁ a 'locationStorage.locations' (a propriedade 'locations' dentro do objeto 'locationStorage')
+
+
+
+e então FARÁ O 'PUSH()' DE UMA NOVA 'LOCATION' para DENTRO DO ARRAY DE 'LOCATIONS'....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push();                                            });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+
+
+----------------------------------------
+
+
+
+ESSE OBJETO QUE SERÁ A 'location' do usuário VAI TER UM 
+
+
+___iD____.... esse ID VAI SER GERADO __NA HORA___ ('on the fly')...
+
+
+
+Para isso podemos usar a função conhecida de 'Math.random()';  (essa função não gera IDs 'perfectly unique', mas por enquanto ela vai servir)...
+
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push(id: Math.random());                      });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+COMO SEGUNDA PROPRIEDADE DESSE OBJETO, TEREMOS A PROPRIEDADE 
+
+
+'address'... essa propriedade será obtida POR MEIO DA PROPRIEDADE 
+
+
+'address' do BODY DO REQUEST.... (e professor vai acessar essa propriedade por meio da DOT notation....)
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({id: Math.random(), address: req.body.address});                      });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+
+---------------------------------------------------
+
+
+
+Podemos colocar esse valor de 
+
+
+'req.body.address' nessa propriedade PQ ESSA 
+
+PROPRIEDADE 
+
+DE 
+
+
+'address' NO BODY DO OBJETO 'REQUEST' JÁ É ESPERADA ('expected')....
+
+
+
+JÁ A PROPRIEDade 
+
+
+
+'coords' PODERÁ/DEVE SER UM 
+
+___'NESTED OBJECT'____,  um 
+
+
+objeto com as keys lat 
+
+e 
+
+lng...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({id: Math.random(), address: req.body.address, coords: {lat:  , lng:  }});       
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+
+--------------------------------
+
+
+
+
+
+CERTO.
+
+
+MAS QUAIS SERÃO OS VALORES DESSAS PROPRIEDADES?
+
+
+
+Bem, o lat deverá ter um valor de 'req.body.lat',
+
+
+e o 
+
+
+
+'lng' deverá ter um valor de 'req.body.lng'...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({id: Math.random(), address: req.body.address, coords: {lat: req.body.lat, lng: req.body.lng  }});       
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+CERTO. 
+
+
+
+É claro que essa será nossa obrigação:
+
+
+assegurar que QUANDO NÓS/O USUÁRIO ENVIA ESSE REQUEST de tipo 'post' ao path de 'add-location' NÓS 
+
+
+CONSIGAMOS PROVIDENCIAR ESSE FIELD de 'address' NO ___BODY____ do request...
+
+Também precisamos providenciar esses fields de 
+
+
+'lat' e 'lng' nesse mesmo BODY do request...
+
+
+
+
+
+EX(código bonito):
+
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({
+                    id: Math.random(), 
+                    address: req.body.address, 
+                    coords: { lat: req.body.lat, lng: req.body.lng
+                    });       
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+-----------------------------------------------------------------------------------
+
+
+
+COM ISSO, COM ESSE TRECHO 
+
+
+
+'
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({
+                    id: Math.random(), 
+                    address: req.body.address, 
+                    coords: { lat: req.body.lat, lng: req.body.lng
+                    });       
+                               });
+                            '
+
+
+
+
+    O BODY DO REQUEST DE TIPO 'POST' do usuário DEVERÁ/SERÁ 
+
+    ADICIONADO AO NOSSO 
+
+    'LOCATIONSTORAGE' (aquele objeto que segura uma propriedade com um ARRAY chamado de 'locations'....)....
+
+
+
+    (SIM, ESSA É A 'IN MEMORY STORAGE' de um servidor/backend....
+    você armazena as coisas 
+    em um pedaço de código dentro da memória/código do servidor...
+    quando você desligar o servidor,
+    
+    todos esses dados serão perdidos.)
+
+
+
+----------------------------------------------------------
+
+
+Certo.
+
+
+
+
+MAS seria bom, também, enviar de volta uma 'RESPONSE'...
+
+
+FAZEMOS ISSO PARA QUE NÓS BASICAMENTE CONSIGAMOS PROVIDENCIAR UMA 
+
+'''RESPOSTA''' ao client de que ALGO EFETIVAMENTE ACONTECEU.... (que algo aconteceu ao ter sido enviado o seu input/seus dados....)
+
+
+
+para isso, devemos usar o argumento 'RESP' (response)....
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({
+                    id: Math.random(), 
+                    address: req.body.address, 
+                    coords: { lat: req.body.lat, lng: req.body.lng
+                    });       
+
+
+resp; /////eis o código em questão.
+
+
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+CERTO.
+
+NÓS CHAMAMOS ESSE ARGUMENTO/objeto e então 
+
+
+
+CHAMAMOS UM MÉTODO QUE EXISTE NELE...
+
+
+
+o método 
+
+
+'.json()'.... --->  ESSE MÉTODO '.JSON()', quando usado/chamado na RESPONSE, 
+
+
+ACABA ___ENVIANDO ___ DE VOLTA ___ UMA RESPONSE 'JSON' ___ ao USUÁRIO/CLIENT...
+
+
+
+
+professor explica que é a mesma coisa que 
+
+escrever 
+
+
+'resp.send()' e então definir o 'Content-Type' do header dessa response como 
+
+'json' MANUALMENTE.... (só que sem toda a mão de fazer isso)....
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({
+                    id: Math.random(), 
+                    address: req.body.address, 
+                    coords: { lat: req.body.lat, lng: req.body.lng
+                    });       
+
+
+resp.json();
+
+
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+Nessa resposta/response que enviará de volta dados JSON, nós podemos/devemos 
+
+ENVIAR DE VOLTA UM OBJETO ({}) (QUE SERÁ CONVERTIDO EM '.JSON' AUTOMATICAMENTE 
+POR MEIO DO 'express.js'...).
+
+
+Enviaremos uma 'json response'...
+
+
+
+
+NESSE OBJETO PODEMOS TER UMA MENSAGEM, talvez, EM QUE DIZEMOS 
+
+
+(em uma propriedade de nome 'message')
+
+
+
+
+'Stored location!'
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({
+                    id: Math.random(), 
+                    address: req.body.address, 
+                    coords: { lat: req.body.lat, lng: req.body.lng
+                    });       
+
+
+resp.json({
+    message: 'Stored location!'
+});
+
+
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+-------------------------------------
+
+
+
+É claro que também poderíamos adicionar umas validações 
+
+extras aqui, uns 'IF CHECKS' para 
+
+checar se conseguimos, de fato, coordenadas 
+
+válidas no nosso código.... (e aí mandaríamos um erro nas hipóteses em que o negócio inputtado pelo usuário é INVÁLIDO...).
+
+
+
+
+
+---> mas não devemos ver isso por enquanto, porque é mt complicação..
+
+
+
+
+
+---> VAMOS ___ASSUMIR__ que sempre vamos conseguir dados válidos nesses 
+
+espaços/fields 
+
+
+no body do/dos nosso/nossos request/requests...
+
+
+-----------------------------------------
+
+
+
+
+COM TUDO ISSO DEFINIDO, AGORA TEMOS 
+
+NOSSA PRIMEIRA 'ROUTE' settada....
+
+
+
+
+
+
+--->porém, denota o professor, essa route ESTÁ VIVENDO DENTRO 
+
+DO arquivo .js DE 
+
+
+'location.js'... -------> isso significa que, até agora, até o momento, EM NENHUM LUGAR 
+
+DE NOSSO APLICATIVO NÓS COMUNICAMOS AO JAVASCRIPT/NODE/EXPRESS que 
+
+ESTAMOS 
+
+__INTERESSADOS___ nesse arquivo...  -----> certo....
+
+
+De volta ao 
+
+'app.js', QUE NA VERDADE É O ARQUIVO QUE SERÁ REALMENTE EXECUTADO 
+
+PELO NODE com o comando 'node app.js' no terminal, 
+
+
+
+NÓS 
+
+TEMOS/DEVEMOS IMPORTAR 
+
+
+
+ESSE ARQUIVO 
+
+
+'location.js'...............
+
+
+PARA SER MAIS PRECISO, PRECISAMOS IMPORTAR ___AS ROUTES___ DEFINIDAS 
+
+NESSE ARQUIVO....
+
+
+
+E AÍ NÓS PRECISAMOS DIZER AO 'EXPRESS' QUE ELE DEVE ___CONSIDERAR___ ESSAS ROUTES 
+
+QUANDO ELE FOR 'FUNNELAR' TODOS OS REQUESTS POR DENTRO DO NOSSO CÓDIGO, POR MEIO 
+DE TODOS 
+
+OS MIDDLEWARES...
+
+
+
+
+
+BEM, para importar ALGO DAQUELE ARQUIVO 'location.js' PARA O NOSSO 
+
+
+'APP.js',
+
+
+NÓS PRECISAMOS, PRIMEIRAMENTE, ____EXPORTAR___ ALGUMA COISA 
+
+
+
+no 'location.js'... (exportar a coisa que vamos querer usar)...
+
+
+
+
+
+----------------------> CERTO... VOCÊ DEVE SABER ISSO:
+
+
+
+O ___EXPRESS____ TEM SUA PRÓPRIA SINTAXE ___ DE EXPORTS____...
+
+
+
+
+
+você não tem uma keyword 'export/import' que nem no javascript comum....
+
+
+Não, aqui você deve exportar por meio 
+
+ 
+
+
+
+ DA SINTAXE 
+
+
+
+ 'module.exports'..... 
+
+
+
+
+
+ (NÓS JÁ VIMOS ISSO ANTES, SIM, QUANDO NÓS TRABALHAMOS, NO PASSADO, COM O WEBPACK...)
+
+
+
+ ex de nosso uso disso com o webpack:
+
+
+ex:
+
+
+
+
+module.exports = {
+  mode: 'development',
+  entry: {
+    'SharePlace': './src/SharePlace.js',
+    'MyPlace': './src/MyPlace.js',
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist', 'assets', 'scripts'),
+    publicPath: 'assets/scripts/'
+  },
+  devtool: 'cheap-module-eval-source-map',
+  devServer: {
+    contentBase: './dist'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                { useBuiltIns: 'usage', corejs: { version: 3 } }
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  plugins: [new CleanPlugin.CleanWebpackPlugin()]
+};
+
+
+
+
+---------------------------------------
+
+
+
+
+
+então, a sintaxe é 
+
+
+
+'module.exports = {
+
+}'
+
+
+
+-------------------------------------------------
+
+
+
+
+O PROFESSOR MENCIONOU, NAQUELA OPORTUNIDADE, QUE ESSE CÓDIGO 
+
+
+'module.exports' SERIA GERENCIADO/ADMINISTRADO PELO NODE.Js....
+
+
+
+Psé, agora percebemos que ISSO É VERDADE.
+
+
+
+
+
+É assim que exportamos algo em um arquivo node.js...
+
+
+nós escrevemos 
+
+
+'module.exports' 
+
+
+e então APONTAMOS A ____ALGUMA COISA____ QUE DEVERÁ 
+
+___SER EXPORTADA___....
+
+
+
+
+
+A coisa que será exportada aqui, por exemplo, é o 
+
+
+_____ROUTER EM SI_____....
+
+
+
+
+É por isso que nós vamos escrever 
+
+
+
+
+'module.exports = router;'
+
+
+
+
+ex:
+
+
+
+
+
+const express = require('express');
+
+const router = express.Router();
+
+
+const locationStorage = {
+    locations = []
+}
+
+
+
+
+router.post('/add-location', (req, resp, next) => {
+                locationStorage.locations.push({
+                    id: Math.random(), 
+                    address: req.body.address, 
+                    coords: { lat: req.body.lat, lng: req.body.lng
+                    });       
+
+
+resp.json({
+    message: 'Stored location!'
+});
+
+
+                               });
+
+
+
+router.get('/add-location', (req, resp, next) => {
+                                                            });
+
+
+
+
+
+module.exports = router;
+
+
+
+
+------------------------------------------
+
+
+
+
+se você digitar 'router' e colocar isso nesse 'module.exports', isso 
+
+JÁ VAI EXPORTAR ____tODAS AS ROTAS___ REGISTRADAS dentro 
+
+
+desse arquivo 'location.js'..... 
+
+
+
+
+Portanto, agora nós fizemos export desse 'configured express router'...
+
+
+E AGORA 
+
+PODEMOS IMPORTÁ-LO EM OUTRO ARQUIVO...
+
+
+
+
+
+
+E NÓS VAMOS IMPORTAR ESSE NEGÓCIO EM 'app.js'
+
+
+COM A MESMA SINTAXE 
+
+QUE UTILIZAMOS ANTERIORMENTE...
+
+
+
+com 
+
+
+
+'const xxxx = require(yyy)'...
+
+
+
+NÓS DEVEMOS ESCOLHER UM NOME QUALQUER PARA ESSA CONSTANTE 
+
+E ENTÃO COLOCAR no slot do 'path' 
+
+O CAMINHO EM QUE COLOCAMOS O NOSSO ARQUIVO EM QUE ESTÃO AS 
+
+'ROUTES'...
+
+
+Nesse caso, o arquivo está dentro da PASTA 'routes'....
+
+
+
+
+
+é o arquivo 'location' dentro da pasta 'routes'....
+
+
+
+
+
+Ex:
+
+
+
+
+
+const locationRoutes = require('./routes/location');
+
+
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+CERTO, AQUI TIVEMOS DE USAR UM 'PATH', pois agora não se trata de uma package que 
+estamos importando aqui (como em 'const express = require('express')'), 
+
+E SIM UM DE NOSSOS PRÓPRIOS ARQUIVOS... (é por isso que temos que especificar o path.. ---> É UM RELATIVE PATH... ---> OBS: você deve OMITIR O '.js', pq o node.js  VAI ADICIONAR PARA VOCÊ AUTOMATICAMENTE essa extensão... )
+
+
+
+
+
+
+
+POR FIM, AGORA APENAS TEMOS QUE COMUNICAR AO 'express.js' QUE ELE DEVERÁ 
+
+
+____CONSIDERAR_____ ESSAS 'locationRoutes', essas  routes 
+
+
+DEFINIDAS DENTRO DO 'location.js' E REFERENCIADAS em 'app.js' POR MEIO DAQUELE IMPORT..
+
+
+
+
+
+A ___ORDEM/POSICIONAMENTO ____ DO LOCAL EM QUE VAMOS CHAMAR 'routes' nesse arquivo 
+
+'app.js' É IMPORTANTE!!!! 
+
+
+
+DEVEMOS FAZER O CHAMADO/USO DE ROUTES (o 'funneling' pelas routes) 
+
+
+____ DEPOIS DO PARSE ___ DO BODY___ , MAS ___ANTES ____ DO SERVIDOR __ FAZER SEU PROCESSO 
+
+DE 'listen'....
+
+
+
+
+E ESSE CHAMADO/USO DAS ROUTES SEMPRE SERÁ UM ___MIDDLEWARE___ ('app.use()') NO NOSSO CÓDIGO....
+
+
+
+
+
+
+
+é por isso que o app.js vai ficar assim:
+
+
+
+
+EX:
+
+
+
+
+
+
+const express = require('express');
+
+const locationRoutes = require('./routes/location')
+
+
+const app = express();
+
+app.use(express.json());
+
+app.use(); ////////////////É AQUI QUE AS 'ROUTES' SERÃO INSERIDAS (ou seja, depois DO PARSING DO BODY, feito em 'express.json()', logo acima...)
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);*/
+  resp.render('index', {
+      user: userName,
+  });
+
+      });
+
+
+
+app.listen(3000);
+
+
+
+-------------------------------
+
+
+
+
+
+Certo, mas o que devemos colocar nesse middleware para que as routes sejam registradas?
+
+
+BEM, É SIMPLES, APENAS PRECISAMOS COLOCAR A CONSTANTE QUE ESTÁ SEGURANDO ESSAS ROUTEs DENTRO do middleware....
+
+
+
+EX:
+
+
+
+
+
+
+const express = require('express');
+
+const locationRoutes = require('./routes/location')
+
+
+const app = express();
+
+app.use(express.json());
+
+app.use(locationRoutes); 
+
+
+
+app.use((req, resp, next ) => {
+    resp.setHeader('Content-Type', 'text/html');
+    next();
+});
+
+
+app.use((req, resp, next) => {
+    const userName = req.body.username || 'Unknown user';
+    resp.send(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);*/
+  resp.render('index', {
+      user: userName,
+  });
+
+      });
+
+
+
+app.listen(3000);
+
+
+
+
+
+----------------------------------
+
+
+
+
+MAS PQ DIABOS ISSO FUNCIONA?
+
+
+
+
+Funciona, explica o professor, porque O 'EXPRESS.ROUTER', NO FINAL DAS CONTAS,
+
+
+__tAMBÉM__ É UM MIDDLEWARe... É UM __MIDDLEWARE__ QUE VOCÊ 
+
+
+PODE REGISTRAR NOS SEUS APLICATIVOS DO EXPRESS...
+
+
+
+E AGORA O EXPRESS SABE QUE ___ELE DEVERÁ FAZER 'FUNNEL'____ DOS INCOMING 
+
+REQUESTS POR DENTRO DESSAS ROUTES, TAMBÉM...
+
+
+
+
+
+E é assim que definimos nossa 'filtering logic' NO NOSSO CÓDIGO...
+
+
+
+É UMA FILTERING LOGIC que gira em torno do MÉTODO HTTP ENVIADO PELO USUÁRIO 
+
+
+E DO PATH ESCOLHIDO PELO NOSSO CÓDIGO... (Essas são as condições dos paths, o que 
+
+determina o path que o usuário vai seguir ao acessar nossa página.... ) 
+
+
+
+----> essas funções executadas pelas ROUTES também são, na verdade, 
+
+MIDDLEWARE FUNCTIONS....
+
+
+---------------------------
+
+
+PROFESSOR FALOU MUITO.
+
+DEVEMOS FAZER NOSSO SERVIDOR INICIAR...
+
+e então trabalhar com o clientside...
+
+
+
+------------------------------------------------
+
+
+Devemos trabalhar com o clientside....
+
+
+
+Devemos assegurar que, EM 
+
+
+
+'SharePlace', quando 
+
+
+
+acontece o GET das 'coordinates' e do 'address' no nosso flow/código, 
+
+na linha 
+
+
+
+'selectPlace(coordinates, address) { //////// NESTA LLINHA AQUI.
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+'
+
+
+--------------------------------------------------
+
+
+
+DEVEMOS ASSEGURAR QUE, QUANDO NÓS CONSEGUIMOS ESSE COORDINATES E ESSE 'ADDRESS', nosso 
+request
+
+
+SEJA MANDADO COM SUCESSO ao nosso 'backend'...
+
+
+
+
+
+--> OBS: o backend (servidor) ESTÁ RODANDO 
+
+NA PORTA '3000'.....................
+
+
+---> O FRONTEND, por default, USA A PORTA ___8080__... (o webpack dev server escolhe essa porta)..
+
+
+
+---> ISSO SIGNIFICA QUE __NÃO HÁ CLASH__ ENTRE AS PORTAS USADAS PELO BACKEND E PELO FRONTEND...
+
+
+
+---> professor explica que devemos sempre usar diferentes portas PQ 
+ESSES CÓDIGOS SÃO 
+
+____DOIS SERVIDORES _____ TOTALMENTE _____ DIFERENTES... (é quase/é como se 
+eles estivessem rodando EM DIFERENTES DOMÍNIOS/DOMAINS....)...
+
+
+
+Para fazer o envio das coordinates e do 'address', desses parâmetros, 
+
+ao nosso backend,
+
+
+PROFESSOR DIZ QUE 
+
+
+
+_______PODEMOS USAR ____ 'fetch() API' naquele trecho do 
+
+
+'selectPlace' (alternativamente, poderíamos usar O __AXIOS__, mas ele não usa aqui...)....
+
+
+
+
+
+
+POR MEIO DESSA FETCH API, PODEMOS ENVIAR UM HTTP REQUEST 
+
+
+
+à 'http://localhost:3000'  (pq estamos rodando esse nosso servidor LOCALMENTE;
+
+mas se estivéssemos construindo uma webpage com servidor de verdade, esse endereço 
+
+seria distinto daquele escolhido/usado pelo frontend.... no final das contas, esse 
+negócio ao qual vocÊ enviará o fetch request TEM DE SER UM ____SERVIDOR ___ SEPARADO (a separate server).... )
+
+
+
+
+
+
+Certo....
+
+
+
+O código está ficando assim:
+
+
+
+
+
+ex:
+
+
+'selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000'); ///////////EIS O CÓDIGO EM QUESTÃO.
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+'
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+MAS NÃO ACABAMOS POR AQUI, pois ainda é necessário
+
+
+
+DIRECIONAR/CONDUZIR ESSE REQUEST, enviado ao backend, POR DENTRO 
+
+DOS NOSSOS 'PATHS'.......
+
+
+
+Aqui, nesse exemplo, vamos querer enviar esse request 
+
+
+a 
+
+
+'/add-location'..... -----> PQ ESSE É O PATH QUE ESTAMOS 'FILTERING OUT' com um 
+
+___POST REQUEST___ (que é esse tipo de request que estaremos enviando por meio desse uso 
+de 'fetch'....)
+
+
+
+
+
+ex:
+
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location'); ///////////EIS O CÓDIGO EM QUESTÃO.
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+
+--------------------------------------------------
+
+
+
+
+
+
+CERTO.
+
+
+MAS NÃO ACABAMOS POR AQUI....
+
+
+
+Ainda devemos 
+
+___CONFIGURAR___ esse request que será enviado....
+
+
+
+devemos fazer isso POR MEIO DO SEGUNDO 
+
+
+ARGUMENTO DE 'fetch()', QUE É UM OBJETO...
+
+
+nesse objeto deverá haver uma 
+
+
+PROPRIEDADE 
+
+
+de nome 
+
+
+'method', e seu valor DEVERÁ ESTAR DEFINIDO COMO 'POST' (para que seja possível alcançar aquela 'ROUTE' específica definida no backend....).
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST'      ///////////EIS O CÓDIGO EM QUESTÃO.
+  }); 
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+Por fim, devemos ADICIONAR __UM __BODY__, uma propriedade 'body', A ESSE REQUEST....
+
+
+
+ESSE BODY SERÁ AS 'coordinates' e o 'address'...
+
+
+----------------------------------------------------
+
+
+ex:
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  /////EIS O CÓDIGO EM QUESTÃO...
+  }); 
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+
+----------------------------------------------------
+
+
+
+
+PARA CONSEGUIR INSERIR ESSES VALORES (coordinates e address) ALI, DENTRO DO BODY, PRECISAMOS 
+
+
+CHAMAR __"JSON.STRINGIFY()'.....
+
+
+
+precisamos fazer isso explica o professor, pq NÓS PRECISAMOS PROVIDENCIAR ___ALGUM CÓDIGO__ 
+
+'JSON' nesse nosso REQUEST QUE SERÁ ENVIADO AO BACKEND....
+
+
+
+
+Nesse 'JSON.STRINGIFY()' NÓS VAMOS PASSAR COMO ARGUMENTO __UM OBJETO__...
+
+
+E aí é IMPORTANTE QUE NÓS PASSEMOS AS KEYS ___CORRETAS__ dentro desse objeto...
+
+
+
+
+NÓS TEMOS QUE PASSAR AS KEYS ___AS QUAIS __ NÓS TENTAMOS EXTRAIR LÁ 
+
+
+NO  __BACKEND___.... (ou seja, as keys de 'address', 'lat' e 'lng'...).  lá, no backend, 
+
+NÓS ESTAMOS PROCURANDO/ESTAREMOS PROCURANDO POR 
+
+ESSAS 3 KEYS, AS KEYS DE 'address' ('req.body.address'), 'lat' ('req.body.lat') e 'lng' ('req.body.lng')...
+
+
+É POR ISSO QUE DEVEMOS PROVIDENCIAR ESSAS EXATAS 3 KEYS.... devemos providenciar essas 
+
+exatas 3 keys aqui também....
+
+
+
+
+
+
+Vamos adicionar uma key de 
+
+'address', que vai segurar um valor DE ADDRESS (Aquele parâmetro recebido pelo 
+método/função 'SelectPlace'), 
+
+
+UMA KEY DE 
+
+'lat', QUE VAI SEGURAR O VALOR DE 'coordinates.lat', 
+
+
+
+E POR FIM UMA KEY 
+
+
+DE 
+'lng' QUE VAI SEGURAR UM VALOR DE 
+
+'coordinates.lng'...
+
+
+
+
+ex:
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+  }); 
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+
+-------------------------------------------
+
+
+
+
+COM ISSO, ESSE AGORA VAI SER UM ___BODY___ VÁLIDO PARA O NOSSO REQUEST...
+
+
+
+
+ 
+Entretanto, também precisamos providenciar ALGUNS ___HEADERS_ a esse 'objeto config' do fetch api/do 
+nosso request...
+
+
+precisamos desses headers para DIZER AO 'BACKEND' QUE NÓS ESTAREMOS ENVIANDO UNS DADOS DE TIPO __JSON___... (json data)...
+
+
+
+
+é por isso que o professor vai adicionar uma key de nome 'headers', com um valor de um objeto, QUE CONTERÁ TODOS OS HEADERS 
+pertinentes....
+
+
+
+ELE COLOCA UMa key/header de 
+
+
+'Content-Type', cujo valor ele define como sendo 'application/json'... (ISSO DIRÁ 
+
+
+AO BACKEND QUE NÓS ____ESTAMOS ENVIANDO ___ ALGUNS DADOS 'JSON'... -----> fazemos isso 
+
+para QUE 'BODYPARSER ('express.json())', em app.js ), O QUAL ESTÁ FAZENDO 'WATCH', está ESPERANDO 
+POR JSON DATA, SAIBA QUE ESSE É __UM REQUEST__ CUJO BODY ELE DEVERÁ PARSEAR___....
+
+
+
+
+
+ex:
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+    headers: {
+      'Content-Type': 'application/json' ///////EIS O CÓDIGO EM QUESTÃO.
+    }
+  }); 
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+-------------------------
+
+
+
+CERTO.
+
+
+ESTAREMOS TENTANDO ENVIAR ESSE HTTP REQUEST DE MÉTODO POST, DE DADOS 'JSON'...
+
+
+aí, depois disso, NÓS VAMOS CONSEGUIR DE VOLTA 
+
+
+UMA 
+
+
+'response' por meio desse SEND do 'request'... como nós SABEMOS __QUE 
+
+VAMOS___, DEFINITIVAMENTE, _ __ RECEBER UMA RESPONSE (isso é algo dessa API de fetch 
+e o funcionamento dos requests), NÓS 
+
+PODEMOS SIMPLESMENTE 
+
+CONFIGURAR O '.then() block' DESSE MÉTODO fetch 
+
+
+assim:
+
+
+
+
+
+fetch().then(response => {
+
+})
+
+
+
+
+------------------------------------------
+
+
+
+
+(pq nós SABEMOS que vamos receber uma 'response' por meio do SEND do request...)
+
+
+
+
+ex:
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+    headers: {
+      'Content-Type': 'application/json' 
+    }
+  }).then(response => { ///////EIS O CÓDIGO EM QUESTÃO.
+
+  });
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+PROFESSOR DIZ QUE AÍ NÓS DEVEMOS/TALVEZ DEVEREMOS ___PARSEAR___ A JSON 
+
+DATA ___ que vamos RECEBER 
+
+
+DENTRO DA __rESPOSTA__ (response) DO SERVIDOR/BACKEND...
+
+
+
+Como fazemos isso? Ué, por meio do método '.json()' (que existe dentro do objeto RESPONSE)....
+
+
+
+ex:
+
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+    headers: {
+      'Content-Type': 'application/json' 
+    }
+  }).then(response => { 
+    response.json(); ////////EIS O CÓDIGO EM QUESTÃO.
+
+  });
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+---------------------------------------------------------------
+
+
+
+
+
+Certo... mas a mera conversão dos dados recebidos pelo RESPONSE do servidor/backend 
+
+NÃO FAZEM NADA NO NOSSO CÓDIGO, por si só....
+
+
+É NECESSÁRIO ESCREVER UM 'return' NESSE 'THEN() block' PARA QUE 
+
+
+O VALOR DO 'response.json()' (esse valor convertido) SEJA 
+
+RETORNADO POR MEIO DA 'fetch() API'....
+
+
+---------------------------------------
+
+
+
+
+ex:
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+    headers: {
+      'Content-Type': 'application/json' 
+    }
+  }).then(response => { 
+    return response.json(); //////eis o código em questão 
+
+  });
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+--------------------------------------
+
+
+
+
+Certo...
+
+
+
+depois de conseguir 
+
+
+essa RESPONSE CONVERTIDA por meio desse then() block,
+
+
+
+NÓS PODEMOS ENTÃO CONSEGUIR 
+
+
+O VALOR DA 'data' CONTIDA NESSA RESPONSE POR MEIO DE 
+
+
+______OUTRO THEN() block subsequente___... e aí 
+
+podemos usar ESSES DADOS PARA RODAR MAIS CÓDIGO EM CIMA DELE...
+
+
+
+
+ex:
+
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+    headers: {
+      'Content-Type': 'application/json' 
+    }
+  }).then(response => { 
+    return response.json();
+  }).then(data => {  ////////EIS O CÓDIGO EM QUESTÃO.
+
+  })
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+-----------------------------------------
+
+
+
+
+CERTO, MAS QUE CÓDIGO O PROFESSOR 
+
+
+EXECUTARÁ A PARTIR DESSA 'data' obtida a partir desse response retornado pelo servidor?
+
+
+
+Bem, ele EXECUTARÁ 
+
+
+
+UM __CONSOLE.LOG__ de 'data'....
+
+
+
+
+(OBS: PROFESSOR DIZ QUE VOCÊ TAMBÉM PODERIA TER USADO UM ASYNC/AWAIT AQUI NESSE 'SharePlace', no lugar 
+dos 'then()' blocks...)
+
+
+
+
+
+RESULTADO FINAL:
+
+
+
+
+
+
+selectPlace(coordinates, address) {
+  if (this.map) {
+    this.map.render(coordinates);
+  } else {
+    this.map = new Map(coordinates);
+  }
+  fetch('http://localhost:3000/add-location', {
+    method: 'POST',
+    body:  JSON.stringify({
+      address: address,
+      lat: coordinates.lat, 
+      lng: coordinates.lng
+    })
+    headers: {
+      'Content-Type': 'application/json' 
+    }
+  }).then(response => { 
+    return response.json();
+  }).then(data => {  
+    console.log(data);
+  })
+  this.shareBtn.disabled = false;
+  const sharedLinkInputElement = document.getElementById('share-link');
+  sharedLinkInputElement.value = `${location.origin}/my-place?address=${...}`
+}
+
+
+
+---------------------------------------------------------------------------
+
+
+
+
+
+
+NA VERDADE, EM UMA SITUAÇÃO REAL, VOCÊ ADICIONARIA TAMBÉM UM 
+
+
+'IF CHECK', UM 'CATCH BLOCK' para checar/INFORMAR A VOCÊ 
+
+POSSÍVEIS ERROS.... -----> você teria de usar aquela metodologia que 
+
+o professor explica em um dos módulos, aquelas lições sobre ERRORS QUE 
+
+TEM STATUS CODE DE 'GOOD', mas que ainda são erros....
+
+
+
+(MAS NO NOSSO SERVIDOR, NÓS NÃO ESTAMOS SETTANDO NENHUM OUTRO 
+
+'STATUS CODE' QUE NÃO SEJA O DEFAULT DE '200'... ---> nós também 
+
+não estamos settANDO OUTROS ERROS, A NÃO SER QUE TENHAMOS 
+
+UM __BUG__ dentro do nosso código...)
+
+
+
+Com tudo isso escrito, devemos salvar o código CLIENTSIDE e executar nosso servidor...
+
+
+
+
+
+
+CERTO.
+
+
+
+EXECUTAMOS NOSSO 'FRONTEND' no 
+
+
+endereço localhost:8080....
+
+
+
+
+Mas o 'live-reloading' não está funcionando...
+
+
+(não consigo lembrar o porque disso...).
+
+
+
+Certo...
+
+
+Não consegui adicionar o 'live-reload' poss ver isso DEPOIS.
+
+
+
+
+
+Ainda temos aquele erro do googlemaps API, pois ainda não temos uma key 
+
+válida para esse negócio...
+
+
+
+
+
+
+Professor diz para tentarmos achar um lugar no mapa....
+
+
+
+Nós inserimos um endereço, e, de fato um lugar é mostrado no mapa....
+
+
+
+ENTRETANTO, APARECE UM ERRO NO CONSOLE....
+
+
+
+'Acess localhost/:1 to fetch at 'http://localhost:3000/add-location' from origin 
+'http://localhost:8080' has been blocked by CORS policy: response to 
+preflight request doesn't pass access control check: No 
+'Access-Control-Allow-Origin' header is present on the requested source.
+If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch 
+the resource with CORS disabled' 
+
+
+
+
+
+
+(O PROFESSOR JÁ FALOU DISSO ANTES... é aquela coisa do 'CORS', aquele sistema 
+
+DE SEGURANÇA usado para limitar o acesso do javascript ao nosso pc...)

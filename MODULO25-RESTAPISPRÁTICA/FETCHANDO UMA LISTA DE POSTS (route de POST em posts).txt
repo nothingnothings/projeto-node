@@ -1,0 +1,1788 @@
+
+
+
+
+
+
+
+
+
+
+
+----------> COMEÇAMOS A TRABALHAR COM A REST API DE NOVO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------>  ABRIMOS 2 JANELAS,
+
+
+
+1 
+
+
+PARA 
+
+A REST API,
+
+OUTRA 
+
+PARA 
+
+
+O 
+
+
+
+REACTJS...
+
+
+
+
+
+
+
+
+--> no NODEEXPRESS APP, usamos 'localhost:8080',
+
+
+
+
+
+já QUE no REACT usamos 
+
+'localhost:3000'...
+
+
+
+
+AUTOMATICAMENTE...
+
+
+
+
+
+
+
+
+-------------------------
+
+
+
+
+ISSO SIMULA, NO CASO, QUE 
+
+
+
+
+ESSES 2 'ENDS' DE MEU APP SÃO SERVIDOS 
+
+POR 2 DIFERENTES SERVERS (cenário bem comum, 
+
+PQ 
+
+
+APPS 'STATIC' COMO O REACT __ SÃO __ FREQUENTEMENTE 
+
+
+HOSTEADOS POR AQUILO QUE CHAMAMOS DE 'STATIC HOSTS',
+
+QUE SÃO HOSTS OPTIMIZADOS PARA SERVIR 
+
+
+APPS QUE CONSISTEM APENAS DE 
+
+HTML JAVASCRIPT E CSS..... .------->  JÁ OS APP-SERVERS QUE FAZEM O SERVE DO BACKEND 
+
+__GERALMENTE__ SE UTILIZAM DE HOSTS DINÂMICOS...
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> OK... TEMOS DIFERENTES PORTS, DIFERENTES DOMÍNIOS...
+
+
+
+
+
+
+-------> E É EXATAMENTE POR ISSO QUE PRECISAMOS DO SET DAQUELES HEADERS NO app.js,
+
+
+VISTO AQUI:
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------> COM ISSO, PODEMOS COMEÇAR O TRABALHO NAS NOSSAS ROUTES DE 
+
+'feed'...
+
+
+
+
+
+
+
+
+
+
+
+--> temos os códigos de 
+
+
+
+
+//GET /feed/posts
+router.get('/posts', feedController.getPosts);
+
+//POST /feed/post
+router.post('/post', feedController.createPost);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ISSO NOS DEIXA CRIAR 1 POST, OU RETRIEVAR POSTS JÁ EXISTENTES....
+
+
+
+
+
+
+
+
+
+-_> AGORA DEVEOMS ADICIONAR CÓDIGO/LÓGICA NOS NOSSOS CONTROLLERS,LÁ EM 'feed.js':
+
+
+
+
+
+EX:
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post.' }],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title;
+  const content = req.body.content;
+
+  console.log('REQUEST RECEIVED');
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString,
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> VAMOS QUERER RETRIEVAR POSTS, DE VERDADE,
+
+
+
+
+e 
+
+
+também 
+
+
+deixar o user criar novos posts...
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA ISSO,
+
+
+
+
+COMEÇAMOS COM 
+
+
+
+'GETTING POSTS'... -----> PQ ISSO VAI NOS DEIXAR 
+
+
+
+
+VER PELO MENOS ALGUMA 'DUMMY DAT',
+
+
+
+
+o que já é útil...
+
+
+
+
+
+
+
+
+--> PARA ISSO, 
+
+LÁ EM 
+
+
+'getPosts',
+
+
+
+NÓS ACTUALLY JÁ RETORNAMOS UMA LIST DE 'DUMMY DATA POSTS'.... 
+
+
+
+
+ISTO É VISTO NESTE CÓDIGO:
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post.' }],
+  });
+};
+
+
+
+
+
+
+
+
+
+
+--> CADA POST TEM 1 'TITLE' E ' CONTENT'...
+
+
+
+
+
+
+
+
+
+--------> É Claro que o aspecto da data em 1 app SEMPRE DEPENDE DE VOCÊ...
+
+
+
+
+
+
+
+
+
+--> NESSE APP, 
+
+
+
+
+como nossa  FRONTEND TAMBÉM 
+
+ESPERA 
+
+
+
+
+VÁRIAS INFORMAÇÕES, COMO VISTO EM 'SinglePost.js':
+
+
+
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={this.state.image} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+
+
+
+
+
+  ,
+
+
+
+
+
+
+  VAMOS QUERER 
+
+
+
+  TER 'title', 'author',
+
+
+  'date',
+
+
+
+  'image'...
+
+
+
+
+
+
+  ----------------------------
+
+
+
+
+
+
+
+
+
+
+  --> POST: {
+
+      title: xxx ,
+      author: xxx,
+      date: xxx,
+       image: xxx,
+       content
+  }
+
+
+
+
+
+
+
+
+
+
+  ------> A DATA QUE ARMAZENAMOS 
+
+
+  NA NOSSA DATABASE DEVERÁ TER ESSES FIELDS AÍ,
+
+
+  NO FINAL DAS CONTAS....
+
+
+
+
+
+
+
+
+
+
+  --> MAS PROFESSOR EXPLICA QUE ___ 'WE DONT HAVE TO START WITH THE FULL PACKAGE'... ------> 
+
+
+
+  NÓS JÁ TEMOS 
+
+
+
+   
+
+
+   1 'title'
+
+
+   e 
+
+
+   '1 content'
+
+
+
+
+   nesse dummy post,
+
+   POR ISSO PODEMOS 
+
+   ADICIONAR 
+
+
+   'imageUrl'....
+
+
+
+
+
+
+
+
+
+
+   ---> E, POR ENQUANTO, PODEMOS APENAS 
+
+
+
+   COLOCAR UMA IMAGE 
+
+   DENTRO DE 1 FOLDER CHAMADO DE 
+
+
+   'images',
+
+
+   no nosso backend....
+
+
+
+
+
+
+
+   -----> É CLARO QUE MAIS TARDE VAMOS ADICIONAR IMAGE UPLOAD,
+
+
+
+   mas por enquanto vamos  usar essa image, armazenada LOCALMENTE....
+
+
+
+
+
+
+   ---------------------------------------
+
+
+
+
+
+
+
+
+   ---> é claro que, se DESEJAMOS OUTPUTTAR ESSA IMAGE,
+
+
+   POSSIVELMENTE TEREMOS DE ADICIONAR AQUELE CÓDIGO DE 'SERVE PUBLIC',
+
+   aquele código DO
+
+
+   express que 
+
+
+
+   __DEIXA CERTOS FOLDERS ( no caso, o folder 'images') 
+
+
+
+
+   DE NOSSO APPP __ _COMO _ PÚBLICOS... (SERVIR ESTATICAMENTE)
+
+
+
+
+
+
+   ---> PARA ISSO, VAMOS ATÉ O  'app.js'
+
+
+   E ESCREVEMOS:
+
+
+
+
+
+
+
+
+app.use(express.static(path.join(__dirname, 'images')));
+
+
+
+
+
+
+
+
+
+
+
+
+--> acho que isso funcionará, mas não tenho certeza....
+
+
+
+
+
+---------------------------------------------
+
+
+
+
+
+
+
+PARA CONSEGUIR SERVIR ESSE POST,
+
+
+
+
+
+precisamos providenciar um PATH A ESSA IMAGE, 
+
+lá 
+
+
+
+
+
+no 'getPosts',
+
+
+NO CONTROLLER 'feed.js':
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [{ title: 'First Post', content: 'This is the first post.', imageUrl: 'images/o-fantastico-jaspion.jpg' }],
+  });
+};
+
+exports.createPost = (req, res, next) => {
+  //CREATE POST IN DB...
+
+  const title = req.body.title;
+  const content = req.body.content;
+
+  console.log('REQUEST RECEIVED');
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: {
+      title: title,
+      content: content,
+      id: new Date().toISOString,
+    },
+  });
+};
+
+
+
+
+
+
+
+
+----------------------------------------
+
+
+
+
+ISSO É O 'LOCAL PATH' 
+
+
+
+
+
+A ESSE ARQUIVO, NO BACKEND.... -> MAS É CLARO QUE 
+
+
+
+O 
+
+'DOMAIN'  (domínio.com) 
+
+
+
+ESTÁ FALTANDO 
+
+
+NA IMAGEURL 
+
+
+DESSA IMAGE,
+
+
+
+
+MAS O PROFESSOR EXPLICA QUE 
+
+ISSO É ALGO QUE VAMOS TER DE ANEXAR 
+
+LÁ 
+
+NO FRONTEND.... (
+
+
+
+    lá 
+
+
+    naquele código de 
+
+
+
+
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={this.state.image} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+
+
+
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+-------> talvez assim:
+
+
+
+
+
+
+  render() {
+    return (
+      <section className="single-post">
+        <h1>{this.state.title}</h1>
+        <h2>
+          Created by {this.state.author} on {this.state.date}
+        </h2>
+        <div className="single-post__image">
+          <Image contain imageUrl={`${window.location.host}/${this.state.image}`} />
+        </div>
+        <p>{this.state.content}</p>
+      </section>
+    );
+  }
+
+
+
+
+
+
+
+
+
+  -------------------------------
+
+
+
+
+
+
+'window.location.host'
+
+VAI DAR EXATAMENTE O DOMÍNIO DE QUE PRECISAMOS....
+
+
+
+
+
+-------------------------------------------
+
+
+
+
+
+
+
+CERTO....
+
+
+MAS 
+
+ESSE 
+
+É UM 
+
+
+
+
+POST QUE EU PODERIA ACTUALLY 'SERVE', AGORA, se o tivesse... 
+
+
+
+
+
+
+
+
+-------->  AGORA PRECISO, NO MEU FRONTEND,
+
+
+enviar um request  de tipo GET
+
+
+a 
+
+
+
+
+'/feed/posts' 
+
+
+
+
+
+
+(feed é o filtro inicial, que definimos lá no 'app.js', como visto em 'app.use('/feed', feedRoutes)'...)
+
+
+
+
+
+
+
+
+
+
+PRECISO ENCONTRAR O LOCAL DE 
+
+
+MEU APP REACT QUE FAZ 
+
+
+ESSE FETCH DE MEUS POSTS...
+
+
+
+
+
+
+
+
+
+
+
+
+--> É ISTO AQUI:
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    fetch('URL')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchErrors);
+  };
+
+
+
+
+
+
+
+--------------------------
+
+
+
+
+TIPO ASSIM:
+
+
+
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('/feed/posts')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchErrors);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ---------> ENTRETANTO, 
+
+  NADA ACONTECEU,
+
+  NÃO FOI ENVIADO UM REQUEST A ESSA ROUTE NO NOSSO APp....
+
+
+
+
+
+
+
+
+
+
+
+  -_> PROFESSOR FALA EXATAMENTE ISOS,
+
+
+
+  FALA 
+
+
+  DESSE NEGÓCIO DO 'loadPosts'...
+
+
+
+
+
+
+
+
+
+
+  --> ELE EXPLICA QUE 
+
+
+  TAMBÉM INCORPOROU 'PAGINATION' NO NOSSO APP,
+
+  E QUE ISSO É VISTO 
+
+
+
+
+  NAQUELE TRECHO De 
+
+
+
+
+
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+
+
+
+
+
+
+
+
+    ,
+
+
+
+    E QUE 
+
+    VEREMOS ISSO MAIS TARDE...
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK.... MAS O QUE ELE COLOCOU NAQUELA URL? 
+
+
+
+
+
+ele  colocou 
+
+
+'http://localhost:8080',
+
+
+e não simplesmente 
+
+
+'/feed/posts',
+
+como eu havia colocado....
+
+
+
+
+o código correto, portanto, ficou assim:
+
+
+
+
+
+
+
+  loadPosts = (direction) => {
+    if (direction) {
+      this.setState({ postsLoading: true, posts: [] });
+    }
+
+    let page = this.state.postPage;
+
+    if (direction === 'next') {
+      page++;
+      this.setState({ postPage: page });
+    }
+
+    if (direction === 'previous') {
+      page--;
+      this.setState({ postPage: page });
+    }
+
+    // fetch('URL')
+    fetch('http://localhost:8080/feed/posts')
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchErrors);
+  };
+
+
+----------------------
+
+
+
+
+
+
+COM ISSO,
+
+OBTENHO UM ERRO....
+
+
+
+
+
+
+
+
+
+
+
+TypeError: Cannot read properties of undefined (reading 'name')
+(anonymous function)
+A:/projeto4 - NODEJS/MODULO25-RESTAPISAPLICACAOPRATICADOCONHECIMENTO/NOVONOVOPROJETO22-IMPLEMENTANDOUMBACKENDNODEEXPRESSCOMRESTAPI- FRONTEND (REACTJS)/src/pages/Feed/Feed.js:264
+  261 | <Post
+  262 |   key={post._id}
+  263 |   id={post._id}
+> 264 |   author={post.creator.name}
+      | ^  265 |   date={new Date(post.createdAt).toLocaleDateString('en-US')}
+  266 |   title={post.title}
+  267 |   image={post.imageUrl}
+
+
+
+
+
+
+
+
+
+
+  -------> É O 'author', que NÃO HAVÍAMOS ADICIONADO....
+
+
+
+
+
+
+
+
+
+
+
+
+
+  O QUE INTERESSA É AQUELE THEN BLOCK,
+
+  este aqui:
+
+
+
+
+
+
+        .then((data) => {
+        this.setState({
+          posts: data.posts,
+          totalPosts: data.totalItems,
+          postsLoading: false,
+        });
+      })
+      .catch(this.catchErrors);
+
+
+
+
+
+
+
+
+
+
+
+
+--> NESSE LOCAL,
+
+USAMOS ALGUMA LÓGICA REACT (pass de props)
+
+
+PARA 
+
+RENDERIZAR POSTS...
+
+
+
+
+
+
+
+
+
+--> aí o professor fala desse erro do 'name'... -> 
+
+
+ISSO ACONTECEU PQ USERS AINAD NÃO SÃO SUPORTADOS NO MEU APP... ----> 
+
+
+
+
+
+POR ISSO VAMOS TER QUE ADICIONAR UMA 
+
+
+PROPRIEDADE 
+
+de 
+
+
+
+'author' 
+
+
+
+no nosso 
+
+DUMMY 
+
+
+
+POST,
+
+lá em 
+
+'feed.js' (arquivo controller)...
+
+
+
+
+
+
+
+
+
+
+
+EU EDITO O CÓDIGO, E O DEIXO ASSIM:
+
+
+
+
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [
+      {
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+      },
+    ],
+  });
+};
+
+
+
+
+
+
+
+
+
+------------------------------
+
+
+
+
+
+
+
+COM ISSO,
+
+
+
+
+A LÓGICA DE 'GETPOSTS'
+
+funciona...
+
+
+--> obtenho 1 único post,
+
+
+post 
+
+de 
+
+'First Post',
+ 
+
+
+
+ tipo assim:
+
+
+
+ Posted by Max on Invalid Date
+First Post
+VIEWEDITDELETE
+
+
+
+
+
+
+
+
+
+---------------------------------------
+
+
+
+
+OK....
+
+
+
+objeto 'creator',
+
+
+
+objeto com um 'name',
+
+
+
+E AÍ 
+
+DEPOIS 
+
+
+
+
+
+uma 'date'... (mais tarde VAMOS CONECTAR ESSE OBJETO  'creator' COM _ USERS__ DE VERDADE__, NA DATABASE... )
+
+
+
+
+fica tipo assim:
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [
+      {
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+
+        },
+
+        date: new Date(),
+
+      },
+    ],
+  });
+};
+
+
+
+
+-----------------------------------
+
+
+
+POR FIM, VAMOS QUERER ADICIONAR 1 'ID' 
+
+
+A 
+
+ESSE 
+
+
+
+
+NOSSO POST,
+
+TUDO PARA QUE 
+
+
+EVITEMOS AQUELE ERRO DO REACT DE 'TOPMOST ELEMENTS IN A LIST MUST HAVE THE KEY ATTRIBUTE' (e o 
+
+
+key attribute, nesse caso, É DE VALOR '_id', que e´o que o 
+
+
+professor 
+
+
+codou aqui:
+
+
+
+
+              {this.state.posts.map((post) => (
+                <Post
+                  key={post._id}
+                  id={post._id}
+                  author={post.creator.name}
+                  date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                  title={post.title}
+                  image={post.imageUrl}
+                  content={post.content}
+                  onStartEdit={this.startEditPostHandler.bind(this, post._id)}
+                  onDelete={this.deletePostHandler.bind(this, post._id)}
+                />
+              ))}
+
+
+
+
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+----> CERTO....
+
+
+
+
+fica tipo assim, no controller:
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+    ],
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CRIO MAIS 1 'POST',
+só para 
+
+ter mais de 1 
+
+
+
+na minha starting page de 
+
+'localhost:8080'...
+
+
+
+
+
+
+EX:
+
+
+
+
+
+
+exports.getPosts = (req, res, next) => {
+  res.status(200).json({
+    posts: [
+      {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'First Post',
+        content: 'This is the first post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+
+
+        {
+        _id: Math.random() + new Date().toISOString(),
+        title: 'Second Post',
+        content: 'This is the second post.',
+        imageUrl: 'images/o-fantastico-jaspion.jpg',
+
+        creator: {
+          name: 'Max',
+        },
+        createdAt: new Date(),
+      },
+    ],
+    
+  });
+};
+
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... ----> MAIS TARDE,
+ 
+
+ NO CASO,
+
+
+
+ VAMOS USAR 'MONGOOSE' (mongodb)
+
+ para retrievar 
+
+ esses posts,
+
+
+
+ E ISSO, É CLARO,
+
+
+ SEMPRE ADICIONA IDS com '_id',
+
+
+ por isso já vá se acostumando...
+
+
+
+
+
+
+ --> RECARREGAMOS... 
+
+
+
+
+
+
+
+
+
+
+
+ --> O CÓDIGO DO PROFESSOR DÁ THROW DE UM ERROR DE 
+
+
+ 'Unexpected token < in JSON at position 0' ------> ELE NOS DIZ QUE 
+
+ ESSE ERRO OCORRE PQ 
+
+
+ NÃO ESTMAOS FETCHEANDO O 'STATUS' DO USER...
+
+
+
+ --> mas ainda assim, estamos obtendo nossos posts...
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --> no nosso código, esse error handler não aparece... (sinal de que escrevi algo errado...) --> só aparece 
+
+ o 
+ ERROR NO CONSOLE:
+
+
+ VM368:1 Uncaught (in promise) SyntaxError: Unexpected token < in JSON at position 0
+
+
+
+
+
+
+ --------------
+
+
+ ok, consegui consertar, eram apenas erros de escrita....
+
+
+
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+PROFESSOR DIZ QUE ESSE POST ESTÁ NICE...
+
+
+
+
+
+
+
+
+
+ok.... 
+
+
+
+
+
+
+
+
+
+o fetch de posts 'funciona',
+
+
+
+
+mas funciona COM DUMMY DATA... --> 
+
+PARA CONSEGUIRMOS TRABALHAR COM 'REAL DATA' (
+
+
+
+    posts de VERDADE,
+
+    NA DATABASe,
+
+
+
+),
+
+
+
+
+
+
+
+O PROFESSOR QUER 
+
+
+'BE ABLE TO CREATE NEW POSTS,
+ 
+
+ BY CLICKING 'new post'...
+
+
+
+
+
+
+
+ -------------> PARA ISSO, PRECISAMOS CONECTAR NOSSO BACKEND ___ AO MONGOOSE/MONGODB...
+
+
+
+
+
+
+ -_> E DEPOIS DISSO, PRECISAMOS VINCULAR NOSSO 
+
+
+ FRONTEND AO BACKEND, por meio da fetch api...
+
+
+
+
+
+
+ ------------

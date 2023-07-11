@@ -1,0 +1,1935 @@
+
+
+
+
+
+
+
+
+
+
+
+---> PARA TRABALHAR COM NOSSO NOVO MODEL 
+
+de 
+
+'Cart',
+
+
+
+DEVEMOS 
+
+
+
+
+__IR __ ATÉ 
+
+O FOLDER 
+
+DE 
+
+'controllers'...
+
+
+
+
+
+
+------> LÁ, EM CONTROLLERS,
+
+
+
+vamos 
+
+até 
+
+
+o 
+
+
+
+arquivo 
+
+de 
+
+'shop.js',
+
+
+
+
+
+
+
+
+
+que é ONDE TEMOS NOSSAS 'CART-RELATED ACTIONS'...
+
+
+
+
+
+
+
+
+
+
+
+
+SEU CÓDIGO É ESTE:
+
+
+
+
+const Product = require('../models/product');
+
+const Cart = require('../models/cart');
+
+
+
+exports.getStartingPage = (req, res, next) => {
+  res.render('shop/index', {
+    path: '/',
+    pageTitle: 'The Shop',
+  });
+};
+
+exports.getCheckoutPage = (req, res, next) => {
+  res.render(
+    'shop/checkout'
+  );
+};
+
+
+
+exports.getCart = (req, res, next) => {
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+      const cartProducts = [];
+      for (const product of products) {
+        const cartProductData = cart.products.find(
+          (prod) => prod.id === product.id
+        );
+        if (cartProductData) {
+          cartProducts.push({
+            productData: product,
+            quantity: cartProductData.quantity,
+          });
+        }
+      }
+      console.log(cartProducts);
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        cartProducts: cartProducts,
+      });
+    });
+  });
+};
+
+exports.deleteCartItem = (req, res, next) => {
+  const productId = req.body.id;
+  console.log(productId);
+
+  Product.findProduct(productId, (product) => {
+    console.log(product, 'LINE');
+    Cart.deleteProductFromCart(productId, product.price);
+    res.redirect('/cart');
+  });
+};
+
+exports.getOrdersPage = (req, res, next) => {
+  res.render('shop/orders', {
+    pageTitle: 'Your Orders',
+    path: '/orders',
+  });
+};
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+  console.log(productId);
+
+  Product.findProduct(
+    productId,
+
+    (product) => {
+      Cart.addProduct(product.id, product.price);
+      res.redirect('/cart');
+    }
+  );
+};
+
+exports.getProductDetailPage = (req, res, next) => {
+  const productId = req.params.productId;
+
+ Product.findByPk(productId)
+  .then((product) => {
+
+
+      if(!product) {
+        return;
+      }
+
+    res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/products',
+        product: product,
+      });
+    
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+exports.getProductsPage = (req, res, next) => {
+  // Product.findAll({where:}).then().catch(); /////ali no PRIMEIRO SLOT DE PARÂMETROS, de 'findAll', VOCÊ PODE COLOCAR __OPÇÕEs__ PARA O FETCH.... (definir restrições, como ''''só retrievar os records que tenham/WHERE 'id' igual a xxxx, etc etc...)
+  Product.findAll()
+    .then(
+      //////DENTRO DO 'THEN BLOCK' vamos ter os nossos products, essencialmente...
+      (products) => {
+        res.render('shop/product-list', {
+          prods: products,
+          pageTitle: 'Shop',
+          path: '/products',
+          productCSS: true,
+          activeShop: true,
+          hasProducts: products.length > 0,
+        });
+      }
+    )
+    .catch();
+};
+
+
+
+
+
+
+
+
+
+
+-------> ok....
+
+
+
+
+
+
+TEMOS 
+
+
+
+
+
+
+'getCart'... ----> 
+
+
+
+
+PROFESSOR NOS EXPLICA QUE OS OUTROS CONTROLLERS VAO FUNCIONAR, MAS ESTE AQUI, ESPECIFICAMENTE,
+
+
+
+NÃO VAI FUNCIONAR....
+
+
+
+
+
+
+
+SEU CÓDIGO ESTÁ ASSIM:
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+      const cartProducts = [];
+      for (const product of products) {
+        const cartProductData = cart.products.find(
+          (prod) => prod.id === product.id
+        );
+        if (cartProductData) {
+          cartProducts.push({
+            productData: product,
+            quantity: cartProductData.quantity,
+          });
+        }
+      }
+      console.log(cartProducts);
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        cartProducts: cartProducts,
+      });
+    });
+  });
+};
+
+
+
+
+
+
+
+
+
+-------> como você pode perceber, AINDA ESTAMOS/ESTÁVAMOS USANDO 
+
+
+O CÓDIGO QUE NÃO USAVA 
+
+
+SEQUELIZE/NEM MESMO USAVA CÓDIGO SQL,
+
+aquele código de 
+
+
+'Cart.getCart()'....
+
+
+
+
+
+
+
+------>  VAMOS DELETAR 
+
+
+TODO ESSE 
+
+CÓDIGO 
+
+
+
+de 
+
+
+'Cart.getCart()',
+
+pq 
+
+
+isso aí usava o filesystem,
+
+que não estamos usando mais...
+
+
+
+
+
+
+
+
+
+----> PROFESSOR EXPLICA QUE DENTRO DE 'exports.getCart()" ele vai querer:
+
+
+
+
+
+
+
+
+1) CONSEGUIR (get) UM 'CART' __ ASSOCIADO___ COM 
+
+
+O 'CURRENT EXISTING USEr'....
+
+
+
+
+
+
+2) PARA ENTÃO, MUNIDO DESSE CART ASSOCIADO COM O 'CURRENT EXISTING USER',
+
+
+__ FAZER __ GET__ DE TODOS OS PRODUCTS__ DENTRO DO CARRINHO ASSOCIADO A ESSE USER
+
+
+
+
+3) RENDERIZAR OS PRODUCTS DENTRO DESSE CARRINHO, NA NOSSA PAGE de 
+
+
+'localhost:3000/shop/cart'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok......  --> pode parecer bem complicado, 
+
+
+
+
+
+mas devo tentar mesmo assim... (sozinho)...
+
+
+
+
+
+
+
+
+
+--> O QUE EU _ ACHO __ QUE POSSO TENTAR FAZER.... --> 
+
+
+provavelmente,
+
+
+
+
+
+posso tentar 
+
+
+
+
+
+EXECUTAR UM CÓDIGO DE 'MÉTODO MÁGICO',
+
+
+
+como 
+
+
+
+
+
+'req.user.getCart(productId)',
+
+
+
+PARA 
+
+__TENTAR__ CONSEGUIR _ UM CARRINHO/O CARRINHO 
+
+
+QUE 
+
+
+TENHA 
+
+
+1 'userId'
+
+FIELD 
+
+
+
+NO SEU INTERIOR 
+
+
+com um 
+
+VALOR EXATAMENTE IGUAL 
+
+
+
+
+ao valor 'id' dentro 
+
+
+
+de 
+
+'req.user',
+
+
+aquele 
+
+'req.user.id',
+
+
+
+QUE DEFINIMOS POR MEIO DO CÓDIGO (lá em app.js, em um middleware) DE 
+
+
+
+''''
+
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user; ////este código aqui...
+      console.log(req.user), 'LINE';
+      next(); //precisamos disto, senão a execução do nosso app NODEJS vai parar....
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+
+''
+
+
+
+
+
+
+
+-->OK... VOU TENTAR FAZER ISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FICA TIPO ISTO AQUI, ACHO:
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+req.user.getCart()
+.then(
+  () => {
+
+  }
+)
+
+
+};
+
+
+
+
+
+
+
+
+
+
+-> OK... AGORA 
+
+SÓ PRECISO CONTINUAR MANIPULANDO 
+
+
+ESSE 'CART'
+
+
+que obtive 
+lá 
+
+
+
+da minha database....
+
+
+
+
+
+
+
+
+
+
+RECAPITULANDO:
+
+1) CONSEGUIR (get) UM 'CART' __ ASSOCIADO___ COM 
+
+
+O 'CURRENT EXISTING USEr'....
+
+
+
+
+
+
+2) PARA ENTÃO, MUNIDO DESSE CART ASSOCIADO COM O 'CURRENT EXISTING USER',
+
+
+__ FAZER __ GET__ DE TODOS OS PRODUCTS__ DENTRO DO CARRINHO ASSOCIADO A ESSE USER
+
+
+
+
+3) RENDERIZAR OS PRODUCTS DENTRO DESSE CARRINHO, NA NOSSA PAGE de 
+
+
+'localhost:3000/shop/cart'....
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> JÁ FIZ O 1,
+
+
+tenho que fazer o 2....
+
+
+
+
+
+
+
+
+
+
+
+
+TALVEZ ISTO AQUI?
+
+
+
+
+
+
+
+---------------------------
+
+
+
+
+req.user.getCart() //NÃO SEI SE ESTE MÉTODO EXISTE nesse objeto...
+.then(
+  (cart) => {
+      return cart.getProducts(); ///NÃO SEI SE ESSE MÉTODO EXISTE NESSE OBJETO RETORNADO LÁ DA NOSSA DATABASE SQL por meio do sequelize...
+  }
+)
+.then(
+(products) => {
+  
+}
+)
+
+
+
+-------------------------
+
+
+
+PARA COMPLETAR,
+
+
+precisamos 
+
+
+
+
+
+
+FAZER O RENDER DESSES PRODUCTS...
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+req.user.getCart()
+.then(
+  (cart) => {
+      return cart.getProducts();
+  }
+)
+.then(
+(products) => {
+        console.log(products);
+        res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        cartProducts: products
+      });
+}
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> É __CLARO __ QUE ISSO NOS DEU UM ERRO...
+
+
+ERRO 
+
+de 
+
+''' TypeError: Cannot read property 'getProducts' of null '''
+
+
+
+
+----------------------------
+
+
+
+
+OK....
+
+
+
+
+
+
+
+
+
+TEMOS UMA LISTA DE MAGIC METHODS, ENCONTRADA NA INTERNET:
+
+
+
+
+
+
+https://medium.com/@jsmney/a-more-in-depth-look-at-sequelizes-magic-methods-428928c70d58
+
+
+cat.addOwner()	M:M	owner {}, or ownerId	created join table row	
+cat.addOwners()	M:M	array of owner {} or ownerId, can be a combination	array of created join table rows	
+cat.countOwners()	M:M	none	int	
+cat.createOwner()	1:1, 1:M, M:M	new owner {} (what you could also pass into Owner.create() )	created owner object	cat instance will have updated ownerId
+cat.getOwner()	1:1, 1:M	none	owner object (if exists), or null	
+cat.getOwners()	M:M	none	array of owner object(s)	
+cat.hasOwner()	M:M	owner {}, or ownerId	boolean	
+cat.hasOwners()	M:M	array of owner {} or ownerId, can be a combination	boolean	returns true only if ALL owners own this cat
+cat.removeOwner()	M:M	owner {}, or ownerId	int	number of owners removed
+cat.removeOwners()	M:M	array of owner {} or ownerId, can be a combination	int	number of owners removed
+cat.setOwner()	1:1, 1:M	owner {}, or ownerId	cat object	with updated ownerId
+owner.addCat()	1:M, M:M	cat {}, or catId	owner object if 1:M, created join table row if M:M	
+owner.addCats()	1:M, M:M	array of cat {} or catId, can be a combination	owner object if 1:M, array of created join table rows if M:M	
+owner.countCats()	1:M, M:M	none	int	
+owner.createCat()	1:1, 1:M, M:M	new cat {} (what you could also pass into Cat.create() )	created cat {}	with associated ownerId
+owner.getCat()	1:1	none	cat object (if exists), or null	
+owner.getCats()	1:M, M:M	none	array of cat {}	
+owner.hasCat()	1:M, M:M	cat {}, or catId	boolean	
+owner.hasCats()	1:M, M:M	array of cat {} or catId, can be a combination	boolean	returns true only if ALL cats are owned
+owner.removeCat()	1:M, M:M	cat {}, or catId	object 'cats' (referencing the table) if 1:M, # rows removed if M:M	
+owner.removeCats()	1:M, M:M	array of cat {} or catId, can be a combination	object 'cats' (referencing the table) if 1:M,# rows removed if M:M	
+owner.setCat()	1:1	cat {}, or catId	cat object	with updated ownerId
+owner.setCats()	1:M, M:M	array of cat {} or catId, can be a combination	owner {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TypeError: Cannot read property 'getProducts' of null ----> parece que isso 
+
+
+aconteceu 
+
+pq 
+
+ESSE MÉTODO __ NÃO EXISTE__ DENTRO 
+
+
+do 
+
+objeto sequelize
+'cart' retornado __ DE DENTRO da nossa database 
+
+
+SQL...[
+
+
+o que é estranho, de fato...
+]
+
+
+
+
+
+
+
+
+
+--> req.user.getCart()
+.then(
+  (cart) => {
+    console.log(cart, 'LINE');
+      return cart.getProducts();
+  }
+)
+
+
+
+
+
+
+
+
+--> esse 'cart' está aparecendo como 'null'.. --> significa que 
+
+HÁ ALGO DE ERRADO COM 
+
+O 
+
+METHOD 
+
+de 
+
+'req.user.getCart()'...
+
+
+
+
+
+
+
+
+mas não devia existir nada de errado, pois entre o 'user' e o 'cart' há 
+
+uma relação 
+
+'one-to-one',
+
+o que 
+
+deveria nos deixar 
+
+
+executar 
+
+
+'req.user.getCart()'
+
+para retrievar 
+
+
+
+o cart associado a esse user...
+
+
+
+
+
+
+--> talvez isso tenha acontecido JUSTAMENTE PQ NÃO TEMOS 
+
+
+CART ALGUM ADICIONADO 
+
+
+
+NO NOSSO APP, ainda...
+
+
+
+
+
+
+
+--> para isso, é claro que devemos 
+
+
+___CONSERTAR, TAMBÉM,
+
+
+O CONTROLLER 
+
+DE 
+
+
+'postToCart'....
+
+
+
+
+
+
+
+
+
+SEU CÓDIGO, ATÉ AGORA,
+
+ESTAVA ASSIM:
+
+
+
+
+
+
+
+exports.postToCart = (req, res, next) => {
+  const productId = req.body.productId;
+  console.log(productId);
+
+  Product.findProduct(
+    productId,
+
+    (product) => {
+      Cart.addProduct(product.id, product.price);
+      res.redirect('/cart');
+    }
+  );
+};
+
+
+
+
+
+
+
+----------------------------
+
+
+
+
+vamos ter que alterar isso aí, fazer com que funcione com os métodos do sequelize...
+
+
+
+
+
+
+
+
+
+
+
+
+---> eu ainda acho que alguns FIELDS estão FALTANDO lá 
+
+
+
+
+no nosso model de 'cart',
+
+
+
+fields 
+
+como 
+
+
+
+PRODUCTS 
+
+
+
+
+e PRICE...
+
+
+
+
+
+
+----> ok.... mas vejamos 
+
+o código do professor....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> ele escreve assim:
+
+
+
+
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+
+  console.log(req.user.cart); 
+
+
+
+
+}
+
+
+
+
+
+
+
+
+------> ELE CONSOLE.LOGGA ISSO 
+
+para 
+
+
+
+
+ver se conseguimos acessar o CART por meio do objeto user, armazenado no request... -->
+
+
+
+
+
+
+o console.log 
+
+
+nos retorna UNDEFINED,
+
+sinal de que 
+
+NÃO 
+
+PODEMOS 
+
+
+ACESSAR O CART ASSIM....
+
+
+
+
+
+
+----> para acessar nosso request,
+
+
+
+professor 
+
+
+
+
+diz que 
+
+devemos 
+
+fazer 
+
+a 
+
+mesma coisa que eu fiz,
+
+
+
+
+executar 
+
+
+
+'req.user.getCart().then().catch()',
+
+
+
+
+
+
+
+ESSE MAGIC METHOD,
+
+
+para conseguir 
+
+o 
+
+'Cart'
+
+
+ASSOCIADO 
+
+A 
+
+ESSE USER...
+
+
+
+
+
+
+
+
+
+
+
+
+----> OK.... TEREMOS CONSEGUIDO O CART....
+
+
+
+
+
+
+
+
+------> NOSSA PÁGINA AINDA NÃO VAI SER CARREGADA,
+
+O 
+
+
+CART VAI RETORNAR 'NULL'
+
+
+JUSTAMNETE 
+
+
+
+
+pq 
+
+
+
+
+__NÓS NÃO TEMOS CART ALGUM DEFINIDO NA NOSSA DATABASE, AINDA...
+
+
+
+
+
+
+
+
+
+
+
+
+-----> EXATAMENTE COMO CRIAMOS UM 
+
+'user'
+
+
+
+NO _ _STARTUP _ DE NOSSO APP,
+
+
+
+como visto neste código aqui:
+
+
+
+
+
+
+''''''''''''''''''''''''''''''''''''''
+
+sequelize
+  .sync 
+    () 
+  .then((result) => {
+
+    return User.findByPk(1); ////ESTAS LINHAS CRIAM NOSSO USER... VVVVV
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user; 
+  })
+  .then(
+    user => {
+
+
+
+
+      app.listen(3000);
+    }
+  )
+
+
+
+
+'''''''''''''''''''''''''
+
+
+
+
+
+
+
+
+
+BEM.... NAQUELE THEN BLOCK ALI DE BAIXO, EM QUE CONSEGUIMOS O USER 
+
+
+
+e 
+
+
+
+rodamos 'app.listen(3000)',
+
+
+professor
+
+
+
+vai 
+
+
+
+ESCREVER UM IF CHECK CHECANDO PELO 
+
+'defined'
+
+
+de 
+
+user; 
+
+
+se ele estiver DEFINED, 
+
+
+
+vamos querer:
+
+
+
+
+
+
+1) CRIAR UM CART PARA ELE (se esse cart já não existia na database....)
+
+
+
+
+
+2) rodar o servidor...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+.then(
+  (user) => {
+
+      if(user) {
+          
+          const existingCart = user.getCart();
+
+
+          if (!existingCart) {
+            user.createCart(); //////////ISSO VAI CRIAR UM CART, SE ELE JÁ NÃO EXISTIR....
+          }
+          app.listen(3000);
+
+      } else {
+
+        return;
+      }
+
+
+  }
+)
+
+
+
+
+
+
+
+-----> o professor nos explica que 
+
+'user.createCart()',
+
+
+
+esse 
+
+
+método 
+
+'createCart()',
+
+
+_PODE__ SER CHAMADO COM 'PARÂMETROS VAZIOS' AGORA,
+
+
+
+pq por enquanto ele NÃO VAI SEGURAR NENHUM TIPO DE DATA (só colocamos o field 'id', até agora...)
+
+
+
+
+
+
+
+
+O PROFESSOR REFORMULA UM POUCO O CÓDIGO TAMBÉM;
+
+
+ELE 
+
+
+RETORNA ESSE 
+
+'user.createCart();',
+
+
+
+
+
+
+
+E AÍ 
+
+
+
+FAZ COM QUE O 'app.listen(3000)'
+
+
+SEJA 
+
+EXECUTADO APENAS NO PRÓXIMO THEN BLOCK, na próxima etapa....
+
+
+
+
+
+
+MEU CÓDIGO FICOU ASSIM(meio gororoba):
+
+
+
+
+
+
+
+
+
+
+
+sequelize
+  .sync 
+  (
+    )  
+  .then((result) => {
+
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+
+    return user; 
+  })
+  .then((user) => {
+
+      if (user) {
+
+          return user.getCart()
+          .then(
+              (cart) => {
+
+                if(!cart) {
+                  return user.createCart();
+                } else {
+                  return;
+                }
+              } 
+          )
+      }
+
+  })
+  .then(
+    (user) => {
+      app.listen(3000);
+    }
+  )
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+
+--------------------------------------
+
+
+
+
+
+BEM, A BOA NOTÍCIA É QUE 
+
+
+
+UM RECORD/OBJETO 'cart'
+
+FOI CRIADO 
+
+
+LÁ 
+
+
+NA TABLE DE 'carts'... ----> e esse cart possui um 'userId' 
+
+de 
+
+valor '1',
+
+
+
+sinalizando que foi O
+
+
+USER 
+
+de 
+
+'id'
+ 
+
+ 1 
+
+
+
+ que 
+
+ o 
+
+ criou....
+
+
+
+
+
+
+ --------------------------
+
+
+
+
+
+
+
+AGORA, SE TENTARMOS RECARREGAR AQUELA PÁGINA 
+
+
+DE 
+
+'carts',
+
+
+
+
+
+
+
+veremos 
+
+1 
+
+
+
+
+'Your Cart',
+
+
+mas sem nenhum item... 
+
+
+
+(
+
+  isso pq não adicionamos nenhum item 
+
+  ao nosso cart,
+
+
+  e TAMBÉM
+  pq 
+
+
+  NÃO EXISTE 1 FIELD PARA ESSES ITEMS....
+)
+
+
+
+
+
+
+
+
+
+--> precisamos adicionar uma lógica para 
+
+
+'ADD PRODUCTS INTO OUR CARTS'... (E não é a mesma lógica de databases NOSQL, pois aqui NÃO HÁ DUPLICAÇÃO DE DADOS, e sim trabalharemos com aquela TABLE INTERMEDIÁRIA de 'cart-item', provavelmente...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> MEU CÓDIGO DE 'GETCART'
+
+está assim:
+
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+req.user.getCart()
+.then(
+  (cart) => {
+    console.log(cart, 'LINE');
+      return cart.getProducts();
+  }
+)
+.then(
+(products) => {
+        console.log(products);
+        res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        cartProducts: products
+      });
+}
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+-------------> e é claro que ele NÃO FUNCIONA por completo... --> isso 
+
+pq 
+
+ a parte 
+
+ de 
+ 'getProducts'
+
+ ainda não funciona...
+
+
+
+
+
+
+
+ --> LÁ NO 'getCart',
+
+
+ SÓ PARA 
+
+
+ TESTAR,
+
+
+ professor 
+
+
+
+ faz um console.log 
+
+
+ de 
+
+
+
+ 'req.user.cart',
+
+
+ para ver se isso passa a existir...
+
+
+
+
+
+NÃO... CONTINUA UNDEFINED
+
+
+
+
+ -----> professor conclui que não 
+
+ SOMOS CAPAZES DE 
+
+ ACESSAR 
+
+
+
+
+'CART' COMO UMA PROPRIEDADE 
+
+
+nesse objeto 'req.user',
+
+
+
+
+MAS QUE 
+
+AINDA PODEMOS O OBTER POR MEIO DE 
+
+'req.user.getCart()'...
+
+
+
+
+
+
+
+
+
+--> OK, COM ESSE CÓDIGO AÍ, CONSEGUIMOS NOSSO CART LÁ DA DATABASE.. --> 
+
+
+
+mas agora queremos mostrar os PRODUCTS nesse cart...
+
+
+
+
+
+
+
+
+professor escreve 
+
+
+
+
+
+req.user.getCart(
+  (cart) => {
+
+
+
+    return cart.getProducts()
+  }
+)
+
+
+
+
+----------------------
+
+
+
+
+
+AÍ, O PROFESSOR NOS EXPLICA QUE 
+
+
+
+1 cart 
+
+
+
+,
+
+
+nosso cart,
+
+
+está agora 
+
+associated 
+
+
+aos 
+
+'products',
+
+
+
+
+isso graças 
+
+às linhas 
+
+de 
+
+
+
+'Cart.belongsToMany(Product, { through: CartItem})'
+
+
+e 
+
+
+
+'Product.belongsToMany(Cart, { through: CartItem})'
+
+
+
+
+
+
+
+
+--> E O SEQUELIZE VAI 'DO THE MAGIC OF LOOKING INTO CART ITEM AND SO ON'...
+
+
+
+
+
+
+
+
+--> 'cart-item' é a nossa in-between table....
+
+
+
+
+
+
+
+
+
+
+----> ok... professor escreve o then block 
+
+
+
+que 
+
+vai receber nossos 'products',
+
+
+se existirem no cart...
+
+
+
+
+
+
+ex:
+
+
+
+exports.getCart = (req, res, next) => {
+
+
+req.user.getCart()
+.then(
+  (cart) => {
+    console.log(cart, 'LINE');
+      return cart.getProducts();
+  }
+)
+.then(
+(products) => {
+        console.log(products);
+        res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        cartProducts: products
+      });
+}
+)
+.catch(
+  (err) => {
+    console.log(err);
+  }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+-------> OK... MAS É CLARO QUE ISSO SIGNIFICA QUE 
+
+
+
+__NÓS TEMOS QUE __ _TER PRODUCTS _ LÁ 
+
+
+NOS NOSSOS CARTS..
+
+
+
+
+
+
+
+
+--> se recarregarmos a page de 
+
+'cart',
+
+
+
+realmente, veremos NENHUM PRODUCT,
+
+
+ 
+
+
+ pq 
+
+ não 
+
+
+
+ temos eles msm....
+
+
+
+
+
+
+ ----> voltaremos a isso mais tarde...
+
+
+
+
+
+
+
+
+ ---> PROFESSOR DIZ QUE DEVEMOS DAR UMA OLHADA NO NOSSO QUERY STATEMENT...
+
+
+
+
+
+
+
+ -----> OS SQL STATEMENTS SÃO MT BONS DE SEREM ESCRITOS PELO SEQUELIZE....
+
+
+
+
+
+
+  
+
+  --------> OK.... ANTES DE VOLTARMOS A COISA QUE 
+
+
+
+
+  VAMOS TER QUE FAZER 
+
+  'REGARDING GETTING THE CART PRODUCTS',
+
+
+
+  DEVEMOS 
+
+
+  ___ NOS ASSEGURAR _ DE QUE SOMOS CAPAZES __ DE ADICIONAR PRODUCTS_ AO 
+
+  CART...
+
+
+
+
+
+
+  ---> devemos nos focar no ADD DE PRODUCTS AO CART, NA PRÓXIMA AULA..

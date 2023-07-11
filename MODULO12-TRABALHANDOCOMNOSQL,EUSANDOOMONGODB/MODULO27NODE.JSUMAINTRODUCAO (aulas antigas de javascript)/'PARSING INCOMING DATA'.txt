@@ -1,0 +1,2318 @@
+CERTO...
+
+
+
+ENVIAR DADOS DE VOLTA AO USUÁRIO É UMA COISA, sim...
+
+
+
+PORÉM, SERVIDORES TIPICAMENTE __QUEREM__ , ALÉM DISSO, SER
+CAPAZES 
+
+
+DE __rECEBER DADOS__ ('receive data')...
+
+
+
+
+código atual:
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    
+    response.setHeader('Content-Type', 'text/html');
+    response.write('hello there!');
+    response.end();
+});
+
+
+
+server.listen(3000);
+
+
+
+--------------------------------------------
+
+
+
+PARA ISSO, PARA RECEBER DADOS E AGIR DE ACORDO COM ELES, NÓS 
+
+PRECISAMOS __ENVIAR ___ UM CÓDIGO HTML __ DIFERENTE DAQUELE QUE 
+ESTAMOS RETORNANDO.... (Diferente de 'hello there'...)
+
+
+PRECISAMOS ENVIAR DE VOLTA UM CÓDIGO 'HTML ' QUE __INCLUA___
+
+ALGO QUE DEIXE O USUÁRIO ENVIAR UM __REQUEST__ A NÓS....
+
+
+
+---> o professor aqui não está falando DE UM SCRIPT EM QUE USAMOS A FETCH API...
+
+Nós ___PODERÍAMOS___ FAZER ISSO, mas SE QUISÉSSEMOS FAZER ISSO, 
+
+TERÍAMOS QUE ESCREVER ___ MUITAS___ LINHAS DE CÓDIGO... 
+
+
+
+
+
+Em vez disso, podemos começar de forma simples 
+
+
+E SIMPLESMENTE 
+
+
+__ENVIAR__ UMA 'form'...
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form></form>'); //////eis o código em questão.
+    response.end();
+});
+
+
+
+server.listen(3000);
+
+
+
+------------------------------------------------------
+
+
+
+
+VOCÊ TALVEZ SE LEMBRE QUE FORMS POSSUEM ESSE __COMPORTAMENTO DEFAULT___ 
+
+em que QUANDO UM BOTÃO É PRESSIONADO, TEMOS AQUELE 'BROWSER DEFAULT' de UM 
+
+
+________request_____ SER ENVIADO AUTOMATICAMENTE AO SERVIDOR QUE 
+
+___SERVE__ A PÁGINA...
+
+
+E era exatamente devido a isso que TÍNNHAMOS aquele método do javascript clientside
+
+
+'preventDefault()', para PREVENIR ESSE COMPORTAMENTO DE 
+
+'send request ao servidor E ENTÃO RECARREGUE A PÁGINA...'
+
+
+------------------------------------
+
+
+AQUI, NESSE EXEMPLO, NO ENTANTO, O PROFESSOR ___NÃO QUER ___ PREVENIR ESSE COMPORTAMENTO...
+
+
+
+
+
+----> ELE QUER, DE FATO, QUE O JAVASCRIPT BROWSERSIDE ___TEM ___ ESSE 'DEFAULT BEHAVIOR'..
+
+
+Isso quer dizer que ELE __QUER__, DE FATO, QUE O REQUEST SEJA ENVIADO AO SERVIDOR node.js....
+
+
+
+
+ELE QUER ISSO PQ ESSA É SIMPLESMENTE OUTRA MANEIRA __VÁLIDA__
+
+DE CONSTRUIR WEB APPLICATIONS.... EM VEZ DE TRABALHAR COM 
+
+'CLIENTSIDE JAVASCRIPT' para realizar a maior parte do trabalho, em vez de usar um monte de linhas de javascript clientside,
+
+
+
+NÓS PODERÍAMOS TOMAR A APPROACH MAIS 'TRADICIONAL', A APPROACH COM 
+
+
+__MENOS CÓDIGO JAVASCRIPT___; menos código javascript pq nós TALVEZ NÃO PRECISEMOS 
+DE TANTO CÓDIOGO JAVASCRIPT CLIENTSIDE NO NOSSO PROEJTo.... (talvez nem precisemos de 'if checks' para validar o input do usuário, por exemplo....)
+
+
+
+OU SEJA, 
+
+
+AQUI VAMOS QUERER QUE O BROWSER 'FAÇA SUAS PRÓPRIAS COISAS', ou seja 
+'
+'DO ITS OWN THING' e então ENVIAR O REQUEST AO SERVIDOR 
+
+
+para que _________a VALIDAÇÃO ___ DO USUÁRIO____ ENTÃO 
+
+OCORRA ____DENTRO DO SERVIDOR___, E NÃO FORA, NO 'CLIENTSIDE'...
+
+
+
+
+A validação de 'requests' PODE SER FEITA TANTO COMO NO BROWSERSIDE COMO NO NODEJSSIDE.
+
+
+
+
+AMBOS OS LADOS TAMBÉM SERÃO CONECTADOS MAIS TARDE....
+
+
+CERTO, NÓS VAMOS LÁ 
+
+
+E __RENDERIZAMOS__ UMA SIMPLES 'FORm COM O ATRIBUTO
+
+
+'input.type = text'...
+
+
+
+
+ex:
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form><input type="text"<>button type="submit">Send</button></form>'); //////eis o código em questão.
+    response.end();
+});
+
+
+
+server.listen(3000);
+
+
+--------------------------------------------
+
+
+
+Certo... dentro desse 'button' no interior desse html, 
+
+Professor diz que podemos TER UM TEXTO 'Send'...
+
+
+
+E O TIPO DO BOTÃO (essa parte é importante) --- >DEVERÁ SER DO 'TYPE' submit....
+
+
+
+
+
+Certo, agora temos:
+
+
+1) um elemento form 
+
+
+2) um elemento INPUT
+
+3) um elemento BUTTOn
+
+
+4) closing form tag....
+
+
+ 
+
+-------------------------------
+
+
+SE SALVARMOS TUDO ISSO E RECARREGARMOS...
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form><input type="text"><button type="submit">Send</button></form>'); //////eis o código em questão.
+    response.end();
+});
+
+
+
+server.listen(3000);
+
+
+
+
+
+se então executarmos o servidor de novo, 
+
+
+
+
+
+AGORA VEREMOS 
+
+
+
+2 ELEMENTOS NA NOSSA PÁGINA,
+
+
+
+O ELEMENTO 'INPUT' (de tipo 'text') 
+
+
+
+E O ELEMENTO 
+
+'BUTTON', com 'send' escrito...
+
+
+
+------------------------------------
+
+
+
+
+
+AGORA, SE NÓS ENTÃO ESCREVERMOS ALGO NO FIELD DO 'INPUT' 
+
+E APERTARMOS EM 'send',
+
+
+A NOSSA PÁGINA VAI ___RECARREGAR___....
+
+
+Podemos constatar isso PELA ABA 'network' NOS DEV TOOLS... (a página 'pisca' também....)
+
+
+Na aba 'network', podemos ver um arquivo PISCAR rapidamente...
+
+esse arquivo é 
+
+O __OUTGOING REQUEST____ antes da página 
+
+_______rECARREGAR_____...
+
+
+
+
+
+----> professor explica, reitera, que o OUTGOING REQUEST __PADRÃO___ É 
+SEMPRE um request de 'get'...
+
+
+-----> ENTRETANTO, PODEMOS IR ATÉ O CÓDIGO HTML DA 'form' que colocamos 
+
+em 'write' E ENTÃO SETTAR UM 'ATTRIBUTE' de 
+
+'METHOD'... como valor desse attribute, podemos colocar 
+
+
+'POST' ---> isso fará COM QUE NOSSO GET REQUEST VIRE UM 
+__POST___ REQUEST... (post ---> envia dados a um servidor)...
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST"><input type="text"><button type="submit">Send</button></form>'); //////eis o código em questão.
+    response.end();
+});
+
+
+-----------------------------------------------------
+
+
+
+
+
+
+Feito isso, professor aponta QUE PODEMOS TAMBÉM ADICIONAR OUTRO ATRIBUTO 
+
+A ESSA 'TAG' DE 'FORM', uma tag "action", A QUAL PODEMOS APONTAR 
+
+À LOCALIDADE DE '/' ... (slash)... ('slash nothing') --->
+---> ISSO VAI DIZER AO BROWSER A QUAL LUGAR/URL ELE DEVERÁ 
+ENVIAR ESSE HTTP REQUEST..... (esse HTTP REQUEST __ENVIADO___ PELO USUÁRIO DE ___ NOSSA PÁGINA __....)
+
+
+
+
+
+
+
+-----------------------------------------
+
+
+
+FEITO ISSO, PARA QUE OS DADOS DA __fORM___ SEJAM APROPRIADAMENTE 
+
+____'decodados' __ (decoding), NÓS DEVEMOS escrever um 
+
+attribute de 'NAME' ao input.......
+
+
+
+como valor desse attribute de 'name', podemos dar o valor 
+
+de 'username', um IDENTIFIER de 'username'....
+
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST"><input name="username" type="text"><button type="submit">Send</button></form>'); //////eis o código em questão.
+    response.end();
+});
+
+-------------------------------------
+
+
+
+ENTRETANTO, O PROFESSOR EXPLICA que o 'name' do input é 
+
+ALGO QUE NÓS PODEMOS ESCOLHER, PODEMOS ESCOLHER O NOME DE NOSSA PREFERÊNCIA...
+
+
+
+
+
+--------------------------------------------
+
+
+
+---> COM ISSO, AGORA O BROWSER É CAPAZ DE __PARSEAR___
+essa form da página... 
+
+
+ele é capaz de parsear essa form E É CAPAZ DE DAR UMA OLHADA 
+EM TODOS OS INPUTS QUE possuem um 'name'.... --->
+--->
+
+---> mas o que ele faz com esse 'name'???
+
+
+
+Bem, basicamente, por trás das cenas ELE VAI CRIAR UM 'DATA OBJECT' em que 
+ele ARMAZENARÁ TODOS OS DADOS QUE O USUÁRIO INPUTTOU no 'field' do input 
+SOB UMA KEY DE 'username'...
+
+
+
+ex:
+
+
+
+usuário inputta 'merda';
+
+
+a javascript engine vai pegar esse input de 'merda' 
+
+e colocar 
+
+em um objeto 
+
+
+assim:
+
+
+
+const input = {username: 'merda'}
+
+
+-------------------------------------------------------------
+
+
+
+
+FEITA A CRIAÇÃO DESSE OBJETO 'por trás das cenas' PELO 
+
+JAVASCRIPT, a javascript ENGINE VAI ENTÃO 
+
+___ENVIAR ___ UM POST___ REQUEST___ com 
+
+ESSE EXATO 'data OBJECT' PARA ESSA 
+
+URL especificada em 'action=xxxx'...
+
+
+-------------------------------------------------
+
+
+É isso que o browser fará agora, portanto...
+
+
+---> E ISSO QUE O BROWSER FAZ É ___UM COMPORTAMENTO DEFAULT DO BROWSER___, 
+
+É ALGO QUE NÃO TEM NADA A VER COM O NODE.JS, nada a ver com o javascript 
+em geral...
+
+
+
+-----> É EVIDENTE QUE PODERÍAMOS ___PREVENIR____ O COMPORTAMENTO 
+DE 'submit form -reload page' DO BROWSER 
+
+por meio de CLIENTSIDE JAVASCRIPT (
+
+
+    aquele processo que aprendemos em lições mais antigas, em que 
+
+    FAZÍAMOS 'listen to' da FORM SUBMISSION E ENTÃO 
+
+    EXECUTÁVAMOS 'event.preventDefault();'...
+
+
+) --------> MAS O PROFESSOR EXPLICA QUE 
+
+ELE NÃO QUER FAZER ISSO AQUI; AQUI, ELE QUER USAR ESSE COMPORTAMENTO 
+
+__DEFAULT__ DO BROWSER, ele não vai querer que seja aplicado o 'event.preventDefault();'...
+
+
+-----------------------------------
+
+
+
+
+CERTO....
+
+
+
+
+AGORA, COM ESSE CÓDIGO, NÓS ACABAREMOS ENVIANDO ESSE HTTP REQUEST AO SERVIDOR...
+
+
+
+
+Se agora eu recarregar o servidor, entrar na página, inputtar algo no field do 'input' E ENTÃO 
+
+APERTAR 'ENTER' (send), 
+
+
+
+EU PERCEBEREI QUE 
+
+______NADA TERÁ MUDADO___...
+
+
+
+
+
+A página continuará a mesma...
+
+
+
+
+ENTRETANTO, SE EU CHECAR A ABA 
+
+
+'NETWORK',  CONSTATAREI QUE 
+
+
+NOSSO SERVIDOR ESTÁ RECEBENDO UM 
+
+
+'REQUEST' do usuário... ; ou seja, 
+
+quando apertamos 'send' naquela form, 
+
+ALGO É ENVIADO ÀQUELA URL DE '/'....
+
+
+
+essa url de '/' __DEVE SER___ o endereço do nosso próprio servidor, 
+aquela url de 'localhost:3000' (a porta 3000 do nosso servidor/máquina/local filesystem...)....
+
+
+
+
+
+PROFESSOR ENTÃO EXPLICA QUE:
+
+
+
+1) ESTAMOS RECEBENDO UMA 'request' NO NOSSO SERVIDOR...
+
+(e onde está o 'request' no nosso código?)
+
+
+aqui:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => {  //////ESTÁ AQUI... O 'request' do usuário É RECEBIDO AQUI...
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>');
+    response.end();
+});
+
+
+
+server.listen(3000); 
+
+
+
+
+
+2) CERTO, ESTAMOS RECEBENDO O 'REQUEST', mas agora 
+
+DEVEMOS __PARSEÁ-LO__ e UTILIZÁ-LO__ no código do nosso servidor, na 
+sua LÓGICA...
+
+
+
+
+----------------------------------------------------------------
+
+
+
+PARA PARSEAR ESSE 'request', 
+
+
+
+AQUI DEVEMOS TRABALHAR com aquele objeto 'REQUEST', aquele OBJETO 
+
+COM O QUAL NÃO TRABALHAMOS ATÉ AGORA, NEM UTILIZAMOS....
+
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+
+PARSEAR O __BODY___ DE um 'incoming request' PODE SER 
+
+___UM POUCO 'TRICKY'/ESTRANHO___ na primeira vez...
+
+
+
+
+-------> MAS DEPOIS VAMOS APRENDER SOBRE COMO FAZER ESSE PARSING DE UMA MANEIRA 
+MAIS TRANQUILA/FÁCIL...
+
+
+
+
+
+---> nós primeiramente começamos pela CRIAÇÃO DE UMA __VARIÁVEL__...
+uma variável de nome 'BODY'...
+
+
+ex:
+
+
+
+
+const server = http.createServer((request, response) => {
+
+    let body 
+
+
+
+
+} );
+
+
+-----------------------------------------
+
+
+
+ESSA VARIÁVEL DEVERÁ CONTER UM ____ARRAY____...
+
+
+
+Deverá conter um array pq ___O BODY___ DE UMA 
+
+
+
+RESPONSE É RECEBIDO __ COMO ____ 'CHUNKS OF DATA'...
+
+
+
+é recebido em pedações de dados POR RAZÕES DE EFICIÊNCIA (faz o código 
+ser mais rápido)....
+
+
+
+
+NOSSO TRABALHO, AQUI, É BASICAMENTE 
+
+_______aRMAZENAR___ TODOS ESSES 'CHUNKS de data' E ENTÃO 
+
+CONVERTÊ-LOS 
+
+EM 'text' LOGO DEPOIS DISSO...
+
+
+--------------------------------------------
+
+
+ex:
+
+
+
+
+const server = http.createServer((request, response) => {
+
+    let body = [];
+
+
+
+
+} );
+
+
+
+------------------------------------------------
+
+
+
+
+
+
+Certo.... agora nós teremos nossas CHUNKS OF DATA dentro 
+
+desse array 'body'...
+
+
+
+
+agora PRECISAMOS/PRECISAREMOS ___EXTRAIR___ A 'DATA' DO 
+
+
+'BODY' DESSE REQUEST... (que ficará nessa variável de nome body, que tem aquele array...)....
+
+
+
+
+
+MAS ANTES DE FAZERMOS ISSO, DEVEMOS EXAMINAR O QUE EXATAMENTE HÁ DENTRO 
+
+DO REQUEST...
+
+
+Fazemos isso por meio de um CONSOLE.LOG de 'request'...
+
+
+
+ex:
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+
+    let body = [];
+    console.log(request);
+
+
+
+
+} );
+
+
+---------------------------------
+
+
+
+
+Se fazemos isso, se escrevemos esse 'console.log', 
+
+
+
+NOSSO TERMINAL DO IDE (visual studio code)
+
+
+
+É PREENCHIDO POR 
+
+
+
+BILHOES DE LINHAS DE CÓDIGo.... (do console.log)...
+
+
+professor explica que SE NÓS TENTARMOS CONSOLE.LOGGAR O OBJETO 
+
+'request' inteiro, ele será UM OBJETO GIGANTE NO TERMINAL...
+
+em vez disso, ele vai querer 
+
+
+CONSOLE.LOGGAR APENAS O 'request.method'
+
+
+
+'.method' ---------> É APENAS UMA DAS PROPRIEDADES DO OBJETO 'request'...
+
+
+
+'.method' ----> É UMA DAS PROPRIEDADES DO OBJETO 'REQUEST' QUE PODEMOS LER....
+
+
+
+
+PROFESSOR EXPLICA QUE ELE VAI QUERER 
+
+
+CONSOLE.LOGGAR o
+
+'method' do request 
+
+
+e a 
+
+
+'.url' DO REQUEST....
+
+
+
+ex:
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+
+    let body = [];
+    console.log(request.method, request.url);
+
+
+
+
+} );
+
+
+
+-------------------------------------------
+
+
+
+
+COM ISSO, COM ESSE CONSOLE.LOG, PODEMOS PELO MENOS OBSERVAR, quando ele for executado,
+
+
+
+QUAIS REQUESTS, NO FINAL DAS CONTAS, ACABAM ALCANÇANDO ESSE 'listener' aqui...
+
+
+quais requests, para quais MÉTODOS e URLS, acabam alcançando esse nosso listener de 'server.listen'....
+
+
+
+
+O OUTPUT QUE RECEBEMOS no terminal É:
+
+
+
+
+POST /
+GET /favicon.ico
+
+
+
+
+
+-----> aparentemente, isso é indesejado (professor nem mencionou que esse resultado é possível...)
+
+
+--------------------------------
+
+
+
+PROFESSOR EXPLICA:
+
+
+
+''quando nós visitamos essa página, o browser acaba ENVIANDO UM 
+REQUEST PARA nosso DOMÍNIO.com + '/' (slash nothing)...''
+
+
+
+
+
+---> Certo... consegui 'CONSERTAR' esse problema...
+
+
+---> encontrei um fórum no github que 
+
+mostrava um código que faz SUMIR esse GET de '/favicon.ico'...
+
+
+é o código:
+
+
+
+    if (request.url === '/favicon.ico') {
+        response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+        response.end();
+        console.log('favicon requested');
+        return;
+      }
+
+
+-----------------------------------
+
+
+
+Se você colocar esse if check e seu código vinculado 
+
+dentro do CÓDIGO QUE CRIA O SEU SERVIDOR (
+
+    ou seja, dentro do function body da função interna de 
+
+    '.createServer()'...
+
+    ex:
+
+
+
+    'const server = http.createServer((request, response) => {
+
+            ... (código vai aqui).
+
+
+    })
+)
+
+
+------------------------------------
+
+
+Certo, continuando a lição....
+
+
+
+Se fizermos tudo aquilo e executarmos o servidor do nodejs,
+
+
+já veremos algum output no console...s
+
+
+Veremos 
+
+
+'GET /'
+
+
+----------------------------------
+
+
+
+
+CERTO... percebemos que, então, POR DEFAULT, quando 
+
+VISITAMOS A PÁGINA, O BROWSER 
+
+____ENVIA UM REQUEST___ AO NOSSO 
+
+DOMAIN...(Que é 'domain.com + slash nothing' ) ----> por causa do 'action=/'....
+
+
+
+
+
+ou seja.....
+
+
+
+
+conseguimos 
+
+
+'GET /' ----> PQ  '/' É O QUE CONSEGUIMOS, POR MEIO DESSE REQUEST DO USUÁRIO...
+
+
+
+mas pq não há nada depois do '/'?
+
+
+Pq o que há ao lado do '/' É A ___URL___, o PATH...
+
+COMO NÓS __NÃO DEFINIMOS___ PATH___ ALGUM __ NESSE ___ 
+NOSSO __ EXEMPLO, o restante da linha de código  ('request.url')
+
+APARECE __VAZIO__.
+
+
+------------------------------
+
+
+
+
+Entretanto, professor continua...
+
+
+Se ele digitar algo dentro do input field e então enviar (tipo 'Anna') , 
+
+
+ele vai receber....
+
+
+
+ELE VAI RECEBER ALGO ___DIFERENTE___ no 
+
+servidor, ele vai receber um request 
+
+
+de tipo 
+
+__POST___, como podemos ver pelo terminal, 
+
+
+que fala 
+
+'POST /'...
+
+
+-------------------------
+
+
+
+E OLHE QUE CURIOSO:
+
+
+quando ENTRAMOS NA PÁGINA PELA PRIMEIRA VEZ, __recebemos um request__ de tipo 
+
+'GET' vindo do browser (pq o browser vai querer CONSEGUIR OS DADOS DA PÁGINA/DO NEGÓCIO 
+QUE EXISTE NO SERVIDOR...)...
+
+
+DEPOIS, quando A PÁGINA JÁ SE ENCONTRA CARREGADA, O INPUT FIELD E O BOTÃO JÁ ESTÃO ALI, 
+
+quando clicarmos em SEND __ou __ RECARREGARMOS A PÁGINA, 
+
+o SERVIDOR VAI RECEBER UM REQUEST DE 'POST'... (algo completamente diferente 
+do primeiro caso, POIS __dADOS__ VÃO ESTAR SENDO ENVIADOS AO SERVIDOR....
+
+O que fazemos com esses dados DEPENDE DE NOSSA VONTADE... se não escrevermos 
+
+nada, nada acontecerá com esse request de 'post'... MAS PODEMOS 
+USAR ESSES REQUEST DE 'POST' para ___ARMAZENAR DADOS___ DENTRO DO NOSSO SERVIDOR 
+
+NODE.JS....)
+
+
+
+
+--------------------------
+
+
+
+
+'console.log(request.method, request.url)', 
+
+PORTANTO, 
+
+NOS DÁ ___ALGUNS DADOS___ SOBRE O QUE PODEMOS CONSEGUIR NO 
+INTERIOR 
+
+DE UM REQUEST....
+
+
+
+MAS É EVIDENTE QUE QUEREMOS CONSEGUIR O ___BODY___ 
+dessa response...
+
+
+
+E para PARSEAR o body de um REQUEST, 
+
+nós precisamos ADICIONAR UM LISTENER NO REQUEST...
+
+
+Precisamos adicionar um listener, sim... mas nós não 
+vamos adicionar esse listener POR MEIO DA SINTAXE 'PADRÃO' DO JAVASCRIPT....
+
+
+Não, aqui devemos usar aquela sintaxe bosta/bizarra de 'onclick', 'onsubmit', 'onerror', etc etc....
+
+
+
+Mas não exatamente essa sintaxe de '.onxxx'.... NÃO, O NODE.JS PEDE APENAS '.on'..
+
+
+
+
+
+----> professor explica, no entanto, que REALMENTE EXISTE UM MÉTODO 'addEventListener' NO 
+
+
+NODE.JS, mas que ele NÃO É O ADEQUADO PARA FAZER ISSO QUE ESTAMOS TENTANDO FAZER.... (ele é usado para OUTRAS COISAS no node.js)...
+
+-----------------------------
+
+
+
+E essa é uma diferença do node.js para o javascript de browser ---> 
+
+NODE.JS TIPICAMENTE TRABALHA COM 
+
+'.on' E COM 
+
+
+'.once' --------------> 'once' É USADO __SE QUEREMOS __ APENAS FAZER 'LISTEN TO' daquele evento UMA ÚNICA VEZ....
+
+
+
+
+Temos que nos acostumar a essa diferença...
+
+
+------------------------------------------------
+
+
+Certo.......
+
+
+
+vamos colocar um event listener no 
+
+
+REQUEST....
+
+
+ex:
+
+
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    if (request.url === '/favicon.ico') {
+        response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+        response.end();
+        console.log('favicon requested');
+        return;
+      }
+
+
+
+
+
+    request.on(); ///////EIS O CÓDIGO EM QUESTÃO.
+
+
+
+    let body = [];
+    console.log(request.method, request.url);
+   
+    response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>');
+    response.end();
+});
+
+
+
+server.listen(3000);
+
+
+
+--------------------------------
+
+
+
+
+
+
+CERTO...
+
+
+
+MAS O MÉTODO/eventListener 
+
+chamado 
+
+'.on()' 
+
+
+
+
+EXIGE PARÂMETROS....
+
+
+
+
+
+
+1o PARÂMETRO ----> O __TIPO DE EVENTO___ AO QUAL VOCÊ FARÁ 'listen to'...
+                        nesse nosso exemplo, o professor fará 'listen to' do evento __DATA____.
+
+
+
+
+ex:
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data');
+})
+
+--------------------------------------
+
+
+
+PROFESSOR EXPLICA QUE 
+
+____ESSE É UM DOS EVENTOS __ OS QUAIS O NODE.JS ___CONHECE___... (é um evento comum... é como 'CLICK' no javascript do browser...)
+
+
+
+
+
+
+
+NODE.JS CONHECE O EVENTO 'data' NO REQUEST.... 
+
+
+
+
+
+
+
+
+
+2o ARGUMENTO DESSE MÉTODO/LISTENER de 'on' -------------> SEGUNDO ARGUMENTO SEMPRE 
+SERÁ __UMA FUNÇÃO___... SERÁ/É UMA FUNÇÃO QUE ___SERÁ EXECUTADA____ QUANDO ESSE EVENTO 
+
+OCORRER.... (ou seja, esse método '.on' REALMENTE É UM EVENTLISTENER, PRATICAMENTE.)
+
+
+
+
+
+
+REPRESENTAÇÃO:
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data', () => {
+
+    });
+})
+
+
+------------------------------------------
+
+
+
+
+DENTRO DESSA 'FUNÇÃO INTERNA', NÓS VAMOS 
+
+
+SEMPRE RECEBER COMO PARÂMETRO o argumento 'chunk' (é a CHUNK de 'data' QUE VAI SER ENFIADA NESSA FUNÇÃO INTERNA, AO ACONTECER O EVENTO 'data' no nosso request...)...
+
+
+
+
+esse 'chunk' VAI SER PASSADO PELO NODE.JS para dentro da nossa função...
+
+
+
+
+Recebido esse parâmetro, podemos ENTÃO FAZER '.PUSH' DELE (dentro da function body) 
+
+POR MEIO 
+
+DE '.push'... vamos fazer push dele PARA DENTRO DE UM ARRAY, PARA DENTRO DO ARRAY DE 
+
+'body'...
+
+
+
+
+ex:
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data', (chunk) => { /////EIS O CÓDIGO EM QUESTÃO
+        body.push(chunk);    ///////EIS O CÓDIGO EM QUESTÃO
+    });
+});
+
+
+
+----------------------------------
+
+
+
+
+RESUMINDO:
+
+
+O ARRAY 'body' É UM ARRAY NORMAL DE JAVASCRIPT, com todos os 
+
+MÉTODOS/FUNÇÕES ____COMUNS DE ARRAYS__, típicos a arrays....
+
+
+
+
+
+
+
+BTW -----> EM 'NODE.JS' NÓS TAMBÉM TEMOS UM MILHÃO DE TIPOS 
+DE ___MÉTODOS ESPECIAIS___, como 'filter', 'map', e assim por diante, 
+
+todos esses métodos especiais que APRENDEMOS NO MÓDULO 
+
+SOBRE ARRAYS.... --------> ISSO TAMBÉM É SUPORTADO PELO NODE.JS...
+
+
+-------------------------------------------------
+
+
+
+
+AGORA, RESUMINDO, EM TODA 'DATA PIECE' QUE NÓS 'LEMOS'/RECEBEMOS, TODA 
+
+DATA PIECE QUE VEM NO REQUEST, NÓS 
+
+COLOCAMOS DENTRO DESSE 
+
+ARRAY DE 'body'...
+
+
+
+
+
+Certo.
+
+
+Mas agora estamos interessados no momento no tempo (moment of time) EM QUE 
+
+___ESTAMOS ___ '''DONE''', estamos ACABADOS, ''done receiving data'', acabamos com o processo 
+de receber dados.... ----> para isso, podemos 
+ADICIONAR __OUTRO LISTENER__ EM 'request'...... --->
+
+---> MAS ESSE SEGUNDO LISTENER NÓS VAMOS COLOCAR 'LISTENING TO' a um 
+evento ____END______.... UM EVENTO 'END'  em 'request'....
+
+
+ex:
+
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data', (chunk) => { /////EIS O CÓDIGO EM QUESTÃO
+        body.push(chunk);   
+    });
+    request.on('end');
+});
+
+
+---------------------------
+
+
+
+ESSE EVENTO 'end' SERÁ ___DISPARADO___ ('fired') QUANDO ESTIVERMOS ____aCABADOS____ (done)
+
+
+COM O REQUEST... ou seja, quando O REQUEST JÁ TIVER SIDO """FULLY PARSED""" (totalmente analisado...)
+
+
+nesse evento, no evento 'END', nós também devemos/deveremos ter UMA FUNÇÃO A SER EXECUTADA....
+
+
+
+--> obs: quando ocorrer o evento 'END', NÓS SABEMOS/TEMOS CERTEZA DE QUE 
+
+___O ARRAY ___ DE 'body'___ ESTARÁ __TOTALMENTE OCUPADO COM 'CHUNKS OF DATA' (com vários chunks)...
+
+Ou seja, teremos TODOS OS CHUNKS OF DATA que recebemos reunidos nesse array...
+
+
+COMO TEMOS TODOS OS CHUNKS OF DATA REUNIDOS ALI, AGORA APENAS PRECISAMOS 
+
+________cONVERTER_____ esse ""body""", esse 
+
+
+BODY COMPOSTO DE UM ___ARRAY___ DE DATA CHUNKS___ (ex: 'let body = [chunk1, chunk2, chunk3]')
+
+EM ALGUM 'STRING DATA' COM O QUAL PODEREMOS/PODEMOS TRABALHAR...
+
+
+
+Para que ocorra essa conversão, 
+
+
+devemos definir 
+
+            (=)
+'body' COMO sendo igual a/IGUAL A __""BUFFER""___ (BUFFER ---> É UM OBJETO GLOBAL DISPONÍVEL NO NODE.JS...)
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data', (chunk) => { 
+        body.push(chunk);   
+    });
+    request.on('end', () => {
+        body = Buffer //////EIS O CÓDIGO EM QUESTÃO.
+    });
+});
+
+
+
+
+------------------------------------------
+
+
+
+
+-----> certo, 'Buffer'... 
+
+
+Mais precisamente 
+
+
+'Buffer.concat()'...   ('.CONCAT' É UM MÉTODO EM 'BUFFER'...)....
+
+
+
+
+
+escreveremos 
+
+
+                        (o body usado nesse parâmetro é o ARRAY 'body', definido lá na linha de código 'let body = [];'... é essa variável/array que ESTARÁ PREENCHIDA pelos CHUNKS OF DATA)
+'body = buffer.concat(body)'
+
+
+
+
+
+certo.....
+
+
+POR FIM, CHAMAREMOS '.toString()' NESSE MÉTODO 
+
+DE '.concat(body)'....
+
+
+
+
+ex:
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data', (chunk) => { 
+        body.push(chunk);   
+    });
+    request.on('end', () => {
+        body = Buffer.concat(body).toString();
+    });
+});
+
+
+
+----------------------------------------------
+
+
+
+Buffer.concat(body).toString(); -----> OU SEJA, ELE VAI ""CONCATENAR"" TODOS OS CHUNKS DE DENTRO DO ARRAY EM 1 ÚNICO CONTEÚDO... DEpois de concatenar todos os chunks, aquele código 'toString()' VAI CONVERTER TODOS ELES EM __UMA STRING___...
+
+
+E é exatamente isso que queríamos, que o negócio todo fosse convertido em UMA STRING...
+
+
+E essa É APENAS __UMA __ DAS FORMAS ___ DE CONVERTER ESSE ARRAY DE DADOS recebidos 
+
+no 'REQUEST', esse ARRAY DE 'ENCODED CHUNKS', EM UMA STRING NORMAL......
+
+
+devido ao código 
+
+'body = xxxxx' ('body = Buffer.concat(body).toString();'),
+
+ESSES DADOS TODOS, ESSES DADOS CONVERTIDOS, SÃO TODOS 
+
+ARMAZENADOS ___DE VOLTA ___ NAQUELA VARIÁVEL __ DE NOME 'body'...
+
+(E ISSO EXPLICA PQ O PROFESSOR USOU UMA ___VARIÁVEL___ em 'let body = [];', E NÃO 
+UMA CONSTANTE... pq ele sabia QUE O SEU CONTEÚDO INTERNO IA MUDAR....)
+
+
+
+
+-----> Uma vez que esse processo 
+
+'body = Buffer.concat(body).toString();' ESTÁ 
+
+___aCABADO__ (once this is done) 
+
+NÓS 
+
+SABEMOS EXATAMENTE O QUE ESTARÁ DENTRO DO 'body'....
+
+
+----> é por isso que devemos CONSOLE.LOGGAR o 'body' aqui, para 
+VER EXATAMENTE O QUE HÁ NO SEU INTERIOR...
+
+
+
+ex:
+
+
+
+
+
+
+const server = http.createServer((request, response) => {
+    let body = [];
+    request.on('data', (chunk) => { 
+        body.push(chunk);   
+    });
+    request.on('end', () => {
+        body = Buffer.concat(body).toString();
+        console.log(body);
+    });
+});
+
+
+
+
+-------------------------------
+
+
+QUITAMOS O SERVIDOR E O REINICIAMOS....
+
+
+
+
+
+
+SE AGORA DIGITARMOS 'ANNA' no input field E CLICARMOS EM 'SEND' (no botão send),
+
+
+
+VEREMOS NO TERMINAL 
+
+A MENSAGEM
+
+
+'username=anna'...
+
+
+
+ISSO SIGNIFICA QUE NOSSO CÓDIGO FOI UM SUCESSO...
+
+
+o console.log de 'body' AGORA NOS RENDE 'anna' DEVIDO 
+
+A AQUELA CONVERSÃO DE 'chunks' EM 1 ÚNICO VALOR __sTRING___. (toString())...
+
+
+
+
+
+COMO NÓS RECEBEMOS UMA __sTRING____, professor explica que AGORA PODEMOS 
+
+PARSEAR ESSA STRING, FAZER O QUE QUISERMOS COM ELA....
+
+
+
+Poderíamos, POR EXEMPLO, 
+
+
+
+ARMAZENAR ESSE VALOR 'STRING' manipulado.... 
+
+
+armazenar esse valor em uma string..
+
+
+
+exemplo:
+
+
+'const userName = body.split('=')[1]' ------------> 
+
+AQUI, O PROFESSOR DIZ QUE DEVEMOS USAR ESSE CÓDIGO SE QUISERMOS 
+
+_______aPENAS____ O  ___vALOR____ dessa key 'username'...
+
+(pq '.split()' VAI SPLITTAR ESSA STRING EM 2.... 
+
+aquele parâmetro '=' É O CRITÉRIO/PARÂMETRO UTILIZADO NA HORA DO SPLIT....
+
+é o negócio que vai CINDIR os dois elementos 'string'...) ---> 
+
+
+'split' CRIA DUAS STRINGS a partir daquela única string...
+
+aí, feita essa divisão, o PROFESSOR ESCOLHE O ELEMENTO ENTRE ESSA STRING 
+
+splittada 
+
+POR MEIO DO INDEXADOR....
+
+
+ex:
+
+[0]         [1]
+username   anna 
+
+
+
+
+
+ou seja,
+
+
+'const userName = body.split('=')[1]' É IGUAL A 'const userName = 'anna'...
+
+
+
+-------------------------------------------------------------------
+
+
+
+Certo, agora estamos com o segundo elemento daquela string que obtivemos antes....
+
+
+
+
+-----> agora temos o 'concrete user name'...
+
+
+
+
+---> Agora que temos o 'concrete username',
+
+
+PODEMOS MANDAR DE VOLTA UMA ____rESPONSE___ ao usuário...
+
+
+
+
+----------------------------------------
+
+
+
+
+----> professor explica que SEMPRE QUE VAMOS ESCREVER 
+
+A __RESPONSE/RESPOSTA__ DO NOSSO SERVIDOR, É IMPORTANTE 
+
+QUE ENVIEMOS ESSA RESPOSTA ____NO LUGAR ___ CORRETO....
+
+
+
+
+Atualmente, o que nós estamos fazendo, é ENVIAR A RESPOSTA DE VOLTA 
+
+____ANTES ___ DE TER SIDO TERMINADO O 'PARSING' DO INCOMING REQUEST....
+
+
+
+(ou seja,
+
+
+esse código:
+
+    '
+     response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>');
+    response.end();
+    '
+
+
+
+    ACABA ENVIANDO A RESPONSe __AO USUÁRIO____ ANTES MESMO DO INCOMING REQUEST do usuário TER SIDO PARSEADO...
+) 
+
+
+----> essas 3 linhas de código do 'response' acabam ENVIANDO UMA RESPONSE 
+AO USUÁRIO __ANTES___ DO INCOMING HTTP REQUEST DO USUÁRIO __ PQ O
+
+
+
+___CÓDIGO___ '.on' 
+
+que temos 
+
+
+DENTRO DA FUNÇÃO INTERNA DE 'createServer(request, response => {...})'
+
+
+
+
+(ou seja, o código:
+
+
+  request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        body = Buffer.concat(body).toString();
+        const userName = body.split('=')[1];
+        console.log(body);
+        console.log(userName);
+      })
+
+)
+
+
+TUDO ISSO É CÓDIGO ASSÍNCRONO....
+
+
+esses listeners de 
+
+'.on' (de 'data' e de 'end') 
+
+
+SÃO TRIGGADOS.....
+
+
+
+o eventListener de 'data' É TRIGGADO __MÚLTIPLAS VEZES__, potencialmente....
+
+
+já 
+
+o eventListener de 'end' É TRIGGADO ___EM ALGUM MOMENTO NO FUTURO__, QUANDO ESTAMOS 'DONE' COM O PARSING dos CHUNKS de data que recebemos pelo incoming http request....
+
+
+
+
+
+Isso significa que AS 2 FUNÇÕES QUE ATRIBUÍMOS A ESSES LISTENERS (a função que FAZ PUSH DOS CHUNKS em 1 array, e a função que CONCATENA TUDO EM 1 ÚNICA STRING E DEPOIS SPLITTA ELA tendo como critério o '=')
+
+____NÃO SÃO ___ EXECUTADAS___ 'right away', não 
+
+são executadas, por exemplo, quando 
+
+a linha 'request.on('data', (chunk) => '
+
+
+É EXECUTADA...
+
+})  --------> ESSAS FUNÇÕES 
+
+
+___SÓ SÃO EXECUTADAS__ QUANDO O NOSSO EVENTO ('data' ou 'end') OCORRE....
+
+
+
+
+
+E ISSO É A MESMA COISA QUE OCORRIA NO BROWSER... ----> a função que você 
+
+
+REGISTRA EM UM 'CLICK EVENT' ____SÓ É 'DISPARADA' E EXECUTA ___ QUANDO O 
+
+CLICK ACONTECE, E NÃO QUANDO O JAVASCRIPT 'parseia' a linha de código que 
+tem o addEventListener.../'.on'...
+
+
+
+------------------------------------------
+
+
+Isso significa, no presente momento, que 
+
+essas 2 linhas de código, 'data' e 'end' SÓ SÃO 
+
+EXECUTADAS QUANDO OS EVENTOS OCORREM...
+
+
+E esses eventos OCORREM EM ALGUM PONTO DO __FUTURO__...
+
+
+EIS O PROBLEMA:
+
+
+
+as linhas 
+
+
+'
+     response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>');
+    response.end();
+'
+
+
+
+
+SÃO ____DE EXECUÇÃO IMEDIATA___ (assim que são parseadas, são executadas___).... ('execução síncrona')
+
+
+
+enquanto que as linhas 
+
+
+
+
+  request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        body = Buffer.concat(body).toString();
+        const userName = body.split('=')[1];
+        console.log(body);
+        console.log(userName);
+      })
+
+
+
+SÃO DE EXECUÇÃO PROLONGADA/NÃO IMEDIATA/EVENTUAL/'assíncrona'.... ( ou seja, só são executadas quando seu evento ocorre; e esse evento tipicamente vai ocorrer DEPOIS da execução daqueles códigos __IMEDIATOS__/síncronos....)
+
+
+
+
+
+
+----> aí reside o problema:
+
+
+
+eu só quero enviar a response UMA VEZ QUE EU ESTEJA 'DONE' COM O PARSING 
+
+E TRANSFORMAÇÃO DOS DADOS por meio das funções assíncronas atribuídas àqueles eventos....
+
+
+--------------------------------------------
+
+
+
+
+Para solucionar o problema, professor explica que DEVEMOS ENVIAR 
+
+ESSAS 
+
+3 LINHAS 
+
+
+de 
+
+
+     response.setHeader('Content-Type', 'text/html');
+    response.write('<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>');
+    response.end();
+
+
+
+
+PARA DENTRO DA FUNÇÃO ASSÍNCRONA atribuída ao evento 'end'... ('request.on('end', () => {})')...
+
+
+
+Ficará assim:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    if (request.url === '/favicon.ico') {
+        response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+        response.end();
+        console.log('favicon requested');
+        return;
+      }
+
+
+
+
+
+
+
+    let body = [];
+      request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        body = Buffer.concat(body).toString();
+        const userName = body.split('=')[1];
+        console.log(body);
+        console.log(userName);
+        response.setHeader('Content-Type', 'text/html');
+        response.write('<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>');
+        response.end();
+      })
+
+
+
+
+  
+      
+
+});
+
+
+
+server.listen(3000); 
+
+
+
+
+
+
+-----------------------------------
+
+
+
+ESSA ALTERAÇÃO FARÁ COM QUE NÓS NÃO ENVIEMOS UMA ___RESPONSE___ ANTES 
+
+DE TER ACABADO ESSE PROCESSO DE 'PARSING' e  'manipulação' de string...
+
+
+
+Se salvarmos tudo isso, digitarmos 
+
+
+um username e clicarmos 'send'....
+
+veremos:
+
+
+
+NENHUMA DIFERENÇA...
+
+
+
+
+
+----> ENTRETANTO, PROFESSOR DIZ QUE ___ESSA SOLUÇÃO__ É MAIS __ LIMPA... DEIXA O CÓDIGO MAIS ___LIMPO__....
+
+
+E não é APENAS MAIS LIMPA, como também ___ABSOLUTAMENTE NECESSÁRIA___ se vocÊ 
+
+QUISER levar em consideração aquele userName que você envia de volta... ----> 
+------------->
+
+
+-----------> professor mostra isso por meio de um exemplo...
+
+Se eu quisesse, por exemplo, colocar uma <H1></H1> tag 
+
+NAQUELa 'tira de html' que colocamos em 
+
+
+'response.write(
+'<form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>'
+)',
+
+
+
+uma H1 TAG __DINâMICA___, com o VALOR DO USERNAME que o 'user' inputtou....
+
+
+
+se eu quisesse/quiser fazer isso, devo primeiramente converter 
+
+essa string do html em UM TEMPLATE LITERAL por meio de ``...
+
+
+Aí terei de inserir o valor dinâmico do valor do username...
+
+
+ex:
+
+
+
+
+`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`
+
+---------------------------------------
+
+
+
+SE EU QUISER REALMENTE QUE ESSE NEGÓCIO FUNCIONE, vou precisar dessa solução que o professor me mostrou, 
+
+da 'ORDENAÇÃO' das funções assíncronas com as síncronas...
+
+
+
+
+
+Agora, se eu digitar 
+
+
+
+'Arthur', 
+
+
+
+o servidor 
+
+
+vai me 
+
+
+retornar 
+
+
+um RESPONSE 
+
+
+
+de 
+
+
+`<h1>Hi, Arthur</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`
+
+
+
+
+
+
+ELE VAI CONSEGUIR 
+
+RETORNAR/ENVIAR ISSO POR MEIO DAQUELA TRANSFORMAÇÃO 
+
+DOS CHUNKS E SUBSEQUENTE TRANSFORMAÇÃO/MANIPULAÇÃO DA STRING, 
+
+A COMBINAÇÃO ENTRE FUNÇÕES SÍNCRONAS ('response.xxxx') E ASSÍNCRONAS ('.on')
+-------------------------------------------------
+
+
+
+
+
+Mas o professor não acaba por aqui...
+
+
+
+Ele muda a nossa 
+
+constante 'userName' PARA 
+
+
+QUE ELA SEJA UMA 
+
+
+___VARIÁVEL___...
+
+
+Aí ele vai lá 
+
+
+
+e define o valor desse 'userName' COMO SENDO UMA STRING DE 'Unknown user'.... ----> isso será USADO PARA QUANDO O USUÁRIO RECÉM ENTRAR NA PÁGINA, QUANDO ELE NÃO TIVER INPUTTADO NADA NAQUELE FIELD, AINDA...
+
+
+
+ex:
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { ///////DEFINE O SERVIDOR
+    //response.setHeader('Content-Type', 'text/plain'); //USADO PARA OUTPUTTAR O 'HTML' como simples texto na página do browser (não há conversão, nesse caso, da escrita HTML em elementos da página.... a escrita html é simplesmente mostrada como texto na página do browser...)
+    if (request.url === '/favicon.ico') {
+        response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+        response.end();
+        console.log('favicon requested');
+        return;
+      }
+
+
+
+
+
+
+
+    let body = [];
+      request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        body = Buffer.concat(body).toString();
+        let userName = 'Unknown user';
+        console.log(body);
+        console.log(userName);
+
+            //console.log(request.method, request.url);
+      
+    response.setHeader('Content-Type', 'text/html');
+    //response.write('hello there!');
+    response.write(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+    response.end();
+      })
+
+
+
+
+
+});
+
+
+
+server.listen(3000); //////EXECUTA O SERVIDOR.
+
+
+-------------------------------------------
+
+
+
+FEITO ISSO, ELE COLOCA UM IF CHECK 
+
+
+
+que 'irá checar PELA __eXISTÊNCIA ___ DE 'body'...
+
+
+se 'body' EXISTIR/SE BODY FOR RECEBIDO (truthy), 
+
+VOU QUERER DEFINIR 
+
+O 'userName' COMO SENDO aquele código de antes,
+
+o 'body.split('=')[1]'
+
+
+
+ex:
+
+
+
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { ///////DEFINE O SERVIDOR
+    //response.setHeader('Content-Type', 'text/plain'); //USADO PARA OUTPUTTAR O 'HTML' como simples texto na página do browser (não há conversão, nesse caso, da escrita HTML em elementos da página.... a escrita html é simplesmente mostrada como texto na página do browser...)
+    if (request.url === '/favicon.ico') {
+        response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+        response.end();
+        console.log('favicon requested');
+        return;
+      }
+
+
+
+
+
+
+
+    let body = [];
+      request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        body = Buffer.concat(body).toString();
+        let userName = 'Unknown user';
+        if(body) {
+            userName = body.split('=')[1]; /////// EIS O CÓDIGO EM QUESTÃO.
+        }
+        console.log(body);
+        console.log(userName);
+
+         
+      
+    response.setHeader('Content-Type', 'text/html');
+   
+    response.write(`<h1>Hi, ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`);
+    response.end();
+      })
+
+
+
+
+
+});
+
+
+
+server.listen(3000); //////EXECUTA O SERVIDOR.
+
+
+
+
+------------------------------------------
+
+
+
+
+ISSO SIGNIFICA QUE, COM ISSO, AGORA TEMOS UM 'FALLBACK VALUE' para o usuário 
+
+NO CASO DE NÓS AINDA NÃO TIVERMOS SETTADO NADA como isso (por meio do input field)...
+
+
+
+-----------------------------------------------
+
+
+Certo, agora nossa funcionalidade funciona...
+
+'Hi, Arthur'...
+
+
+---------------------------------------
+
+
+
+
+-----> aprendemos sobre como tudo isso funciona, 
+
+e que isso pode ser meio DIFÍCIL de settar...
+
+
+ENTRETANTO, PROFESSOR APONTA QUE __TEMOS UMA SOLUÇÃO __ MAIS FÁCIL 
+
+PARA RESOLVER ESSES CASOS assíncronos/síncronos, que é 
+
+o EXPRESS.JS, A 
+
+
+
+
+FRAMEWORK MAIS FAMOSA DO NODE.JS...
+
+
+
+---------------------------------------

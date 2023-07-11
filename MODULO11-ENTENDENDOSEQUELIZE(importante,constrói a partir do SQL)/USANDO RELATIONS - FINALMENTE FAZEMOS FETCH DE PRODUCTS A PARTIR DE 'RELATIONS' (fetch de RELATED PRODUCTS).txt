@@ -1,0 +1,1192 @@
+
+
+
+
+
+
+
+
+
+
+
+----> OK... APRENDEMOS SOBRE ASSOCIATIONS,  
+
+
+
+E TAMBÉM 
+
+SOBRE AQUELES MAGIC METHODS LEGAIS,
+
+
+
+como 
+
+
+
+
+'req.user.createProduct()',
+
+
+
+
+
+e o 
+
+
+'.createXXX()',
+
+
+
+que 
+
+é 
+
+
+criado a partir 
+
+
+do DEFINE de relations por métodos como 'Product.belongsTo(User)'...
+
+
+
+
+
+
+
+
+------> VOCÊ PODE APRENDER MAIS SOBRE ISSO NOS OFFICIAL DOCS,
+
+CLARO....
+
+
+
+
+
+
+
+
+
+--> OK... MAS QUAL IMPLICAÇÃO 
+
+
+ESSA COLOCAÇÃO DE 
+
+
+
+'userId' 
+
+
+dentro de objetos 'Product' (e a table Products, também),
+
+
+
+
+
+E OS MÉTODOS 
+
+mágicos 
+
+
+
+
+__ 
+
+
+IMPÕE 
+
+
+as 
+
+
+nossas OUTRAs
+ 
+
+
+ ações 
+
+ em 
+
+ 'admin.js' (controller)? 
+
+
+
+
+
+
+
+
+
+
+
+
+ --> O PROFESSOR EXPLICA QUE 
+
+
+ PARA 
+
+
+
+ 'exports.getEditProductPage()'
+
+
+
+
+ NÃO TEMOS 
+
+
+
+ NENHUMA IMPLICATION NOVA... --> ISSO 
+
+ PQ 
+
+ AINDA VAMOS FETCH 
+
+
+ 1 
+
+
+
+ SINGLE PRODUCT,
+
+
+
+
+ E 
+
+
+ VAMOS FETCHEAR DE MODO QUE __ NÃO NOS IMPORTAMOS __ COM 
+
+ O 
+
+ USER 
+
+
+ ASSOCIADO ÀQUELE PRODUCT... (e sim nos importamos 
+ 
+ com o 
+ 
+ ID 
+ 
+ do product em relação AOS __ OUTROS __ PRODUCTS na table 'products'...)
+
+
+
+
+
+
+ ex:
+
+
+
+
+
+
+
+ exports.getEditProductPage = (req, res, next) => {
+  const editMode = req.query.edit;
+  if (!editMode) {
+    return res.redirect('/'); 
+  }
+
+  const productId = req.params.productId;
+
+  Product.findByPk(productId) 
+    .then((product) => {
+      if (!product) {
+        alert(
+          'The requested product has not been found in the database.'
+        );
+        return;
+      } else {
+        res.render('admin/edit-product', {
+          pageTitle: 'Edit Product',
+          path: '/admin/edit-product',
+          editing: editMode,
+          prod: product,
+        });
+      }
+    });
+};
+
+
+
+
+
+
+
+
+
+
+-------> CERTO... MAS VOCÊ PODERIA ARGUMENTAR 
+
+QUE 
+
+
+
+__VOCÊ __ SÓ QUER __ 
+
+
+
+ENCONTRAR/poder editar __ PRODUCTS 
+
+
+PARA O 
+
+
+'CURRENTLY LOGGED IN USER'........ ---> PQ, SE 
+
+
+PENSARMOS 1 POUCO,
+
+
+APENAS 
+
+O 
+
+
+ADMIN QUE 
+
+
+EFETIVAMENTE CRIOU AQUELE PRODUCT, E NÃO OUTRO ADMIN,
+
+
+
+deve 
+
+ter permissão 
+
+para 
+
+o 
+
+deletar... ---->   
+
+
+
+
+
+
+
+
+E PARA ___ CONSEGUIR ESSE EFEITO,
+
+PARA __ PROCURAR __ 
+
+
+APENAS __ OS 
+
+PRODUCTS __ QUE 
+
+
+FORAM 
+
+
+CRIADOS 
+
+
+POR 1 DETERMINADO USER,
+
+
+
+professor 
+
+diz que 
+devemos, nesse controller aí,
+
+
+
+escrever 
+
+
+algo como 
+
+
+'req.user.getProducts()'........ -------> 
+
+
+
+
+
+
+
+
+
+DE NOVO, 
+
+
+'getProducts()'
+
+É UM 
+
+
+__MÉTODO MÁGICO, criado a partir de 
+
+
+
+'Product.belongsTo(User)'... --------> 
+
+
+
+
+
+
+
+
+
+CERTO.... O CÓDIGO IA COMEÇAR ASSim:
+
+
+
+
+
+
+
+
+exports.getEditProductPage = (req, res, next) => {
+
+    const editMode = req.query.edit;
+
+    if(!editMode) {
+        return res.redirect('/');
+    }
+
+const productId = req.params.productId;
+
+
+req.user.getProducts();//////EIS O CÓDIGO EM QUESTÃO.
+
+}
+
+
+
+
+
+
+
+
+-----> AÍ, DENTRO 
+
+
+
+DESSE 
+
+
+
+'.getProducts()',
+
+
+VOCÊ 
+
+
+PASSA UM OBJETO CONFIG,
+
+COMO SEMPRE,
+
+
+
+
+em que 
+
+você 
+
+vai 
+
+escrever 
+
+algo como 
+
+
+
+
+------------------------------------------------------
+
+
+const productId = req.params.productId;
+
+
+req.user.getProducts(
+    {
+        where: {
+            id: productId
+        }
+    }
+)
+
+
+-------------------------------------
+
+
+
+
+
+ISSO REALMENTE VAI 'NARROW DOWN' 
+
+
+o seu '''find/query''' de 
+
+products na database 
+
+PARA 
+
+
+PROCURAR __ APENAS __ OS PRODUCTS ASSOCIADOS 
+
+AO 
+
+seu 'user' ('req.user') específico,
+
+
+
+OU SEJA,
+
+
+products que 
+
+tenham 
+
+um 
+
+valor no seu field 'userId' 
+
+
+EQUIVALENTE 
+
+
+
+ao valor desse 'req.user.id' específico, no runtime do seu app...
+
+
+
+
+
+
+
+
+
+
+
+------> como resultado disso,
+
+se você tentar editar, agora, um product 
+
+
+que NÃO TENHA SIDO CRIADO PELO USER DE VALOR '1',
+
+a página 
+
+de 
+
+
+'EDIT PRODUCT'
+
+vai mostrar um monte de empty fields.... --> sinal que isso funcionou,
+
+
+pq 
+
+
+
+
+AQUELE PRODUCT ESPECÍFICO NÃO PODERÁ SER ENCONTRADO/EDITADO 
+
+
+POR 1 USER 
+
+
+com 
+
+
+
+valor de 'id' 
+
+que não 
+
+'bata' com o seu 'userId'...
+
+
+
+
+FICA TIPO:
+
+
+
+
+
+
+
+  if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+  
+  req.user.getProducts(
+    {
+      where: {id: productId}
+    }
+
+  )
+  .then(
+    (product) => {
+
+      if (!product) {
+        return res.redirect('/');
+      }
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                prod: product,
+      })
+    }
+  )
+
+
+
+
+
+
+
+
+  --------------------> MAS ESSE CÓDIGO NÃO ESTÁ FUNCIONANDO/NÃO FUNCIONARÁ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAS PQ? É POR CAUSA DISTO:
+
+
+
+
+''''                    ''''
+
+  req.user.getProducts() 
+
+
+
+
+
+
+  --> ISSO AÍ NÃO É UM 
+
+  'findById()'/'findByPk()'.... -------> 
+
+
+
+
+
+  E SIM É 
+
+
+  TIPO UM 
+
+
+  'fetchAll()'... ----> ISSO SIGNIFICA QUE 
+
+  ELE 
+
+
+  SEMPRE 
+
+  VAI 
+
+
+  NOS RETORNAR 1 
+
+  __ARRAY__, E NÃO UM OBJETO_, MESMO QUANDO 
+
+
+  
+
+
+
+
+
+  ELE VAI NOS 
+
+  DAR APENAS '1 PRODUCT' (como nesse nosso caso, de 'getEditProductPage', em que estamos interessados APENAS NAQUELE PRODUCT ESPECÍFICO, PARA O EDITAR...)
+
+
+
+
+
+
+
+  ----> nesse caso, o que precisamos fazer 
+
+  É MANIPULAR ESSE ARRAY (representado por 'products' no then block) 
+
+  PARA __ 
+
+
+  EXTRAIR 
+
+
+  O 
+
+  ELEMENTO 'product'
+
+
+  de que precisamos/em que estamos interessados...
+
+
+
+
+  ex:
+
+
+
+
+    if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+  
+  req.user.getProducts(
+    {
+      where: {id: productId}
+    }
+
+  )
+  .then(
+    (product) => {
+
+      if (!product) {
+        return res.redirect('/');
+      }
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                prod: product,
+      })
+    }
+  )
+
+
+
+
+
+
+
+
+
+
+  ---> PARA SOLUCIONAR ISSO, 
+
+  professor diz que 
+
+
+  devemos 
+
+
+
+
+  escrever 
+
+  'products' em vez de 'product',
+
+
+  e aí 
+
+
+  devemos 
+
+
+  
+
+
+  MANIPULAR O ARRAY POR MEIO DE UM CÓDIGO COMO 
+
+
+
+  'const product = products[0]'....
+
+
+
+
+
+
+
+  EX:
+
+
+
+
+
+    if (!editMode) {
+    return res.redirect('/'); ////redireciona admin que NÃO TIVER O QUERY PARAM de 'edit=true' na url que é enviada a route de '/admin/edit-product/:productId?'....
+  }
+
+  const productId = req.params.productId;
+  
+  req.user.getProducts(
+    {
+      where: {id: productId}
+    }
+
+  )
+  .then(
+    (products) => { ///////EIS O CÓDIGO EM QUESTÃO.
+        const product = products[0]; ////////EIS O CÓDIGO EM QUESTÃo.
+      if (!product) {
+        return res.redirect('/');
+      }
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                prod: product,
+      })
+    }
+  )
+
+
+
+
+  -------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+  ----> ok, agora vemos 
+
+
+
+
+
+  as informações nos input fields,
+
+
+
+
+
+
+sinalizando que isso funcionou....
+
+
+
+
+
+
+
+
+
+--> ESSE APPROACH de '.getProducts()'
+
+
+É O __ APPROACH MAIS ELEGANTE.... 
+
+
+AINDA ASSIM,
+
+
+APPROACH ANTIGO, 
+de 
+
+
+'Product.findById(ProductId' 
+
+
+__TAMBÉM FUNCIONA,
+
+
+
+
+mas é menos elegante...
+
+
+
+
+
+
+
+
+
+
+--------> CERTO....
+
+
+
+
+
+
+
+
+AÍ TEMOS O CONTROLLER DE 'editProduct',
+
+que tem este código:
+
+
+
+exports.editProduct = (req, res, next) => {
+
+
+const productId = req.body.id;
+
+console.log(productId);
+
+
+  Product.findByPk(productId)
+  .then(
+      product => {
+  
+  
+          product.title = req.body.title;
+          product.price = req.body.price;
+          product.description = req.body.description;
+          product.imageUrl = req.body.imageUrl;
+          return product.save();          
+      }
+  )
+  .then(
+(result) => {console.log('UPDATED PRODUCT')
+res.status(302).redirect('/products');
+}
+  )
+  .catch(
+      (err) => {
+          console.log(err);
+      }
+  )
+};
+
+
+
+
+
+
+
+
+
+
+--------> PROFESSOR EXPLICA QUE 
+
+
+NESSE 
+
+EXEMPLO AÍ DE CÓDIGO 
+
+ELE 
+
+ESTÁ 
+
+'FINE' 
+
+com essa sintaxe,
+
+
+
+
+pq a essa altura do campeonato, 
+
+
+
+
+nessa linha 
+
+de 
+
+'Product.findById(productId)',
+
+
+O PROFESSOR 
+
+
+__JÁ ASSUME/JÁ É ASSUMIDO 
+
+QUE 
+
+TEMOS 
+
+
+1 PRODUCT 
+
+
+'FOR THIS USER ONLY'.... ------> 
+
+
+é por isso que 
+
+
+updatar 
+
+dessa forma aí é fine...
+
+
+
+
+
+
+
+
+
+------> CERTO.... --> MAS AQUELE 
+
+
+
+
+
+código de 'getProducts',
+
+
+QUE FAZ O  GET 
+
+
+
+DE TODOS OS PRODUCTS 
+
+CRIADOS POR AQUELE ADMIN ESPECÍFICO,
+
+
+
+esse código aí deve MUDAR..
+
+
+
+
+
+
+seu código está assim, até agora:
+
+
+
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  Product.findAll().then((products) => {
+    res.render('admin/product-list-admin', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: products,
+    });
+  });
+};
+
+
+
+
+
+
+
+
+
+-------> NESSE LOCAL AÍ,
+
+devemos 
+
+
+
+usar 
+
+
+'req.user.getProducts()',
+
+
+
+
+
+
+
+
+
+-----> ISSO VAI NARROW DOWN 
+
+
+os 
+
+
+
+
+products retrievados,
+
+
+pois 
+
+
+serão 
+
+
+PROCURADOS/GET 
+
+
+APENAS 
+
+OS 
+
+
+PRODUCTS que 
+
+tenham 
+
+um 
+
+
+
+'userId' de 
+
+VALOR '1' no seu interior (pq é isso que está na propriedade 'id', lá no objeto 'req.user'...)
+
+
+
+
+
+
+EX:
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  Product.getProducts().then((products) => { ///////EIS O CÓDIGO EM QUESTÃO.
+    res.render('admin/product-list-admin', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: products,
+    });
+  });
+};
+
+
+
+--------------------------------
+
+
+
+
+
+
+
+
+
+
+
+----> JÁ NO 'postDeleteProduct',
+
+novamente,
+
+professor diz que 
+
+
+poderíamos 
+
+
+
+
+
+
+apenas 
+
+
+'FIND A PRODUCT ONLY FOR A PRODUCT WITH THIS 
+
+
+SPECIFIC USERID in its fields',
+
+
+
+MAS 
+
+
+
+diz que 
+
+
+
+está fine com o setup atual,
+
+
+
+
+que usa 
+
+
+so´
+
+'findByPk' 
+
+
+sem se importar 
+
+com o field 
+
+do 
+'userId'...
+
+
+
+ex:
+
+
+exports.getProductsAdminPage = (req, res, next) => {
+  Product.findAll().then((products) => {
+    res.render('admin/product-list-admin', {
+      path: '/admin/products-list',
+      pageTitle: 'Admin Products Page',
+      prods: products,
+    });
+  });
+};
+
+
+
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+------> OK, FIZEMOS MAIS ALGUMAS MUDANÇAS,
+
+
+USAMOS ALGUNS MÉTODOS 
+
+QUE 
+
+
+NOS MOSTRAM 
+
+OS 
+
+
+PODERES QUE 
+
+O SEQUELIZE NOS DÁ PARA 
+
+'ASSOCIATED MODELS'...
+
+
+
+
+
+
+----> AGORA DEVEMOS ___COMO __ 
+
+PODEMOS 
+
+
+REINTRODUZIR O MODEL DE 'cart'
+
+
+
+AO NOSSO APP...

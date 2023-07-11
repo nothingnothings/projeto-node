@@ -1,0 +1,728 @@
+
+
+
+
+
+
+
+
+
+
+
+
+----> AGORA TRABALHAMOS UM POUCO COM O EXPRESS.JS...
+
+
+
+
+
+
+
+
+
+
+
+--> NOSSO CÓDIGO ESTÁ ASSIM:
+
+
+
+const http = require('http');
+
+const express = require('express'); ///necessário.
+
+const app = express(); /////necessário.
+
+app.use((req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+
+  next(); /////EIS O CÓDIGO EM QUESTÃO. 'ALLOWS THE REQUEST TO REACH THE NEXT MIDDLEWARE IN LINE, WHICH IS THE MIDDLEWARE/APP.USE BELOW THIS ONE....'
+});
+
+app.use((req, res, next) => {
+  console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+  res.send('<h1>Hello from express!</h1>'); ////o 'send()' já setta nos headers UM CONTENT-TYPE DE 'html/text' POR DEFAULT.. (e é claro que você pode OVERWRITTAR ESSE COMPORTAMENTO POR MEIO DE CÓDIGOS COMO  'setHead' e 'setHeader'...)
+});
+
+const server = http.createServer(app); ////app ---> é a constante que temos logo acima (sim, o expressJS, quando armazenado em uma CONST, fica com um formato parecido com o de um REQUESTHANDLER, parecido com um '(req, res) => {}')
+
+server.listen(3000);
+
+
+
+
+
+
+
+--------------------------------------
+
+
+
+
+
+
+AGORA DEVEMOS VER UM POUCO DOS 'INTERNALS' DO EXPRESSJS,
+
+
+
+pelo menos um pouco...
+
+
+
+
+
+
+
+
+
+
+
+---> REPOSITÓRIO DO EXPRESSJS... 
+
+
+
+
+
+
+
+
+
+-------> no github repo,
+
+VOCÊ TEM O 
+
+'lib'... ----->
+
+ 
+
+
+
+ ali, você tem um arquivo 
+
+
+ 'response.js'.... -----> PROCURAMOS 
+
+ POR 
+
+
+
+ 'send', 
+
+
+
+
+
+
+
+
+
+ E AÍ VAMOS 
+
+ VER 
+
+
+
+ A 
+
+ FUNÇÃO 
+
+ 'send()',
+
+
+ E COMO 
+
+
+
+
+
+ELA É DEFINIDA INTERNAMENTE.... -----> 
+ 
+
+
+
+
+
+
+
+
+
+
+
+ E ISSO, BTW, É UMA ÓTIMA TECNICA PARA DESCOBRIR COMO ALGO 
+
+ FUNCIONA 
+
+ POR TRÁS DAS CENAS (e também 
+ 
+ 
+ 
+ 
+ ver se 
+ 
+ 
+ algum header já é settada 
+ 
+ para nós,
+ 
+ por meio de TPPs...
+
+ 
+ )
+
+
+
+
+
+
+
+
+
+
+
+ ok ----> O QUE O SEND FAZ INTERNAMENTE ? --> 
+
+ ELE 
+
+ BASICAMENTE 
+
+ ___ANALISA__ 
+
+ QUAL 'TYPE OF DATA'
+
+ QUE 
+
+ VOCÊ ESTÁ ENVIANDO... ------> SE ELE DETECTA 
+
+ QUE 
+
+ VOCÊ 
+
+ ESTÁ USANDO SOME 
+
+ 'STRING DATA',
+
+
+ ELE VAI 
+
+
+ SETTAR O CONTENT-TYPE COMO 
+
+ 'HTML',
+
+ mas 
+
+
+ __SÓ __ SE NÓS __ NÃO TIVÉSSEMOS DEFINIDO ESSE 'CONTENT-TYPE'
+
+ ANTERIORMENTE..  (ou seja,
+ 
+ ELE 
+ CHECA
+  
+  PELA PRESENÇA 
+  
+  DO 
+  
+  
+  HEADER 
+  
+  'CONTENT-TYPE'; 
+  
+
+
+  SE 
+
+
+  ELE NÃO O ENCONTRA, 
+
+  USA O SEU DEFAULT...
+
+
+  
+  
+  )
+
+
+
+
+
+
+
+
+  ------> OK... E SE NÓS TIVÉSSEMOS 
+
+
+  OUTROS VALORES,
+
+
+  COMO 
+
+
+
+  UM __ BOOLEAN_, NUMBER__ OU 
+
+  'OBJECT' (object notation),
+
+
+
+
+O 
+
+
+
+___ EXPRESSJS 
+
+
+VAI DEFINIR ESSE CONTENT-TYPE AUTOMATICAMENTE OU 
+
+
+COMO 
+
+'BINARY'
+
+OU 
+
+COMO 
+
+'JSON DATA'...
+
+
+
+
+
+
+
+
+
+
+
+
+
+------> E ESSAS SÃO ALGUMAS DAS COISAS INTERNAS QUE 
+
+O 
+
+RESPONSE FAZ... 
+
+
+
+
+
+
+---> MERGULHAR NESSES DOCS PODE AJUDAR àS VEZES....
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> OUTRA COISA QUE PODEMOS FAZER/VER,
+
+
+É QUE 
+
+PODEMOS 
+
+
+
+TAMBÉM ENCURTAR AQUELE CÓDIGO 
+
+DE 
+
+
+
+'const server = http.createServer(app);
+
+
+
+server.listen(3000);'
+
+
+
+
+
+CÓDIGO EM QUE BASICAMENTE SETTAMOS NOSSO SERVER, SUA FUNCIONALIDADE BÁSICA...
+
+
+
+
+
+
+
+
+
+-----> NÓS PODEMOS PASSAR 'app'
+
+
+
+
+COMO 
+
+
+
+ARGUMENTO DAQUELE MÉTODO 
+
+'createServer',
+
+sim;
+
+
+
+
+MAS __ TAMBÉM PODEMOS, ALTERNATIVAMENTE,
+
+
+__SÓ USAR 
+
+'app.listen(3000)',
+
+
+
+
+
+
+
+
+
+
+
+SHORTCUT QUE VAI BASICAMENTE FAZER ESSAS 2 COISAS PARA NÓS:
+
+
+
+vai:
+
+
+
+1) deixar implícito um 'const server = http.createServer(app)',
+
+
+
+
+
+2) DEIXAR IMPLÍCITO UM 'server.listen(3000);'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PODEMOS VER MAIS DETALHES SOBRE ISSO NO ARQUIVO 'application.js'
+
+
+
+DOS DOCS 
+
+DO 
+
+
+EXPRESSJS... ------> se PROCURARMOS POR 
+
+'listen',
+
+
+VEREMOS 
+
+
+
+
+QUE O CÓDIGO DO NEGÓCIO TEM ISTO:
+
+
+
+
+
+
+''''''''''''''''''''''''''
+
+app.listen = function listen() {
+  var server = http.createServer(this);
+  return server.listen.apply(server, arguments);
+}
+
+''''''''''''''''''''''''''
+
+
+
+OU SEJA,
+
+
+É REALMENTE UM RESUMO DAQUELAS 2 LINHAS DE CÓDIGO...
+
+
+
+
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+OK... NOSSO CÓDIGO FICARÁ ASSIM:
+
+
+
+
+
+
+const http = require('http');
+
+const express = require('express'); 
+
+const app = express(); 
+
+app.use((req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+
+  next(); 
+});
+
+app.use((req, res, next) => {
+  console.log('test2; IN ANOTHER MIDDLEWARE'); 
+  res.send('<h1>Hello from express!</h1>'); 
+});
+
+// const server = http.createServer(app); ////app ---> é a constante que temos logo acima (sim, o expressJS, quando armazenado em uma CONST, fica com um formato parecido com o de um REQUESTHANDLER, parecido com um '(req, res) => {}')
+                    /////^^^^^SUBSTITUÍDO POR 'app.listen(3000)', assim como a linha logo abaixo....
+
+
+// server.listen(3000); ///resumido/substituído por 'app.listen(3000)', que age como shorthand disso... (É UMA FEATURE DO EXPRESS.).
+
+
+
+
+
+
+app.listen(3000); ///é um resumo/shorthand de 'const server = http.createServer(app);' e 'server.listen(3000)'...
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+
+
+OK.... OUTRA VANTAGEM DESSE 
+
+'app.listen(3000)'
+
+
+É QUE 
+PODEMOS 
+
+
+SIMPLESMENTE 
+
+
+REMOVER O IMPORT 
+
+DE 
+
+
+
+'const http = require('http')'
+
+QUE TEMOS 
+
+LÁ EM CIMA,
+
+
+
+JUSTAMENTE PQ ELE 
+JÁ É 
+
+UTILIZADO 
+
+
+
+NESSE 
+
+'app.listen(3000)'...
+
+
+
+
+--------------------------------
+
+
+OK,
+
+
+NOSSO CÓDIGO VAI FICAR ASSIM:
+
+
+
+
+
+
+// const http = require('http'); desnecessário, pois ESSE MÓDULO JÁ É 'IMPLÍCITO'/utilizado __ lá no EXPRESSJS, já está contido naquele MÉTODO '.listen(3000)' DE 'app' (que É O NOSSO APLICATIVO EXPRESSJS, no final das contas....)
+
+const express = require('express'); ///necessário.
+
+const app = express(); /////necessário.
+
+app.use((req, res, next) => {
+  console.log('test; IN THE MIDDLEWARE');
+
+  next(); /////EIS O CÓDIGO EM QUESTÃO. 'ALLOWS THE REQUEST TO REACH THE NEXT MIDDLEWARE IN LINE, WHICH IS THE MIDDLEWARE/APP.USE BELOW THIS ONE....'
+});
+
+app.use((req, res, next) => {
+  console.log('test2; IN ANOTHER MIDDLEWARE'); ///agora este código será alcançado...
+  res.send('<h1>Hello from express!</h1>'); ////o 'send()' já setta nos headers UM CONTENT-TYPE DE 'html/text' POR DEFAULT.. (e é claro que você pode OVERWRITTAR ESSE COMPORTAMENTO POR MEIO DE CÓDIGOS COMO  'setHead' e 'setHeader'...)
+});
+
+// const server = http.createServer(app); ////app ---> é a constante que temos logo acima (sim, o expressJS, quando armazenado em uma CONST, fica com um formato parecido com o de um REQUESTHANDLER, parecido com um '(req, res) => {}')
+                    /////^^^^^SUBSTITUÍDO POR 'app.listen(3000)', assim como a linha logo abaixo....
+
+
+// server.listen(3000); ///resumido/substituído por 'app.listen(3000)', que age como shorthand disso... (É UMA FEATURE DO EXPRESS.).
+
+
+
+
+
+
+app.listen(3000); ///é um resumo/shorthand de 'const server = http.createServer(app);' e 'server.listen(3000)'...
+                    ///também torna desnecessário o import de 'const http = require('http'), PQ ESES MÓDULO JÁ VEM COM esse método '.listen()' no nosso app EXPRESS..
+
+
+
+
+
+
+
+
+
+                    -------------------------------------------------------
+
+
+
+
+
+
+
+
+                  
+            
+
+
+OK, COM ISSO ENTENDEMOS O QUE EXATAMENTE FAZ O EXPRESSJS,
+
+e agora 
+
+compreendemos como ELE 
+
+
+NOS 
+
+DEIXA 
+ESCREVER 
+
+
+CÓDIGO MAIS ___LIMPO___, JUSTAMENTE 
+
+PQ 
+
+AGORA 
+
+TEMOS 
+
+UMA 
+
+'CLEARLY DEFINED STRUCTURE'... ---------> DEVEMOS 
+
+
+
+
+
+USAR AQUELE 'MIDDLEWARE FUNNEL' 
+
+e entaõ 
+
+
+
+
+__ ECONOMIZAMOS CODe____.....
+
+
+
+
+
+
+
+
+
+
+---> A PERGUNTA É:
+
+
+
+
+
+
+COMO PODEMOS AGORA 
+
+HANDLAR DIFERENTES ROUTES,
+
+
+como fazíamos antes(
+
+'
+if (url === '/') {
+
+}',
+
+
+etc....
+
+
+
+)? 
+
+
+
+
+
+
+-------> E, É CLARO, TAMBÉM SERIA LEGAL SE CONSEGUÍSSEMOS FAZER 
+
+'READ'
+ 
+ DOS INCOMING REQUESTS 
+
+ DE 
+
+ UMA MANEIRA MAIS FACILITADA... -------> 
+
+
+
+ VEREMOS 
+
+ ESSAS FEATURES AO LONGO DAS PRÓXIMAS AULAS..

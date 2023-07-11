@@ -1,0 +1,248 @@
+HORA DE UM RESUMO E CLEANUP
+
+
+
+
+
+
+
+
+
+
+
+
+--> ANTES DE MAIS NADA,
+
+DEVEMOS 
+
+'CLEANUP'...  ---> professor 
+
+
+vai apagar layouts 
+
+pq 
+
+ele 
+
+só vai 
+usar 
+
+'ejs'...
+
+
+
+
+
+
+-----> ele deleta 
+
+
+
+.hbs,
+
+.html e 
+
+
+.pug,
+
+
+PQ SÓ VAMOS USAR 
+
+
+'.ejs'...
+
+
+
+
+
+
+
+
+
+
+-----> PROFESSOR QUER ASSEGURAR QUE ENTENDEMOS 
+
+O 
+FLOW  
+
+
+COMO 
+
+A DATA 
+
+
+ENTRA NAS TEMPLATES,
+
+
+E TAMBÉM 
+
+
+O QUE AS TEMPLATING ENGINES FAZEM...
+
+
+
+
+------> PROFESSOR DIZ QUE NÓS 
+
+
+'DO RENDER A TEMPLATE'
+
+por meio 
+
+
+daquele 
+
+
+
+método 
+
+
+
+
+'res.render('nomeDoTemplatePageQueVocêQuer', {OBJETO COM A DATA QUE SERÁ ENFIADA NO TEMPLATE})'
+
+ 
+
+
+
+
+
+ ---> ESSE MÉTODO 'RENDER' VAI SEMPRE 
+
+
+ 'LOOK FOR' 
+
+
+ A 
+
+
+
+ VIEW ENGINE QUE 
+ NÓS REGISTRAMOS
+
+
+
+ no nosso projeto,
+
+ lá 
+
+ no INÍCIO,
+
+ NO 'APP.JS' (main file de nosso projeto)...
+
+
+
+
+
+
+
+ --> NO CASO, PROFESSOR DEIXOU REGISTRADA A TEMPLATING ENGINE 
+
+ do 
+
+ 'ejs',
+
+
+ POR MEIO DESSA LINHA DE CÓDIGO:
+
+
+
+ app.set('view engine', 'ejs');
+
+
+
+
+EX:
+
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express'); ///necessário.
+
+const bodyParser = require('body-parser');
+
+const expressHbs = require('express-handlebars');
+
+const app = express(); /////necessário.
+
+
+
+app.set('view engine', 'ejs'); ///ISTO AQUI É A SINTAXE DE IMPORT/INSTALL/IMPLEMENTAÇÃO DO EJS... --> sim, só isso já instala/implementa ele no seu código (bem mais simples do que o 'HANDLEBARS', pq é BUILTIN, exatamente como o PUG...)
+
+const adminData = require('./routes/admin');
+
+
+const shopRoutes = require('./routes/shop')
+
+
+
+------------------------------------------
+
+
+
+
+
+
+'VIEW ENGINE' --> É UMA CONFIGURATION KEY/PROPRIEDAE 
+
+
+USDA 
+
+PARA 
+
+DEFINIR QUAL TEMPLATING ENGINE USAREMOS/USAMOS...
+
+
+
+
+
+
+--> já a linha 
+
+'app.set('views', 'views')'
+
+
+
+É USADA 
+
+PARA 
+DEFNIR 
+
+
+O FOLDER 
+
+
+
+QUE DEVERÁ SER UTILIZADO PARA O RENDER DE VIEWS (é o folder em que as views ficam armazenadas/os templates ficam armazenados...)
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+OK..... COM ISSO,
+
+
+
+O
+ 
+
+
+ EXPRESSJS
+
+
+ vai 
+ chamar 

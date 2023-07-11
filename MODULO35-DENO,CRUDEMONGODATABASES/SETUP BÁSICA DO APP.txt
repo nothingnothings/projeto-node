@@ -1,0 +1,660 @@
+S
+
+
+
+
+
+
+
+
+--> PROFESSOR ANEXA FRONTEND ao nosso projeto,
+
+
+FRONTEND QUE SERÁ 
+
+CONECTADO 
+
+
+AO 
+
+
+
+NOSSO BACKEND... -_> é um BASIC REACT APP 
+que 
+
+
+
+
+ESTÁ PRONTO PARA CONVERSAR 
+
+
+COM 
+
+
+O NOSSO 
+
+
+DENO SERVE...
+
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE NÃO VAI 
+
+
+ESCREVER ESSE APP 'from scratch' 
+
+conosco,
+
+
+
+
+
+MAS QUE 
+
+
+PODEMOS 
+
+editá-lo por conta própria...
+
+
+
+
+
+
+
+
+
+
+-_> PARA COMEÇARMOS A USAR 
+
+
+ESSE 
+
+CÓDIGO,
+
+
+
+devoms 
+
+navegar até o extracted folder 
+
+
+E 
+
+AÍ 
+
+ENTRAR 
+
+
+
+NO 
+
+FOLDER DE 
+
+'src'.... ( 
+
+
+    ENTRAR NO FOLDER DE 'frontend-app',
+
+
+
+    E aí dentro do folder 'src', 
+
+
+
+
+
+
+    E AÍ __ RODAR 'npm install' (para instalar o react)
+    ,
+
+
+    E 
+
+    AÍ RODAR 
+
+    'npm start'
+
+    PARA 
+
+    INICIAR O NOSSO APP 
+
+    NA PORTA 3000, provavelmente..
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> What is useCallback used for?
+The useCallback hook is used when you have a 
+
+component in which the child is rerendering again and again without need.
+
+ Pass an inline callback and an array of dependencies. useCallback 
+ 
+ 
+ will return a memoized version of the callback that only changes if one 
+ 
+ 
+ of the dependencies has changed.
+
+
+
+
+
+
+
+
+
+
+
+---> pelo visto , professor está chamando esse 'useCallback'
+
+
+
+__ DE DENTRO___ DE 'useEffect()'...
+
+
+
+
+
+
+
+
+useCallback()
+useCallback() often is used in conjunction with useEffect() because it allows you to prevent the re-creation of a function. For this, it's important to understand that functions are just objects in JavaScript.
+
+
+
+
+
+
+
+
+
+
+
+
+
+OK... FIZ O SETUP DE TODO O CÓDIGO FRONTEND...
+
+
+
+
+
+
+há um trecho curioso com 
+
+
+'useCallback'
+
+
+e 
+
+'useEffect'..
+
+
+
+
+
+
+
+
+Could not find a required file.
+  Name: index.js
+  Searched in: A:\projeto4 - NODEJS\MODULO35-DENO,CRUDEMONGODATABASES\NOVOPROJETODENO,FRONTEND\src
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> OK... AGORA AJEITEI O LAYOUT DO FRONTENd...
+
+
+
+
+
+
+
+
+
+  --> ERRO:
+
+
+
+  Module not found: Can't resolve './components/Todos' in 'A:\projeto4 - NODEJS\MODULO35-DENO,CRUDEMONGODATABASES\NOVOPROJETODENO,FRONTEND\src'
+
+
+
+
+
+
+
+
+
+
+
+  --> acho que naõ exportei esse negócio...
+
+
+
+
+
+
+
+
+
+
+
+
+  --> FUNCIONOU, bem rapidinho....
+
+
+
+
+
+
+
+
+  --------------------
+
+
+
+
+
+  AGORA 
+
+  SÓ TENHO QUE VER A AULA DO PROFESSOR...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --> ELE RODA NPM INSTALL, INSTALA DEPENDENCIAS, YADDA YADDA...
+
+
+
+
+
+
+
+
+
+  -> DEV-ONLY SERVER PARA ESSE FRONTEND APP....
+
+
+
+
+
+
+
+
+
+  ---> É O MESMO PADRÃO QUE USAMOS NOS MÓDULOS DE 'REST API/GRAPHQL' do curso...
+
+
+
+
+
+
+
+
+
+
+  ---> OK..
+   
+
+
+   temos esse 
+
+   react app,
+
+
+   que vamos tentar 
+
+   COMUNICAR AO NOSSO 
+
+   SERVER DENO...
+
+
+
+
+
+
+
+
+   --> MAS O SERVER DENO AINDA NÃO ESTÁ RODNADO,
+
+
+   POR ISSO 
+
+   ESTAMOS RECEBENDO UNS ERRORS NO CONSOLE...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> DEVEMOS DEIXAR ESSE FRONTEND RODANDO E DEVEMOS INICIAR 
+
+
+
+   NOSSO 
+
+
+   PROJETO 
+
+
+   'deno'...S
+
+
+
+
+
+
+
+
+
+   --> rode o deno app 
+
+   com 
+
+
+
+
+   'deno run --allow-net app.ts'... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> CERTO.. FUNCIONOU...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> AGORA VAMOS QUERER USAR 
+
+
+
+   O NOSSO FRONTEND, TEORICAMENTE... 
+
+
+
+
+
+
+
+
+
+
+
+
+   --> ainda estamos recebendo aquele error de 
+
+
+
+
+   VM103:1 Uncaught (in promise) SyntaxError: Unexpected token < in JSON at position 0
+
+
+
+
+
+
+
+
+
+
+
+   --> A RAZÃO PARA ISSO É QUE 
+
+
+
+   LÁ NO REACT APP TEMOS QUE 
+
+   FAZER 
+
+
+
+   UM PEQUENO AJUSTE... --> 
+
+
+
+   lá em 'components',
+
+
+   'Todo.js',
+
+
+
+   ENCONTRAMOS UM MONTE DE URLS..
+
+
+
+
+
+
+
+
+   --> E TODAS ESSAS URLS ESTÃO APONTANDO A 'localhost:3000', em vez de 'localhost:8080' (endereço de nosso backend)...
+
+
+
+
+
+
+
+   ------> TROQUEI ISSO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   --> AGORA ESTAMOS RECEBENDO __ OUTRO _ ERRO....
+
+
+
+
+
+
+
+
+   --> ERRO DE 'CORS'...
+
+
+
+
+
+
+
+   localhost/:1 Access to fetch at 'http://localhost:8080/todos' from origin 
+   
+   
+   'http://localhost:3000' has been blocked by CORS policy: Response to
+   
+   
+    preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin'
+    
+    
+     header is present on the requested resource. If an opaque response serves your needs, set 
+     
+     the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> PARA CONSERTAR ESSE ERRO ,DEVEMOS SABER O QUE É O 'CORS',
+
+e eu já sei, + ou - ---> 
+
+
+
+
+
+
+LÁ NO EXPRESS,
+
+TEMOS AQUELE 
+
+
+
+
+
+código 
+
+que consertava esse problema:
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, PATCH, GET, POST, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if(req.method === 'OPTIONS') {
+    return res.sendStatus(200); ////USAMOS ISTO APENAS __ EM PROJETOS COM 'GRAPHQL' ativado no backend... --> isso vai fazer com que OS REQUESTS DE TIPO 'OPTIONS' (disparados AUTOMATICAMENTE POR NOSSOS BROWSERS) NUNCA __ ATINJAM__ A ENDPOINT ÚNICA DO GRAPHQL (que é o que queremos, na verdade).... ---> isso evita um ERRO 405, no uso do graphql...
+  }
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+-_> SERIA BOM SE TIVÉSSEMOS ESSE CÓDIGO NO 'DENO OAk'
+
+
+
+
+, no caso....
+
+
+
+
+
+
+
+
+
+
+
+
+--> certo...
+
+
+
+
+
+
+--> PROFESSOR VAI DAR UM REFRESHER DO CORS....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----->

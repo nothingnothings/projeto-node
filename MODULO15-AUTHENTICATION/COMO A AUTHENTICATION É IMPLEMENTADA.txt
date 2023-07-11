@@ -1,0 +1,664 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----> COMO É IMPLEMENTADA A AUTHENTICATIOn?
+
+
+
+
+
+
+
+
+
+
+--> BEM, TEMOS O MESMO SETUP DE ANTES,
+
+
+
+
+
+EX:
+
+
+
+
+| User | 
+
+
+
+
+
+
+
+
+
+| sERVER |
+    |
+    V 
+| Database |
+
+
+
+
+
+
+
+----------------------
+
+
+
+
+
+
+
+
+
+
+TEMOS O USER,
+
+
+
+NOSSO BACKEND (server + database),
+
+
+
+
+
+
+
+
+tudo certO...
+
+
+
+
+
+
+
+
+
+
+
+------> AÍ, TIPICAMENTE,
+
+
+O 
+
+
+USER 
+VAI 
+
+
+
+ENVIAR 1 
+
+
+
+'LOGIN REQUEST'...
+
+
+
+
+
+
+
+
+
+ex:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+| User | 
+
+
+|
+|login
+|request
+|
+|
+|
+V
+
+
+| sERVER |
+    |
+    V 
+| Database |
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+É CLARO QUE PARA QUE EXISTA 1 
+
+
+'LOGIN REQUEST',
+
+
+É NECESSÁRIO QUE ESSE USER/VISITANTE DE NOSSA 
+
+PAGE 
+
+
+__JÁ _ ESTEJA 
+
+'SIGNEDUP'... ------>  MAS 
+
+
+
+
+DEPOIS DO SIGNUP,
+
+é claro que podemos SIGNIN...  -------> E AÍ,
+
+
+
+
+NO SERVER,
+
+
+
+_VAMOS _ CHECAr__ 
+
+
+SE 
+
+
+
+
+______ESSA COMBINAÇÃO__ DE 
+
+
+
+'EMAIL + PASSWORD'
+
+
+
+É __ VÁLIDA,
+
+
+VAMOS CHECAR__ 
+
+
+
+SE ________ TEMOS 
+
+
+1 
+
+USER 
+
+COM 
+
+
+ESSE 
+
+EMAIL 
+
+
+E 
+
+ESSE 
+
+PASSWORD 
+
+
+
+___ARMAZENADO __ LÁ 
+
+NA NOSSA DATABASe...  ------------->
+
+
+
+
+
+
+
+
+SE ESSE FOR O CASO,
+
+
+
+VAMOS QUERER CRIAR 1 ___SESSION__ PARA 
+
+ESSE 
+
+
+
+USER... (
+
+
+    e essa 
+
+    session é 
+
+
+    ARMAZENADA EM UMA __ COLLECTION __ A PARTE, LÁ NA NOSSA DATABASE...
+)
+
+
+
+
+
+
+
+
+
+---> E APRENDEMOS SOBRE COMO O 'CREATE' DESSA SESSION FUNCIONA __ LÁ NO ÚLTIMO MÓDULO:
+
+
+
+A) é CRIADO 1 'SESSION' lá na collection de 'sessions' na nossa database, por meio de middlewares como 'express-session'... (acompanhados de packages como 'connect-mongodb-session')
+
+
+
+
+
+B) ___ É __ CRIADO/POSICIONADO 1 'cookie de session' LÁ NO BROWSER DO USER, que O IDENTIFICARÁ COMO PERTENCENTE/VINCULADO __ A ESSA SESSION__ QUE TEMOS NA NOSSA DATABASE... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ESSA SESSION (no SERVER), JUNTO DO 'COOKIE DA SESSION', no browser do user,
+
+
+
+__ VÃO __ IDENTIFICAR ESSE USER... -------> ISSO É NECESSÁRIO PQ 
+
+
+
+
+CASO CONTRÁRIO, __ SEM 1 SESSION (na database, acompanhada do Cookie da session, no browser do user), 
+
+
+__ MESMO __ SE DESCOBRÍSSEMOS QUE 
+
+AS 
+
+CREDENTIALS SÃO 'VALID',
+
+
+
+
+O USER 
+
+
+ACABARIA 
+
+'LOGGED OUT' 
+
+
+
+___ JÁ __ NO PRÓXIMO REQUEST__ (ou seja, NA PRÓXIMA PAGE que ele visitasse, já teria outro request) QUE 
+
+
+ELE 
+
+ENVIASSE 
+
+
+AO NOSSO SERVER... -------> ISSO PQ __VOCÊ 
+
+
+TEM QUE __ SE LEMBRAR ___ QUE 
+
+
+
+
+
+_______REQUESTS___ INTERAGEM  _________ COM NOSSO SERVER DE FORMA ___ SEPARADA, SÃO 
+
+AUTÔNOMOS E NAÕ INTERAGEM 1 COM O OUTRO (requests NÃO SE COMUNICAM, não sabem nada 1 sobre o outro)... 
+
+
+
+
+
+
+
+
+
+-----> __ POR OS REQUESTS SEREM 'INDEPENDENTES'/AUTÔNOMOS,
+
+PRECISAMOS __ DE UMA 
+
+
+__________SESSION_______ PARA ___ OS CONECTAR,
+
+
+CONECTAR OS REQUESTS __ VINDOS DE 1 MESMO USER... -------> E É EXATAMENTE 
+
+POR ISSO  
+
+
+QUE 
+
+CRÍAMOS 
+
+
+
+
+
+1 SESSION POR MEIO DA INFORMAÇÃO 
+
+
+
+DO 
+
+
+'USER'/AUTH INFORMATION... ------>  OK........  A PARTIR 
+
+
+
+DO LOGIN REQUEST 
+
+
+E 
+
+
+
+A OPERAÇÃO 
+
+
+
+
+DE PROCESSAMENTO/CRIAÇÃO 
+
+DESSA 
+
+
+SESSION, 
+
+LÁ 
+
+
+
+NA DATABASE/SERVER,
+
+
+
+
+
+__ENVIAMOS UMA RESPONSE AO USER,
+
+RESPONSE 
+
+
+DE 
+
+CÓDIGO 
+
+200,
+
+ 
+
+
+ BASICAMENTE UMA SUCCESS RESPONSE,
+
+
+
+
+
+ E AÍ __ OBVIAMENTE VAMOS ARMAZENAR AQUELE COOKIE 'belonging to the session',
+ lá 
+
+
+ NO CLIENT... -------> FAZEMOS ISSO PARA QUE REALMENTE SEJA ESTABELECIDA 
+
+ A 
+
+ 'SESSION'...
+
+
+(armazenado o SESSION ID do user, altamente criptografado, __ DENTRO __ DO 'cookie da session', no seu browser... --> é isso que vai IDENTIFICAR/correlacionar o USER com a SESSION armazenada na database, que tem aquele '._id' PURO, sem ser hasheado como o 'id' ARMAZENADO NO 'cookie da session'....)
+
+
+
+
+
+
+ --------> OK... DEPOIS DISSO,
+
+
+
+
+
+
+_O  USER__ REALMENTE__ SE TORNA ___ CAPAZ__ DE 
+
+
+
+
+VISITAR_ _NOSSAS 'RESTRICTED ROUTES',
+
+
+
+
+
+ISSO 
+
+
+PQ 
+
+
+
+
+ESSE COOKIE 
+
+(que pode ser permanent/session, sua natureza, dependendo do que settamos) 
+
+
+
+AGORA
+
+
+
+SERÁ 
+
+ENVIADO 
+
+
+
+
+_____ EM TODO E CADA REQUEST__ AO NOSSO SERVER,
+
+
+
+
+
+
+E NO SERVER PODEOMS 
+
+
+
+
+CONECTAR ESSE COOKIE A UMA SESSION,
+
+
+
+E AÍ 
+
+
+
+__NA SESSION (sua presença/ausência)
+
+
+
+
+
+NA COLLECTION DE 'SESSIONS'
+
+___ NÓS TEMOS 
+
+A 
+
+INFORMATION 
+
+
+
+SE 
+
+AQUELE 
+
+USER 
+
+ESTÁ 
+
+
+'SIGNED IN' OU NÃO...
+
+
+
+
+
+
+
+
+---------> E SE O USER ESTÁ SIGNED IN,
+
+PODEMOS GARANTIR ACESSO A ALGUNS 
+
+RECURSOS... ----->   E É ___ASSIM QUE __ 
+
+
+
+
+AUTHENTICATION É IMPLEMENTADA ________ EM QUALQUER WEBAPP __ QUE 
+
+
+RENDERIZE 
+
+
+'VIEWS'...- -------> VAMOS APRENDER 
+
+
+
+
+
+UMA ___MANEIRA__ DIFERENTE DE 
+
+'ADD AUTHENTICATION'
+
+mais tarde,
+
+
+
+QUANDO APRENDERMOS 
+
+SOBRE 
+
+
+
+
+
+REST APIs 
+
+e 
+
+
+'GRAPHQL APIs'..
+
+
+
+
+
+
+
+
+
+
+
+
+--> MAS PARA 1 
+
+WEBAPP 
+
+TRADICIONAL,
+
+
+
+como esse que estamos construindo aqui
+,
+
+
+
+
+APP 
+
+
+EM QUE 
+
+
+
+__REALMENTE_ RENDERIZAMOS 
+
+
+EJS/HANDLEBARS/PUG/templating ENGINES,
+
+
+
+
+
+
+
+_______ APPS EM QUE RENDERIZAMOS VIEWS,
+
+
+
+AÍ REALMENTE 
+
+
+
+VAMOS USAR 
+
+
+ESSE APPROACH 
+
+DE 
+
+AUTHENTICATION 
+
+'SESSION-BASED'...

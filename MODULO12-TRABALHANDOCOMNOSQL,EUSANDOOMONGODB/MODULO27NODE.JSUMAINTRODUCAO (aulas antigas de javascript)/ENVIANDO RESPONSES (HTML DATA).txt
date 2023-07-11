@@ -1,0 +1,374 @@
+E É CLARO QUE TEMOS INTERESSE EM MANDAR DE VOLTA 'HTML DATA'... (por meio da response)...
+
+
+
+ISSO SERIA ÓTIMO, NA VERDADE....
+
+
+
+
+
+
+---> E É CLARO QUE PODEMOS FAZER ISSO...
+
+
+
+
+Podemos fazer isso na linha de código 
+
+
+
+'response.write' dentro da config/definição do servidor....
+
+
+
+
+ex:
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { 
+    response.write(); ////AQUI...
+    response.end();
+});
+
+
+
+server.listen(3000);
+
+
+
+-------------------------------------------------
+
+
+
+
+pq 'response.write()' É EXATAMENTE O LOCAL DO CÓDIGO DO NOSSO SERVIDOR EM QUE ESCREVEMOS 
+
+A NOSSA RESPONSE...
+
+
+
+NÓS poderíamos, por exemplo, usar/escrever HTML ali...
+
+
+ex:
+
+
+
+response.write('<h1>Hello there</h1>');
+
+
+
+-----------------------------------------
+
+
+
+
+
+Entretanto, se nós fizermos isso, há 2 coisas que devemos ter em mente:
+
+
+
+1) NÓS DEVEMOS AGORA __QUITTAR___ O SERVIDOR... quitar e o restartar... (devemos fazer Isso
+PQ ALTERAMOS ARQUIVOS.... o 'ongoing proccess' ainda continua, mas ele executa seu código com base NOS ARQUIVOS VELHOS...)
+
+--> Devemos reiniciar esse servidor, durante o desenvolvimento...
+
+
+
+----> E É CLARO QUE DEPOIS, MAIS TARDE, QUANDO VOCÊ TIVER FEITO 'DEPLOY' DO SEU SERVIDOR, 
+
+SE VOCÊ MUDAR ALGUMA COISA NO CÓDIGO  E ENTÃO QUISER  QUE ESSE CÓDIGO TENHA UM __eFEITO__ NO 
+
+SERVIDOR, após ter uploadado o 'arquivo server' ao servidor, você DEVERÁ QUITAR O SERVIDOR E ENTÃO RESTARTÁ-Lo...
+
+(isso significa que DEPOIS DE VOCÊ UPLOADAR SEU ARQUIVO SERVIDOR À CLOUD/MACHINE, VOCÊ TERÁ 
+de REINICIAR O SERVIDOR QUE RODA NESSA MÁQUINA/CLOUD...)
+
+
+
+Essa é a primeira coisa...
+
+
+
+
+2) O outro problema é o resultado do HTML....
+
+
+Se você executar nosso código dnv, dessa vez com o html, VOCÊ 
+
+
+VERÁ QUE O CÓDIGO DAQUELA HTML TAG ESTÁ SENDO, de fato, 'DISPLAYADO' corretamente (é uma H1 TAG...)
+
+
+
+MAS SE NÓS ABRIRMOS O 'DEV TOOLS' E ENTÃO NAVEGARMOS ATÉ A ABA 'NETWORK' 
+ 
+e então RECARREGARMOS A PÁGINA, se examinarmos 
+
+
+a seção 'HEADERS' no devtools e ANALIASRMOS os headers que foram 
+
+mandados como PARTE DA RESPONSE ENVIADA PELO SERVIDOR, 
+
+
+
+VEREMOS QUE __NÃO ___ EXISTIRÁ ___ NADA ALI...
+
+
+
+---> esses RESPONSE HEADERS __NÃO DIZEM NADA ___ ACERCA __ DO TIPO DE 'data' __ QUE 
+
+ESSA data é....  ---> O BROWSER AQUI, NA VERDADE, CONSEGUE 
+
+RENDERIZAR ESSA HTML CORRETAMENTE, consegue renderizar isso como HTML NO DOM, 
+
+MAS ISSO não é algo QUE DEVEMOS 'TAKE FOR GRANTED'... -----------> ESSA É UMA 
+
+'SMART GUESS' POR PARTE DO BROWSER, AQUI, pq ele vê 
+QUE NOSSO CONTEÚDO __"""PARECE""""___ CONTER ALGUM HTML ---------> NEM TODOS 
+OS BROWSERS NECESSARIAMENTE FAZEM ISSO...
+
+
+-----> EM VEZ DE DEIXAR ISSO 'LARGADO', É UMA BOA PRÁTICA, E __MUITO IMPORTANTE__, DEFINIR 
+
+UM 'EXTRA HEADER'; OU SEJA, ADICIONAR UM 
+
+
+EXTRA HEADER, BASICAMENTE UMA 'METADATA EXTRA', À RESPONSE HEADEr quando você 
+estiver ENVIANDO ESSA RESPONSE DE VOLTA ao browser... devemos fazer isso 
+
+PQ ESSA "METADATA EXTRA", esse EXTRA HEADER, VAI COMUNICAR AO BROWSER QUAL TIPO 
+
+DE 'DATA' ESTARÁ ANEXADA (attached).... pq esse header é o que vai dizer/informar ao 
+browser o que ele deverá FAZER COM ESSES DADOS, qual 'course of action' tomar....
+---> se fazemos isso, deixamos 
+
+de depender desses 'smart guesses'...
+
+
+
+------------------------------
+
+
+
+
+BEM, NÓS JÁ TRABALHAMOS COM 'HEADERS' ANTES; CONTUDO, ANTES NÓS 
+
+TRABALHAMOS COM HEADERS SENDO ANEXADOS NO ___CLIENTSIDE____... era no clientside 
+javascript que 
+
+estávamos anexando os headers... os anexávamos aos http requests enviados pelo clientside 
+javascript...
+
+
+esses http requests eram então enviados a um BACKEND....
+
+
+
+
+BEM, AGORA NÓS ESTAMOS CRIANDO JUSTAMENTE ESSE 'BACKEND'...
+
+
+
+
+OS HEADERS QUE COLOCÁVAMOS NOS 'OUTGOING REQUESTS' do clientside eram coisas 
+
+
+como 
+
+
+'content-type' dos dados,
+
+
+ etc etc.....
+
+
+
+
+
+
+AGORA PRECISAMOS FAZER A MESMA COISA, MAS NO CAMINHO INVERSO:
+
+PRECISAMOS SETTAR HEADERS NÃO NO CLIENTSIDE JAVASCRIPT, E SIM 
+
+no __SERVERSIDE___......
+
+
+
+
+
+
+
+E REALMENTE PODEMOS FAZER ISSO...
+
+
+
+no objeto 'response',
+
+
+TEMOS UM MÉTODO CHAMADO DE 
+
+
+'setHeader()'....
+
+---------------------------------
+
+
+
+SETHEADER EXIGE ___DOIS ARGUMENTOS___ 
+
+
+
+
+1o argumento ----> É O 'HEADER IDENTIFIER'...  (ou seja, o HEADER EM SI...)
+
+
+
+2o argumento ----> É O VALOR PARA ESSE 'HEADER'...
+
+
+
+----------------------------------
+
+
+
+
+response.setHeader(name, value)#
+Added in: v0.4.0
+name <string>
+value <any>
+Returns: <http.ServerResponse>
+Returns the response object.
+
+Sets a single header value for implicit headers. If this header already exists in the to-be-sent headers, its value will be replaced. Use an array of strings here to send multiple headers with the same name. Non-string values will be stored without modification. Therefore, response.getHeader() may return non-string values. However, the non-string values will be converted to strings for network transmission. The same response object is returned to the caller, to enable call chaining.
+
+
+
+-----------------------------------------------------------------
+
+
+
+
+PORTANTO, PARA O PRIMEIRO ARGUMENTO GERALMENTE DEFINIMOS COISAS COMO 
+
+'Content-Type' ----> trabalhamos com isso anteriormente no CLIENTSIDE JAVASCRIPT...
+
+
+Isso é um HEADER diz ao browser o TIPO DE CONTEÚDO QUE QUEREMOS ENVIAR POR MEIO DESSA RESPONSE...
+
+
+
+
+
+PARA O SEGUNDO ARGUMENTO, COLOCAMOS ___o VALOR___ QUE QUEREMOS DEFINIR COMO SENDO O 
+DO PRIMEIRO PARÂMETRO...
+
+
+
+
+Como o nosso parâmetro é o 'content-type', aqui VAMOS QUERER DEFINIR 
+
+O SEGUNDO PARÂMETRO COMO 
+
+
+'text/html', pois vamos querer enviar aquele código '<h1>Hello there</h1>'
+
+
+
+
+AOS BROWSERS, por meio do servidor...
+
+
+
+
+
+'text/html' ----> É O 'STANDARDIZED IDENTIFIER' PARA DIZER 'Hey, nós temos dados HTML TEXT... anexados 
+à OUTGOING RESPONSE...' ---- isso SIGNIFICA QUE ESSA RESPONSE 
+
+DE FATO É UM ___TEXT__, É UMA STRING, mas É ___HTML__ QUE ESTÁ DENTRO DESSE TEXTO/STRING.......
+
+
+
+
+uma alternativa a 'text/html' SERIA 
+
+
+'text/plain'... -----------> ISSO VAI DIZER AO BROWSER QUE ELE NÃO DEVERÁ PARSEAR ESSA RESPONSE COMO 'html comum'; ISSO DIRÁ A ELE QUE ESSE CONTEÚDO DEVE SER RENDERIZADO __COMO__ 'PLAIN TEXT'... (ou seja, ELE DEVERÁ OUTPUTTAR o código html COMO UMA STRINg na página do browser...)
+
+
+
+
+
+
+EX:
+
+
+
+
+
+const http = require('http');
+
+
+
+
+
+const server = http.createServer((request, response) => { ///////DEFINE O SERVIDOR
+    //response.setHeader('Content-Type', 'text/plain'); //USADO PARA OUTPUTTAR O 'HTML' como simples texto na página do browser (não há conversão, nesse caso, da escrita HTML em elementos da página.... a escrita html é simplesmente mostrada como texto na página do browser...)
+    response.setHeader('Content-Type', 'text/html');
+    response.write('hello there!');
+    response.end();
+});
+
+
+
+server.listen(3000); //////EXECUTA O SERVIDOR.
+
+
+
+----------------------------------
+
+
+
+
+
+SE USARMOS A ALTERNATIVA DO 'text/plain', O CÓDIGO HTML 
+
+
+SERÁ MOSTRADO COMO TEXTO NA NOSSA PÁGINA....
+
+
+---> isso acontece pq o BROWSER NÃO VAI TENTAR 'ADIVINHAR' QUAL O TIPO 
+DE DADOS QUE ESTAMOS ENVIANDO POR MEIO DA RESPONSE... ele vai saber, por meio 
+do HEADER definido por 'setHeader()' no nosso arquivo 'app.js', QUE 
+
+ELE DEVERÁ LER A RESPONSE QUE FORA RECEBIDA POR ELE ___COMO SE FOSSE 'SIMPLES TEXTO' (plain text).
+
+
+
+
+
+-----> É isso que faz o browser 'displayar' O TEXTO HTML COMO SIMPLES TEXTO, COMO UMA STRING NA PÁGINA...
+
+
+
+
+---> entretanto, devemos alterar para 'text/html', pois queremos que o conteúdo HTML 
+
+seja renderizado na página... porém, esses headers sempre devem ser colocados, pois 
+fazem com que o browser evite ''ADIVINHAR'' O TIPO DE DADOS QUE ELE RECEBERÁ...
+
+
+
+--------------------------------------------------------------------------
+
+
+
+

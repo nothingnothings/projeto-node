@@ -1,0 +1,420 @@
+
+
+
+
+
+
+POR QUE VALIDAR O INPUT? 
+
+
+
+
+
+
+
+
+
+
+--> PQ DIABOS GOSTARÍAMOS __ DE ADICIONAR DATA/INPUT __ VALIDATION ___ 
+
+
+
+NO NOSSO APLICATIVO? 
+
+
+
+
+
+
+
+
+
+----> BEM, SE NÓS TIVERMOS/TEMOS 1 USER 
+
+INTERAGINDO COM NOSSO APP,
+
+
+
+
+
+TIPICAMENTE __ TEREMOS 1 MONTE DE 'FORMS',
+
+
+não interessa o tipo de webapp que estivermos construindo...
+
+
+
+
+
+
+
+
+
+------> NO NOSSO PROJETO EXEMPLO,
+
+
+
+NÓS TÍNHAMOS/TEMOS 1 FORM PARA O SIGNUP,
+
+
+
+OUTRA PARA O SIGNIN,
+
+
+e outra 
+
+
+
+para o ADD DE PRODUCTS...
+
+
+
+
+
+
+
+
+
+------> E MAIOR O APP, 
+
+
+
+
+MAIOR A QUANTIDADE DE DATA QUE VOCÊ PRECISARÁ 
+
+DE 
+
+SEUS 
+
+USERS, EM CERTO PONTO....
+
+
+
+
+
+
+
+-----> POR ISSO TEMOS ESSA FORM, FORM PELA QUAL O USER INTERAGE..
+
+
+
+
+
+
+
+
+
+
+-----> NO FINAL DAS CONTAS,
+
+QUANDO ESSE FORM É 'SUBMITTED',
+
+por meio 
+
+de um POST REQUEST (como controlamos nas nossas forms),
+
+
+
+
+
+AÍ __ UM REQUEST__ É ENVIADO AO NOSSO BACKEND... -------> 
+
+
+
+
+
+
+BTW::: VOCê TAMBÉM PODE __ CONFIGURAR __ SUA FORM PARA 
+
+ELA ENVIAR 1 GET REQUEST,
+
+
+
+MAS _ A COISA 'KEY' aqui é 
+
+
+QUE 
+
+
+
+1 
+REQUEST COM A 'FORM DATA'
+
+É 
+
+REALMENTE 
+
+ENVIADO... -----------> E NÓS JÁ 
+
+
+
+
+ESTAMOS FAZENDO/JÁ FIZEMOS ISSO NO NOSSO WEBAPP,
+
+
+PQ 
+
+ISSO 
+
+É 
+
+UMA __ TASK ___ CRUCIAL EM QUALQUER WEB APP... ------> 
+
+
+
+
+
+
+
+
+
+
+
+
+OK.... LÁ NO NOSSO BACKEND (código nodejs),
+
+
+
+NÓS TIPICAMENTE 
+
+INTERAGIMOS 
+
+
+
+COM UMA __ DATABASE__.... ----> OU, ENTAÕ ,
+
+
+
+
+FAZEMOS WRITE DA DATA EM UMA 'NORMAL FILE'
+
+
+no nosso backend... ( o que é ruim...) -----> MAS NO FINAL DAS CONTAS,
+
+
+O QUE INTERESSA É 
+QUE 
+
+
+
+NÓS 
+
+'TAKE THAT DATA WE WANT TO RECEIVE'
+
+
+e ENTAÕ 
+
+
+__A ARMAZENAMOS__...
+
+
+
+
+
+
+
+
+-------> BEM... E ESSA É EXATAMENTE A PARTE QUE PODE SER PERIGOSA/PROBLEMÁTICA.... --------> 
+
+
+
+
+
+
+AGORA, NO APP, 
+
+NÃO TEMOS 
+
+NENHUM TIPO DE 'DATA VALIDATION'... --> isso significa que 
+
+
+
+SE UM USER TENTASSE FAZER LOGIN COM ALGO QUE ___ NÃO É UM _ 
+'VALID EMAIL ADDRESS',
+
+
+
+
+
+NÓS DEIXARÍAMOS ISSO,
+
+
+NÃO 
+
+
+
+CRIARÍAMOS PROBLEMAS nesse aspecto.. ------> NÓS NÃO 
+
+
+
+PREVENIRÍAMOS 
+
+
+__O INPUT DE ALGO __ INCORRETO__ PELO USER... ------> A MESMA COISA SE APLICA 
+
+
+PARA O 
+
+
+
+'ADD A PRODUCT' ------> NÓS NÃO ESTAMOS NOS IMPORTANDO COM A COISA QUE 
+
+
+O USER 
+
+INPUTTA,
+
+
+
+
+
+E ISSO É 
+
+
+
+
+
+ALGO QUE O PROFESSOR QUER MUDAR NESSE MÓDULO... -----> 
+
+
+
+
+
+
+
+
+
+
+
+
+professor VAI QUERER __ ADICIONAR ALGUMA VALIDATION __ COMO 
+
+UMA 
+
+'EXTRA STEP',
+
+
+
+
+EXTRA STEP QUE 
+
+__SERÁ __ 
+
+
+EXECUTADA ___ BEM NO INÍCIO ___ 
+
+
+
+
+DO NOSSO 
+
+'NODEJS CODE',
+
+
+
+
+OU __ SEJA,___ 
+
+
+
+
+BEM NO INÍCIO, 
+
+QUANDO 
+
+NÓS 
+
+
+
+FAZEMOS O _HANDLE__ 
+
+DE UM 
+
+
+REQUEST (do user)
+
+LÁ 
+
+
+NO NOSSO SERVER/BACKEND (app.js)....
+
+
+
+
+
+
+
+
+
+
+--------> VAMOS FAZER ESSA VERIFICAÇÃO/VALIDAÇÃO __ BEM NO INÍCIO,
+
+
+
+_____ PARA SÓ DEPOIS, BEM MAIS TARDE,
+
+ARMAZENAR 
+
+
+ESSE VALOR INPUTTADO __ PELO USER___ EM 
+
+
+1 DATABASE... ------> E ESSA VALIDATION 
+
+
+
+
+
+PODE ___ OU __:
+
+
+
+
+
+1) SER BEM SUCEDIDA E DEIXAR A DATA __ SER ESCRITA NA DATABASE... (ou a um file, ou então HANDLED BY THE REST OF OUR NODE CODE)
+
+
+
+
+
+
+
+
+2) __SER__ REJEITADA, REJEITAR O INPUT,
+
+
+
+
+___ E AÍ __ RETORNAR ALGUMA INFO AO USER __ PEDINDO QUE __ ELE 
+
+
+__CORRIJA __ O ERRO_  E TENTE DE NOVO...
+
+
+
+
+
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+--> OK, É ISSO QUE VEREMOS NESSE MÓDULO,
+
+
+
+
+VAMOS VER _ COMO _ FAZER 'VALIDATE' 
+
+E 
+
+COMO 
+
+
+PROVIDENCIAR __UMA BOA USER EXPERIENCE...

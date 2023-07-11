@@ -1,0 +1,810 @@
+
+
+
+
+
+
+
+
+
+
+---> de volta ao nosso projeto,
+
+DEVEMOS INSTALAR/ADICIONAR EXPRESS.JS 
+
+A ELE...
+
+
+
+
+
+
+
+
+
+--> PROFESSOR EXPLICA QUE PODERÍAMOS SÓ CRIAR UM NOVO PROJETO,
+
+
+
+
+
+___ MAS ASSEGURE-SE DE QUE 
+
+O NODEMON 
+
+
+
+ESTÁ INSTALADO NESSE NOVO PROJETO...
+
+
+
+
+
+
+----> MAS O PROFESSOR VAI SE LIVRAR DO 
+
+ARQUIVO 
+
+'routes.js',
+
+
+
+
+PQ 
+
+
+ELE VAI QUERER CRIAR UM APP NOVO, BASICAMENTE...
+ (faremos o mesmo)...
+
+
+
+
+
+
+
+
+
+
+
+ ------------> OK, RODAMOS 
+
+
+ 'npm init', para 
+
+ conseguir o 'package.json',
+
+
+ E AÍ INSTALAMOS O NODEMON...
+
+
+
+
+
+
+
+
+ ---> vamos querer o mesmo setup do último projeto, na verdade...
+
+
+
+
+
+
+
+ certo... adicionei aquele folder 
+
+ de 
+ '.vscode' 
+
+ com o 
+
+ 'launch.json' tbm....
+
+
+
+
+
+
+
+ ------> ADICIONALMENTE,
+
+
+ VAMOS INSTALAR O EXPRESS.JS 
+
+ por meio do código 
+
+ 'npm install --save express'...
+
+
+
+
+
+
+
+
+
+
+ --> NÃO VAMOS ADICIONAR 'dev'
+
+ nesse comando pq 
+
+ O EXPRESS É UMA 'PRODUCTION DEPENDENCY'...
+
+
+
+
+
+
+
+
+ ----------> VAMOS USAR O EXPRESS COMO PARTE INTEGRAL DO APP QUE VAMOS SHIPPAR,
+
+
+
+ por isso ele faz parte do pRODUCTION CODE;
+
+ ELE PRECISA 
+
+ FAZER 
+ PARTE 
+
+ 
+
+
+ DO COMPUTADOR/SERVER QUALQUER EM QUE 
+
+ VAMOS QUERER 
+
+ 'RUN OUR APPLICATIOn',
+
+ quando a deployarmos...
+
+
+
+
+
+
+
+
+ -----> em outras palavras: o EXPRESS.JS É UMA 'MAJOR PIECE'
+
+ de nosso app...
+
+
+
+
+
+
+
+ ----------> ok.......... instalamo-no...
+
+
+
+
+
+
+
+ npm install --save express
+
+
+
+
+
+
+ -------------------------------
+
+
+
+
+ AGORA PODEMOS COMEÇAR A USAR ESSE PACKAGE...
+
+
+
+
+
+ --> PARA O UTILIZAR, PROFESSOR VAI ATÉ NOSSO ARQUIVO 
+
+ 'app.js'
+
+
+ E ENTÃO 
+
+
+
+
+
+
+
+ ELE VAI IMPORTÁ-LO....
+
+
+
+
+
+
+
+ --> escrve:
+
+
+
+
+
+ const express = require('express');
+
+
+
+
+
+ --------------------------------
+
+
+
+
+ VAI FICAR ASSIM:
+
+
+
+
+const http = require('http');
+
+const express = require('express');
+
+const server = http.createServer();
+
+server.listen(3000);
+
+
+
+
+
+
+
+
+
+
+--> VAMOS DIVIDIR QUE NEM O PROFESSOR:
+
+
+
+
+
+SEMPRE OS IMPORTS DO NODE EM SI SÃO ESCRITOS PRIMEIRO (como visto em 'http'),
+
+
+e aí 
+
+
+os 
+IMPORTS 
+
+DE THIRD PARTY PACKAGES VÊM DEPOIS... (como 'express', por exemplo...)
+
+
+
+
+
+
+
+
+
+------> ok... AGORA O EXPRESS FOI IMPORTADO....
+
+
+
+
+
+
+
+
+
+------> AGORA PODEMOS CRIAR UMA 'EXPRESS APPLICATION' por meio da 
+
+
+
+ESCRITA 
+
+DE 
+
+
+
+
+
+'const app = xxxx' ------> 
+
+
+
+
+
+
+É CLARO QUE VOCÊ PODE ESCOLHER O NOME QUE VOCÊ QUISER, MAS O PESSOAL 
+
+
+
+GERALMENTE USA 'app',
+
+
+
+usa 'app' e aí __ ARMAZENA__ A 
+
+
+'
+EXPRESS APPLICATION' 
+
+
+dentro 
+
+dessa const....
+
+
+
+
+
+
+
+
+
+--> ex:
+
+
+
+
+
+
+const app = express();
+
+
+
+
+
+
+
+
+
+
+--------> AÍ, RODAMOS O EXPRESS __ COMO UMA FUNÇÃO___....
+
+
+
+
+
+
+
+
+
+
+
+
+OU SEJA, PARA INCORPORAR/ATIVAR O EXPRESS NO SEU PROJETO,
+
+
+você precisa 
+
+de 
+2 linhas:
+
+
+
+
+
+1) const express = require('express');
+
+
+
+
+
+2) const app = express();
+
+
+
+
+
+-------------------------------------------------------
+
+
+
+
+
+
+-------> EM OUTRAS PALAVRAS, O PACKAGE DO 
+
+
+
+EXPRESS PARECE __ IMPORTAR UMA FUNÇÃO... ------> 
+
+
+
+
+E VOCÊ PODE VER ISSO SE VOCÊ APERTAR 
+
+
+'ctrl' 
+
+e 
+
+dar hover em cima 
+
+
+desse pacote...
+
+
+
+
+(
+
+
+    vemos coisas 
+
+    como 
+
+
+    'import * as bodyParser from 'body-parser',
+
+
+
+    e 
+
+
+    'import * as core from 'express-serve-static-core'...
+)
+
+
+
+
+
+
+------------> E SE VOCÊ APERTAR 'CTRL' e então CLICAR COM O BOTÃO ESQUERDO NESSAS INFO,
+
+
+vocÊ será LEVADO AO SOURCE CODE DO EXPRESS.JS...
+
+
+
+
+
+
+
+
+
+
+
+AÍ, NO FINAL DESSE ARQUIVO SOURCE,
+
+VEMOS 
+
+QUE 
+
+
+O 
+
+EXPRESS.JS 
+
+FAZ UM EXPORT,
+
+ELE 
+
+EXPORTA ISTO:
+
+
+''''''export = e;           ''''' 
+
+
+
+
+
+
+
+
+
+-------> MAS ESSE ARQUIVO DE SOURCE DO EXPRESS.JS 
+
+
+não é 
+
+UM ARQUIVO '.js',
+
+E SIM É UM 
+
+
+
+arquivo 
+
+'d.ts' (definition TYPESCRIPT, esse é o TIPO desse arquivo).... ------> 
+
+
+ESSE ARQUIVO TEM UMA SINTAXE __ DIFERENTE__ DAQUELA USADA NO JAVASCRIPT COMUM/NODE...
+
+
+
+
+
+
+
+
+
+
+
+
+-------> ainda assim, 
+
+o importante é que 
+
+
+
+'e', essa coisa exportada,
+
+no final das contas 
+
+
+é 
+
+
+
+A FUNÇÃO DE 
+
+
+'e(): core.Express;'
+
+
+
+
+
+
+
+
+
+-------> OU SEJA, POR ESSE ARQUIVO EXPORTAR O 'EXPRESS' COMO UMA FUNÇÃO,
+
+
+
+nós sempre devemos EXECUTAR 
+
+
+'express' como uma FUNÇÃO,
+
+NO LUGAR EM QUE O IMPORTAMOS (que é em 'app.js', invariavelmente)....
+
+
+
+
+ex:
+
+
+
+
+
+const http = require('http');
+
+const express = require('express'); ///necessário.
+
+const app = express(); /////necessário.
+
+const server = http.createServer();
+
+server.listen(3000);
+
+
+
+
+
+-----------------------------------
+
+
+
+
+
+
+
+------>  ok....
+
+
+E ISSO, POR SUA VEZ,
+
+
+CRIARÁ UM OBJETO 'EXPRESS.JS',
+
+
+em que 
+
+a FRAMEWORK VAI 
+
+'STORE AND MANAGE' 
+
+
+UM MONTE DE COISAS PARA NÓS,
+
+
+POR TRÁS DAS CENAS...
+
+
+
+
+-------------------------------
+
+
+
+--------> OU SEJA,
+
+UM MONTE DE LÓGICA FICARÁ NESSA CONSTANTE 
+
+'app'...
+
+
+
+
+
+
+
+
+
+
+------> ALÉM DE CONTER UM MONTE DE LÓGICA ÚTIL,
+
+
+
+
+
+ESSA CONSTANTE 
+'app' (Que segura/holds 'express()')
+
+
+
+
+___
+ TAMBEM TEM A CONVENIÊNCIA 
+
+
+ DE 
+
+ __ SER UM 'VALID REQUEST HANDLER' ----> por isso,
+
+
+
+ VOCê PODE SIMPLESMENTE 
+
+ PASSÁ-LA 
+
+
+
+
+ PARA 'createServer',
+
+
+ como 
+
+
+ se fosse (e é)
+
+
+ uma 
+
+ daquelas funções 
+
+
+
+ '(req, res) => {
+            xxxxx
+ }  
+ '
+
+
+
+ ----------------------------
+
+
+
+
+
+ OU SEJA, NOSSO CÓDIGO FICARÁ ASSIM:
+
+
+
+
+
+
+ const http = require('http');
+
+const express = require('express'); ///necessário.
+
+
+const app = express(); /////necessário.
+
+const server = http.createServer(app); ////EIS O CÓDIGO EM QUESTÃO.
+
+
+server.listen(3000);
+
+
+
+
+-----------------------------------------
+
+
+
+
+
+
+OK....
+
+
+
+
+
+
+PASSAMOS O APP COMO UM REQUEST HANDLER AO 'createServer'...
+
+
+
+
+
+
+
+-------> E SE VOCÊ FIZER ISSO E INICIAR O SEU PROJETO COM 
+
+'npm start',
+
+
+VOCÊ ACTUALLY TERÁ UM 'RUNNING SERVER',
+
+que 
+
+é claro que 
+
+
+
+NÃO VAI HANDLAR QUAISQUER REQUESTS NO MOMENTO,
+
+justamnete 
+
+
+
+
+PQ AINDA NÃO DEFINIMOS LÓGICA ALGUMA QUE DEVA ACONTECER/SER EXECUTADA 
+
+
+
+A PARTIR 
+
+DE INCOMING REQUESTS...
+
+
+
+
+
+
+
+
+------> APP BASICAMENTE NÃO FARÁ NADA, NO MOMENTO... -----> 
+
+
+
+__QUASE NADA__ , NA VERDADE... -> ISSO PQ 
+
+
+ESSA CONST 
+
+NA VERDADE 
+
+
+FAZ 1 COISINHA PARA NÓS... --------> 
+
+
+
+
+ELA 
+
+SETTA UMA CERTA 
+
+MANEIRA 
+
+__DE HANDLAR__ 
+
+INCOMING REQUESTS... ----->  É UMA __ CARACTERÍSTICA 
+
+CENTRAL __ 
+
+
+DO EXPRESS.JS... (os middlewares? talvez? )...
+
+
+
+VEREMOS ESSA FEATURE NA PRÓXIMA AULA...
